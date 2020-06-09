@@ -27,7 +27,8 @@ jobs:
       name: "Unit Tests"
       before_script:
         - npm install
-      script: npm test
+        - npm install coveralls
+      script: CI=true npm test -- --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 
 notifications:
   email: false

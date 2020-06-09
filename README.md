@@ -1,5 +1,7 @@
 # Submission interface frontend
 
+[![Build Status](https://travis-ci.org/CSCfi/metadata-submitter-frontend.svg?branch=master)](https://travis-ci.org/CSCfi/metadata-submitter-frontend)
+
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)
 
 ## Install and run

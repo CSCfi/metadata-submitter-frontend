@@ -24,4 +24,4 @@ Metadata submission interface is released under `MIT`, see [LICENSE](LICENSE).
 
 ## Contributing
 
-If you want to contribute to a project and make it better, your help is very welcome. For more info about how to contribute, see [CONTRIBUTING](CONTRIBUTING).
+If you want to contribute to a project and make it better, your help is very welcome. For more info about how to contribute, see [CONTRIBUTING](CONTRIBUTING.md).

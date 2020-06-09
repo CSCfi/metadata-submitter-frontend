@@ -1,0 +1,33 @@
+language: node_js
+
+node: 14
+
+stages:
+  - name: tests
+    if: type IN (push, pull_request)
+
+jobs:
+  include:
+    - stage: tests
+      name: "Code style check"
+      before_script:
+        - npm install
+      script: npm run lint:check
+    - stage: tests
+      name: "Non-js file formatting check"
+      before_script:
+        - npm install
+      script: npm run format:check
+    - stage: tests
+      name: "Static type checks"
+      before_script:
+        - npm install
+      script: npm run flow
+    - stage: tests
+      name: "Unit Tests"
+      before_script:
+        - npm install
+      script: npm test
+
+notifications:
+  email: false

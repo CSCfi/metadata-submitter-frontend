@@ -1,6 +1,7 @@
 # Submission interface frontend
 
 [![Build Status](https://travis-ci.org/CSCfi/metadata-submitter-frontend.svg?branch=master)](https://travis-ci.org/CSCfi/metadata-submitter-frontend)
+[![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)
 

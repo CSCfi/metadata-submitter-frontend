@@ -2,8 +2,8 @@ import React from "react"
 import { render } from "@testing-library/react"
 import App from "./App"
 
-test("renders testing link", () => {
+test("Renders upload text", () => {
   const { getByText } = render(<App />)
-  const linkElement = getByText(/Testing stuff here/i)
+  const linkElement = getByText(/Upload an XML file/i)
   expect(linkElement).toBeInTheDocument()
 })

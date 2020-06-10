@@ -1,14 +1,14 @@
 // @flow
 import React from "react"
+import PropTypes from "prop-types"
 import Container from "@material-ui/core/Container"
 import HomeIcon from "@material-ui/icons/Home"
-import Typography from "@material-ui/core/Typography"
 import CssBaseline from "@material-ui/core/CssBaseline"
+
 import {
   AppBar,
   Toolbar,
   Card,
-  CardActions,
   CardHeader,
   CardContent,
   Grid,
@@ -18,17 +18,48 @@ import {
 } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 
+import XMLUploadForm from "./components/XMLUploadForm"
+
 const useStyles = makeStyles(theme => ({
   appBar: {
     position: "relative",
     borderBottom: `1px solid ${theme.palette.divider}`,
-    alignItems: "center",
+    alignItems: "flex-end",
+    color: "rgb(72,72,72)",
+    backgroundColor: "white",
   },
   link: {
     margin: theme.spacing(1, 1.5),
     color: "inherit",
   },
+  linkButton: {
+    margin: theme.spacing(1, 1.5),
+    color: "white",
+    padding: "10px 20px",
+    backgroundColor: "rgb(121, 131, 204)",
+    borderRadius: "20px",
+  },
 }))
+
+const UploadCard = props => {
+  return (
+    <Card>
+      <CardHeader
+        title={`Submit ${props.objectType}`}
+        subheader={"Upload an XML file"}
+        titleTypographyProps={{ align: "center" }}
+        subheaderTypographyProps={{ align: "center" }}
+      />
+      <CardContent>
+        <XMLUploadForm />
+      </CardContent>
+    </Card>
+  )
+}
+
+UploadCard.propTypes = {
+  objectType: PropTypes.string.isRequired,
+}
 
 const App = () => {
   const classes = useStyles()
@@ -52,35 +83,18 @@ const App = () => {
             <Link href="#" className={classes.link}>
               Submissions
             </Link>
-            <Link variant="button" href="#" className={classes.link}>
-              New submission
-            </Link>
+            <Button>
+              <Link href="#" className={classes.linkButton}>
+                New submission
+              </Link>
+            </Button>
           </nav>
         </Toolbar>
       </AppBar>
       <Container maxWidth="md" component="main" justify="center">
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item>
-            <Card>
-              <CardHeader
-                title="Submit study"
-                subheader={"Upload an XML file"}
-                titleTypographyProps={{ align: "center" }}
-                subheaderTypographyProps={{ align: "center" }}
-              />
-              <CardContent>
-                <div>
-                  <Typography component="h2" variant="h3" color="textPrimary">
-                    And man, some content man!
-                  </Typography>
-                </div>
-              </CardContent>
-              <CardActions>
-                <Button fullWidth color="primary">
-                  Paina nappulaa
-                </Button>
-              </CardActions>
-            </Card>
+            <UploadCard objectType="study" />
           </Grid>
         </Grid>
       </Container>

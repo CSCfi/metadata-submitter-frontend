@@ -1,6 +1,5 @@
-// @flow
-import React from "react"
-import PropTypes from "prop-types"
+//@flow
+import React, { useState } from "react"
 import Container from "@material-ui/core/Container"
 import HomeIcon from "@material-ui/icons/Home"
 import CssBaseline from "@material-ui/core/CssBaseline"
@@ -17,6 +16,8 @@ import {
   IconButton,
 } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
+import ListItemText from "@material-ui/core/ListItemText"
+import ListItem from "@material-ui/core/ListItem"
 
 import XMLUploadForm from "./components/XMLUploadForm"
 
@@ -41,11 +42,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const UploadCard = props => {
+const UploadCard = (objectType: string, changeObject: Function) => {
   return (
     <Card>
       <CardHeader
-        title={`Submit ${props.objectType}`}
+        title={`Submit ${objectType}`}
         subheader={"Upload an XML file"}
         titleTypographyProps={{ align: "center" }}
         subheaderTypographyProps={{ align: "center" }}
@@ -53,16 +54,48 @@ const UploadCard = props => {
       <CardContent>
         <XMLUploadForm />
       </CardContent>
+      <Button onClick={() => changeObject("")}>
+        Back to choosing a submission
+      </Button>
     </Card>
   )
 }
 
-UploadCard.propTypes = {
-  objectType: PropTypes.string.isRequired,
+const SubmitObjectCard = (changeObject: Function) => {
+  const objectTypes = [
+    "study",
+    "project",
+    "sample",
+    "experiment",
+    "run",
+    "analysis",
+    "dac",
+    "policy",
+    "dataset",
+  ]
+
+  return (
+    <Card>
+      <CardHeader title="Submit an object" />
+      <CardContent>
+        {objectTypes.map((type, index) => {
+          const typeCapitalized = type[0].toUpperCase() + type.substring(1)
+          return (
+            <ListItem button onClick={() => changeObject(type)} key={index}>
+              <ListItemText primary={typeCapitalized} />
+            </ListItem>
+          )
+        })}
+      </CardContent>
+    </Card>
+  )
 }
 
 const App = () => {
   const classes = useStyles()
+  const [objectType, setObjectType] = useState("")
+
+  const changeObject = (type: string) => setObjectType(type)
 
   return (
     <React.Fragment>
@@ -91,10 +124,15 @@ const App = () => {
           </nav>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="md" component="main" justify="center">
+      <Container component="main" justify="center">
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item>
-            <UploadCard objectType="study" />
+            {objectType === "" ? (
+              <SubmitObjectCard changeObject={changeObject} />
+            ) : (
+              //$FlowFixMe
+              <UploadCard objectType={objectType} changeObject={changeObject} />
+            )}
           </Grid>
         </Grid>
       </Container>

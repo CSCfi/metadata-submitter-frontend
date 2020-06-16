@@ -1,6 +1,6 @@
 //@flow
 import React from "react"
-import useStyles from "../styles"
+import useStyles from "styles"
 import { AppBar, Toolbar, Button, Link, IconButton } from "@material-ui/core"
 import HomeIcon from "@material-ui/icons/Home"
 

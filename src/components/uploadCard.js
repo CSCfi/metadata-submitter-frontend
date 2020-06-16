@@ -11,8 +11,8 @@ import {
   ListItem,
 } from "@material-ui/core"
 
-import UploadXMLForm from "./forms/uploadXMLForm"
-import { setObjectType } from "../features/objectTypeSlice"
+import UploadXMLForm from "forms/uploadXMLForm"
+import { setObjectType } from "features/objectTypeSlice"
 
 const UploadFormCard = () => {
   const dispatch = useDispatch()

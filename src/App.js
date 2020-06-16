@@ -1,8 +1,8 @@
 //@flow
 import React from "react"
 import { Container, CssBaseline, Grid } from "@material-ui/core"
-import Nav from "./components/nav"
-import UploadCard from "./components/uploadCard"
+import Nav from "components/nav"
+import UploadCard from "components/uploadCard"
 
 const App = () => (
   <React.Fragment>

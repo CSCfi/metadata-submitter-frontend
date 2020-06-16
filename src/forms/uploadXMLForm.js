@@ -6,7 +6,7 @@ import { Button, LinearProgress } from "@material-ui/core"
 import Alert from "@material-ui/lab/Alert"
 import * as yup from "yup"
 import { SimpleFileUpload } from "formik-material-ui"
-import objectAPIService from "../../services/objectAPI"
+import objectAPIService from "services/objectAPI"
 
 const UploadXMLForm = () => {
   const [errorMessage, setErrorMessage] = useState("")

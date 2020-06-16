@@ -1,15 +1,17 @@
+//@flow
 import React, { useState } from "react"
+import { useSelector } from "react-redux"
 import { Formik, Form, Field } from "formik"
 import { Button, LinearProgress } from "@material-ui/core"
+import Alert from "@material-ui/lab/Alert"
 import * as yup from "yup"
 import { SimpleFileUpload } from "formik-material-ui"
-import objectService from "../services/object"
-import Notification from "./Notification"
+import objectAPIService from "../../services/objectAPI"
 
-const XMLUploadForm = () => {
-  const [errorMessage, setErrorMessage] = useState(null)
-  const typeErrorMessage =
-    "The file format you attached to this form is not allowed."
+const UploadXMLForm = () => {
+  const [errorMessage, setErrorMessage] = useState("")
+  const [errorType, setErrorType] = useState("")
+  const { objectType } = useSelector(state => state.objectType)
   return (
     <div>
       <Formik
@@ -20,22 +22,23 @@ const XMLUploadForm = () => {
             .required("Please attach a file before submitting.")
             .test(
               "fileType",
-              typeErrorMessage,
+              "The file format you attached to this form is not allowed.",
               value => value && value.type === "text/xml"
             ),
         })}
         onSubmit={async (values, { setSubmitting }) => {
-          console.log(values.file)
-          const response = await objectService.createFromXML(
-            "study",
+          const response = await objectAPIService.createFromXML(
+            objectType,
             values.file
           )
           if (response.ok) {
             setErrorMessage(
               `Submitted with accessionid ${response.data.accessionId}`
             )
+            setErrorType("success")
           } else {
             setErrorMessage(`Error: ${response.data}`)
+            setErrorType("error")
           }
           setSubmitting(false)
         }}
@@ -55,11 +58,19 @@ const XMLUploadForm = () => {
           </Form>
         )}
       </Formik>
-      <div>
-        <Notification message={errorMessage} />
-      </div>
+      {errorMessage && errorType && (
+        <Alert
+          severity={errorType}
+          onClose={() => {
+            setErrorMessage("")
+            setErrorType("")
+          }}
+        >
+          {errorMessage}
+        </Alert>
+      )}
     </div>
   )
 }
 
-export default XMLUploadForm
+export default UploadXMLForm

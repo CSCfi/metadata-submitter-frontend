@@ -61,7 +61,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint:check && npm run format:check && npm run flow && CI=true npm test"
+      "pre-commit": "npm run lint:check && npm run format:check && npm run flow && npm test -- --watchAll=false"
     }
   },
   "proxy": "http://localhost:5430"

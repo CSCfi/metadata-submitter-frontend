@@ -1,6 +1,8 @@
 //@flow
 import React from "react"
-import { Container, CssBaseline, Grid } from "@material-ui/core"
+import Container from "@material-ui/core/Container"
+import CssBaseline from "@material-ui/core/CssBaseline"
+import Grid from "@material-ui/core/Grid"
 import Nav from "components/nav"
 import UploadCard from "components/uploadCard"
 

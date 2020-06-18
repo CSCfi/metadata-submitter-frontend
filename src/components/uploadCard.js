@@ -2,14 +2,12 @@
 import React from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
-  ListItemText,
-  ListItem,
-} from "@material-ui/core"
+import Card from "@material-ui/core/Card"
+import CardHeader from "@material-ui/core/CardHeader"
+import CardContent from "@material-ui/core/CardContent"
+import Button from "@material-ui/core/Button"
+import ListItemText from "@material-ui/core/ListItemText"
+import ListItem from "@material-ui/core/ListItem"
 
 import UploadXMLForm from "forms/uploadXMLForm"
 import { setObjectType } from "features/objectTypeSlice"

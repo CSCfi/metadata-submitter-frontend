@@ -7,6 +7,7 @@ import Link from "@material-ui/core/Link"
 import IconButton from "@material-ui/core/IconButton"
 import HomeIcon from "@material-ui/icons/Home"
 import { makeStyles } from "@material-ui/core/styles"
+import { Link as RouterLink } from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -35,6 +36,8 @@ const Nav = () => {
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar>
         <IconButton
+          component={RouterLink}
+          to="/"
           className={classes.HomeIcon}
           aria-label="go to frontpage"
           color="inherit"
@@ -49,7 +52,11 @@ const Nav = () => {
             Submissions
           </Link>
           <Button>
-            <Link href="#" className={classes.linkButton}>
+            <Link
+              component={RouterLink}
+              to="/submit"
+              className={classes.linkButton}
+            >
               New submission
             </Link>
           </Button>

@@ -2,12 +2,17 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render } from "@testing-library/react"
 import Nav from "./nav"
+import { BrowserRouter as Router } from "react-router-dom"
 
 describe("NavBar", () => {
   let component
 
   beforeEach(() => {
-    component = render(<Nav />)
+    component = render(
+      <Router>
+        <Nav />
+      </Router>
+    )
   })
 
   test("has correct nav links rendered", () => {

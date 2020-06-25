@@ -7,6 +7,8 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
 
 import Nav from "components/nav"
+import Page404 from "error_pages/Page404"
+import Page500 from "error_pages/Page500"
 import Home from "components/home"
 import NewDraftCard from "components/newDraftCard"
 
@@ -29,8 +31,14 @@ const App = () => {
             <Route path="/newdraft">
               <NewDraftCard />
             </Route>
-            <Route path="/">
+            <Route path="/error500">
+              <Page500 />
+            </Route>
+            <Route exact path="/">
               <Home />
+            </Route>
+            <Route path="*">
+              <Page404 />
             </Route>
           </Switch>
         </Container>

@@ -1,18 +1,19 @@
 //@flow
 import React from "react"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+
 import Container from "@material-ui/core/Container"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import Grid from "@material-ui/core/Grid"
-import Nav from "components/nav"
-import UploadCard from "components/uploadCard"
 import Card from "@material-ui/core/Card"
-import CardActions from "@material-ui/core/CardActions"
 import CardHeader from "@material-ui/core/CardHeader"
 import CardContent from "@material-ui/core/CardContent"
 import Skeleton from "@material-ui/lab/Skeleton"
-import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+
+import Nav from "components/nav"
+import UploadCard from "components/uploadCard"
+import Home from "components/home"
 
 const useStyles = makeStyles(theme => ({
   cardGrid: {
@@ -28,50 +29,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
 }))
-
-const Home = () => {
-  const classes = useStyles()
-  const cards = [
-    {
-      title: "Your open submissions",
-    },
-    {
-      title: "Your submissions",
-    },
-    {
-      title: "Notifications",
-    },
-  ]
-  return (
-    <Grid container spacing={4}>
-      {cards.map(card => {
-        return (
-          <Grid key={card.title} item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardHeader title={card.title} />
-              <CardContent className={classes.cardContent}>
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-                <Skeleton variant="text" width={220} height={20} />
-              </CardContent>
-              <CardActions>
-                <Button variant="outlined" color="primary">
-                  See all
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        )
-      })}
-    </Grid>
-  )
-}
 
 const Submit = () => {
   const classes = useStyles()

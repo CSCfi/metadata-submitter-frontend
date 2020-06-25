@@ -38,7 +38,7 @@ const UploadXMLForm = () => {
             )
             setErrorType("success")
           } else {
-            setErrorMessage(`Error: ${response.data}`)
+            setErrorMessage(`Error: ${response.data.detail}`)
             setErrorType("error")
           }
           setSubmitting(false)

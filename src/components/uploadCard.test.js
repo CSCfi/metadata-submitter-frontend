@@ -4,10 +4,10 @@ import { render, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import UploadCard from "./uploadCard"
+import NewDraftCard from "./newDraftCard"
 const mockStore = configureStore([])
 
-describe("UploadCard", () => {
+describe("NewDraftCard", () => {
   test("has all categories rendered when objectType is not set", () => {
     const store = mockStore({
       objectType: {
@@ -16,7 +16,7 @@ describe("UploadCard", () => {
     })
     const { getByText } = render(
       <Provider store={store}>
-        <UploadCard />
+        <NewDraftCard />
       </Provider>
     )
     const types = [
@@ -31,7 +31,7 @@ describe("UploadCard", () => {
       "Dataset",
     ]
     types.forEach(type => {
-      const headerElement = getByText("Submit an object")
+      const headerElement = getByText("Create new draft")
       expect(headerElement).toBeInTheDocument()
       const typeElement = getByText(`${type}`)
       expect(typeElement).toBeInTheDocument()
@@ -46,7 +46,7 @@ describe("UploadCard", () => {
     })
     const { getByText } = render(
       <Provider store={store}>
-        <UploadCard />
+        <NewDraftCard />
       </Provider>
     )
     const typeElement = getByText("Submit sample")
@@ -63,7 +63,7 @@ describe("UploadCard", () => {
 
     const { getByText } = render(
       <Provider store={store}>
-        <UploadCard />
+        <NewDraftCard />
       </Provider>
     )
     const button = getByText("Sample").closest("div")

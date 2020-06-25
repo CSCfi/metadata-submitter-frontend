@@ -61,7 +61,7 @@ const App = () => {
         <Nav />
         <Container className={classes.cardGrid} maxWidth="md">
           <Switch>
-            <Route path="/submit">
+            <Route path="/newdraft">
               <Submit />
             </Route>
             <Route path="/">

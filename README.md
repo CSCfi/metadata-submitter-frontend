@@ -7,9 +7,16 @@ Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for mo
 
 ## Install and run
 
-Clone project and install dependencies with `npm install`.
+Requirements:
 
-Run frontend in development mode with `npm start`. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node 12+
+- Optionally docker + docker-compose
+
+For quick testing, go to the `development` folder and launch frontend with Docker by running `docker-compose up --build` (add `-d` flag to run container in the background). Frontend can then be found from `http://localhost:3000`.
+
+If you want to use your local node setup, just install dependencies with `npm install` and run frontend in development mode with `npm start`.
+
+If you also need backend for development, check out [backend repository](https://github.com/CSCfi/metadata-submitter/).
 
 ## Tests
 

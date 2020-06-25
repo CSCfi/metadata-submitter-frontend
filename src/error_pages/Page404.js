@@ -12,7 +12,7 @@ const Page404 = () => {
     <Grid container direction="row" justify="center" alignItems="stretch">
       <Grid item xs={6}>
         <Card>
-          <CardHeader title="404 Not Fount" />
+          <CardHeader title="404 Not Found" />
           <CardContent>
             Oops! Page <code>{location.pathname}</code> could not be found.
           </CardContent>

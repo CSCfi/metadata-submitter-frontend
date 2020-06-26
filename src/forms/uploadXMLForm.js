@@ -2,7 +2,8 @@
 import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { Formik, Form, Field } from "formik"
-import { Button, LinearProgress } from "@material-ui/core"
+import Button from "@material-ui/core/Button"
+import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import * as yup from "yup"
 import { SimpleFileUpload } from "formik-material-ui"
@@ -37,7 +38,7 @@ const UploadXMLForm = () => {
             )
             setErrorType("success")
           } else {
-            setErrorMessage(`Error: ${response.data}`)
+            setErrorMessage(`Error: ${response.data.detail}`)
             setErrorType("error")
           }
           setSubmitting(false)

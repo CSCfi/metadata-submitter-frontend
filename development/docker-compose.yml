@@ -1,0 +1,12 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ../.
+      dockerfile: development/Dockerfile-dev
+    container_name: "metadata_submitter_frontend"
+    ports:
+      - 3000:3000
+    restart: on-failure
+    stdin_open: true
+    tty: true

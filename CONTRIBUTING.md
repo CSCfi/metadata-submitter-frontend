@@ -27,11 +27,11 @@ All Pull Requests related to features should be done against `develop` branch, r
 
 Give your branch a short descriptive name (like the names between the `<>` below) and prefix the name with something representative for that branch:
 
-- `feature/<feature-name>` - used when an enhancement or new feature was implemented;
-- `docs/<what-the-docs>` - missing docs or keeping them up to date;
-- `bugfix/<caught-it>` - solved a bug;
-- `test/<thank-you>` - adding missing tests for a feature, we would prefer they would come with the `feature` but still `thank you`;
-- `refactor/<that-name-is-confusing>` - well we hope we don't mess anything and we don't get to use this;
+- `feature/<feature-name>` - used when an enhancement or new feature was implemented
+- `docs/<what-the-docs>` - missing docs or keeping them up to date
+- `bugfix/<caught-it>` - solved a bug
+- `test/<thank-you>` - adding missing tests for a feature, we would prefer they would come with the `feature` but still `thank you`
+- `refactor/<that-name-is-confusing>` - well we hope we don't mess anything and we don't get to use this
 - `hotfix/<oh-no>` - for when things needed to be fixed yesterday.
 
 ### Coding conventions
@@ -43,7 +43,7 @@ We do optimize for readability, and it would be awesome if you go through the co
 - 80 character limit is almost strict, but can be broken in documentation when hyperlinks go over the limits
 - We follow recommended code style settings from [eslint](https://eslint.org/docs/rules/),[prettier](https://prettier.io/docs/) and [react](https://github.com/yannickcr/eslint-plugin-react) with some small exceptions. Exceptions are stated in config files for `eslint` and `prettier`.
 - Static type errors are should be checked with [flow](https://flow.org/en/docs/)
-- We like to keep things simple, so when possible avoid importing any big libraries.
+- We encourage you to use javascript libraries if it makes code more readable and simplifies program logic
 - Tools to help you:
   - Linting, formatting and type checking is configured to be run with `npm`, see `script` inside `package.json` for possible options
   - Repository has a pre-configured pre-commit hook for git, use that to handle checks before you commit to your branch.

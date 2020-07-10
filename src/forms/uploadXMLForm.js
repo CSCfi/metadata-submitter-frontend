@@ -18,7 +18,6 @@ const UploadXMLForm = () => {
     <div>
       <Formik
         initialValues={{ file: null }}
-
         validationSchema={yup.object().shape({
           file: yup
             .mixed()
@@ -38,7 +37,7 @@ const UploadXMLForm = () => {
                 )
                 return response.ok && response.data.isValid
               }
-            )
+            ),
         })}
         onSubmit={async (values, { setSubmitting }) => {
           const response = await objectAPIService.createFromXML(
@@ -52,8 +51,10 @@ const UploadXMLForm = () => {
             )
             setErrorType("success")
           } else {
-            if (response.status === 504){
-              setErrorMessage(`Couldn't connect to metadata server, details: ${response.data}`)
+            if (response.status === 504) {
+              setErrorMessage(
+                `Couldn't connect to metadata server, details: ${response.data}`
+              )
               setErrorType("error")
             } else {
               setErrorMessage(`Error: ${response.data.detail}`)

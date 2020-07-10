@@ -32,14 +32,20 @@ const UploadXMLForm = () => {
             objectType,
             values.file
           )
+          console.log(response)
           if (response.ok) {
             setErrorMessage(
               `Submitted with accessionid ${response.data.accessionId}`
             )
             setErrorType("success")
           } else {
-            setErrorMessage(`Error: ${response.data.detail}`)
-            setErrorType("error")
+            if (response.status === 504){
+              setErrorMessage(`Couldn't connect to metadata server, details: ${response.data}`)
+              setErrorType("error")
+            } else {
+              setErrorMessage(`Error: ${response.data.detail}`)
+              setErrorType("error")
+            }
           }
           setSubmitting(false)
         }}

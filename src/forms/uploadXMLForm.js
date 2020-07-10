@@ -169,6 +169,7 @@ const UploadXMLForm = () => {
           <Form>
             <Field component={FileUpload} name="file" label="Choose file" />
             {isSubmitting && <LinearProgress />}
+            <br />
             <Button
               variant="outlined"
               color="primary"

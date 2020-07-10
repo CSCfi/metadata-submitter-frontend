@@ -8,6 +8,7 @@ import Alert from "@material-ui/lab/Alert"
 import * as yup from "yup"
 import { SimpleFileUpload } from "formik-material-ui"
 import objectAPIService from "services/objectAPI"
+import submissionAPIService from "services/submissionAPI"
 
 const UploadXMLForm = () => {
   const [errorMessage, setErrorMessage] = useState("")
@@ -17,6 +18,7 @@ const UploadXMLForm = () => {
     <div>
       <Formik
         initialValues={{ file: null }}
+
         validationSchema={yup.object().shape({
           file: yup
             .mixed()
@@ -25,7 +27,18 @@ const UploadXMLForm = () => {
               "fileType",
               "The file format you attached to this form is not allowed.",
               value => value && value.type === "text/xml"
-            ),
+            )
+            .test(
+              "validateXML",
+              `The file you attachent is not valid ${objectType}`,
+              async value => {
+                const response = await submissionAPIService.validateXMLFile(
+                  objectType,
+                  value
+                )
+                return response.ok && response.data.isValid
+              }
+            )
         })}
         onSubmit={async (values, { setSubmitting }) => {
           const response = await objectAPIService.createFromXML(

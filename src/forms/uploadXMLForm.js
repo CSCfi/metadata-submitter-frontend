@@ -78,9 +78,19 @@ const FileUpload = ({
   )
 }
 
+const checkResponseError = response => {
+  switch (response.status) {
+    case 504:
+      return "Unfortunately couldn't connect to our server to validate your file."
+    case 400:
+      return `Unfortunately an error happened when saving your file to our servers, details: ${response.data}`
+    default:
+      return `Unfortunately an unexpected error on our servers, details: ${response.data}`
+  }
+}
+
 const UploadXMLForm = () => {
-  const [errorMessage, setErrorMessage] = useState("")
-  const [errorType, setErrorType] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const { objectType } = useSelector(state => state.objectType)
   const classes = useStyles()
 
@@ -100,33 +110,24 @@ const UploadXMLForm = () => {
               values.file
             )
             if (!response.ok) {
-              errors.file = `Unfortunately an error happened when validating your file in our servers, details: ${response.data}`
+              errors.file = checkResponseError(response)
             } else if (!response.data.isValid) {
               errors.file = `The file you attached is not valid ${objectType}, please check file for errors.`
             }
           }
           return errors
         }}
-        onSubmit={async (values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting, setFieldError }) => {
           const response = await objectAPIService.createFromXML(
             objectType,
             values.file
           )
           if (response.ok) {
-            setErrorMessage(
+            setSuccessMessage(
               `Submitted with accessionid ${response.data.accessionId}`
             )
-            setErrorType("success")
           } else {
-            if (response.status === 504) {
-              setErrorMessage(
-                `Couldn't connect to metadata server, details: ${response.data}`
-              )
-              setErrorType("error")
-            } else {
-              setErrorMessage(`Error: ${response.data.detail}`)
-              setErrorType("error")
-            }
+            setFieldError("file", checkResponseError(response))
           }
           setSubmitting(false)
         }}
@@ -149,15 +150,14 @@ const UploadXMLForm = () => {
           </Form>
         )}
       </Formik>
-      {errorMessage && errorType && (
+      {successMessage && (
         <Alert
-          severity={errorType}
+          severity="success"
           onClose={() => {
-            setErrorMessage("")
-            setErrorType("")
+            setSuccessMessage("")
           }}
         >
-          {errorMessage}
+          {successMessage}
         </Alert>
       )}
     </div>

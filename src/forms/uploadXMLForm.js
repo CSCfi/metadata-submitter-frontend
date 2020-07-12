@@ -5,8 +5,8 @@ import { Formik, Form, Field } from "formik"
 import { FieldProps, getIn } from "formik"
 import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
 import Input, { InputProps } from "@material-ui/core/Input"
-import FormHelperText from "@material-ui/core/FormHelperText"
 import Button from "@material-ui/core/Button"
+import TextField from "@material-ui/core/TextField"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import * as yup from "yup"
@@ -17,23 +17,20 @@ import { makeStyles } from "@material-ui/core/styles"
 // Input stylings from: https://benmarshall.me/styling-file-inputs/
 const useStyles = makeStyles(theme => ({
   root: {
+    display: "flex",
     "& > *": {
-      margin: theme.spacing(1),
+      margin: theme.spacing(2),
     },
   },
   input: {
-    border: "0",
-    clip: "rect(0, 0, 0, 0)",
-    height: "1px",
-    overflow: "hidden",
-    padding: "0",
-    position: "absolute !important",
-    whiteSpace: "nowrap",
-    width: "1px",
+    display: "none",
+  },
+  row: {
+    display: "inline-flex",
   },
 }))
 
-interface SimpleFileUploadProps extends FieldProps {
+interface FileUploadProps extends FieldProps {
   label: string;
   disabled?: boolean;
   InputProps?: Omit<InputProps, "name" | "type" | "label">;
@@ -42,44 +39,51 @@ interface SimpleFileUploadProps extends FieldProps {
 
 const FileUpload = ({
   field,
-  form: { isSubmitting, touched, errors, setFieldValue },
+  form: { isSubmitting, touched, errors, setFieldValue, values },
   label,
   disabled = false,
   InputProps: inputProps,
   FormControlProps: formControlProps,
-}: SimpleFileUploadProps) => {
+}: FileUploadProps) => {
   const error = getIn(touched, field.name) && getIn(errors, field.name)
   const classes = useStyles()
+  console.log(values.file)
 
   return (
-    <FormControl {...formControlProps}>
-      {label && (
+    <FormControl {...formControlProps} className={classes.root}>
+      <div className={classes.row}>
+        <TextField
+          placeholder={values.file ? values.file.name : "Name"}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
         <label htmlFor="file-select-button">
           <Button variant="contained" color="primary" component="span">
             {label}
           </Button>
         </label>
-      )}
-      <Input
-        error={!!error}
-        inputProps={{
-          accept: "text/xml",
-          type: "file",
-          className: classes.input,
-          id: "file-select-button",
-          disabled: disabled || isSubmitting,
-          name: field.name,
-          onChange: event => {
-            if (inputProps?.onChange) {
-              inputProps.onChange(event)
-            } else {
-              const file = event.currentTarget.files[0]
-              setFieldValue(field.name, file)
-            }
-          },
-        }}
-      />
-      {error && <FormHelperText error>{error}</FormHelperText>}
+        <Input
+          className={classes.input}
+          error={!!error}
+          inputProps={{
+            accept: "text/xml",
+            type: "file",
+            id: "file-select-button",
+            disabled: disabled || isSubmitting,
+            name: field.name,
+            onChange: event => {
+              if (inputProps?.onChange) {
+                inputProps.onChange(event)
+              } else {
+                const file = event.currentTarget.files[0]
+                setFieldValue(field.name, file)
+              }
+            },
+          }}
+        />
+      </div>
+      {error && <Alert severity="error">{error}</Alert>}
     </FormControl>
   )
 }
@@ -88,6 +92,7 @@ const UploadXMLForm = () => {
   const [errorMessage, setErrorMessage] = useState("")
   const [errorType, setErrorType] = useState("")
   const { objectType } = useSelector(state => state.objectType)
+  const classes = useStyles()
 
   return (
     <div>
@@ -141,17 +146,12 @@ const UploadXMLForm = () => {
       >
         {({ submitForm, isSubmitting }) => (
           <Form>
-            <Field
-              component={FileUpload}
-              name="file"
-              placeholder="name"
-              label="Choose file"
-            />
+            <Field component={FileUpload} name="file" label="Choose file" />
             {isSubmitting && <LinearProgress />}
-            <br />
             <Button
-              variant="contained"
+              variant="outlined"
               color="primary"
+              className={classes.submitButton}
               disabled={isSubmitting}
               onClick={submitForm}
             >

@@ -1,20 +1,17 @@
 //@flow
 import React, { useState } from "react"
 import { useSelector } from "react-redux"
-import { Formik, Form, Field } from "formik"
-import { FieldProps, getIn } from "formik"
+import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
 import Input, { InputProps } from "@material-ui/core/Input"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
-import * as yup from "yup"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 import { makeStyles } from "@material-ui/core/styles"
 
-// Input stylings from: https://benmarshall.me/styling-file-inputs/
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -22,7 +19,7 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(2),
     },
   },
-  input: {
+  hiddenInput: {
     display: "none",
   },
   fileField: {
@@ -59,7 +56,7 @@ const FileUpload = ({
           </Button>
         </label>
         <Input
-          className={classes.input}
+          className={classes.hiddenInput}
           error={!!error}
           inputProps={{
             accept: "text/xml",
@@ -91,27 +88,25 @@ const UploadXMLForm = () => {
     <div>
       <Formik
         initialValues={{ file: null }}
-        validationSchema={yup.object().shape({
-          file: yup
-            .mixed()
-            .required("Please attach a file before submitting.")
-            .test(
-              "fileType",
-              "The file format you attached to this form is not allowed.",
-              value => value && value.type === "text/xml"
+        validate={async values => {
+          const errors = {}
+          if (!values.file) {
+            errors.file = "Please attach a file."
+          } else if (values.file.type !== "text/xml") {
+            errors.file = "Please attach an XML file."
+          } else {
+            const response = await submissionAPIService.validateXMLFile(
+              objectType,
+              values.file
             )
-            .test(
-              "validateXML",
-              `The file you attached is not valid ${objectType}`,
-              async value => {
-                const response = await submissionAPIService.validateXMLFile(
-                  objectType,
-                  value
-                )
-                return response.ok && response.data.isValid
-              }
-            ),
-        })}
+            if (!response.ok) {
+              errors.file = `Unfortunately an error happened when validating your file in our servers, details: ${response.data}`
+            } else if (!response.data.isValid) {
+              errors.file = `The file you attached is not valid ${objectType}, please check file for errors.`
+            }
+          }
+          return errors
+        }}
         onSubmit={async (values, { setSubmitting }) => {
           const response = await objectAPIService.createFromXML(
             objectType,

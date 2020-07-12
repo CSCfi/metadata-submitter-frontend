@@ -36,7 +36,14 @@ interface FileUploadProps extends FieldProps {
 
 const FileUpload = ({
   field,
-  form: { isSubmitting, touched, errors, setFieldValue, values, setTouched },
+  form: {
+    isSubmitting,
+    touched,
+    errors,
+    values,
+    setFieldValue,
+    setFieldTouched,
+  },
   label,
   disabled = false,
   FormControlProps: formControlProps,
@@ -68,7 +75,7 @@ const FileUpload = ({
               event.preventDefault()
               const file = event.currentTarget.files[0]
               setFieldValue(field.name, file)
-              setTouched({ file: true }, false)
+              setFieldTouched(field.name, true, false)
             },
           }}
         />
@@ -81,11 +88,14 @@ const FileUpload = ({
 const checkResponseError = response => {
   switch (response.status) {
     case 504:
-      return "Unfortunately couldn't connect to our server to validate your file."
+      return `Unfortunately couldn't connect to our server to validate your 
+        file.`
     case 400:
-      return `Unfortunately an error happened when saving your file to our servers, details: ${response.data}`
+      return `Unfortunately an error happened when saving your file to our 
+        servers, details: ${response.data}`
     default:
-      return `Unfortunately an unexpected error on our servers, details: ${response.data}`
+      return `Unfortunately an unexpected error on our servers, details: 
+        ${response.data}`
   }
 }
 
@@ -112,7 +122,9 @@ const UploadXMLForm = () => {
             if (!response.ok) {
               errors.file = checkResponseError(response)
             } else if (!response.data.isValid) {
-              errors.file = `The file you attached is not valid ${objectType}, please check file for errors.`
+              errors.file = `The file you attached is not valid ${objectType}, 
+              our server reported following error:
+              ${response.data.detail.reason}.`
             }
           }
           return errors

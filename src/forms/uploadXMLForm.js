@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   input: {
     display: "none",
   },
-  row: {
+  fileField: {
     display: "inline-flex",
   },
 }))
@@ -39,24 +39,19 @@ interface FileUploadProps extends FieldProps {
 
 const FileUpload = ({
   field,
-  form: { isSubmitting, touched, errors, setFieldValue, values },
+  form: { isSubmitting, touched, errors, setFieldValue, values, setTouched },
   label,
   disabled = false,
-  InputProps: inputProps,
   FormControlProps: formControlProps,
 }: FileUploadProps) => {
   const error = getIn(touched, field.name) && getIn(errors, field.name)
   const classes = useStyles()
-  console.log(values.file)
-
   return (
     <FormControl {...formControlProps} className={classes.root}>
-      <div className={classes.row}>
+      <div className={classes.fileField}>
         <TextField
           placeholder={values.file ? values.file.name : "Name"}
-          InputProps={{
-            readOnly: true,
-          }}
+          inputProps={{ readOnly: true }}
         />
         <label htmlFor="file-select-button">
           <Button variant="contained" color="primary" component="span">
@@ -73,12 +68,10 @@ const FileUpload = ({
             disabled: disabled || isSubmitting,
             name: field.name,
             onChange: event => {
-              if (inputProps?.onChange) {
-                inputProps.onChange(event)
-              } else {
-                const file = event.currentTarget.files[0]
-                setFieldValue(field.name, file)
-              }
+              event.preventDefault()
+              const file = event.currentTarget.files[0]
+              setFieldValue(field.name, file)
+              setTouched({ file: true }, false)
             },
           }}
         />
@@ -109,7 +102,7 @@ const UploadXMLForm = () => {
             )
             .test(
               "validateXML",
-              `The file you attachent is not valid ${objectType}`,
+              `The file you attached is not valid ${objectType}`,
               async value => {
                 const response = await submissionAPIService.validateXMLFile(
                   objectType,
@@ -124,7 +117,6 @@ const UploadXMLForm = () => {
             objectType,
             values.file
           )
-          console.log(response)
           if (response.ok) {
             setErrorMessage(
               `Submitted with accessionid ${response.data.accessionId}`
@@ -144,7 +136,7 @@ const UploadXMLForm = () => {
           setSubmitting(false)
         }}
       >
-        {({ submitForm, isSubmitting }) => (
+        {({ touched, errors, submitForm, isSubmitting }) => (
           <Form>
             <Field component={FileUpload} name="file" label="Choose file" />
             {isSubmitting && <LinearProgress />}
@@ -152,7 +144,9 @@ const UploadXMLForm = () => {
               variant="outlined"
               color="primary"
               className={classes.submitButton}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || touched.file == null || errors.file != null
+              }
               onClick={submitForm}
             >
               Submit

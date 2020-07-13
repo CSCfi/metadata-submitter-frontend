@@ -1,12 +1,12 @@
 //@flow
 import { create } from "apisauce"
 
-const validate_api = create({ baseURL: "/validate" })
+const api = create({ baseURL: "" })
 
-const ValidateXMLFile = async (objectType: string, XMLFile: Object) => {
+const validateXMLFile = async (objectType: string, XMLFile: Object) => {
   let formData = new FormData()
   formData.append(objectType, XMLFile)
-  return await validate_api.post(formData)
+  return await api.post("/validate", formData)
 }
 
-export default { ValidateXMLFile }
+export default { validateXMLFile }

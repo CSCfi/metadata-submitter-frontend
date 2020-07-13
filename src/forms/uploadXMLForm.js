@@ -20,7 +20,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   hiddenInput: {
-    display: "none",
+    border: "0",
+    clip: "rect(0, 0, 0, 0)",
+    height: "1px",
+    overflow: "hidden",
+    padding: "0",
+    position: "absolute !important",
+    whiteSpace: "nowrap",
+    width: "1px",
   },
   fileField: {
     display: "inline-flex",
@@ -56,11 +63,14 @@ const FileUpload = ({
           placeholder={values.file ? values.file.name : "Name"}
           inputProps={{ readOnly: true }}
         />
-        <label htmlFor="file-select-button">
-          <Button variant="contained" color="primary" component="span">
-            {label}
-          </Button>
-        </label>
+        <Button
+          htmlFor="file-select-button"
+          variant="contained"
+          color="primary"
+          component="label"
+        >
+          {label}
+        </Button>
         <Input
           className={classes.hiddenInput}
           error={!!error}

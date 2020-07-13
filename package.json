@@ -62,7 +62,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint:check && npm run format:check && npm run flow && npm test -- --watchAll=false"
+      "pre-commit": "npm run lint:check && npm run format:check && npm run flow -- check && npm test -- --watchAll=false"
     }
   }
 }

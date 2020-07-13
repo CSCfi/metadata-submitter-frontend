@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
-import Input, { InputProps } from "@material-ui/core/Input"
+import Input from "@material-ui/core/Input"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import LinearProgress from "@material-ui/core/LinearProgress"
@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 interface FileUploadProps extends FieldProps {
   label: string;
   disabled?: boolean;
-  InputProps?: Omit<InputProps, "name" | "type" | "label">;
   FormControlProps?: FormControlProps;
 }
 

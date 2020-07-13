@@ -88,7 +88,7 @@ const FileUpload = ({
 const checkResponseError = response => {
   switch (response.status) {
     case 504:
-      return `Unfortunately couldn't connect to our server to validate your 
+      return `Unfortunately we couldn't connect to our server to validate your 
         file.`
     case 400:
       return `Unfortunately an error happened when saving your file to our 
@@ -101,6 +101,7 @@ const checkResponseError = response => {
 
 const UploadXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
+  const [successStatus, setSuccessStatus] = useState("info")
   const { objectType } = useSelector(state => state.objectType)
   const classes = useStyles()
 
@@ -119,6 +120,7 @@ const UploadXMLForm = () => {
               objectType,
               values.file
             )
+
             if (!response.ok) {
               errors.file = checkResponseError(response)
             } else if (!response.data.isValid) {
@@ -130,17 +132,27 @@ const UploadXMLForm = () => {
           return errors
         }}
         onSubmit={async (values, { setSubmitting, setFieldError }) => {
+          const waitForServertimer = setTimeout(() => {
+            setSuccessStatus("info")
+            setSuccessMessage(`For some reason, your file is still being saved
+            to our database, please wait. If saving doesn't go through in two
+            minutes, please try saving the file again.`)
+          }, 5000)
+
           const response = await objectAPIService.createFromXML(
             objectType,
             values.file
           )
+
           if (response.ok) {
+            setSuccessStatus("success")
             setSuccessMessage(
               `Submitted with accessionid ${response.data.accessionId}`
             )
           } else {
             setFieldError("file", checkResponseError(response))
           }
+          clearTimeout(waitForServertimer)
           setSubmitting(false)
         }}
       >
@@ -157,14 +169,14 @@ const UploadXMLForm = () => {
               }
               onClick={submitForm}
             >
-              Submit
+              Save
             </Button>
           </Form>
         )}
       </Formik>
       {successMessage && (
         <Alert
-          severity="success"
+          severity={successStatus}
           onClose={() => {
             setSuccessMessage("")
           }}

@@ -93,8 +93,7 @@ const checkResponseError = response => {
       return `Unfortunately an error happened when saving your file to our 
         servers, details: ${response.data}`
     default:
-      return `Unfortunately an unexpected error on our servers, details: 
-        ${response.data}`
+      return "Unfortunately an unexpected error happened on our servers"
   }
 }
 

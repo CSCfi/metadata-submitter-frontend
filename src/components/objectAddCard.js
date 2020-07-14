@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
 
 import UploadXMLForm from "forms/uploadXMLForm"
+import FillObjectDetailsForm from "forms/fillObjectDetailsForm"
 import { setObjectType } from "features/objectTypeSlice"
 
 const useStyles = makeStyles(theme => ({
@@ -31,15 +32,17 @@ const ObjectAddCard = () => {
   const dispatch = useDispatch()
   const { objectType } = useSelector(state => state.objectType)
   const [submissionType, setSubmissionType] = useState("")
-  if (submissionType == "form") {
+  if (submissionType === "form") {
     return (
       <Card>
         <CardHeader title={`${objectType}`} subheader={"Fill Form"} />
-        <CardContent className={classes.cardContent}></CardContent>
+        <CardContent className={classes.cardContent}>
+          <FillObjectDetailsForm />
+        </CardContent>
         <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
       </Card>
     )
-  } else if (submissionType == "XML") {
+  } else if (submissionType === "XML") {
     return (
       <Card>
         <CardHeader title={`${objectType}`} subheader={"Upload XML file"} />

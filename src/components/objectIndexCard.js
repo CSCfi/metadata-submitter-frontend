@@ -31,7 +31,6 @@ const ObjectIndexCard = () => {
   const dispatch = useDispatch()
   const objectTypes = [
     "study",
-    "project",
     "sample",
     "experiment",
     "run",

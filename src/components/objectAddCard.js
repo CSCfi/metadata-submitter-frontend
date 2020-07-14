@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 import Card from "@material-ui/core/Card"
@@ -30,18 +30,53 @@ const ObjectAddCard = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const { objectType } = useSelector(state => state.objectType)
-  return (
-    <Card>
-      <CardHeader
-        title={`Submit ${objectType}`}
-        subheader={"Upload an XML file"}
-      />
-      <CardContent className={classes.cardContent}>
-        <UploadXMLForm />
-      </CardContent>
-      <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-    </Card>
-  )
+  const [submissionType, setSubmissionType] = useState("")
+  if (submissionType == "form") {
+    return (
+      <Card>
+        <CardHeader title={`${objectType}`} subheader={"Fill Form"} />
+        <CardContent className={classes.cardContent}></CardContent>
+        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+      </Card>
+    )
+  } else if (submissionType == "XML") {
+    return (
+      <Card>
+        <CardHeader title={`${objectType}`} subheader={"Upload XML file"} />
+        <CardContent className={classes.cardContent}>
+          <UploadXMLForm />
+        </CardContent>
+        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+      </Card>
+    )
+  } else {
+    return (
+      <Card>
+        <CardHeader
+          title={`${objectType}`}
+          subheader={"Choose type of submission"}
+        />
+        <CardContent className={classes.cardContent}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setSubmissionType("form")}
+          >
+            Fill Form
+          </Button>
+          <span>or</span>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setSubmissionType("XML")}
+          >
+            Upload XML file
+          </Button>
+        </CardContent>
+        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+      </Card>
+    )
+  }
 }
 
 export default ObjectAddCard

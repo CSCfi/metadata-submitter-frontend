@@ -21,7 +21,6 @@ describe("NewDraftCard", () => {
     )
     const types = [
       "Study",
-      "Project",
       "Sample",
       "Experiment",
       "Run",
@@ -49,8 +48,10 @@ describe("NewDraftCard", () => {
         <NewDraftCard />
       </Provider>
     )
-    const typeElement = getByText("Submit sample")
-    expect(typeElement).toBeInTheDocument()
+    const header = getByText("sample")
+    expect(header).toBeInTheDocument()
+    const subHeader = getByText("Choose type of submission")
+    expect(subHeader).toBeInTheDocument()
   })
 
   test("sends correct dispatch action when link button is clicked", () => {

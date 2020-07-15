@@ -4,12 +4,12 @@ const studySchema = {
     xrefLink: {
       $id: "#/definitions/xrefLink",
       type: "object",
-      title: "Add xrefLink",
+      title: "XRef Link",
       required: ["db", "id"],
       properties: {
         db: {
           type: "string",
-          title: "Add DB",
+          title: "DataBase",
         },
         id: {
           type: "string",
@@ -20,33 +20,37 @@ const studySchema = {
     urlLink: {
       $id: "#/definitions/urlLink",
       type: "object",
-      title: "Add URL Link ",
+      title: "URL Link",
       required: ["label", "url"],
       properties: {
         label: {
           description: "Text label to display for the link.",
+          title: "Label",
           type: "string",
         },
         url: {
-          description: "The internet service link (file:, http:, ftp: etc.",
+          description: "The internet service link (http(s), ftp) etc.",
           type: "string",
+          title: "URL",
           pattern: "^(https?|ftp)://",
         },
       },
     },
-    entrezlink: {
-      $id: "#/definitions/entrezlink",
+    entrezLink: {
+      $id: "#/definitions/entrezLink",
       type: "object",
-      title: "Add Entrez Link",
+      title: "Entrez Link",
       required: ["db"],
       properties: {
         db: {
           description:
             "NCBI controlled vocabulary of permitted cross references. Please see http://www.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi? .",
+          title: "DataBase",
           type: "string",
         },
         label: {
           description: "How to label the link.",
+          title: "Label",
           type: "string",
         },
       },
@@ -60,25 +64,25 @@ const studySchema = {
       properties: {
         tag: {
           type: "string",
-          title: "tag title",
+          title: "Tag title",
         },
         value: {
           type: "string",
-          title: "description",
+          title: "Description",
         },
       },
     },
   },
   type: "object",
-  required: ["studyTitle", "studyTitle"],
+  required: ["studyTitle", "studyType"],
   properties: {
     studyTitle: {
-      title: "Study title",
+      title: "Study Title",
       description: "Title of the study as would be used in a publication.",
       type: "string",
     },
     studyType: {
-      title: "Study type",
+      title: "Study Type",
       description:
         "The Study type presents a controlled vocabulary for expressing the overall purpose of the study.",
       type: "string",
@@ -100,7 +104,7 @@ const studySchema = {
       ],
     },
     studyAbstract: {
-      title: "Study abstract",
+      title: "Study Abstract",
       description:
         "Briefly describes the goals, purpose, and scope of the Study. This need not be listed if it can be inherited from a referenced publication.",
       type: "string",
@@ -108,40 +112,33 @@ const studySchema = {
       maxLength: 100,
     },
     studyDescription: {
-      title: "Study description",
+      title: "Study Description",
       description: "More extensive free-form description of the study.",
       type: "string",
     },
     studyLinks: {
-      type: "object",
-      title: "The studyLinks schema",
-      required: ["studyLink"],
-      properties: {
-        studyLink: {
-          type: "array",
-          title: "The studyLink schema",
-          items: {
-            anyOf: [
-              {
-                $ref: "#/definitions/xrefLink",
-              },
-              {
-                $ref: "#/definitions/entrezLink",
-              },
-              {
-                $ref: "#/definitions/urlLink",
-              },
-            ],
-          },
-        },
+      type: "array",
+      title: "Study Links",
+      items: {
+        anyOf: [
+          { title: "XRef Link", $ref: "#/definitions/xrefLink" },
+          { title: "Entrez Link", $ref: "#/definitions/entrezLink" },
+          { title: "URL Link", $ref: "#/definitions/urlLink" },
+        ],
       },
     },
     studyAttributes: {
       type: "array",
-      title: "The studyAttributes schema",
+      title: "Study Attributes",
       items: {
         $ref: "#/definitions/studyAttribute",
       },
+    },
+    pubMedID: {
+      type: "string",
+      title: "pubMedID identifier",
+      description: " PubMed ID (8 digits) or the PMC ID (PMC + 7 digits)",
+      pattern: "^[0-9]{8}|PMC[0-9]{7}",
     },
     center: {
       title: "Description for Center",
@@ -149,12 +146,12 @@ const studySchema = {
       type: "object",
       properties: {
         centerName: {
-          title: "Center name",
+          title: "Center Name",
           description: "The center name of the submitter.",
           type: "string",
         },
         centerProjectName: {
-          title: "Study abstract",
+          title: "Center Project Name",
           description:
             " Submitter defined project name.  This field is intended for backward tracking of the study record to the submitter's LIMS.",
           type: "string",

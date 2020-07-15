@@ -9,6 +9,10 @@ const createFromXML = async (objectType: string, XMLFile: Object) => {
   return await api.post(`/${objectType}`, formData)
 }
 
+const createFromJSON = async (objectType: string, JSON: Object) => {
+  return await api.post(`/${objectType}`, JSON)
+}
+
 const getObjectByAccessionId = async (
   objectType: string,
   accessionId: string
@@ -22,6 +26,7 @@ const getAllObjectsByObjectType = async (objectType: string) => {
 
 export default {
   createFromXML,
+  createFromJSON,
   getObjectByAccessionId,
   getAllObjectsByObjectType,
 }

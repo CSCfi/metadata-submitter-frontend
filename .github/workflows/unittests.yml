@@ -1,0 +1,25 @@
+name: Unit tests and coverage
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '14' ]
+    name: Node ${{ matrix.node }} eslint check
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install coveralls
+      - name: Run Jest unit tests and report coverage to coveralls
+        run: |
+          CI=true npm test -- --coverage
+          cat && ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

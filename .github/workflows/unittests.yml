@@ -1,10 +1,13 @@
 name: Unit tests and coverage
 
-on: [push]
+on:
+  push:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node: ["14"]

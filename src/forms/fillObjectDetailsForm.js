@@ -91,4 +91,16 @@ const FillObjectDetailsForm = () => {
   )
 }
 
+  return (
+    <Form
+      liveValidate
+      onSubmit={() => console.log("test")}
+      schema={studySchema}
+      formData={formData}
+      onChange={event => setFormData(event.formData)}
+      showErrorList={false}
+      widgets={{ TextWidget, SelectWidget }}
+    />
+  )
+}
 export default FillObjectDetailsForm

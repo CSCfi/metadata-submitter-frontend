@@ -28,7 +28,7 @@
     "lint:check": "eslint .",
     "format": "prettier --write \"**/*.+(json|yml|yaml|css|md)\"",
     "format:check": "prettier --check \"**/*.+(json|yml|yaml|css|md)\"",
-    "flow": "flow"
+    "flow:check": "flow check"
   },
   "eslintConfig": {
     "extends": [
@@ -63,7 +63,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint:check && npm run format:check && npm run flow -- check && npm test -- --watchAll=false"
+      "pre-commit": "npm run lint:check && npm run format:check && npm run flow:check && npm test -- --watchAll=false"
     }
   }
 }

@@ -32,19 +32,19 @@ const TextWidget = ({
   ...textFieldProps
 }: TextWidgetProps) => {
   const _onChange = (event: SyntheticEvent<>) => {
-    const {target} = event
+    const { target } = event
     if (target instanceof HTMLInputElement) {
       return onChange(target.value === "" ? options.emptyValue : target.value)
     }
   }
   const _onBlur = (event: SyntheticEvent<>) => {
-    const {target} = event
+    const { target } = event
     if (target instanceof HTMLInputElement) {
       return onBlur(id, target.value)
     }
   }
   const _onFocus = (event: SyntheticEvent<>) => {
-    const {target} = event
+    const { target } = event
     if (target instanceof HTMLInputElement) {
       return onFocus(id, target.value)
     }

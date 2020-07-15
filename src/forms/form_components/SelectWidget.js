@@ -62,19 +62,19 @@ const SelectWidget = ({
   const emptyValue = multiple ? [] : ""
 
   const _onChange = (event: SyntheticEvent<>) => {
-    const {target} = event
-    if (target instanceof HTMLInputElement) {
+    const { target } = event
+    if (target instanceof HTMLSelectElement) {
       return onChange(processValue(schema, target.value))
     }
   }
   const _onBlur = (event: SyntheticEvent<>) => {
-    const {target} = event
+    const { target } = event
     if (target instanceof HTMLInputElement) {
       return onBlur(id, processValue(schema, target.value))
     }
   }
   const _onFocus = (event: SyntheticEvent<>) => {
-    const {target} = event
+    const { target } = event
     if (target instanceof HTMLInputElement) {
       return onFocus(id, processValue(schema, target.value))
     }

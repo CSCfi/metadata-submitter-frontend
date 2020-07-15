@@ -27,59 +27,65 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+type ChooseProps = {
+  setSubmissionType: string => void,
+}
+
+const ChooseSubmission = ({ setSubmissionType }: ChooseProps) => (
+  <div>
+    <Button
+      variant="outlined"
+      color="primary"
+      onClick={() => setSubmissionType("form")}
+    >
+      Fill Form
+    </Button>
+    <span>or</span>
+    <Button
+      variant="outlined"
+      color="primary"
+      onClick={() => setSubmissionType("xml")}
+    >
+      Upload XML file
+    </Button>
+  </div>
+)
+
 const ObjectAddCard = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const { objectType } = useSelector(state => state.objectType)
-  const [submissionType, setSubmissionType] = useState("")
-  if (submissionType === "form") {
-    return (
-      <Card>
-        <CardHeader title={`${objectType}`} subheader={"Fill Form"} />
-        <CardContent className={classes.cardContent}>
-          <FillObjectDetailsForm />
-        </CardContent>
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-      </Card>
-    )
-  } else if (submissionType === "XML") {
-    return (
-      <Card>
-        <CardHeader title={`${objectType}`} subheader={"Upload XML file"} />
-        <CardContent className={classes.cardContent}>
-          <UploadXMLForm />
-        </CardContent>
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-      </Card>
-    )
-  } else {
-    return (
-      <Card>
-        <CardHeader
-          title={`${objectType}`}
-          subheader={"Choose type of submission"}
+  const [submissionType, setSubmissionType] = useState("default")
+  const submissionTypes = {
+    form: {
+      subheader: "Fill form",
+      component: <FillObjectDetailsForm />,
+    },
+    xml: {
+      subheader: "Upload XML file",
+      component: <UploadXMLForm />,
+    },
+    default: {
+      subheader: "Choose type of submission",
+      component: (
+        <ChooseSubmission
+          setSubmissionType={value => setSubmissionType(value)}
         />
-        <CardContent className={classes.cardContent}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setSubmissionType("form")}
-          >
-            Fill Form
-          </Button>
-          <span>or</span>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setSubmissionType("XML")}
-          >
-            Upload XML file
-          </Button>
-        </CardContent>
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-      </Card>
-    )
+      ),
+    },
   }
+  return (
+    <Card>
+      <CardHeader
+        title={objectType}
+        subheader={submissionTypes[submissionType]["subheader"]}
+      />
+      <CardContent className={classes.cardContent}>
+        {submissionTypes[submissionType]["component"]}
+      </CardContent>
+      <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+    </Card>
+  )
 }
 
 export default ObjectAddCard

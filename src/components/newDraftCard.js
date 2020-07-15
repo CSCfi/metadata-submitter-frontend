@@ -16,7 +16,7 @@ const NewDraftCard = () => {
       alignItems="stretch"
       spacing={10}
     >
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         {objectType === "" ? <ObjectIndexCard /> : <ObjectAddCard />}
       </Grid>
     </Grid>

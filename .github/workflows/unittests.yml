@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Do clean install and install coveralls
+      - name: Install dependencies and coveralls
         run: |
           npm ci
           npm install coveralls

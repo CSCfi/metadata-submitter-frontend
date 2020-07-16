@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         node: ["14"]
-    name: Node ${{ matrix.node }} eslint check
+    name: Prettier check
     steps:
       - uses: actions/checkout@v2
-      - name: Setup node
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}

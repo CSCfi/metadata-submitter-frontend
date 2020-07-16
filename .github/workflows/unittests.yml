@@ -23,5 +23,8 @@ jobs:
       - name: Run unit tests with react-app-scripts and save coverage
         run: CI=true npm test -- --coverage
       - name: Report coverage to coveralls
+        env:
+          COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
+          COVERALLS_GIT_BRANCH: "${{ github.ref }}"
         run: |
           cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

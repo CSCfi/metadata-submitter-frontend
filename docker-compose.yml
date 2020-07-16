@@ -16,8 +16,8 @@ services:
     tty: true
     networks:
       # Change if using different network for backend container
-      - metadata-submitter_default
+      - metadatasubmitter_default
 
 networks:
-  metadata-submitter_default:
+  metadatasubmitter_default:
     external: true

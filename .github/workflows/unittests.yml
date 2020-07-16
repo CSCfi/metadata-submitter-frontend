@@ -5,18 +5,17 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: ["14"]
-
+        node: ["14"]
+    name: Jest unit tests and coveralls push
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Do clean install and install coveralls
+      - name: Install dependencies and coveralls
         run: |
           npm ci
           npm install coveralls

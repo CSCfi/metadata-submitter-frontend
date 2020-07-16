@@ -1,0 +1,30 @@
+name: Unit tests and coverage
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ["14"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Do clean install and install coveralls
+        run: |
+          npm ci
+          npm install coveralls
+      - name: Run unit tests with react-app-scripts and save coverage
+        run: CI=true npm test -- --coverage
+      - name: Report coverage to coveralls
+        env:
+          COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
+          COVERALLS_GIT_BRANCH: "${{ github.ref }}"
+        run: |
+          cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

@@ -48,8 +48,8 @@ describe("NewDraftCard", () => {
         <NewDraftCard />
       </Provider>
     )
-    const subHeader = getByText("Choose type of submission")
-    expect(subHeader).toBeInTheDocument()
+    const header = getByText("Choose type of submission")
+    expect(header).toBeInTheDocument()
   })
 
   test("sends correct dispatch action when link button is clicked", () => {

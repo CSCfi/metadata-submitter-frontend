@@ -1,6 +1,6 @@
 //@flow
 import React, { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 
 import Card from "@material-ui/core/Card"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -22,70 +22,104 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
   },
+  cardHeader: {
+    backgroundColor: theme.palette.grey[700],
+    color: "white",
+    fontWeight: "bold",
+  },
   cardContent: {
     flexGrow: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "400px",
+  },
+  submissionTypeButton: {
+    maxWidth: "150px",
+    padding: "10px",
+    margin: "20px",
   },
 }))
 
 type ChooseProps = {
   setSubmissionType: string => void,
+  buttonContents: Array<{ type: string, title: string }>,
 }
 
-const ChooseSubmission = ({ setSubmissionType }: ChooseProps) => (
-  <div>
-    <Button
-      variant="outlined"
-      color="primary"
-      onClick={() => setSubmissionType("form")}
-    >
-      Fill Form
-    </Button>
-    <span>or</span>
-    <Button
-      variant="outlined"
-      color="primary"
-      onClick={() => setSubmissionType("xml")}
-    >
-      Upload XML file
-    </Button>
-  </div>
-)
+const ChooseSubmission = ({
+  setSubmissionType,
+  buttonContents,
+}: ChooseProps) => {
+  const classes = useStyles()
+  return (
+    <Card>
+      <CardHeader
+        title="Choose type of submission"
+        titleTypographyProps={{ variant: "inherit" }}
+        className={classes.cardHeader}
+      />
+      <CardContent className={classes.cardContent}>
+        {buttonContents.map(content => (
+          <Button
+            key={content.type}
+            variant="outlined"
+            color="primary"
+            onClick={() => setSubmissionType(content.type)}
+            className={classes.submissionTypeButton}
+          >
+            {content.title}
+          </Button>
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
 
 const ObjectAddCard = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const { objectType } = useSelector(state => state.objectType)
-  const [submissionType, setSubmissionType] = useState("default")
-  const submissionTypes = {
+  const [submissionType, setSubmissionType] = useState("")
+  const cards = {
     form: {
-      subheader: "Fill form",
+      title: "Fill form",
       component: <FillObjectDetailsForm />,
     },
     xml: {
-      subheader: "Upload XML file",
+      title: "Upload XML file",
       component: <UploadXMLForm />,
     },
-    default: {
-      subheader: "Choose type of submission",
-      component: (
-        <ChooseSubmission
-          setSubmissionType={value => setSubmissionType(value)}
-        />
-      ),
+    existing: {
+      title: "Choose existing object",
+      component: <UploadXMLForm />,
     },
   }
-  return (
-    <Card>
-      <CardHeader
-        title={objectType}
-        subheader={submissionTypes[submissionType]["subheader"]}
+  if (submissionType === "") {
+    return (
+      <ChooseSubmission
+        setSubmissionType={value => setSubmissionType(value)}
+        buttonContents={Object.keys(cards).map(key => {
+          return {
+            type: key,
+            title: cards[key].title,
+          }
+        })}
       />
-      <CardContent className={classes.cardContent}>
-        {submissionTypes[submissionType]["component"]}
-      </CardContent>
-      <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-    </Card>
-  )
+    )
+  } else {
+    return (
+      <Card>
+        <CardHeader
+          title={cards[submissionType]["title"]}
+          titleTypographyProps={{ variant: "inherit" }}
+          className={classes.cardHeader}
+        />
+        <CardContent className={classes.cardContent}>
+          {cards[submissionType]["component"]}
+        </CardContent>
+        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+      </Card>
+    )
+  }
 }
 
 export default ObjectAddCard

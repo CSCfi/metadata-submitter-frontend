@@ -37,7 +37,7 @@ describe("NewDraftCard", () => {
     })
   })
 
-  test("show single upload card when objectType is set", () => {
+  test("show submissionType selection when objectType is set", () => {
     const store = mockStore({
       objectType: {
         objectType: "sample",
@@ -48,8 +48,6 @@ describe("NewDraftCard", () => {
         <NewDraftCard />
       </Provider>
     )
-    const header = getByText("sample")
-    expect(header).toBeInTheDocument()
     const subHeader = getByText("Choose type of submission")
     expect(subHeader).toBeInTheDocument()
   })

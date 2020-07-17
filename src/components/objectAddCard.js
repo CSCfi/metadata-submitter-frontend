@@ -52,7 +52,7 @@ const ChooseSubmission = ({
 }: ChooseProps) => {
   const classes = useStyles()
   return (
-    <Card>
+    <div>
       <CardHeader
         title="Choose type of submission"
         titleTypographyProps={{ variant: "inherit" }}
@@ -71,7 +71,7 @@ const ChooseSubmission = ({
           </Button>
         ))}
       </CardContent>
-    </Card>
+    </div>
   )
 }
 
@@ -95,15 +95,18 @@ const ObjectAddCard = () => {
   }
   if (submissionType === "") {
     return (
-      <ChooseSubmission
-        setSubmissionType={value => setSubmissionType(value)}
-        buttonContents={Object.keys(cards).map(key => {
-          return {
-            type: key,
-            title: cards[key].title,
-          }
-        })}
-      />
+      <Card>
+        <ChooseSubmission
+          setSubmissionType={value => setSubmissionType(value)}
+          buttonContents={Object.keys(cards).map(key => {
+            return {
+              type: key,
+              title: cards[key].title,
+            }
+          })}
+        />
+        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+      </Card>
     )
   } else {
     return (

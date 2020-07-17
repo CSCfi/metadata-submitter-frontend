@@ -21,7 +21,6 @@ describe("NewDraftCard", () => {
     )
     const types = [
       "Study",
-      "Project",
       "Sample",
       "Experiment",
       "Run",
@@ -38,7 +37,7 @@ describe("NewDraftCard", () => {
     })
   })
 
-  test("show single upload card when objectType is set", () => {
+  test("show submissionType selection when objectType is set", () => {
     const store = mockStore({
       objectType: {
         objectType: "sample",
@@ -49,8 +48,8 @@ describe("NewDraftCard", () => {
         <NewDraftCard />
       </Provider>
     )
-    const typeElement = getByText("Submit sample")
-    expect(typeElement).toBeInTheDocument()
+    const header = getByText("Choose type of submission")
+    expect(header).toBeInTheDocument()
   })
 
   test("sends correct dispatch action when link button is clicked", () => {

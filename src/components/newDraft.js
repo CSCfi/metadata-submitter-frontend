@@ -12,6 +12,9 @@ import Link from "@material-ui/core/Link"
 import Stepper from "@material-ui/core/Stepper"
 import Step from "@material-ui/core/Step"
 import StepLabel from "@material-ui/core/StepLabel"
+import ObjectIndexCard from "components/objectIndexCard"
+import ObjectAddCard from "components/objectAddCard"
+import { useSelector } from "react-redux"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -47,6 +50,10 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
   },
+  formRow: {
+    display: "flex",
+    flexDirection: "row",
+  },
   footerRow: {
     display: "flex",
     flexDirection: "row",
@@ -73,6 +80,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
+  },
+  objectInfo: {
+    margin: theme.spacing(2),
   },
 }))
 
@@ -237,10 +247,27 @@ const NewDraftFirst = ({ currentStep, steps }: DraftStepProps) => {
 
 const NewDraftSecond = ({ currentStep, steps }: DraftStepProps) => {
   const classes = useStyles()
+  const { objectType } = useSelector(state => state.objectType)
   return (
     <div className={classes.paperContent}>
-      <NewDraftHeader headerText="Second" />
+      <NewDraftHeader headerText="Create new draft folder" />
       <NewDraftSteps currentStep={currentStep} steps={steps} />
+      <div className={classes.formRow}>
+        <ObjectIndexCard />
+        {objectType === "" ? (
+          <div className={classes.objectInfo}>
+            <p>
+              Add objects by clicking the name, then fill form or upload XML
+              File.
+            </p>
+            <p>
+              You can also add objects and edit them after saving your draft.
+            </p>
+          </div>
+        ) : (
+          <ObjectAddCard />
+        )}
+      </div>
     </div>
   )
 }

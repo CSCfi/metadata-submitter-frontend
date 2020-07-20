@@ -9,6 +9,9 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import Tooltip from "@material-ui/core/Tooltip"
 import { Link as RouterLink } from "react-router-dom"
 import Link from "@material-ui/core/Link"
+import Stepper from "@material-ui/core/Stepper"
+import Step from "@material-ui/core/Step"
+import StepLabel from "@material-ui/core/StepLabel"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -37,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(4),
   },
   submitNewObjectRow: {
+    display: "inline-flex",
+  },
+  stepper: {
     display: "inline-flex",
   },
   submitNewObjectTip: {
@@ -70,6 +76,19 @@ const NewDraftFolderContent = () => {
       >
         Create new draft folder
       </Typography>
+      <div className={classes.stepper}>
+        <Stepper activeStep={0} alternativeLabel>
+          <Step key={1}>
+            <StepLabel>Name & description</StepLabel>
+          </Step>
+          <Step key={2}>
+            <StepLabel>Add objects</StepLabel>
+          </Step>
+          <Step key={3}>
+            <StepLabel>Summary</StepLabel>
+          </Step>
+        </Stepper>
+      </div>
     </div>
   )
 }
@@ -118,7 +137,7 @@ const NewDraftFront = ({ handleNext }: DraftProps) => {
 
 const NewDraft = () => {
   const classes = useStyles()
-  const [wizardStep, setWizardStep] = useState(0)
+  const [wizardStep, setWizardStep] = useState(-1)
   const maxWidth = "md"
 
   const handleNext = () => {
@@ -128,8 +147,8 @@ const NewDraft = () => {
   return (
     <Container maxWidth={maxWidth}>
       <Paper className={classes.paper}>
-        {wizardStep === 0 && <NewDraftFront handleNext={handleNext} />}
-        {wizardStep === 1 && <NewDraftFolderContent handleNext={handleNext} />}
+        {wizardStep === -1 && <NewDraftFront handleNext={handleNext} />}
+        {wizardStep === 0 && <NewDraftFolderContent handleNext={handleNext} />}
         <div>
           <Link
             component={RouterLink}

@@ -40,10 +40,17 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(4),
   },
   submitNewObjectRow: {
-    display: "inline-flex",
+    display: "flex",
+    flexDirection: "row",
   },
   stepper: {
-    display: "inline-flex",
+    display: "flex",
+    flexDirection: "row",
+  },
+  footerRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   submitNewObjectTip: {
     marginLeft: theme.spacing(2),
@@ -54,7 +61,85 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
   },
+  nextButton: {
+    textTransform: "none",
+    fontWeight: "bold",
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+  },
+  backButton: {
+    textTransform: "none",
+    fontWeight: "bold",
+    marginLeft: theme.spacing(2),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+  },
 }))
+
+// Props for draft sub-components
+
+type DraftFooterProps = {
+  currentStep: number,
+  handleNext: void => void,
+  handlePrev: void => void,
+}
+
+// sub-components
+const NewDraftFooter = ({
+  currentStep,
+  handleNext,
+  handlePrev,
+}: DraftFooterProps) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.footerRow}>
+      <div>
+        <Link
+          component={RouterLink}
+          aria-label="Cancel adding a new draft"
+          to="/"
+        >
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.cancelButton}
+          >
+            Cancel
+          </Button>
+        </Link>
+        {currentStep >= 1 && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.backButton}
+            onClick={handlePrev}
+          >
+            Back
+          </Button>
+        )}
+      </div>
+      {currentStep >= 0 && currentStep < 2 && (
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.nextButton}
+          onClick={handleNext}
+        >
+          Next
+        </Button>
+      )}
+      {currentStep === 2 && (
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.nextButton}
+        >
+          Save draft
+        </Button>
+      )}
+    </div>
+  )
+}
 
 const NewObjectTooltip = withStyles(theme => ({
   tooltip: {
@@ -93,11 +178,11 @@ const NewDraftFolderContent = () => {
   )
 }
 
-type DraftProps = {
-  handleNext: string => void,
+type NewDraftFrontProps = {
+  handleNext: void => void,
 }
 
-const NewDraftFront = ({ handleNext }: DraftProps) => {
+const NewDraftFront = ({ handleNext }: NewDraftFrontProps) => {
   const classes = useStyles()
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
@@ -137,33 +222,31 @@ const NewDraftFront = ({ handleNext }: DraftProps) => {
 
 const NewDraft = () => {
   const classes = useStyles()
-  const [wizardStep, setWizardStep] = useState(-1)
+  const [currentStep, setCurrentStep] = useState(-1)
   const maxWidth = "md"
 
   const handleNext = () => {
-    setWizardStep(wizardStep + 1)
+    setCurrentStep(currentStep + 1)
+  }
+  const handlePrev = () => {
+    setCurrentStep(currentStep - 1)
   }
 
   return (
     <Container maxWidth={maxWidth}>
       <Paper className={classes.paper}>
-        {wizardStep === -1 && <NewDraftFront handleNext={handleNext} />}
-        {wizardStep === 0 && <NewDraftFolderContent handleNext={handleNext} />}
-        <div>
-          <Link
-            component={RouterLink}
-            aria-label="Cancel adding a new draft"
-            to="/"
-          >
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.cancelButton}
-            >
-              Cancel
-            </Button>
-          </Link>
-        </div>
+        {currentStep === -1 && <NewDraftFront handleNext={handleNext} />}
+        {currentStep === 0 && (
+          <NewDraftFolderContent
+            handleNext={handleNext}
+            handlePrev={handlePrev}
+          />
+        )}
+        <NewDraftFooter
+          currentStep={currentStep}
+          handleNext={handleNext}
+          handlePrev={handlePrev}
+        />
       </Paper>
     </Container>
   )

@@ -1,4 +1,5 @@
-import React from "react"
+//@flow
+import React, { useState } from "react"
 import { withStyles, makeStyles } from "@material-ui/core/styles"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
@@ -14,6 +15,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
     padding: theme.spacing(4),
+    minHeight: "40vh",
   },
   paperTitle: {
     fontWeight: "bold",
@@ -57,43 +59,77 @@ const NewObjectTooltip = withStyles(theme => ({
   },
 }))(Tooltip)
 
-const NewDraft = () => {
+const NewDraftFolderContent = () => {
   const classes = useStyles()
-  const maxWidth = "md"
+  return (
+    <div className={classes.paperContent}>
+      <Typography
+        component="h1"
+        variant="subtitle1"
+        className={classes.paperTitle}
+      >
+        Create new draft folder
+      </Typography>
+    </div>
+  )
+}
+
+type DraftProps = {
+  handleNext: string => void,
+}
+
+const NewDraftFront = ({ handleNext }: DraftProps) => {
+  const classes = useStyles()
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
   return (
+    <div className={classes.paperContent}>
+      <Typography
+        component="h1"
+        variant="subtitle1"
+        className={classes.paperTitle}
+      >
+        Create new draft
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.newDraftButton}
+        disableElevation
+        onClick={handleNext}
+      >
+        New folder
+      </Button>
+      <div className={classes.submitNewObjectRow}>
+        <Typography
+          component="h2"
+          variant="subtitle1"
+          className={classes.paperTitle}
+        >
+          Or do you want to submit object?
+        </Typography>
+        <NewObjectTooltip title={submitObjectHelpText} arrow>
+          <HelpOutlineIcon className={classes.submitNewObjectTip} />
+        </NewObjectTooltip>
+      </div>
+    </div>
+  )
+}
+
+const NewDraft = () => {
+  const classes = useStyles()
+  const [wizardStep, setWizardStep] = useState(0)
+  const maxWidth = "md"
+
+  const handleNext = () => {
+    setWizardStep(wizardStep + 1)
+  }
+
+  return (
     <Container maxWidth={maxWidth}>
       <Paper className={classes.paper}>
-        <div className={classes.paperContent}>
-          <Typography
-            component="h1"
-            variant="subtitle1"
-            className={classes.paperTitle}
-          >
-            Create new draft
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.newDraftButton}
-            disableElevation
-          >
-            New folder
-          </Button>
-          <div className={classes.submitNewObjectRow}>
-            <Typography
-              component="h2"
-              variant="subtitle1"
-              className={classes.paperTitle}
-            >
-              Or do you want to submit object?
-            </Typography>
-            <NewObjectTooltip title={submitObjectHelpText} arrow>
-              <HelpOutlineIcon className={classes.submitNewObjectTip} />
-            </NewObjectTooltip>
-          </div>
-        </div>
+        {wizardStep === 0 && <NewDraftFront handleNext={handleNext} />}
+        {wizardStep === 1 && <NewDraftFolderContent handleNext={handleNext} />}
         <div>
           <Link
             component={RouterLink}

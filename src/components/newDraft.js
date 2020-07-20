@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
   },
   paperTitle: {
     fontWeight: "bold",
-    marginBottom: theme.spacing(8),
   },
   paperContent: {
     display: "flex",
@@ -37,6 +36,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(2),
     paddingLeft: theme.spacing(8),
     paddingRight: theme.spacing(8),
+    marginTop: theme.spacing(8),
     marginBottom: theme.spacing(4),
   },
   submitNewObjectRow: {
@@ -82,6 +82,15 @@ type DraftFooterProps = {
   currentStep: number,
   handleNext: void => void,
   handlePrev: void => void,
+}
+
+type DraftHeaderProps = {
+  headerText: string,
+}
+
+type DraftStepProps = {
+  currentStep: number,
+  steps: Array<string>,
 }
 
 // sub-components
@@ -141,6 +150,36 @@ const NewDraftFooter = ({
   )
 }
 
+const NewDraftHeader = ({ headerText }: DraftHeaderProps) => {
+  const classes = useStyles()
+  return (
+    <Typography
+      component="h1"
+      variant="subtitle1"
+      className={classes.paperTitle}
+    >
+      {headerText}
+    </Typography>
+  )
+}
+
+const NewDraftSteps = ({ currentStep, steps }: DraftStepProps) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.stepper}>
+      <Stepper activeStep={currentStep} alternativeLabel>
+        {steps.map(label => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+
+// Step components
+
 const NewObjectTooltip = withStyles(theme => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -149,34 +188,6 @@ const NewObjectTooltip = withStyles(theme => ({
     boxShadow: theme.shadows[1],
   },
 }))(Tooltip)
-
-const NewDraftFolderContent = () => {
-  const classes = useStyles()
-  return (
-    <div className={classes.paperContent}>
-      <Typography
-        component="h1"
-        variant="subtitle1"
-        className={classes.paperTitle}
-      >
-        Create new draft folder
-      </Typography>
-      <div className={classes.stepper}>
-        <Stepper activeStep={0} alternativeLabel>
-          <Step key={1}>
-            <StepLabel>Name & description</StepLabel>
-          </Step>
-          <Step key={2}>
-            <StepLabel>Add objects</StepLabel>
-          </Step>
-          <Step key={3}>
-            <StepLabel>Summary</StepLabel>
-          </Step>
-        </Stepper>
-      </div>
-    </div>
-  )
-}
 
 type NewDraftFrontProps = {
   handleNext: void => void,
@@ -188,13 +199,7 @@ const NewDraftFront = ({ handleNext }: NewDraftFrontProps) => {
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
   return (
     <div className={classes.paperContent}>
-      <Typography
-        component="h1"
-        variant="subtitle1"
-        className={classes.paperTitle}
-      >
-        Create new draft
-      </Typography>
+      <NewDraftHeader headerText="Create new draft" />
       <Button
         variant="contained"
         color="primary"
@@ -220,10 +225,55 @@ const NewDraftFront = ({ handleNext }: NewDraftFrontProps) => {
   )
 }
 
+const NewDraftFirst = ({ currentStep, steps }: DraftStepProps) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.paperContent}>
+      <NewDraftHeader headerText="Create new draft folder" />
+      <NewDraftSteps currentStep={currentStep} steps={steps} />
+    </div>
+  )
+}
+
+const NewDraftSecond = ({ currentStep, steps }: DraftStepProps) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.paperContent}>
+      <NewDraftHeader headerText="Second" />
+      <NewDraftSteps currentStep={currentStep} steps={steps} />
+    </div>
+  )
+}
+
+const NewDraftThird = ({ currentStep, steps }: DraftStepProps) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.paperContent}>
+      <NewDraftHeader headerText="Third" />
+      <NewDraftSteps currentStep={currentStep} steps={steps} />
+    </div>
+  )
+}
+
+const getStepContent = (currentStep: number, handleNext: any) => {
+  const steps = ["Name & description", "Add objects", "Summary"]
+  switch (currentStep) {
+    case -1:
+      return <NewDraftFront handleNext={handleNext} />
+    case 0:
+      return <NewDraftFirst currentStep={currentStep} steps={steps} />
+    case 1:
+      return <NewDraftSecond currentStep={currentStep} steps={steps} />
+    case 2:
+      return <NewDraftThird currentStep={currentStep} steps={steps} />
+    default:
+      throw new Error("Unknown step")
+  }
+}
+
 const NewDraft = () => {
   const classes = useStyles()
   const [currentStep, setCurrentStep] = useState(-1)
-  const maxWidth = "md"
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1)
@@ -233,15 +283,9 @@ const NewDraft = () => {
   }
 
   return (
-    <Container maxWidth={maxWidth}>
+    <Container maxWidth={currentStep <= 0 ? "md" : "lg"}>
       <Paper className={classes.paper}>
-        {currentStep === -1 && <NewDraftFront handleNext={handleNext} />}
-        {currentStep === 0 && (
-          <NewDraftFolderContent
-            handleNext={handleNext}
-            handlePrev={handlePrev}
-          />
-        )}
+        {getStepContent(currentStep, handleNext)}
         <NewDraftFooter
           currentStep={currentStep}
           handleNext={handleNext}

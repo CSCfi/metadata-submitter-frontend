@@ -6,12 +6,14 @@ import Container from "@material-ui/core/Container"
 import Button from "@material-ui/core/Button"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import Tooltip from "@material-ui/core/Tooltip"
+import { Link as RouterLink } from "react-router-dom"
+import Link from "@material-ui/core/Link"
 
 const useStyles = makeStyles(theme => ({
   paper: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
-    padding: theme.spacing(8),
+    padding: theme.spacing(4),
   },
   paperTitle: {
     fontWeight: "bold",
@@ -37,6 +39,12 @@ const useStyles = makeStyles(theme => ({
   },
   submitNewObjectTip: {
     marginLeft: theme.spacing(2),
+  },
+  cancelButton: {
+    textTransform: "none",
+    fontWeight: "bold",
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
   },
 }))
 
@@ -85,6 +93,21 @@ const NewDraft = () => {
               <HelpOutlineIcon className={classes.submitNewObjectTip} />
             </NewObjectTooltip>
           </div>
+        </div>
+        <div>
+          <Link
+            component={RouterLink}
+            aria-label="Cancel adding a new draft"
+            to="/"
+          >
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.cancelButton}
+            >
+              Cancel
+            </Button>
+          </Link>
         </div>
       </Paper>
     </Container>

@@ -306,7 +306,7 @@ const getStepContent = (currentStep: number, handleNext: any) => {
   }
 }
 
-const NewDraft = () => {
+const NewDraftWizard = () => {
   const classes = useStyles()
   const [currentStep, setCurrentStep] = useState(-1)
 
@@ -331,4 +331,4 @@ const NewDraft = () => {
   )
 }
 
-export default NewDraft
+export default NewDraftWizard

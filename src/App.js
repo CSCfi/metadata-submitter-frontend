@@ -9,7 +9,7 @@ import Nav from "components/nav"
 import Page404 from "error_pages/Page404"
 import Page500 from "error_pages/Page500"
 import Home from "components/home"
-import NewDraft from "components/newDraft"
+import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
 
 const App = () => {
   return (
@@ -20,7 +20,7 @@ const App = () => {
         <Switch>
           <Route path="/newdraft">
             <Container>
-              <NewDraft />
+              <NewDraftWizard />
             </Container>
           </Route>
           <Route path="/error500">

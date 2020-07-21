@@ -13,7 +13,7 @@ import Stepper from "@material-ui/core/Stepper"
 import Step from "@material-ui/core/Step"
 import StepLabel from "@material-ui/core/StepLabel"
 import ObjectIndex from "components/ObjectIndex"
-import ObjectAddCard from "components/objectAddCard"
+import ObjectAdd from "components/ObjectAdd"
 import { useSelector } from "react-redux"
 
 const useStyles = makeStyles(theme => ({
@@ -272,7 +272,7 @@ const NewDraftSecond = ({ currentStep, steps }: DraftStepProps) => {
               </p>
             </div>
           ) : (
-            <ObjectAddCard />
+            <ObjectAdd />
           )}
         </div>
       </div>

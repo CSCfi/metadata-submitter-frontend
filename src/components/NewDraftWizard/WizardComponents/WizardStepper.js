@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   },
 })
 
-const WizardSteps = () => {
+const WizardStepper = () => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)
   const steps = ["Name & description", "Add objects", "Summary"]
@@ -30,4 +30,4 @@ const WizardSteps = () => {
   )
 }
 
-export default WizardSteps
+export default WizardStepper

@@ -1,13 +1,13 @@
 //@flow
 import React from "react"
 import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardSteps from "../WizardComponents/WizardSteps"
+import WizardStepper from "../WizardComponents/WizardStepper"
 
 const WizardShowSummaryStep = () => {
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardSteps />
+      <WizardStepper />
       <WizardHeader headerText="Summary" />
     </>
   )

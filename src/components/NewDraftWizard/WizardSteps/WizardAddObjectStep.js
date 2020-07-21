@@ -2,7 +2,7 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardSteps from "../WizardComponents/WizardSteps"
+import WizardStepper from "../WizardComponents/WizardStepper"
 import ObjectIndex from "../../ObjectIndex"
 import ObjectAdd from "../../ObjectAdd"
 import { makeStyles } from "@material-ui/core/styles"
@@ -29,7 +29,7 @@ const WizardAddObjectStep = () => {
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardSteps />
+      <WizardStepper />
       <div className={classes.formRow}>
         <ObjectIndex />
         <div className={classes.formBox}>

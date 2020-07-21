@@ -119,7 +119,7 @@ const ObjectAddCard = () => {
         <CardContent className={classes.cardContent}>
           {cards[submissionType]["component"]}
         </CardContent>
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
+        <Button onClick={() => dispatch(setObjectType(""))}>Hide</Button>
       </Card>
     )
   }

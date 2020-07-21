@@ -1,11 +1,13 @@
 //@flow
 import React from "react"
+import type { ElementRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
 import { decrement, increment, reset } from "../../../features/wizardStepSlice"
 import { makeStyles } from "@material-ui/core/styles"
+import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
   cancelButton: {
@@ -34,7 +36,22 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const WizardFooter = () => {
+interface nextButtonRefProp {
+  nextButtonRef: ElementRef<typeof Formik>;
+}
+
+/**
+ * Define wizard footer with changing button actions.
+ *
+ * Cancel button quits the whole wizard process.
+ * Back button decrements wizard steps by one
+ * Next button increments wizard steps by one and acts as a Formik form
+ * submitter when nextButtonRef is set (e.g. is not null).
+ *
+ * @param nextButtonRef: Mutable ref object from useRef-hook
+ */
+
+const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -66,23 +83,23 @@ const WizardFooter = () => {
           </Button>
         )}
       </div>
-      {wizardStep >= 0 && wizardStep < 2 && (
+      {wizardStep >= 0 && (
         <Button
           variant="contained"
           color="primary"
           className={classes.nextButton}
-          onClick={() => dispatch(increment())}
+          disabled={nextButtonRef?.current?.isSubmitting}
+          onClick={async () => {
+            if (nextButtonRef.current) {
+              await nextButtonRef.current.submitForm()
+              if (Object.entries(nextButtonRef.current.errors).length === 0)
+                dispatch(increment())
+            } else {
+              dispatch(increment())
+            }
+          }}
         >
-          Next
-        </Button>
-      )}
-      {wizardStep === 2 && (
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.nextButton}
-        >
-          Save draft
+          {wizardStep === 2 ? "Save draft" : "Next"}
         </Button>
       )}
     </div>

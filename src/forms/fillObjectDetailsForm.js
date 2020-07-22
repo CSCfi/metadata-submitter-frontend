@@ -9,6 +9,23 @@ import { useSelector } from "react-redux"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import analysisUiSchema from "./ui_schemas/analysis.json"
+import datasetUiSchema from "./ui_schemas/dataset.json"
+import experimentUiSchema from "./ui_schemas/experiment.json"
+import policyUiSchema from "./ui_schemas/policy.json"
+import runUiSchema from "./ui_schemas/run.json"
+import sampleUiSchema from "./ui_schemas/sample.json"
+import studyUiSchema from "./ui_schemas/study.json"
+
+const uiSchemas = {
+  analysis: analysisUiSchema,
+  dataset: datasetUiSchema,
+  experiment: experimentUiSchema,
+  policy: policyUiSchema,
+  run: runUiSchema,
+  sample: sampleUiSchema,
+  study: studyUiSchema,
+}
 
 const checkResponseError = response => {
   switch (response.status) {
@@ -75,6 +92,7 @@ const FillObjectDetailsForm = () => {
             setSubmitting(false)
           }}
           schema={formSchema}
+          uiSchema={uiSchemas[objectType]}
           formData={formData}
           onChange={event => setFormData(event.formData)}
           showErrorList={false}

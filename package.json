@@ -13,6 +13,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "apisauce": "^1.1.1",
+    "concurrently": "^5.2.0",
     "formik": "^2.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -24,11 +25,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:noninteractive": "react-scripts test --watchAll=false",
     "lint": "eslint --fix .",
     "lint:check": "eslint .",
     "format": "prettier --write \"**/*.+(json|yml|yaml|css|md)\"",
     "format:check": "prettier --check \"**/*.+(json|yml|yaml|css|md)\"",
-    "flow:check": "flow check"
+    "flow:check": "flow check",
+    "concurrently": "concurrently"
   },
   "eslintConfig": {
     "extends": [
@@ -63,7 +66,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint:check && npm run format:check && npm run flow:check && npm test -- --watchAll=false"
+      "pre-commit": "npm run concurrently -- \"npm:lint:check\" \"npm:format:check\" \"npm:flow:check\" \"npm:test:noninteractive\" "
     }
   }
 }

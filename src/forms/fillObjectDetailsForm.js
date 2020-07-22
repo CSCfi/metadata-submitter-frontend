@@ -1,10 +1,10 @@
 //@flow
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import Form from "@rjsf/material-ui"
 import TextWidget from "./form_components/TextWidget"
 import SelectWidget from "./form_components/SelectWidget"
-import objectAPIService from "../services/objectAPI"
-import schemaAPIService from "../services/schemaAPI"
+import objectAPIService from "services/objectAPI"
+import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
@@ -30,11 +30,10 @@ const uiSchemas = {
 const checkResponseError = response => {
   switch (response.status) {
     case 504:
-      return `Unfortunately we couldn't connect to our server to validate your 
-        file.`
+      return `Unfortunately we couldn't connect to our server to catch this form.`
     case 400:
-      return `Unfortunately an error happened when saving your file to our 
-        servers, details: ${response.data}`
+      return `Unfortunately an error happened when connection to our to catch this form, 
+        details: ${response.data}`
     default:
       return "Unfortunately an unexpected error happened on our servers"
   }
@@ -48,11 +47,16 @@ const FillObjectDetailsForm = () => {
   const { objectType } = useSelector(state => state.objectType)
   const [formSchema, setFormSchema] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchSchema = async () => {
-      const result = await schemaAPIService.getSchemaByObjectType(objectType)
-      setFormSchema(result.data)
+      const response = await schemaAPIService.getSchemaByObjectType(objectType)
+      if (response.ok) {
+        setFormSchema(response.data)
+      } else {
+        setError(checkResponseError(response))
+      }
       setIsLoading(false)
     }
     fetchSchema()
@@ -60,6 +64,8 @@ const FillObjectDetailsForm = () => {
 
   if (isLoading) {
     return <CircularProgress />
+  } else if (error) {
+    return <Alert severity="error">{error}</Alert>
   } else {
     return (
       <div>

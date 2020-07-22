@@ -70,7 +70,6 @@ const FillObjectDetailsForm = () => {
     return (
       <div>
         <Form
-          liveValidate
           onSubmit={async () => {
             setSubmitting(true)
             const waitForServertimer = setTimeout(() => {

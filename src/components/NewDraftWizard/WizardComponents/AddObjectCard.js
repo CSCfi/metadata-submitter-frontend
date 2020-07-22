@@ -13,33 +13,69 @@ import FillObjectDetailsForm from "forms/fillObjectDetailsForm"
 import { setObjectType } from "features/objectTypeSlice"
 
 const useStyles = makeStyles(theme => ({
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
   card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
+    width: "100%",
+    marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
   cardHeader: {
-    backgroundColor: theme.palette.grey[700],
+    backgroundColor: theme.palette.primary.main,
     color: "white",
     fontWeight: "bold",
+  },
+  cardHeaderAction: {
+    marginTop: "-4px",
+    marginBottom: "-4px",
   },
   cardContent: {
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "400px",
+    minHeight: "40vh",
   },
   submissionTypeButton: {
-    maxWidth: "150px",
-    padding: "10px",
-    margin: "20px",
+    textTransform: "none",
+    fontWeight: "bold",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(4),
+  },
+  hideButton: {
+    textTransform: "none",
+    fontWeight: "bold",
+    color: theme.palette.common.white,
+    marginTop: 0,
   },
 }))
+
+const CustomCardHeader = ({ title }: { title: string }) => {
+  const classes = useStyles()
+  const dispatch = useDispatch()
+  return (
+    <CardHeader
+      title={title}
+      titleTypographyProps={{ variant: "inherit" }}
+      classes={{
+        root: classes.cardHeader,
+        action: classes.cardHeaderAction,
+      }}
+      action={
+        <Button
+          variant="outlined"
+          aria-label="hide card"
+          className={classes.hideButton}
+          onClick={() => dispatch(setObjectType(""))}
+        >
+          Hide
+        </Button>
+      }
+    />
+  )
+}
 
 type ChooseProps = {
   setSubmissionType: string => void,
@@ -53,11 +89,7 @@ const ChooseSubmission = ({
   const classes = useStyles()
   return (
     <div>
-      <CardHeader
-        title="Choose type of submission"
-        titleTypographyProps={{ variant: "inherit" }}
-        className={classes.cardHeader}
-      />
+      <CustomCardHeader title="Choose type of submission" />
       <CardContent className={classes.cardContent}>
         {buttonContents.map(content => (
           <Button
@@ -75,9 +107,8 @@ const ChooseSubmission = ({
   )
 }
 
-const ObjectAddCard = () => {
+const AddObjectCard = () => {
   const classes = useStyles()
-  const dispatch = useDispatch()
   const [submissionType, setSubmissionType] = useState("")
   const cards = {
     form: {
@@ -93,36 +124,26 @@ const ObjectAddCard = () => {
       component: <UploadXMLForm />,
     },
   }
-  if (submissionType === "") {
-    return (
-      <Card>
+  return (
+    <Card className={classes.card}>
+      {submissionType === "" ? (
         <ChooseSubmission
           setSubmissionType={value => setSubmissionType(value)}
-          buttonContents={Object.keys(cards).map(key => {
-            return {
-              type: key,
-              title: cards[key].title,
-            }
-          })}
+          buttonContents={Object.keys(cards).map(key => ({
+            type: key,
+            title: cards[key].title,
+          }))}
         />
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-      </Card>
-    )
-  } else {
-    return (
-      <Card>
-        <CardHeader
-          title={cards[submissionType]["title"]}
-          titleTypographyProps={{ variant: "inherit" }}
-          className={classes.cardHeader}
-        />
-        <CardContent className={classes.cardContent}>
-          {cards[submissionType]["component"]}
-        </CardContent>
-        <Button onClick={() => dispatch(setObjectType(""))}>Back</Button>
-      </Card>
-    )
-  }
+      ) : (
+        <>
+          <CustomCardHeader title={cards[submissionType]["title"]} />
+          <CardContent className={classes.cardContent}>
+            {cards[submissionType]["component"]}
+          </CardContent>
+        </>
+      )}
+    </Card>
+  )
 }
 
-export default ObjectAddCard
+export default AddObjectCard

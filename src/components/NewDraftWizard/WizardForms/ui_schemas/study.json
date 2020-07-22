@@ -2,7 +2,8 @@
   "studyDescription": {
     "ui:widget": "textarea",
     "ui:options": {
-      "rows": 5
+      "rows": 5,
+      "variant": "outlined"
     }
   }
 }

@@ -75,8 +75,8 @@ const FillObjectDetailsForm = () => {
             const waitForServertimer = setTimeout(() => {
               setSuccessStatus("info")
               setSuccessMessage(`For some reason, your file is still being saved
-            to our database, please wait. If saving doesn't go through in two
-            minutes, please try saving the file again.`)
+                to our database, please wait. If saving doesn't go through in two
+                minutes, please try saving the file again.`)
             }, 5000)
 
             const response = await objectAPIService.createFromJSON(

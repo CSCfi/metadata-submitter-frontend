@@ -108,7 +108,7 @@ const checkResponseError = response => {
   }
 }
 
-const UploadXMLForm = () => {
+const UploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
   const { objectType } = useSelector(state => state.objectType)
@@ -197,4 +197,4 @@ const UploadXMLForm = () => {
   )
 }
 
-export default UploadXMLForm
+export default UploadObjectXMLForm

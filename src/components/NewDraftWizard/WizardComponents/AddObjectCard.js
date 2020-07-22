@@ -8,8 +8,8 @@ import CardContent from "@material-ui/core/CardContent"
 import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
 
-import UploadXMLForm from "forms/uploadXMLForm"
-import FillObjectDetailsForm from "forms/fillObjectDetailsForm"
+import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
+import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
 import { setObjectType } from "features/objectTypeSlice"
 
 const useStyles = makeStyles(theme => ({
@@ -117,11 +117,11 @@ const AddObjectCard = () => {
     },
     xml: {
       title: "Upload XML file",
-      component: <UploadXMLForm />,
+      component: <UploadObjectXMLForm />,
     },
     existing: {
       title: "Choose existing object",
-      component: <UploadXMLForm />,
+      component: <UploadObjectXMLForm />,
     },
   }
   return (

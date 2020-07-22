@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+/**
+ * Translate Formik field props to props that Material UI TextField can use.
+ */
 const fieldToTextField = ({
   disabled,
   field,
@@ -35,6 +38,9 @@ const fieldToTextField = ({
   }
 }
 
+/**
+ * Wrap Material UI TextField inside custom component
+ */
 const TextField = ({ children, ...props }: FieldProps) => (
   <>
     <MuiTextField {...fieldToTextField(props)}>{children}</MuiTextField>

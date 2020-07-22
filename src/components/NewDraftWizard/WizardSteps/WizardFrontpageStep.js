@@ -38,6 +38,9 @@ const NewObjectTooltip = withStyles(theme => ({
   },
 }))(Tooltip)
 
+/**
+ * Show selection to create new folder or add single metadata object
+ */
 const WizardFrontpageStep = () => {
   const classes = useStyles()
   const dispatch = useDispatch()

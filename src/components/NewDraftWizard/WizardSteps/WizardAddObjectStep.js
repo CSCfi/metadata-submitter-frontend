@@ -3,8 +3,8 @@ import React from "react"
 import { useSelector } from "react-redux"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
-import ObjectIndex from "../../ObjectIndex"
-import ObjectAdd from "../../ObjectAdd"
+import ObjectIndexTabs from "../WizardComponents/ObjectIndexTabs"
+import AddObjectCard from "../WizardComponents/AddObjectCard"
 import { makeStyles } from "@material-ui/core/styles"
 
 const useStyles = makeStyles(theme => ({
@@ -23,6 +23,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+/**
+ * Show info about object adding, render card with object adding featured if
+ * objectType is set.
+ */
+
 const WizardAddObjectStep = () => {
   const classes = useStyles()
   const { objectType } = useSelector(state => state.objectType)
@@ -31,7 +36,7 @@ const WizardAddObjectStep = () => {
       <WizardHeader headerText="Create new draft folder" />
       <WizardStepper />
       <div className={classes.formRow}>
-        <ObjectIndex />
+        <ObjectIndexTabs />
         <div className={classes.formBox}>
           {objectType === "" ? (
             <div className={classes.objectInfo}>
@@ -44,7 +49,7 @@ const WizardAddObjectStep = () => {
               </p>
             </div>
           ) : (
-            <ObjectAdd />
+            <AddObjectCard />
           )}
         </div>
       </div>

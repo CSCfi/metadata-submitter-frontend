@@ -13,6 +13,9 @@ const useStyles = makeStyles({
   },
 })
 
+/**
+ * Show info about wizard steps to user.
+ */
 const WizardStepper = () => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)

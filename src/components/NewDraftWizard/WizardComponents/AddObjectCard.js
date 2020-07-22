@@ -107,7 +107,7 @@ const ChooseSubmission = ({
   )
 }
 
-const ObjectAdd = () => {
+const AddObjectCard = () => {
   const classes = useStyles()
   const [submissionType, setSubmissionType] = useState("")
   const cards = {
@@ -129,12 +129,10 @@ const ObjectAdd = () => {
       {submissionType === "" ? (
         <ChooseSubmission
           setSubmissionType={value => setSubmissionType(value)}
-          buttonContents={Object.keys(cards).map(key => {
-            return {
-              type: key,
-              title: cards[key].title,
-            }
-          })}
+          buttonContents={Object.keys(cards).map(key => ({
+            type: key,
+            title: cards[key].title,
+          }))}
         />
       ) : (
         <>
@@ -148,4 +146,4 @@ const ObjectAdd = () => {
   )
 }
 
-export default ObjectAdd
+export default AddObjectCard

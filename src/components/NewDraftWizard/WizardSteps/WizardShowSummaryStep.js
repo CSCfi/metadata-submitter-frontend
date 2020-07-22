@@ -3,6 +3,9 @@ import React from "react"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
+/**
+ * Show summary of objects added to folder
+ */
 const WizardShowSummaryStep = () => {
   return (
     <>

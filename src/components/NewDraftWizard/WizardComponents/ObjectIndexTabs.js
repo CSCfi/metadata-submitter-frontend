@@ -22,7 +22,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ObjectIndex = () => {
+/**
+ * Render tabs for choosing which object type to add.
+ */
+const ObjectIndexTabs = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const { objectType } = useSelector(state => state.objectType)
@@ -62,4 +65,4 @@ const ObjectIndex = () => {
   )
 }
 
-export default ObjectIndex
+export default ObjectIndexTabs

@@ -92,9 +92,12 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
           onClick={async () => {
             if (nextButtonRef.current) {
               await nextButtonRef.current.submitForm()
-              if (Object.entries(nextButtonRef.current.errors).length === 0)
-                dispatch(increment())
-            } else {
+            }
+            if (
+              wizardStep !== 2 &&
+              (!nextButtonRef.current ||
+                Object.entries(nextButtonRef.current.errors).length === 0)
+            ) {
               dispatch(increment())
             }
           }}

@@ -1,0 +1,11 @@
+{
+  "datasetType": {
+    "ui:widget": "checkboxes"
+  },
+  "description": {
+    "ui:widget": "textarea",
+    "ui:options": {
+      "rows": 10
+    }
+  }
+}

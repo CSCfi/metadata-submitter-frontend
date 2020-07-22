@@ -1,0 +1,21 @@
+{
+  "description": {
+    "ui:widget": "textarea",
+    "ui:options": {
+      "rows": 5
+    }
+  },
+  "desgin": {
+    "sampleRef": {},
+    "libraryDescriptor": {
+      "targetLoci": {
+        "description": {
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 5
+          }
+        }
+      }
+    }
+  }
+}

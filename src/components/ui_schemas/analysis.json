@@ -1,0 +1,8 @@
+{
+  "description": {
+    "ui:widget": "textarea",
+    "ui:options": {
+      "rows": 5
+    }
+  }
+}

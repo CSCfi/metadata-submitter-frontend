@@ -1,21 +1,20 @@
 //@flow
 import React, { useEffect, useState } from "react"
 import Form from "@rjsf/material-ui"
-import TextWidget from "./form_components/TextWidget"
-import SelectWidget from "./form_components/SelectWidget"
+import SelectWidget from "./CustomJSONSchemaFormComponents/SelectWidget"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import analysisUiSchema from "./ui_schemas/analysis.json"
-import datasetUiSchema from "./ui_schemas/dataset.json"
-import experimentUiSchema from "./ui_schemas/experiment.json"
-import policyUiSchema from "./ui_schemas/policy.json"
-import runUiSchema from "./ui_schemas/run.json"
-import sampleUiSchema from "./ui_schemas/sample.json"
-import studyUiSchema from "./ui_schemas/study.json"
+import analysisUiSchema from "./UiSchemas/analysis.json"
+import datasetUiSchema from "./UiSchemas/dataset.json"
+import experimentUiSchema from "./UiSchemas/experiment.json"
+import policyUiSchema from "./UiSchemas/policy.json"
+import runUiSchema from "./UiSchemas/run.json"
+import sampleUiSchema from "./UiSchemas/sample.json"
+import studyUiSchema from "./UiSchemas/study.json"
 
 const uiSchemas = {
   analysis: analysisUiSchema,
@@ -62,62 +61,58 @@ const FillObjectDetailsForm = () => {
     fetchSchema()
   }, [objectType])
 
-  if (isLoading) {
-    return <CircularProgress />
-  } else if (error) {
-    return <Alert severity="error">{error}</Alert>
-  } else {
-    return (
-      <div>
-        <Form
-          onSubmit={async () => {
-            setSubmitting(true)
-            const waitForServertimer = setTimeout(() => {
-              setSuccessStatus("info")
-              setSuccessMessage(`For some reason, your file is still being saved
+  if (isLoading) return <CircularProgress />
+  if (error) return <Alert severity="error">{error}</Alert>
+  return (
+    <div>
+      <Form
+        onSubmit={async () => {
+          setSubmitting(true)
+          const waitForServertimer = setTimeout(() => {
+            setSuccessStatus("info")
+            setSuccessMessage(`For some reason, your file is still being saved
                 to our database, please wait. If saving doesn't go through in two
                 minutes, please try saving the file again.`)
-            }, 5000)
+          }, 5000)
 
-            const response = await objectAPIService.createFromJSON(
-              objectType,
-              formData
+          const response = await objectAPIService.createFromJSON(
+            objectType,
+            formData
+          )
+
+          if (response.ok) {
+            setSuccessStatus("success")
+            setSuccessMessage(
+              `Submitted with accessionid ${response.data.accessionId}`
             )
+          } else {
+            setSuccessStatus("error")
+            setSuccessMessage(checkResponseError(response))
+          }
+          clearTimeout(waitForServertimer)
+          setSubmitting(false)
+        }}
+        schema={formSchema}
+        uiSchema={uiSchemas[objectType]}
+        formData={formData}
+        onChange={event => setFormData(event.formData)}
+        showErrorList={false}
+        widgets={{ SelectWidget }}
+      />
+      {isSubmitting && <LinearProgress />}
 
-            if (response.ok) {
-              setSuccessStatus("success")
-              setSuccessMessage(
-                `Submitted with accessionid ${response.data.accessionId}`
-              )
-            } else {
-              setSuccessStatus("error")
-              setSuccessMessage(checkResponseError(response))
-            }
-            clearTimeout(waitForServertimer)
-            setSubmitting(false)
+      {successMessage && (
+        <Alert
+          severity={successStatus}
+          onClose={() => {
+            setSuccessMessage("")
           }}
-          schema={formSchema}
-          uiSchema={uiSchemas[objectType]}
-          formData={formData}
-          onChange={event => setFormData(event.formData)}
-          showErrorList={false}
-          widgets={{ TextWidget, SelectWidget }}
-        />
-        {isSubmitting && <LinearProgress />}
-
-        {successMessage && (
-          <Alert
-            severity={successStatus}
-            onClose={() => {
-              setSuccessMessage("")
-            }}
-          >
-            {successMessage}
-          </Alert>
-        )}
-      </div>
-    )
-  }
+        >
+          {successMessage}
+        </Alert>
+      )}
+    </div>
+  )
 }
 
 export default FillObjectDetailsForm

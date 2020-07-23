@@ -100,6 +100,7 @@ const SelectWidget = ({
       }}
       SelectProps={{
         native: true,
+        multiple: typeof multiple === "undefined" ? false : multiple,
       }}
     >
       {enumOptions.map(({ value, label }: any, i: number) => {

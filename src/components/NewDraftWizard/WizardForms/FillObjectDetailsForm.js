@@ -98,6 +98,7 @@ const FillObjectDetailsForm = () => {
         onChange={event => setFormData(event.formData)}
         showErrorList={false}
         widgets={{ SelectWidget }}
+        noHtml5Validate
       />
       {isSubmitting && <LinearProgress />}
 

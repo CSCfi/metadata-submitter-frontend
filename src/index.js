@@ -23,9 +23,6 @@ const CSCtheme = createMuiTheme({
     MuiTextField: {
       variant: "outlined",
     },
-    Button: {
-      variant: "outlined",
-    },
   },
 })
 

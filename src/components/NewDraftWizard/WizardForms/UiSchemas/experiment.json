@@ -2,7 +2,7 @@
   "description": {
     "ui:widget": "textarea"
   },
-  "desgin": {
+  "design": {
     "sampleRef": {},
     "libraryDescriptor": {
       "targetLoci": {

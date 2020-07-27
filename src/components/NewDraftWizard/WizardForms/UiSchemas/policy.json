@@ -1,0 +1,10 @@
+{
+  "policy": {
+    "policyText": {
+      "ui:widget": "textarea",
+      "ui:options": {
+        "rows": 10
+      }
+    }
+  }
+}

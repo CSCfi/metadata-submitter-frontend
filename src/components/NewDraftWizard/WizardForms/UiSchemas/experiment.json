@@ -1,0 +1,15 @@
+{
+  "description": {
+    "ui:widget": "textarea"
+  },
+  "design": {
+    "sampleRef": {},
+    "libraryDescriptor": {
+      "targetLoci": {
+        "description": {
+          "ui:widget": "textarea"
+        }
+      }
+    }
+  }
+}

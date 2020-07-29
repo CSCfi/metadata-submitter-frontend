@@ -31,13 +31,21 @@ const FillObjectDetailsForm = () => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
-        setYupSchema(await JSONSchemaParser.parse_schema(response.data))
-        setFormFields([])
+        setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
+        setFormFields(
+          JSONSchemaParser.buildFieldsAndInitialValues(response.data)
+        )
         setInitialValues({
-          "descriptor" : {
-            "studyTitle" : "",
-            "studyAbstract" : ""
-          }
+          descriptor: {
+            studyTitle: "",
+            studyAbstract: "",
+            centerName: "",
+          },
+          studyDescription: "",
+          pubMedID: "",
+          center: {
+            centerProjectName: "",
+          },
         })
       } else {
         setError(checkResponseError(response))
@@ -53,7 +61,7 @@ const FillObjectDetailsForm = () => {
     <div>
       <Formik
         initialValues={initialValues}
-        validationSchema={yupSchema}
+        validationSchema={YupSchema}
         onSubmit={values => console.log(values)}
       >
         <Form>{formFields}</Form>

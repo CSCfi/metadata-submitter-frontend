@@ -6,6 +6,7 @@ import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import { Form, Formik } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
+import Button from "@material-ui/core/Button"
 
 const checkResponseError = response => {
   switch (response.status) {
@@ -33,11 +34,12 @@ const FillObjectDetailsForm = () => {
       if (response.ok) {
         setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
         setFormFields(
-          JSONSchemaParser.buildFieldsAndInitialValues(response.data)
+          await JSONSchemaParser.buildFieldsAndInitialValues(response.data)
         )
         setInitialValues({
           descriptor: {
             studyTitle: "",
+            studyType: "",
             studyAbstract: "",
             centerName: "",
           },
@@ -58,15 +60,26 @@ const FillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <div>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={YupSchema}
-        onSubmit={values => console.log(values)}
-      >
-        <Form>{formFields}</Form>
-      </Formik>
-    </div>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={YupSchema}
+      onSubmit={values => console.log(values)}
+    >
+      {({ submitForm, isSubmitting }) => (
+        <Form>
+          {formFields}
+          <Button
+            key="button"
+            variant="outlined"
+            color="primary"
+            disabled={isSubmitting}
+            onClick={submitForm}
+          >
+            Save
+          </Button>
+        </Form>
+      )}
+    </Formik>
   )
 }
 

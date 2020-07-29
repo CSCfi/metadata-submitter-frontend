@@ -4,25 +4,8 @@ import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import analysisUiSchema from "./UiSchemas/analysis.json"
-import datasetUiSchema from "./UiSchemas/dataset.json"
-import experimentUiSchema from "./UiSchemas/experiment.json"
-import policyUiSchema from "./UiSchemas/policy.json"
-import runUiSchema from "./UiSchemas/run.json"
-import sampleUiSchema from "./UiSchemas/sample.json"
-import studyUiSchema from "./UiSchemas/study.json"
 import { Form, Formik } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
-
-const uiSchemas = {
-  analysis: analysisUiSchema,
-  dataset: datasetUiSchema,
-  experiment: experimentUiSchema,
-  policy: policyUiSchema,
-  run: runUiSchema,
-  sample: sampleUiSchema,
-  study: studyUiSchema,
-}
 
 const checkResponseError = response => {
   switch (response.status) {

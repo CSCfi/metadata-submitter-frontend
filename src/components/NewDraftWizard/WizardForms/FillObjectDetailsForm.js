@@ -1,11 +1,7 @@
 //@flow
 import React, { useEffect, useState } from "react"
-import Form from "@rjsf/material-ui"
-import SelectWidget from "./CustomJSONSchemaFormComponents/SelectWidget"
-import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
-import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import analysisUiSchema from "./UiSchemas/analysis.json"
@@ -15,6 +11,8 @@ import policyUiSchema from "./UiSchemas/policy.json"
 import runUiSchema from "./UiSchemas/run.json"
 import sampleUiSchema from "./UiSchemas/sample.json"
 import studyUiSchema from "./UiSchemas/study.json"
+import { Form, Formik } from "formik"
+import JSONSchemaParser from "./JSONSchemaParser"
 
 const uiSchemas = {
   analysis: analysisUiSchema,
@@ -39,12 +37,10 @@ const checkResponseError = response => {
 }
 
 const FillObjectDetailsForm = () => {
-  const [formData, setFormData] = useState(null)
-  const [isSubmitting, setSubmitting] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-  const [successStatus, setSuccessStatus] = useState("info")
   const { objectType } = useSelector(state => state.objectType)
-  const [formSchema, setFormSchema] = useState(null)
+  const [YupSchema, setYupSchema] = useState(null)
+  const [formFields, setFormFields] = useState([])
+  const [initialValues, setInitialValues] = useState({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -52,7 +48,14 @@ const FillObjectDetailsForm = () => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
-        setFormSchema(response.data)
+        setYupSchema(await JSONSchemaParser.parse_schema(response.data))
+        setFormFields([])
+        setInitialValues({
+          "descriptor" : {
+            "studyTitle" : "",
+            "studyAbstract" : ""
+          }
+        })
       } else {
         setError(checkResponseError(response))
       }
@@ -65,53 +68,13 @@ const FillObjectDetailsForm = () => {
   if (error) return <Alert severity="error">{error}</Alert>
   return (
     <div>
-      <Form
-        onSubmit={async () => {
-          setSubmitting(true)
-          const waitForServertimer = setTimeout(() => {
-            setSuccessStatus("info")
-            setSuccessMessage(`For some reason, your file is still being saved
-                to our database, please wait. If saving doesn't go through in two
-                minutes, please try saving the file again.`)
-          }, 5000)
-
-          const response = await objectAPIService.createFromJSON(
-            objectType,
-            formData
-          )
-
-          if (response.ok) {
-            setSuccessStatus("success")
-            setSuccessMessage(
-              `Submitted with accessionid ${response.data.accessionId}`
-            )
-          } else {
-            setSuccessStatus("error")
-            setSuccessMessage(checkResponseError(response))
-          }
-          clearTimeout(waitForServertimer)
-          setSubmitting(false)
-        }}
-        schema={formSchema}
-        uiSchema={uiSchemas[objectType]}
-        formData={formData}
-        onChange={event => setFormData(event.formData)}
-        showErrorList={false}
-        widgets={{ SelectWidget }}
-        noHtml5Validate
-      />
-      {isSubmitting && <LinearProgress />}
-
-      {successMessage && (
-        <Alert
-          severity={successStatus}
-          onClose={() => {
-            setSuccessMessage("")
-          }}
-        >
-          {successMessage}
-        </Alert>
-      )}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={yupSchema}
+        onSubmit={values => console.log(values)}
+      >
+        <Form>{formFields}</Form>
+      </Formik>
     </div>
   )
 }

@@ -225,7 +225,6 @@ describe("SchemaParser", () => {
     const fields = await JSONSchemaParser.buildFieldsAndInitialValues(
       studySchema
     )
-    console.log(fields[1])
-    expect(fields.length).toBe(7)
+    expect(fields.length).toBe(11)
   })
 })

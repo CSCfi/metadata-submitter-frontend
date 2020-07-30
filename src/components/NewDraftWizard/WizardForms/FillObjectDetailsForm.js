@@ -4,9 +4,12 @@ import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import { Form, Formik } from "formik"
+import { Field, FieldArray, Form, Formik } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
 import Button from "@material-ui/core/Button"
+import { TextField, Select } from "formik-material-ui"
+import InputLabel from "@material-ui/core/InputLabel"
+import FormControl from "@material-ui/core/FormControl"
 
 const checkResponseError = response => {
   switch (response.status) {
@@ -48,6 +51,9 @@ const FillObjectDetailsForm = () => {
           center: {
             centerProjectName: "",
           },
+          studyLinks: {
+            xrefLinks: [],
+          },
         })
       } else {
         setError(checkResponseError(response))
@@ -65,18 +71,9 @@ const FillObjectDetailsForm = () => {
       validationSchema={YupSchema}
       onSubmit={values => console.log(values)}
     >
-      {({ submitForm, isSubmitting }) => (
+      {({ values, submitForm, isSubmitting }) => (
         <Form>
           {formFields}
-          <Button
-            key="button"
-            variant="outlined"
-            color="primary"
-            disabled={isSubmitting}
-            onClick={submitForm}
-          >
-            Save
-          </Button>
         </Form>
       )}
     </Formik>

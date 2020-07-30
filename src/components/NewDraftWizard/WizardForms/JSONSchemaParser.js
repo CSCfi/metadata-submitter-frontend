@@ -1,31 +1,12 @@
+import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
-import { Field } from "formik"
-import React from "react"
-import { TextField } from "formik-material-ui"
+import { Field, FieldArray, Form, useFormikContext } from "formik"
+import { TextField, Select } from "formik-material-ui"
 import InputLabel from "@material-ui/core/InputLabel"
 import FormControl from "@material-ui/core/FormControl"
-import MuiNativeSelect from "@material-ui/core/NativeSelect"
+import Button from "@material-ui/core/Button"
 
-const fieldToNativeSelect = ({
-  disabled,
-  field: { onBlur: fieldOnBlur, ...field },
-  form: { isSubmitting },
-  onBlur,
-  ...props
-}) => ({
-  disabled: disabled ?? isSubmitting,
-  onBlur:
-    onBlur ??
-    function (e) {
-      fieldOnBlur(e ?? field.name)
-    },
-  ...field,
-  ...props,
-})
-const NativeSelect = props => (
-  <MuiNativeSelect {...fieldToNativeSelect(props)} />
-)
 
 const buildYupSchema = async schema => {
   try {
@@ -44,6 +25,7 @@ const buildFieldsAndInitialValues = async schema => {
 }
 
 const traverse = (properties, path = "", components = []) => {
+  const { values, remove, push } = useFormikContext();
   for (const property in properties) {
     switch (properties[property]["type"]) {
       case "object": {
@@ -62,10 +44,16 @@ const traverse = (properties, path = "", components = []) => {
               </InputLabel>
               <Field
                 key={`${name}-select`}
-                component={NativeSelect}
+                component={Select}
+                native
                 name={name}
-                inputProps={{ id: `${name}-select` }}
+                inputProps={{ name: name, id: `${name}-select` }}
               >
+                <option
+                  key={`${name}-placeholder`}
+                  aria-label="None"
+                  value=""
+                />
                 {properties[property]["enum"].map(option => (
                   <option key={option} value={option}>
                     {option}
@@ -85,6 +73,54 @@ const traverse = (properties, path = "", components = []) => {
             />
           )
         }
+        break
+      }
+      case "array": {
+        components.push(
+        <FieldArray name="studyLinks.xrefLinks">
+          {({ values, remove, push }) => (
+            <div>
+              {values.studyLinks.xrefLinks.length > 0 &&
+              values.studyLinks.xrefLinks.map((xRefLink, index) => (
+                <div key={`studyLinks.xrefLinks.${index}`}>
+                  <Field
+                    name={`studyLinks.xrefLinks.${index}.db`}
+                    label="Db"
+                    component={TextField}
+                  />
+                  <Field
+                    name={`studyLinks.xrefLinks.${index}.id`}
+                    label="Id"
+                    component={TextField}
+                  />
+                  <Button
+                    key="button"
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => remove(index)}
+                  >
+                    Remove this xrefLink
+                  </Button>
+                </div>
+              ))}
+              <Button
+                key="button"
+                variant="outlined"
+                color="primary"
+                onClick={() => push({ db: "", id: "" })}
+              >
+                Add new xrefLink
+              </Button>
+            </div>
+          )}
+        </FieldArray>
+        )
+        //console.log(property)
+        //const newComponents = traverse(
+        //  properties[property]["items"]["properties"],
+        //  `${path}${property}.`
+        //)
+        //console.log(newComponents)
         break
       }
       default: {

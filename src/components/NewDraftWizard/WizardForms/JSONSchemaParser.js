@@ -8,9 +8,9 @@ import FormControl from "@material-ui/core/FormControl"
 import Button from "@material-ui/core/Button"
 
 const dereferenceSchema = async schema => {
-  let dereferenced_schema = await $RefParser.dereference(schema)
-  delete dereferenced_schema["definitions"]
-  return dereferenced_schema
+  let dereferencedSchema = await $RefParser.dereference(schema)
+  delete dereferencedSchema["definitions"]
+  return dereferencedSchema
 }
 
 const buildYupSchema = async schema => {
@@ -22,33 +22,28 @@ const buildYupSchema = async schema => {
 }
 
 const buildInitialValues = schema => {
-  return traverse_values(schema["properties"])
+  return traverseValues(schema["properties"])
 }
 
-const buildFieldsAndInitialValues = (schema, values) => {
-  return traverse(schema["properties"], values)
-}
-
-const traverse_values = properties => {
+const traverseValues = properties => {
   let values = {}
-  for (const property in properties) {
-    switch (properties[property]["type"]) {
+  for (const propertyKey in properties) {
+    const property = properties[propertyKey]
+    switch (property["type"]) {
       case "object": {
-        values[property] = traverse_values(properties[property]["properties"])
+        values[propertyKey] = traverseValues(property["properties"])
         break
       }
       case "string": {
-        values[property] = ""
+        values[propertyKey] = ""
         break
       }
       case "array": {
-        values[property] = []
+        values[propertyKey] = []
         break
       }
       default: {
-        console.error(
-          `No parsing support for type ${properties[property]["type"]} yet`
-        )
+        console.error(`No parsing support for type ${property["type"]} yet`)
         break
       }
     }
@@ -56,26 +51,32 @@ const traverse_values = properties => {
   return values
 }
 
-const traverse = (properties, values, path = "", components = []) => {
-  for (const property in properties) {
-    switch (properties[property]["type"]) {
+const buildFields = (schema, values) => {
+  return traverseFields(schema["properties"], values)
+}
+
+const traverseFields = (properties, values, path = "") => {
+  let components = []
+  for (const propertyKey in properties) {
+    const property = properties[propertyKey]
+    switch (property["type"]) {
       case "object": {
         components = components.concat(
-          traverse(
-            properties[property]["properties"],
-            values,
-            `${path}${property}.`
+          traverseFields(
+            property["properties"],
+            values[propertyKey],
+            `${path}${propertyKey}.`
           )
         )
         break
       }
       case "string": {
-        if (properties[property]["enum"]) {
-          const name = `${path}${property}`
+        const name = `${path}${propertyKey}`
+        if (property["enum"]) {
           components.push(
             <FormControl key={name}>
               <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
-                {properties[property]["title"]}
+                {property["title"]}
               </InputLabel>
               <Field
                 key={`${name}-select`}
@@ -89,7 +90,7 @@ const traverse = (properties, values, path = "", components = []) => {
                   aria-label="None"
                   value="Select stuff"
                 />
-                {properties[property]["enum"].map(option => (
+                {property["enum"].map(option => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -98,12 +99,11 @@ const traverse = (properties, values, path = "", components = []) => {
             </FormControl>
           )
         } else {
-          const name = `${path}${property}`
           components.push(
             <Field
               name={name}
               key={name}
-              label={properties[property]["title"]}
+              label={property["title"]}
               component={TextField}
             />
           )
@@ -111,31 +111,30 @@ const traverse = (properties, values, path = "", components = []) => {
         break
       }
       case "array": {
-        if (property !== "xrefLinks") break
+        const name = `${path}${propertyKey}`
+        const itemStructure = traverseValues(property["items"]["properties"])
         components.push(
-          <FieldArray name="studyLinks.xrefLinks" key={`studyLinks.xrefLinks`}>
+          <FieldArray name={name} key={name}>
             {({ remove, push }) => (
               <div>
-                {values.studyLinks.xrefLinks.length > 0 &&
-                  values.studyLinks.xrefLinks.map((xRefLink, index) => (
-                    <div key={`studyLinks.xrefLinks.${index}`}>
-                      <Field
-                        name={`studyLinks.xrefLinks.${index}.db`}
-                        label="Db"
-                        component={TextField}
-                      />
-                      <Field
-                        name={`studyLinks.xrefLinks.${index}.id`}
-                        label="Id"
-                        component={TextField}
-                      />
+                {values[propertyKey].length > 0 &&
+                  values[propertyKey].map((_, index) => (
+                    <div key={`${name}.${index}`}>
+                      {Object.keys(itemStructure).map(item => (
+                        <Field
+                          key={`${name}.${index}.${item}`}
+                          name={`${name}.${index}.${item}`}
+                          label={item}
+                          component={TextField}
+                        />
+                      ))}
                       <Button
-                        key="button"
+                        key={`${name}-${index}-removeButton`}
                         variant="outlined"
                         color="primary"
                         onClick={() => remove(index)}
                       >
-                        Remove this xrefLink
+                        {`Remove ${propertyKey}`}
                       </Button>
                     </div>
                   ))}
@@ -143,25 +142,18 @@ const traverse = (properties, values, path = "", components = []) => {
                   key="button"
                   variant="outlined"
                   color="primary"
-                  onClick={() => push({ db: "", id: "" })}
+                  onClick={() => push(itemStructure)}
                 >
-                  Add new xrefLink
+                  {`Add ${propertyKey}`}
                 </Button>
               </div>
             )}
           </FieldArray>
         )
-        //console.log(property)
-        //const newComponents = traverse( //  properties[property]["items"]["properties"],
-        //  `${path}${property}.`
-        //)
-        //console.log(newComponents)
         break
       }
       default: {
-        console.error(
-          `No parsing support for type ${properties[property]["type"]} yet`
-        )
+        console.error(`No parsing support for type ${property["type"]} yet`)
         break
       }
     }
@@ -170,8 +162,8 @@ const traverse = (properties, values, path = "", components = []) => {
 }
 
 export default {
-  buildInitialValues,
   dereferenceSchema,
+  buildInitialValues,
+  buildFields,
   buildYupSchema,
-  buildFieldsAndInitialValues,
 }

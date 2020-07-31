@@ -231,10 +231,12 @@ describe("SchemaParser", () => {
     const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
       studySchema
     )
-    const fields = await JSONSchemaParser.buildFieldsAndInitialValues(
-      dereferencedSchema
+    const values = await JSONSchemaParser.buildInitialValues(dereferencedSchema)
+    const fields = await JSONSchemaParser.buildFields(
+      dereferencedSchema,
+      values
     )
-    expect(fields.length).toBe(8)
+    expect(fields.length).toBe(11)
   })
   test("returns correct values from given study", async () => {
     const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(

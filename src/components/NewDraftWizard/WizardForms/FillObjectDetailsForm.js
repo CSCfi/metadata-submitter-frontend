@@ -4,7 +4,7 @@ import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import { Form, Formik } from "formik"
+import { Form, Formik, useFormikContext } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
 
 const checkResponseError = response => {
@@ -21,10 +21,10 @@ const checkResponseError = response => {
 
 interface FormFieldsProps {
   formSchema: any;
-  values: any;
 }
 
-const FormFields = ({ formSchema, values }: FormFieldsProps) => {
+const FormFields = ({ formSchema }: FormFieldsProps) => {
+  const { values } = useFormikContext()
   const components = JSONSchemaParser.buildFields(formSchema, values)
   return <div>{components}</div>
 }
@@ -68,9 +68,9 @@ const FillObjectDetailsForm = () => {
         console.log(JSON.stringify(values, null, 2))
       }}
     >
-      {({ values }) => (
+      {() => (
         <Form>
-          <FormFields formSchema={formSchema} values={values} />
+          <FormFields formSchema={formSchema} />
           <button type="submit">Submit</button>
         </Form>
       )}

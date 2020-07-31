@@ -227,18 +227,7 @@ describe("SchemaParser", () => {
     const valid = await yupSchema.isValid(studyExample)
     expect(valid).toBe(true)
   })
-  test("returns correct amount of form fields with given study", async () => {
-    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
-      studySchema
-    )
-    const values = await JSONSchemaParser.buildInitialValues(dereferencedSchema)
-    const fields = await JSONSchemaParser.buildFields(
-      dereferencedSchema,
-      values
-    )
-    expect(fields.length).toBe(11)
-  })
-  test("returns correct values from given study", async () => {
+  test("returns correct initial values from given study", async () => {
     const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
       studySchema
     )

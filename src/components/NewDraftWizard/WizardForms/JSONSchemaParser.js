@@ -1,11 +1,12 @@
 import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
-import { Field, FieldArray } from "formik"
+import { Field, FieldArray, useField } from "formik"
 import { TextField, Select } from "formik-material-ui"
 import InputLabel from "@material-ui/core/InputLabel"
 import FormControl from "@material-ui/core/FormControl"
 import Button from "@material-ui/core/Button"
+import FormHelperText from "@material-ui/core/FormHelperText"
 
 const dereferenceSchema = async schema => {
   let dereferencedSchema = await $RefParser.dereference(schema)
@@ -73,19 +74,16 @@ const traverseFields = (properties, values, path = "") => {
       case "string": {
         const name = `${path}${propertyKey}`
         const label = property["title"] ?? propertyKey
-        if (property["enum"]) {
-          const component = createSelectField(name, label, property["enum"])
-          components.push(component)
-        } else {
-          const component = createTextField(name, label)
-          components.push(component)
-        }
+        const component = property["enum"]
+          ? FormSelectField(name, label, property["enum"])
+          : FormTextField(name, label)
+        components.push(component)
         break
       }
       case "array": {
         const name = `${path}${propertyKey}`
         const label = property["title"] ?? propertyKey
-        components.push(createArray(name, label, property, values[propertyKey]))
+        components.push(FormArray(name, label, property, values[propertyKey]))
         break
       }
       default: {
@@ -97,37 +95,37 @@ const traverseFields = (properties, values, path = "") => {
   return components
 }
 
-const createTextField = (name, label) => (
+const FormTextField = (name, label) => (
   <Field name={name} key={name} label={label} component={TextField} />
 )
 
-const createSelectField = (name, label, options) => (
-  <FormControl key={name}>
-    <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
-      {label}
-    </InputLabel>
-    <Field
-      name={name}
-      key={`${name}-select`}
-      component={Select}
-      inputProps={{ name: name, id: `${name}-select` }}
-      native
-    >
-      <option
-        key={`${name}-placeholder`}
-        aria-label="None"
-        value="Select stuff"
-      />
-      {options.map(option => (
-        <option key={`${name}.${option}`} value={option}>
-          {option}
-        </option>
-      ))}
-    </Field>
-  </FormControl>
-)
+const FormSelectField = (name, label, options) => {
+  const [, meta] = useField(name)
+  return (
+    <FormControl key={name} error={meta.touched && !!meta.error}>
+      <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
+        {label}
+      </InputLabel>
+      <Field
+        name={name}
+        key={`${name}-select`}
+        component={Select}
+        inputProps={{ name: name, id: `${name}-select` }}
+        native
+      >
+        <option aria-label="None" value="" disabled />
+        {options.map(option => (
+          <option key={`${name}.${option}`} value={option}>
+            {option}
+          </option>
+        ))}
+      </Field>
+      <FormHelperText>{meta.touched && meta.error}</FormHelperText>
+    </FormControl>
+  )
+}
 
-const createArray = (name, label, property, values) => {
+const FormArray = (name, label, property, values) => {
   const itemStructure = traverseValues(property["items"]["properties"])
   return (
     <FieldArray name={name} key={name}>
@@ -137,7 +135,7 @@ const createArray = (name, label, property, values) => {
             values.map((_, index) => (
               <div key={`${name}.${index}`}>
                 {Object.keys(itemStructure).map(item =>
-                  createTextField(`${name}.${index}.${item}`, item)
+                  FormTextField(`${name}.${index}.${item}`, item)
                 )}
                 <Button
                   key={`${name}.${index}-removeButton`}

@@ -207,7 +207,10 @@ const studyExample = {
 
 describe("SchemaParser", () => {
   test("returns yup studySchema that fails for invalid study", async () => {
-    const yupSchema = await JSONSchemaParser.buildYupSchema(studySchema)
+    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
+      studySchema
+    )
+    const yupSchema = await JSONSchemaParser.buildYupSchema(dereferencedSchema)
     const invalid = await yupSchema.isValid({
       descriptor: {
         studyTitle: "testi testinen",
@@ -217,14 +220,47 @@ describe("SchemaParser", () => {
     expect(invalid).toBe(false)
   })
   test("returns yup studySchema that matches valid study", async () => {
-    const yupSchema = await JSONSchemaParser.buildYupSchema(studySchema)
+    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
+      studySchema
+    )
+    const yupSchema = await JSONSchemaParser.buildYupSchema(dereferencedSchema)
     const valid = await yupSchema.isValid(studyExample)
     expect(valid).toBe(true)
   })
   test("returns correct amount of form fields with given study", async () => {
-    const fields = await JSONSchemaParser.buildFieldsAndInitialValues(
+    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
       studySchema
     )
-    expect(fields.length).toBe(11)
+    const fields = await JSONSchemaParser.buildFieldsAndInitialValues(
+      dereferencedSchema
+    )
+    expect(fields.length).toBe(8)
+  })
+  test("returns correct values from given study", async () => {
+    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
+      studySchema
+    )
+    const initialValues = await JSONSchemaParser.buildInitialValues(
+      dereferencedSchema
+    )
+    expect(initialValues).toStrictEqual({
+      descriptor: {
+        studyTitle: "",
+        studyType: "",
+        studyAbstract: "",
+        centerName: "",
+      },
+      studyDescription: "",
+      studyLinks: {
+        xrefLinks: [],
+        entrezLinks: [],
+        urlLinks: [],
+      },
+      studyAttributes: [],
+      pubMedID: "",
+      center: {
+        centerProjectName: "",
+      },
+    })
   })
 })

@@ -23,7 +23,11 @@ const buildYupSchema = async schema => {
 }
 
 const buildInitialValues = schema => {
-  return traverseValues(schema["properties"])
+  try {
+    return traverseValues(schema["properties"])
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const traverseValues = properties => {
@@ -36,6 +40,10 @@ const traverseValues = properties => {
         break
       }
       case "string": {
+        values[propertyKey] = ""
+        break
+      }
+      case "integer": {
         values[propertyKey] = ""
         break
       }
@@ -52,22 +60,22 @@ const traverseValues = properties => {
   return values
 }
 
-const buildFields = (schema, values) => {
-  return traverseFields(schema["properties"], values)
+const buildFields = schema => {
+  try {
+    return traverseFields(schema["properties"])
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-const traverseFields = (properties, values, path = "") => {
+const traverseFields = (properties, path = "") => {
   let components = []
   for (const propertyKey in properties) {
     const property = properties[propertyKey]
     switch (property["type"]) {
       case "object": {
-        components = components.concat(
-          traverseFields(
-            property["properties"],
-            values[propertyKey],
-            `${path}${propertyKey}.`
-          )
+        components.push(
+          ...traverseFields(property["properties"], `${path}${propertyKey}.`)
         )
         break
       }
@@ -80,10 +88,16 @@ const traverseFields = (properties, values, path = "") => {
         components.push(component)
         break
       }
+      case "integer": {
+        const name = `${path}${propertyKey}`
+        const label = property["title"] ?? propertyKey
+        components.push(FormTextField(name, label))
+        break
+      }
       case "array": {
         const name = `${path}${propertyKey}`
         const label = property["title"] ?? propertyKey
-        components.push(FormArray(name, label, property, values[propertyKey]))
+        components.push(FormArray(name, label, property))
         break
       }
       default: {
@@ -125,14 +139,16 @@ const FormSelectField = (name, label, options) => {
   )
 }
 
-const FormArray = (name, label, property, values) => {
+const FormArray = (name, label, property) => {
   const itemStructure = traverseValues(property["items"]["properties"])
+  const [, meta] = useField(name)
+  const { value } = meta
   return (
     <FieldArray name={name} key={name}>
       {({ remove, push }) => (
         <div>
-          {values.length > 0 &&
-            values.map((_, index) => (
+          {value.length > 0 &&
+            value.map((_, index) => (
               <div key={`${name}.${index}`}>
                 {Object.keys(itemStructure).map(item =>
                   FormTextField(`${name}.${index}.${item}`, item)

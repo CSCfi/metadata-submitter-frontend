@@ -2,11 +2,11 @@ import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
 import { Field, FieldArray, useField } from "formik"
-import { TextField, Select } from "formik-material-ui"
+import { CheckboxWithLabel, Select, TextField } from "formik-material-ui"
 import InputLabel from "@material-ui/core/InputLabel"
 import FormControl from "@material-ui/core/FormControl"
-import Button from "@material-ui/core/Button"
 import FormHelperText from "@material-ui/core/FormHelperText"
+import Button from "@material-ui/core/Button"
 
 const dereferenceSchema = async schema => {
   let dereferencedSchema = await $RefParser.dereference(schema)
@@ -45,6 +45,10 @@ const traverseValues = properties => {
       }
       case "integer": {
         values[propertyKey] = ""
+        break
+      }
+      case "boolean": {
+        values[propertyKey] = false
         break
       }
       case "array": {
@@ -94,6 +98,12 @@ const traverseFields = (properties, path = "") => {
         components.push(FormTextField(name, label))
         break
       }
+      case "boolean": {
+        const name = `${path}${propertyKey}`
+        const label = property["title"] ?? propertyKey
+        components.push(FormBooleanField(name, label))
+        break
+      }
       case "array": {
         const name = `${path}${propertyKey}`
         const label = property["title"] ?? propertyKey
@@ -139,6 +149,16 @@ const FormSelectField = (name, label, options) => {
   )
 }
 
+const FormBooleanField = (name, label) => (
+  <Field
+    name={name}
+    key={name}
+    type="checkbox"
+    component={CheckboxWithLabel}
+    Label={{ label: label }}
+  />
+)
+
 const FormArray = (name, label, property) => {
   const itemStructure = traverseValues(property["items"]["properties"])
   const [, meta] = useField(name)
@@ -150,9 +170,27 @@ const FormArray = (name, label, property) => {
           {value.length > 0 &&
             value.map((_, index) => (
               <div key={`${name}.${index}`}>
-                {Object.keys(itemStructure).map(item =>
-                  FormTextField(`${name}.${index}.${item}`, item)
-                )}
+                {Object.keys(itemStructure).map(item => {
+                  switch (property["items"]["properties"][item]["type"]) {
+                    case "string": {
+                      const fieldName = `${name}.${index}.${item}`
+                      return property["enum"]
+                        ? FormSelectField(fieldName, item, property["enum"])
+                        : FormTextField(fieldName, item)
+                    }
+                    case "integer": {
+                      const fieldName = `${name}.${index}.${item}`
+                      return FormTextField(fieldName, item)
+                    }
+                    case "boolean": {
+                      const fieldName = `${name}.${index}.${item}`
+                      return FormBooleanField(fieldName, item)
+                    }
+                    default: {
+                      return null
+                    }
+                  }
+                })}
                 <Button
                   key={`${name}.${index}-removeButton`}
                   variant="outlined"

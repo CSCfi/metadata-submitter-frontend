@@ -72,84 +72,20 @@ const traverseFields = (properties, values, path = "") => {
       }
       case "string": {
         const name = `${path}${propertyKey}`
+        const label = property["title"] ?? propertyKey
         if (property["enum"]) {
-          components.push(
-            <FormControl key={name}>
-              <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
-                {property["title"]}
-              </InputLabel>
-              <Field
-                key={`${name}-select`}
-                component={Select}
-                native
-                name={name}
-                inputProps={{ name: name, id: `${name}-select` }}
-              >
-                <option
-                  key={`${name}-placeholder`}
-                  aria-label="None"
-                  value="Select stuff"
-                />
-                {property["enum"].map(option => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </Field>
-            </FormControl>
-          )
+          const component = createSelectField(name, label, property["enum"])
+          components.push(component)
         } else {
-          components.push(
-            <Field
-              name={name}
-              key={name}
-              label={property["title"]}
-              component={TextField}
-            />
-          )
+          const component = createTextField(name, label)
+          components.push(component)
         }
         break
       }
       case "array": {
         const name = `${path}${propertyKey}`
-        const itemStructure = traverseValues(property["items"]["properties"])
-        components.push(
-          <FieldArray name={name} key={name}>
-            {({ remove, push }) => (
-              <div>
-                {values[propertyKey].length > 0 &&
-                  values[propertyKey].map((_, index) => (
-                    <div key={`${name}.${index}`}>
-                      {Object.keys(itemStructure).map(item => (
-                        <Field
-                          key={`${name}.${index}.${item}`}
-                          name={`${name}.${index}.${item}`}
-                          label={item}
-                          component={TextField}
-                        />
-                      ))}
-                      <Button
-                        key={`${name}-${index}-removeButton`}
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => remove(index)}
-                      >
-                        {`Remove ${propertyKey}`}
-                      </Button>
-                    </div>
-                  ))}
-                <Button
-                  key="button"
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => push(itemStructure)}
-                >
-                  {`Add ${propertyKey}`}
-                </Button>
-              </div>
-            )}
-          </FieldArray>
-        )
+        const label = property["title"] ?? propertyKey
+        components.push(createArray(name, label, property, values[propertyKey]))
         break
       }
       default: {
@@ -159,6 +95,72 @@ const traverseFields = (properties, values, path = "") => {
     }
   }
   return components
+}
+
+const createTextField = (name, label) => (
+  <Field name={name} key={name} label={label} component={TextField} />
+)
+
+const createSelectField = (name, label, options) => (
+  <FormControl key={name}>
+    <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
+      {label}
+    </InputLabel>
+    <Field
+      name={name}
+      key={`${name}-select`}
+      component={Select}
+      inputProps={{ name: name, id: `${name}-select` }}
+      native
+    >
+      <option
+        key={`${name}-placeholder`}
+        aria-label="None"
+        value="Select stuff"
+      />
+      {options.map(option => (
+        <option key={`${name}.${option}`} value={option}>
+          {option}
+        </option>
+      ))}
+    </Field>
+  </FormControl>
+)
+
+const createArray = (name, label, property, values) => {
+  const itemStructure = traverseValues(property["items"]["properties"])
+  return (
+    <FieldArray name={name} key={name}>
+      {({ remove, push }) => (
+        <div>
+          {values.length > 0 &&
+            values.map((_, index) => (
+              <div key={`${name}.${index}`}>
+                {Object.keys(itemStructure).map(item =>
+                  createTextField(`${name}.${index}.${item}`, item)
+                )}
+                <Button
+                  key={`${name}.${index}-removeButton`}
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => remove(index)}
+                >
+                  {`Remove ${label}`}
+                </Button>
+              </div>
+            ))}
+          <Button
+            key="button"
+            variant="outlined"
+            color="primary"
+            onClick={() => push(itemStructure)}
+          >
+            {`Add ${label}`}
+          </Button>
+        </div>
+      )}
+    </FieldArray>
+  )
 }
 
 export default {

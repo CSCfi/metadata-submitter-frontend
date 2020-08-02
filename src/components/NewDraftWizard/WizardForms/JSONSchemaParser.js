@@ -56,6 +56,10 @@ const traverseValues = properties => {
         values[propertyKey] = ""
         break
       }
+      case "number": {
+        values[propertyKey] = 0
+        break
+      }
       case "boolean": {
         values[propertyKey] = false
         break
@@ -75,7 +79,9 @@ const traverseValues = properties => {
 
 const buildFields = schema => {
   try {
-    let components = [FormHeader(schema["title"], 1)]
+    let components = [
+      FormHeader(schema["title"], `${schema["title"]}-header`, 1),
+    ]
     components.push(...traverseFields(schema["properties"]))
     return components
   } catch (error) {
@@ -87,9 +93,11 @@ const traverseFields = (properties, path = "", level = 2) => {
   let components = []
   for (const propertyKey in properties) {
     const property = properties[propertyKey]
+    const name = `${path}${propertyKey}`
+    const label = property["title"] ? property["title"] : propertyKey
     switch (property["type"]) {
       case "object": {
-        components.push(FormHeader(property["title"], level))
+        components.push(FormHeader(label, name, level))
         components.push(
           ...traverseFields(
             property["properties"],
@@ -99,35 +107,14 @@ const traverseFields = (properties, path = "", level = 2) => {
         )
         break
       }
-      case "string": {
-        const name = `${path}${propertyKey}`
-        const label = property["title"] ?? propertyKey
-        const component = property["enum"]
-          ? FormSelectField(name, label, property["enum"])
-          : FormTextField(name, label)
-        components.push(component)
-        break
-      }
-      case "integer": {
-        const name = `${path}${propertyKey}`
-        const label = property["title"] ?? propertyKey
-        components.push(FormTextField(name, label))
-        break
-      }
-      case "boolean": {
-        const name = `${path}${propertyKey}`
-        const label = property["title"] ?? propertyKey
-        components.push(FormBooleanField(name, label))
-        break
-      }
       case "array": {
-        const name = `${path}${propertyKey}`
-        const label = property["title"] ?? propertyKey
+        components.push(FormHeader(label, name, level))
         components.push(FormArray(name, label, property))
         break
       }
       default: {
-        console.error(`No parsing support for type ${property["type"]} yet`)
+        const component = SolveSuitableComponent(name, label, property)
+        if (component) components.push(component)
         break
       }
     }
@@ -135,14 +122,60 @@ const traverseFields = (properties, path = "", level = 2) => {
   return components
 }
 
-const FormHeader = (text, level) => (
-  <Typography variant={`h${level}`} key={`${text}-header`}>
-    {text}
-  </Typography>
-)
+const SolveSuitableComponent = (name, label, property) => {
+  switch (property["type"]) {
+    case "string": {
+      return property["enum"]
+        ? FormSelectField(name, label, property["enum"])
+        : FormTextField(name, label)
+    }
+    case "integer": {
+      return FormTextField(name, label)
+    }
+    case "number": {
+      return FormNumberField(name, label)
+    }
+    case "boolean": {
+      return FormBooleanField(name, label)
+    }
+    default: {
+      console.error(`
+        No parsing support for type ${property["type"]} yet. 
+        Details about this object: 
+        `)
+      console.error(JSON.stringify(property))
+      return null
+    }
+  }
+}
+
+const FormHeader = (text, name, level) => {
+  const classes = useStyles()
+  level = level > 6 ? 6 : level
+  return (
+    <Typography
+      className={classes.fullWidth}
+      variant={`h${level}`}
+      key={`${name}-header`}
+    >
+      {text}
+    </Typography>
+  )
+}
 
 const FormTextField = (name, label) => (
   <Field name={name} key={name} label={label} component={TextField} fullWidth />
+)
+
+const FormNumberField = (name, label) => (
+  <Field
+    name={name}
+    key={name}
+    label={label}
+    type="number"
+    component={TextField}
+    fullWidth
+  />
 )
 
 const FormSelectField = (name, label, options) => {
@@ -187,34 +220,22 @@ const FormArray = (name, label, property) => {
   const [, meta] = useField(name)
   const { value } = meta
   const classes = useStyles()
-
   return (
-    <FieldArray name={name} key={name}>
+    <FieldArray name={name} key={`${name}-array`}>
       {({ remove, push }) => (
         <div className={classes.fullWidth}>
           {value.length > 0 &&
             value.map((_, index) => (
               <div key={`${name}.${index}`}>
                 {Object.keys(itemStructure).map(item => {
-                  switch (property["items"]["properties"][item]["type"]) {
-                    case "string": {
-                      const fieldName = `${name}.${index}.${item}`
-                      return property["enum"]
-                        ? FormSelectField(fieldName, item, property["enum"])
-                        : FormTextField(fieldName, item)
-                    }
-                    case "integer": {
-                      const fieldName = `${name}.${index}.${item}`
-                      return FormTextField(fieldName, item)
-                    }
-                    case "boolean": {
-                      const fieldName = `${name}.${index}.${item}`
-                      return FormBooleanField(fieldName, item)
-                    }
-                    default: {
-                      return null
-                    }
-                  }
+                  const innerName = `${name}.${index}.${item}`
+                  const innerLabel = item
+                  const innerProperty = property["items"]["properties"][item]
+                  return SolveSuitableComponent(
+                    innerName,
+                    innerLabel,
+                    innerProperty
+                  )
                 })}
                 <Button
                   key={`${name}.${index}-removeButton`}

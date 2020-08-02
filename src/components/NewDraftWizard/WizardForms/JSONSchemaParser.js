@@ -109,7 +109,10 @@ const traverseFields = (properties, path = "", level = 2) => {
       }
       case "array": {
         components.push(FormHeader(label, name, level))
-        components.push(FormArray(name, label, property))
+        const component = property["items"]["enum"]
+          ? FormCheckBoxArray(name, property["items"]["enum"])
+          : FormArray(name, label, property)
+        components.push(component)
         break
       }
       default: {
@@ -137,6 +140,10 @@ const SolveSuitableComponent = (name, label, property) => {
     }
     case "boolean": {
       return FormBooleanField(name, label)
+    }
+    case "array": {
+      console.error("Arrays inside arrays are not supported")
+      return null
     }
     default: {
       console.error(`
@@ -214,6 +221,23 @@ const FormBooleanField = (name, label) => (
     fullWidth
   />
 )
+
+const FormCheckBoxArray = (name, items) => {
+  return (
+    <div key={name}>
+      {items.map(item => (
+        <Field
+          key={`${name}-${item}`}
+          component={CheckboxWithLabel}
+          name={name}
+          Label={{ label: item }}
+          type="checkbox"
+          value={item}
+        />
+      ))}
+    </div>
+  )
+}
 
 const FormArray = (name, label, property) => {
   const itemStructure = traverseValues(property["items"]["properties"])

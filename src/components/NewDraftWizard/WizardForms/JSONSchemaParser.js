@@ -7,6 +7,15 @@ import InputLabel from "@material-ui/core/InputLabel"
 import FormControl from "@material-ui/core/FormControl"
 import FormHelperText from "@material-ui/core/FormHelperText"
 import Button from "@material-ui/core/Button"
+import Typography from "@material-ui/core/Typography"
+import { makeStyles } from "@material-ui/core/styles"
+
+const useStyles = makeStyles(theme => ({
+  fullWidth: {
+    width: "100%",
+    margin: theme.spacing(1),
+  },
+}))
 
 const dereferenceSchema = async schema => {
   let dereferencedSchema = await $RefParser.dereference(schema)
@@ -66,20 +75,27 @@ const traverseValues = properties => {
 
 const buildFields = schema => {
   try {
-    return traverseFields(schema["properties"])
+    let components = [FormHeader(schema["title"], 1)]
+    components.push(...traverseFields(schema["properties"]))
+    return components
   } catch (error) {
     console.error(error)
   }
 }
 
-const traverseFields = (properties, path = "") => {
+const traverseFields = (properties, path = "", level = 2) => {
   let components = []
   for (const propertyKey in properties) {
     const property = properties[propertyKey]
     switch (property["type"]) {
       case "object": {
+        components.push(FormHeader(property["title"], level))
         components.push(
-          ...traverseFields(property["properties"], `${path}${propertyKey}.`)
+          ...traverseFields(
+            property["properties"],
+            `${path}${propertyKey}.`,
+            ++level
+          )
         )
         break
       }
@@ -119,14 +135,20 @@ const traverseFields = (properties, path = "") => {
   return components
 }
 
+const FormHeader = (text, level) => (
+  <Typography variant={`h${level}`} key={`${text}-header`}>
+    {text}
+  </Typography>
+)
+
 const FormTextField = (name, label) => (
-  <Field name={name} key={name} label={label} component={TextField} />
+  <Field name={name} key={name} label={label} component={TextField} fullWidth />
 )
 
 const FormSelectField = (name, label, options) => {
   const [, meta] = useField(name)
   return (
-    <FormControl key={name} error={meta.touched && !!meta.error}>
+    <FormControl fullWidth key={name} error={meta.touched && !!meta.error}>
       <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
         {label}
       </InputLabel>
@@ -156,6 +178,7 @@ const FormBooleanField = (name, label) => (
     type="checkbox"
     component={CheckboxWithLabel}
     Label={{ label: label }}
+    fullWidth
   />
 )
 
@@ -163,10 +186,12 @@ const FormArray = (name, label, property) => {
   const itemStructure = traverseValues(property["items"]["properties"])
   const [, meta] = useField(name)
   const { value } = meta
+  const classes = useStyles()
+
   return (
     <FieldArray name={name} key={name}>
       {({ remove, push }) => (
-        <div>
+        <div className={classes.fullWidth}>
           {value.length > 0 &&
             value.map((_, index) => (
               <div key={`${name}.${index}`}>

@@ -17,7 +17,7 @@
     "formik-material-ui": "^3.0.0-alpha.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-redux": "^7.2.0",
+    "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "schema-to-yup": "^1.9.25"
@@ -57,7 +57,7 @@
   "devDependencies": {
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-flowtype": "^5.2.0",
-    "eslint-plugin-jest": "^23.18.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.4",
     "flow-bin": "^0.126.1",
     "http-proxy-middleware": "^1.0.5",

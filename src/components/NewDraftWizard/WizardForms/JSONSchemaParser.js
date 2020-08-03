@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import RemoveIcon from "@material-ui/icons/Remove"
 import Button from "@material-ui/core/Button"
+import Paper from "@material-ui/core/Paper"
 
 const dereferenceSchema = async schema => {
   await $RefParser.dereference(schema)
@@ -107,7 +108,7 @@ const traverseFields = (properties, path = "", level = 2) => {
         components.push(FormHeader(label, name, level))
         const component = property["items"]["enum"]
           ? FormCheckBoxArray(name, property["items"]["enum"])
-          : FormArray(name, label, property)
+          : FormArray(name, label, property, level)
         components.push(component)
         break
       }
@@ -235,17 +236,19 @@ const FormArray = (name, label, property) => {
         <div className="array">
           {value.length > 0 &&
             value.map((_, index) => (
-              <div className="arrayItem" key={`${name}.${index}`}>
-                {Object.keys(itemStructure).map(item => {
-                  const innerName = `${name}.${index}.${item}`
-                  const innerLabel = item
-                  const innerProperty = property["items"]["properties"][item]
-                  return SolveSuitableComponent(
-                    innerName,
-                    innerLabel,
-                    innerProperty
-                  )
-                })}
+              <div className="arrayRow" key={`${name}.${index}`}>
+                <Paper elevation={2}>
+                  {Object.keys(itemStructure).map(item => {
+                    const innerName = `${name}.${index}.${item}`
+                    const innerLabel = item
+                    const innerProperty = property["items"]["properties"][item]
+                    return SolveSuitableComponent(
+                      innerName,
+                      innerLabel,
+                      innerProperty
+                    )
+                  })}
+                </Paper>
                 <IconButton
                   key={`${name}.${index}-removeButton`}
                   onClick={() => remove(index)}

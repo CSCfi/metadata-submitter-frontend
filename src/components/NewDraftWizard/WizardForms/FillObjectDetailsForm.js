@@ -14,25 +14,29 @@ const useStyles = makeStyles(theme => ({
     flexWrap: "wrap",
     "& .MuiTextField-root": {
       width: "45%",
-      marginLeft: theme.spacing(1),
-      marginTop: theme.spacing(1),
-      marginRight: theme.spacing(3),
-      marginBottom: theme.spacing(1),
+      margin: theme.spacing(1),
     },
     "& .MuiTypography-root": {
-      width: "100%",
       margin: theme.spacing(1),
       ...theme.typography.subtitle1,
       fontWeight: "bold",
     },
     "& .MuiTypography-h2": {
+      width: "100%",
       color: theme.palette.secondary.main,
       borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
+    "& .MuiTypography-h3": {
+      width: "45%",
+    },
     "& .array": {
-      width: "100%",
-      "& .arrayItem": {
-        width: "45%",
+      margin: theme.spacing(1),
+      width: "45%",
+      "& .arrayRow": {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: theme.spacing(1),
+        width: "100%",
       },
     },
   },

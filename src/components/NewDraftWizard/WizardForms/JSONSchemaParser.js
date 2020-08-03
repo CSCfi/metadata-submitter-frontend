@@ -18,14 +18,14 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const dereferenceSchema = async schema => {
-  let dereferencedSchema = await $RefParser.dereference(schema)
-  delete dereferencedSchema["definitions"]
-  return dereferencedSchema
+  await $RefParser.dereference(schema)
+  delete schema["definitions"]
 }
 
 const buildYupSchema = async schema => {
   try {
-    return buildYup(schema, {})
+    const config = {}
+    return buildYup(schema, config)
   } catch (error) {
     console.error(error)
   }
@@ -218,7 +218,6 @@ const FormBooleanField = (name, label) => (
     type="checkbox"
     component={CheckboxWithLabel}
     Label={{ label: label }}
-    fullWidth
   />
 )
 

@@ -55,13 +55,11 @@ const FillObjectDetailsForm = () => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
-        const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
-          response.data
-        )
-        setFormSchema(dereferencedSchema)
-        setYupSchema(await JSONSchemaParser.buildYupSchema(dereferencedSchema))
+        await JSONSchemaParser.dereferenceSchema(response.data)
+        setFormSchema(response.data)
+        setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
         setInitialValues(
-          await JSONSchemaParser.buildInitialValues(dereferencedSchema)
+          await JSONSchemaParser.buildInitialValues(response.data)
         )
       } else {
         setError(checkResponseError(response))

@@ -207,33 +207,25 @@ const studyExample = {
 
 describe("SchemaParser", () => {
   test("returns yup studySchema that fails for invalid study", async () => {
-    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
-      studySchema
-    )
-    const yupSchema = await JSONSchemaParser.buildYupSchema(dereferencedSchema)
+    await JSONSchemaParser.dereferenceSchema(studySchema)
+    const yupSchema = await JSONSchemaParser.buildYupSchema(studySchema)
     const invalid = await yupSchema.isValid({
       descriptor: {
-        studyTitle: "testi testinen",
-        studyType: "jeah",
+        studyTitle: "Testing testing",
+        studyType: "Failure studytype",
       },
     })
     expect(invalid).toBe(false)
   })
   test("returns yup studySchema that matches valid study", async () => {
-    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
-      studySchema
-    )
-    const yupSchema = await JSONSchemaParser.buildYupSchema(dereferencedSchema)
+    await JSONSchemaParser.dereferenceSchema(studySchema)
+    const yupSchema = await JSONSchemaParser.buildYupSchema(studySchema)
     const valid = await yupSchema.isValid(studyExample)
     expect(valid).toBe(true)
   })
   test("returns correct initial values from given study", async () => {
-    const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(
-      studySchema
-    )
-    const initialValues = await JSONSchemaParser.buildInitialValues(
-      dereferencedSchema
-    )
+    await JSONSchemaParser.dereferenceSchema(studySchema)
+    const initialValues = await JSONSchemaParser.buildInitialValues(studySchema)
     expect(initialValues).toStrictEqual({
       descriptor: {
         studyTitle: "",

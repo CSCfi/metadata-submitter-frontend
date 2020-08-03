@@ -11,6 +11,16 @@ import App from "App"
  * Set up custom theme that follows CSC's design guidelines.
  */
 const CSCtheme = createMuiTheme({
+  overrides: {
+    MuiButton: {
+      root: {
+        textTransform: "none",
+        fontWeight: "bold",
+        paddingLeft: "32px",
+        paddingRight: "32px",
+      },
+    },
+  },
   palette: {
     primary: {
       main: "#8b1a4f",

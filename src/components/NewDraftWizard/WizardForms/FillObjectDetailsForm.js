@@ -9,14 +9,31 @@ import JSONSchemaParser from "./JSONSchemaParser"
 import { makeStyles } from "@material-ui/core/styles"
 
 const useStyles = makeStyles(theme => ({
-  root: {
+  formComponents: {
     display: "flex",
     flexWrap: "wrap",
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
+      width: "45%",
+      marginLeft: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      marginRight: theme.spacing(3),
+      marginBottom: theme.spacing(1),
     },
-    "& .MuiFormControl-root": {
+    "& .MuiTypography-root": {
+      width: "100%",
       margin: theme.spacing(1),
+      ...theme.typography.subtitle1,
+      fontWeight: "bold",
+    },
+    "& .MuiTypography-h2": {
+      color: theme.palette.secondary.main,
+      borderBottom: `2px solid ${theme.palette.secondary.main}`,
+    },
+    "& .array": {
+      width: "100%",
+      "& .arrayItem": {
+        width: "45%",
+      },
     },
   },
 }))
@@ -40,7 +57,7 @@ interface FormFieldsProps {
 const FormFields = ({ formSchema }: FormFieldsProps) => {
   const classes = useStyles()
   const components = JSONSchemaParser.buildFields(formSchema)
-  return <div className={classes.root}>{components}</div>
+  return <div className={classes.formComponents}>{components}</div>
 }
 
 const FillObjectDetailsForm = () => {

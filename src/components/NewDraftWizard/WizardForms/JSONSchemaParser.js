@@ -3,16 +3,11 @@ import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
 import { Field, FieldArray, useField } from "formik"
 import { CheckboxWithLabel, TextField } from "formik-material-ui"
-import Button from "@material-ui/core/Button"
+import AddIcon from "@material-ui/icons/Add"
 import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
-
-const useStyles = makeStyles(theme => ({
-  fullWidth: {
-    width: "100%",
-    margin: theme.spacing(1),
-  },
-}))
+import IconButton from "@material-ui/core/IconButton"
+import RemoveIcon from "@material-ui/icons/Remove"
+import Button from "@material-ui/core/Button"
 
 const dereferenceSchema = async schema => {
   await $RefParser.dereference(schema)
@@ -77,7 +72,11 @@ const traverseValues = properties => {
 const buildFields = schema => {
   try {
     let components = [
-      FormHeader(schema["title"], `${schema["title"]}-header`, 1),
+      FormHeader(
+        `New ${schema["title"].toLowerCase()}`,
+        `${schema["title"]}-header`,
+        1
+      ),
     ]
     components.push(...traverseFields(schema["properties"]))
     return components
@@ -99,7 +98,7 @@ const traverseFields = (properties, path = "", level = 2) => {
           ...traverseFields(
             property["properties"],
             `${path}${propertyKey}.`,
-            ++level
+            level + 1
           )
         )
         break
@@ -154,21 +153,16 @@ const SolveSuitableComponent = (name, label, property) => {
 }
 
 const FormHeader = (text, name, level) => {
-  const classes = useStyles()
-  level = level > 6 ? 6 : level
+  const variant = level > 6 ? "body1" : `h${level}`
   return (
-    <Typography
-      className={classes.fullWidth}
-      variant={`h${level}`}
-      key={`${name}-header`}
-    >
+    <Typography variant={variant} key={`${name}-header`}>
       {text}
     </Typography>
   )
 }
 
 const FormTextField = (name, label) => (
-  <Field name={name} key={name} label={label} component={TextField} fullWidth />
+  <Field name={name} key={name} label={label} component={TextField} />
 )
 
 const FormNumberField = (name, label) => (
@@ -178,7 +172,6 @@ const FormNumberField = (name, label) => (
     label={label}
     type="number"
     component={TextField}
-    fullWidth
   />
 )
 
@@ -196,7 +189,6 @@ const FormSelectField = (name, label, options) => {
       }}
       error={meta.touched && !!meta.error}
       helperText={meta.touched && meta.error}
-      fullWidth
     >
       <option aria-label="None" value="" disabled />
       {options.map(option => (
@@ -218,35 +210,32 @@ const FormBooleanField = (name, label) => (
   />
 )
 
-const FormCheckBoxArray = (name, items) => {
-  return (
-    <div key={name}>
-      {items.map(item => (
-        <Field
-          key={`${name}-${item}`}
-          component={CheckboxWithLabel}
-          name={name}
-          Label={{ label: item }}
-          type="checkbox"
-          value={item}
-        />
-      ))}
-    </div>
-  )
-}
+const FormCheckBoxArray = (name, items) => (
+  <div key={name}>
+    {items.map(item => (
+      <Field
+        key={`${name}-${item}`}
+        component={CheckboxWithLabel}
+        name={name}
+        Label={{ label: item }}
+        type="checkbox"
+        value={item}
+      />
+    ))}
+  </div>
+)
 
 const FormArray = (name, label, property) => {
   const itemStructure = traverseValues(property["items"]["properties"])
   const [, meta] = useField(name)
   const { value } = meta
-  const classes = useStyles()
   return (
     <FieldArray name={name} key={`${name}-array`}>
       {({ remove, push }) => (
-        <div className={classes.fullWidth}>
+        <div className="array">
           {value.length > 0 &&
             value.map((_, index) => (
-              <div key={`${name}.${index}`}>
+              <div className="arrayItem" key={`${name}.${index}`}>
                 {Object.keys(itemStructure).map(item => {
                   const innerName = `${name}.${index}.${item}`
                   const innerLabel = item
@@ -257,23 +246,23 @@ const FormArray = (name, label, property) => {
                     innerProperty
                   )
                 })}
-                <Button
+                <IconButton
                   key={`${name}.${index}-removeButton`}
-                  variant="outlined"
-                  color="primary"
                   onClick={() => remove(index)}
                 >
-                  {`Remove ${label}`}
-                </Button>
+                  <RemoveIcon />
+                </IconButton>
               </div>
             ))}
           <Button
-            key="button"
-            variant="outlined"
+            key={`${name}-addButton`}
+            variant="contained"
             color="primary"
+            size="small"
+            startIcon={<AddIcon />}
             onClick={() => push(itemStructure)}
           >
-            {`Add ${label}`}
+            Add new item
           </Button>
         </div>
       )}

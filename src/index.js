@@ -22,6 +22,11 @@ const CSCtheme = createMuiTheme({
   props: {
     MuiTextField: {
       variant: "outlined",
+      size: "small",
+    },
+    MuiFormControl: {
+      variant: "outlined",
+      size: "small",
     },
   },
 })

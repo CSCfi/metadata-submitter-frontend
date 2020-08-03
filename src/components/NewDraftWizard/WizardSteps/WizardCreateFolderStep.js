@@ -93,7 +93,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
             variant="outlined"
             fullWidth
             multiline
-            rowsMax={4}
+            rows={4}
             required
           />
         </Form>

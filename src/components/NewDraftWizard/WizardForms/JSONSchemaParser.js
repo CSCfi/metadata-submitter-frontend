@@ -2,10 +2,7 @@ import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
 import { Field, FieldArray, useField } from "formik"
-import { CheckboxWithLabel, Select, TextField } from "formik-material-ui"
-import InputLabel from "@material-ui/core/InputLabel"
-import FormControl from "@material-ui/core/FormControl"
-import FormHelperText from "@material-ui/core/FormHelperText"
+import { CheckboxWithLabel, TextField } from "formik-material-ui"
 import Button from "@material-ui/core/Button"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
@@ -188,26 +185,26 @@ const FormNumberField = (name, label) => (
 const FormSelectField = (name, label, options) => {
   const [, meta] = useField(name)
   return (
-    <FormControl fullWidth key={name} error={meta.touched && !!meta.error}>
-      <InputLabel key={`${name}-label`} htmlFor={`${name}-select`}>
-        {label}
-      </InputLabel>
-      <Field
-        name={name}
-        key={`${name}-select`}
-        component={Select}
-        inputProps={{ name: name, id: `${name}-select` }}
-        native
-      >
-        <option aria-label="None" value="" disabled />
-        {options.map(option => (
-          <option key={`${name}.${option}`} value={option}>
-            {option}
-          </option>
-        ))}
-      </Field>
-      <FormHelperText>{meta.touched && meta.error}</FormHelperText>
-    </FormControl>
+    <Field
+      name={name}
+      key={name}
+      component={TextField}
+      select
+      label={label}
+      SelectProps={{
+        native: true,
+      }}
+      error={meta.touched && !!meta.error}
+      helperText={meta.touched && meta.error}
+      fullWidth
+    >
+      <option aria-label="None" value="" disabled />
+      {options.map(option => (
+        <option key={`${name}.${option}`} value={option}>
+          {option}
+        </option>
+      ))}
+    </Field>
   )
 }
 

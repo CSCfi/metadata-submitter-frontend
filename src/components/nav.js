@@ -41,11 +41,10 @@ const useStyles = makeStyles(theme => ({
 
 const Nav = () => {
   const classes = useStyles()
-  const preventDefault = event => event.preventDefault()
   return (
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
-        <Link href="#" onClick={preventDefault} className={classes.brandLink}>
+        <Link to="/" component={RouterLink} className={classes.brandLink}>
           <img className={classes.logo} src="csc_logo.svg" alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>

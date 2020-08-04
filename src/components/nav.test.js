@@ -18,6 +18,7 @@ describe("NavBar", () => {
   test("has correct nav links rendered", () => {
     const nav = component.container.querySelector("nav")
     const expectedLinks = [
+      "Main Page",
       "Open submissions",
       "Submissions",
       "Create new draft",

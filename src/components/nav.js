@@ -60,7 +60,6 @@ const Nav = () => {
             color="inherit"
           >
             <HomeIcon />
-            Main Page
           </IconButton>
           <Link href="#" className={classes.link}>
             Open submissions

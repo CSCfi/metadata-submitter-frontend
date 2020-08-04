@@ -10,8 +10,16 @@ import Page404 from "error_pages/Page404"
 import Page500 from "error_pages/Page500"
 import Home from "components/home"
 import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
+import { makeStyles } from "@material-ui/core/styles"
+
+const useStyles = makeStyles(theme => ({
+  content: {
+    padding: theme.spacing(8, 0, 6),
+  },
+}))
 
 const App = () => {
+  const classes = useStyles()
   return (
     <Router>
       <React.Fragment>
@@ -19,7 +27,7 @@ const App = () => {
         <Nav />
         <Switch>
           <Route path="/newdraft">
-            <Container>
+            <Container component="newdraft" className={classes.content}>
               <NewDraftWizard />
             </Container>
           </Route>
@@ -27,7 +35,7 @@ const App = () => {
             <Page500 />
           </Route>
           <Route exact path="/">
-            <Container>
+            <Container component="main" className={classes.content}>
               <Home />
             </Container>
           </Route>

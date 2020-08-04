@@ -27,5 +27,6 @@
         "paths": ["src"]
       }
     }
-  }
+  },
+  "ignorePatterns": ["node_modules/*", "build/*"]
 }

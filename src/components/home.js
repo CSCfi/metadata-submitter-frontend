@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
   cardContent: {
     flexGrow: 1,
   },
+  tableCard: {
+    margin: "10px 0",
+  },
 }))
 
 type SubmissionIndexCardProps = {
@@ -62,12 +65,15 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
 }
 
 const Home = () => {
-  const cards = [
+  const classes = useStyles()
+  const draftCard = [
     {
       title: "Your draft submissions",
       folderType: "draft",
       submissions: ["Title1", "Title2", "Title3", "Title4", "Title5"],
     },
+  ]
+  const publisheCard = [
     {
       title: "Your published submissions",
       folderType: "published",
@@ -75,10 +81,27 @@ const Home = () => {
     },
   ]
   return (
-    <Grid container direction="row" justify="center" alignItems="stretch" spacing={10}>
-      {cards.map(card => {
+    <Grid
+      container
+      direction="column"
+      justify="space-between"
+      alignItems="stretch"
+    >
+      {draftCard.map(card => {
         return (
-          <Grid item xs={6} key={card.title}>
+          <Grid item xs={12} key={card.title} className={classes.tableCard}>
+            <SubmissionIndexCard
+              title={card.title}
+              folderType={card.folderType}
+              folderTitles={card.submissions}
+              key={card.title}
+            />
+          </Grid>
+        )
+      })}
+      {publisheCard.map(card => {
+        return (
+          <Grid item xs={12} key={card.title} className={classes.tableCard}>
             <SubmissionIndexCard
               title={card.title}
               folderType={card.folderType}

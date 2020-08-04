@@ -10,24 +10,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
-  cancelButton: {
-    textTransform: "none",
-    fontWeight: "bold",
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
-  },
-  nextButton: {
-    textTransform: "none",
-    fontWeight: "bold",
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
-  },
   backButton: {
-    textTransform: "none",
-    fontWeight: "bold",
     marginLeft: theme.spacing(2),
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
   },
   footerRow: {
     display: "flex",
@@ -76,7 +60,6 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
           <Button
             variant="contained"
             color="primary"
-            className={classes.backButton}
             onClick={() => dispatch(decrement())}
           >
             Back
@@ -87,7 +70,6 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
         <Button
           variant="contained"
           color="primary"
-          className={classes.nextButton}
           disabled={nextButtonRef?.current?.isSubmitting}
           onClick={async () => {
             if (nextButtonRef.current) {

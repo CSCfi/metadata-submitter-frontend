@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     position: "relative",
     borderBottom: `1px solid ${theme.palette.divider}`,
     alignItems: "flex-end",
-    color: "rgb(72,72,72)",
+    color: theme.palette.text.primary,
     backgroundColor: "white",
   },
   link: {
@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
   },
   linkButton: {
     margin: theme.spacing(1, 1.5),
-    color: "white",
-    padding: "10px 20px",
-    backgroundColor: "rgb(121, 131, 204)",
-    borderRadius: "20px",
   },
 }))
 
@@ -56,7 +52,11 @@ const Nav = () => {
             aria-label="Create new draft"
             to="/newdraft"
           >
-            <Button variant="contained" className={classes.linkButton}>
+            <Button
+              color="primary"
+              variant="contained"
+              className={classes.linkButton}
+            >
               Create new draft
             </Button>
           </Link>

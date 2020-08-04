@@ -1,30 +1,46 @@
 //@flow
 import React, { useEffect, useState } from "react"
-import Form from "@rjsf/material-ui"
-import SelectWidget from "./CustomJSONSchemaFormComponents/SelectWidget"
-import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
-import LinearProgress from "@material-ui/core/LinearProgress"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import analysisUiSchema from "./UiSchemas/analysis.json"
-import datasetUiSchema from "./UiSchemas/dataset.json"
-import experimentUiSchema from "./UiSchemas/experiment.json"
-import policyUiSchema from "./UiSchemas/policy.json"
-import runUiSchema from "./UiSchemas/run.json"
-import sampleUiSchema from "./UiSchemas/sample.json"
-import studyUiSchema from "./UiSchemas/study.json"
+import { Form, Formik } from "formik"
+import JSONSchemaParser from "./JSONSchemaParser"
+import { makeStyles } from "@material-ui/core/styles"
 
-const uiSchemas = {
-  analysis: analysisUiSchema,
-  dataset: datasetUiSchema,
-  experiment: experimentUiSchema,
-  policy: policyUiSchema,
-  run: runUiSchema,
-  sample: sampleUiSchema,
-  study: studyUiSchema,
-}
+const useStyles = makeStyles(theme => ({
+  formComponents: {
+    display: "flex",
+    flexWrap: "wrap",
+    "& .MuiTextField-root": {
+      width: "45%",
+      margin: theme.spacing(1),
+    },
+    "& .MuiTypography-root": {
+      margin: theme.spacing(1),
+      ...theme.typography.subtitle1,
+      fontWeight: "bold",
+    },
+    "& .MuiTypography-h2": {
+      width: "100%",
+      color: theme.palette.secondary.main,
+      borderBottom: `2px solid ${theme.palette.secondary.main}`,
+    },
+    "& .MuiTypography-h3": {
+      width: "45%",
+    },
+    "& .array": {
+      margin: theme.spacing(1),
+      width: "45%",
+      "& .arrayRow": {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: theme.spacing(1),
+        width: "100%",
+      },
+    },
+  },
+}))
 
 const checkResponseError = response => {
   switch (response.status) {
@@ -38,21 +54,34 @@ const checkResponseError = response => {
   }
 }
 
+interface FormFieldsProps {
+  formSchema: any;
+}
+
+const FormFields = ({ formSchema }: FormFieldsProps) => {
+  const classes = useStyles()
+  const components = JSONSchemaParser.buildFields(formSchema)
+  return <div className={classes.formComponents}>{components}</div>
+}
+
 const FillObjectDetailsForm = () => {
-  const [formData, setFormData] = useState(null)
-  const [isSubmitting, setSubmitting] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-  const [successStatus, setSuccessStatus] = useState("info")
   const { objectType } = useSelector(state => state.objectType)
-  const [formSchema, setFormSchema] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [formSchema, setFormSchema] = useState({})
+  const [YupSchema, setYupSchema] = useState(null)
+  const [initialValues, setInitialValues] = useState({})
 
   useEffect(() => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
+        await JSONSchemaParser.dereferenceSchema(response.data)
         setFormSchema(response.data)
+        setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
+        setInitialValues(
+          await JSONSchemaParser.buildInitialValues(response.data)
+        )
       } else {
         setError(checkResponseError(response))
       }
@@ -64,55 +93,21 @@ const FillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <div>
-      <Form
-        onSubmit={async () => {
-          setSubmitting(true)
-          const waitForServertimer = setTimeout(() => {
-            setSuccessStatus("info")
-            setSuccessMessage(`For some reason, your file is still being saved
-                to our database, please wait. If saving doesn't go through in two
-                minutes, please try saving the file again.`)
-          }, 5000)
-
-          const response = await objectAPIService.createFromJSON(
-            objectType,
-            formData
-          )
-
-          if (response.ok) {
-            setSuccessStatus("success")
-            setSuccessMessage(
-              `Submitted with accessionid ${response.data.accessionId}`
-            )
-          } else {
-            setSuccessStatus("error")
-            setSuccessMessage(checkResponseError(response))
-          }
-          clearTimeout(waitForServertimer)
-          setSubmitting(false)
-        }}
-        schema={formSchema}
-        uiSchema={uiSchemas[objectType]}
-        formData={formData}
-        onChange={event => setFormData(event.formData)}
-        showErrorList={false}
-        widgets={{ SelectWidget }}
-        noHtml5Validate
-      />
-      {isSubmitting && <LinearProgress />}
-
-      {successMessage && (
-        <Alert
-          severity={successStatus}
-          onClose={() => {
-            setSuccessMessage("")
-          }}
-        >
-          {successMessage}
-        </Alert>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={YupSchema}
+      onSubmit={values => {
+        console.log("JSON form successfully submitted")
+        console.log(JSON.stringify(values, null, 2))
+      }}
+    >
+      {() => (
+        <Form>
+          <FormFields formSchema={formSchema} />
+          <button type="submit">Submit</button>
+        </Form>
       )}
-    </div>
+    </Formik>
   )
 }
 

@@ -35,18 +35,12 @@ const useStyles = makeStyles(theme => ({
     minHeight: "40vh",
   },
   submissionTypeButton: {
-    textTransform: "none",
-    fontWeight: "bold",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
     marginLeft: theme.spacing(4),
     marginRight: theme.spacing(4),
   },
   hideButton: {
-    textTransform: "none",
-    fontWeight: "bold",
     color: theme.palette.common.white,
     marginTop: 0,
   },

@@ -4,7 +4,7 @@ import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import Button from "@material-ui/core/Button"
 import Link from "@material-ui/core/Link"
-import Typography from '@material-ui/core/Typography';
+import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import HomeIcon from "@material-ui/icons/Home"
 import { makeStyles } from "@material-ui/core/styles"
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 1.5),
   },
   toolbar: {
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   title: {
     flexGrow: 1,
@@ -41,18 +41,16 @@ const useStyles = makeStyles(theme => ({
 
 const Nav = () => {
   const classes = useStyles()
-  const preventDefault = (event) => event.preventDefault();
+  const preventDefault = event => event.preventDefault()
   return (
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
         <Link href="#" onClick={preventDefault} className={classes.brandLink}>
-            <img className={classes.logo}
-              src="csc_logo.svg"
-              alt="CSC" />
-          </Link>
+          <img className={classes.logo} src="csc_logo.svg" alt="CSC" />
+        </Link>
         <Typography variant="h6" noWrap className={classes.title}>
           Metadata Submitter
-          </Typography>
+        </Typography>
         <nav className={classes.nav}>
           <IconButton
             component={RouterLink}

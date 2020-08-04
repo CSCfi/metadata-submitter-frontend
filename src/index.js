@@ -28,6 +28,9 @@ const CSCtheme = createMuiTheme({
     secondary: {
       main: "#dfe1e3",
     },
+    background: {
+      default: "white",
+    },
   },
   props: {
     MuiTextField: {

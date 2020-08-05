@@ -8,6 +8,7 @@ import CardActions from "@material-ui/core/CardActions"
 import CardHeader from "@material-ui/core/CardHeader"
 import CardContent from "@material-ui/core/CardContent"
 import Button from "@material-ui/core/Button"
+import Divider from "@material-ui/core/Divider"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -22,6 +23,11 @@ const useStyles = makeStyles(theme => ({
     height: "100%",
     display: "flex",
     flexDirection: "column",
+    border: "none",
+    padding: 0,
+  },
+  cardTitle: {
+    fontSize: "0.5em",
   },
   cardContent: {
     flexGrow: 1,
@@ -41,14 +47,22 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
   const { title, folderType, folderTitles } = props
   return (
-    <Card className={classes.card}>
-      <CardHeader title={title} />
+    <Card className={classes.card} variant="outlined">
+      <CardHeader
+        title={title}
+        titleTypographyProps={{ variant: "subtitle1" }}
+        className={classes.cardTitle}
+      />
       <CardContent className={classes.cardContent}>
         <List>
           {folderTitles.map(folderTitle => {
             return (
-              <ListItem button key={folderTitle}>
-                {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
+              <ListItem button key={folderTitle} dense>
+                {folderType === "published" ? (
+                  <FolderIcon color="primary" />
+                ) : (
+                  <FolderOpenIcon color="primary" />
+                )}
                 <ListItemText primary={folderTitle} />
               </ListItem>
             )
@@ -56,9 +70,16 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
         </List>
       </CardContent>
       <CardActions>
-        <Button variant="outlined" color="primary">
-          See all
-        </Button>
+        <Grid
+          container
+          alignItems="flex-start"
+          justify="flex-end"
+          direction="row"
+        >
+          <Button variant="outlined" color="primary">
+            See all
+          </Button>
+        </Grid>
       </CardActions>
     </Card>
   )
@@ -99,6 +120,7 @@ const Home = () => {
           </Grid>
         )
       })}
+      <Divider variant="middle" />
       {publisheCard.map(card => {
         return (
           <Grid item xs={12} key={card.title} className={classes.tableCard}>

@@ -19,11 +19,21 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(4),
     alignItems: "stretch",
   },
+  paperFirstStep: {
+    padding: theme.spacing(4),
+    alignItems: "stretch",
+    width: "60%",
+    margin: theme.spacing(10, "auto"),
+  },
   paperContent: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
+  },
+  container: {
+    flex: "1 0 auto",
+    padding: 0,
   },
 }))
 
@@ -61,11 +71,11 @@ const NewDraftWizard = () => {
   const nextButtonRef = useRef<Formik>(null)
 
   return (
-    <Container maxWidth={wizardStep <= 0 ? "md" : "lg"}>
-      <Paper className={classes.paper}>
+    <Container maxWidth="false" className={classes.container}>
+      <Paper className={wizardStep <= 0 ? classes.paperFirstStep : classes.paper}>
         <div className={classes.paperContent}>{getStepContent(wizardStep, nextButtonRef)}</div>
-        <WizardFooter nextButtonRef={nextButtonRef} />
       </Paper>
+      <WizardFooter nextButtonRef={nextButtonRef} />
     </Container>
   )
 }

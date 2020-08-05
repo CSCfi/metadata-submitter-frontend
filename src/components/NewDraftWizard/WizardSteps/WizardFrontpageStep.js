@@ -5,6 +5,8 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import Button from "@material-ui/core/Button"
 import { increment } from "../../../features/wizardStepSlice"
 import Typography from "@material-ui/core/Typography"
+import Grid from "@material-ui/core/Grid"
+import Divider from "@material-ui/core/Divider"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Tooltip from "@material-ui/core/Tooltip"
@@ -47,26 +49,33 @@ const WizardFrontpageStep = () => {
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
   return (
-    <>
-      <WizardHeader headerText="Create new draft" />
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.newDraftButton}
-        disableElevation
-        onClick={() => dispatch(increment())}
-      >
-        New folder
-      </Button>
-      <div className={classes.submitNewObjectRow}>
-        <Typography component="h2" variant="subtitle2">
-          Or do you want to submit object?
-        </Typography>
-        <NewObjectTooltip title={submitObjectHelpText} arrow>
-          <HelpOutlineIcon className={classes.submitNewObjectTip} />
-        </NewObjectTooltip>
-      </div>
-    </>
+    <Grid container direction="row" justify="space-around" alignItems="center" spacing={2}>
+      <Grid item xs={12}>
+        <WizardHeader headerText="Create New Submission" />
+      </Grid>
+      <Grid item xs={5}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.newDraftButton}
+          disableElevation
+          onClick={() => dispatch(increment())}
+        >
+          New folder
+        </Button>
+      </Grid>
+      <Divider orientation="vertical" flexItem />
+      <Grid item xs={5}>
+        <div className={classes.submitNewObjectRow}>
+          <Typography component="h2" variant="subtitle2">
+            Or do you want to submit object?
+          </Typography>
+          <NewObjectTooltip title={submitObjectHelpText} arrow>
+            <HelpOutlineIcon className={classes.submitNewObjectTip} />
+          </NewObjectTooltip>
+        </div>
+      </Grid>
+    </Grid>
   )
 }
 

@@ -66,9 +66,9 @@ const Nav = () => {
           <Link href="#" className={classes.link}>
             Submissions
           </Link>
-          <Link component={RouterLink} aria-label="Create new draft" to="/newdraft">
+          <Link component={RouterLink} aria-label="Create Submission" to="/newdraft">
             <Button color="primary" variant="contained" className={classes.linkButton}>
-              Create new draft
+              Create Submission
             </Button>
           </Link>
         </nav>

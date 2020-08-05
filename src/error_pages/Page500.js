@@ -13,9 +13,8 @@ const Page500 = () => {
         <Card>
           <CardHeader title="500 Error" />
           <CardContent>
-            Oops, this means our server caused some sort of error we have not
-            thought of. We would like to fix the error, so could you maybe drop
-            us a line in <a href={errorLink}>our github repo</a>?
+            Oops, this means our server caused some sort of error we have not thought of. We would like to fix the
+            error, so could you maybe drop us a line in <a href={errorLink}>our github repo</a>?
           </CardContent>
         </Card>
       </Grid>

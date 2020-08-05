@@ -42,11 +42,7 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
   return (
     <div className={classes.footerRow}>
       <div>
-        <Link
-          component={RouterLink}
-          aria-label="Cancel adding a new draft"
-          to="/"
-        >
+        <Link component={RouterLink} aria-label="Cancel adding a new draft" to="/">
           <Button
             variant="contained"
             color="secondary"
@@ -57,11 +53,7 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
           </Button>
         </Link>
         {wizardStep >= 1 && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => dispatch(decrement())}
-          >
+          <Button variant="contained" color="primary" onClick={() => dispatch(decrement())}>
             Back
           </Button>
         )}
@@ -77,8 +69,7 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
             }
             if (
               wizardStep !== 2 &&
-              (!nextButtonRef.current ||
-                Object.entries(nextButtonRef.current.errors).length === 0)
+              (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
             ) {
               dispatch(increment())
             }

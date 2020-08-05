@@ -86,8 +86,7 @@ const studySchema = {
     studyType: {
       $id: "#/definitions/studyType",
       title: "Study Type",
-      description:
-        "The Study type presents a controlled vocabulary for expressing the overall purpose of the study.",
+      description: "The Study type presents a controlled vocabulary for expressing the overall purpose of the study.",
       type: "string",
       enum: [
         "Whole Genome Sequencing",
@@ -190,8 +189,7 @@ const studySchema = {
 
 const studyExample = {
   descriptor: {
-    studyTitle:
-      "Highly integrated epigenome maps in Arabidopsis - whole genome shotgun bisulfite sequencing",
+    studyTitle: "Highly integrated epigenome maps in Arabidopsis - whole genome shotgun bisulfite sequencing",
     studyType: "Transcriptome Analysis",
     studyAbstract:
       "Part of a set of highly integrated epigenome maps for Arabidopsis thaliana. Keywords: Illumina high-throughput bisulfite sequencing Overall design: Whole genome shotgun bisulfite sequencing of wildtype Arabidopsis plants (Columbia-0), and met1, drm1 drm2 cmt3, and ros1 dml2 dml3 null mutants using the Illumina Genetic Analyzer.",

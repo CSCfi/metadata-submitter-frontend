@@ -33,10 +33,7 @@ const useStyles = makeStyles(theme => ({
  * @param nextButtonRef: Mutable ref object from useRef-hook
  */
 
-const getStepContent = (
-  wizardStep: number,
-  nextButtonRef: ElementRef<typeof Formik>
-) => {
+const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof Formik>) => {
   switch (wizardStep) {
     case -1:
       return <WizardFrontpageStep />
@@ -66,9 +63,7 @@ const NewDraftWizard = () => {
   return (
     <Container maxWidth={wizardStep <= 0 ? "md" : "lg"}>
       <Paper className={classes.paper}>
-        <div className={classes.paperContent}>
-          {getStepContent(wizardStep, nextButtonRef)}
-        </div>
+        <div className={classes.paperContent}>{getStepContent(wizardStep, nextButtonRef)}</div>
         <WizardFooter nextButtonRef={nextButtonRef} />
       </Paper>
     </Container>

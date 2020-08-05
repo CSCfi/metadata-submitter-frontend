@@ -13,10 +13,7 @@ const createFromJSON = async (objectType: string, JSON: Object) => {
   return await api.post(`/${objectType}`, JSON)
 }
 
-const getObjectByAccessionId = async (
-  objectType: string,
-  accessionId: string
-) => {
+const getObjectByAccessionId = async (objectType: string, accessionId: string) => {
   return await api.get(`/${objectType}/${accessionId}`)
 }
 

@@ -1,7 +1,4 @@
-import objectTypeReducer, {
-  initialState,
-  setObjectType,
-} from "./objectTypeSlice"
+import objectTypeReducer, { initialState, setObjectType } from "./objectTypeSlice"
 
 describe("objectType slices reducers, actions and selectors", () => {
   test("should return the initial state on first run", () => {

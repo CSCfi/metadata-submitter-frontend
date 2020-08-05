@@ -29,16 +29,7 @@ const ObjectIndexTabs = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const { objectType } = useSelector(state => state.objectType)
-  const objectTypes = [
-    "study",
-    "sample",
-    "experiment",
-    "run",
-    "analysis",
-    "dac",
-    "policy",
-    "dataset",
-  ]
+  const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   return (
     <div className={classes.index}>
@@ -51,14 +42,7 @@ const ObjectIndexTabs = () => {
       >
         {objectTypes.map(type => {
           const typeCapitalized = type[0].toUpperCase() + type.substring(1)
-          return (
-            <Tab
-              label={typeCapitalized}
-              value={type}
-              key={type}
-              className={classes.tab}
-            />
-          )
+          return <Tab label={typeCapitalized} value={type} key={type} className={classes.tab} />
         })}
       </Tabs>
     </div>

@@ -72,13 +72,7 @@ const traverseValues = properties => {
 
 const buildFields = schema => {
   try {
-    let components = [
-      FormHeader(
-        `New ${schema["title"].toLowerCase()}`,
-        `${schema["title"]}-header`,
-        1
-      ),
-    ]
+    let components = [FormHeader(`New ${schema["title"].toLowerCase()}`, `${schema["title"]}-header`, 1)]
     components.push(...traverseFields(schema["properties"]))
     return components
   } catch (error) {
@@ -95,13 +89,7 @@ const traverseFields = (properties, path = "", level = 2) => {
     switch (property["type"]) {
       case "object": {
         components.push(FormHeader(label, name, level))
-        components.push(
-          ...traverseFields(
-            property["properties"],
-            `${path}${propertyKey}.`,
-            level + 1
-          )
-        )
+        components.push(...traverseFields(property["properties"], `${path}${propertyKey}.`, level + 1))
         break
       }
       case "array": {
@@ -125,9 +113,7 @@ const traverseFields = (properties, path = "", level = 2) => {
 const SolveSuitableComponent = (name, label, property) => {
   switch (property["type"]) {
     case "string": {
-      return property["enum"]
-        ? FormSelectField(name, label, property["enum"])
-        : FormTextField(name, label)
+      return property["enum"] ? FormSelectField(name, label, property["enum"]) : FormTextField(name, label)
     }
     case "integer": {
       return FormTextField(name, label)
@@ -162,18 +148,10 @@ const FormHeader = (text, name, level) => {
   )
 }
 
-const FormTextField = (name, label) => (
-  <Field name={name} key={name} label={label} component={TextField} />
-)
+const FormTextField = (name, label) => <Field name={name} key={name} label={label} component={TextField} />
 
 const FormNumberField = (name, label) => (
-  <Field
-    name={name}
-    key={name}
-    label={label}
-    type="number"
-    component={TextField}
-  />
+  <Field name={name} key={name} label={label} type="number" component={TextField} />
 )
 
 const FormSelectField = (name, label, options) => {
@@ -202,13 +180,7 @@ const FormSelectField = (name, label, options) => {
 }
 
 const FormBooleanField = (name, label) => (
-  <Field
-    name={name}
-    key={name}
-    type="checkbox"
-    component={CheckboxWithLabel}
-    Label={{ label: label }}
-  />
+  <Field name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
 )
 
 const FormCheckBoxArray = (name, items) => (
@@ -242,17 +214,10 @@ const FormArray = (name, label, property) => {
                     const innerName = `${name}.${index}.${item}`
                     const innerLabel = item
                     const innerProperty = property["items"]["properties"][item]
-                    return SolveSuitableComponent(
-                      innerName,
-                      innerLabel,
-                      innerProperty
-                    )
+                    return SolveSuitableComponent(innerName, innerLabel, innerProperty)
                   })}
                 </Paper>
-                <IconButton
-                  key={`${name}.${index}-removeButton`}
-                  onClick={() => remove(index)}
-                >
+                <IconButton key={`${name}.${index}-removeButton`} onClick={() => remove(index)}>
                   <RemoveIcon />
                 </IconButton>
               </div>

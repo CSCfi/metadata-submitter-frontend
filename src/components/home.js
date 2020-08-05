@@ -45,11 +45,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
           {folderTitles.map(folderTitle => {
             return (
               <ListItem button key={folderTitle}>
-                {folderType === "published" ? (
-                  <FolderIcon color="primary" />
-                ) : (
-                  <FolderOpenIcon color="primary" />
-                )}
+                {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                 <ListItemText primary={folderTitle} />
               </ListItem>
             )
@@ -75,23 +71,11 @@ const Home = () => {
     {
       title: "Your published submissions",
       folderType: "published",
-      submissions: [
-        "Published1",
-        "Published2",
-        "Published3",
-        "Published4",
-        "Published5",
-      ],
+      submissions: ["Published1", "Published2", "Published3", "Published4", "Published5"],
     },
   ]
   return (
-    <Grid
-      container
-      direction="row"
-      justify="center"
-      alignItems="stretch"
-      spacing={10}
-    >
+    <Grid container direction="row" justify="center" alignItems="stretch" spacing={10}>
       {cards.map(card => {
         return (
           <Grid item xs={6} key={card.title}>

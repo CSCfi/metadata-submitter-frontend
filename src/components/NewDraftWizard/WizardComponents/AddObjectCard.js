@@ -76,10 +76,7 @@ type ChooseProps = {
   buttonContents: Array<{ type: string, title: string }>,
 }
 
-const ChooseSubmission = ({
-  setSubmissionType,
-  buttonContents,
-}: ChooseProps) => {
+const ChooseSubmission = ({ setSubmissionType, buttonContents }: ChooseProps) => {
   const classes = useStyles()
   return (
     <div>
@@ -131,9 +128,7 @@ const AddObjectCard = () => {
       ) : (
         <>
           <CustomCardHeader title={cards[submissionType]["title"]} />
-          <CardContent className={classes.cardContent}>
-            {cards[submissionType]["component"]}
-          </CardContent>
+          <CardContent className={classes.cardContent}>{cards[submissionType]["component"]}</CardContent>
         </>
       )}
     </Card>

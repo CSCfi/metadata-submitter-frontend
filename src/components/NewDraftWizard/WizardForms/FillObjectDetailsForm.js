@@ -79,9 +79,7 @@ const FillObjectDetailsForm = () => {
         await JSONSchemaParser.dereferenceSchema(response.data)
         setFormSchema(response.data)
         setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
-        setInitialValues(
-          await JSONSchemaParser.buildInitialValues(response.data)
-        )
+        setInitialValues(await JSONSchemaParser.buildInitialValues(response.data))
       } else {
         setError(checkResponseError(response))
       }

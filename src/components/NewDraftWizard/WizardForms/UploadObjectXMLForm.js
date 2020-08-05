@@ -43,14 +43,7 @@ interface FileUploadProps extends FieldProps {
 
 const FileUpload = ({
   field,
-  form: {
-    isSubmitting,
-    touched,
-    errors,
-    values,
-    setFieldValue,
-    setFieldTouched,
-  },
+  form: { isSubmitting, touched, errors, values, setFieldValue, setFieldTouched },
   label,
   disabled = false,
   FormControlProps: formControlProps,
@@ -60,16 +53,8 @@ const FileUpload = ({
   return (
     <FormControl {...formControlProps} className={classes.root}>
       <div className={classes.fileField}>
-        <TextField
-          placeholder={values.file ? values.file.name : "Name"}
-          inputProps={{ readOnly: true }}
-        />
-        <Button
-          htmlFor="file-select-button"
-          variant="contained"
-          color="primary"
-          component="label"
-        >
+        <TextField placeholder={values.file ? values.file.name : "Name"} inputProps={{ readOnly: true }} />
+        <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
           {label}
         </Button>
         <Input
@@ -125,10 +110,7 @@ const UploadObjectXMLForm = () => {
           } else if (values.file.type !== "text/xml") {
             errors.file = "Please attach an XML file."
           } else {
-            const response = await submissionAPIService.validateXMLFile(
-              objectType,
-              values.file
-            )
+            const response = await submissionAPIService.validateXMLFile(objectType, values.file)
 
             if (!response.ok) {
               errors.file = checkResponseError(response)
@@ -148,16 +130,11 @@ const UploadObjectXMLForm = () => {
             minutes, please try saving the file again.`)
           }, 5000)
 
-          const response = await objectAPIService.createFromXML(
-            objectType,
-            values.file
-          )
+          const response = await objectAPIService.createFromXML(objectType, values.file)
 
           if (response.ok) {
             setSuccessStatus("success")
-            setSuccessMessage(
-              `Submitted with accessionid ${response.data.accessionId}`
-            )
+            setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
           } else {
             setFieldError("file", checkResponseError(response))
           }
@@ -173,9 +150,7 @@ const UploadObjectXMLForm = () => {
               variant="outlined"
               color="primary"
               className={classes.submitButton}
-              disabled={
-                isSubmitting || touched.file == null || errors.file != null
-              }
+              disabled={isSubmitting || touched.file == null || errors.file != null}
               onClick={submitForm}
             >
               Save

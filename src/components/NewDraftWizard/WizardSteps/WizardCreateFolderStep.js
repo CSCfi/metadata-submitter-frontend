@@ -67,8 +67,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
       validate={values => {
         const errors = {}
         if (!values.name) errors.name = "Please give a name for folder."
-        if (!values.description)
-          errors.description = "Please give a description for folder."
+        if (!values.description) errors.description = "Please give a description for folder."
         return errors
       }}
       onSubmit={(values, { setSubmitting }) => {
@@ -78,14 +77,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
     >
       {() => (
         <Form className={classes.root}>
-          <Field
-            name="name"
-            label="Name"
-            component={TextField}
-            variant="outlined"
-            fullWidth
-            required
-          />
+          <Field name="name" label="Name" component={TextField} variant="outlined" fullWidth required />
           <Field
             name="description"
             label="Description"

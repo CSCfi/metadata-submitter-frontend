@@ -20,11 +20,7 @@ type DraftHeaderProps = {
 const WizardHeader = ({ headerText }: DraftHeaderProps) => {
   const classes = useStyles()
   return (
-    <Typography
-      component="h1"
-      variant="subtitle1"
-      className={classes.paperTitle}
-    >
+    <Typography component="h1" variant="subtitle1" className={classes.paperTitle}>
       {headerText}
     </Typography>
   )

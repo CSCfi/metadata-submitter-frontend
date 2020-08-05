@@ -40,13 +40,8 @@ const WizardAddObjectStep = () => {
         <div className={classes.formBox}>
           {objectType === "" ? (
             <div className={classes.objectInfo}>
-              <p>
-                Add objects by clicking the name, then fill form or upload XML
-                File.
-              </p>
-              <p>
-                You can also add objects and edit them after saving your draft.
-              </p>
+              <p>Add objects by clicking the name, then fill form or upload XML File.</p>
+              <p>You can also add objects and edit them after saving your draft.</p>
             </div>
           ) : (
             <AddObjectCard />

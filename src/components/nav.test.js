@@ -18,7 +18,7 @@ describe("NavBar", () => {
   test("has correct nav links rendered", () => {
     const nav = component.container.querySelector("nav")
     const expectedLinksLength = 4
-    const expectedLinks = ["Open submissions", "Submissions", "Create new draft"]
+    const expectedLinks = ["Open submissions", "Submissions", "Create Submission"]
     expect(nav.children).toHaveLength(expectedLinksLength)
     expectedLinks.forEach(link => {
       const linkElement = component.getByText(link)

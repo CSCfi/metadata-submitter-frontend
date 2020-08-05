@@ -59,7 +59,7 @@ const WizardFrontpageStep = () => {
         New folder
       </Button>
       <div className={classes.submitNewObjectRow}>
-        <Typography component="h2" variant="subtitle1">
+        <Typography component="h2" variant="subtitle2">
           Or do you want to submit object?
         </Typography>
         <NewObjectTooltip title={submitObjectHelpText} arrow>

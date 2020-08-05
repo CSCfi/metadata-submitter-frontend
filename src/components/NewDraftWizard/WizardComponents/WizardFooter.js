@@ -17,6 +17,21 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    flexShrink: 0,
+    borderTop: "solid 1px #ccc",
+    backgroundColor: "white",
+    position: "fixed",
+    left: 0,
+    bottom: 0,
+    padding: "10px",
+    height: "60px",
+    width: "100%",
+  },
+  phantom: {
+    display: "block",
+    padding: "20px",
+    height: "60px",
+    width: "100%",
   },
 }))
 
@@ -40,44 +55,47 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
   return (
-    <div className={classes.footerRow}>
-      <div>
-        <Link component={RouterLink} aria-label="Cancel adding a new draft" to="/">
+    <div>
+      <div className={classes.phantom} />
+      <div className={classes.footerRow}>
+        <div>
+          <Link component={RouterLink} aria-label="Cancel adding a new draft" to="/">
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.cancelButton}
+              onClick={() => dispatch(reset())}
+            >
+              Cancel
+            </Button>
+          </Link>
+          {wizardStep >= 1 && (
+            <Button variant="contained" color="primary" onClick={() => dispatch(decrement())}>
+              Back
+            </Button>
+          )}
+        </div>
+        {wizardStep >= 0 && (
           <Button
             variant="contained"
-            color="secondary"
-            className={classes.cancelButton}
-            onClick={() => dispatch(reset())}
+            color="primary"
+            disabled={nextButtonRef?.current?.isSubmitting}
+            onClick={async () => {
+              if (nextButtonRef.current) {
+                await nextButtonRef.current.submitForm()
+              }
+              if (
+                wizardStep !== 2 &&
+                (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
+              ) {
+                dispatch(increment())
+              }
+            }}
           >
-            Cancel
-          </Button>
-        </Link>
-        {wizardStep >= 1 && (
-          <Button variant="contained" color="primary" onClick={() => dispatch(decrement())}>
-            Back
+            {wizardStep === 2 ? "Save draft" : "Next"}
           </Button>
         )}
       </div>
-      {wizardStep >= 0 && (
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={nextButtonRef?.current?.isSubmitting}
-          onClick={async () => {
-            if (nextButtonRef.current) {
-              await nextButtonRef.current.submitForm()
-            }
-            if (
-              wizardStep !== 2 &&
-              (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
-            ) {
-              dispatch(increment())
-            }
-          }}
-        >
-          {wizardStep === 2 ? "Save draft" : "Next"}
-        </Button>
-      )}
     </div>
   )
 }

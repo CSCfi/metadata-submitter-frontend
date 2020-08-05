@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: "100%",
   },
   brandLink: {
-    padding: ".5rem .75rem",
+    padding: theme.spacing(0.5, 0.75),
   },
   link: {
     margin: theme.spacing(1, 1.5),

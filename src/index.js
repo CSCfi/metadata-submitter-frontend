@@ -20,6 +20,11 @@ const CSCtheme = createMuiTheme({
         paddingRight: "32px",
       },
     },
+    MuiTypography: {
+      subtitle1: {
+        fontWeight: 600,
+      },
+    },
   },
   palette: {
     primary: {
@@ -27,6 +32,9 @@ const CSCtheme = createMuiTheme({
     },
     secondary: {
       main: "#dfe1e3",
+    },
+    background: {
+      default: "white",
     },
   },
   props: {

@@ -3,6 +3,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { Provider } from "react-redux"
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
+import "style.css"
 
 import store from "store"
 import App from "App"

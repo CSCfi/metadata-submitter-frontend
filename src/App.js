@@ -35,7 +35,11 @@ const App = () => {
             <Page500 />
           </Route>
           <Route exact path="/">
-            <Container component="main" className={classes.content}>
+            <Container
+              component="main"
+              maxWidth="md"
+              className={classes.content}
+            >
               <Home />
             </Container>
           </Route>

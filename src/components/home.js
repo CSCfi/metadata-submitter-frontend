@@ -48,21 +48,13 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const { title, folderType, folderTitles } = props
   return (
     <Card className={classes.card} variant="outlined">
-      <CardHeader
-        title={title}
-        titleTypographyProps={{ variant: "subtitle1" }}
-        className={classes.cardTitle}
-      />
+      <CardHeader title={title} titleTypographyProps={{ variant: "subtitle1" }} className={classes.cardTitle} />
       <CardContent className={classes.cardContent}>
         <List>
           {folderTitles.map(folderTitle => {
             return (
               <ListItem button key={folderTitle} dense>
-                {folderType === "published" ? (
-                  <FolderIcon color="primary" />
-                ) : (
-                  <FolderOpenIcon color="primary" />
-                )}
+                {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                 <ListItemText primary={folderTitle} />
               </ListItem>
             )
@@ -70,12 +62,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
         </List>
       </CardContent>
       <CardActions>
-        <Grid
-          container
-          alignItems="flex-start"
-          justify="flex-end"
-          direction="row"
-        >
+        <Grid container alignItems="flex-start" justify="flex-end" direction="row">
           <Button variant="outlined" color="primary">
             See all
           </Button>
@@ -102,12 +89,7 @@ const Home = () => {
     },
   ]
   return (
-    <Grid
-      container
-      direction="column"
-      justify="space-between"
-      alignItems="stretch"
-    >
+    <Grid container direction="column" justify="space-between" alignItems="stretch">
       {draftCard.map(card => {
         return (
           <Grid item xs={12} key={card.title} className={classes.tableCard}>

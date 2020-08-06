@@ -10,9 +10,6 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
-  backButton: {
-    marginLeft: theme.spacing(2),
-  },
   footerRow: {
     display: "flex",
     flexDirection: "row",
@@ -26,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     padding: "10px",
     height: "60px",
     width: "100%",
+  },
+  footerButton: {
+    margin: theme.spacing(0, 1),
   },
   phantom: {
     display: "block",
@@ -59,12 +59,12 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
         <div>
-          <Link component={RouterLink} aria-label="Cancel adding a new draft" to="/">
+          <Link component={RouterLink} aria-label="Cancel creating a new submission" to="/">
             <Button
               variant="contained"
               color="secondary"
-              className={classes.cancelButton}
               onClick={() => dispatch(reset())}
+              className={classes.footerButton}
             >
               Cancel
             </Button>
@@ -76,24 +76,30 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
           )}
         </div>
         {wizardStep >= 0 && (
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={nextButtonRef?.current?.isSubmitting}
-            onClick={async () => {
-              if (nextButtonRef.current) {
-                await nextButtonRef.current.submitForm()
-              }
-              if (
-                wizardStep !== 2 &&
-                (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
-              ) {
-                dispatch(increment())
-              }
-            }}
-          >
-            {wizardStep === 2 ? "Save draft" : "Next"}
-          </Button>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={nextButtonRef?.current?.isSubmitting}
+              className={classes.footerButton}
+              onClick={async () => {
+                if (nextButtonRef.current) {
+                  await nextButtonRef.current.submitForm()
+                }
+                if (
+                  wizardStep !== 2 &&
+                  (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
+                ) {
+                  dispatch(increment())
+                }
+              }}
+            >
+              Save and Exit
+            </Button>
+            <Button variant="contained" disabled={wizardStep === 2 ? false : true}>
+              Publish
+            </Button>
+          </div>
         )}
       </div>
     </div>

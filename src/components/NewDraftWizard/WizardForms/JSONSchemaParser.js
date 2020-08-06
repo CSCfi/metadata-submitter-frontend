@@ -1,4 +1,5 @@
-import React from "react"
+//@flow
+import * as React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
 import { FastField, FieldArray } from "formik"
@@ -79,11 +80,11 @@ const buildFields = (schema, values) => {
   }
 }
 
-const pathToName = path => path.join(".")
+const pathToName = ({ path }: { path: Array<string> }) => path.join(".")
 
 const traverseFields = (object, values, path) => {
   if (object["oneOf"]) return
-  const name = pathToName(path)
+  const name = pathToName({ path })
   const label = object["title"] ? object["title"] : name
   switch (object["type"]) {
     case "object": {
@@ -94,28 +95,33 @@ const traverseFields = (object, values, path) => {
         components.push(traverseFields(property, values[propertyKey], [...path, propertyKey]))
       }
       return (
-        <div className="formSection" key={`${name}-section`}>
-          <FormHeader name={name} text={label} level={path.length + 1} />
+        <FormSection name={name} label={label} level={path.length + 1}>
           {components}
-        </div>
+        </FormSection>
       )
     }
     case "string": {
-      return object["enum"] ? FormSelectField(name, label, object["enum"]) : FormTextField(name, label)
+      return object["enum"] ? (
+        <FormSelectField name={name} label={label} options={object["enum"]} />
+      ) : (
+        <FormTextField name={name} label={label} />
+      )
     }
     case "integer": {
-      return FormTextField(name, label)
+      return <FormTextField name={name} label={label} />
     }
     case "number": {
-      return FormNumberField(name, label)
+      return <FormNumberField name={name} label={label} />
     }
     case "boolean": {
-      return FormBooleanField(name, label)
+      return <FormBooleanField name={name} label={label} />
     }
     case "array": {
-      return object["items"]["enum"]
-        ? FormCheckBoxArray(name, object["items"]["enum"])
-        : FormArray(object["items"], values, path)
+      return object["items"]["enum"] ? (
+        <FormCheckBoxArray name={name} label={label} options={object["items"]["enum"]} />
+      ) : (
+        <FormArray object={object["items"]} values={values} path={path} />
+      )
     }
     default: {
       console.error(`
@@ -129,22 +135,32 @@ const traverseFields = (object, values, path) => {
   }
 }
 
-const FormHeader = (text, name, level) => {
-  const variant = level > 6 ? "body1" : `h${level}`
+type FormFieldBase = {
+  name: string,
+  label: string,
+}
+
+const FormSection = (props: FormFieldBase & { level: Number, children?: React.Node }) => {
+  const { name, label, level } = props
   return (
-    <Typography variant={variant} key={`${name}-header`}>
-      {text}
-    </Typography>
+    <div className="formSection" key={`${name}-section`}>
+      <Typography key={`${name}-header`} variant={`h${level}`}>
+        {label}
+      </Typography>
+      {props.children}
+    </div>
   )
 }
 
-const FormTextField = (name, label) => <FastField name={name} key={name} label={label} component={TextField} />
+const FormTextField = ({ name, label }: FormFieldBase) => (
+  <FastField name={name} key={name} label={label} component={TextField} />
+)
 
-const FormNumberField = (name, label) => (
+const FormNumberField = ({ name, label }: FormFieldBase) => (
   <FastField name={name} key={name} label={label} type="number" component={TextField} />
 )
 
-const FormSelectField = (name, label, options) => {
+const FormSelectField = ({ name, label, options }: FormFieldBase & { options: Array<string> }) => {
   return (
     <FastField name={name} key={name} component={TextField} select label={label} SelectProps={{ native: true }}>
       <option aria-label="None" value="" disabled />
@@ -157,12 +173,13 @@ const FormSelectField = (name, label, options) => {
   )
 }
 
-const FormBooleanField = (name, label) => (
+const FormBooleanField = ({ name, label }: FormFieldBase) => (
   <FastField name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
 )
 
-const FormCheckBoxArray = (name, options) => (
+const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: Array<string> }) => (
   <div key={name}>
+    {label} - check from following options
     {options.map(option => (
       <FastField
         key={`${name}-${option}`}
@@ -176,13 +193,19 @@ const FormCheckBoxArray = (name, options) => (
   </div>
 )
 
-const FormArray = (object, values, path) => {
-  const name = pathToName(path)
+type FormArrayProps = {
+  object: any,
+  values: any,
+  path: Array<string>,
+}
+
+const FormArray = ({ object, values, path }: FormArrayProps) => {
+  const name = pathToName({ path })
   const items = traverseValues(object)
   return (
     <FieldArray name={name} key={`${name}-array`}>
       {({ remove, push }) => (
-        <div className="array">
+        <div className="array" key={name}>
           {values.length > 0 &&
             values.map((_, index) => (
               <div className="arrayRow" key={`${name}.${index}`}>

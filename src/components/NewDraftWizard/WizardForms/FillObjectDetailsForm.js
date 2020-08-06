@@ -54,8 +54,8 @@ const checkResponseError = response => {
   }
 }
 
-interface FormFieldsProps {
-  formSchema: any;
+type FormFieldsProps = {
+  formSchema: any,
 }
 
 const FormFields = ({ formSchema }: FormFieldsProps) => {
@@ -99,7 +99,7 @@ const FillObjectDetailsForm = () => {
         console.log(JSON.stringify(values, null, 2))
       }}
     >
-      {(values) => (
+      {() => (
         <Form>
           <FormFields formSchema={formSchema} />
         </Form>

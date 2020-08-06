@@ -93,7 +93,12 @@ const traverseFields = (object, values, path) => {
         const property = properties[propertyKey]
         components.push(traverseFields(property, values[propertyKey], [...path, propertyKey]))
       }
-      return components
+      return (
+        <div className="formSection" key={`${name}-section`}>
+          <FormHeader name={name} text={label} level={path.length + 1} />
+          {components}
+        </div>
+      )
     }
     case "string": {
       return object["enum"] ? FormSelectField(name, label, object["enum"]) : FormTextField(name, label)
@@ -216,27 +221,3 @@ export default {
   buildFields,
   buildYupSchema,
 }
-
-//case "object": {
-//  return [FormHeader(label, name, level), ...traverseFields(property["properties"], `${path}${name}.`, level + 1)]
-//}
-//switch (property["type"]) {
-//  case "object": {
-//    components.push(FormHeader(label, name, level))
-//    components.push(...traverseFields(property["properties"], `${path}${propertyKey}.`, level + 1))
-//    break
-//  }
-//  case "array": {
-//    components.push(FormHeader(label, name, level))
-//    const component = property["items"]["enum"]
-//      ? FormCheckBoxArray(name, property["items"]["enum"])
-//      : FormArray(name, label, property, path, level)
-//    components.push(component)
-//    break
-//  }
-//  default: {
-//    //const component = SolveSuitableComponent(name, label, property)
-//    //if (component) components.push(component)
-//    break
-//  }
-//}

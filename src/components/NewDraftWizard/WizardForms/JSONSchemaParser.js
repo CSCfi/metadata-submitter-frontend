@@ -36,6 +36,7 @@ const traverseValues = properties => {
   let values = {}
   for (const propertyKey in properties) {
     const property = properties[propertyKey]
+    if (property["oneOf"]) continue
     switch (property["type"]) {
       case "object": {
         values[propertyKey] = traverseValues(property["properties"])
@@ -86,6 +87,10 @@ const traverseFields = (properties, path = "", level = 2) => {
     const property = properties[propertyKey]
     const name = `${path}${propertyKey}`
     const label = property["title"] ? property["title"] : propertyKey
+    if (property["oneOf"]) {
+      components.push(OneOfSelectField)
+      continue
+    }
     switch (property["type"]) {
       case "object": {
         components.push(FormHeader(label, name, level))
@@ -96,7 +101,7 @@ const traverseFields = (properties, path = "", level = 2) => {
         components.push(FormHeader(label, name, level))
         const component = property["items"]["enum"]
           ? FormCheckBoxArray(name, property["items"]["enum"])
-          : FormArray(name, label, property, level)
+          : FormArray(name, label, property, level, path)
         components.push(component)
         break
       }
@@ -110,7 +115,14 @@ const traverseFields = (properties, path = "", level = 2) => {
   return components
 }
 
-const SolveSuitableComponent = (name, label, property) => {
+const OneOfSelectField = () => (
+  <TextField id="joujou" select label="Select" value="jou" onChange={() => console.log("newvalue")}>
+    <option value="mage">Mage</option>
+    <option value="gema">Gema</option>
+  </TextField>
+)
+
+const SolveSuitableComponent = (name, label, property, level) => {
   switch (property["type"]) {
     case "string": {
       return property["enum"] ? FormSelectField(name, label, property["enum"]) : FormTextField(name, label)
@@ -123,6 +135,9 @@ const SolveSuitableComponent = (name, label, property) => {
     }
     case "boolean": {
       return FormBooleanField(name, label)
+    }
+    case "object": {
+      return [FormHeader(label, name, level), ...traverseFields(property["properties"], `na.`, level + 1)]
     }
     case "array": {
       console.error("Arrays inside arrays are not supported")
@@ -155,7 +170,7 @@ const FormNumberField = (name, label) => (
 )
 
 const FormSelectField = (name, label, options) => {
-  const [, meta] = useField(name)
+  //const [, meta] = useField(name)
   return (
     <Field
       name={name}
@@ -166,8 +181,8 @@ const FormSelectField = (name, label, options) => {
       SelectProps={{
         native: true,
       }}
-      error={meta.touched && !!meta.error}
-      helperText={meta.touched && meta.error}
+      //error={meta.touched && !!meta.error}
+      //helperText={meta.touched && meta.error}
     >
       <option aria-label="None" value="" disabled />
       {options.map(option => (
@@ -198,7 +213,7 @@ const FormCheckBoxArray = (name, items) => (
   </div>
 )
 
-const FormArray = (name, label, property) => {
+const FormArray = (name, label, property, path, level) => {
   const itemStructure = traverseValues(property["items"]["properties"])
   const [, meta] = useField(name)
   const { value } = meta
@@ -214,7 +229,7 @@ const FormArray = (name, label, property) => {
                     const innerName = `${name}.${index}.${item}`
                     const innerLabel = item
                     const innerProperty = property["items"]["properties"][item]
-                    return SolveSuitableComponent(innerName, innerLabel, innerProperty)
+                    return SolveSuitableComponent(innerName, innerLabel, innerProperty, path, level)
                   })}
                 </Paper>
                 <IconButton key={`${name}.${index}-removeButton`} onClick={() => remove(index)}>

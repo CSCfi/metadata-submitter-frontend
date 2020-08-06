@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexWrap: "wrap",
     "& .MuiTextField-root": {
-      width: "45%",
+      width: "48%",
       margin: theme.spacing(1),
     },
     "& .MuiTypography-root": {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
     "& .MuiTypography-h3": {
-      width: "45%",
+      width: "100%",
     },
     "& .array": {
       margin: theme.spacing(1),
@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
         alignItems: "center",
         marginBottom: theme.spacing(1),
         width: "100%",
+        "& .MuiTextField-root": {
+          width: "95%",
+        },
       },
     },
   },

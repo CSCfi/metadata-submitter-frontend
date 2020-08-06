@@ -99,10 +99,9 @@ const FillObjectDetailsForm = () => {
         console.log(JSON.stringify(values, null, 2))
       }}
     >
-      {() => (
+      {(values) => (
         <Form>
           <FormFields formSchema={formSchema} />
-          <button type="submit">Submit</button>
         </Form>
       )}
     </Formik>

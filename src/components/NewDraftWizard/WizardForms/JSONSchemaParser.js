@@ -1,7 +1,7 @@
 import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
-import { Field, FieldArray, useField } from "formik"
+import { FastField, FieldArray, useField } from "formik"
 import { CheckboxWithLabel, TextField } from "formik-material-ui"
 import AddIcon from "@material-ui/icons/Add"
 import Typography from "@material-ui/core/Typography"
@@ -101,7 +101,7 @@ const traverseFields = (properties, path = "", level = 2) => {
         components.push(FormHeader(label, name, level))
         const component = property["items"]["enum"]
           ? FormCheckBoxArray(name, property["items"]["enum"])
-          : FormArray(name, label, property, level, path)
+          : FormArray(name, label, property, path, level)
         components.push(component)
         break
       }
@@ -122,7 +122,7 @@ const OneOfSelectField = () => (
   </TextField>
 )
 
-const SolveSuitableComponent = (name, label, property, level) => {
+const SolveSuitableComponent = (name, label, property, path, level) => {
   switch (property["type"]) {
     case "string": {
       return property["enum"] ? FormSelectField(name, label, property["enum"]) : FormTextField(name, label)
@@ -137,7 +137,7 @@ const SolveSuitableComponent = (name, label, property, level) => {
       return FormBooleanField(name, label)
     }
     case "object": {
-      return [FormHeader(label, name, level), ...traverseFields(property["properties"], `na.`, level + 1)]
+      return [FormHeader(label, name, level), ...traverseFields(property["properties"], `${path}${name}.`, level + 1)]
     }
     case "array": {
       console.error("Arrays inside arrays are not supported")
@@ -163,16 +163,15 @@ const FormHeader = (text, name, level) => {
   )
 }
 
-const FormTextField = (name, label) => <Field name={name} key={name} label={label} component={TextField} />
+const FormTextField = (name, label) => <FastField name={name} key={name} label={label} component={TextField} />
 
 const FormNumberField = (name, label) => (
-  <Field name={name} key={name} label={label} type="number" component={TextField} />
+  <FastField name={name} key={name} label={label} type="number" component={TextField} />
 )
 
 const FormSelectField = (name, label, options) => {
-  //const [, meta] = useField(name)
   return (
-    <Field
+    <FastField
       name={name}
       key={name}
       component={TextField}
@@ -181,8 +180,6 @@ const FormSelectField = (name, label, options) => {
       SelectProps={{
         native: true,
       }}
-      //error={meta.touched && !!meta.error}
-      //helperText={meta.touched && meta.error}
     >
       <option aria-label="None" value="" disabled />
       {options.map(option => (
@@ -190,18 +187,18 @@ const FormSelectField = (name, label, options) => {
           {option}
         </option>
       ))}
-    </Field>
+    </FastField>
   )
 }
 
 const FormBooleanField = (name, label) => (
-  <Field name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
+  <FastField name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
 )
 
 const FormCheckBoxArray = (name, items) => (
   <div key={name}>
     {items.map(item => (
-      <Field
+      <FastField
         key={`${name}-${item}`}
         component={CheckboxWithLabel}
         name={name}

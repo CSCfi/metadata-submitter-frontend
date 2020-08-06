@@ -11,12 +11,12 @@ import RemoveIcon from "@material-ui/icons/Remove"
 import Button from "@material-ui/core/Button"
 import Paper from "@material-ui/core/Paper"
 
-const dereferenceSchema = async schema => {
+const dereferenceSchema = async (schema: any) => {
   await $RefParser.dereference(schema)
   delete schema["definitions"]
 }
 
-const buildYupSchema = async schema => {
+const buildYupSchema = async (schema: any) => {
   try {
     const config = {}
     return buildYup(schema, config)
@@ -25,7 +25,7 @@ const buildYupSchema = async schema => {
   }
 }
 
-const buildInitialValues = schema => {
+const buildInitialValues = (schema: any) => {
   try {
     return traverseValues(schema)
   } catch (error) {
@@ -33,7 +33,7 @@ const buildInitialValues = schema => {
   }
 }
 
-const traverseValues = object => {
+const traverseValues = (object: any) => {
   if (object["oneOf"]) return
   switch (object["type"]) {
     case "object": {
@@ -72,7 +72,7 @@ const traverseValues = object => {
   }
 }
 
-const buildFields = (schema, values) => {
+const buildFields = (schema: any, values: any) => {
   try {
     return traverseFields(schema, values, [])
   } catch (error) {
@@ -80,11 +80,11 @@ const buildFields = (schema, values) => {
   }
 }
 
-const pathToName = ({ path }: { path: Array<string> }) => path.join(".")
+const pathToName = (path: string[]) => path.join(".")
 
-const traverseFields = (object, values, path) => {
+const traverseFields = (object: any, values: any, path: string[]) => {
   if (object["oneOf"]) return
-  const name = pathToName({ path })
+  const name = pathToName(path)
   const label = object["title"] ? object["title"] : name
   switch (object["type"]) {
     case "object": {
@@ -95,32 +95,32 @@ const traverseFields = (object, values, path) => {
         components.push(traverseFields(property, values[propertyKey], [...path, propertyKey]))
       }
       return (
-        <FormSection name={name} label={label} level={path.length + 1}>
+        <FormSection key={name} name={name} label={label} level={path.length + 1}>
           {components}
         </FormSection>
       )
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField name={name} label={label} options={object["enum"]} />
+        <FormSelectField key={name} name={name} label={label} options={object["enum"]} />
       ) : (
-        <FormTextField name={name} label={label} />
+        <FormTextField key={name} name={name} label={label} />
       )
     }
     case "integer": {
-      return <FormTextField name={name} label={label} />
+      return <FormTextField key={name} name={name} label={label} />
     }
     case "number": {
-      return <FormNumberField name={name} label={label} />
+      return <FormNumberField key={name} name={name} label={label} />
     }
     case "boolean": {
-      return <FormBooleanField name={name} label={label} />
+      return <FormBooleanField key={name} name={name} label={label} />
     }
     case "array": {
       return object["items"]["enum"] ? (
-        <FormCheckBoxArray name={name} label={label} options={object["items"]["enum"]} />
+        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} />
       ) : (
-        <FormArray object={object["items"]} values={values} path={path} />
+        <FormArray key={name} object={object["items"]} values={values} path={path} />
       )
     }
     default: {
@@ -140,7 +140,7 @@ type FormFieldBase = {
   label: string,
 }
 
-const FormSection = (props: FormFieldBase & { level: Number, children?: React.Node }) => {
+const FormSection = (props: FormFieldBase & { level: number, children?: React.Node }) => {
   const { name, label, level } = props
   return (
     <div className="formSection" key={`${name}-section`}>
@@ -152,17 +152,15 @@ const FormSection = (props: FormFieldBase & { level: Number, children?: React.No
   )
 }
 
-const FormTextField = ({ name, label }: FormFieldBase) => (
-  <FastField name={name} key={name} label={label} component={TextField} />
-)
+const FormTextField = ({ name, label }: FormFieldBase) => <FastField name={name} label={label} component={TextField} />
 
 const FormNumberField = ({ name, label }: FormFieldBase) => (
-  <FastField name={name} key={name} label={label} type="number" component={TextField} />
+  <FastField name={name} label={label} type="number" component={TextField} />
 )
 
-const FormSelectField = ({ name, label, options }: FormFieldBase & { options: Array<string> }) => {
+const FormSelectField = ({ name, label, options }: FormFieldBase & { options: string[] }) => {
   return (
-    <FastField name={name} key={name} component={TextField} select label={label} SelectProps={{ native: true }}>
+    <FastField name={name} component={TextField} select label={label} SelectProps={{ native: true }}>
       <option aria-label="None" value="" disabled />
       {options.map(option => (
         <option key={`${name}-${option}`} value={option}>
@@ -174,11 +172,11 @@ const FormSelectField = ({ name, label, options }: FormFieldBase & { options: Ar
 }
 
 const FormBooleanField = ({ name, label }: FormFieldBase) => (
-  <FastField name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
+  <FastField name={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
 )
 
-const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: Array<string> }) => (
-  <div key={name}>
+const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
+  <div>
     {label} - check from following options
     {options.map(option => (
       <FastField
@@ -200,36 +198,30 @@ type FormArrayProps = {
 }
 
 const FormArray = ({ object, values, path }: FormArrayProps) => {
-  const name = pathToName({ path })
-  const items = traverseValues(object)
+  const name = pathToName(path)
+  const items = (traverseValues(object): any) // Type cast to object
   return (
-    <FieldArray name={name} key={`${name}-array`}>
+    <FieldArray name={name}>
       {({ remove, push }) => (
-        <div className="array" key={name}>
+        <div className="array">
           {values.length > 0 &&
             values.map((_, index) => (
               <div className="arrayRow" key={`${name}.${index}`}>
                 <Paper elevation={2}>
                   {Object.keys(items).map(item => {
                     const [lastPathItem] = path.slice(-1)
+                    const pathWithoutLastItem = path.slice(0, -1)
                     const lastPathItemWithIndex = `${lastPathItem}[${index}]`
-                    const newPath = [path.slice(0, -1), lastPathItemWithIndex, item]
+                    const newPath = [...pathWithoutLastItem, lastPathItemWithIndex, item]
                     return traverseFields(object["properties"][item], values[index][item], newPath)
                   })}
                 </Paper>
-                <IconButton key={`${name}.${index}-removeButton`} onClick={() => remove(index)}>
+                <IconButton onClick={() => remove(index)}>
                   <RemoveIcon />
                 </IconButton>
               </div>
             ))}
-          <Button
-            key={`${name}-addButton`}
-            variant="contained"
-            color="primary"
-            size="small"
-            startIcon={<AddIcon />}
-            onClick={() => push(items)}
-          >
+          <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => push(items)}>
             Add new item
           </Button>
         </div>

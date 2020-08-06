@@ -1,7 +1,7 @@
 import React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { buildYup } from "schema-to-yup"
-import { FastField, FieldArray, useField } from "formik"
+import { FastField, FieldArray } from "formik"
 import { CheckboxWithLabel, TextField } from "formik-material-ui"
 import AddIcon from "@material-ui/icons/Add"
 import Typography from "@material-ui/core/Typography"
@@ -71,61 +71,32 @@ const traverseValues = object => {
   }
 }
 
-const buildFields = schema => {
+const buildFields = (schema, values) => {
   try {
-    let components = [FormHeader(`New ${schema["title"].toLowerCase()}`, `${schema["title"]}-header`, 1)]
-    components.push(...traverseFields(schema["properties"]))
-    return components
+    return traverseFields(schema, values, [])
   } catch (error) {
     console.error(error)
   }
 }
 
-const traverseFields = (properties, path = "", level = 2) => {
-  let components = []
-  for (const propertyKey in properties) {
-    const property = properties[propertyKey]
-    const name = `${path}${propertyKey}`
-    const label = property["title"] ? property["title"] : propertyKey
-    if (property["oneOf"]) {
-      components.push(OneOfSelectField)
-      continue
-    }
-    switch (property["type"]) {
-      case "object": {
-        components.push(FormHeader(label, name, level))
-        components.push(...traverseFields(property["properties"], `${path}${propertyKey}.`, level + 1))
-        break
-      }
-      case "array": {
-        components.push(FormHeader(label, name, level))
-        const component = property["items"]["enum"]
-          ? FormCheckBoxArray(name, property["items"]["enum"])
-          : FormArray(name, label, property, path, level)
-        components.push(component)
-        break
-      }
-      default: {
-        const component = SolveSuitableComponent(name, label, property)
-        if (component) components.push(component)
-        break
-      }
-    }
-  }
-  return components
-}
+const pathToName = path => path.join(".")
 
-const OneOfSelectField = () => (
-  <TextField id="joujou" select label="Select" value="jou" onChange={() => console.log("newvalue")}>
-    <option value="mage">Mage</option>
-    <option value="gema">Gema</option>
-  </TextField>
-)
-
-const SolveSuitableComponent = (name, label, property, path, level) => {
-  switch (property["type"]) {
+const traverseFields = (object, values, path) => {
+  if (object["oneOf"]) return
+  const name = pathToName(path)
+  const label = object["title"] ? object["title"] : name
+  switch (object["type"]) {
+    case "object": {
+      let components = []
+      const properties = object["properties"]
+      for (const propertyKey in properties) {
+        const property = properties[propertyKey]
+        components.push(traverseFields(property, values[propertyKey], [...path, propertyKey]))
+      }
+      return components
+    }
     case "string": {
-      return property["enum"] ? FormSelectField(name, label, property["enum"]) : FormTextField(name, label)
+      return object["enum"] ? FormSelectField(name, label, object["enum"]) : FormTextField(name, label)
     }
     case "integer": {
       return FormTextField(name, label)
@@ -136,19 +107,18 @@ const SolveSuitableComponent = (name, label, property, path, level) => {
     case "boolean": {
       return FormBooleanField(name, label)
     }
-    case "object": {
-      return [FormHeader(label, name, level), ...traverseFields(property["properties"], `${path}${name}.`, level + 1)]
-    }
     case "array": {
-      console.error("Arrays inside arrays are not supported")
-      return null
+      return object["items"]["enum"]
+        ? FormCheckBoxArray(name, object["items"]["enum"])
+        : FormArray(object["items"], values, path)
     }
     default: {
       console.error(`
-        No parsing support for type ${property["type"]} yet. 
-        Details about this object: 
-        `)
-      console.error(JSON.stringify(property))
+      No field parsing support for type ${object["type"]} yet.
+      
+      Pretty printed version of object with unsupported type:
+      ${JSON.stringify(object, null, 2)}
+      `)
       return null
     }
   }
@@ -171,19 +141,10 @@ const FormNumberField = (name, label) => (
 
 const FormSelectField = (name, label, options) => {
   return (
-    <FastField
-      name={name}
-      key={name}
-      component={TextField}
-      select
-      label={label}
-      SelectProps={{
-        native: true,
-      }}
-    >
+    <FastField name={name} key={name} component={TextField} select label={label} SelectProps={{ native: true }}>
       <option aria-label="None" value="" disabled />
       {options.map(option => (
-        <option key={`${name}.${option}`} value={option}>
+        <option key={`${name}-${option}`} value={option}>
           {option}
         </option>
       ))}
@@ -195,38 +156,37 @@ const FormBooleanField = (name, label) => (
   <FastField name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
 )
 
-const FormCheckBoxArray = (name, items) => (
+const FormCheckBoxArray = (name, options) => (
   <div key={name}>
-    {items.map(item => (
+    {options.map(option => (
       <FastField
-        key={`${name}-${item}`}
+        key={`${name}-${option}`}
         component={CheckboxWithLabel}
         name={name}
-        Label={{ label: item }}
+        Label={{ label: option }}
         type="checkbox"
-        value={item}
+        value={option}
       />
     ))}
   </div>
 )
 
-const FormArray = (name, label, property, path, level) => {
-  const itemStructure = traverseValues(property["items"]["properties"])
-  const [, meta] = useField(name)
-  const { value } = meta
+const FormArray = (object, values, path) => {
+  const name = pathToName(path)
+  const items = traverseValues(object)
   return (
     <FieldArray name={name} key={`${name}-array`}>
       {({ remove, push }) => (
         <div className="array">
-          {value.length > 0 &&
-            value.map((_, index) => (
+          {values.length > 0 &&
+            values.map((_, index) => (
               <div className="arrayRow" key={`${name}.${index}`}>
                 <Paper elevation={2}>
-                  {Object.keys(itemStructure).map(item => {
-                    const innerName = `${name}.${index}.${item}`
-                    const innerLabel = item
-                    const innerProperty = property["items"]["properties"][item]
-                    return SolveSuitableComponent(innerName, innerLabel, innerProperty, path, level)
+                  {Object.keys(items).map(item => {
+                    const [lastPathItem] = path.slice(-1)
+                    const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+                    const newPath = [path.slice(0, -1), lastPathItemWithIndex, item]
+                    return traverseFields(object["properties"][item], values[index][item], newPath)
                   })}
                 </Paper>
                 <IconButton key={`${name}.${index}-removeButton`} onClick={() => remove(index)}>
@@ -240,7 +200,7 @@ const FormArray = (name, label, property, path, level) => {
             color="primary"
             size="small"
             startIcon={<AddIcon />}
-            onClick={() => push(itemStructure)}
+            onClick={() => push(items)}
           >
             Add new item
           </Button>
@@ -256,3 +216,27 @@ export default {
   buildFields,
   buildYupSchema,
 }
+
+//case "object": {
+//  return [FormHeader(label, name, level), ...traverseFields(property["properties"], `${path}${name}.`, level + 1)]
+//}
+//switch (property["type"]) {
+//  case "object": {
+//    components.push(FormHeader(label, name, level))
+//    components.push(...traverseFields(property["properties"], `${path}${propertyKey}.`, level + 1))
+//    break
+//  }
+//  case "array": {
+//    components.push(FormHeader(label, name, level))
+//    const component = property["items"]["enum"]
+//      ? FormCheckBoxArray(name, property["items"]["enum"])
+//      : FormArray(name, label, property, path, level)
+//    components.push(component)
+//    break
+//  }
+//  default: {
+//    //const component = SolveSuitableComponent(name, label, property)
+//    //if (component) components.push(component)
+//    break
+//  }
+//}

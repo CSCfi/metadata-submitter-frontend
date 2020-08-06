@@ -56,8 +56,7 @@ const checkResponseError = response => {
 
 const FormFields = ({ formSchema }: { formSchema: any }) => {
   const classes = useStyles()
-  const { initialValues, values, errors } = useFormikContext()
-  console.log(JSON.stringify(initialValues, null, 2))
+  const { values, errors } = useFormikContext()
   const components = JSONSchemaParser.buildFields(formSchema, values, errors)
   return <div className={classes.formComponents}>{components}</div>
 }

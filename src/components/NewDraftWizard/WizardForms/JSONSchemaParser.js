@@ -26,49 +26,49 @@ const buildYupSchema = async schema => {
 
 const buildInitialValues = schema => {
   try {
-    return traverseValues(schema["properties"])
+    return traverseValues(schema)
   } catch (error) {
     console.error(error)
   }
 }
 
-const traverseValues = properties => {
-  let values = {}
-  for (const propertyKey in properties) {
-    const property = properties[propertyKey]
-    if (property["oneOf"]) continue
-    switch (property["type"]) {
-      case "object": {
-        values[propertyKey] = traverseValues(property["properties"])
-        break
+const traverseValues = object => {
+  if (object["oneOf"]) return
+  switch (object["type"]) {
+    case "object": {
+      let values = {}
+      const properties = object["properties"]
+      for (const propertyKey in properties) {
+        const property = properties[propertyKey]
+        values[propertyKey] = traverseValues(property)
       }
-      case "string": {
-        values[propertyKey] = ""
-        break
-      }
-      case "integer": {
-        values[propertyKey] = ""
-        break
-      }
-      case "number": {
-        values[propertyKey] = 0
-        break
-      }
-      case "boolean": {
-        values[propertyKey] = false
-        break
-      }
-      case "array": {
-        values[propertyKey] = []
-        break
-      }
-      default: {
-        console.error(`No parsing support for type ${property["type"]} yet`)
-        break
-      }
+      return values
+    }
+    case "string": {
+      return ""
+    }
+    case "integer": {
+      return ""
+    }
+    case "number": {
+      return 0
+    }
+    case "boolean": {
+      return false
+    }
+    case "array": {
+      return []
+    }
+    default: {
+      console.error(`
+      No initial value parsing support for type ${object["type"]} yet.
+      
+      Pretty printed version of object with unsupported type:
+      ${JSON.stringify(object, null, 2)}
+      `)
+      break
     }
   }
-  return values
 }
 
 const buildFields = schema => {

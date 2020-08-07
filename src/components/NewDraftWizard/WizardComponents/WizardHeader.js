@@ -3,11 +3,15 @@ import React from "react"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   paperTitle: {
     fontWeight: "bold",
+    color: "white",
+    width: "100%",
+    padding: theme.spacing(3),
+    backgroundColor: "#9b416b",
   },
-})
+}))
 
 type DraftHeaderProps = {
   headerText: string,

@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^7.2.1",
     "apisauce": "^1.1.2",
     "concurrently": "^5.2.0",
-    "enjoi": "^7.0.0",
+    "enjoi": "github:tlivings/enjoi",
     "formik": "^2.1.5",
     "joi": "^17.2.0",
     "react": "^16.13.1",

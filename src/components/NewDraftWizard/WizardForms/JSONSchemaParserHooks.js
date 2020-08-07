@@ -56,13 +56,14 @@ const traverseFields = (object: any, register: void, path: string[]) => {
     case "boolean": {
       return <FormBooleanField key={name} name={name} label={label} register={register} />
     }
-    //case "array": {
-    //  return object["items"]["enum"] ? (
-    //    <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} />
-    //  ) : (
-    //    <FormArray key={name} object={object["items"]} values={values} path={path} />
-    //  )
-    //}
+    case "array": {
+      return object["items"]["enum"] ? (
+        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} register={register} />
+      ) : (
+        <div key={name}>Array not supported</div>
+        //<FormArray key={name} object={object["items"]} values={values} path={path} />
+      )
+    }
     default: {
       console.error(`
       No field parsing support for type ${object["type"]} yet.
@@ -78,6 +79,7 @@ const traverseFields = (object: any, register: void, path: string[]) => {
 type FormFieldBase = {
   name: string,
   label: string,
+  register: void,
 }
 
 const FormSection = (props: FormFieldBase & { level: number, children?: React.Node }) => {
@@ -115,24 +117,22 @@ const FormSelectField = ({ name, label, options, register }: FormFieldBase & { o
 
 const FormBooleanField = ({ name, label, register }: FormFieldBase) => (
   <FormControlLabel control={<Checkbox name={name} inputRef={register} />} label={label} />
-  //<TextField name={name} type="checkbox" Label={{ label: label }} />
 )
 
-//const FormCheckBoxArray = ({ name, label, options, register }: FormFieldBase & { options: string[] }) => (
-//  <div>
-//    {label} - check from following options
-//    {options.map(option => (
-//      <FastField
-//        key={`${name}-${option}`}
-//        component={CheckboxWithLabel}
-//        name={name}
-//        Label={{ label: option }}
-//        type="checkbox"
-//        value={option}
-//      />
-//    ))}
-//  </div>
-//)
+const FormCheckBoxArray = ({ name, label, options, register }: FormFieldBase & { options: string[] }) => (
+  <div>
+    <p>
+      <strong>{label}</strong> - check from following options
+    </p>
+    {options.map(option => (
+      <FormControlLabel
+        key={option}
+        control={<Checkbox name={name} inputRef={register} value={option} color="primary" />}
+        label={option}
+      />
+    ))}
+  </div>
+)
 
 export default {
   buildFields,

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
-import { decrement, increment, reset } from "../../../features/wizardStepSlice"
+import { reset } from "../../../features/wizardStepSlice"
 import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   footerButton: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 2),
   },
   phantom: {
     display: "block",
@@ -69,29 +69,16 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
               Cancel
             </Button>
           </Link>
-          {wizardStep >= 1 && (
-            <Button variant="contained" color="primary" onClick={() => dispatch(decrement())}>
-              Back
-            </Button>
-          )}
         </div>
         {wizardStep >= 0 && (
           <div>
             <Button
               variant="contained"
               color="primary"
-              disabled={nextButtonRef?.current?.isSubmitting}
+              disabled={wizardStep === 2 && nextButtonRef?.current?.isSubmitting ? false : true}
               className={classes.footerButton}
               onClick={async () => {
-                if (nextButtonRef.current) {
-                  await nextButtonRef.current.submitForm()
-                }
-                if (
-                  wizardStep !== 2 &&
-                  (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
-                ) {
-                  dispatch(increment())
-                }
+                await nextButtonRef.current.submitForm()
               }}
             >
               Save and Exit

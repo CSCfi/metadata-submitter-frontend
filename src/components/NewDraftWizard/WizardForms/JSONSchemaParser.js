@@ -77,17 +77,19 @@ const ConnectForm = ({ children }: { children: any }) => {
 
 const pathToName = (path: string[]) => path.join(".")
 
-const traverseFields = (object: any, path: string[]) => {
+const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
   if (object["oneOf"]) return
   const name = pathToName(path)
+  const [lastPathItem] = path.slice(-1)
   const label = object["title"] ? object["title"] : name
+  const required = !!requiredProperties?.includes(lastPathItem)
   switch (object["type"]) {
     case "object": {
       let components = []
       const properties = object["properties"]
       for (const propertyKey in properties) {
         const property = properties[propertyKey]
-        components.push(traverseFields(property, [...path, propertyKey]))
+        components.push(traverseFields(property, [...path, propertyKey], object["required"]))
       }
       return (
         <FormSection key={name} name={name} label={label} level={path.length + 1}>
@@ -97,23 +99,23 @@ const traverseFields = (object: any, path: string[]) => {
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField key={name} name={name} label={label} options={object["enum"]} />
+        <FormSelectField key={name} name={name} label={label} options={object["enum"]} required={required} />
       ) : (
-        <FormTextField key={name} name={name} label={label} />
+        <FormTextField key={name} name={name} label={label} required={required} />
       )
     }
     case "integer": {
-      return <FormTextField key={name} name={name} label={label} />
+      return <FormTextField key={name} name={name} label={label} required={required} />
     }
     case "number": {
-      return <FormNumberField key={name} name={name} label={label} />
+      return <FormNumberField key={name} name={name} label={label} required={required} />
     }
     case "boolean": {
-      return <FormBooleanField key={name} name={name} label={label} />
+      return <FormBooleanField key={name} name={name} label={label} required={required} />
     }
     case "array": {
       return object["items"]["enum"] ? (
-        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} />
+        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} required={required} />
       ) : (
         <FormArray key={name} object={object["items"]} path={path} />
       )
@@ -130,12 +132,14 @@ const traverseFields = (object: any, path: string[]) => {
   }
 }
 
-type FormFieldBase = {
+type FormSectionProps = {
   name: string,
   label: string,
+  level: number,
+  children?: React.Node,
 }
 
-const FormSection = (props: FormFieldBase & { level: number, children?: React.Node }) => {
+const FormSection = (props: FormSectionProps) => {
   const { name, label, level } = props
   return (
     <div className="formSection" key={`${name}-section`}>
@@ -147,7 +151,13 @@ const FormSection = (props: FormFieldBase & { level: number, children?: React.No
   )
 }
 
-const FormTextField = ({ name, label }: FormFieldBase) => (
+type FormFieldBaseProps = {
+  name: string,
+  label: string,
+  required: boolean,
+}
+
+const FormTextField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -159,13 +169,14 @@ const FormTextField = ({ name, label }: FormFieldBase) => (
           defaultValue=""
           error={!!error}
           helperText={error?.message}
+          required={required}
         />
       )
     }}
   </ConnectForm>
 )
 
-const FormNumberField = ({ name, label }: FormFieldBase) => (
+const FormNumberField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -178,14 +189,14 @@ const FormNumberField = ({ name, label }: FormFieldBase) => (
           defaultValue=""
           error={!!error}
           helperText={error?.message}
+          required={required}
         />
       )
     }}
-    }
   </ConnectForm>
 )
 
-const FormSelectField = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
+const FormSelectField = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -199,6 +210,7 @@ const FormSelectField = ({ name, label, options }: FormFieldBase & { options: st
           defaultValue=""
           error={!!error}
           helperText={error?.message}
+          required={required}
         >
           <option aria-label="None" value="" disabled />
           {options.map(option => (
@@ -212,12 +224,12 @@ const FormSelectField = ({ name, label, options }: FormFieldBase & { options: st
   </ConnectForm>
 )
 
-const FormBooleanField = ({ name, label }: FormFieldBase) => (
+const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
       return (
-        <FormControl error={!!error}>
+        <FormControl error={!!error} required={required}>
           <FormGroup>
             <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
             <FormHelperText>{error?.message}</FormHelperText>
@@ -228,7 +240,7 @@ const FormBooleanField = ({ name, label }: FormFieldBase) => (
   </ConnectForm>
 )
 
-const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
+const FormCheckBoxArray = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
   <div>
     <p>
       <strong>{label}</strong> - check from following options
@@ -237,7 +249,7 @@ const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: 
       {({ register, errors }) => {
         const error = _.get(errors, name)
         return (
-          <FormControl error={!!error}>
+          <FormControl error={!!error} required={required}>
             <FormGroup>
               {options.map<React.Element<typeof FormControlLabel>>(option => (
                 <FormControlLabel
@@ -275,7 +287,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(object["properties"][item], pathForThisIndex)
+                return traverseFields(object["properties"][item], pathForThisIndex, object["required"])
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

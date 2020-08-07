@@ -2,15 +2,15 @@
 import * as React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import AddIcon from "@material-ui/icons/Add"
-import Typography from "@material-ui/core/Typography"
-import IconButton from "@material-ui/core/IconButton"
-import RemoveIcon from "@material-ui/icons/Remove"
 import Button from "@material-ui/core/Button"
-import TextField from "@material-ui/core/TextField"
-import Paper from "@material-ui/core/Paper"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
-import { useFieldArray, useForm } from "react-hook-form"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import IconButton from "@material-ui/core/IconButton"
+import Paper from "@material-ui/core/Paper"
+import RemoveIcon from "@material-ui/icons/Remove"
+import TextField from "@material-ui/core/TextField"
+import Typography from "@material-ui/core/Typography"
+import { useFieldArray, useFormContext } from "react-hook-form"
 
 const dereferenceSchema = async (schema: any) => {
   await $RefParser.dereference(schema)
@@ -56,17 +56,22 @@ const traverseValues = (object: any) => {
   }
 }
 
-const buildFields = (schema: any, register: void) => {
+const buildFields = (schema: any) => {
   try {
-    return traverseFields(schema, register, [])
+    return traverseFields(schema, [])
   } catch (error) {
     console.error(error)
   }
 }
 
+const ConnectForm = ({ children }) => {
+  const methods = useFormContext()
+  return children({ ...methods })
+}
+
 const pathToName = (path: string[]) => path.join(".")
 
-const traverseFields = (object: any, register: void, path: string[]) => {
+const traverseFields = (object: any, path: string[]) => {
   if (object["oneOf"]) return
   const name = pathToName(path)
   const label = object["title"] ? object["title"] : name
@@ -76,7 +81,7 @@ const traverseFields = (object: any, register: void, path: string[]) => {
       const properties = object["properties"]
       for (const propertyKey in properties) {
         const property = properties[propertyKey]
-        components.push(traverseFields(property, register, [...path, propertyKey]))
+        components.push(traverseFields(property, [...path, propertyKey]))
       }
       return (
         <FormSection key={name} name={name} label={label} level={path.length + 1}>
@@ -86,25 +91,25 @@ const traverseFields = (object: any, register: void, path: string[]) => {
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField key={name} name={name} label={label} options={object["enum"]} register={register} />
+        <FormSelectField key={name} name={name} label={label} options={object["enum"]} />
       ) : (
-        <FormTextField key={name} name={name} label={label} register={register} />
+        <FormTextField key={name} name={name} label={label} />
       )
     }
     case "integer": {
-      return <FormTextField key={name} name={name} label={label} register={register} />
+      return <FormTextField key={name} name={name} label={label} />
     }
     case "number": {
-      return <FormNumberField key={name} name={name} label={label} register={register} />
+      return <FormNumberField key={name} name={name} label={label} />
     }
     case "boolean": {
-      return <FormBooleanField key={name} name={name} label={label} register={register} />
+      return <FormBooleanField key={name} name={name} label={label} />
     }
     case "array": {
       return object["items"]["enum"] ? (
-        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} register={register} />
+        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} />
       ) : (
-        <FormArray key={name} object={object["items"]} path={path} register={register} />
+        <FormArray key={name} object={object["items"]} path={path} />
       )
     }
     default: {
@@ -122,7 +127,6 @@ const traverseFields = (object: any, register: void, path: string[]) => {
 type FormFieldBase = {
   name: string,
   label: string,
-  register: void,
 }
 
 const FormSection = (props: FormFieldBase & { level: number, children?: React.Node }) => {
@@ -137,57 +141,69 @@ const FormSection = (props: FormFieldBase & { level: number, children?: React.No
   )
 }
 
-const FormTextField = ({ name, label, register }: FormFieldBase) => (
-  <TextField name={name} label={label} inputRef={register} defaultValue="" />
+const FormTextField = ({ name, label }: FormFieldBase) => (
+  <ConnectForm>
+    {({ register }) => <TextField name={name} label={label} inputRef={register} defaultValue="" />}
+  </ConnectForm>
 )
 
-const FormNumberField = ({ name, label, register }: FormFieldBase) => (
-  <TextField name={name} label={label} type="number" inputRef={register} defaultValue="" />
+const FormNumberField = ({ name, label }: FormFieldBase) => (
+  <ConnectForm>
+    {({ register }) => <TextField name={name} label={label} type="number" inputRef={register} defaultValue="" />}
+  </ConnectForm>
 )
 
-const FormSelectField = ({ name, label, options, register }: FormFieldBase & { options: string[] }) => {
-  return (
-    <TextField name={name} select label={label} SelectProps={{ native: true }} inputRef={register} defaultValue="">
-      <option aria-label="None" value="" disabled />
-      {options.map(option => (
-        <option key={`${name}-${option}`} value={option}>
-          {option}
-        </option>
-      ))}
-    </TextField>
-  )
-}
-
-const FormBooleanField = ({ name, label, register }: FormFieldBase) => (
-  <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+const FormSelectField = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
+  <ConnectForm>
+    {({ register }) => (
+      <TextField name={name} select label={label} SelectProps={{ native: true }} inputRef={register} defaultValue="">
+        <option aria-label="None" value="" disabled />
+        {options.map(option => (
+          <option key={`${name}-${option}`} value={option}>
+            {option}
+          </option>
+        ))}
+      </TextField>
+    )}
+  </ConnectForm>
 )
 
-const FormCheckBoxArray = ({ name, label, options, register }: FormFieldBase & { options: string[] }) => (
+const FormBooleanField = ({ name, label }: FormFieldBase) => (
+  <ConnectForm>
+    {({ register }) => (
+      <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+    )}
+  </ConnectForm>
+)
+
+const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
   <div>
     <p>
       <strong>{label}</strong> - check from following options
     </p>
-    {options.map(option => (
-      <FormControlLabel
-        key={option}
-        control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
-        label={option}
-      />
-    ))}
+    <ConnectForm>
+      {({ register }) => {
+        return options.map(option => (
+          <FormControlLabel
+            key={option}
+            control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+            label={option}
+          />
+        ))
+      }}
+    </ConnectForm>
   </div>
 )
 
 type FormArrayProps = {
   object: any,
   path: Array<string>,
-  register: any,
 }
 
-const FormArray = ({ object, path, register }: FormArrayProps) => {
+const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
   const items = traverseValues(object)
-  const { control } = useForm({})
-  const { fields, append, remove } = useFieldArray({ control, name })
+  const { fields, append, remove } = useFieldArray({ name })
   return (
     <div className="array" key={`${name}-array`}>
       {fields.map((field, index) => {
@@ -199,7 +215,7 @@ const FormArray = ({ object, path, register }: FormArrayProps) => {
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(object["properties"][item], register, pathForThisIndex)
+                return traverseFields(object["properties"][item], pathForThisIndex)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

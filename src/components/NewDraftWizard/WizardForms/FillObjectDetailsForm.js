@@ -6,7 +6,7 @@ import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import JSONSchemaParser from "./JSONSchemaParser"
 import { makeStyles } from "@material-ui/core/styles"
-import { useForm } from "react-hook-form"
+import { useForm, FormProvider } from "react-hook-form"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -57,17 +57,14 @@ const checkResponseError = response => {
   }
 }
 
-const FormFields = ({ formSchema, register }: { formSchema: any, register: void }) => {
-  const classes = useStyles()
-  const components = JSONSchemaParser.buildFields(formSchema, register)
-  return <div className={classes.formComponents}>{components}</div>
-}
-
 const FillObjectDetailsForm = () => {
   const { objectType } = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [formSchema, setFormSchema] = useState({})
+  const methods = useForm()
+  const classes = useStyles()
+  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
 
   useEffect(() => {
     const fetchSchema = async () => {
@@ -83,15 +80,15 @@ const FillObjectDetailsForm = () => {
     fetchSchema()
   }, [objectType])
 
-  const { register, handleSubmit } = useForm()
-  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormFields formSchema={formSchema} register={register} />
-      <input type="submit" value="Save" />
-    </form>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
+        {JSONSchemaParser.buildFields(formSchema)}
+        <input type="submit" value="Save" />
+      </form>
+    </FormProvider>
   )
 }
 

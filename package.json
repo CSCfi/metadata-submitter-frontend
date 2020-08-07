@@ -17,6 +17,7 @@
     "enjoi": "github:tlivings/enjoi",
     "formik": "^2.1.5",
     "joi": "^17.2.0",
+    "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.3.0",

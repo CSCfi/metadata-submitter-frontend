@@ -11,6 +11,10 @@ import RemoveIcon from "@material-ui/icons/Remove"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import { useFieldArray, useFormContext } from "react-hook-form"
+import * as _ from "lodash"
+import FormHelperText from "@material-ui/core/FormHelperText"
+import FormGroup from "@material-ui/core/FormGroup"
+import { FormControl } from "@material-ui/core"
 
 const dereferenceSchema = async (schema: any) => {
   let dereferenced = JSON.parse(JSON.stringify(schema))
@@ -145,36 +149,82 @@ const FormSection = (props: FormFieldBase & { level: number, children?: React.No
 
 const FormTextField = ({ name, label }: FormFieldBase) => (
   <ConnectForm>
-    {({ register }) => <TextField name={name} label={label} inputRef={register} defaultValue="" />}
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <TextField
+          name={name}
+          label={label}
+          inputRef={register}
+          defaultValue=""
+          error={!!error}
+          helperText={error?.message}
+        />
+      )
+    }}
   </ConnectForm>
 )
 
 const FormNumberField = ({ name, label }: FormFieldBase) => (
   <ConnectForm>
-    {({ register }) => <TextField name={name} label={label} type="number" inputRef={register} defaultValue="" />}
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <TextField
+          name={name}
+          label={label}
+          type="number"
+          inputRef={register}
+          defaultValue=""
+          error={!!error}
+          helperText={error?.message}
+        />
+      )
+    }}
+    }
   </ConnectForm>
 )
 
 const FormSelectField = ({ name, label, options }: FormFieldBase & { options: string[] }) => (
   <ConnectForm>
-    {({ register }) => (
-      <TextField name={name} select label={label} SelectProps={{ native: true }} inputRef={register} defaultValue="">
-        <option aria-label="None" value="" disabled />
-        {options.map(option => (
-          <option key={`${name}-${option}`} value={option}>
-            {option}
-          </option>
-        ))}
-      </TextField>
-    )}
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <TextField
+          name={name}
+          select
+          label={label}
+          SelectProps={{ native: true }}
+          inputRef={register}
+          defaultValue=""
+          error={!!error}
+          helperText={error?.message}
+        >
+          <option aria-label="None" value="" disabled />
+          {options.map(option => (
+            <option key={`${name}-${option}`} value={option}>
+              {option}
+            </option>
+          ))}
+        </TextField>
+      )
+    }}
   </ConnectForm>
 )
 
 const FormBooleanField = ({ name, label }: FormFieldBase) => (
   <ConnectForm>
-    {({ register }) => (
-      <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
-    )}
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <FormControl error={!!error}>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+            <FormHelperText>{error?.message}</FormHelperText>
+          </FormGroup>
+        </FormControl>
+      )
+    }}
   </ConnectForm>
 )
 
@@ -184,17 +234,23 @@ const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: 
       <strong>{label}</strong> - check from following options
     </p>
     <ConnectForm>
-      {({ register }) =>
-        options.map<React.Element<typeof FormControlLabel>>(option => {
-          return (
-            <FormControlLabel
-              key={option}
-              control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
-              label={option}
-            />
-          )
-        })
-      }
+      {({ register, errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <FormControl error={!!error}>
+            <FormGroup>
+              {options.map<React.Element<typeof FormControlLabel>>(option => (
+                <FormControlLabel
+                  key={option}
+                  control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+                  label={option}
+                />
+              ))}
+              <FormHelperText>{error?.message}</FormHelperText>
+            </FormGroup>
+          </FormControl>
+        )
+      }}
     </ConnectForm>
   </div>
 )

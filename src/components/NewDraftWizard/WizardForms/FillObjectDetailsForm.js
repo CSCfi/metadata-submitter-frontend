@@ -7,6 +7,8 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import JSONSchemaParser from "./JSONSchemaParser"
 import { makeStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider } from "react-hook-form"
+import Enjoi from "enjoi"
+import Joi from "joi"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -62,6 +64,7 @@ const FillObjectDetailsForm = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [formSchema, setFormSchema] = useState({})
+  const [validationSchema, setValidationSchema] = useState(null)
   const methods = useForm()
   const classes = useStyles()
   const onSubmit = data => console.log(JSON.stringify(data, null, 2))
@@ -70,8 +73,9 @@ const FillObjectDetailsForm = () => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
-        await JSONSchemaParser.dereferenceSchema(response.data)
-        setFormSchema(response.data)
+        const dereferenced = await JSONSchemaParser.dereferenceSchema(response.data)
+        setFormSchema(dereferenced)
+        setValidationSchema(Enjoi.schema(dereferenced))
       } else {
         setError(checkResponseError(response))
       }

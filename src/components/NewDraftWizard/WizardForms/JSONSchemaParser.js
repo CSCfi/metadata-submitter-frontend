@@ -13,8 +13,10 @@ import Typography from "@material-ui/core/Typography"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
 const dereferenceSchema = async (schema: any) => {
-  await $RefParser.dereference(schema)
-  delete schema["definitions"]
+  let dereferenced = JSON.parse(JSON.stringify(schema))
+  await $RefParser.dereference(dereferenced)
+  delete dereferenced["definitions"]
+  return dereferenced
 }
 
 const traverseValues = (object: any) => {

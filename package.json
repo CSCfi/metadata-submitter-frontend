@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.6",
+    "@hookform/resolvers": "^0.1.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
@@ -13,7 +14,9 @@
     "@testing-library/user-event": "^7.2.1",
     "apisauce": "^1.1.2",
     "concurrently": "^5.2.0",
+    "enjoi": "^7.0.0",
     "formik": "^2.1.5",
+    "joi": "^17.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.3.0",

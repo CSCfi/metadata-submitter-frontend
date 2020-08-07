@@ -1,14 +1,14 @@
 //@flow
-import React, { useEffect, useState } from "react"
-import schemaAPIService from "services/schemaAPI"
-import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import Enjoi from "enjoi"
 import JSONSchemaParser from "./JSONSchemaParser"
+import React, { useEffect, useState } from "react"
+import schemaAPIService from "services/schemaAPI"
+import { joiResolver } from "@hookform/resolvers"
 import { makeStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider } from "react-hook-form"
-import Enjoi from "enjoi"
-import Joi from "joi"
+import { useSelector } from "react-redux"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -65,7 +65,9 @@ const FillObjectDetailsForm = () => {
   const [error, setError] = useState("")
   const [formSchema, setFormSchema] = useState({})
   const [validationSchema, setValidationSchema] = useState(null)
-  const methods = useForm()
+  const methods = useForm({
+    resolver: joiResolver(validationSchema),
+  })
   const classes = useStyles()
   const onSubmit = data => console.log(JSON.stringify(data, null, 2))
 

@@ -7,7 +7,7 @@ import schemaAPIService from "services/schemaAPI"
 import { makeStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider } from "react-hook-form"
 import { useSelector } from "react-redux"
-import Ajv from "ajv"
+import { ajvResolver } from "./ajvResolver"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -58,23 +58,35 @@ const checkResponseError = response => {
   }
 }
 
+const FormContent = ({ resolver, formSchema }: { resolver: typeof ajvResolver, formSchema: any }) => {
+  const classes = useStyles()
+  const methods = useForm({ mode: "onBlur", resolver })
+  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents} noValidate>
+        {JSONSchemaParser.buildFields(formSchema)}
+        <input type="submit" value="Save" />
+      </form>
+    </FormProvider>
+  )
+}
+
 const FillObjectDetailsForm = () => {
   const { objectType } = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [formSchema, setFormSchema] = useState({})
-  const [validate, setValidate] = useState(null)
-  const methods = useForm()
-  const classes = useStyles()
-  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
+  const [validationSchema, setValidationSchema] = useState({})
 
   useEffect(() => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
         setFormSchema(await JSONSchemaParser.dereferenceSchema(response.data))
-        const ajv = new Ajv()
-        setValidate(ajv.compile(response.data))
+        console.log("setting validation schema")
+        console.log(response.data)
+        setValidationSchema(response.data)
       } else {
         setError(checkResponseError(response))
       }
@@ -85,15 +97,7 @@ const FillObjectDetailsForm = () => {
 
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
-        {JSONSchemaParser.buildFields(formSchema)}
-        <input type="submit" value="Save" />
-        {console.log(validate(methods.getValues()))}
-      </form>
-    </FormProvider>
-  )
+  return <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} />
 }
 
 export default FillObjectDetailsForm

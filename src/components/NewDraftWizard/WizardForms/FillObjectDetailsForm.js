@@ -4,9 +4,11 @@ import schemaAPIService from "services/schemaAPI"
 import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import { Form, Formik, useFormikContext } from "formik"
+//import { Form, Formik, useFormikContext } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
+import JSONSchemaParserHooks from "./JSONSchemaParserHooks"
 import { makeStyles } from "@material-ui/core/styles"
+import { useForm } from "react-hook-form"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -57,10 +59,16 @@ const checkResponseError = response => {
   }
 }
 
-const FormFields = ({ formSchema }: { formSchema: any }) => {
+//const FormFields = ({ formSchema }: { formSchema: any }) => {
+//  const classes = useStyles()
+//  const { values } = useFormikContext()
+//  const components = JSONSchemaParser.buildFields(formSchema, values)
+//  return <div className={classes.formComponents}>{components}</div>
+//}
+
+const FormFields = ({ formSchema, register }: { formSchema: any, register: void }) => {
   const classes = useStyles()
-  const { values } = useFormikContext()
-  const components = JSONSchemaParser.buildFields(formSchema, values)
+  const components = JSONSchemaParserHooks.buildFields(formSchema, register)
   return <div className={classes.formComponents}>{components}</div>
 }
 
@@ -69,8 +77,8 @@ const FillObjectDetailsForm = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [formSchema, setFormSchema] = useState({})
-  const [YupSchema, setYupSchema] = useState(null)
-  const [initialValues, setInitialValues] = useState({})
+  //const [YupSchema, setYupSchema] = useState(null)
+  //const [initialValues, setInitialValues] = useState({})
 
   useEffect(() => {
     const fetchSchema = async () => {
@@ -78,8 +86,8 @@ const FillObjectDetailsForm = () => {
       if (response.ok) {
         await JSONSchemaParser.dereferenceSchema(response.data)
         setFormSchema(response.data)
-        setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
-        setInitialValues(await JSONSchemaParser.buildInitialValues(response.data))
+        //setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
+        //setInitialValues(await JSONSchemaParser.buildInitialValues(response.data))
       } else {
         setError(checkResponseError(response))
       }
@@ -88,23 +96,29 @@ const FillObjectDetailsForm = () => {
     fetchSchema()
   }, [objectType])
 
+  const { register, handleSubmit, errors } = useForm()
+  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={YupSchema}
-      onSubmit={values => {
-        console.log("JSON form successfully submitted")
-        console.log(JSON.stringify(values, null, 2))
-      }}
-    >
-      {() => (
-        <Form>
-          <FormFields formSchema={formSchema} />
-        </Form>
-      )}
-    </Formik>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormFields formSchema={formSchema} register={register} />
+      <input type="submit" />
+    </form>
+    //<Formik
+    //  initialValues={initialValues}
+    //  validationSchema={YupSchema}
+    //  onSubmit={values => {
+    //    console.log("JSON form successfully submitted")
+    //    console.log(JSON.stringify(values, null, 2))
+    //  }}
+    //>
+    //  {() => (
+    //    <Form>
+    //      <FormFields formSchema={formSchema} />
+    //    </Form>
+    //  )}
+    //</Formik>
   )
 }
 

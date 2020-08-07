@@ -27,7 +27,7 @@ const traverseValues = (object: any) => {
         const property = properties[propertyKey]
         values[propertyKey] = traverseValues(property)
       }
-      return values
+      return ((values: any): typeof object)
     }
     case "string": {
       return ""
@@ -64,7 +64,7 @@ const buildFields = (schema: any) => {
   }
 }
 
-const ConnectForm = ({ children }) => {
+const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
 }
@@ -182,15 +182,17 @@ const FormCheckBoxArray = ({ name, label, options }: FormFieldBase & { options: 
       <strong>{label}</strong> - check from following options
     </p>
     <ConnectForm>
-      {({ register }) => {
-        return options.map(option => (
-          <FormControlLabel
-            key={option}
-            control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
-            label={option}
-          />
-        ))
-      }}
+      {({ register }) =>
+        options.map<React.Element<typeof FormControlLabel>>(option => {
+          return (
+            <FormControlLabel
+              key={option}
+              control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+              label={option}
+            />
+          )
+        })
+      }
     </ConnectForm>
   </div>
 )
@@ -202,7 +204,7 @@ type FormArrayProps = {
 
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
-  const items = traverseValues(object)
+  const items = (traverseValues(object): any)
   const { fields, append, remove } = useFieldArray({ name })
   return (
     <div className="array" key={`${name}-array`}>

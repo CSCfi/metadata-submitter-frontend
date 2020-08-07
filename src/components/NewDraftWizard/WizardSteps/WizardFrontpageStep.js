@@ -1,7 +1,6 @@
 //@flow
 import React from "react"
 import { useDispatch } from "react-redux"
-import WizardHeader from "../WizardComponents/WizardHeader"
 import Button from "@material-ui/core/Button"
 import { increment } from "../../../features/wizardStepSlice"
 import Typography from "@material-ui/core/Typography"
@@ -51,7 +50,9 @@ const WizardFrontpageStep = () => {
   return (
     <Grid container direction="row" justify="space-around" alignItems="center" spacing={2}>
       <Grid item xs={12}>
-        <WizardHeader headerText="Create New Submission" />
+        <Typography component="h2" variant="h6" align="center">
+          Create New Submission
+        </Typography>
       </Grid>
       <Grid item xs={5}>
         <Button

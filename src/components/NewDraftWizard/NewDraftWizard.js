@@ -14,9 +14,6 @@ import WizardShowSummaryStep from "./WizardSteps/WizardShowSummaryStep"
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(4),
-    padding: theme.spacing(4),
     alignItems: "stretch",
   },
   paperFirstStep: {
@@ -46,13 +43,13 @@ const useStyles = makeStyles(theme => ({
 const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof Formik>) => {
   switch (wizardStep) {
     case -1:
-      return <WizardFrontpageStep />
+      return <WizardFrontpageStep nextButtonRef={nextButtonRef} />
     case 0:
       return <WizardCreateFolderStep nextButtonRef={nextButtonRef} />
     case 1:
-      return <WizardAddObjectStep />
+      return <WizardAddObjectStep nextButtonRef={nextButtonRef} />
     case 2:
-      return <WizardShowSummaryStep />
+      return <WizardShowSummaryStep nextButtonRef={nextButtonRef} />
     default:
       throw new Error("Unknown step")
   }
@@ -72,7 +69,7 @@ const NewDraftWizard = () => {
 
   return (
     <Container maxWidth="false" className={classes.container}>
-      <Paper className={wizardStep <= 0 ? classes.paperFirstStep : classes.paper}>
+      <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
         <div className={classes.paperContent}>{getStepContent(wizardStep, nextButtonRef)}</div>
       </Paper>
       <WizardFooter nextButtonRef={nextButtonRef} />

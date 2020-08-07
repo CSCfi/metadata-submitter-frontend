@@ -6,6 +6,8 @@ import WizardStepper from "../WizardComponents/WizardStepper"
 import ObjectIndexTabs from "../WizardComponents/ObjectIndexTabs"
 import AddObjectCard from "../WizardComponents/AddObjectCard"
 import { makeStyles } from "@material-ui/core/styles"
+import type { ElementRef } from "react"
+import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
   formRow: {
@@ -23,18 +25,22 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+interface nextButtonRefProp {
+  nextButtonRef: ElementRef<typeof Formik>;
+}
+
 /**
  * Show info about object adding, render card with object adding featured if
  * objectType is set.
  */
 
-const WizardAddObjectStep = () => {
+const WizardAddObjectStep = ({ nextButtonRef }: nextButtonRefProp) => {
   const classes = useStyles()
   const { objectType } = useSelector(state => state.objectType)
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardStepper />
+      <WizardStepper nextButtonRef={nextButtonRef} />
       <div className={classes.formRow}>
         <ObjectIndexTabs />
         <div className={classes.formBox}>

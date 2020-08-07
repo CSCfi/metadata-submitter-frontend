@@ -77,10 +77,10 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
     >
       {() => (
         <Form className={classes.root}>
-          <Field name="name" label="Name" component={TextField} variant="outlined" fullWidth required />
+          <Field name="name" label="Folder Name" component={TextField} variant="outlined" fullWidth required />
           <Field
             name="description"
-            label="Description"
+            label="Folder Description"
             component={TextField}
             variant="outlined"
             fullWidth
@@ -103,7 +103,7 @@ const WizardCreateFolderStep = ({ nextButtonRef }: nextButtonRefProp) => {
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardStepper />
+      <WizardStepper nextButtonRef={nextButtonRef} />
       <CreateFolderForm nextButtonRef={nextButtonRef} />
     </>
   )

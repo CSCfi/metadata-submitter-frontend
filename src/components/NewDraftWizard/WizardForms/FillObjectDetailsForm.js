@@ -103,22 +103,8 @@ const FillObjectDetailsForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormFields formSchema={formSchema} register={register} />
-      <input type="submit" />
+      <input type="submit" value="Save" />
     </form>
-    //<Formik
-    //  initialValues={initialValues}
-    //  validationSchema={YupSchema}
-    //  onSubmit={values => {
-    //    console.log("JSON form successfully submitted")
-    //    console.log(JSON.stringify(values, null, 2))
-    //  }}
-    //>
-    //  {() => (
-    //    <Form>
-    //      <FormFields formSchema={formSchema} />
-    //    </Form>
-    //  )}
-    //</Formik>
   )
 }
 

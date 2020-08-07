@@ -14,14 +14,12 @@
     "apisauce": "^1.1.2",
     "concurrently": "^5.2.0",
     "formik": "^2.1.5",
-    "formik-material-ui": "^3.0.0-alpha.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.3.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
-    "schema-to-yup": "^1.9.25"
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

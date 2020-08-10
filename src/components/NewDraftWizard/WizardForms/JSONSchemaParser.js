@@ -85,15 +85,13 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
   const required = !!requiredProperties?.includes(lastPathItem)
   switch (object["type"]) {
     case "object": {
-      let components = []
       const properties = object["properties"]
-      for (const propertyKey in properties) {
-        const property = properties[propertyKey]
-        components.push(traverseFields(property, [...path, propertyKey], object["required"]))
-      }
       return (
         <FormSection key={name} name={name} label={label} level={path.length + 1}>
-          {components}
+          {Object.keys(properties).map(propertyKey => {
+            const property = properties[propertyKey]
+            return traverseFields(property, [...path, propertyKey], object["required"])
+          })}
         </FormSection>
       )
     }

@@ -60,7 +60,7 @@ const checkResponseError = response => {
     case 504:
       return `Unfortunately we couldn't connect to our server to catch this form.`
     case 400:
-      return `Unfortunately an error happened when connection to our to catch this form, 
+      return `Unfortunately an error happened when connecting to our server to catch this form, 
         details: ${response.data}`
     default:
       return "Unfortunately an unexpected error happened on our servers"

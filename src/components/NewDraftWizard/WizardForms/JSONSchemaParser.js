@@ -167,8 +167,8 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   return (
     <div>
       <TextField
-        name={name}
-        key={name}
+        name={`${name}-select`}
+        key={`${name}-select`}
         label={label}
         defaultValue=""
         select

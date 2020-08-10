@@ -1,5 +1,6 @@
 //@flow
 import * as React from "react"
+import { useState } from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import AddIcon from "@material-ui/icons/Add"
 import Button from "@material-ui/core/Button"
@@ -78,7 +79,7 @@ const ConnectForm = ({ children }: { children: any }) => {
 const pathToName = (path: string[]) => path.join(".")
 
 const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
-  if (object["oneOf"]) return
+  if (object["oneOf"]) return <FormOneOfField path={path} object={object} />
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object["title"] ? object["title"] : name
@@ -155,6 +156,40 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
+type FormSelecFieldProps = FormFieldBaseProps & { options: string[] }
+
+const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
+  const [field, setField] = useState("")
+  const handleChange = event => setField(event.target.value)
+  const name = pathToName(path)
+  const label = object["title"] ? object["title"] : name
+  const options = object["oneOf"]
+  return (
+    <div>
+      <TextField
+        name={name}
+        key={name}
+        label={label}
+        defaultValue=""
+        select
+        SelectProps={{ native: true }}
+        onChange={handleChange}
+      >
+        <option aria-label="None" value="" disabled />
+        {options.map(optionObject => {
+          const option = optionObject["title"]
+          return (
+            <option key={`${name}-${option}`} value={option}>
+              {option}
+            </option>
+          )
+        })}
+      </TextField>
+      {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
+    </div>
+  )
+}
+
 const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
   <ConnectForm>
     {({ register, errors }) => {
@@ -175,7 +210,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   </ConnectForm>
 )
 
-const FormSelectField = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+const FormSelectField = ({ name, label, required, options }: FormSelecFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -219,7 +254,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   </ConnectForm>
 )
 
-const FormCheckBoxArray = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+const FormCheckBoxArray = ({ name, label, required, options }: FormSelecFieldProps) => (
   <div>
     <p>
       <strong>{label}</strong> - check from following options

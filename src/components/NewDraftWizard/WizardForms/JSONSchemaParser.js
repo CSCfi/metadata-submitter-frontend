@@ -119,6 +119,9 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
         <FormArray key={name} object={object["items"]} path={path} />
       )
     }
+    case "null": {
+      return null
+    }
     default: {
       console.error(`
       No field parsing support for type ${object["type"]} yet.

@@ -22,7 +22,7 @@ const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
                     ...(validateAllFieldCriteria
                       ? {
                           types: {
-                            [""]: message || true,
+                            "": message || true,
                           },
                         }
                       : {}),

@@ -1,246 +1,288 @@
-import React from "react"
+//@flow
+import * as React from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
-import { buildYup } from "schema-to-yup"
-import { Field, FieldArray, useField } from "formik"
-import { CheckboxWithLabel, TextField } from "formik-material-ui"
 import AddIcon from "@material-ui/icons/Add"
-import Typography from "@material-ui/core/Typography"
-import IconButton from "@material-ui/core/IconButton"
-import RemoveIcon from "@material-ui/icons/Remove"
 import Button from "@material-ui/core/Button"
+import Checkbox from "@material-ui/core/Checkbox"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
+import RemoveIcon from "@material-ui/icons/Remove"
+import TextField from "@material-ui/core/TextField"
+import Typography from "@material-ui/core/Typography"
+import { useFieldArray, useFormContext } from "react-hook-form"
+import * as _ from "lodash"
+import FormHelperText from "@material-ui/core/FormHelperText"
+import FormGroup from "@material-ui/core/FormGroup"
+import { FormControl } from "@material-ui/core"
 
-const dereferenceSchema = async schema => {
-  await $RefParser.dereference(schema)
-  delete schema["definitions"]
+const dereferenceSchema = async (schema: any) => {
+  let dereferenced = JSON.parse(JSON.stringify(schema))
+  await $RefParser.dereference(dereferenced)
+  delete dereferenced["definitions"]
+  return dereferenced
 }
 
-const buildYupSchema = async schema => {
-  try {
-    const config = {}
-    return buildYup(schema, config)
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const buildInitialValues = schema => {
-  try {
-    return traverseValues(schema["properties"])
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const traverseValues = properties => {
-  let values = {}
-  for (const propertyKey in properties) {
-    const property = properties[propertyKey]
-    switch (property["type"]) {
-      case "object": {
-        values[propertyKey] = traverseValues(property["properties"])
-        break
+const traverseValues = (object: any) => {
+  if (object["oneOf"]) return
+  switch (object["type"]) {
+    case "object": {
+      let values = {}
+      const properties = object["properties"]
+      for (const propertyKey in properties) {
+        const property = properties[propertyKey]
+        values[propertyKey] = traverseValues(property)
       }
-      case "string": {
-        values[propertyKey] = ""
-        break
-      }
-      case "integer": {
-        values[propertyKey] = ""
-        break
-      }
-      case "number": {
-        values[propertyKey] = 0
-        break
-      }
-      case "boolean": {
-        values[propertyKey] = false
-        break
-      }
-      case "array": {
-        values[propertyKey] = []
-        break
-      }
-      default: {
-        console.error(`No parsing support for type ${property["type"]} yet`)
-        break
-      }
+      return ((values: any): typeof object)
     }
-  }
-  return values
-}
-
-const buildFields = schema => {
-  try {
-    let components = [FormHeader(`New ${schema["title"].toLowerCase()}`, `${schema["title"]}-header`, 1)]
-    components.push(...traverseFields(schema["properties"]))
-    return components
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const traverseFields = (properties, path = "", level = 2) => {
-  let components = []
-  for (const propertyKey in properties) {
-    const property = properties[propertyKey]
-    const name = `${path}${propertyKey}`
-    const label = property["title"] ? property["title"] : propertyKey
-    switch (property["type"]) {
-      case "object": {
-        components.push(FormHeader(label, name, level))
-        components.push(...traverseFields(property["properties"], `${path}${propertyKey}.`, level + 1))
-        break
-      }
-      case "array": {
-        components.push(FormHeader(label, name, level))
-        const component = property["items"]["enum"]
-          ? FormCheckBoxArray(name, property["items"]["enum"])
-          : FormArray(name, label, property, level)
-        components.push(component)
-        break
-      }
-      default: {
-        const component = SolveSuitableComponent(name, label, property)
-        if (component) components.push(component)
-        break
-      }
-    }
-  }
-  return components
-}
-
-const SolveSuitableComponent = (name, label, property) => {
-  switch (property["type"]) {
     case "string": {
-      return property["enum"] ? FormSelectField(name, label, property["enum"]) : FormTextField(name, label)
+      return ""
     }
     case "integer": {
-      return FormTextField(name, label)
+      return ""
     }
     case "number": {
-      return FormNumberField(name, label)
+      return 0
     }
     case "boolean": {
-      return FormBooleanField(name, label)
+      return false
     }
     case "array": {
-      console.error("Arrays inside arrays are not supported")
-      return null
+      return []
     }
     default: {
       console.error(`
-        No parsing support for type ${property["type"]} yet. 
-        Details about this object: 
-        `)
-      console.error(JSON.stringify(property))
+      No initial value parsing support for type ${object["type"]} yet.
+      
+      Pretty printed version of object with unsupported type:
+      ${JSON.stringify(object, null, 2)}
+      `)
+      break
+    }
+  }
+}
+
+const buildFields = (schema: any) => {
+  try {
+    return traverseFields(schema, [])
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const ConnectForm = ({ children }: { children: any }) => {
+  const methods = useFormContext()
+  return children({ ...methods })
+}
+
+const pathToName = (path: string[]) => path.join(".")
+
+const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
+  if (object["oneOf"]) return
+  const name = pathToName(path)
+  const [lastPathItem] = path.slice(-1)
+  const label = object["title"] ? object["title"] : name
+  const required = !!requiredProperties?.includes(lastPathItem)
+  switch (object["type"]) {
+    case "object": {
+      const properties = object["properties"]
+      return (
+        <FormSection key={name} name={name} label={label} level={path.length + 1}>
+          {Object.keys(properties).map(propertyKey => {
+            const property = properties[propertyKey]
+            return traverseFields(property, [...path, propertyKey], object["required"])
+          })}
+        </FormSection>
+      )
+    }
+    case "string": {
+      return object["enum"] ? (
+        <FormSelectField key={name} name={name} label={label} options={object["enum"]} required={required} />
+      ) : (
+        <FormTextField key={name} name={name} label={label} required={required} />
+      )
+    }
+    case "integer": {
+      return <FormTextField key={name} name={name} label={label} required={required} />
+    }
+    case "number": {
+      return <FormTextField key={name} name={name} label={label} required={required} type="number" />
+    }
+    case "boolean": {
+      return <FormBooleanField key={name} name={name} label={label} required={required} />
+    }
+    case "array": {
+      return object["items"]["enum"] ? (
+        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} required={required} />
+      ) : (
+        <FormArray key={name} object={object["items"]} path={path} />
+      )
+    }
+    default: {
+      console.error(`
+      No field parsing support for type ${object["type"]} yet.
+      
+      Pretty printed version of object with unsupported type:
+      ${JSON.stringify(object, null, 2)}
+      `)
       return null
     }
   }
 }
 
-const FormHeader = (text, name, level) => {
-  const variant = level > 6 ? "body1" : `h${level}`
+type FormSectionProps = {
+  name: string,
+  label: string,
+  level: number,
+  children?: React.Node,
+}
+
+const FormSection = (props: FormSectionProps) => {
+  const { name, label, level } = props
   return (
-    <Typography variant={variant} key={`${name}-header`}>
-      {text}
-    </Typography>
+    <div className="formSection" key={`${name}-section`}>
+      <Typography key={`${name}-header`} variant={`h${level}`}>
+        {label}
+      </Typography>
+      {props.children}
+    </div>
   )
 }
 
-const FormTextField = (name, label) => <Field name={name} key={name} label={label} component={TextField} />
+type FormFieldBaseProps = {
+  name: string,
+  label: string,
+  required: boolean,
+}
 
-const FormNumberField = (name, label) => (
-  <Field name={name} key={name} label={label} type="number" component={TextField} />
+const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
+  <ConnectForm>
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <TextField
+          name={name}
+          label={label}
+          inputRef={register}
+          defaultValue=""
+          error={!!error}
+          helperText={error?.message}
+          required={required}
+          type={type}
+        />
+      )
+    }}
+  </ConnectForm>
 )
 
-const FormSelectField = (name, label, options) => {
-  const [, meta] = useField(name)
-  return (
-    <Field
-      name={name}
-      key={name}
-      component={TextField}
-      select
-      label={label}
-      SelectProps={{
-        native: true,
+const FormSelectField = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+  <ConnectForm>
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <TextField
+          name={name}
+          label={label}
+          inputRef={register}
+          defaultValue=""
+          error={!!error}
+          helperText={error?.message}
+          required={required}
+          select
+          SelectProps={{ native: true }}
+        >
+          <option aria-label="None" value="" disabled />
+          {options.map(option => (
+            <option key={`${name}-${option}`} value={option}>
+              {option}
+            </option>
+          ))}
+        </TextField>
+      )
+    }}
+  </ConnectForm>
+)
+
+const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
+  <ConnectForm>
+    {({ register, errors }) => {
+      const error = _.get(errors, name)
+      return (
+        <FormControl error={!!error} required={required}>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+            <FormHelperText>{error?.message}</FormHelperText>
+          </FormGroup>
+        </FormControl>
+      )
+    }}
+  </ConnectForm>
+)
+
+const FormCheckBoxArray = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+  <div>
+    <p>
+      <strong>{label}</strong> - check from following options
+    </p>
+    <ConnectForm>
+      {({ register, errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <FormControl error={!!error} required={required}>
+            <FormGroup>
+              {options.map<React.Element<typeof FormControlLabel>>(option => (
+                <FormControlLabel
+                  key={option}
+                  control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+                  label={option}
+                />
+              ))}
+              <FormHelperText>{error?.message}</FormHelperText>
+            </FormGroup>
+          </FormControl>
+        )
       }}
-      error={meta.touched && !!meta.error}
-      helperText={meta.touched && meta.error}
-    >
-      <option aria-label="None" value="" disabled />
-      {options.map(option => (
-        <option key={`${name}.${option}`} value={option}>
-          {option}
-        </option>
-      ))}
-    </Field>
-  )
-}
-
-const FormBooleanField = (name, label) => (
-  <Field name={name} key={name} type="checkbox" component={CheckboxWithLabel} Label={{ label: label }} />
-)
-
-const FormCheckBoxArray = (name, items) => (
-  <div key={name}>
-    {items.map(item => (
-      <Field
-        key={`${name}-${item}`}
-        component={CheckboxWithLabel}
-        name={name}
-        Label={{ label: item }}
-        type="checkbox"
-        value={item}
-      />
-    ))}
+    </ConnectForm>
   </div>
 )
 
-const FormArray = (name, label, property) => {
-  const itemStructure = traverseValues(property["items"]["properties"])
-  const [, meta] = useField(name)
-  const { value } = meta
+type FormArrayProps = {
+  object: any,
+  path: Array<string>,
+}
+
+const FormArray = ({ object, path }: FormArrayProps) => {
+  const name = pathToName(path)
+  const items = (traverseValues(object): any)
+  const { fields, append, remove } = useFieldArray({ name })
   return (
-    <FieldArray name={name} key={`${name}-array`}>
-      {({ remove, push }) => (
-        <div className="array">
-          {value.length > 0 &&
-            value.map((_, index) => (
-              <div className="arrayRow" key={`${name}.${index}`}>
-                <Paper elevation={2}>
-                  {Object.keys(itemStructure).map(item => {
-                    const innerName = `${name}.${index}.${item}`
-                    const innerLabel = item
-                    const innerProperty = property["items"]["properties"][item]
-                    return SolveSuitableComponent(innerName, innerLabel, innerProperty)
-                  })}
-                </Paper>
-                <IconButton key={`${name}.${index}-removeButton`} onClick={() => remove(index)}>
-                  <RemoveIcon />
-                </IconButton>
-              </div>
-            ))}
-          <Button
-            key={`${name}-addButton`}
-            variant="contained"
-            color="primary"
-            size="small"
-            startIcon={<AddIcon />}
-            onClick={() => push(itemStructure)}
-          >
-            Add new item
-          </Button>
-        </div>
-      )}
-    </FieldArray>
+    <div className="array" key={`${name}-array`}>
+      {fields.map((field, index) => {
+        const [lastPathItem] = path.slice(-1)
+        const pathWithoutLastItem = path.slice(0, -1)
+        const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+        return (
+          <div className="arrayRow" key={`${name}[${index}]`}>
+            <Paper elevation={2}>
+              {Object.keys(items).map(item => {
+                const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
+                return traverseFields(object["properties"][item], pathForThisIndex, object["required"])
+              })}
+            </Paper>
+            <IconButton onClick={() => remove(index)}>
+              <RemoveIcon />
+            </IconButton>
+          </div>
+        )
+      })}
+      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append(items)}>
+        Add new item
+      </Button>
+    </div>
   )
 }
 
 export default {
   dereferenceSchema,
-  buildInitialValues,
   buildFields,
-  buildYupSchema,
 }

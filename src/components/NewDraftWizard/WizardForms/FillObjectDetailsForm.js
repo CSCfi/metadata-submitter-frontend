@@ -1,19 +1,23 @@
 //@flow
-import React, { useEffect, useState } from "react"
-import schemaAPIService from "services/schemaAPI"
-import { useSelector } from "react-redux"
 import Alert from "@material-ui/lab/Alert"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import { Form, Formik } from "formik"
 import JSONSchemaParser from "./JSONSchemaParser"
+import React, { useEffect, useState } from "react"
+import schemaAPIService from "services/schemaAPI"
 import { makeStyles } from "@material-ui/core/styles"
+import { useForm, FormProvider } from "react-hook-form"
+import { useSelector } from "react-redux"
+import { ajvResolver } from "./ajvResolver"
+import objectAPIService from "services/objectAPI"
+import Button from "@material-ui/core/Button"
+import LinearProgress from "@material-ui/core/LinearProgress"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
     display: "flex",
     flexWrap: "wrap",
     "& .MuiTextField-root": {
-      width: "45%",
+      width: "48%",
       margin: theme.spacing(1),
     },
     "& .MuiTypography-root": {
@@ -27,7 +31,7 @@ const useStyles = makeStyles(theme => ({
       borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
     "& .MuiTypography-h3": {
-      width: "45%",
+      width: "100%",
     },
     "& .array": {
       margin: theme.spacing(1),
@@ -37,6 +41,9 @@ const useStyles = makeStyles(theme => ({
         alignItems: "center",
         marginBottom: theme.spacing(1),
         width: "100%",
+        "& .MuiTextField-root": {
+          width: "95%",
+        },
       },
     },
   },
@@ -54,32 +61,65 @@ const checkResponseError = response => {
   }
 }
 
-interface FormFieldsProps {
-  formSchema: any;
+type FormContentProps = {
+  resolver: typeof ajvResolver,
+  formSchema: any,
+  onSubmit: () => Promise<any>,
 }
 
-const FormFields = ({ formSchema }: FormFieldsProps) => {
+const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
-  const components = JSONSchemaParser.buildFields(formSchema)
-  return <div className={classes.formComponents}>{components}</div>
+  const methods = useForm({ mode: "onBlur", resolver })
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
+        {JSONSchemaParser.buildFields(formSchema)}
+        <Button variant="contained" color="primary" size="small" type="submit">
+          Save
+        </Button>
+      </form>
+    </FormProvider>
+  )
 }
 
 const FillObjectDetailsForm = () => {
   const { objectType } = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
+  const [successStatus, setSuccessStatus] = useState("info")
   const [formSchema, setFormSchema] = useState({})
-  const [YupSchema, setYupSchema] = useState(null)
-  const [initialValues, setInitialValues] = useState({})
+  const [validationSchema, setValidationSchema] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+
+  const onSubmit = async data => {
+    setSubmitting(true)
+    const waitForServertimer = setTimeout(() => {
+      setSuccessStatus("info")
+      setSuccessMessage(`For some reason, your file is still being saved
+                to our database, please wait. If saving doesn't go through in two
+                minutes, please try saving the file again.`)
+    }, 5000)
+
+    const response = await objectAPIService.createFromJSON(objectType, data)
+
+    if (response.ok) {
+      setSuccessStatus("success")
+      setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
+    } else {
+      setSuccessStatus("error")
+      setSuccessMessage(checkResponseError(response))
+    }
+    clearTimeout(waitForServertimer)
+    setSubmitting(false)
+  }
 
   useEffect(() => {
     const fetchSchema = async () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
-        await JSONSchemaParser.dereferenceSchema(response.data)
-        setFormSchema(response.data)
-        setYupSchema(await JSONSchemaParser.buildYupSchema(response.data))
-        setInitialValues(await JSONSchemaParser.buildInitialValues(response.data))
+        setFormSchema(await JSONSchemaParser.dereferenceSchema(response.data))
+        setValidationSchema(response.data)
       } else {
         setError(checkResponseError(response))
       }
@@ -91,21 +131,20 @@ const FillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={YupSchema}
-      onSubmit={values => {
-        console.log("JSON form successfully submitted")
-        console.log(JSON.stringify(values, null, 2))
-      }}
-    >
-      {() => (
-        <Form>
-          <FormFields formSchema={formSchema} />
-          <button type="submit">Submit</button>
-        </Form>
+    <div>
+      <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} onSubmit={onSubmit} />
+      {submitting && <LinearProgress />}
+      {successMessage && (
+        <Alert
+          severity={successStatus}
+          onClose={() => {
+            setSuccessMessage("")
+          }}
+        >
+          {successMessage}
+        </Alert>
       )}
-    </Formik>
+    </div>
   )
 }
 

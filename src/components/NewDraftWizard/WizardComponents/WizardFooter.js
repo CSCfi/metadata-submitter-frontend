@@ -75,7 +75,7 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={wizardStep === 2 && nextButtonRef?.current?.isSubmitting ? false : true}
+              disabled={wizardStep >= 1 ? false : true}
               className={classes.footerButton}
               onClick={async () => {
                 await nextButtonRef.current.submitForm()
@@ -83,7 +83,10 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
             >
               Save and Exit
             </Button>
-            <Button variant="contained" disabled={wizardStep === 2 ? false : true}>
+            <Button
+              variant="contained"
+              disabled={wizardStep === 2 && nextButtonRef?.current?.isSubmitting ? false : true}
+            >
               Publish
             </Button>
           </div>

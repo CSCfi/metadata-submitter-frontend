@@ -117,7 +117,7 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
       return object.items.enum ? (
         <FormCheckBoxArray key={name} name={name} label={label} options={object.items.enum} required={required} />
       ) : (
-        <FormArray key={name} object={object.items} path={path} />
+        <FormArray key={name} object={object} path={path} />
       )
     }
     case "null": {
@@ -291,21 +291,26 @@ type FormArrayProps = {
 
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
-  const items = (traverseValues(object): any)
+  const label = object.title ?? name
+  const items = (traverseValues(object.items): any)
+  const level = path.length + 1
   const { fields, append, remove } = useFieldArray({ name })
   return (
     <div className="array" key={`${name}-array`}>
+      <Typography key={`${name}-header`} variant={`h${level}`}>
+        {label}
+      </Typography>
       {fields.map((field, index) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+        const properties = object.items.properties
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                const required = object?.else?.required ?? object.required
-                return traverseFields(object["properties"][item], pathForThisIndex, required)
+                return traverseFields(properties[item], pathForThisIndex)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

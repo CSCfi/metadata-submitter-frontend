@@ -79,8 +79,8 @@ const ConnectForm = ({ children }: { children: any }) => {
 const pathToName = (path: string[]) => path.join(".")
 
 const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
-  if (object["oneOf"]) return <FormOneOfField path={path} object={object} />
   const name = pathToName(path)
+  if (object["oneOf"]) return <FormOneOfField key={name} path={path} object={object} />
   const [lastPathItem] = path.slice(-1)
   const label = object["title"] ? object["title"] : name
   const required = !!requiredProperties?.includes(lastPathItem)
@@ -159,7 +159,7 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
-type FormSelecFieldProps = FormFieldBaseProps & { options: string[] }
+type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 
 const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   const [field, setField] = useState("")
@@ -170,8 +170,7 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   return (
     <div>
       <TextField
-        name={`${name}-select`}
-        key={`${name}-select`}
+        name={name}
         label={label}
         defaultValue=""
         select
@@ -213,7 +212,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   </ConnectForm>
 )
 
-const FormSelectField = ({ name, label, required, options }: FormSelecFieldProps) => (
+const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -257,7 +256,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   </ConnectForm>
 )
 
-const FormCheckBoxArray = ({ name, label, required, options }: FormSelecFieldProps) => (
+const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldProps) => (
   <div>
     <p>
       <strong>{label}</strong> - check from following options

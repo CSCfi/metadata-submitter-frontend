@@ -155,12 +155,9 @@ type FormFieldBaseProps = {
   name: string,
   label: string,
   required: boolean,
-  props: {
-    type?: string,
-  }
 }
 
-const FormTextField = ({ name, label, required, ...props }: FormFieldBaseProps) => (
+const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -173,7 +170,7 @@ const FormTextField = ({ name, label, required, ...props }: FormFieldBaseProps) 
           error={!!error}
           helperText={error?.message}
           required={required}
-          {...props}
+          type={type}
         />
       )
     }}

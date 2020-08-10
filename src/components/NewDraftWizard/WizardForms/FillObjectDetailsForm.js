@@ -8,6 +8,9 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { ajvResolver } from "./ajvResolver"
+import objectAPIService from "services/objectAPI"
+import Button from "@material-ui/core/Button"
+import LinearProgress from "@material-ui/core/LinearProgress"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -58,15 +61,22 @@ const checkResponseError = response => {
   }
 }
 
-const FormContent = ({ resolver, formSchema }: { resolver: typeof ajvResolver, formSchema: any }) => {
+type FormContentProps = {
+  resolver: typeof ajvResolver,
+  formSchema: any,
+  onSubmit: () => Promise<any>,
+}
+
+const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
-  const onSubmit = data => console.log(JSON.stringify(data, null, 2))
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
         {JSONSchemaParser.buildFields(formSchema)}
-        <input type="submit" value="Save" />
+        <Button variant="contained" color="primary" size="small" type="submit">
+          Save
+        </Button>
       </form>
     </FormProvider>
   )
@@ -76,8 +86,33 @@ const FillObjectDetailsForm = () => {
   const { objectType } = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
+  const [successStatus, setSuccessStatus] = useState("info")
   const [formSchema, setFormSchema] = useState({})
   const [validationSchema, setValidationSchema] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+
+  const onSubmit = async data => {
+    setSubmitting(true)
+    const waitForServertimer = setTimeout(() => {
+      setSuccessStatus("info")
+      setSuccessMessage(`For some reason, your file is still being saved
+                to our database, please wait. If saving doesn't go through in two
+                minutes, please try saving the file again.`)
+    }, 5000)
+
+    const response = await objectAPIService.createFromJSON(objectType, data)
+
+    if (response.ok) {
+      setSuccessStatus("success")
+      setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
+    } else {
+      setSuccessStatus("error")
+      setSuccessMessage(checkResponseError(response))
+    }
+    clearTimeout(waitForServertimer)
+    setSubmitting(false)
+  }
 
   useEffect(() => {
     const fetchSchema = async () => {
@@ -95,7 +130,22 @@ const FillObjectDetailsForm = () => {
 
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
-  return <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} />
+  return (
+    <div>
+      <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} onSubmit={onSubmit} />
+      {submitting && <LinearProgress />}
+      {successMessage && (
+        <Alert
+          severity={successStatus}
+          onClose={() => {
+            setSuccessMessage("")
+          }}
+        >
+          {successMessage}
+        </Alert>
+      )}
+    </div>
+  )
 }
 
 export default FillObjectDetailsForm

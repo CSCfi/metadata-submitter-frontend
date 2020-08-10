@@ -108,7 +108,7 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
       return <FormTextField key={name} name={name} label={label} required={required} />
     }
     case "number": {
-      return <FormNumberField key={name} name={name} label={label} required={required} />
+      return <FormTextField key={name} name={name} label={label} required={required} type="number" />
     }
     case "boolean": {
       return <FormBooleanField key={name} name={name} label={label} required={required} />
@@ -155,9 +155,12 @@ type FormFieldBaseProps = {
   name: string,
   label: string,
   required: boolean,
+  props: {
+    type?: string,
+  }
 }
 
-const FormTextField = ({ name, label, required }: FormFieldBaseProps) => (
+const FormTextField = ({ name, label, required, ...props }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -170,26 +173,7 @@ const FormTextField = ({ name, label, required }: FormFieldBaseProps) => (
           error={!!error}
           helperText={error?.message}
           required={required}
-        />
-      )
-    }}
-  </ConnectForm>
-)
-
-const FormNumberField = ({ name, label, required }: FormFieldBaseProps) => (
-  <ConnectForm>
-    {({ register, errors }) => {
-      const error = _.get(errors, name)
-      return (
-        <TextField
-          name={name}
-          label={label}
-          type="number"
-          inputRef={register}
-          defaultValue=""
-          error={!!error}
-          helperText={error?.message}
-          required={required}
+          {...props}
         />
       )
     }}
@@ -203,14 +187,14 @@ const FormSelectField = ({ name, label, required, options }: FormFieldBaseProps 
       return (
         <TextField
           name={name}
-          select
           label={label}
-          SelectProps={{ native: true }}
           inputRef={register}
           defaultValue=""
           error={!!error}
           helperText={error?.message}
           required={required}
+          select
+          SelectProps={{ native: true }}
         >
           <option aria-label="None" value="" disabled />
           {options.map(option => (

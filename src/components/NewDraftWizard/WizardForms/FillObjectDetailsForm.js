@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   formComponents: {
     display: "flex",
     flexWrap: "wrap",
+    flexDirection: "column",
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -47,6 +48,11 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  formButton: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
 }))
 
 const checkResponseError = response => {
@@ -73,10 +79,12 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
-        {JSONSchemaParser.buildFields(formSchema)}
-        <Button variant="contained" color="primary" size="small" type="submit">
-          Save
-        </Button>
+        <div>{JSONSchemaParser.buildFields(formSchema)}</div>
+        <div>
+          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButton}>
+            Save
+          </Button>
+        </div>
       </form>
     </FormProvider>
   )

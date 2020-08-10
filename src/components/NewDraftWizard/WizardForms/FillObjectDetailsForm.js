@@ -64,7 +64,7 @@ const FormContent = ({ resolver, formSchema }: { resolver: typeof ajvResolver, f
   const onSubmit = data => console.log(JSON.stringify(data, null, 2))
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents} noValidate>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
         {JSONSchemaParser.buildFields(formSchema)}
         <input type="submit" value="Save" />
       </form>
@@ -84,8 +84,6 @@ const FillObjectDetailsForm = () => {
       const response = await schemaAPIService.getSchemaByObjectType(objectType)
       if (response.ok) {
         setFormSchema(await JSONSchemaParser.dereferenceSchema(response.data))
-        console.log("setting validation schema")
-        console.log(response.data)
         setValidationSchema(response.data)
       } else {
         setError(checkResponseError(response))

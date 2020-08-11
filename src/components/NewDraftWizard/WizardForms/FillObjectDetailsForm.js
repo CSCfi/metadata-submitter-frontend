@@ -11,6 +11,7 @@ import { ajvResolver } from "./ajvResolver"
 import objectAPIService from "services/objectAPI"
 import Button from "@material-ui/core/Button"
 import LinearProgress from "@material-ui/core/LinearProgress"
+import Ajv from "ajv"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -124,7 +125,7 @@ const FillObjectDetailsForm = () => {
   useEffect(() => {
     const fetchSchema = async () => {
       let schema = localStorage.getItem(`cached_${objectType}_schema`)
-      if (!schema) {
+      if (!schema || !new Ajv().validateSchema(schema)) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {
           schema = response.data

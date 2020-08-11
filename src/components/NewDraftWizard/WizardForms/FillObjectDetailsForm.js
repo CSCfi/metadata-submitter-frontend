@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   formComponents: {
     display: "flex",
     flexWrap: "wrap",
+    minWidth: "60vw",
     flexDirection: "column",
     "& .MuiTextField-root": {
       width: "48%",

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
-import { reset } from "../../../features/wizardStepSlice"
+import { reset } from "features/wizardStepSlice"
 import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 

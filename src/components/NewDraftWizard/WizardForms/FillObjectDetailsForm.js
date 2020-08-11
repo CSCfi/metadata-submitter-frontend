@@ -55,12 +55,12 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const checkResponseError = (response, prefixText)  => {
+const checkResponseError = (response, prefixText) => {
   switch (response.status) {
     case 504:
       return `Unfortunately we couldn't connect to our server.`
     case 400:
-      return `${prefixText}, details: ${response.data}`
+      return `${prefixText}, details: ${response.data.detail}`
     default:
       return "Unfortunately an unexpected error happened on our servers"
   }

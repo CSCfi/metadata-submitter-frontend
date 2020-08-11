@@ -161,12 +161,30 @@ type FormSectionProps = {
 const FormSection = (props: FormSectionProps) => {
   const { name, label, level } = props
   return (
-    <div className="formSection" key={`${name}-section`}>
-      <Typography key={`${name}-header`} variant={`h${level}`}>
-        {label}
-      </Typography>
-      {props.children}
-    </div>
+    <ConnectForm>
+      {({ errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <div>
+            <div className="formSection" key={`${name}-section`}>
+              <Typography key={`${name}-header`} variant={`h${level}`}>
+                {label}
+              </Typography>
+              {props.children}
+            </div>
+            <div>
+              {error ? (
+                <FormControl error>
+                  <FormHelperText>
+                    {label} {error?.message}
+                  </FormHelperText>
+                </FormControl>
+              ) : null}
+            </div>
+          </div>
+        )
+      }}
+    </ConnectForm>
   )
 }
 
@@ -188,27 +206,36 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   const options = object.oneOf
 
   return (
-    <div>
-      <TextField
-        name={name}
-        label={label}
-        defaultValue=""
-        select
-        SelectProps={{ native: true }}
-        onChange={handleChange}
-      >
-        <option aria-label="None" value="" disabled />
-        {options.map(optionObject => {
-          const option = optionObject.title
-          return (
-            <option key={`${name}-${option}`} value={option}>
-              {option}
-            </option>
-          )
-        })}
-      </TextField>
-      {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
-    </div>
+    <ConnectForm>
+      {({ errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <div>
+            <TextField
+              name={name}
+              label={label}
+              defaultValue=""
+              select
+              SelectProps={{ native: true }}
+              onChange={handleChange}
+              error={!!error}
+              helperText={error?.message}
+            >
+              <option aria-label="None" value="" disabled />
+              {options.map(optionObject => {
+                const option = optionObject.title
+                return (
+                  <option key={`${name}-${option}`} value={option}>
+                    {option}
+                  </option>
+                )
+              })}
+            </TextField>
+            {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
+          </div>
+        )
+      }}
+    </ConnectForm>
   )
 }
 

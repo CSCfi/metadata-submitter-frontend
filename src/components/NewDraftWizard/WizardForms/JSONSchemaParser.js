@@ -1,5 +1,6 @@
 //@flow
 import * as React from "react"
+import { useState } from "react"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import AddIcon from "@material-ui/icons/Add"
 import Button from "@material-ui/core/Button"
@@ -78,26 +79,27 @@ const ConnectForm = ({ children }: { children: any }) => {
 const pathToName = (path: string[]) => path.join(".")
 
 const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
-  if (object["oneOf"]) return
   const name = pathToName(path)
+  if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} />
   const [lastPathItem] = path.slice(-1)
-  const label = object["title"] ? object["title"] : name
+  const label = object.title ?? name
   const required = !!requiredProperties?.includes(lastPathItem)
-  switch (object["type"]) {
+  switch (object.type) {
     case "object": {
-      const properties = object["properties"]
+      const properties = object.properties
       return (
         <FormSection key={name} name={name} label={label} level={path.length + 1}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey]
-            return traverseFields(property, [...path, propertyKey], object["required"])
+            const required = object?.else?.required ?? object.required
+            return traverseFields(property, [...path, propertyKey], required)
           })}
         </FormSection>
       )
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField key={name} name={name} label={label} options={object["enum"]} required={required} />
+        <FormSelectField key={name} name={name} label={label} options={object.enum} required={required} />
       ) : (
         <FormTextField key={name} name={name} label={label} required={required} />
       )
@@ -112,15 +114,18 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
       return <FormBooleanField key={name} name={name} label={label} required={required} />
     }
     case "array": {
-      return object["items"]["enum"] ? (
-        <FormCheckBoxArray key={name} name={name} label={label} options={object["items"]["enum"]} required={required} />
+      return object.items.enum ? (
+        <FormCheckBoxArray key={name} name={name} label={label} options={object.items.enum} required={required} />
       ) : (
-        <FormArray key={name} object={object["items"]} path={path} />
+        <FormArray key={name} object={object} path={path} />
       )
+    }
+    case "null": {
+      return null
     }
     default: {
       console.error(`
-      No field parsing support for type ${object["type"]} yet.
+      No field parsing support for type ${object.type} yet.
       
       Pretty printed version of object with unsupported type:
       ${JSON.stringify(object, null, 2)}
@@ -155,6 +160,39 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
+type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
+
+const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
+  const [field, setField] = useState("")
+  const handleChange = event => setField(event.target.value)
+  const name = pathToName(path)
+  const label = object.title ?? name
+  const options = object.oneOf
+  return (
+    <div>
+      <TextField
+        name={name}
+        label={label}
+        defaultValue=""
+        select
+        SelectProps={{ native: true }}
+        onChange={handleChange}
+      >
+        <option aria-label="None" value="" disabled />
+        {options.map(optionObject => {
+          const option = optionObject.title
+          return (
+            <option key={`${name}-${option}`} value={option}>
+              {option}
+            </option>
+          )
+        })}
+      </TextField>
+      {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
+    </div>
+  )
+}
+
 const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
   <ConnectForm>
     {({ register, errors }) => {
@@ -175,7 +213,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   </ConnectForm>
 )
 
-const FormSelectField = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -219,7 +257,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   </ConnectForm>
 )
 
-const FormCheckBoxArray = ({ name, label, required, options }: FormFieldBaseProps & { options: string[] }) => (
+const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldProps) => (
   <div>
     <p>
       <strong>{label}</strong> - check from following options
@@ -253,20 +291,26 @@ type FormArrayProps = {
 
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
-  const items = (traverseValues(object): any)
+  const label = object.title ?? name
+  const items = (traverseValues(object.items): any)
+  const level = path.length + 1
   const { fields, append, remove } = useFieldArray({ name })
   return (
     <div className="array" key={`${name}-array`}>
+      <Typography key={`${name}-header`} variant={`h${level}`}>
+        {label}
+      </Typography>
       {fields.map((field, index) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+        const properties = object.items.properties
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(object["properties"][item], pathForThisIndex, object["required"])
+                return traverseFields(properties[item], pathForThisIndex)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

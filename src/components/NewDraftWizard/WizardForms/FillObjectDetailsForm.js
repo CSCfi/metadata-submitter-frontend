@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   formComponents: {
     display: "flex",
     flexWrap: "wrap",
+    flexDirection: "column",
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -47,6 +48,11 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  formButton: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
 }))
 
 const checkResponseError = response => {
@@ -54,7 +60,7 @@ const checkResponseError = response => {
     case 504:
       return `Unfortunately we couldn't connect to our server to catch this form.`
     case 400:
-      return `Unfortunately an error happened when connection to our to catch this form, 
+      return `Unfortunately an error happened when connecting to our server to catch this form, 
         details: ${response.data}`
     default:
       return "Unfortunately an unexpected error happened on our servers"
@@ -73,10 +79,12 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
-        {JSONSchemaParser.buildFields(formSchema)}
-        <Button variant="contained" color="primary" size="small" type="submit">
-          Save
-        </Button>
+        <div>{JSONSchemaParser.buildFields(formSchema)}</div>
+        <div>
+          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButton}>
+            Save
+          </Button>
+        </div>
       </form>
     </FormProvider>
   )

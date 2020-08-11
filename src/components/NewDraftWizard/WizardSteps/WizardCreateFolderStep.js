@@ -7,6 +7,8 @@ import { Field, Form, Formik } from "formik"
 import MuiTextField, { TextFieldProps } from "@material-ui/core/TextField"
 import { FieldProps, getIn } from "formik"
 import { makeStyles } from "@material-ui/core/styles"
+import { useDispatch } from "react-redux"
+import { createNewDraftFolder } from "features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,6 +59,7 @@ interface nextButtonRefProp {
  */
 const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   return (
     <Formik
       innerRef={nextButtonRef}
@@ -71,7 +74,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
         return errors
       }}
       onSubmit={(values, { setSubmitting }) => {
-        console.log("Successfully submitted!")
+        dispatch(createNewDraftFolder(values))
         setSubmitting(false)
       }}
     >

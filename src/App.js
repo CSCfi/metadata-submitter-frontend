@@ -25,6 +25,14 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     height: "100%",
   },
+  loginContent: {
+    padding: theme.spacing(0),
+    margin: theme.spacing(8, 0, 0),
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
 }))
 
 const App = () => {
@@ -49,7 +57,7 @@ const App = () => {
             </Container>
           </Route>
           <Route exact path="/login">
-            <Container component="main" maxWidth="md" className={classes.content}>
+            <Container component="main" maxWidth={false} className={classes.loginContent}>
               <Login />
             </Container>
           </Route>

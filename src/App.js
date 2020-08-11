@@ -9,6 +9,7 @@ import Nav from "components/nav"
 import Page404 from "error_pages/Page404"
 import Page500 from "error_pages/Page500"
 import Home from "components/home"
+import Login from "components/login"
 import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -45,6 +46,11 @@ const App = () => {
           <Route exact path="/">
             <Container component="main" maxWidth="md" className={classes.content}>
               <Home />
+            </Container>
+          </Route>
+          <Route exact path="/login">
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <Login />
             </Container>
           </Route>
           <Route path="*">

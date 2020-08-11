@@ -67,6 +67,9 @@ const traverseValues = (object: any) => {
     case "array": {
       return []
     }
+    case "null": {
+      return null
+    }
     default: {
       console.error(`
       No initial value parsing support for type ${object["type"]} yet.
@@ -87,6 +90,9 @@ const buildFields = (schema: any) => {
   }
 }
 
+/*
+ * Allow children components inside ConnectForm to pull react-hook-form objects and methods from context
+ * */
 const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
@@ -243,6 +249,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
         <TextField
           name={name}
@@ -253,6 +260,8 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
           helperText={error?.message}
           required={required}
           type={type}
+          multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+          rows={5}
         />
       )
     }}

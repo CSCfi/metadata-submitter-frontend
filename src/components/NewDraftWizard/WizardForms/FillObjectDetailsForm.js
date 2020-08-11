@@ -11,6 +11,7 @@ import { ajvResolver } from "./ajvResolver"
 import objectAPIService from "services/objectAPI"
 import Button from "@material-ui/core/Button"
 import LinearProgress from "@material-ui/core/LinearProgress"
+import Ajv from "ajv"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -123,13 +124,22 @@ const FillObjectDetailsForm = () => {
 
   useEffect(() => {
     const fetchSchema = async () => {
-      const response = await schemaAPIService.getSchemaByObjectType(objectType)
-      if (response.ok) {
-        setFormSchema(await JSONSchemaParser.dereferenceSchema(response.data))
-        setValidationSchema(response.data)
+      let schema = localStorage.getItem(`cached_${objectType}_schema`)
+      if (!schema || !new Ajv().validateSchema(schema)) {
+        const response = await schemaAPIService.getSchemaByObjectType(objectType)
+        if (response.ok) {
+          schema = response.data
+          localStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+        } else {
+          setError(checkResponseError(response, "Unfortunately an error happened while catching form fields"))
+          setIsLoading(false)
+          return
+        }
       } else {
-        setError(checkResponseError(response, "Unfortunately an error happened while catching form fields"))
+        schema = JSON.parse(schema)
       }
+      setFormSchema(await JSONSchemaParser.dereferenceSchema(schema))
+      setValidationSchema(schema)
       setIsLoading(false)
     }
     fetchSchema()

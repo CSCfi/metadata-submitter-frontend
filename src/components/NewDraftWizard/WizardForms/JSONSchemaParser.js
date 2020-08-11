@@ -82,7 +82,7 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
   const name = pathToName(path)
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} />
   const [lastPathItem] = path.slice(-1)
-  const label = object.title ?? name
+  const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem)
   switch (object.type) {
     case "object": {
@@ -165,9 +165,12 @@ type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   const [field, setField] = useState("")
   const handleChange = event => setField(event.target.value)
+
   const name = pathToName(path)
-  const label = object.title ?? name
+  const [lastPathItem] = path.slice(-1)
+  const label = object.title ?? lastPathItem
   const options = object.oneOf
+
   return (
     <div>
       <TextField
@@ -291,7 +294,8 @@ type FormArrayProps = {
 
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
-  const label = object.title ?? name
+  const [lastPathItem] = path.slice(-1)
+  const label = object.title ?? lastPathItem
   const items = (traverseValues(object.items): any)
   const level = path.length + 1
   const { fields, append, remove } = useFieldArray({ name })

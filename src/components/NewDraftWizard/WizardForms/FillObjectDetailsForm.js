@@ -55,13 +55,12 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const checkResponseError = response => {
+const checkResponseError = (response, prefixText)  => {
   switch (response.status) {
     case 504:
-      return `Unfortunately we couldn't connect to our server to catch this form.`
+      return `Unfortunately we couldn't connect to our server.`
     case 400:
-      return `Unfortunately an error happened when connecting to our server to catch this form, 
-        details: ${response.data}`
+      return `${prefixText}, details: ${response.data}`
     default:
       return "Unfortunately an unexpected error happened on our servers"
   }
@@ -108,15 +107,16 @@ const FillObjectDetailsForm = () => {
                 to our database, please wait. If saving doesn't go through in two
                 minutes, please try saving the file again.`)
     }, 5000)
+    const clearedData = JSONSchemaParser.clearEmptyValues(data)
 
-    const response = await objectAPIService.createFromJSON(objectType, data)
+    const response = await objectAPIService.createFromJSON(objectType, clearedData)
 
     if (response.ok) {
       setSuccessStatus("success")
       setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
     } else {
       setSuccessStatus("error")
-      setSuccessMessage(checkResponseError(response))
+      setSuccessMessage(checkResponseError(response, "Validation failed"))
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
@@ -129,7 +129,7 @@ const FillObjectDetailsForm = () => {
         setFormSchema(await JSONSchemaParser.dereferenceSchema(response.data))
         setValidationSchema(response.data)
       } else {
-        setError(checkResponseError(response))
+        setError(checkResponseError(response, "Unfortunately an error happened while catching form fields"))
       }
       setIsLoading(false)
     }

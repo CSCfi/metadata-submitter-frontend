@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 
 import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
 import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
-import { setObjectType } from "features/objectTypeSlice"
+import { resetObjectType } from "features/objectTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -62,7 +62,7 @@ const CustomCardHeader = ({ title }: { title: string }) => {
           variant="outlined"
           aria-label="hide card"
           className={classes.hideButton}
-          onClick={() => dispatch(setObjectType(""))}
+          onClick={() => dispatch(resetObjectType())}
         >
           Hide
         </Button>

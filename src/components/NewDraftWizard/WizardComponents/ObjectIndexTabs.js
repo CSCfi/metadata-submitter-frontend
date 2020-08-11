@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 const ObjectIndexTabs = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const { objectType } = useSelector(state => state.objectType)
+  const objectType = useSelector(state => state.objectType)
   const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   return (

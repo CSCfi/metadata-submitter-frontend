@@ -96,7 +96,7 @@ const checkResponseError = response => {
 const UploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
-  const { objectType } = useSelector(state => state.objectType)
+  const objectType = useSelector(state => state.objectType)
   const classes = useStyles()
 
   return (

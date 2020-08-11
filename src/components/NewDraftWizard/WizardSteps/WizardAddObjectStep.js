@@ -36,7 +36,7 @@ interface nextButtonRefProp {
 
 const WizardAddObjectStep = ({ nextButtonRef }: nextButtonRefProp) => {
   const classes = useStyles()
-  const { objectType } = useSelector(state => state.objectType)
+  const objectType = useSelector(state => state.objectType)
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />

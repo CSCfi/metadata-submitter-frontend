@@ -92,7 +92,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
 }
 
 const FillObjectDetailsForm = () => {
-  const { objectType } = useSelector(state => state.objectType)
+  const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")

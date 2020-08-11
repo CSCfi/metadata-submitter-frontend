@@ -108,10 +108,8 @@ const FillObjectDetailsForm = () => {
                 to our database, please wait. If saving doesn't go through in two
                 minutes, please try saving the file again.`)
     }, 5000)
-    const clearedData = JSONSchemaParser.clearEmptyValues(data)
-
-    const response = await objectAPIService.createFromJSON(objectType, clearedData)
-
+    const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+    const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
     if (response.ok) {
       setSuccessStatus("success")
       setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)

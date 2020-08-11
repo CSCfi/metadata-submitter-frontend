@@ -41,8 +41,8 @@ export const ajvResolver = validationSchema => {
   const ajv = new Ajv({ allErrors: true, coerceTypes: true })
   return async values => {
     const validate = ajv.compile(validationSchema)
-    const clearedValues = JSONSchemaParser.clearEmptyValues(values)
-    const valid = validate(clearedValues)
+    const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)
+    const valid = validate(cleanedValues)
     if (!valid) {
       return {
         errors: parseErrorSchema(validate, false),

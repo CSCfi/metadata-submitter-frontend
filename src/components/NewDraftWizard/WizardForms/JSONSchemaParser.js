@@ -24,18 +24,22 @@ const dereferenceSchema = async (schema: any) => {
   return dereferenced
 }
 
-const clearEmptyValues = (data: any) => {
-  const clearedData = JSON.parse(JSON.stringify(data))
-  return traverseEmptyValues(clearedData)
+const cleanUpFormValues = (data: any) => {
+  const cleanedData = JSON.parse(JSON.stringify(data))
+  return traverseFormValuesForCleanUp(cleanedData)
 }
 
-const traverseEmptyValues = (data: any) => {
+const traverseFormValuesForCleanUp = (data: any) => {
   Object.keys(data).forEach(key => {
     if (typeof data[key] === "object") {
-      data[key] = traverseEmptyValues(data[key])
+      data[key] = traverseFormValuesForCleanUp(data[key])
       if (Object.keys(data[key]).length === 0) delete data[key]
     }
-    if (data[key] === "") delete data[key]
+    if (data[key] === "") {
+      delete data[key]
+    } else if (!isNaN(data[key])) {
+      data[key] = Number(data[key])
+    }
   })
   return data
 }
@@ -385,5 +389,5 @@ const FormArray = ({ object, path }: FormArrayProps) => {
 export default {
   dereferenceSchema,
   buildFields,
-  clearEmptyValues,
+  cleanUpFormValues,
 }

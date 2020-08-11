@@ -24,6 +24,26 @@ const dereferenceSchema = async (schema: any) => {
   return dereferenced
 }
 
+const cleanUpFormValues = (data: any) => {
+  const cleanedData = JSON.parse(JSON.stringify(data))
+  return traverseFormValuesForCleanUp(cleanedData)
+}
+
+const traverseFormValuesForCleanUp = (data: any) => {
+  Object.keys(data).forEach(key => {
+    if (typeof data[key] === "object") {
+      data[key] = traverseFormValuesForCleanUp(data[key])
+      if (Object.keys(data[key]).length === 0) delete data[key]
+    }
+    if (data[key] === "") {
+      delete data[key]
+    } else if (!isNaN(data[key])) {
+      data[key] = Number(data[key])
+    }
+  })
+  return data
+}
+
 const traverseValues = (object: any) => {
   if (object["oneOf"]) return
   switch (object["type"]) {
@@ -51,6 +71,9 @@ const traverseValues = (object: any) => {
     case "array": {
       return []
     }
+    case "null": {
+      return null
+    }
     default: {
       console.error(`
       No initial value parsing support for type ${object["type"]} yet.
@@ -71,6 +94,9 @@ const buildFields = (schema: any) => {
   }
 }
 
+/*
+ * Allow children components inside ConnectForm to pull react-hook-form objects and methods from context
+ * */
 const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
@@ -82,7 +108,7 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
   const name = pathToName(path)
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} />
   const [lastPathItem] = path.slice(-1)
-  const label = object.title ?? name
+  const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem)
   switch (object.type) {
     case "object": {
@@ -145,12 +171,30 @@ type FormSectionProps = {
 const FormSection = (props: FormSectionProps) => {
   const { name, label, level } = props
   return (
-    <div className="formSection" key={`${name}-section`}>
-      <Typography key={`${name}-header`} variant={`h${level}`}>
-        {label}
-      </Typography>
-      {props.children}
-    </div>
+    <ConnectForm>
+      {({ errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <div>
+            <div className="formSection" key={`${name}-section`}>
+              <Typography key={`${name}-header`} variant={`h${level}`}>
+                {label}
+              </Typography>
+              {props.children}
+            </div>
+            <div>
+              {error ? (
+                <FormControl error>
+                  <FormHelperText>
+                    {label} {error?.message}
+                  </FormHelperText>
+                </FormControl>
+              ) : null}
+            </div>
+          </div>
+        )
+      }}
+    </ConnectForm>
   )
 }
 
@@ -165,31 +209,43 @@ type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   const [field, setField] = useState("")
   const handleChange = event => setField(event.target.value)
+
   const name = pathToName(path)
-  const label = object.title ?? name
+  const [lastPathItem] = path.slice(-1)
+  const label = object.title ?? lastPathItem
   const options = object.oneOf
+
   return (
-    <div>
-      <TextField
-        name={name}
-        label={label}
-        defaultValue=""
-        select
-        SelectProps={{ native: true }}
-        onChange={handleChange}
-      >
-        <option aria-label="None" value="" disabled />
-        {options.map(optionObject => {
-          const option = optionObject.title
-          return (
-            <option key={`${name}-${option}`} value={option}>
-              {option}
-            </option>
-          )
-        })}
-      </TextField>
-      {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
-    </div>
+    <ConnectForm>
+      {({ errors }) => {
+        const error = _.get(errors, name)
+        return (
+          <div>
+            <TextField
+              name={name}
+              label={label}
+              defaultValue=""
+              select
+              SelectProps={{ native: true }}
+              onChange={handleChange}
+              error={!!error}
+              helperText={error?.message}
+            >
+              <option aria-label="None" value="" disabled />
+              {options.map(optionObject => {
+                const option = optionObject.title
+                return (
+                  <option key={`${name}-${option}`} value={option}>
+                    {option}
+                  </option>
+                )
+              })}
+            </TextField>
+            {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
+          </div>
+        )
+      }}
+    </ConnectForm>
   )
 }
 
@@ -197,6 +253,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
         <TextField
           name={name}
@@ -207,6 +264,8 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
           helperText={error?.message}
           required={required}
           type={type}
+          multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+          rows={5}
         />
       )
     }}
@@ -291,7 +350,8 @@ type FormArrayProps = {
 
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
-  const label = object.title ?? name
+  const [lastPathItem] = path.slice(-1)
+  const label = object.title ?? lastPathItem
   const items = (traverseValues(object.items): any)
   const level = path.length + 1
   const { fields, append, remove } = useFieldArray({ name })
@@ -329,4 +389,5 @@ const FormArray = ({ object, path }: FormArrayProps) => {
 export default {
   dereferenceSchema,
   buildFields,
+  cleanUpFormValues,
 }

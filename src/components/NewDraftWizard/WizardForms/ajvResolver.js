@@ -1,5 +1,6 @@
 import { appendErrors } from "react-hook-form"
 import Ajv from "ajv"
+import JSONSchemaParser from "./JSONSchemaParser"
 
 // This resolver is based on https://github.com/react-hook-form/resolvers/pull/14 and should be replaced with official
 // ajv resolver when react-hook-forms release it!
@@ -40,7 +41,8 @@ export const ajvResolver = validationSchema => {
   const ajv = new Ajv({ allErrors: true, coerceTypes: true })
   return async values => {
     const validate = ajv.compile(validationSchema)
-    const valid = validate(values)
+    const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)
+    const valid = validate(cleanedValues)
     if (!valid) {
       return {
         errors: parseErrorSchema(validate, false),

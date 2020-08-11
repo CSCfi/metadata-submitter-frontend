@@ -16,6 +16,14 @@ const useStyles = makeStyles(theme => ({
   content: {
     padding: theme.spacing(8, 0, 6),
   },
+  wizardContent: {
+    padding: theme.spacing(0),
+    margin: theme.spacing(8, 0, 0),
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
 }))
 
 const App = () => {
@@ -27,7 +35,7 @@ const App = () => {
         <Nav />
         <Switch>
           <Route path="/newdraft">
-            <Container component="main" className={classes.content}>
+            <Container component="main" maxWidth={false} className={classes.wizardContent}>
               <NewDraftWizard />
             </Container>
           </Route>

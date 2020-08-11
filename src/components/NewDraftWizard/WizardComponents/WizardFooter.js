@@ -5,18 +5,33 @@ import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
-import { decrement, increment, reset } from "../../../features/wizardStepSlice"
+import { reset } from "features/wizardStepSlice"
 import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
-  backButton: {
-    marginLeft: theme.spacing(2),
-  },
   footerRow: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    flexShrink: 0,
+    borderTop: "solid 1px #ccc",
+    backgroundColor: "white",
+    position: "fixed",
+    left: 0,
+    bottom: 0,
+    padding: "10px",
+    height: "60px",
+    width: "100%",
+  },
+  footerButton: {
+    margin: theme.spacing(0, 2),
+  },
+  phantom: {
+    display: "block",
+    padding: "20px",
+    height: "60px",
+    width: "100%",
   },
 }))
 
@@ -40,44 +55,43 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
   return (
-    <div className={classes.footerRow}>
-      <div>
-        <Link component={RouterLink} aria-label="Cancel adding a new draft" to="/">
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.cancelButton}
-            onClick={() => dispatch(reset())}
-          >
-            Cancel
-          </Button>
-        </Link>
-        {wizardStep >= 1 && (
-          <Button variant="contained" color="primary" onClick={() => dispatch(decrement())}>
-            Back
-          </Button>
+    <div>
+      <div className={classes.phantom} />
+      <div className={classes.footerRow}>
+        <div>
+          <Link component={RouterLink} aria-label="Cancel creating a new submission" to="/">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => dispatch(reset())}
+              className={classes.footerButton}
+            >
+              Cancel
+            </Button>
+          </Link>
+        </div>
+        {wizardStep >= 0 && (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={wizardStep >= 1 ? false : true}
+              className={classes.footerButton}
+              onClick={async () => {
+                await nextButtonRef.current.submitForm()
+              }}
+            >
+              Save and Exit
+            </Button>
+            <Button
+              variant="contained"
+              disabled={wizardStep === 2 && nextButtonRef?.current?.isSubmitting ? false : true}
+            >
+              Publish
+            </Button>
+          </div>
         )}
       </div>
-      {wizardStep >= 0 && (
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={nextButtonRef?.current?.isSubmitting}
-          onClick={async () => {
-            if (nextButtonRef.current) {
-              await nextButtonRef.current.submitForm()
-            }
-            if (
-              wizardStep !== 2 &&
-              (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
-            ) {
-              dispatch(increment())
-            }
-          }}
-        >
-          {wizardStep === 2 ? "Save draft" : "Next"}
-        </Button>
-      )}
     </div>
   )
 }

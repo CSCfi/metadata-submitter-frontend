@@ -35,7 +35,7 @@ const App = () => {
         <Nav />
         <Switch>
           <Route path="/newdraft">
-            <Container component="main" maxWidth="false" className={classes.wizardContent}>
+            <Container component="main" maxWidth={false} className={classes.wizardContent}>
               <NewDraftWizard />
             </Container>
           </Route>

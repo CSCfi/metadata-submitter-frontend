@@ -68,7 +68,7 @@ const NewDraftWizard = () => {
   const nextButtonRef = useRef<Formik>(null)
 
   return (
-    <Container maxWidth="false" className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
         <div className={classes.paperContent}>{getStepContent(wizardStep, nextButtonRef)}</div>
       </Paper>

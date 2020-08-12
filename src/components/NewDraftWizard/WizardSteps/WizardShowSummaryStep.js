@@ -38,14 +38,30 @@ interface nextButtonRefProp {
   nextButtonRef: ElementRef<typeof Formik>;
 }
 
+type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
+
+type GroupedBySchema = {| [Schema]: string[] |}
+
 /**
  * Show summary of objects added to folder
  */
 const WizardShowSummaryStep = ({ nextButtonRef }: nextButtonRefProp) => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
-  const groupedObjects = ["Study", "Sample", "Experiment", "Run", "Analysis", "DAC", "Policy"].map(schema => {
-    return { [schema]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()) }
+  const groupedObjects: Array<GroupedBySchema> = [
+    "Study",
+    "Sample",
+    "Experiment",
+    "Run",
+    "Analysis",
+    "DAC",
+    "Policy",
+  ].map((schema: string) => {
+    return {
+      [(schema: string)]: metadataObjects
+        .filter(object => object.schema.toLowerCase() === schema.toLowerCase())
+        .map(object => object.accessionId),
+    }
   })
   const classes = useStyles()
   return (
@@ -65,9 +81,9 @@ const WizardShowSummaryStep = ({ nextButtonRef }: nextButtonRefProp) => {
                 <div className="objectAmount">{group[schema].length}</div>
               </div>
               <div>
-                {group[schema].map(metadataObject => (
-                  <ListItem button key={metadataObject.accessionId} dense className={classes.objectListItems}>
-                    <ListItemText primary={metadataObject.accessionId} />
+                {group[schema].map(accessionId => (
+                  <ListItem button key={accessionId} dense className={classes.objectListItems}>
+                    <ListItemText primary={accessionId} />
                   </ListItem>
                 ))}
               </div>

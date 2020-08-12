@@ -3,7 +3,7 @@ import React from "react"
 import { useSelector } from "react-redux"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
-import ObjectIndexTabs from "../WizardComponents/ObjectIndexTabs"
+import ObjectIndex from "../WizardComponents/ObjectIndex"
 import AddObjectCard from "../WizardComponents/AddObjectCard"
 import { makeStyles } from "@material-ui/core/styles"
 import type { ElementRef } from "react"
@@ -42,7 +42,7 @@ const WizardAddObjectStep = ({ nextButtonRef }: nextButtonRefProp) => {
       <WizardHeader headerText="Create new draft folder" />
       <WizardStepper nextButtonRef={nextButtonRef} />
       <div className={classes.formRow}>
-        <ObjectIndexTabs />
+        <ObjectIndex />
         <div className={classes.formBox}>
           {objectType === "" ? (
             <div className={classes.objectInfo}>

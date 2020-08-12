@@ -8,8 +8,8 @@ const wizardStepSlice = createSlice({
   reducers: {
     increment: state => state + 1,
     decrement: state => state - 1,
-    reset: () => initialState,
+    resetWizard: () => initialState,
   },
 })
-export const { increment, decrement, reset } = wizardStepSlice.actions
+export const { increment, decrement, resetWizard } = wizardStepSlice.actions
 export default wizardStepSlice.reducer

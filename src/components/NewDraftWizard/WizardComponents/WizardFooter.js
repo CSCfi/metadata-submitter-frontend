@@ -1,13 +1,13 @@
 //@flow
 import React from "react"
-import type { ElementRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
-import { reset } from "features/wizardStepSlice"
+import { resetWizard } from "features/wizardStepSlice"
+import { resetObjectType } from "features/objectTypeSlice"
+import { resetFolder } from "features/submissionFolderSlice"
 import { makeStyles } from "@material-ui/core/styles"
-import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -35,22 +35,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface nextButtonRefProp {
-  nextButtonRef: ElementRef<typeof Formik>;
-}
-
 /**
  * Define wizard footer with changing button actions.
- *
- * Cancel button quits the whole wizard process.
- * Back button decrements wizard steps by one
- * Next button increments wizard steps by one and acts as a Formik form
- * submitter when nextButtonRef is set (e.g. is not null).
- *
- * @param nextButtonRef: Mutable ref object from useRef-hook
  */
 
-const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
+const WizardFooter = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -63,7 +52,11 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => dispatch(reset())}
+              onClick={() => {
+                dispatch(resetWizard())
+                dispatch(resetFolder())
+                dispatch(resetObjectType())
+              }}
               className={classes.footerButton}
             >
               Cancel
@@ -75,17 +68,20 @@ const WizardFooter = ({ nextButtonRef }: nextButtonRefProp) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={wizardStep >= 1 ? false : true}
+              disabled={wizardStep < 1}
               className={classes.footerButton}
-              onClick={async () => {
-                await nextButtonRef.current.submitForm()
+              onClick={() => {
+                console.log("This should save and exit!")
               }}
             >
               Save and Exit
             </Button>
             <Button
               variant="contained"
-              disabled={wizardStep === 2 && nextButtonRef?.current?.isSubmitting ? false : true}
+              disabled={wizardStep !== 2}
+              onClick={() => {
+                console.log("This should publish!")
+              }}
             >
               Publish
             </Button>

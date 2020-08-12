@@ -6,7 +6,7 @@ import { Link as RouterLink } from "react-router-dom"
 import Button from "@material-ui/core/Button"
 import { resetWizard } from "features/wizardStepSlice"
 import { resetObjectType } from "features/objectTypeSlice"
-import { resetFolder } from "features/submissionFolderSlice"
+import { deleteFolderAndContent } from "features/submissionFolderSlice"
 import { makeStyles } from "@material-ui/core/styles"
 import Dialog from "@material-ui/core/Dialog"
 import DialogTitle from "@material-ui/core/DialogTitle"
@@ -73,14 +73,15 @@ const WizardFooter = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
+  const folder = useSelector(state => state.submissionFolder)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
 
   const handleCancel = cancelWizard => {
     if (cancelWizard) {
       console.log("here!")
       dispatch(resetWizard())
-      dispatch(resetFolder())
       dispatch(resetObjectType())
+      dispatch(deleteFolderAndContent(folder))
     } else {
       setCancelDialogOpen(false)
     }

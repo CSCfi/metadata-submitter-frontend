@@ -21,9 +21,14 @@ const getAllObjectsByObjectType = async (objectType: string) => {
   return await api.get(`/${objectType}`)
 }
 
+const deleteObjectByAccessionId = async (objectType: string, accessionId: string) => {
+  return await api.delete(`/${objectType}/${accessionId}`)
+}
+
 export default {
   createFromXML,
   createFromJSON,
   getObjectByAccessionId,
   getAllObjectsByObjectType,
+  deleteObjectByAccessionId,
 }

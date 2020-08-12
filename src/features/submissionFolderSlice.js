@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import folderAPIService from "services/folderAPI"
+import objectAPIService from "../services/objectAPI"
 
 const initialState = null
 
@@ -37,4 +38,20 @@ export const addObjectToFolder = (folderID, objectDetails) => async dispatch => 
     return
   }
   dispatch(addObject(objectDetails))
+}
+
+export const deleteFolderAndContent = folder => async dispatch => {
+  if (folder) {
+    const response = await folderAPIService.deleteFolderById(folder.id)
+    if (!response.ok) console.error(`Couldn't delete folder with id ${folder.id}`)
+    if (folder.metadataObjects) {
+      await Promise.all(
+        folder.metadataObjects.map(async object => {
+          const response = await objectAPIService.deleteObjectByAccessionId(object.schema, object.accessionId)
+          if (!response.ok) console.error(`Couldn't delete object with accessionId ${object.accessionId}`)
+        })
+      )
+    }
+  }
+  dispatch(resetFolder())
 }

@@ -31,7 +31,7 @@ export const createNewDraftFolder = folderDetails => async dispatch => {
 }
 
 export const addObjectToFolder = (folderID, objectDetails) => async dispatch => {
-  const changes = [{ op: "add", path: "/metadataObjects", value: objectDetails }]
+  const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
     console.log(response)

@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "@material-ui/core/Link"
 import { Link as RouterLink } from "react-router-dom"
@@ -8,6 +8,11 @@ import { resetWizard } from "features/wizardStepSlice"
 import { resetObjectType } from "features/objectTypeSlice"
 import { resetFolder } from "features/submissionFolderSlice"
 import { makeStyles } from "@material-ui/core/styles"
+import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogActions from "@material-ui/core/DialogActions"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -35,33 +40,65 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+const CancelDialog = ({ open, handleCancel }: { open: boolean, handleCancel: boolean => void }) => (
+  <Dialog
+    open={open}
+    onClose={() => handleCancel(false)}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+  >
+    <DialogTitle id="alert-dialog-title">{"Cancel creating a submission folder?"}</DialogTitle>
+    <DialogContent>
+      <DialogContentText id="alert-dialog-description">
+        If you cancel creating submission folder, the folder and its content will not be saved anywhere.
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button variant="outlined" onClick={() => handleCancel(false)} color="primary" autoFocus>
+        No, continue creating the folder
+      </Button>
+      <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
+        <Button variant="contained" onClick={() => handleCancel(true)} color="primary">
+          Yes, cancel creating folder
+        </Button>
+      </Link>
+    </DialogActions>
+  </Dialog>
+)
+
 /**
  * Define wizard footer with changing button actions.
  */
-
 const WizardFooter = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+
+  const handleCancel = cancelWizard => {
+    if (cancelWizard) {
+      console.log("here!")
+      dispatch(resetWizard())
+      dispatch(resetFolder())
+      dispatch(resetObjectType())
+    } else {
+      setCancelDialogOpen(false)
+    }
+  }
+
   return (
     <div>
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
         <div>
-          <Link component={RouterLink} aria-label="Cancel creating a new submission" to="/">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                dispatch(resetWizard())
-                dispatch(resetFolder())
-                dispatch(resetObjectType())
-              }}
-              className={classes.footerButton}
-            >
-              Cancel
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setCancelDialogOpen(true)}
+            className={classes.footerButton}
+          >
+            Cancel
+          </Button>
         </div>
         {wizardStep >= 0 && (
           <div>
@@ -88,6 +125,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
+      <CancelDialog open={cancelDialogOpen} handleCancel={handleCancel} />
     </div>
   )
 }

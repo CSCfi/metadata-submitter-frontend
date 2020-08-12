@@ -98,6 +98,7 @@ const UploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
   const objectType = useSelector(state => state.objectType)
+  const { id: folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
 
@@ -138,7 +139,7 @@ const UploadObjectXMLForm = () => {
             setSuccessStatus("success")
             setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
             dispatch(
-              addObjectToFolder({
+              addObjectToFolder(folderId, {
                 accessionId: response.data.accessionId,
                 schema: objectType,
               })

@@ -8,13 +8,13 @@ const submissionFolderSlice = createSlice({
   initialState,
   reducers: {
     setFolder: (state, action) => action.payload,
-    addObjectToFolder: (state, action) => {
+    addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
     resetFolder: () => initialState,
   },
 })
-export const { setFolder, addObjectToFolder, resetFolder } = submissionFolderSlice.actions
+export const { setFolder, addObject, resetFolder } = submissionFolderSlice.actions
 export default submissionFolderSlice.reducer
 
 export const createNewDraftFolder = folderDetails => async dispatch => {
@@ -25,6 +25,16 @@ export const createNewDraftFolder = folderDetails => async dispatch => {
   }
   const response = await folderAPIService.createNewFolder(folder)
   if (!response.ok) return
-  folder.id = response.data.id
+  folder.id = response.data.folderId
   dispatch(setFolder(folder))
+}
+
+export const addObjectToFolder = (folderID, objectDetails) => async dispatch => {
+  const changes = [{ op: "add", path: "/metadataObjects", value: objectDetails }]
+  const response = await folderAPIService.patchFolderById(folderID, changes)
+  if (!response.ok) {
+    console.log(response)
+    return
+  }
+  dispatch(addObject(objectDetails))
 }

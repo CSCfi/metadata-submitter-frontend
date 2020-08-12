@@ -160,29 +160,27 @@ const WizardStepper = ({ nextButtonRef }: nextButtonRefProp) => {
           </Step>
         ))}
       </Stepper>
-      {wizardStep >= 0 && (
-        <Button
-          disabled={nextButtonRef?.current?.isSubmitting}
-          className={classes.centeredStepButton}
-          disableElevation
-          color="primary"
-          variant="outlined"
-          onClick={async () => {
-            if (nextButtonRef.current) {
-              await nextButtonRef.current.submitForm()
-            }
-            if (
-              wizardStep !== 2 &&
-              (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
-            ) {
-              dispatch(increment())
-            }
-          }}
-        >
-          Next
-          <ArrowForwardIosIcon fontSize="large" />
-        </Button>
-      )}
+      <Button
+        disabled={nextButtonRef?.current?.isSubmitting || wizardStep >= 2}
+        className={classes.centeredStepButton}
+        disableElevation
+        color="primary"
+        variant="outlined"
+        onClick={async () => {
+          if (nextButtonRef.current) {
+            await nextButtonRef.current.submitForm()
+          }
+          if (
+            wizardStep !== 2 &&
+            (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
+          ) {
+            dispatch(increment())
+          }
+        }}
+      >
+        Next
+        <ArrowForwardIosIcon fontSize="large" />
+      </Button>
     </div>
   )
 }

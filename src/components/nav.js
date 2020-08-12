@@ -1,6 +1,5 @@
 //@flow
 import React from "react"
-import PropTypes from "prop-types"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import Button from "@material-ui/core/Button"
@@ -9,7 +8,7 @@ import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import HomeIcon from "@material-ui/icons/Home"
 import { makeStyles } from "@material-ui/core/styles"
-import { Link as RouterLink, withRouter } from "react-router-dom"
+import { Link as RouterLink, useLocation } from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -40,13 +39,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface MenuProps extends PropTypes {
-  location: PropTypes.object.isRequired;
-}
-
-const Menu = (props: MenuProps) => {
+const Menu = () => {
   const classes = useStyles()
-  const { location } = props
+  let location = useLocation()
   if (location.pathname.match(/login/)) {
     return null
   }
@@ -76,8 +71,6 @@ const Menu = (props: MenuProps) => {
   )
 }
 
-const NavMenu = withRouter(Menu)
-
 const Nav = () => {
   const classes = useStyles()
   return (
@@ -89,7 +82,7 @@ const Nav = () => {
         <Typography variant="h6" noWrap className={classes.title}>
           Metadata Submitter
         </Typography>
-        <NavMenu />
+        <Menu />
       </Toolbar>
     </AppBar>
   )

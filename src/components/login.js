@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     marginLeft: "auto",
     marginRight: "50px",
-    marginTop: "-50px",
+    marginTop: "-70px",
     minHeight: "300px",
     "& img": {
       width: "100%",

@@ -1,6 +1,6 @@
 //@flow
 import React, { useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
 import Input from "@material-ui/core/Input"
@@ -11,6 +11,7 @@ import Alert from "@material-ui/lab/Alert"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 import { makeStyles } from "@material-ui/core/styles"
+import { addObjectToFolder } from "features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,6 +98,7 @@ const UploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
   const objectType = useSelector(state => state.objectType)
+  const dispatch = useDispatch()
   const classes = useStyles()
 
   return (
@@ -135,6 +137,12 @@ const UploadObjectXMLForm = () => {
           if (response.ok) {
             setSuccessStatus("success")
             setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
+            dispatch(
+              addObjectToFolder({
+                accessionId: response.data.accessionId,
+                schema: objectType,
+              })
+            )
           } else {
             setFieldError("file", checkResponseError(response))
           }

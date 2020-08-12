@@ -13,7 +13,7 @@ import ListItemText from "@material-ui/core/ListItemText"
 const useStyles = makeStyles(theme => ({
   summary: {
     padding: theme.spacing(1),
-    width: "30vw",
+    width: theme.spacing(100),
   },
   schemaTitleRow: {
     display: "flex",

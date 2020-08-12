@@ -13,13 +13,10 @@ import Button from "@material-ui/core/Button"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Ajv from "ajv"
 import { addObjectToFolder } from "../../../features/submissionFolderSlice"
+import Container from "@material-ui/core/Container"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
-    display: "flex",
-    flexWrap: "wrap",
-    minWidth: "60vw",
-    flexDirection: "column",
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -157,7 +154,7 @@ const FillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   if (error) return <Alert severity="error">{error}</Alert>
   return (
-    <div>
+    <Container maxWidth="md">
       <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} onSubmit={onSubmit} />
       {submitting && <LinearProgress />}
       {successMessage && (
@@ -170,7 +167,7 @@ const FillObjectDetailsForm = () => {
           {successMessage}
         </Alert>
       )}
-    </div>
+    </Container>
   )
 }
 

@@ -85,7 +85,7 @@ const AddObjectCard = () => {
     },
     existing: {
       title: "Choose existing object",
-      component: <div>Not implemented yet</div>
+      component: <div>Not implemented yet</div>,
     },
   }
   return (

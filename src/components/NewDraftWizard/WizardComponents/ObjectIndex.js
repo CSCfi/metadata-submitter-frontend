@@ -1,9 +1,10 @@
 //@flow
 import React, { useState } from "react"
-//import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 
 import { makeStyles } from "@material-ui/core/styles"
-//import { setObjectType } from "features/objectTypeSlice"
+import { setObjectType } from "features/objectTypeSlice"
+import { setSubmissionType } from "features/submissionTypeSlice"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
@@ -97,8 +98,7 @@ const SubmissionTypeList = ({ handleClick }: { handleClick: string => void }) =>
  */
 const ObjectIndex = () => {
   const classes = useStyles()
-  //const dispatch = useDispatch()
-  //const objectType = useSelector(state => state.objectType)
+  const dispatch = useDispatch()
   const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   const [expandedObjectType, setExpandedObjectType] = useState("")
@@ -108,8 +108,13 @@ const ObjectIndex = () => {
   }
 
   const setObjectAndSubmissionTypes = (submissionType: string) => {
-    console.log(submissionType)
-    console.log(expandedObjectType)
+    const submissionTypeMap = {
+      "Fill Form": "form",
+      "Upload XML File": "xml",
+      "Choose existing object": "existing",
+    }
+    dispatch(setSubmissionType(submissionTypeMap[submissionType]))
+    dispatch(setObjectType(expandedObjectType))
   }
 
   return (
@@ -117,7 +122,12 @@ const ObjectIndex = () => {
       {objectTypes.map(objectType => {
         const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
         return (
-          <Accordion key={objectType} square expanded={expandedObjectType === objectType} onChange={handlePanelChange(objectType)}>
+          <Accordion
+            key={objectType}
+            square
+            expanded={expandedObjectType === objectType}
+            onChange={handlePanelChange(objectType)}
+          >
             <AccordionSummary aria-controls="type-content" id="type-header">
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
             </AccordionSummary>

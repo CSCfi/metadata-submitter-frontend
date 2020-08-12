@@ -11,7 +11,7 @@ const rootReducer = combineReducers({
   objectType: objectTypeReducer,
   wizardStep: wizardStepReducer,
   submissionFolder: submissionFolderReducer,
-  submissionType: submissionTypeReducer
+  submissionType: submissionTypeReducer,
 })
 
 export default rootReducer

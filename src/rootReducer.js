@@ -9,7 +9,7 @@ import submissionFolderReducer from "features/submissionFolderSlice"
 const rootReducer = combineReducers({
   objectType: objectTypeReducer,
   wizardStep: wizardStepReducer,
-  folder: submissionFolderReducer,
+  submissionFolder: submissionFolderReducer,
 })
 
 export default rootReducer

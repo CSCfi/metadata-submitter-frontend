@@ -9,6 +9,7 @@ import Nav from "components/nav"
 import Page404 from "error_pages/Page404"
 import Page500 from "error_pages/Page500"
 import Home from "components/home"
+import Login from "components/login"
 import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -17,6 +18,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(8, 0, 6),
   },
   wizardContent: {
+    padding: theme.spacing(0),
+    margin: theme.spacing(8, 0, 0),
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
+  loginContent: {
     padding: theme.spacing(0),
     margin: theme.spacing(8, 0, 0),
     width: "100%",
@@ -45,6 +54,11 @@ const App = () => {
           <Route exact path="/">
             <Container component="main" maxWidth="md" className={classes.content}>
               <Home />
+            </Container>
+          </Route>
+          <Route exact path="/login">
+            <Container component="main" maxWidth={false} className={classes.loginContent}>
+              <Login />
             </Container>
           </Route>
           <Route path="*">

@@ -34,6 +34,9 @@ const CSCtheme = createMuiTheme({
     secondary: {
       main: "#dfe1e3",
     },
+    third: {
+      main: "#006476",
+    },
     background: {
       default: "white",
     },

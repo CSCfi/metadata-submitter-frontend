@@ -6,12 +6,13 @@ import React, { useEffect, useState } from "react"
 import schemaAPIService from "services/schemaAPI"
 import { makeStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider } from "react-hook-form"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { ajvResolver } from "./ajvResolver"
 import objectAPIService from "services/objectAPI"
 import Button from "@material-ui/core/Button"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Ajv from "ajv"
+import { addObjectToFolder } from "../../../features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {
@@ -100,6 +101,8 @@ const FillObjectDetailsForm = () => {
   const [formSchema, setFormSchema] = useState({})
   const [validationSchema, setValidationSchema] = useState({})
   const [submitting, setSubmitting] = useState(false)
+  const dispatch = useDispatch()
+  const { id: folderId } = useSelector(state => state.submissionFolder)
 
   const onSubmit = async data => {
     setSubmitting(true)
@@ -114,6 +117,12 @@ const FillObjectDetailsForm = () => {
     if (response.ok) {
       setSuccessStatus("success")
       setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
+      dispatch(
+        addObjectToFolder(folderId, {
+          accessionId: response.data.accessionId,
+          schema: objectType,
+        })
+      )
     } else {
       setSuccessStatus("error")
       setSuccessMessage(checkResponseError(response, "Validation failed"))

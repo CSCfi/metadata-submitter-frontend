@@ -134,7 +134,7 @@ const FillObjectDetailsForm = () => {
   useEffect(() => {
     const fetchSchema = async () => {
       let schema = localStorage.getItem(`cached_${objectType}_schema`)
-      if (!schema || !new Ajv().validateSchema(schema)) {
+      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {
           schema = response.data

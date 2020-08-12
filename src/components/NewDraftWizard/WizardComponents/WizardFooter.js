@@ -78,7 +78,6 @@ const WizardFooter = () => {
 
   const handleCancel = cancelWizard => {
     if (cancelWizard) {
-      console.log("here!")
       dispatch(resetWizard())
       dispatch(resetObjectType())
       dispatch(deleteFolderAndContent(folder))

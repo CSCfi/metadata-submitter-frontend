@@ -15,9 +15,13 @@ export const { setFolder, resetFolder } = submissionFolderSlice.actions
 export default submissionFolderSlice.reducer
 
 export const createNewDraftFolder = folderDetails => async dispatch => {
-  const response = await folderAPIService.createNewFolder({ ...folderDetails, published: false, metadataObjects: [] })
+  let folder = {
+    ...folderDetails,
+    published: false,
+    metadataObjets: [],
+  }
+  const response = await folderAPIService.createNewFolder(folder)
   if (!response.ok) return
-  const folderResponse = await folderAPIService.getFolderById(response.data.folderId)
-  if (!folderResponse.ok) return
-  dispatch(setFolder(folderResponse.data))
+  folder.id = response.data.id
+  dispatch(setFolder(folder))
 }

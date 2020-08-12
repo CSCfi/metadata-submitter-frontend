@@ -9,6 +9,10 @@ import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
 import { withStyles } from "@material-ui/core/styles"
 import NoteAddIcon from "@material-ui/icons/NoteAdd"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
+import Typography from "@material-ui/core/Typography"
 
 const useStyles = makeStyles(theme => ({
   index: {
@@ -16,16 +20,19 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     width: theme.spacing(30),
   },
+  submissionTypeList: {
+    padding: 0,
+  },
+  submissionTypeListItem: {
+    backgroundColor: theme.palette.secondary.main,
+  },
 }))
 
 // Customized accordion from https://material-ui.com/components/accordion/#customized-accordions
 const Accordion = withStyles({
   root: {
-    border: "1px solid rgba(0, 0, 0, .125)",
+    borderTop: "1px solid rgba(0, 0, 0, .125)",
     boxShadow: "none",
-    "&:not(:last-child)": {
-      borderBottom: 0,
-    },
     "&:before": {
       display: "none",
     },
@@ -39,7 +46,6 @@ const Accordion = withStyles({
 const AccordionSummary = withStyles(theme => ({
   root: {
     backgroundColor: theme.palette.grey["800"],
-    borderBottom: "1px solid rgba(0, 0, 0, .125)",
     height: 56,
     marginBottom: -1,
     "&$expanded": {
@@ -59,11 +65,32 @@ const AccordionSummary = withStyles(theme => ({
   expanded: {},
 }))(MuiAccordionSummary)
 
-const AccordionDetails = withStyles(theme => ({
+const AccordionDetails = withStyles({
   root: {
-    padding: theme.spacing(2),
+    display: "inherit",
+    padding: 0,
   },
-}))(MuiAccordionDetails)
+})(MuiAccordionDetails)
+
+const SubmissionTypeList = ({ handleClick }: { handleClick: string => void }) => {
+  const submissionTypes = ["Fill Form", "Upload XML File", "Choose existing object"]
+  const classes = useStyles()
+  return (
+    <List dense className={classes.submissionTypeList}>
+      {submissionTypes.map(submissionType => (
+        <ListItem
+          divider
+          key={submissionType}
+          button
+          onClick={() => handleClick(submissionType)}
+          className={classes.submissionTypeListItem}
+        >
+          <ListItemText primary={submissionType} primaryTypographyProps={{ variant: "subtitle1" }} />
+        </ListItem>
+      ))}
+    </List>
+  )
+}
 
 /**
  * Render tabs for choosing which object type to add.
@@ -74,22 +101,29 @@ const ObjectIndex = () => {
   //const objectType = useSelector(state => state.objectType)
   const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
-  const [expanded, setExpanded] = useState("")
+  const [expandedObjectType, setExpandedObjectType] = useState("")
 
-  const handleChange = panel => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false)
+  const handlePanelChange = panel => (event, newExpanded) => {
+    setExpandedObjectType(newExpanded ? panel : false)
+  }
+
+  const setObjectAndSubmissionTypes = (submissionType: string) => {
+    console.log(submissionType)
+    console.log(expandedObjectType)
   }
 
   return (
     <div className={classes.index}>
-      {objectTypes.map(type => {
-        const typeCapitalized = type[0].toUpperCase() + type.substring(1)
+      {objectTypes.map(objectType => {
+        const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
         return (
-          <Accordion key={type} square expanded={expanded === type} onChange={handleChange(type)}>
+          <Accordion key={objectType} square expanded={expandedObjectType === objectType} onChange={handlePanelChange(objectType)}>
             <AccordionSummary aria-controls="type-content" id="type-header">
-              <NoteAddIcon /> {typeCapitalized}
+              <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
             </AccordionSummary>
-            <AccordionDetails>1 2 3</AccordionDetails>
+            <AccordionDetails>
+              <SubmissionTypeList handleClick={setObjectAndSubmissionTypes} />
+            </AccordionDetails>
           </Accordion>
         )
       })}

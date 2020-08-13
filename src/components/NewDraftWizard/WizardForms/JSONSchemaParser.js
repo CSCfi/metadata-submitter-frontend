@@ -18,6 +18,9 @@ import RemoveIcon from "@material-ui/icons/Remove"
 import * as _ from "lodash"
 import { useFieldArray, useFormContext } from "react-hook-form"
 
+/*
+ * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
+ */
 const dereferenceSchema = async (schema: any) => {
   let dereferenced = JSON.parse(JSON.stringify(schema))
   await $RefParser.dereference(dereferenced)
@@ -25,6 +28,9 @@ const dereferenceSchema = async (schema: any) => {
   return dereferenced
 }
 
+/*
+ * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
+ */
 const cleanUpFormValues = (data: any) => {
   const cleanedData = JSON.parse(JSON.stringify(data))
   return traverseFormValuesForCleanUp(cleanedData)
@@ -45,6 +51,9 @@ const traverseFormValuesForCleanUp = (data: any) => {
   return data
 }
 
+/*
+ * Parse initial values from given object
+ */
 const traverseValues = (object: any) => {
   if (object["oneOf"]) return
   switch (object["type"]) {
@@ -87,6 +96,10 @@ const traverseValues = (object: any) => {
   }
 }
 
+/*
+ * Build react-hook-form fields based on given schema
+ */
+
 const buildFields = (schema: any) => {
   try {
     return traverseFields(schema, [])
@@ -97,14 +110,20 @@ const buildFields = (schema: any) => {
 
 /*
  * Allow children components inside ConnectForm to pull react-hook-form objects and methods from context
- * */
+ */
 const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
 }
 
+/*
+ * Translate array of path object levels (such as ["descriptor", "studyType"]) to unique name ("descriptor.studyType")
+ */
 const pathToName = (path: string[]) => path.join(".")
 
+/*
+ * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
+ */
 const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
   const name = pathToName(path)
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} />
@@ -169,6 +188,9 @@ type FormSectionProps = {
   children?: React.Node,
 }
 
+/*
+ * FormSection is rendered for properties with type object
+ */
 const FormSection = (props: FormSectionProps) => {
   const { name, label, level } = props
   return (
@@ -207,6 +229,9 @@ type FormFieldBaseProps = {
 
 type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 
+/*
+ * FormOneOfField is rendered if property can be choosed from many possible.
+ */
 const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   const [field, setField] = useState("")
   const handleChange = event => setField(event.target.value)
@@ -250,6 +275,9 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
   )
 }
 
+/*
+ * FormTextField is the most usual type, rendered for strings, integers and numbers.
+ */
 const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
   <ConnectForm>
     {({ register, errors }) => {
@@ -273,6 +301,9 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
   </ConnectForm>
 )
 
+/*
+ * FormSelectField is rendered for choosing one from many options
+ */
 const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
@@ -301,6 +332,9 @@ const FormSelectField = ({ name, label, required, options }: FormSelectFieldProp
   </ConnectForm>
 )
 
+/*
+ * FormSelectField is rendered for checkboxes
+ */
 const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
@@ -317,6 +351,9 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   </ConnectForm>
 )
 
+/*
+ * FormSelectField is rendered for selection from options where it's possible to choose many options
+ */
 const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldProps) => (
   <div>
     <p>
@@ -349,6 +386,9 @@ type FormArrayProps = {
   path: Array<string>,
 }
 
+/*
+ * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
+ */
 const FormArray = ({ object, path }: FormArrayProps) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)

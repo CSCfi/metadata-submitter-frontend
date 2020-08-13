@@ -8,11 +8,11 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 import { useSelector } from "react-redux"
 
-import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
-import WizardAddObjectStep from "../components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
-import WizardCreateFolderStep from "../components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
-import WizardFrontpageStep from "../components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
-import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
+import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
+import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
+import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
+import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -38,10 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 /**
  * Return correct content for each step
- * @param wizardStep: Step to render
- * @param nextButtonRef: Mutable ref object from useRef-hook
  */
-
 const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof Formik>) => {
   switch (wizardStep) {
     case -1:
@@ -58,11 +55,9 @@ const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof For
 }
 
 /**
- * Container for new draft wizard, renders content for each wizard page. This
- * includes on-linear steps such as adding just one metadata object.
+ * Container for wizard, renders content for each wizard step.
  *
- * Some children components need to hook extra functionalities to footers next-
- * button, so reference hook it set here.
+ * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
 const NewDraftWizard = () => {
   const classes = useStyles()

@@ -105,7 +105,7 @@ const Home = () => {
       submissions: ["Title1", "Title2", "Title3", "Title4", "Title5"],
     },
   ]
-  const publisheCard = [
+  const publishedCard = [
     {
       title: "Your Published Submissions",
       folderType: "published",
@@ -130,7 +130,7 @@ const Home = () => {
         )
       })}
       <Divider variant="middle" />
-      {publisheCard.map(card => {
+      {publishedCard.map(card => {
         return (
           <Grid item xs={12} key={card.title} className={classes.tableCard}>
             <SubmissionIndexCard

@@ -67,3 +67,7 @@ const render = () => {
   )
 }
 render()
+
+if (process.env.NODE_ENV === "development" && module.hot) {
+  module.hot.accept("./App", render)
+}

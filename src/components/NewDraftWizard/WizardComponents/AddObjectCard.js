@@ -1,6 +1,6 @@
 //@flow
-import React, { useState } from "react"
-import { useDispatch } from "react-redux"
+import React from "react"
+import { useDispatch, useSelector } from "react-redux"
 
 import Card from "@material-ui/core/Card"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -10,7 +10,8 @@ import { makeStyles } from "@material-ui/core/styles"
 
 import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
 import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
-import { setObjectType } from "features/objectTypeSlice"
+import { resetObjectType } from "features/objectTypeSlice"
+import { resetSubmissionType } from "features/submissionTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -62,7 +63,10 @@ const CustomCardHeader = ({ title }: { title: string }) => {
           variant="outlined"
           aria-label="hide card"
           className={classes.hideButton}
-          onClick={() => dispatch(setObjectType(""))}
+          onClick={() => {
+            dispatch(resetObjectType())
+            dispatch(resetSubmissionType())
+          }}
         >
           Hide
         </Button>
@@ -71,36 +75,9 @@ const CustomCardHeader = ({ title }: { title: string }) => {
   )
 }
 
-type ChooseProps = {
-  setSubmissionType: string => void,
-  buttonContents: Array<{ type: string, title: string }>,
-}
-
-const ChooseSubmission = ({ setSubmissionType, buttonContents }: ChooseProps) => {
-  const classes = useStyles()
-  return (
-    <div>
-      <CustomCardHeader title="Choose type of submission" />
-      <CardContent className={classes.cardContent}>
-        {buttonContents.map(content => (
-          <Button
-            key={content.type}
-            variant="outlined"
-            color="primary"
-            onClick={() => setSubmissionType(content.type)}
-            className={classes.submissionTypeButton}
-          >
-            {content.title}
-          </Button>
-        ))}
-      </CardContent>
-    </div>
-  )
-}
-
 const AddObjectCard = () => {
   const classes = useStyles()
-  const [submissionType, setSubmissionType] = useState("")
+  const submissionType = useSelector(state => state.submissionType)
   const cards = {
     form: {
       title: "Fill form",
@@ -112,25 +89,13 @@ const AddObjectCard = () => {
     },
     existing: {
       title: "Choose existing object",
-      component: <UploadObjectXMLForm />,
+      component: <div>Not implemented yet</div>,
     },
   }
   return (
     <Card className={classes.card}>
-      {submissionType === "" ? (
-        <ChooseSubmission
-          setSubmissionType={value => setSubmissionType(value)}
-          buttonContents={Object.keys(cards).map(key => ({
-            type: key,
-            title: cards[key].title,
-          }))}
-        />
-      ) : (
-        <>
-          <CustomCardHeader title={cards[submissionType]["title"]} />
-          <CardContent className={classes.cardContent}>{cards[submissionType]["component"]}</CardContent>
-        </>
-      )}
+      <CustomCardHeader title={cards[submissionType]["title"]} />
+      <CardContent className={classes.cardContent}>{cards[submissionType]["component"]}</CardContent>
     </Card>
   )
 }

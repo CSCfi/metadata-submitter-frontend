@@ -7,6 +7,8 @@ import { Field, Form, Formik } from "formik"
 import MuiTextField, { TextFieldProps } from "@material-ui/core/TextField"
 import { FieldProps, getIn } from "formik"
 import { makeStyles } from "@material-ui/core/styles"
+import { useDispatch, useSelector } from "react-redux"
+import { createNewDraftFolder } from "features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,6 +59,25 @@ interface nextButtonRefProp {
  */
 const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const folder = useSelector(state => state.submissionFolder)
+  if (folder) {
+    return (
+      <form className={classes.root}>
+        <MuiTextField label="Folder Name" variant="outlined" fullWidth required disabled defaultValue={folder.name} />
+        <MuiTextField
+          label="Folder Description"
+          variant="outlined"
+          fullWidth
+          required
+          disabled
+          defaultValue={folder.description}
+          multiline
+          rows={5}
+        />
+      </form>
+    )
+  }
   return (
     <Formik
       innerRef={nextButtonRef}
@@ -71,7 +92,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
         return errors
       }}
       onSubmit={(values, { setSubmitting }) => {
-        console.log("Successfully submitted!")
+        dispatch(createNewDraftFolder(values))
         setSubmitting(false)
       }}
     >
@@ -85,7 +106,7 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
             variant="outlined"
             fullWidth
             multiline
-            rows={4}
+            rows={5}
             required
           />
         </Form>

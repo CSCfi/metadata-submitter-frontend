@@ -37,7 +37,7 @@ const traverseFormValuesForCleanUp = (data: any) => {
     }
     if (data[key] === "") {
       delete data[key]
-    } else if (!isNaN(data[key])) {
+    } else if (typeof data[key] === "string" && !isNaN(data[key])) {
       data[key] = Number(data[key])
     }
   })

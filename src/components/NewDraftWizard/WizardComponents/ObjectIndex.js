@@ -14,6 +14,12 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import Typography from "@material-ui/core/Typography"
+import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogActions from "@material-ui/core/DialogActions"
+import Button from "@material-ui/core/Button"
 
 const useStyles = makeStyles(theme => ({
   index: {
@@ -82,12 +88,41 @@ const AccordionDetails = withStyles({
   },
 })(MuiAccordionDetails)
 
+const CancelFormDialog = ({ open, handleCancelling }: { open: boolean, handleCancelling: boolean => void }) => (
+  <Dialog
+    open={open}
+    onClose={() => handleCancelling(false)}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+  >
+    <DialogTitle id="alert-dialog-title">{"Would you like to save draft version of this form?"}</DialogTitle>
+    <DialogContent>
+      <DialogContentText id="alert-dialog-description">
+        If you save form as a draft, you can continue filling it later.
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button variant="contained" onClick={() => handleCancelling(false)} color="secondary">
+        Cancel
+      </Button>
+      <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
+        Do not save
+      </Button>
+      <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
+        Save
+      </Button>
+    </DialogActions>
+  </Dialog>
+)
+
 const SubmissionTypeList = ({
-  handleClick,
+  handleSubmissionTypeChange,
   isCurrentObjectType,
+  currentSubmissionType,
 }: {
-  handleClick: string => void,
+  handleSubmissionTypeChange: string => void,
   isCurrentObjectType: boolean,
+  currentSubmissionType: string,
 }) => {
   const submissionTypes = ["form", "xml", "existing"]
   const submissionTypeMap = {
@@ -96,7 +131,6 @@ const SubmissionTypeList = ({
     existing: "Choose existing object",
   }
   const classes = useStyles()
-  const currentSubmissionType = useSelector(state => state.submissionType)
 
   return (
     <List dense className={classes.submissionTypeList}>
@@ -106,7 +140,7 @@ const SubmissionTypeList = ({
           divider
           key={submissionType}
           button
-          onClick={() => handleClick(submissionType)}
+          onClick={() => handleSubmissionTypeChange(submissionType)}
           className={classes.submissionTypeListItem}
         >
           <ListItemText primary={submissionTypeMap[submissionType]} primaryTypographyProps={{ variant: "subtitle1" }} />
@@ -125,16 +159,33 @@ const ObjectIndex = () => {
   const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   const [expandedObjectType, setExpandedObjectType] = useState("")
+  const [clickedSubmissionType, setClickedSubmissionType] = useState("")
+  const [cancelFormOpen, setCancelFormOpen] = useState(false)
+  const currentObjectType = useSelector(state => state.objectType)
+  const currentSubmissionType = useSelector(state => state.submissionType)
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
   }
 
-  const setObjectAndSubmissionTypes = (submissionType: string) => {
-    dispatch(setSubmissionType(submissionType))
-    dispatch(setObjectType(expandedObjectType))
+  const handleSubmissionTypeChange = (submissionType: string) => {
+    if (currentSubmissionType === "") {
+      dispatch(setSubmissionType(submissionType))
+      dispatch(setObjectType(expandedObjectType))
+    } else {
+      setClickedSubmissionType(submissionType)
+      setCancelFormOpen(true)
+    }
   }
-  const currentObjectType = useSelector(state => state.objectType)
+
+  const handleCancelling = (cancel: boolean) => {
+    setClickedSubmissionType("")
+    setCancelFormOpen(false)
+    if (cancel) {
+      dispatch(setSubmissionType(clickedSubmissionType))
+      dispatch(setObjectType(expandedObjectType))
+    }
+  }
 
   return (
     <div className={classes.index}>
@@ -156,11 +207,16 @@ const ObjectIndex = () => {
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <SubmissionTypeList handleClick={setObjectAndSubmissionTypes} isCurrentObjectType={isCurrentObjectType} />
+              <SubmissionTypeList
+                handleSubmissionTypeChange={handleSubmissionTypeChange}
+                isCurrentObjectType={isCurrentObjectType}
+                currentSubmissionType={currentSubmissionType}
+              />
             </AccordionDetails>
           </Accordion>
         )
       })}
+      <CancelFormDialog open={cancelFormOpen} handleCancelling={handleCancelling} />
     </div>
   )
 }

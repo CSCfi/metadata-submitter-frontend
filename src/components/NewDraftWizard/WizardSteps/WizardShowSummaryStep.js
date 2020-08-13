@@ -36,8 +36,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface nextButtonRefProp {
-  nextButtonRef: ElementRef<typeof Formik>;
+type NextButtonRefProp = {
+  nextButtonRef: ElementRef<typeof Formik>,
 }
 
 type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
@@ -47,7 +47,7 @@ type GroupedBySchema = {| [Schema]: string[] |}
 /**
  * Show summary of objects added to folder
  */
-const WizardShowSummaryStep = ({ nextButtonRef }: nextButtonRefProp) => {
+const WizardShowSummaryStep = ({ nextButtonRef }: NextButtonRefProp) => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
   const groupedObjects: Array<GroupedBySchema> = [

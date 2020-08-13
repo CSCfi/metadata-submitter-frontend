@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Translate Formik field props to props that Material UI TextField can use.
+ * Translate Formik field props to props that Material UI TextField can use,
+ * inspired by: https://github.com/stackworx/formik-material-ui/blob/master/packages/formik-material-ui/src/TextField.tsx
  */
 const fieldToTextField = ({
   disabled,
@@ -51,15 +52,14 @@ const TextField = ({ children, ...props }: FieldProps) => (
   </>
 )
 
-interface nextButtonRefProp {
-  nextButtonRef: ElementRef<typeof Formik>;
+type NextButtonRefProp = {
+  nextButtonRef: ElementRef<typeof Formik>,
 }
 
 /**
- * Define Formik form for adding new folder
- * @param nextButtonRef: Mutable ref object from useRef-hook
+ * Define Formik form for adding new folder. NextButtonRef is added to Formik so submission can be triggered outside this component.
  */
-const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
+const CreateFolderForm = ({ nextButtonRef }: NextButtonRefProp) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
@@ -119,10 +119,9 @@ const CreateFolderForm = ({ nextButtonRef }: nextButtonRefProp) => {
 
 /**
  * Show form to create folder as first step of new draft wizard
- * @param nextButtonRef: Mutable ref object from useRef-hook
  */
 
-const WizardCreateFolderStep = ({ nextButtonRef }: nextButtonRefProp) => {
+const WizardCreateFolderStep = ({ nextButtonRef }: NextButtonRefProp) => {
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />

@@ -1,6 +1,6 @@
 //@flow
 import React, { useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 import { makeStyles } from "@material-ui/core/styles"
 import { setObjectType } from "features/objectTypeSlice"
@@ -26,6 +26,16 @@ const useStyles = makeStyles(theme => ({
   },
   submissionTypeListItem: {
     backgroundColor: theme.palette.secondary.main,
+    "&.Mui-selected": {
+      backgroundColor: theme.palette.secondary.main,
+      boxShadow: `inset 10px 0px 0px 0px ${theme.palette.primary.main}`,
+    },
+  },
+  nonSelectedAccordion: {
+    backgroundColor: theme.palette.grey["800"],
+  },
+  selectedAccordion: {
+    backgroundColor: theme.palette.primary.main,
   },
 }))
 
@@ -46,7 +56,6 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.grey["800"],
     height: 56,
     marginBottom: -1,
     "&$expanded": {
@@ -73,20 +82,34 @@ const AccordionDetails = withStyles({
   },
 })(MuiAccordionDetails)
 
-const SubmissionTypeList = ({ handleClick }: { handleClick: string => void }) => {
-  const submissionTypes = ["Fill Form", "Upload XML File", "Choose existing object"]
+const SubmissionTypeList = ({
+  handleClick,
+  isCurrentObjectType,
+}: {
+  handleClick: string => void,
+  isCurrentObjectType: boolean,
+}) => {
+  const submissionTypes = ["form", "xml", "existing"]
+  const submissionTypeMap = {
+    form: "Fill Form",
+    xml: "Upload XML File",
+    existing: "Choose existing object",
+  }
   const classes = useStyles()
+  const currentSubmissionType = useSelector(state => state.submissionType)
+
   return (
     <List dense className={classes.submissionTypeList}>
       {submissionTypes.map(submissionType => (
         <ListItem
+          selected={isCurrentObjectType && currentSubmissionType === submissionType}
           divider
           key={submissionType}
           button
           onClick={() => handleClick(submissionType)}
           className={classes.submissionTypeListItem}
         >
-          <ListItemText primary={submissionType} primaryTypographyProps={{ variant: "subtitle1" }} />
+          <ListItemText primary={submissionTypeMap[submissionType]} primaryTypographyProps={{ variant: "subtitle1" }} />
         </ListItem>
       ))}
     </List>
@@ -108,19 +131,16 @@ const ObjectIndex = () => {
   }
 
   const setObjectAndSubmissionTypes = (submissionType: string) => {
-    const submissionTypeMap = {
-      "Fill Form": "form",
-      "Upload XML File": "xml",
-      "Choose existing object": "existing",
-    }
-    dispatch(setSubmissionType(submissionTypeMap[submissionType]))
+    dispatch(setSubmissionType(submissionType))
     dispatch(setObjectType(expandedObjectType))
   }
+  const currentObjectType = useSelector(state => state.objectType)
 
   return (
     <div className={classes.index}>
       {objectTypes.map(objectType => {
         const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
+        const isCurrentObjectType = objectType === currentObjectType
         return (
           <Accordion
             key={objectType}
@@ -128,11 +148,15 @@ const ObjectIndex = () => {
             expanded={expandedObjectType === objectType}
             onChange={handlePanelChange(objectType)}
           >
-            <AccordionSummary aria-controls="type-content" id="type-header">
+            <AccordionSummary
+              className={isCurrentObjectType ? classes.selectedAccordion : classes.nonSelectedAccordion}
+              aria-controls="type-content"
+              id="type-header"
+            >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <SubmissionTypeList handleClick={setObjectAndSubmissionTypes} />
+              <SubmissionTypeList handleClick={setObjectAndSubmissionTypes} isCurrentObjectType={isCurrentObjectType} />
             </AccordionDetails>
           </Accordion>
         )

@@ -69,6 +69,9 @@ const render = () => {
 }
 render()
 
+/**
+ * Reload app with after redux store has been reloaded, see: https://redux-toolkit.js.org/tutorials/advanced-tutorial#store-setup-and-hmr
+ */
 if (process.env.NODE_ENV === "development" && module.hot) {
   module.hot.accept("./App", render)
 }

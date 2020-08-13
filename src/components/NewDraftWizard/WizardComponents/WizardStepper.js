@@ -1,6 +1,5 @@
 //@flow
 import React from "react"
-import type { ElementRef } from "react"
 
 import Button from "@material-ui/core/Button"
 import Step from "@material-ui/core/Step"
@@ -12,11 +11,11 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
-import { Formik } from "formik"
 import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
 
-import { decrement, increment } from "../../../features/wizardStepSlice"
+import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import { decrement, increment } from "features/wizardStepSlice"
 
 // Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
 
@@ -125,14 +124,10 @@ const useStyles = makeStyles({
   },
 })
 
-type nextButtonRefProp = {
-  nextButtonRef?: ElementRef<typeof Formik>,
-}
-
 /**
  * Show info about wizard steps to user.
  */
-const WizardStepper = ({ nextButtonRef = null }: nextButtonRefProp) => {
+const WizardStepper = ({ createFolderFormRef = null }: { createFolderFormRef?: CreateFolderFormRef }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -163,18 +158,18 @@ const WizardStepper = ({ nextButtonRef = null }: nextButtonRefProp) => {
         ))}
       </Stepper>
       <Button
-        disabled={nextButtonRef?.current?.isSubmitting || wizardStep >= 2}
+        disabled={createFolderFormRef?.current?.isSubmitting || wizardStep >= 2}
         className={classes.centeredStepButton}
         disableElevation
         color="primary"
         variant="outlined"
         onClick={async () => {
-          if (nextButtonRef.current) {
-            await nextButtonRef.current.submitForm()
+          if (createFolderFormRef.current) {
+            await createFolderFormRef.current.submitForm()
           }
           if (
             wizardStep !== 2 &&
-            (!nextButtonRef.current || Object.entries(nextButtonRef.current.errors).length === 0)
+            (!createFolderFormRef || Object.entries(createFolderFormRef.current.errors).length === 0)
           ) {
             dispatch(increment())
           }

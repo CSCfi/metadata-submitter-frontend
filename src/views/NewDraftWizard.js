@@ -1,6 +1,5 @@
 //@flow
 import React, { useRef } from "react"
-import type { ElementRef } from "react"
 
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
@@ -11,6 +10,7 @@ import { useSelector } from "react-redux"
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 
@@ -39,16 +39,16 @@ const useStyles = makeStyles(theme => ({
 /**
  * Return correct content for each step
  */
-const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof Formik>) => {
+const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFormRef) => {
   switch (wizardStep) {
     case -1:
-      return <WizardFrontpageStep nextButtonRef={nextButtonRef} />
+      return <WizardFrontpageStep />
     case 0:
-      return <WizardCreateFolderStep nextButtonRef={nextButtonRef} />
+      return <WizardCreateFolderStep createFolderFormRef={createFolderFormRef} />
     case 1:
-      return <WizardAddObjectStep nextButtonRef={nextButtonRef} />
+      return <WizardAddObjectStep />
     case 2:
-      return <WizardShowSummaryStep nextButtonRef={nextButtonRef} />
+      return <WizardShowSummaryStep />
     default:
       throw new Error("Unknown step")
   }
@@ -62,12 +62,12 @@ const getStepContent = (wizardStep: number, nextButtonRef: ElementRef<typeof For
 const NewDraftWizard = () => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)
-  const nextButtonRef = useRef<Formik>(null)
+  const createFolderFormRef = useRef<Formik>(null)
 
   return (
     <Container maxWidth={false} className={classes.container}>
       <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
-        <div className={classes.paperContent}>{getStepContent(wizardStep, nextButtonRef)}</div>
+        <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
       </Paper>
       <WizardFooter />
     </Container>

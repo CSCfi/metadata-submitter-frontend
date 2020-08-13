@@ -52,14 +52,12 @@ const TextField = ({ children, ...props }: FieldProps) => (
   </>
 )
 
-type NextButtonRefProp = {
-  nextButtonRef: ElementRef<typeof Formik>,
-}
+export type CreateFolderFormRef = ElementRef<typeof Formik>
 
 /**
- * Define Formik form for adding new folder. NextButtonRef is added to Formik so submission can be triggered outside this component.
+ * Define Formik form for adding new folder. Ref is added to Formik so submission can be triggered outside this component.
  */
-const CreateFolderForm = ({ nextButtonRef }: NextButtonRefProp) => {
+const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
@@ -82,7 +80,7 @@ const CreateFolderForm = ({ nextButtonRef }: NextButtonRefProp) => {
   }
   return (
     <Formik
-      innerRef={nextButtonRef}
+      innerRef={createFolderFormRef}
       initialValues={{
         name: "",
         description: "",
@@ -121,14 +119,12 @@ const CreateFolderForm = ({ nextButtonRef }: NextButtonRefProp) => {
  * Show form to create folder as first step of new draft wizard
  */
 
-const WizardCreateFolderStep = ({ nextButtonRef }: NextButtonRefProp) => {
-  return (
-    <>
-      <WizardHeader headerText="Create new draft folder" />
-      <WizardStepper nextButtonRef={nextButtonRef} />
-      <CreateFolderForm nextButtonRef={nextButtonRef} />
-    </>
-  )
-}
+const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
+  <>
+    <WizardHeader headerText="Create new draft folder" />
+    <WizardStepper createFolderFormRef={createFolderFormRef} />
+    <CreateFolderForm createFolderFormRef={createFolderFormRef} />
+  </>
+)
 
 export default WizardCreateFolderStep

@@ -2,13 +2,13 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles, withStyles } from "@material-ui/core/styles"
 import { setObjectType } from "features/objectTypeSlice"
 import { setSubmissionType } from "features/submissionTypeSlice"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
-import { withStyles } from "@material-ui/core/styles"
+
 import NoteAddIcon from "@material-ui/icons/NoteAdd"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"

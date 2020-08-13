@@ -1,3 +1,4 @@
+//@flow
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = -1

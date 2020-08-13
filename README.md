@@ -33,6 +33,10 @@ We're following recommended settings from eslint, react and prettier -packages w
 
 Running `npm run build` builds the app for production to the `build` folder.
 
+## Architecture
+
+See [architecture](architecture.md).
+
 ## License
 
 Metadata submission interface is released under `MIT`, see [LICENSE](LICENSE).

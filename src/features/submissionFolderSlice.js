@@ -21,8 +21,6 @@ const submissionFolderSlice = createSlice({
 export const { setFolder, addObject, resetFolder } = submissionFolderSlice.actions
 export default submissionFolderSlice.reducer
 
-// Async actions
-
 type FolderFromForm = {
   name: string,
   description: string,

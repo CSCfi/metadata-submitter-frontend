@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/extend-expect"
 import { render } from "@testing-library/react"
 import { BrowserRouter as Router } from "react-router-dom"
 
-import Nav from "./nav"
+import Nav from "./Nav"
 
 describe("NavBar", () => {
   let component

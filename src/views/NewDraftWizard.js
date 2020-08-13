@@ -8,11 +8,11 @@ import { makeStyles } from "@material-ui/core/styles"
 import { Formik } from "formik"
 import { useSelector } from "react-redux"
 
-import WizardFooter from "./WizardComponents/WizardFooter"
-import WizardAddObjectStep from "./WizardSteps/WizardAddObjectStep"
-import WizardCreateFolderStep from "./WizardSteps/WizardCreateFolderStep"
-import WizardFrontpageStep from "./WizardSteps/WizardFrontpageStep"
-import WizardShowSummaryStep from "./WizardSteps/WizardShowSummaryStep"
+import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
+import WizardAddObjectStep from "../components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
+import WizardCreateFolderStep from "../components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import WizardFrontpageStep from "../components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
+import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 
 const useStyles = makeStyles(theme => ({
   paper: {

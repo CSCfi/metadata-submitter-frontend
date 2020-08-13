@@ -6,12 +6,12 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
-import Page404 from "components/ErrorPages/Page404"
-import Page500 from "components/ErrorPages/Page500"
-import Home from "components/home"
-import Login from "components/login"
-import Nav from "components/nav"
-import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
+import Nav from "components/Nav"
+import Page404 from "views/ErrorPages/Page404"
+import Page500 from "views/ErrorPages/Page500"
+import Home from "views/Home"
+import Login from "views/Login"
+import NewDraftWizard from "views/NewDraftWizard"
 
 const useStyles = makeStyles(theme => ({
   content: {

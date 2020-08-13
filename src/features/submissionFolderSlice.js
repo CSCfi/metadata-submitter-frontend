@@ -1,3 +1,4 @@
+//@flow
 import { createSlice } from "@reduxjs/toolkit"
 
 import objectAPIService from "../services/objectAPI"
@@ -20,19 +21,43 @@ const submissionFolderSlice = createSlice({
 export const { setFolder, addObject, resetFolder } = submissionFolderSlice.actions
 export default submissionFolderSlice.reducer
 
-export const createNewDraftFolder = folderDetails => async dispatch => {
-  let folder = {
+// Async actions
+
+type FolderFromForm = {
+  name: string,
+  description: string,
+}
+
+type ObjectInFolder = {
+  accessionId: string,
+  schema: string,
+}
+
+type FolderNoId = {
+  name: string,
+  description: string,
+  published: boolean,
+  metadataObjects: Array<ObjectInFolder>,
+}
+
+type Folder = FolderNoId & { id: string }
+
+export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (dispatch: any => void) => {
+  const folderForBackend: FolderNoId = {
     ...folderDetails,
     published: false,
     metadataObjects: [],
   }
-  const response = await folderAPIService.createNewFolder(folder)
+  const response = await folderAPIService.createNewFolder(folderForBackend)
   if (!response.ok) return
-  folder.id = response.data.folderId
+  const folder: Folder = {
+    ...folderForBackend,
+    id: response.data.folderId,
+  }
   dispatch(setFolder(folder))
 }
 
-export const addObjectToFolder = (folderID, objectDetails) => async dispatch => {
+export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
@@ -42,7 +67,7 @@ export const addObjectToFolder = (folderID, objectDetails) => async dispatch => 
   dispatch(addObject(objectDetails))
 }
 
-export const deleteFolderAndContent = folder => async dispatch => {
+export const deleteFolderAndContent = (folder: Folder) => async (dispatch: any => void) => {
   if (folder) {
     const response = await folderAPIService.deleteFolderById(folder.id)
     if (!response.ok) console.error(`Couldn't delete folder with id ${folder.id}`)

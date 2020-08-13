@@ -80,6 +80,15 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
         <div>
+          <Button
+            variant="contained"
+            color="secondary"
+            size="small"
+            className={classes.formButton}
+            onClick={methods.reset}
+          >
+            Clear form
+          </Button>
           <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButton}>
             Save
           </Button>

@@ -1,14 +1,16 @@
 //@flow
 import React from "react"
-import { useDispatch } from "react-redux"
+
 import Button from "@material-ui/core/Button"
-import { increment } from "../../../features/wizardStepSlice"
-import Typography from "@material-ui/core/Typography"
-import Grid from "@material-ui/core/Grid"
 import Divider from "@material-ui/core/Divider"
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
+import Grid from "@material-ui/core/Grid"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Tooltip from "@material-ui/core/Tooltip"
+import Typography from "@material-ui/core/Typography"
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
+import { useDispatch } from "react-redux"
+
+import { increment } from "../../../features/wizardStepSlice"
 
 const useStyles = makeStyles(theme => ({
   newDraftButton: {

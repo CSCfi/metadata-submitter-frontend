@@ -1,20 +1,22 @@
 //@flow
 import React from "react"
-import clsx from "clsx"
 import type { ElementRef } from "react"
+
+import Button from "@material-ui/core/Button"
+import Step from "@material-ui/core/Step"
+import StepConnector from "@material-ui/core/StepConnector"
+import StepLabel from "@material-ui/core/StepLabel"
+import Stepper from "@material-ui/core/Stepper"
+import { makeStyles, withStyles } from "@material-ui/core/styles"
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
+import Check from "@material-ui/icons/Check"
+import clsx from "clsx"
+import { Formik } from "formik"
 import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
-import Check from "@material-ui/icons/Check"
-import Stepper from "@material-ui/core/Stepper"
-import StepConnector from "@material-ui/core/StepConnector"
-import Step from "@material-ui/core/Step"
-import StepLabel from "@material-ui/core/StepLabel"
-import Button from "@material-ui/core/Button"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
+
 import { decrement, increment } from "../../../features/wizardStepSlice"
-import { Formik } from "formik"
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
 
 // Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
 

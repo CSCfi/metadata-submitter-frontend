@@ -1,17 +1,19 @@
 //@flow
 import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { Field, FieldProps, Form, Formik, getIn } from "formik"
+
+import Button from "@material-ui/core/Button"
 import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
 import Input from "@material-ui/core/Input"
-import Button from "@material-ui/core/Button"
-import TextField from "@material-ui/core/TextField"
 import LinearProgress from "@material-ui/core/LinearProgress"
+import { makeStyles } from "@material-ui/core/styles"
+import TextField from "@material-ui/core/TextField"
 import Alert from "@material-ui/lab/Alert"
+import { Field, FieldProps, Form, Formik, getIn } from "formik"
+import { useDispatch, useSelector } from "react-redux"
+
+import { addObjectToFolder } from "features/submissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
-import { makeStyles } from "@material-ui/core/styles"
-import { addObjectToFolder } from "features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {

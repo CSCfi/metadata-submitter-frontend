@@ -1,13 +1,15 @@
 //@flow
 import React from "react"
+import type { ElementRef } from "react"
+
+import { makeStyles } from "@material-ui/core/styles"
+import { Formik } from "formik"
 import { useSelector } from "react-redux"
+
+import AddObjectCard from "../WizardComponents/AddObjectCard"
+import ObjectIndex from "../WizardComponents/ObjectIndex"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
-import ObjectIndex from "../WizardComponents/ObjectIndex"
-import AddObjectCard from "../WizardComponents/AddObjectCard"
-import { makeStyles } from "@material-ui/core/styles"
-import type { ElementRef } from "react"
-import { Formik } from "formik"
 
 const useStyles = makeStyles(theme => ({
   formRow: {

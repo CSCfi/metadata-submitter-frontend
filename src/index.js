@@ -1,12 +1,13 @@
 //@flow
 import React from "react"
+
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
 import ReactDOM from "react-dom"
 import { Provider } from "react-redux"
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
 import "style.css"
 
-import store from "store"
 import App from "App"
+import store from "store"
 
 /**
  * Set up custom theme that follows CSC's design guidelines.

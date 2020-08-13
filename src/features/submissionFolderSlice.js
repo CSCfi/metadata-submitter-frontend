@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
-import folderAPIService from "services/folderAPI"
+
 import objectAPIService from "../services/objectAPI"
+
+import folderAPIService from "services/folderAPI"
 
 const initialState = null
 

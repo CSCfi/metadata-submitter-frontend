@@ -1,18 +1,20 @@
 //@flow
 import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import Link from "@material-ui/core/Link"
-import { Link as RouterLink } from "react-router-dom"
+
 import Button from "@material-ui/core/Button"
-import { resetWizard } from "features/wizardStepSlice"
-import { resetObjectType } from "features/objectTypeSlice"
-import { deleteFolderAndContent } from "features/submissionFolderSlice"
-import { makeStyles } from "@material-ui/core/styles"
 import Dialog from "@material-ui/core/Dialog"
-import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogActions from "@material-ui/core/DialogActions"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import Link from "@material-ui/core/Link"
+import { makeStyles } from "@material-ui/core/styles"
+import { useDispatch, useSelector } from "react-redux"
+import { Link as RouterLink } from "react-router-dom"
+
+import { resetObjectType } from "features/objectTypeSlice"
+import { deleteFolderAndContent } from "features/submissionFolderSlice"
+import { resetWizard } from "features/wizardStepSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {

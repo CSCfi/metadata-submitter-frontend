@@ -1,15 +1,17 @@
 //@flow
 import React, { useRef } from "react"
 import type { ElementRef } from "react"
-import { Formik } from "formik"
-import { makeStyles } from "@material-ui/core/styles"
-import Paper from "@material-ui/core/Paper"
+
 import Container from "@material-ui/core/Container"
+import Paper from "@material-ui/core/Paper"
+import { makeStyles } from "@material-ui/core/styles"
+import { Formik } from "formik"
 import { useSelector } from "react-redux"
+
 import WizardFooter from "./WizardComponents/WizardFooter"
-import WizardFrontpageStep from "./WizardSteps/WizardFrontpageStep"
-import WizardCreateFolderStep from "./WizardSteps/WizardCreateFolderStep"
 import WizardAddObjectStep from "./WizardSteps/WizardAddObjectStep"
+import WizardCreateFolderStep from "./WizardSteps/WizardCreateFolderStep"
+import WizardFrontpageStep from "./WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "./WizardSteps/WizardShowSummaryStep"
 
 const useStyles = makeStyles(theme => ({

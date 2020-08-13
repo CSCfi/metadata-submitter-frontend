@@ -1,25 +1,25 @@
 //@flow
 import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
 
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import { setObjectType } from "features/objectTypeSlice"
-import { setSubmissionType } from "features/submissionTypeSlice"
 import MuiAccordion from "@material-ui/core/Accordion"
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
-
-import NoteAddIcon from "@material-ui/icons/NoteAdd"
+import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
+import Button from "@material-ui/core/Button"
+import Dialog from "@material-ui/core/Dialog"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogTitle from "@material-ui/core/DialogTitle"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
+import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
-import Dialog from "@material-ui/core/Dialog"
-import DialogTitle from "@material-ui/core/DialogTitle"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogActions from "@material-ui/core/DialogActions"
-import Button from "@material-ui/core/Button"
+import NoteAddIcon from "@material-ui/icons/NoteAdd"
+import { useDispatch, useSelector } from "react-redux"
+
+import { setObjectType } from "features/objectTypeSlice"
+import { setSubmissionType } from "features/submissionTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   index: {

@@ -1,5 +1,6 @@
-import { appendErrors } from "react-hook-form"
 import Ajv from "ajv"
+import { appendErrors } from "react-hook-form"
+
 import JSONSchemaParser from "./JSONSchemaParser"
 
 // This resolver is based on https://github.com/react-hook-form/resolvers/pull/14 and should be replaced with official

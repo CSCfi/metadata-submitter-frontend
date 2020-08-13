@@ -1,21 +1,22 @@
 //@flow
 import * as React from "react"
 import { useState } from "react"
+
 import $RefParser from "@apidevtools/json-schema-ref-parser"
-import AddIcon from "@material-ui/icons/Add"
+import { FormControl } from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
+import FormGroup from "@material-ui/core/FormGroup"
+import FormHelperText from "@material-ui/core/FormHelperText"
 import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
-import RemoveIcon from "@material-ui/icons/Remove"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
-import { useFieldArray, useFormContext } from "react-hook-form"
+import AddIcon from "@material-ui/icons/Add"
+import RemoveIcon from "@material-ui/icons/Remove"
 import * as _ from "lodash"
-import FormHelperText from "@material-ui/core/FormHelperText"
-import FormGroup from "@material-ui/core/FormGroup"
-import { FormControl } from "@material-ui/core"
+import { useFieldArray, useFormContext } from "react-hook-form"
 
 const dereferenceSchema = async (schema: any) => {
   let dereferenced = JSON.parse(JSON.stringify(schema))

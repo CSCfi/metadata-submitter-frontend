@@ -1,19 +1,23 @@
 //@flow
-import Alert from "@material-ui/lab/Alert"
-import CircularProgress from "@material-ui/core/CircularProgress"
-import JSONSchemaParser from "./JSONSchemaParser"
 import React, { useEffect, useState } from "react"
-import schemaAPIService from "services/schemaAPI"
+
+import Button from "@material-ui/core/Button"
+import CircularProgress from "@material-ui/core/CircularProgress"
+import Container from "@material-ui/core/Container"
+import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
+import Alert from "@material-ui/lab/Alert"
+import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { ajvResolver } from "./ajvResolver"
-import objectAPIService from "services/objectAPI"
-import Button from "@material-ui/core/Button"
-import LinearProgress from "@material-ui/core/LinearProgress"
-import Ajv from "ajv"
+
 import { addObjectToFolder } from "../../../features/submissionFolderSlice"
-import Container from "@material-ui/core/Container"
+
+import { ajvResolver } from "./ajvResolver"
+import JSONSchemaParser from "./JSONSchemaParser"
+
+import objectAPIService from "services/objectAPI"
+import schemaAPIService from "services/schemaAPI"
 
 const useStyles = makeStyles(theme => ({
   formComponents: {

@@ -1,17 +1,17 @@
 //@flow
 import React from "react"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 import Container from "@material-ui/core/Container"
 import CssBaseline from "@material-ui/core/CssBaseline"
+import { makeStyles } from "@material-ui/core/styles"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
-import Nav from "components/nav"
-import Page404 from "error_pages/Page404"
-import Page500 from "error_pages/Page500"
 import Home from "components/home"
 import Login from "components/login"
+import Nav from "components/nav"
 import NewDraftWizard from "components/NewDraftWizard/NewDraftWizard"
-import { makeStyles } from "@material-ui/core/styles"
+import Page404 from "error_pages/Page404"
+import Page500 from "error_pages/Page500"
 
 const useStyles = makeStyles(theme => ({
   content: {

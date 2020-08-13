@@ -2,10 +2,10 @@
 
 import { combineReducers } from "@reduxjs/toolkit"
 
-import submissionTypeReducer from "features/submissionTypeSlice"
 import objectTypeReducer from "features/objectTypeSlice"
-import wizardStepReducer from "features/wizardStepSlice"
 import submissionFolderReducer from "features/submissionFolderSlice"
+import submissionTypeReducer from "features/submissionTypeSlice"
+import wizardStepReducer from "features/wizardStepSlice"
 
 const rootReducer = combineReducers({
   objectType: objectTypeReducer,

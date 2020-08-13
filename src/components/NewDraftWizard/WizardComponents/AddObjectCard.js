@@ -1,15 +1,15 @@
 //@flow
 import React from "react"
+
+import Button from "@material-ui/core/Button"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
+import CardHeader from "@material-ui/core/CardHeader"
+import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
-import Card from "@material-ui/core/Card"
-import CardHeader from "@material-ui/core/CardHeader"
-import CardContent from "@material-ui/core/CardContent"
-import Button from "@material-ui/core/Button"
-import { makeStyles } from "@material-ui/core/styles"
-
-import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
 import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
+import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
 import { resetObjectType } from "features/objectTypeSlice"
 import { resetSubmissionType } from "features/submissionTypeSlice"
 

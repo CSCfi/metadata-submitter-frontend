@@ -1,13 +1,15 @@
 //@flow
 import React from "react"
 import type { ElementRef } from "react"
-import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardStepper from "../WizardComponents/WizardStepper"
-import { Field, Form, Formik, FieldProps, getIn } from "formik"
-import MuiTextField, { TextFieldProps } from "@material-ui/core/TextField"
 
 import { makeStyles } from "@material-ui/core/styles"
+import MuiTextField, { TextFieldProps } from "@material-ui/core/TextField"
+import { Field, Form, Formik, FieldProps, getIn } from "formik"
 import { useDispatch, useSelector } from "react-redux"
+
+import WizardHeader from "../WizardComponents/WizardHeader"
+import WizardStepper from "../WizardComponents/WizardStepper"
+
 import { createNewDraftFolder } from "features/submissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({

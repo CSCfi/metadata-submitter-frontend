@@ -20,7 +20,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "jest", "flowtype"],
+  "plugins": ["react", "jest", "flowtype", "import"],
   "settings": {
     "react": {
       "version": "detect"
@@ -30,6 +30,27 @@
         "paths": ["src"]
       }
     }
+  },
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "caseInsensitive": true,
+          "order": "asc"
+        },
+        "newlines-between": "always",
+        "groups": ["builtin", "external", "parent", "sibling", "index"],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"]
+      }
+    ]
   },
   "ignorePatterns": ["node_modules/*", "build/*"]
 }

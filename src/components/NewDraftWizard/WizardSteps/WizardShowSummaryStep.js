@@ -1,14 +1,16 @@
 //@flow
 import React from "react"
-import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardStepper from "../WizardComponents/WizardStepper"
 import type { ElementRef } from "react"
-import { Formik } from "formik"
-import { useSelector } from "react-redux"
-import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
+
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
+import { makeStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import { Formik } from "formik"
+import { useSelector } from "react-redux"
+
+import WizardHeader from "../WizardComponents/WizardHeader"
+import WizardStepper from "../WizardComponents/WizardStepper"
 
 const useStyles = makeStyles(theme => ({
   summary: {

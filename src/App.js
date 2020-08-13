@@ -36,7 +36,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Set up React router and app structure
+ * Set up React router and app structure.
+ * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
  */
 const App = () => {
   const classes = useStyles()
@@ -54,14 +55,14 @@ const App = () => {
           <Route path="/error500">
             <Page500 />
           </Route>
-          <Route exact path="/">
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <Home />
-            </Container>
-          </Route>
           <Route exact path="/login">
             <Container component="main" maxWidth={false} className={classes.loginContent}>
               <Login />
+            </Container>
+          </Route>
+          <Route exact path="/">
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <Home />
             </Container>
           </Route>
           <Route path="*">

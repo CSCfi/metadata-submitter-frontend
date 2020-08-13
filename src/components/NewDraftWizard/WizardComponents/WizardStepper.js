@@ -16,9 +16,10 @@ import { useDispatch, useSelector } from "react-redux"
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import { decrement, increment } from "features/wizardStepSlice"
 
-// Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
-
-const QontoConnector = withStyles({
+/*
+ * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
+ */
+const QontoConnector = withStyles(theme => ({
   alternativeLabel: {
     top: 10,
     left: "calc(-50% + 16px)",
@@ -26,30 +27,30 @@ const QontoConnector = withStyles({
   },
   active: {
     "& $line": {
-      borderColor: "#784af4",
+      borderColor: theme.palette.primary.main,
     },
   },
   completed: {
     "& $line": {
-      borderColor: "#784af4",
+      borderColor: theme.palette.primary.main,
     },
   },
   line: {
-    borderColor: "#eaeaf0",
+    borderColor: theme.palette.secondary.main,
     borderTopWidth: 3,
     borderRadius: 1,
   },
-})(StepConnector)
+}))(StepConnector)
 
-const useQontoStepIconStyles = makeStyles({
+const useQontoStepIconStyles = makeStyles(theme => ({
   root: {
-    color: "#eaeaf0",
+    color: theme.palette.secondary.main,
     display: "flex",
     height: 22,
     alignItems: "center",
   },
   active: {
-    color: "#784af4",
+    color: theme.palette.primary.main,
   },
   circle: {
     width: 8,
@@ -58,7 +59,7 @@ const useQontoStepIconStyles = makeStyles({
     backgroundColor: "currentColor",
   },
   completed: {
-    color: "#784af4",
+    color: theme.palette.primary.main,
     zIndex: 1,
     fontSize: 18,
   },
@@ -67,7 +68,7 @@ const useQontoStepIconStyles = makeStyles({
     backgroundColor: "white",
     boxShadow: 0,
   },
-})
+}))
 
 function QontoStepIcon(props: { active: boolean, completed: boolean }) {
   const classes = useQontoStepIconStyles()

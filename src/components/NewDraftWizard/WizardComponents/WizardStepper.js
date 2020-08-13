@@ -125,14 +125,14 @@ const useStyles = makeStyles({
   },
 })
 
-interface nextButtonRefProp {
-  nextButtonRef: ElementRef<typeof Formik>;
+type nextButtonRefProp = {
+  nextButtonRef?: ElementRef<typeof Formik>,
 }
 
 /**
  * Show info about wizard steps to user.
  */
-const WizardStepper = ({ nextButtonRef }: nextButtonRefProp) => {
+const WizardStepper = ({ nextButtonRef = null }: nextButtonRefProp) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)

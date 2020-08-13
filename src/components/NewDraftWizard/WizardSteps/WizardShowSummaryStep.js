@@ -1,12 +1,10 @@
 //@flow
 import React from "react"
-import type { ElementRef } from "react"
 
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
-import { Formik } from "formik"
 import { useSelector } from "react-redux"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
@@ -36,10 +34,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type NextButtonRefProp = {
-  nextButtonRef: ElementRef<typeof Formik>,
-}
-
 type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
 
 type GroupedBySchema = {| [Schema]: string[] |}
@@ -47,7 +41,7 @@ type GroupedBySchema = {| [Schema]: string[] |}
 /**
  * Show summary of objects added to folder
  */
-const WizardShowSummaryStep = ({ nextButtonRef }: NextButtonRefProp) => {
+const WizardShowSummaryStep = () => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
   const groupedObjects: Array<GroupedBySchema> = [
@@ -69,7 +63,7 @@ const WizardShowSummaryStep = ({ nextButtonRef }: NextButtonRefProp) => {
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardStepper nextButtonRef={nextButtonRef} />
+      <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>
         {groupedObjects.map(group => {

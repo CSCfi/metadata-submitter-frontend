@@ -1,9 +1,7 @@
 //@flow
 import React from "react"
-import type { ElementRef } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
-import { Formik } from "formik"
 import { useSelector } from "react-redux"
 
 import AddObjectCard from "../WizardComponents/AddObjectCard"
@@ -27,22 +25,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface nextButtonRefProp {
-  nextButtonRef: ElementRef<typeof Formik>;
-}
-
 /**
- * Show info about object adding, render card with object adding featured if
- * objectType is set.
+ * Show selection for object and submission types and correct form based on users choice.
  */
 
-const WizardAddObjectStep = ({ nextButtonRef }: nextButtonRefProp) => {
+const WizardAddObjectStep = () => {
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)
   return (
     <>
       <WizardHeader headerText="Create new draft folder" />
-      <WizardStepper nextButtonRef={nextButtonRef} />
+      <WizardStepper />
       <div className={classes.formRow}>
         <ObjectIndex />
         <div className={classes.formBox}>

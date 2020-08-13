@@ -38,12 +38,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface FileUploadProps extends FieldProps {
-  label: string;
-  disabled?: boolean;
-  FormControlProps?: FormControlProps;
+type FileUploadProps = FieldProps & {
+  label: string,
+  disabled?: boolean,
+  FormControlProps?: FormControlProps,
 }
 
+/*
+ * Custom file component for Formik field.
+ */
 const FileUpload = ({
   field,
   form: { isSubmitting, touched, errors, values, setFieldValue, setFieldTouched },
@@ -95,7 +98,9 @@ const checkResponseError = response => {
       return "Unfortunately an unexpected error happened on our servers"
   }
 }
-
+/*
+ * Return formik based form for uploading xml files. Handles form submitting, validating and error/success alerts.
+ */
 const UploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")

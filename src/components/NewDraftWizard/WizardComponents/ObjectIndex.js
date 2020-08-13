@@ -45,7 +45,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-// Customized accordion from https://material-ui.com/components/accordion/#customized-accordions
+/*
+ * Customized accordion from https://material-ui.com/components/accordion/#customized-accordions
+ */
 const Accordion = withStyles({
   root: {
     borderTop: "1px solid rgba(0, 0, 0, .125)",

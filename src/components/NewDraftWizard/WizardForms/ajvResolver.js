@@ -3,9 +3,9 @@ import { appendErrors } from "react-hook-form"
 
 import JSONSchemaParser from "./JSONSchemaParser"
 
-// This resolver is based on https://github.com/react-hook-form/resolvers/pull/14 and should be replaced with official
-// ajv resolver when react-hook-forms release it!
-
+/*
+ * Parse through ajv validation errors and transform them to errors readable by react-hook-form
+ */
 const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
   Array.isArray(validationError.errors)
     ? validationError.errors.reduce((previous, { dataPath, message = "", params, propertyName = "" }) => {
@@ -35,6 +35,9 @@ const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
       }, {})
     : []
 
+/*
+ * Resolver for checking if form data is valid against schema.
+ */
 export const ajvResolver = validationSchema => {
   if (!validationSchema) {
     throw new Error("Undefined schema, not able to validate")

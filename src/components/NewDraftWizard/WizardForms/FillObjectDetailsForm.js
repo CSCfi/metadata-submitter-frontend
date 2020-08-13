@@ -76,6 +76,9 @@ type FormContentProps = {
   onSubmit: () => Promise<any>,
 }
 
+/*
+ * Return react-hook-form based form which is rendered from schema and checked against resolver
+ */
 const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
@@ -102,6 +105,9 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   )
 }
 
+/*
+ * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
+ */
 const FillObjectDetailsForm = () => {
   const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
@@ -114,6 +120,9 @@ const FillObjectDetailsForm = () => {
   const dispatch = useDispatch()
   const { id: folderId } = useSelector(state => state.submissionFolder)
 
+  /*
+   * Submit form with cleaned values and check for response errors
+   */
   const onSubmit = async data => {
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
@@ -141,6 +150,9 @@ const FillObjectDetailsForm = () => {
     setSubmitting(false)
   }
 
+  /*
+   * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.
+   */
   useEffect(() => {
     const fetchSchema = async () => {
       let schema = localStorage.getItem(`cached_${objectType}_schema`)

@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
-
 const WizardAddObjectStep = () => {
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)

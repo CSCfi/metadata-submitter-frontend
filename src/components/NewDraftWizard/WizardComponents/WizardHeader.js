@@ -20,7 +20,6 @@ type DraftHeaderProps = {
 
 /**
  * Render header component for wizards.
- * @param headerText: Text to render inside heading tag
  */
 const WizardHeader = ({ headerText }: DraftHeaderProps) => {
   const classes = useStyles()

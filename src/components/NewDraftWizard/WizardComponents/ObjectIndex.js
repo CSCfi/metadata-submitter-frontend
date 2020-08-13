@@ -88,6 +88,9 @@ const AccordionDetails = withStyles({
   },
 })(MuiAccordionDetails)
 
+/*
+ * Render alert for form cancellation options
+ */
 const CancelFormDialog = ({ open, handleCancelling }: { open: boolean, handleCancelling: boolean => void }) => (
   <Dialog
     open={open}
@@ -115,6 +118,9 @@ const CancelFormDialog = ({ open, handleCancelling }: { open: boolean, handleCan
   </Dialog>
 )
 
+/*
+ * Render list of submission types to be used in accordions
+ */
 const SubmissionTypeList = ({
   handleSubmissionTypeChange,
   isCurrentObjectType,
@@ -151,7 +157,7 @@ const SubmissionTypeList = ({
 }
 
 /**
- * Render tabs for choosing which object type to add.
+ * Render accordion for choosing object type and submission type
  */
 const ObjectIndex = () => {
   const classes = useStyles()

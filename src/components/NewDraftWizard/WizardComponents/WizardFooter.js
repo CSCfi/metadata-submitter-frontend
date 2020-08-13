@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+/*
+ * Render alert for wizard cancellation
+ */
 const CancelDialog = ({ open, handleCancel }: { open: boolean, handleCancel: boolean => void }) => (
   <Dialog
     open={open}

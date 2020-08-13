@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+/*
+ * Create header for form card with button to close the card
+ */
 const CustomCardHeader = ({ title }: { title: string }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -75,6 +78,9 @@ const CustomCardHeader = ({ title }: { title: string }) => {
   )
 }
 
+/*
+ * Render correct form to add objects based on submission type in store
+ */
 const AddObjectCard = () => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)

@@ -11,7 +11,6 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
-import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
 
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
@@ -70,7 +69,7 @@ const useQontoStepIconStyles = makeStyles({
   },
 })
 
-function QontoStepIcon(props) {
+function QontoStepIcon(props: { active: boolean, completed: boolean }) {
   const classes = useQontoStepIconStyles()
   const { active, completed } = props
 
@@ -83,17 +82,6 @@ function QontoStepIcon(props) {
       {completed ? <Check className={classes.completed} /> : <div className={classes.circle} />}
     </div>
   )
-}
-
-QontoStepIcon.propTypes = {
-  /**
-   * Whether this step is active.
-   */
-  active: PropTypes.bool,
-  /**
-   * Mark the step as completed. Is passed to child components.
-   */
-  completed: PropTypes.bool,
 }
 
 const useStyles = makeStyles({
@@ -126,8 +114,9 @@ const useStyles = makeStyles({
 
 /**
  * Show info about wizard steps to user.
+ * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
  */
-const WizardStepper = ({ createFolderFormRef = null }: { createFolderFormRef?: CreateFolderFormRef }) => {
+const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -164,12 +153,12 @@ const WizardStepper = ({ createFolderFormRef = null }: { createFolderFormRef?: C
         color="primary"
         variant="outlined"
         onClick={async () => {
-          if (createFolderFormRef.current) {
+          if (createFolderFormRef?.current) {
             await createFolderFormRef.current.submitForm()
           }
           if (
             wizardStep !== 2 &&
-            (!createFolderFormRef || Object.entries(createFolderFormRef.current.errors).length === 0)
+            (!createFolderFormRef?.current || Object.entries(createFolderFormRef?.current?.errors).length === 0)
           ) {
             dispatch(increment())
           }

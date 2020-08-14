@@ -1,9 +1,10 @@
 //@flow
 import React from "react"
-import Grid from "@material-ui/core/Grid"
+
 import Card from "@material-ui/core/Card"
-import CardHeader from "@material-ui/core/CardHeader"
 import CardContent from "@material-ui/core/CardContent"
+import CardHeader from "@material-ui/core/CardHeader"
+import Grid from "@material-ui/core/Grid"
 
 const Page500 = () => {
   const errorLink = "https://github.com/CSCfi/metadata-submitter/issues"
@@ -13,9 +14,8 @@ const Page500 = () => {
         <Card>
           <CardHeader title="500 Error" />
           <CardContent>
-            Oops, this means our server caused some sort of error we have not
-            thought of. We would like to fix the error, so could you maybe drop
-            us a line in <a href={errorLink}>our github repo</a>?
+            Oops, this means our server caused some sort of error we have not thought of. We would like to fix the
+            error, so could you maybe drop us a line in <a href={errorLink}>our github repo</a>?
           </CardContent>
         </Card>
       </Grid>

@@ -1,0 +1,23 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    image: cscfi/metadata-submitter-frontend-dev:latest
+    container_name: "metadata_submitter_frontend_dev"
+    environment:
+      # Change if using different name for backend container
+      - "REACT_APP_BACKEND_PROXY=metadata_submitter_backend_dev:5430"
+    ports:
+      - 3000:3000
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    networks:
+      # Change if using different network for backend container
+      - metadatasubmitter_default
+
+networks:
+  metadatasubmitter_default:
+    external: true

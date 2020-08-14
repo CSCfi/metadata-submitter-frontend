@@ -1,24 +1,44 @@
 //@flow
 import React from "react"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 import Container from "@material-ui/core/Container"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
-import Nav from "components/nav"
-import Page404 from "error_pages/Page404"
-import Page500 from "error_pages/Page500"
-import Home from "components/home"
-import NewDraftCard from "components/newDraftCard"
+import Nav from "components/Nav"
+import Page404 from "views/ErrorPages/Page404"
+import Page500 from "views/ErrorPages/Page500"
+import Home from "views/Home"
+import Login from "views/Login"
+import NewDraftWizard from "views/NewDraftWizard"
 
 const useStyles = makeStyles(theme => ({
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
+  content: {
+    padding: theme.spacing(8, 0, 6),
+  },
+  wizardContent: {
+    padding: theme.spacing(0),
+    margin: theme.spacing(8, 0, 0),
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
+  loginContent: {
+    padding: theme.spacing(0),
+    margin: theme.spacing(8, 0, 0),
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
   },
 }))
 
+/**
+ * Set up React router and app structure.
+ * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
+ */
 const App = () => {
   const classes = useStyles()
   return (
@@ -26,22 +46,29 @@ const App = () => {
       <React.Fragment>
         <CssBaseline />
         <Nav />
-        <Container className={classes.cardGrid} maxWidth="md">
-          <Switch>
-            <Route path="/newdraft">
-              <NewDraftCard />
-            </Route>
-            <Route path="/error500">
-              <Page500 />
-            </Route>
-            <Route exact path="/">
+        <Switch>
+          <Route path="/newdraft">
+            <Container component="main" maxWidth={false} className={classes.wizardContent}>
+              <NewDraftWizard />
+            </Container>
+          </Route>
+          <Route path="/error500">
+            <Page500 />
+          </Route>
+          <Route exact path="/login">
+            <Container component="main" maxWidth={false} className={classes.loginContent}>
+              <Login />
+            </Container>
+          </Route>
+          <Route exact path="/">
+            <Container component="main" maxWidth="md" className={classes.content}>
               <Home />
-            </Route>
-            <Route path="*">
-              <Page404 />
-            </Route>
-          </Switch>
-        </Container>
+            </Container>
+          </Route>
+          <Route path="*">
+            <Page404 />
+          </Route>
+        </Switch>
       </React.Fragment>
     </Router>
   )

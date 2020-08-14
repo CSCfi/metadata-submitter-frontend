@@ -40,7 +40,7 @@ We do optimize for readability, and it would be awesome if you go through the co
 
 - Indentation should be 2 _spaces_
 - Semi-colon should only be used when necessary
-- 80 character limit is almost strict, but can be broken in documentation when hyperlinks go over the limits
+- 120 character limit is almost strict, but can be broken in documentation when hyperlinks go over the limits
 - We follow recommended code style settings from [eslint](https://eslint.org/docs/rules/),[prettier](https://prettier.io/docs/) and [react](https://github.com/yannickcr/eslint-plugin-react) with some small exceptions. Exceptions are stated in config files for `eslint` and `prettier`.
 - Static type errors are should be checked with [flow](https://flow.org/en/docs/)
 - We encourage you to use javascript libraries if it makes code more readable and simplifies program logic

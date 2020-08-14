@@ -1,6 +1,8 @@
 # Submission interface frontend
 
-[![Build Status](https://travis-ci.org/CSCfi/metadata-submitter-frontend.svg?branch=master)](https://travis-ci.org/CSCfi/metadata-submitter-frontend)
+![Unit tests and coverage](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Unit%20tests%20and%20coverage/badge.svg)
+![Code style check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Code%20style%20check/badge.svg)
+![Static type check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Static%20type%20check/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)
@@ -9,14 +11,19 @@ Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for mo
 
 Requirements:
 
-- Node 12+
-- Optionally docker + docker-compose
+- Node 14+
+- Optionally Docker + docker-compose
+- Backend
 
-For quick testing, go to the `development` folder and launch frontend with Docker by running `docker-compose up --build` (add `-d` flag to run container in the background). Frontend can then be found from `http://localhost:3000`.
+Install backend from [backend repository](https://github.com/CSCfi/metadata-submitter/).
 
-If you want to use your local node setup, just install dependencies with `npm install` and run frontend in development mode with `npm start`.
+Install and run frontend either with:
 
-If you also need backend for development, check out [backend repository](https://github.com/CSCfi/metadata-submitter/).
+- Docker by running `docker-compose up --build` (add `-d` flag to run container in the background).
+  - By default, frontend tries to connect to docker-container running the backend. Feel free to modify `docker-compose.yml` if you want to use some other setup.
+- Local node setup by running `npm install` followed with `npm start`.
+
+After installing and running, frontend can be found from `http://localhost:3000`.
 
 ## Tests
 
@@ -27,6 +34,10 @@ We're following recommended settings from eslint, react and prettier -packages w
 ## Building
 
 Running `npm run build` builds the app for production to the `build` folder.
+
+## Architecture
+
+See [architecture](architecture.md).
 
 ## License
 

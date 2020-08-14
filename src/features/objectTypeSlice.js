@@ -1,19 +1,16 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-export const initialState = {
-  objectType: "",
-}
+const initialState = ""
 
 const objectTypeSlice = createSlice({
   name: "objectType",
   initialState,
   reducers: {
-    setObjectType(state, action) {
-      state.objectType = action.payload
-    },
+    setObjectType: (state, action) => action.payload,
+    resetObjectType: () => initialState,
   },
 })
 
-export const { setObjectType } = objectTypeSlice.actions
+export const { setObjectType, resetObjectType } = objectTypeSlice.actions
 export default objectTypeSlice.reducer

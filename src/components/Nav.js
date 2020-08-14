@@ -11,6 +11,8 @@ import Typography from "@material-ui/core/Typography"
 import HomeIcon from "@material-ui/icons/Home"
 import { Link as RouterLink, useLocation } from "react-router-dom"
 
+import logo from "../csc_logo.svg"
+
 const useStyles = makeStyles(theme => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -78,7 +80,7 @@ const Nav = () => {
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
         <Link to="/" component={RouterLink} className={classes.brandLink}>
-          <img className={classes.logo} src="/csc_logo.svg" alt="CSC" />
+          <img className={classes.logo} src={logo} alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>
           Metadata Submitter

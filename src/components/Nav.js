@@ -78,7 +78,7 @@ const Nav = () => {
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
         <Link to="/" component={RouterLink} className={classes.brandLink}>
-          <img className={classes.logo} src="csc_logo.svg" alt="CSC" />
+          <img className={classes.logo} src="/csc_logo.svg" alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>
           Metadata Submitter

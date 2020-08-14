@@ -1,6 +1,6 @@
 {
   "name": "metadata-submitter-frontend",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.6",

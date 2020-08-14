@@ -1,6 +1,8 @@
 # Submission interface frontend
 
-[![Build Status](https://travis-ci.org/CSCfi/metadata-submitter-frontend.svg?branch=master)](https://travis-ci.org/CSCfi/metadata-submitter-frontend)
+![Unit tests and coverage](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Unit%20tests%20and%20coverage/badge.svg)
+![Code style check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Code%20style%20check/badge.svg)
+![Static type check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Static%20type%20check/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)

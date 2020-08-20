@@ -55,12 +55,12 @@ const App = () => {
           <Route path="/error500">
             <Page500 />
           </Route>
-          <Route exact path="/login">
+          <Route exact path="/">
             <Container component="main" maxWidth={false} className={classes.loginContent}>
               <Login />
             </Container>
           </Route>
-          <Route exact path="/">
+          <Route exact path="/home">
             <Container component="main" maxWidth="md" className={classes.content}>
               <Home />
             </Container>

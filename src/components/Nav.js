@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 const Menu = () => {
   const classes = useStyles()
   let location = useLocation()
-  if (location.pathname.match(/login/)) {
+  if (location.pathname === "/") {
     return null
   }
   return (
@@ -79,7 +79,7 @@ const Nav = () => {
   return (
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
-        <Link to="/" component={RouterLink} className={classes.brandLink}>
+        <Link to="/home" component={RouterLink} className={classes.brandLink}>
           <img className={classes.logo} src={logo} alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>

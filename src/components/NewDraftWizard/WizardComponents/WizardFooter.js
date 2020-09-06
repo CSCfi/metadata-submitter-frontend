@@ -62,7 +62,7 @@ const CancelDialog = ({ open, handleCancel }: { open: boolean, handleCancel: boo
       <Button variant="outlined" onClick={() => handleCancel(false)} color="primary" autoFocus>
         No, continue creating the folder
       </Button>
-      <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
+      <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
         <Button variant="contained" onClick={() => handleCancel(true)} color="primary">
           Yes, cancel creating folder
         </Button>

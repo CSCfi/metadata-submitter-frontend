@@ -52,7 +52,7 @@ const Menu = () => {
     <nav className={classes.nav}>
       <IconButton
         component={RouterLink}
-        to="/"
+        to="/home"
         className={classes.HomeIcon}
         aria-label="go to frontpage"
         color="inherit"

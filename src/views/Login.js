@@ -81,7 +81,7 @@ const Login = () => {
         <Typography variant="h5" component="h5" align="center">
           Login
         </Typography>
-        <Link href="/home">
+        <Link href="/aai">
           <img alt="CSC Login" src="https://user-auth.csc.fi/idp/images/Password.png"></img>
         </Link>
       </Paper>

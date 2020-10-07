@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
-import FormAlert from "./FormAlert"
+import FormAlert from "./WizardAlert"
 
 import { resetObjectType } from "features/objectTypeSlice"
 import { deleteFolderAndContent } from "features/submissionFolderSlice"

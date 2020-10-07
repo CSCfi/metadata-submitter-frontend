@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography"
 import NoteAddIcon from "@material-ui/icons/NoteAdd"
 import { useDispatch, useSelector } from "react-redux"
 
-import FormAlert from "./FormAlert"
+import WizardAlert from "./WizardAlert"
 
 import { setObjectType } from "features/objectTypeSlice"
 import { setSubmissionType } from "features/submissionTypeSlice"
@@ -191,11 +191,11 @@ const ObjectIndex = () => {
         )
       })}
       {cancelFormOpen && (
-        <FormAlert
+        <WizardAlert
           handleAlert={handleCancelling}
           parentLocation="submission"
           alertType={currentSubmissionType}
-        ></FormAlert>
+        ></WizardAlert>
       )}
     </div>
   )

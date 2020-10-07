@@ -13,7 +13,7 @@ import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
 
-import FormAlert from "./FormAlert"
+import WizardAlert from "./WizardAlert"
 
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import { resetObjectType } from "features/objectTypeSlice"
@@ -197,7 +197,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         <ArrowForwardIosIcon fontSize="large" />
       </Button>
       {wizardStep === 1 && alert && (
-        <FormAlert handleAlert={handleNavigation} parentLocation="stepper" alertType={direction}></FormAlert>
+        <WizardAlert handleAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
       )}
     </div>
   )

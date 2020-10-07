@@ -169,7 +169,7 @@ const CancelFormDialog = ({
 /*
  * Render alert form based on location and type
  */
-const FormAlert = ({
+const WizardAlert = ({
   handleAlert,
   parentLocation,
   alertType,
@@ -195,4 +195,4 @@ const FormAlert = ({
   )
 }
 
-export default FormAlert
+export default WizardAlert

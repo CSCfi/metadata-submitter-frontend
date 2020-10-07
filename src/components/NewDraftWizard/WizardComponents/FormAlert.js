@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React from "react"
 
 import Button from "@material-ui/core/Button"
 import Dialog from "@material-ui/core/Dialog"
@@ -8,37 +8,44 @@ import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import Link from "@material-ui/core/Link"
+import { useSelector } from "react-redux"
 import { Link as RouterLink } from "react-router-dom"
 
+/*
+ * Dialog contents are rendered based on parent component location and alert type
+ */
 const CancelFormDialog = ({
-  open,
-  handleCancelling,
+  handleDialog,
   alertType,
   parentLocation,
+  currentSubmissionType,
 }: {
-  open: boolean,
-  handleCancelling: boolean => void,
+  handleDialog: boolean => void,
   alertType: string,
   parentLocation: string,
+  currentSubmissionType: string,
 }) => {
   let [dialogTitle, dialogContent] = ["", ""]
   let dialogActions
+  const formContent = "If you save form as a draft, you can continue filling it later."
+  const xmlContent = "If you save xml as a draft, you can upload it later."
+  const objectContent = "If you save object as a draft, you can upload it later."
   switch (parentLocation) {
     case "submission": {
       switch (alertType) {
         case "form": {
           dialogTitle = "Would you like to save draft version of this form"
-          dialogContent = "If you save form as a draft, you can continue filling it later."
+          dialogContent = formContent
           break
         }
         case "xml": {
           dialogTitle = "Would you like to save draft version of this xml upload"
-          dialogContent = "If you save xml as a draft, you can upload it later."
+          dialogContent = xmlContent
           break
         }
         case "existing": {
           dialogTitle = "Would you like to save draft version of this existing object upload"
-          dialogContent = "If you save object as a draft, you can upload it later."
+          dialogContent = objectContent
           break
         }
         default: {
@@ -48,13 +55,13 @@ const CancelFormDialog = ({
       }
       dialogActions = (
         <DialogActions>
-          <Button variant="contained" onClick={() => handleCancelling(false)} color="secondary">
+          <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
+          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Do not save
           </Button>
-          <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
+          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Save
           </Button>
         </DialogActions>
@@ -69,11 +76,11 @@ const CancelFormDialog = ({
             "If you cancel creating submission folder, the folder and its content will not be saved anywhere."
           dialogActions = (
             <DialogActions>
-              <Button variant="outlined" onClick={() => handleCancelling(false)} color="primary" autoFocus>
+              <Button variant="outlined" onClick={() => handleDialog(false)} color="primary" autoFocus>
                 No, continue creating the folder
               </Button>
               <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
-                <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
+                <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
                   Yes, cancel creating folder
                 </Button>
               </Link>
@@ -86,19 +93,55 @@ const CancelFormDialog = ({
           dialogContent = "Folder has been saved"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
-                <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
-                  Return to listing
+              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
+                <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+                  Return to homepage
                 </Button>
               </Link>
             </DialogActions>
           )
           break
         }
+        default: {
+          dialogTitle = "default"
+          dialogContent = "default content"
+        }
       }
       break
     }
     case "stepper": {
+      dialogTitle = "Move to " + alertType + " step?"
+      dialogContent = "You have unsaved data. You can save current form as draft"
+      switch (currentSubmissionType) {
+        case "form": {
+          dialogContent = formContent
+          break
+        }
+        case "xml": {
+          dialogContent = xmlContent
+          break
+        }
+        case "existing": {
+          dialogContent = objectContent
+          break
+        }
+        default: {
+          dialogContent = "default content"
+        }
+      }
+      dialogActions = (
+        <DialogActions>
+          <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+            Navigate without saving
+          </Button>
+          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+            Save and navigate
+          </Button>
+        </DialogActions>
+      )
       break
     }
     default: {
@@ -109,8 +152,8 @@ const CancelFormDialog = ({
 
   return (
     <Dialog
-      open={open}
-      onClose={() => handleCancelling(false)}
+      open={true}
+      onClose={() => handleDialog(false)}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -127,28 +170,26 @@ const CancelFormDialog = ({
  * Render alert form based on location and type
  */
 const FormAlert = ({
-  handleCancel,
+  handleAlert,
   parentLocation,
   alertType,
 }: {
-  handleCancel: boolean => void,
+  handleAlert: boolean => void,
   parentLocation: string,
   alertType: string,
 }) => {
-  const [alertForm, setAlertFormOpen] = useState(true)
-
-  const handleCancelling = (cancel: boolean) => {
-    setAlertFormOpen(false)
-    handleCancel(cancel)
+  const currentSubmissionType = useSelector(state => state.submissionType)
+  const handleDialog = (action: boolean) => {
+    handleAlert(action)
   }
 
   return (
     <div>
       <CancelFormDialog
-        open={alertForm}
-        handleCancelling={handleCancelling}
+        handleDialog={handleDialog}
         alertType={alertType}
         parentLocation={parentLocation}
+        currentSubmissionType={currentSubmissionType}
       />
     </div>
   )

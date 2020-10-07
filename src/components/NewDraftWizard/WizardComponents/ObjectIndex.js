@@ -192,7 +192,7 @@ const ObjectIndex = () => {
       })}
       {cancelFormOpen && (
         <FormAlert
-          handleCancel={handleCancelling}
+          handleAlert={handleCancelling}
           parentLocation="submission"
           alertType={currentSubmissionType}
         ></FormAlert>

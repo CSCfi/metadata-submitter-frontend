@@ -102,7 +102,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
-      {dialogOpen && <FormAlert handleCancel={handleCancel} parentLocation="footer" alertType={alertType}></FormAlert>}
+      {dialogOpen && <FormAlert handleAlert={handleCancel} parentLocation="footer" alertType={alertType}></FormAlert>}
     </div>
   )
 }

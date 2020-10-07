@@ -33,7 +33,7 @@ const WizardAddObjectStep = () => {
   const objectType = useSelector(state => state.objectType)
   return (
     <>
-      <WizardHeader headerText="Create new draft folder" />
+      <WizardHeader headerText="Create New Folder" />
       <WizardStepper />
       <div className={classes.formRow}>
         <ObjectIndex />

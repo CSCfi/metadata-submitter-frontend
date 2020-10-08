@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
-import { createNewDraftFolder } from "features/submissionFolderSlice"
+import { createNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -11,10 +11,10 @@ import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
-import { addObjectToFolder } from "../../../features/submissionFolderSlice"
+import { addObjectToFolder } from "../../../features/wizardSubmissionFolderSlice"
 
-import { ajvResolver } from "./ajvResolver"
-import JSONSchemaParser from "./JSONSchemaParser"
+import { WizardAjvResolver } from "./WizardAjvResolver"
+import JSONSchemaParser from "./WizardJSONSchemaParser"
 
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -71,7 +71,7 @@ const checkResponseError = (response, prefixText) => {
 }
 
 type FormContentProps = {
-  resolver: typeof ajvResolver,
+  resolver: typeof WizardAjvResolver,
   formSchema: any,
   onSubmit: () => Promise<any>,
 }
@@ -108,7 +108,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const FillObjectDetailsForm = () => {
+const WizardFillObjectDetailsForm = () => {
   const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
@@ -180,7 +180,7 @@ const FillObjectDetailsForm = () => {
   if (error) return <Alert severity="error">{error}</Alert>
   return (
     <Container maxWidth="md">
-      <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} onSubmit={onSubmit} />
+      <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />
       {submitting && <LinearProgress />}
       {successMessage && (
         <Alert
@@ -196,4 +196,4 @@ const FillObjectDetailsForm = () => {
   )
 }
 
-export default FillObjectDetailsForm
+export default WizardFillObjectDetailsForm

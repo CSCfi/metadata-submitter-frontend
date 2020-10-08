@@ -170,17 +170,17 @@ const CancelFormDialog = ({
  * Render alert form based on location and type
  */
 const WizardAlert = ({
-  handleAlert,
+  onAlert,
   parentLocation,
   alertType,
 }: {
-  handleAlert: boolean => void,
+  onAlert: boolean => void,
   parentLocation: string,
   alertType: string,
 }) => {
   const currentSubmissionType = useSelector(state => state.submissionType)
   const handleDialog = (action: boolean) => {
-    handleAlert(action)
+    onAlert(action)
   }
 
   return (

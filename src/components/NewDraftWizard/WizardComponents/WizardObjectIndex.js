@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { setObjectType } from "features/objectTypeSlice"
-import { setSubmissionType } from "features/submissionTypeSlice"
+import { setObjectType } from "features/wizardObjectTypeSlice"
+import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   index: {
@@ -127,7 +127,7 @@ const SubmissionTypeList = ({
 /**
  * Render accordion for choosing object type and submission type
  */
-const ObjectIndex = () => {
+const WizardObjectIndex = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
@@ -192,7 +192,7 @@ const ObjectIndex = () => {
       })}
       {cancelFormOpen && (
         <WizardAlert
-          handleAlert={handleCancelling}
+          onAlert={handleCancelling}
           parentLocation="submission"
           alertType={currentSubmissionType}
         ></WizardAlert>
@@ -201,4 +201,4 @@ const ObjectIndex = () => {
   )
 }
 
-export default ObjectIndex
+export default WizardObjectIndex

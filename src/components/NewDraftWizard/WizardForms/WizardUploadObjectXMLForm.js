@@ -11,7 +11,7 @@ import Alert from "@material-ui/lab/Alert"
 import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 
-import { addObjectToFolder } from "features/submissionFolderSlice"
+import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 
@@ -101,7 +101,7 @@ const checkResponseError = response => {
 /*
  * Return formik based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
-const UploadObjectXMLForm = () => {
+const WizardUploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
   const objectType = useSelector(state => state.objectType)
@@ -188,4 +188,4 @@ const UploadObjectXMLForm = () => {
   )
 }
 
-export default UploadObjectXMLForm
+export default WizardUploadObjectXMLForm

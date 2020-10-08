@@ -5,11 +5,11 @@ import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
-import FormAlert from "./WizardAlert"
+import WizardAlert from "./WizardAlert"
 
-import { resetObjectType } from "features/objectTypeSlice"
-import { deleteFolderAndContent } from "features/submissionFolderSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
+import { deleteFolderAndContent } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -102,7 +102,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
-      {dialogOpen && <FormAlert handleAlert={handleCancel} parentLocation="footer" alertType={alertType}></FormAlert>}
+      {dialogOpen && <WizardAlert onAlert={handleCancel} parentLocation="footer" alertType={alertType}></WizardAlert>}
     </div>
   )
 }

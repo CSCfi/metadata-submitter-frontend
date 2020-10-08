@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardAlert from "./WizardAlert"
 
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
-import { resetObjectType } from "features/objectTypeSlice"
-import { resetSubmissionType } from "features/submissionTypeSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { decrement, increment } from "features/wizardStepSlice"
+import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
@@ -197,7 +197,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         <ArrowForwardIosIcon fontSize="large" />
       </Button>
       {wizardStep === 1 && alert && (
-        <WizardAlert handleAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
+        <WizardAlert onAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
       )}
     </div>
   )

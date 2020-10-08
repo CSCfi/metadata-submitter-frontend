@@ -4,12 +4,6 @@ import React, { useState } from "react"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
-import Button from "@material-ui/core/Button"
-import Dialog from "@material-ui/core/Dialog"
-import DialogActions from "@material-ui/core/DialogActions"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogTitle from "@material-ui/core/DialogTitle"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -17,6 +11,8 @@ import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import NoteAddIcon from "@material-ui/icons/NoteAdd"
 import { useDispatch, useSelector } from "react-redux"
+
+import WizardAlert from "./WizardAlert"
 
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
@@ -89,36 +85,6 @@ const AccordionDetails = withStyles({
     padding: 0,
   },
 })(MuiAccordionDetails)
-
-/*
- * Render alert for form cancellation options
- */
-const CancelFormDialog = ({ open, handleCancelling }: { open: boolean, handleCancelling: boolean => void }) => (
-  <Dialog
-    open={open}
-    onClose={() => handleCancelling(false)}
-    aria-labelledby="alert-dialog-title"
-    aria-describedby="alert-dialog-description"
-  >
-    <DialogTitle id="alert-dialog-title">{"Would you like to save draft version of this form?"}</DialogTitle>
-    <DialogContent>
-      <DialogContentText id="alert-dialog-description">
-        If you save form as a draft, you can continue filling it later.
-      </DialogContentText>
-    </DialogContent>
-    <DialogActions>
-      <Button variant="contained" onClick={() => handleCancelling(false)} color="secondary">
-        Cancel
-      </Button>
-      <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
-        Do not save
-      </Button>
-      <Button variant="contained" onClick={() => handleCancelling(true)} color="primary">
-        Save
-      </Button>
-    </DialogActions>
-  </Dialog>
-)
 
 /*
  * Render list of submission types to be used in accordions
@@ -224,7 +190,13 @@ const WizardObjectIndex = () => {
           </Accordion>
         )
       })}
-      <CancelFormDialog open={cancelFormOpen} handleCancelling={handleCancelling} />
+      {cancelFormOpen && (
+        <WizardAlert
+          onAlert={handleCancelling}
+          parentLocation="submission"
+          alertType={currentSubmissionType}
+        ></WizardAlert>
+      )}
     </div>
   )
 }

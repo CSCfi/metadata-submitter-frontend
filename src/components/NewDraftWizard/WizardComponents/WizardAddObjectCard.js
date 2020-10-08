@@ -8,8 +8,8 @@ import CardHeader from "@material-ui/core/CardHeader"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
-import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
-import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
+import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
+import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -87,11 +87,11 @@ const WizardAddObjectCard = () => {
   const cards = {
     form: {
       title: "Fill form",
-      component: <FillObjectDetailsForm />,
+      component: <WizardFillObjectDetailsForm />,
     },
     xml: {
       title: "Upload XML file",
-      component: <UploadObjectXMLForm />,
+      component: <WizardUploadObjectXMLForm />,
     },
     existing: {
       title: "Choose existing object",

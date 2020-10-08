@@ -2,15 +2,10 @@
 import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
-import Dialog from "@material-ui/core/Dialog"
-import DialogActions from "@material-ui/core/DialogActions"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogTitle from "@material-ui/core/DialogTitle"
-import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
-import { Link as RouterLink } from "react-router-dom"
+
+import WizardAlert from "./WizardAlert"
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
@@ -42,35 +37,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-/*
- * Render alert for wizard cancellation
- */
-const CancelDialog = ({ open, handleCancel }: { open: boolean, handleCancel: boolean => void }) => (
-  <Dialog
-    open={open}
-    onClose={() => handleCancel(false)}
-    aria-labelledby="alert-dialog-title"
-    aria-describedby="alert-dialog-description"
-  >
-    <DialogTitle id="alert-dialog-title">{"Cancel creating a submission folder?"}</DialogTitle>
-    <DialogContent>
-      <DialogContentText id="alert-dialog-description">
-        If you cancel creating submission folder, the folder and its content will not be saved anywhere.
-      </DialogContentText>
-    </DialogContent>
-    <DialogActions>
-      <Button variant="outlined" onClick={() => handleCancel(false)} color="primary" autoFocus>
-        No, continue creating the folder
-      </Button>
-      <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
-        <Button variant="contained" onClick={() => handleCancel(true)} color="primary">
-          Yes, cancel creating folder
-        </Button>
-      </Link>
-    </DialogActions>
-  </Dialog>
-)
-
 /**
  * Define wizard footer with changing button actions.
  */
@@ -79,7 +45,8 @@ const WizardFooter = () => {
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
   const folder = useSelector(state => state.submissionFolder)
-  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [alertType, setAlertType] = useState("")
 
   const handleCancel = cancelWizard => {
     if (cancelWizard) {
@@ -87,7 +54,7 @@ const WizardFooter = () => {
       dispatch(resetObjectType())
       dispatch(deleteFolderAndContent(folder))
     } else {
-      setCancelDialogOpen(false)
+      setDialogOpen(false)
     }
   }
 
@@ -99,7 +66,10 @@ const WizardFooter = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => setCancelDialogOpen(true)}
+            onClick={() => {
+              setDialogOpen(true)
+              setAlertType("cancel")
+            }}
             className={classes.footerButton}
           >
             Cancel
@@ -112,8 +82,10 @@ const WizardFooter = () => {
               color="primary"
               disabled={wizardStep < 1}
               className={classes.footerButton}
+              // TODO: Implement save functionality
               onClick={() => {
-                console.log("This should save and exit!")
+                setDialogOpen(true)
+                setAlertType("save")
               }}
             >
               Save and Exit
@@ -130,7 +102,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
-      <CancelDialog open={cancelDialogOpen} handleCancel={handleCancel} />
+      {dialogOpen && <WizardAlert onAlert={handleCancel} parentLocation="footer" alertType={alertType}></WizardAlert>}
     </div>
   )
 }

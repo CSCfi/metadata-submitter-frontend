@@ -101,7 +101,7 @@ const checkResponseError = response => {
 /*
  * Return formik based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
-const UploadObjectXMLForm = () => {
+const WizardUploadObjectXMLForm = () => {
   const [successMessage, setSuccessMessage] = useState("")
   const [successStatus, setSuccessStatus] = useState("info")
   const objectType = useSelector(state => state.objectType)
@@ -188,4 +188,4 @@ const UploadObjectXMLForm = () => {
   )
 }
 
-export default UploadObjectXMLForm
+export default WizardUploadObjectXMLForm

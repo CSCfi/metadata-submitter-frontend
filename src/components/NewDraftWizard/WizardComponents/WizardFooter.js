@@ -12,9 +12,9 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { Link as RouterLink } from "react-router-dom"
 
-import { resetObjectType } from "features/objectTypeSlice"
-import { deleteFolderAndContent } from "features/submissionFolderSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
+import { deleteFolderAndContent } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {

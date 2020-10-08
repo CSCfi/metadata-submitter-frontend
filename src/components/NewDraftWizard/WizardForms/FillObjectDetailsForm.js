@@ -11,7 +11,7 @@ import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
-import { addObjectToFolder } from "../../../features/submissionFolderSlice"
+import { addObjectToFolder } from "../../../features/wizardSubmissionFolderSlice"
 
 import { ajvResolver } from "./ajvResolver"
 import JSONSchemaParser from "./JSONSchemaParser"

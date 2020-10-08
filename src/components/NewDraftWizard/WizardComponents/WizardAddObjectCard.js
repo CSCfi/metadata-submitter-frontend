@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
 import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
-import { resetObjectType } from "features/objectTypeSlice"
-import { resetSubmissionType } from "features/submissionTypeSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -81,7 +81,7 @@ const CustomCardHeader = ({ title }: { title: string }) => {
 /*
  * Render correct form to add objects based on submission type in store
  */
-const AddObjectCard = () => {
+const WizardAddObjectCard = () => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
   const cards = {
@@ -106,4 +106,4 @@ const AddObjectCard = () => {
   )
 }
 
-export default AddObjectCard
+export default WizardAddObjectCard

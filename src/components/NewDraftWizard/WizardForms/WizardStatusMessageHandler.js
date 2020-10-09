@@ -58,7 +58,7 @@ const SuccessHandler = ({ response }: { response: any }) => {
   return <Alert severity="success">{message}</Alert>
 }
 
-const WizardResponseStatusHandler = ({
+const WizardStatusMessageHandler = ({
   successStatus,
   response,
   prefixText,
@@ -83,4 +83,4 @@ const WizardResponseStatusHandler = ({
   return <div>{!Array.isArray(response) && messageTemplate(successStatus)}</div>
 }
 
-export default WizardResponseStatusHandler
+export default WizardStatusMessageHandler

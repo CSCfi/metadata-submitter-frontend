@@ -15,7 +15,7 @@ import { addObjectToFolder } from "../../../features/wizardSubmissionFolderSlice
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
-import WizardResponseStatusHandler from "./WizardResponseStatusHandler"
+import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -177,11 +177,11 @@ const WizardFillObjectDetailsForm = () => {
       <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />
       {submitting && <LinearProgress />}
       {successStatus && (
-        <WizardResponseStatusHandler
+        <WizardStatusMessageHandler
           successStatus={successStatus}
           response={responseInfo}
           prefixText={errorPrefix}
-        ></WizardResponseStatusHandler>
+        ></WizardStatusMessageHandler>
       )}
     </Container>
   )

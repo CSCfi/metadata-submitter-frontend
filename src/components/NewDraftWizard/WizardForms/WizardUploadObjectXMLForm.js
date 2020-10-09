@@ -11,7 +11,7 @@ import Alert from "@material-ui/lab/Alert"
 import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 
-import WizardResponseStatusHandler from "./WizardResponseStatusHandler"
+import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
@@ -164,11 +164,11 @@ const WizardUploadObjectXMLForm = () => {
         )}
       </Formik>
       {successStatus && (
-        <WizardResponseStatusHandler
+        <WizardStatusMessageHandler
           successStatus={successStatus}
           response={responseStatus}
           prefixText=""
-        ></WizardResponseStatusHandler>
+        ></WizardStatusMessageHandler>
       )}
     </div>
   )

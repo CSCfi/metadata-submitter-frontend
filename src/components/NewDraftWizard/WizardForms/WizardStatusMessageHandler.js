@@ -27,18 +27,16 @@ const ErrorHandler = ({ response, prefixText }: { response: any, prefixText: str
   dispatch(setErrorMessage(message))
   return (
     <div>
-      {message.length && (
-        <Snackbar open={openStatus}>
-          <Alert
-            severity="error"
-            onClose={() => {
-              setOpenStatus(false)
-            }}
-          >
-            {message}
-          </Alert>
-        </Snackbar>
-      )}
+      <Snackbar open={openStatus}>
+        <Alert
+          severity="error"
+          onClose={() => {
+            setOpenStatus(false)
+          }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

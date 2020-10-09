@@ -30,7 +30,7 @@ const CSCtheme = createMuiTheme({
       main: "#006476",
     },
     background: {
-      default: "white",
+      default: "#FFF",
     },
   },
   props: {

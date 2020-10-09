@@ -25,18 +25,18 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   whiteBanner: {
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     color: "#000",
     padding: "15px",
   },
   whiteBanner2: {
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     color: theme.palette.primary.main,
     padding: "15px",
   },
   purpleBanner: {
     backgroundColor: theme.palette.primary.main,
-    color: "white",
+    color: "#FFF",
     padding: "15px",
   },
   login: {

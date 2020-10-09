@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
     color: theme.palette.text.primary,
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
   },
   logo: {
     height: "auto",

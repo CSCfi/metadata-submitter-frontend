@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     flexShrink: 0,
     borderTop: "solid 1px #ccc",
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     position: "fixed",
     left: 0,
     bottom: 0,

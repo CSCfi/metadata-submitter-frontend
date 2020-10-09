@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { resetErrorMessage } from "features/wizardErrorMessageSlice"
+import { setDraftStatus } from "features/draftStatusSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -59,10 +60,22 @@ const FileUpload = ({
 }: FileUploadProps) => {
   const error = getIn(touched, field.name) && getIn(errors, field.name)
   const classes = useStyles()
+  const dispatch = useDispatch()
+  //const draftStatus = useSelector(state => state.draftStatus)
+  //Next fails, so no idea what can go to state
+  // const onChangeHandler = e => {
+  //   dispatch(setDraftStatus(e.target.value))
+  // }
+  // const draftStatus = useSelector(state => state.draftStatus)
+
   return (
     <FormControl {...formControlProps} className={classes.root}>
       <div className={classes.fileField}>
-        <TextField placeholder={values.file ? values.file.name : "Name"} inputProps={{ readOnly: true }} />
+        <TextField
+          placeholder={values.file ? values.file.name : "Name"}
+          inputProps={{ readOnly: true }}
+          onChange={dispatch(setDraftStatus("noSaved"))}
+        />
         <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
           {label}
         </Button>

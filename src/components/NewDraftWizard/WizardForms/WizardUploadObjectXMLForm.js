@@ -61,21 +61,11 @@ const FileUpload = ({
   const error = getIn(touched, field.name) && getIn(errors, field.name)
   const classes = useStyles()
   const dispatch = useDispatch()
-  //const draftStatus = useSelector(state => state.draftStatus)
-  //Next fails, so no idea what can go to state
-  // const onChangeHandler = e => {
-  //   dispatch(setDraftStatus(e.target.value))
-  // }
-  // const draftStatus = useSelector(state => state.draftStatus)
 
   return (
     <FormControl {...formControlProps} className={classes.root}>
       <div className={classes.fileField}>
-        <TextField
-          placeholder={values.file ? values.file.name : "Name"}
-          inputProps={{ readOnly: true }}
-          onChange={dispatch(setDraftStatus("noSaved"))}
-        />
+        <TextField placeholder={values.file ? values.file.name : "Name"} inputProps={{ readOnly: true }} />
         <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
           {label}
         </Button>
@@ -93,6 +83,7 @@ const FileUpload = ({
               const file = event.currentTarget.files[0]
               setFieldValue(field.name, file)
               setFieldTouched(field.name, true, false)
+              dispatch(setDraftStatus("notSaved"))
             },
           }}
         />
@@ -152,6 +143,7 @@ const WizardUploadObjectXMLForm = () => {
               })
             )
             dispatch(resetErrorMessage())
+            dispatch(setDraftStatus("saved"))
           } else {
             setFieldError("file")
             setSuccessStatus("error")

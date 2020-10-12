@@ -21,7 +21,7 @@ describe("WizardStatusMessageHandler", () => {
     })
   })
 
-  it("should open snackbar on error messages", () => {
+  it("should open snackbar on error message", () => {
     const wrapper = mount(
       <Provider store={store}>
         <WizardStatusMessageHandler response={{ status: 504 }} successStatus="error" />

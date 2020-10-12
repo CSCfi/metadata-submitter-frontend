@@ -56,6 +56,11 @@ const useStyles = makeStyles(theme => ({
 
 const Login = () => {
   const classes = useStyles()
+  let loginRoute = "/aai"
+  if (process.env.NODE_ENV === "development") {
+    loginRoute = "/home"
+  }
+
   return (
     <Container maxWidth={false} className={classes.container}>
       <Paper elevation={0} className={classes.banner}>
@@ -81,7 +86,7 @@ const Login = () => {
         <Typography variant="h5" component="h5" align="center">
           Login
         </Typography>
-        <Link href="/aai">
+        <Link href={loginRoute}>
           <img alt="CSC Login" src="https://user-auth.csc.fi/idp/images/Password.png"></img>
         </Link>
       </Paper>

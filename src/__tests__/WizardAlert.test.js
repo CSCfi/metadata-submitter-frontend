@@ -4,9 +4,8 @@ import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import { mount } from "../../../../enzyme"
-
-import WizardAlert from "./WizardAlert"
+import WizardAlert from "../components/NewDraftWizard/WizardComponents/WizardAlert"
+import { mount } from "../enzyme"
 
 const mockStore = configureStore([])
 

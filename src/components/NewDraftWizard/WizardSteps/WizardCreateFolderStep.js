@@ -121,7 +121,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
 const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
   <>
-    <WizardHeader headerText="Creat New Folder" />
+    <WizardHeader headerText="Create New Folder" />
     <WizardStepper createFolderFormRef={createFolderFormRef} />
     <CreateFolderForm createFolderFormRef={createFolderFormRef} />
   </>

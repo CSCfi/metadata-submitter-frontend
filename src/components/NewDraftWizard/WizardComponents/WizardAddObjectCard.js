@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   cardHeader: {
     backgroundColor: theme.palette.primary.main,
-    color: "white",
+    color: "#FFF",
     fontWeight: "bold",
   },
   cardHeaderAction: {

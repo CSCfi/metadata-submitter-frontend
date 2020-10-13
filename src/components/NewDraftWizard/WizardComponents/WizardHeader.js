@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography"
 const useStyles = makeStyles(theme => ({
   paperTitle: {
     fontWeight: "bold",
-    color: "white",
+    color: "#FFF",
     width: "100%",
     padding: theme.spacing(3),
     backgroundColor: "#9b416b",

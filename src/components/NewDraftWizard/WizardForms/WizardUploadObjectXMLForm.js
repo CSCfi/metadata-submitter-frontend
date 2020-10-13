@@ -11,6 +11,9 @@ import Alert from "@material-ui/lab/Alert"
 import { Field, FieldProps, Form, Formik, getIn } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 
+import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
+
+import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -86,29 +89,17 @@ const FileUpload = ({
   )
 }
 
-const checkResponseError = response => {
-  switch (response.status) {
-    case 504:
-      return `Unfortunately we couldn't connect to our server to validate your 
-        file.`
-    case 400:
-      return `Unfortunately an error happened when saving your file to our 
-        servers, details: ${response.data}`
-    default:
-      return "Unfortunately an unexpected error happened on our servers"
-  }
-}
 /*
  * Return formik based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
 const WizardUploadObjectXMLForm = () => {
-  const [successMessage, setSuccessMessage] = useState("")
-  const [successStatus, setSuccessStatus] = useState("info")
+  const [successStatus, setSuccessStatus] = useState("")
+  const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
   const { id: folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
-
+  const errorMessage = useSelector(state => state.errorMessage)
   return (
     <div>
       <Formik
@@ -121,9 +112,9 @@ const WizardUploadObjectXMLForm = () => {
             errors.file = "Please attach an XML file."
           } else {
             const response = await submissionAPIService.validateXMLFile(objectType, values.file)
-
+            setResponseStatus(response)
             if (!response.ok) {
-              errors.file = checkResponseError(response)
+              errors.file = errorMessage
             } else if (!response.data.isValid) {
               errors.file = `The file you attached is not valid ${objectType}, 
               our server reported following error:
@@ -135,24 +126,22 @@ const WizardUploadObjectXMLForm = () => {
         onSubmit={async (values, { setSubmitting, setFieldError }) => {
           const waitForServertimer = setTimeout(() => {
             setSuccessStatus("info")
-            setSuccessMessage(`For some reason, your file is still being saved
-            to our database, please wait. If saving doesn't go through in two
-            minutes, please try saving the file again.`)
           }, 5000)
 
           const response = await objectAPIService.createFromXML(objectType, values.file)
-
+          setResponseStatus(response)
           if (response.ok) {
             setSuccessStatus("success")
-            setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
             dispatch(
               addObjectToFolder(folderId, {
                 accessionId: response.data.accessionId,
                 schema: objectType,
               })
             )
+            dispatch(resetErrorMessage())
           } else {
-            setFieldError("file", checkResponseError(response))
+            setFieldError("file")
+            setSuccessStatus("error")
           }
           clearTimeout(waitForServertimer)
           setSubmitting(false)
@@ -174,15 +163,12 @@ const WizardUploadObjectXMLForm = () => {
           </Form>
         )}
       </Formik>
-      {successMessage && (
-        <Alert
-          severity={successStatus}
-          onClose={() => {
-            setSuccessMessage("")
-          }}
-        >
-          {successMessage}
-        </Alert>
+      {successStatus && (
+        <WizardStatusMessageHandler
+          successStatus={successStatus}
+          response={responseStatus}
+          prefixText=""
+        ></WizardStatusMessageHandler>
       )}
     </div>
   )

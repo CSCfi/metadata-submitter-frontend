@@ -67,7 +67,7 @@ const AccordionSummary = withStyles(theme => ({
     },
   },
   content: {
-    color: "white",
+    color: "#FFF",
     fontWeight: "bold",
     "&$expanded": {
       margin: `${theme.spacing(2)} 0`,

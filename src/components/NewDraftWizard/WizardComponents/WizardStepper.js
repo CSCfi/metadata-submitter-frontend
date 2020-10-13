@@ -69,7 +69,7 @@ const useQontoStepIconStyles = makeStyles(theme => ({
   },
   floating: {
     border: "solid 1px #000",
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     boxShadow: 0,
   },
 }))

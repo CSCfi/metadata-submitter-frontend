@@ -38,7 +38,12 @@ describe("WizardAddObjectStep", () => {
   it("should render XML upload card", () => {
     const { asFragment } = render(wrapper)
     const card = screen.getByText("Upload XML file")
+    const uploadField = screen.getByRole("textbox")
+    const saveButton = screen.getByRole("button", { name: /save/i })
+
     expect(asFragment(wrapper)).toMatchSnapshot()
     expect(card).toBeDefined()
+    expect(uploadField).toBeDefined()
+    expect(saveButton).toHaveAttribute("disabled")
   })
 })

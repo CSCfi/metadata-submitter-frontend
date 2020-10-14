@@ -1,0 +1,1232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WizardAddObjectStep should render XML upload card 1`] = `
+<DocumentFragment>
+  <h1
+    class="MuiTypography-root makeStyles-paperTitle-4 MuiTypography-h6 MuiTypography-alignCenter"
+  >
+    Create New Folder
+  </h1>
+  <div
+    class="makeStyles-stepper-5"
+  >
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-outlined makeStyles-centeredStepButton-7 MuiButton-outlinedPrimary MuiButton-disableElevation"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z"
+          />
+        </svg>
+        Back
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
+    <div
+      class="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-stepperContainer-6 MuiStepper-alternativeLabel MuiPaper-elevation0"
+    >
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal MuiStepLabel-alternativeLabel"
+        >
+          <span
+            class="MuiStepLabel-iconContainer MuiStepLabel-alternativeLabel"
+          >
+            <div
+              class="makeStyles-root-8 makeStyles-active-9"
+            >
+              <div
+                class="makeStyles-circle-10"
+              />
+            </div>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiTypography-root MuiStepLabel-label MuiStepLabel-alternativeLabel MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
+            >
+              Folder Name & Description
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel"
+      >
+        <div
+          class="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-alternativeLabel WithStyles(ForwardRef(StepConnector))-alternativeLabel-13 Mui-disabled"
+        >
+          <span
+            class="MuiStepConnector-line WithStyles(ForwardRef(StepConnector))-line-16 MuiStepConnector-lineHorizontal"
+          />
+        </div>
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled MuiStepLabel-alternativeLabel"
+        >
+          <span
+            class="MuiStepLabel-iconContainer MuiStepLabel-alternativeLabel"
+          >
+            <div
+              class="makeStyles-root-8"
+            >
+              <div
+                class="makeStyles-circle-10"
+              />
+            </div>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiTypography-root MuiStepLabel-label MuiStepLabel-alternativeLabel MuiTypography-body2 MuiTypography-displayBlock"
+            >
+              Add Objects
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal MuiStep-alternativeLabel"
+      >
+        <div
+          class="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-alternativeLabel WithStyles(ForwardRef(StepConnector))-alternativeLabel-13 Mui-disabled"
+        >
+          <span
+            class="MuiStepConnector-line WithStyles(ForwardRef(StepConnector))-line-16 MuiStepConnector-lineHorizontal"
+          />
+        </div>
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled MuiStepLabel-alternativeLabel"
+        >
+          <span
+            class="MuiStepLabel-iconContainer MuiStepLabel-alternativeLabel"
+          >
+            <div
+              class="makeStyles-root-8"
+            >
+              <div
+                class="makeStyles-circle-10"
+              />
+            </div>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiTypography-root MuiStepLabel-label MuiStepLabel-alternativeLabel MuiTypography-body2 MuiTypography-displayBlock"
+            >
+              Summary
+            </span>
+          </span>
+        </span>
+      </div>
+    </div>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-outlined makeStyles-centeredStepButton-7 MuiButton-outlinedPrimary MuiButton-disableElevation"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        Next
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z"
+          />
+        </svg>
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+  <div
+    class="makeStyles-formRow-1"
+  >
+    <div
+      class="makeStyles-index-17"
+    >
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Study
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-selectedAccordion-21"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Sample
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button Mui-selected"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Experiment
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Run
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Analysis
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Dac
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Policy
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiPaper-root MuiAccordion-root WithStyles(ForwardRef(Accordion))-root-22 MuiPaper-elevation1"
+      >
+        <div
+          aria-controls="type-content"
+          aria-disabled="false"
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root WithStyles(ForwardRef(AccordionSummary))-root-24 makeStyles-nonSelectedAccordion-20"
+          id="type-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="MuiAccordionSummary-content WithStyles(ForwardRef(AccordionSummary))-content-25"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"
+              />
+            </svg>
+             
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1"
+            >
+              Dataset
+            </h6>
+          </div>
+        </div>
+        <div
+          class="MuiCollapse-container MuiCollapse-hidden"
+          style="min-height: 0px;"
+        >
+          <div
+            class="MuiCollapse-wrapper"
+          >
+            <div
+              class="MuiCollapse-wrapperInner"
+            >
+              <div
+                aria-labelledby="type-header"
+                id="type-content"
+                role="region"
+              >
+                <div
+                  class="MuiAccordionDetails-root WithStyles(ForwardRef(AccordionDetails))-root-27"
+                >
+                  <ul
+                    class="MuiList-root makeStyles-submissionTypeList-18 MuiList-dense MuiList-padding"
+                  >
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Fill Form
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Upload XML File
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                    <div
+                      aria-disabled="false"
+                      class="MuiButtonBase-root MuiListItem-root makeStyles-submissionTypeListItem-19 MuiListItem-dense MuiListItem-gutters MuiListItem-divider MuiListItem-button"
+                      role="button"
+                      tabindex="0"
+                    >
+                      <div
+                        class="MuiListItemText-root MuiListItemText-dense"
+                      >
+                        <span
+                          class="MuiTypography-root MuiListItemText-primary MuiTypography-subtitle1 MuiTypography-displayBlock"
+                        >
+                          Choose existing object
+                        </span>
+                      </div>
+                      <span
+                        class="MuiTouchRipple-root"
+                      />
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="makeStyles-formBox-2"
+    >
+      <div
+        class="MuiPaper-root MuiCard-root makeStyles-card-28 MuiPaper-elevation1 MuiPaper-rounded"
+      >
+        <div
+          class="MuiCardHeader-root makeStyles-cardHeader-29"
+        >
+          <div
+            class="MuiCardHeader-content"
+          >
+            <span
+              class="MuiTypography-root MuiCardHeader-title MuiTypography-displayBlock"
+            >
+              Upload XML file
+            </span>
+          </div>
+          <div
+            class="MuiCardHeader-action makeStyles-cardHeaderAction-30"
+          >
+            <button
+              aria-label="hide card"
+              class="MuiButtonBase-root MuiButton-root MuiButton-outlined makeStyles-hideButton-33"
+              tabindex="0"
+              type="button"
+            >
+              <span
+                class="MuiButton-label"
+              >
+                Hide
+              </span>
+              <span
+                class="MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </div>
+        <div
+          class="MuiCardContent-root makeStyles-cardContent-31"
+        >
+          <div>
+            <form
+              action="#"
+            >
+              <div
+                class="MuiFormControl-root makeStyles-root-34"
+              >
+                <div
+                  class="makeStyles-fileField-36"
+                >
+                  <div
+                    class="MuiFormControl-root MuiTextField-root"
+                  >
+                    <div
+                      class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+                    >
+                      <input
+                        aria-invalid="false"
+                        class="MuiInputBase-input MuiInput-input"
+                        placeholder="Name"
+                        readonly=""
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                  <label
+                    aria-disabled="false"
+                    class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+                    for="file-select-button"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <span
+                      class="MuiButton-label"
+                    >
+                      Choose file
+                    </span>
+                    <span
+                      class="MuiTouchRipple-root"
+                    />
+                  </label>
+                  <div
+                    class="MuiInputBase-root MuiInput-root MuiInput-underline makeStyles-hiddenInput-35 MuiInputBase-formControl MuiInput-formControl"
+                  >
+                    <input
+                      accept="text/xml"
+                      aria-invalid="false"
+                      class="MuiInputBase-input MuiInput-input"
+                      id="file-select-button"
+                      name="file"
+                      type="file"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <button
+                class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary Mui-disabled Mui-disabled"
+                disabled=""
+                tabindex="-1"
+                type="button"
+              >
+                <span
+                  class="MuiButton-label"
+                >
+                  Save
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

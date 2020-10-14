@@ -3,10 +3,11 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
+import { BrowserRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
-import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
+import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
 
 const mockStore = configureStore([])
 
@@ -22,21 +23,18 @@ describe("WizardStepper", () => {
       wizardStep: 1,
     })
     wrapper = (
-      <Provider store={store}>
-        <WizardStepper />
-      </Provider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <WizardFooter />
+        </Provider>
+      </BrowserRouter>
     )
   })
 
-  it("should take a snapshot", () => {
-    const { asFragment } = render(wrapper)
-    expect(asFragment(wrapper)).toMatchSnapshot()
-  })
-
-  it("should have back-step button disabled when navigated to first step", () => {
+  it("should open dialog on click of cancel", () => {
     const { asFragment } = render(wrapper)
     const firstRender = asFragment()
-    const button = screen.getByRole("button", { name: /Back/i })
+    const button = screen.getByRole("button", { name: /Cancel/i })
     fireEvent.click(button)
     expect(firstRender).toMatchDiffSnapshot(asFragment())
   })

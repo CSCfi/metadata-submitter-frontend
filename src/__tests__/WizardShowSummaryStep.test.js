@@ -39,6 +39,6 @@ describe("WizardShowSummaryStep", () => {
   it("should objects listed", async () => {
     render(wrapper)
     const items = await screen.findAllByRole("button")
-    expect(items).toHaveLength(4) // Screen gets back and next buttons also
+    expect(items).toHaveLength(4) // Screen renders stepper back and next buttons
   })
 })

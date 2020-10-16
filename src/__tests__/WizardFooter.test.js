@@ -5,13 +5,10 @@ import { render, screen, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
-import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
 
 const mockStore = configureStore([])
-
-expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardStepper", () => {
   let store
@@ -32,10 +29,9 @@ describe("WizardStepper", () => {
   })
 
   it("should open dialog on click of cancel", () => {
-    const { asFragment } = render(wrapper)
-    const firstRender = asFragment()
+    render(wrapper)
     const button = screen.getByRole("button", { name: /Cancel/i })
     fireEvent.click(button)
-    expect(firstRender).toMatchDiffSnapshot(asFragment())
+    expect(screen.getByRole("dialog")).toBeDefined()
   })
 })

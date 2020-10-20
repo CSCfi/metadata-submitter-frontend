@@ -25,18 +25,18 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   whiteBanner: {
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     color: "#000",
     padding: "15px",
   },
   whiteBanner2: {
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     color: theme.palette.primary.main,
     padding: "15px",
   },
   purpleBanner: {
     backgroundColor: theme.palette.primary.main,
-    color: "white",
+    color: "#FFF",
     padding: "15px",
   },
   login: {
@@ -56,6 +56,11 @@ const useStyles = makeStyles(theme => ({
 
 const Login = () => {
   const classes = useStyles()
+  let loginRoute = "/aai"
+  if (process.env.NODE_ENV === "development") {
+    loginRoute = "/home"
+  }
+
   return (
     <Container maxWidth={false} className={classes.container}>
       <Paper elevation={0} className={classes.banner}>
@@ -81,7 +86,7 @@ const Login = () => {
         <Typography variant="h5" component="h5" align="center">
           Login
         </Typography>
-        <Link href="#">
+        <Link href={loginRoute}>
           <img alt="CSC Login" src="https://user-auth.csc.fi/idp/images/Password.png"></img>
         </Link>
       </Paper>

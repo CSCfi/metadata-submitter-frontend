@@ -7,7 +7,7 @@ import folderAPIService from "services/folderAPI"
 
 const initialState = null
 
-const submissionFolderSlice = createSlice({
+const wizardSubmissionFolderSlice = createSlice({
   name: "wizardStep",
   initialState,
   reducers: {
@@ -18,8 +18,8 @@ const submissionFolderSlice = createSlice({
     resetFolder: () => initialState,
   },
 })
-export const { setFolder, addObject, resetFolder } = submissionFolderSlice.actions
-export default submissionFolderSlice.reducer
+export const { setFolder, addObject, resetFolder } = wizardSubmissionFolderSlice.actions
+export default wizardSubmissionFolderSlice.reducer
 
 type FolderFromForm = {
   name: string,

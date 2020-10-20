@@ -7,7 +7,7 @@ const proxy = process.env.REACT_APP_BACKEND_PROXY || "localhost:5430"
 
 module.exports = function (app) {
   app.use(
-    ["/objects", "/schemas", "/validate", "/submit", "/folders", "/drafts"],
+    ["/objects", "/schemas", "/validate", "/submit", "/folders", "/drafts", "/aai", "/callback", "/logout"],
     createProxyMiddleware({
       target: `http://${proxy}`,
       changeOrigin: true,

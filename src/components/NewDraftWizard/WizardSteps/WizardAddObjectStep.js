@@ -4,9 +4,9 @@ import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
 
-import AddObjectCard from "../WizardComponents/AddObjectCard"
-import ObjectIndex from "../WizardComponents/ObjectIndex"
+import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 import WizardHeader from "../WizardComponents/WizardHeader"
+import WizardObjectIndex from "../WizardComponents/WizardObjectIndex"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 const useStyles = makeStyles(theme => ({
@@ -33,10 +33,10 @@ const WizardAddObjectStep = () => {
   const objectType = useSelector(state => state.objectType)
   return (
     <>
-      <WizardHeader headerText="Create new draft folder" />
+      <WizardHeader headerText="Create New Folder" />
       <WizardStepper />
       <div className={classes.formRow}>
-        <ObjectIndex />
+        <WizardObjectIndex />
         <div className={classes.formBox}>
           {objectType === "" ? (
             <div className={classes.objectInfo}>
@@ -44,7 +44,7 @@ const WizardAddObjectStep = () => {
               <p>You can also add objects and edit them after saving your draft.</p>
             </div>
           ) : (
-            <AddObjectCard />
+            <WizardAddObjectCard />
           )}
         </div>
       </div>

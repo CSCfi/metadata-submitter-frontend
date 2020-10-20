@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const submissionTypeSlice = createSlice({
+const wizardSubmissionTypeSlice = createSlice({
   name: "submissionType",
   initialState,
   reducers: {
@@ -12,5 +12,5 @@ const submissionTypeSlice = createSlice({
   },
 })
 
-export const { setSubmissionType, resetSubmissionType } = submissionTypeSlice.actions
-export default submissionTypeSlice.reducer
+export const { setSubmissionType, resetSubmissionType } = wizardSubmissionTypeSlice.actions
+export default wizardSubmissionTypeSlice.reducer

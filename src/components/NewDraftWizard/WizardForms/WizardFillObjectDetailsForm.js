@@ -11,10 +11,11 @@ import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
-import { addObjectToFolder } from "../../../features/submissionFolderSlice"
+import { addObjectToFolder } from "../../../features/wizardSubmissionFolderSlice"
 
-import { ajvResolver } from "./ajvResolver"
-import JSONSchemaParser from "./JSONSchemaParser"
+import { WizardAjvResolver } from "./WizardAjvResolver"
+import JSONSchemaParser from "./WizardJSONSchemaParser"
+import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -59,19 +60,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const checkResponseError = (response, prefixText) => {
-  switch (response.status) {
-    case 504:
-      return `Unfortunately we couldn't connect to our server.`
-    case 400:
-      return `${prefixText}, details: ${response.data.detail}`
-    default:
-      return "Unfortunately an unexpected error happened on our servers"
-  }
-}
-
 type FormContentProps = {
-  resolver: typeof ajvResolver,
+  resolver: typeof WizardAjvResolver,
   formSchema: any,
   onSubmit: () => Promise<any>,
 }
@@ -108,17 +98,18 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const FillObjectDetailsForm = () => {
+const WizardFillObjectDetailsForm = () => {
   const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState("")
-  const [successMessage, setSuccessMessage] = useState("")
-  const [successStatus, setSuccessStatus] = useState("info")
+  const [error, setError] = useState(false)
+  const [errorPrefix, setErrorPrefix] = useState("")
+  const [successStatus, setSuccessStatus] = useState("")
   const [formSchema, setFormSchema] = useState({})
   const [validationSchema, setValidationSchema] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const dispatch = useDispatch()
   const { id: folderId } = useSelector(state => state.submissionFolder)
+  const [responseInfo, setResponseInfo] = useState([])
 
   /*
    * Submit form with cleaned values and check for response errors
@@ -127,15 +118,14 @@ const FillObjectDetailsForm = () => {
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
       setSuccessStatus("info")
-      setSuccessMessage(`For some reason, your file is still being saved
-                to our database, please wait. If saving doesn't go through in two
-                minutes, please try saving the file again.`)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
     const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
+
+    setResponseInfo(response)
+
     if (response.ok) {
       setSuccessStatus("success")
-      setSuccessMessage(`Submitted with accessionid ${response.data.accessionId}`)
       dispatch(
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
@@ -144,7 +134,7 @@ const FillObjectDetailsForm = () => {
       )
     } else {
       setSuccessStatus("error")
-      setSuccessMessage(checkResponseError(response, "Validation failed"))
+      setErrorPrefix("Validation failed")
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
@@ -158,11 +148,13 @@ const FillObjectDetailsForm = () => {
       let schema = localStorage.getItem(`cached_${objectType}_schema`)
       if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
+        setResponseInfo(response)
         if (response.ok) {
           schema = response.data
           localStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
         } else {
-          setError(checkResponseError(response, "Unfortunately an error happened while catching form fields"))
+          setError(true)
+          setErrorPrefix("Unfortunately an error happened while catching form fields")
           setIsLoading(false)
           return
         }
@@ -177,23 +169,22 @@ const FillObjectDetailsForm = () => {
   }, [objectType])
 
   if (isLoading) return <CircularProgress />
-  if (error) return <Alert severity="error">{error}</Alert>
+  // Schema validation error differs from response status handler
+  if (error) return <Alert severity="error">{errorPrefix}</Alert>
+
   return (
     <Container maxWidth="md">
-      <FormContent formSchema={formSchema} resolver={ajvResolver(validationSchema)} onSubmit={onSubmit} />
+      <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />
       {submitting && <LinearProgress />}
-      {successMessage && (
-        <Alert
-          severity={successStatus}
-          onClose={() => {
-            setSuccessMessage("")
-          }}
-        >
-          {successMessage}
-        </Alert>
+      {successStatus && (
+        <WizardStatusMessageHandler
+          successStatus={successStatus}
+          response={responseInfo}
+          prefixText={errorPrefix}
+        ></WizardStatusMessageHandler>
       )}
     </Container>
   )
 }
 
-export default FillObjectDetailsForm
+export default WizardFillObjectDetailsForm

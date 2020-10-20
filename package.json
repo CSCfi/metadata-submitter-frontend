@@ -1,6 +1,6 @@
 {
   "name": "metadata-submitter-frontend",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.6",
@@ -56,6 +56,8 @@
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.5",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.0",

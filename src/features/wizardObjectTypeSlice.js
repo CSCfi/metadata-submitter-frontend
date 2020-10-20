@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const objectTypeSlice = createSlice({
+const wizardObjectTypeSlice = createSlice({
   name: "objectType",
   initialState,
   reducers: {
@@ -12,5 +12,5 @@ const objectTypeSlice = createSlice({
   },
 })
 
-export const { setObjectType, resetObjectType } = objectTypeSlice.actions
-export default objectTypeSlice.reducer
+export const { setObjectType, resetObjectType } = wizardObjectTypeSlice.actions
+export default wizardObjectTypeSlice.reducer

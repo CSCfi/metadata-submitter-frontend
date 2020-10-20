@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import Step from "@material-ui/core/Step"
@@ -13,8 +13,12 @@ import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
 
+import WizardAlert from "./WizardAlert"
+
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { decrement, increment } from "features/wizardStepSlice"
+import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
@@ -65,7 +69,7 @@ const useQontoStepIconStyles = makeStyles(theme => ({
   },
   floating: {
     border: "solid 1px #000",
-    backgroundColor: "white",
+    backgroundColor: "#FFF",
     boxShadow: 0,
   },
 }))
@@ -122,6 +126,20 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
   const steps = ["Folder Name & Description", "Add Objects", "Summary"]
+  const formState = useSelector(state => state.submissionType)
+  const [alert, setAlert] = useState(false)
+  const [direction, setDirection] = useState("")
+
+  const handleNavigation = (step: boolean) => {
+    setDirection("")
+    setAlert(false)
+    if (step) {
+      direction === "previous" ? dispatch(decrement()) : dispatch(increment())
+      dispatch(resetObjectType())
+      dispatch(resetSubmissionType())
+    }
+  }
+
   return (
     <div className={classes.stepper}>
       <Button
@@ -130,7 +148,14 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         color="primary"
         variant="outlined"
         disabled={wizardStep < 1}
-        onClick={() => dispatch(decrement())}
+        onClick={() => {
+          if (wizardStep === 1 && formState.trim().length > 0) {
+            setDirection("previous")
+            setAlert(true)
+          } else {
+            dispatch(decrement())
+          }
+        }}
       >
         <ArrowBackIosIcon fontSize="large" />
         Back
@@ -157,7 +182,10 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
           if (createFolderFormRef?.current) {
             await createFolderFormRef.current.submitForm()
           }
-          if (
+          if (wizardStep === 1 && formState.trim().length > 0) {
+            setDirection("next")
+            setAlert(true)
+          } else if (
             wizardStep !== 2 &&
             (!createFolderFormRef?.current || Object.entries(createFolderFormRef?.current?.errors).length === 0)
           ) {
@@ -168,6 +196,9 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         Next
         <ArrowForwardIosIcon fontSize="large" />
       </Button>
+      {wizardStep === 1 && alert && (
+        <WizardAlert onAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
+      )}
     </div>
   )
 }

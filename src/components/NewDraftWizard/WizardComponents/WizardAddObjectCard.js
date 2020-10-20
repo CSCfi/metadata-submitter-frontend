@@ -8,10 +8,10 @@ import CardHeader from "@material-ui/core/CardHeader"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
-import FillObjectDetailsForm from "components/NewDraftWizard/WizardForms/FillObjectDetailsForm"
-import UploadObjectXMLForm from "components/NewDraftWizard/WizardForms/UploadObjectXMLForm"
-import { resetObjectType } from "features/objectTypeSlice"
-import { resetSubmissionType } from "features/submissionTypeSlice"
+import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
+import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   cardHeader: {
     backgroundColor: theme.palette.primary.main,
-    color: "white",
+    color: "#FFF",
     fontWeight: "bold",
   },
   cardHeaderAction: {
@@ -81,17 +81,17 @@ const CustomCardHeader = ({ title }: { title: string }) => {
 /*
  * Render correct form to add objects based on submission type in store
  */
-const AddObjectCard = () => {
+const WizardAddObjectCard = () => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
   const cards = {
     form: {
       title: "Fill form",
-      component: <FillObjectDetailsForm />,
+      component: <WizardFillObjectDetailsForm />,
     },
     xml: {
       title: "Upload XML file",
-      component: <UploadObjectXMLForm />,
+      component: <WizardUploadObjectXMLForm />,
     },
     existing: {
       title: "Choose existing object",
@@ -106,4 +106,4 @@ const AddObjectCard = () => {
   )
 }
 
-export default AddObjectCard
+export default WizardAddObjectCard

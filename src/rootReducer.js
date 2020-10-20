@@ -2,8 +2,8 @@
 
 import { combineReducers } from "@reduxjs/toolkit"
 
-import wizardErrorMessageReducer from "features/wizardErrorMessageSlice"
 import draftStatusReducer from "features/draftStatusSlice"
+import wizardErrorMessageReducer from "features/wizardErrorMessageSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
 import wizardStepReducer from "features/wizardStepSlice"
 import submissionFolderReducer from "features/wizardSubmissionFolderSlice"

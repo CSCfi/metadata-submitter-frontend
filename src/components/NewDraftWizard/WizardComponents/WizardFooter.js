@@ -82,7 +82,6 @@ const WizardFooter = () => {
               color="primary"
               disabled={wizardStep < 1}
               className={classes.footerButton}
-              // TODO: Implement save functionality
               onClick={() => {
                 setDialogOpen(true)
                 setAlertType("save")
@@ -94,7 +93,8 @@ const WizardFooter = () => {
               variant="contained"
               disabled={wizardStep !== 2}
               onClick={() => {
-                console.log("This should publish!")
+                setDialogOpen(true)
+                setAlertType("publish")
               }}
             >
               Publish

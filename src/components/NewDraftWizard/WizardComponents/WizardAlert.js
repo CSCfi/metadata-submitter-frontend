@@ -93,7 +93,21 @@ const CancelFormDialog = ({
           dialogContent = "Folder has been saved"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
+              <Link component={RouterLink} aria-label="Save a new folder and move to frontpage" to="/home">
+                <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+                  Return to homepage
+                </Button>
+              </Link>
+            </DialogActions>
+          )
+          break
+        }
+        case "publish": {
+          dialogTitle = "Objects published"
+          dialogContent = "Compiled objects have been published"
+          dialogActions = (
+            <DialogActions style={{ justifyContent: "center" }}>
+              <Link component={RouterLink} aria-label="Publish folder contents and move to frontpage" to="/home">
                 <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
                   Return to homepage
                 </Button>

@@ -13,12 +13,9 @@ const mockStore = configureStore([])
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardAddObjectStep", () => {
-  let store
-  let wrapper
-
-  beforeEach(() => {
-    store = mockStore({
-      objectType: "sample",
+  it("should not render any cards if no selected object type", () => {
+    const store = mockStore({
+      objectType: "",
       submissionType: "xml",
       submissionFolder: {
         name: "folder name",
@@ -28,21 +25,33 @@ describe("WizardAddObjectStep", () => {
         id: "FOL12341234",
       },
     })
-    wrapper = (
+    render(
       <Provider store={store}>
         <WizardAddObjectStep />
       </Provider>
     )
+    expect(screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")).toBeInTheDocument()
   })
 
-  it("should render XML upload card", () => {
-    render(wrapper)
-    const card = screen.getByText("Upload XML file")
-    const uploadField = screen.getByRole("textbox")
-    const saveButton = screen.getByRole("button", { name: /save/i })
-
-    expect(card).toBeDefined()
-    expect(uploadField).toBeDefined()
-    expect(saveButton).toHaveAttribute("disabled")
+  it("should render appropriate card", () => {
+    const typeList = ["form", "xml", "existing"]
+    typeList.forEach(typeName => {
+      const store = mockStore({
+        objectType: "study",
+        submissionType: typeName,
+        submissionFolder: {
+          description: "Test",
+          id: "FOL12341234",
+          name: "Testname",
+          published: false,
+        },
+      })
+      render(
+        <Provider store={store}>
+          <WizardAddObjectStep />
+        </Provider>
+      )
+      expect(screen.getByTestId(typeName)).toBeInTheDocument()
+    })
   })
 })

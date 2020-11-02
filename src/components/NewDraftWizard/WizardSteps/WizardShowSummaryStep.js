@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   summary: {
     padding: theme.spacing(1),
     width: theme.spacing(100),
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
   schemaTitleRow: {
     display: "flex",

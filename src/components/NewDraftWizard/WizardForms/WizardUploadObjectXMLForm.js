@@ -49,7 +49,6 @@ const WizardUploadObjectXMLForm = () => {
   const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
   const { id: folderId } = useSelector(state => state.submissionFolder)
-  const errorMessage = useSelector(state => state.errorMessage)
   const dispatch = useDispatch()
   const classes = useStyles()
 
@@ -104,11 +103,8 @@ const WizardUploadObjectXMLForm = () => {
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
                     const response = await submissionAPIService.validateXMLFile(objectType, value[0])
-                    console.log(response)
                     setResponseStatus(response)
-                    if (!response.ok) {
-                      return errorMessage
-                    } else if (!response.data.isValid) {
+                    if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
                       our server reported following error:
                       ${response.data.detail.reason}.`

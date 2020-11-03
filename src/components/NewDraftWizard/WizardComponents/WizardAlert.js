@@ -103,13 +103,13 @@ const CancelFormDialog = ({
           break
         }
         case "publish": {
-          dialogTitle = "Objects published"
-          dialogContent = "Compiled objects have been published"
+          dialogTitle = "Publishing objects"
+          dialogContent = "Objects in this folder will be published"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
               <Link component={RouterLink} aria-label="Publish folder contents and move to frontpage" to="/home">
                 <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
-                  Return to homepage
+                  Publish
                 </Button>
               </Link>
             </DialogActions>

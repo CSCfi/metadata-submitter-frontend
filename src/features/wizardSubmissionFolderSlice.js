@@ -66,14 +66,14 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
   dispatch(addObject(objectDetails))
 }
 
-export const publishFolderContent = (folderID: string) => async (dispatch: any => void) => {
+export const publishFolderContent = (folder: Folder) => async (dispatch: any => void) => {
   const changes = [{ op: "replace", path: "/published", value: true }]
-  const response = await folderAPIService.patchFolderById(folderID, changes)
+  const response = await folderAPIService.patchFolderById(folder.id, changes)
   if (!response.ok) {
     console.log(response)
     return
   }
-  dispatch(publishFolder(folderID))
+  dispatch(publishFolder(folder.id))
 }
 
 export const deleteFolderAndContent = (folder: Folder) => async (dispatch: any => void) => {

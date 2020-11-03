@@ -2,14 +2,17 @@
 import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
+import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
+import { Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
 import { deleteFolderAndContent } from "features/wizardSubmissionFolderSlice"
+import { publishFolderContent } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -48,11 +51,18 @@ const WizardFooter = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
 
-  const handleCancel = cancelWizard => {
-    if (cancelWizard) {
+  const handleAlert = alertWizard => {
+    if (alertWizard && alertType == "cancel") {
       dispatch(resetWizard())
       dispatch(resetObjectType())
       dispatch(deleteFolderAndContent(folder))
+    } else if (alertWizard && alertType == "save") {
+      dispatch(resetWizard())
+      console.log("saved here")
+    } else if (alertWizard && alertType == "publish") {
+      dispatch(resetWizard())
+      dispatch(publishFolderContent(folder))
+      console.log("published here")
     } else {
       setDialogOpen(false)
     }
@@ -62,19 +72,30 @@ const WizardFooter = () => {
     <div>
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
-        <div>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              setDialogOpen(true)
-              setAlertType("cancel")
-            }}
-            className={classes.footerButton}
-          >
-            Cancel
-          </Button>
-        </div>
+        {wizardStep < 0 && (
+          <div>
+            <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
+              <Button variant="contained" color="secondary" className={classes.footerButton}>
+                Cancel
+              </Button>
+            </Link>
+          </div>
+        )}
+        {wizardStep >= 0 && (
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                setDialogOpen(true)
+                setAlertType("cancel")
+              }}
+              className={classes.footerButton}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
         {wizardStep >= 0 && (
           <div>
             <Button
@@ -91,6 +112,7 @@ const WizardFooter = () => {
             </Button>
             <Button
               variant="contained"
+              color="primary"
               disabled={wizardStep !== 2}
               onClick={() => {
                 setDialogOpen(true)
@@ -102,7 +124,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
-      {dialogOpen && <WizardAlert onAlert={handleCancel} parentLocation="footer" alertType={alertType}></WizardAlert>}
+      {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
     </div>
   )
 }

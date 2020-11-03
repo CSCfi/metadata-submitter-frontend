@@ -52,17 +52,15 @@ const WizardFooter = () => {
   const [alertType, setAlertType] = useState("")
 
   const handleAlert = alertWizard => {
-    if (alertWizard && alertType == "cancel") {
+    if (alertWizard && alertType === "cancel") {
       dispatch(resetWizard())
       dispatch(resetObjectType())
       dispatch(deleteFolderAndContent(folder))
-    } else if (alertWizard && alertType == "save") {
+    } else if (alertWizard && alertType === "save") {
       dispatch(resetWizard())
-      console.log("saved here")
-    } else if (alertWizard && alertType == "publish") {
+    } else if (alertWizard && alertType === "publish") {
       dispatch(resetWizard())
       dispatch(publishFolderContent(folder))
-      console.log("published here")
     } else {
       setDialogOpen(false)
     }
@@ -72,17 +70,15 @@ const WizardFooter = () => {
     <div>
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
-        {wizardStep < 0 && (
-          <div>
+        <div>
+          {wizardStep < 0 && (
             <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
               <Button variant="contained" color="secondary" className={classes.footerButton}>
                 Cancel
               </Button>
             </Link>
-          </div>
-        )}
-        {wizardStep >= 0 && (
-          <div>
+          )}
+          {wizardStep >= 0 && (
             <Button
               variant="contained"
               color="secondary"
@@ -94,8 +90,8 @@ const WizardFooter = () => {
             >
               Cancel
             </Button>
-          </div>
-        )}
+          )}
+        </div>
         {wizardStep >= 0 && (
           <div>
             <Button

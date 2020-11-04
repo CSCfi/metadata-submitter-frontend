@@ -65,7 +65,7 @@ const WizardShowSummaryStep = () => {
   const classes = useStyles()
   return (
     <>
-      <WizardHeader headerText="Create new draft folder" />
+      <WizardHeader headerText="Create new folder" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>

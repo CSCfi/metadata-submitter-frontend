@@ -98,7 +98,6 @@ const WizardUploadObjectXMLForm = () => {
               hidden
               ref={register({
                 validate: {
-                  test: value => console.log(value),
                   isFile: value => value.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {

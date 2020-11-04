@@ -16,10 +16,9 @@ const wizardSubmissionFolderSlice = createSlice({
       state.metadataObjects.push(action.payload)
     },
     resetFolder: () => initialState,
-    publishFolder: (state, action) => action.payload,
   },
 })
-export const { setFolder, addObject, resetFolder, publishFolder } = wizardSubmissionFolderSlice.actions
+export const { setFolder, addObject, resetFolder } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
 
 type FolderFromForm = {
@@ -74,7 +73,7 @@ export const publishFolderContent = (folder: Folder) => async (dispatch: any => 
     console.log(response)
     return
   }
-  dispatch(publishFolder(folder.id))
+  dispatch(resetFolder())
 }
 
 export const deleteFolderAndContent = (folder: Folder) => async (dispatch: any => void) => {

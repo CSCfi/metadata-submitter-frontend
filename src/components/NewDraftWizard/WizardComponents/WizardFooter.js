@@ -11,8 +11,7 @@ import WizardAlert from "./WizardAlert"
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
-import { deleteFolderAndContent } from "features/wizardSubmissionFolderSlice"
-import { publishFolderContent } from "features/wizardSubmissionFolderSlice"
+import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -58,6 +57,7 @@ const WizardFooter = () => {
       dispatch(deleteFolderAndContent(folder))
     } else if (alertWizard && alertType === "save") {
       dispatch(resetWizard())
+      dispatch(resetFolder())
     } else if (alertWizard && alertType === "publish") {
       dispatch(resetWizard())
       dispatch(publishFolderContent(folder))

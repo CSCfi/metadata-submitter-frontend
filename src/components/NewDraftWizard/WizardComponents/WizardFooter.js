@@ -2,14 +2,16 @@
 import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
+import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
+import { Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
-import { deleteFolderAndContent } from "features/wizardSubmissionFolderSlice"
+import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -48,11 +50,17 @@ const WizardFooter = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
 
-  const handleCancel = cancelWizard => {
-    if (cancelWizard) {
+  const handleAlert = alertWizard => {
+    if (alertWizard && alertType === "cancel") {
       dispatch(resetWizard())
       dispatch(resetObjectType())
       dispatch(deleteFolderAndContent(folder))
+    } else if (alertWizard && alertType === "save") {
+      dispatch(resetWizard())
+      dispatch(resetFolder())
+    } else if (alertWizard && alertType === "publish") {
+      dispatch(resetWizard())
+      dispatch(publishFolderContent(folder))
     } else {
       setDialogOpen(false)
     }
@@ -63,17 +71,26 @@ const WizardFooter = () => {
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
         <div>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              setDialogOpen(true)
-              setAlertType("cancel")
-            }}
-            className={classes.footerButton}
-          >
-            Cancel
-          </Button>
+          {wizardStep < 0 && (
+            <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
+              <Button variant="contained" color="secondary" className={classes.footerButton}>
+                Cancel
+              </Button>
+            </Link>
+          )}
+          {wizardStep >= 0 && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                setDialogOpen(true)
+                setAlertType("cancel")
+              }}
+              className={classes.footerButton}
+            >
+              Cancel
+            </Button>
+          )}
         </div>
         {wizardStep >= 0 && (
           <div>
@@ -82,7 +99,6 @@ const WizardFooter = () => {
               color="primary"
               disabled={wizardStep < 1}
               className={classes.footerButton}
-              // TODO: Implement save functionality
               onClick={() => {
                 setDialogOpen(true)
                 setAlertType("save")
@@ -92,9 +108,11 @@ const WizardFooter = () => {
             </Button>
             <Button
               variant="contained"
+              color="primary"
               disabled={wizardStep !== 2}
               onClick={() => {
-                console.log("This should publish!")
+                setDialogOpen(true)
+                setAlertType("publish")
               }}
             >
               Publish
@@ -102,7 +120,7 @@ const WizardFooter = () => {
           </div>
         )}
       </div>
-      {dialogOpen && <WizardAlert onAlert={handleCancel} parentLocation="footer" alertType={alertType}></WizardAlert>}
+      {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
     </div>
   )
 }

@@ -88,18 +88,21 @@ const WizardAddObjectCard = () => {
     form: {
       title: "Fill form",
       component: <WizardFillObjectDetailsForm />,
+      testId: "form",
     },
     xml: {
       title: "Upload XML file",
       component: <WizardUploadObjectXMLForm />,
+      testId: "xml",
     },
     existing: {
       title: "Choose existing object",
       component: <div>Not implemented yet</div>,
+      testId: "existing",
     },
   }
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
       <CustomCardHeader title={cards[submissionType]["title"]} />
       <CardContent className={classes.cardContent}>{cards[submissionType]["component"]}</CardContent>
     </Card>

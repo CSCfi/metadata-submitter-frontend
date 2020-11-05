@@ -2,13 +2,12 @@
 import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
-import FormControl, { FormControlProps } from "@material-ui/core/FormControl"
-import Input from "@material-ui/core/Input"
+import FormControl from "@material-ui/core/FormControl"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Alert from "@material-ui/lab/Alert"
-import { Field, FieldProps, Form, Formik, getIn } from "formik"
+import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
@@ -42,132 +41,98 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type FileUploadProps = FieldProps & {
-  label: string,
-  disabled?: boolean,
-  FormControlProps?: FormControlProps,
-}
-
 /*
- * Custom file component for Formik field.
- */
-const FileUpload = ({
-  field,
-  form: { isSubmitting, touched, errors, values, setFieldValue, setFieldTouched },
-  label,
-  disabled = false,
-  FormControlProps: formControlProps,
-}: FileUploadProps) => {
-  const error = getIn(touched, field.name) && getIn(errors, field.name)
-  const classes = useStyles()
-  const dispatch = useDispatch()
-
-  return (
-    <FormControl {...formControlProps} className={classes.root}>
-      <div className={classes.fileField}>
-        <TextField placeholder={values.file ? values.file.name : "Name"} inputProps={{ readOnly: true }} />
-        <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
-          {label}
-        </Button>
-        <Input
-          className={classes.hiddenInput}
-          error={!!error}
-          inputProps={{
-            accept: "text/xml",
-            type: "file",
-            id: "file-select-button",
-            disabled: disabled || isSubmitting,
-            name: field.name,
-            onChange: event => {
-              event.preventDefault()
-              const file = event.currentTarget.files[0]
-              setFieldValue(field.name, file)
-              setFieldTouched(field.name, true, false)
-              dispatch(setDraftStatus("notSaved"))
-            },
-          }}
-        />
-      </div>
-      {error && <Alert severity="error">{error}</Alert>}
-    </FormControl>
-  )
-}
-
-/*
- * Return formik based form for uploading xml files. Handles form submitting, validating and error/success alerts.
+ * Return React Hook Form based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
 const WizardUploadObjectXMLForm = () => {
   const [successStatus, setSuccessStatus] = useState("")
+  const [isSubmitting, setSubmitting] = useState(false)
   const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
   const { id: folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
-  const errorMessage = useSelector(state => state.errorMessage)
+
+  const { register, errors, watch, handleSubmit } = useForm({ mode: "onChange" })
+
+  const watchFile = watch("fileUpload")
+
+  const onSubmit = async data => {
+    setSubmitting(true)
+    const file = data.fileUpload[0] || {}
+    const waitForServertimer = setTimeout(() => {
+      setSuccessStatus("info")
+    }, 5000)
+
+    const response = await objectAPIService.createFromXML(objectType, file)
+    setResponseStatus(response)
+    if (response.ok) {
+      setSuccessStatus("success")
+      dispatch(
+        addObjectToFolder(folderId, {
+          accessionId: response.data.accessionId,
+          schema: objectType,
+        })
+      )
+      dispatch(resetErrorMessage())
+    } else {
+      setSuccessStatus("error")
+    }
+    clearTimeout(waitForServertimer)
+    setSubmitting(false)
+  }
+
   return (
     <div>
-      <Formik
-        initialValues={{ file: null }}
-        validate={async values => {
-          const errors = {}
-          if (!values.file) {
-            errors.file = "Please attach a file."
-          } else if (values.file.type !== "text/xml") {
-            errors.file = "Please attach an XML file."
-          } else {
-            const response = await submissionAPIService.validateXMLFile(objectType, values.file)
-            setResponseStatus(response)
-            if (!response.ok) {
-              errors.file = errorMessage
-            } else if (!response.data.isValid) {
-              errors.file = `The file you attached is not valid ${objectType}, 
-              our server reported following error:
-              ${response.data.detail.reason}.`
-            }
-          }
-          return errors
-        }}
-        onSubmit={async (values, { setSubmitting, setFieldError }) => {
-          const waitForServertimer = setTimeout(() => {
-            setSuccessStatus("info")
-          }, 5000)
-
-          const response = await objectAPIService.createFromXML(objectType, values.file)
-          setResponseStatus(response)
-          if (response.ok) {
-            setSuccessStatus("success")
-            dispatch(
-              addObjectToFolder(folderId, {
-                accessionId: response.data.accessionId,
-                schema: objectType,
-              })
-            )
-            dispatch(resetErrorMessage())
-            dispatch(setDraftStatus("saved"))
-          } else {
-            setFieldError("file")
-            setSuccessStatus("error")
-          }
-          clearTimeout(waitForServertimer)
-          setSubmitting(false)
-        }}
-      >
-        {({ touched, errors, submitForm, isSubmitting }) => (
-          <Form>
-            <Field component={FileUpload} name="file" label="Choose file" />
-            {isSubmitting && <LinearProgress />}
-            <Button
-              variant="outlined"
-              color="primary"
-              className={classes.submitButton}
-              disabled={isSubmitting || touched.file == null || errors.file != null}
-              onClick={submitForm}
-            >
-              Save
+      {/* React Hook Form */}
+      <form>
+        <FormControl className={classes.root}>
+          <div className={classes.fileField}>
+            <TextField placeholder={watchFile ? watchFile[0]?.name : "Name"} inputProps={{ readOnly: true }} />
+            <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
+              Choose file
             </Button>
-          </Form>
-        )}
-      </Formik>
+            <input
+              type="file"
+              name="fileUpload"
+              id="file-select-button"
+              hidden
+              ref={register({
+                validate: {
+                  isFile: value => value.length > 0,
+                  isXML: value => value[0]?.type === "text/xml",
+                  isValidXML: async value => {
+                    const response = await submissionAPIService.validateXMLFile(objectType, value[0])
+                    setResponseStatus(response)
+                    if (!response.data.isValid) {
+                      return `The file you attached is not valid ${objectType},
+                      our server reported following error:
+                      ${response.data.detail.reason}.`
+                    }
+                  },
+                },
+              })}
+            />
+          </div>
+          {/* Errors */}
+          {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
+          {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
+          {errors.fileUpload?.type === "isValidXML" && <Alert severity="error">{errors?.fileUpload?.message}</Alert>}
+          {/* Progress bar */}
+          {isSubmitting && <LinearProgress />}
+        </FormControl>
+
+        <Button
+          variant="outlined"
+          color="primary"
+          className={classes.submitButton}
+          disabled={isSubmitting || !watchFile || errors.fileUpload != null}
+          onClick={handleSubmit(onSubmit)}
+        >
+          Save
+        </Button>
+      </form>
+
       {successStatus && (
         <WizardStatusMessageHandler
           successStatus={successStatus}

@@ -6,9 +6,9 @@ import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import App from "./App"
+import App from "../App"
 const mockStore = configureStore([])
-import CSCtheme from "./theme"
+import CSCtheme from "../theme"
 
 describe("App", () => {
   test("gets rendered without crashing", () => {

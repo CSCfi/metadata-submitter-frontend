@@ -59,10 +59,19 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
-    console.log(response)
     return
   }
   dispatch(addObject(objectDetails))
+}
+
+export const publishFolderContent = (folder: Folder) => async (dispatch: any => void) => {
+  const changes = [{ op: "replace", path: "/published", value: true }]
+  const response = await folderAPIService.patchFolderById(folder.id, changes)
+  if (!response.ok) console.error(`Couldn't publish folder with id ${folder.id}`)
+  if (!response.ok) {
+    return
+  }
+  dispatch(resetFolder())
 }
 
 export const deleteFolderAndContent = (folder: Folder) => async (dispatch: any => void) => {

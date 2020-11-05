@@ -4,7 +4,6 @@ import React, { useRef } from "react"
 import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
-import { Formik } from "formik"
 import { useSelector } from "react-redux"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
@@ -62,7 +61,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
 const NewDraftWizard = () => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)
-  const createFolderFormRef = useRef<Formik>(null)
+  const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: Function })>(null)
 
   return (
     <Container maxWidth={false} className={classes.container}>

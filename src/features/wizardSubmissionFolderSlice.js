@@ -25,7 +25,7 @@ export default wizardSubmissionFolderSlice.reducer
 type FolderFromForm = {
   name: string,
   description: string,
-  id?: string,
+  folder?: Object,
 }
 
 type ObjectInFolder = {

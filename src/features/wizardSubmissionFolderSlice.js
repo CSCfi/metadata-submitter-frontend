@@ -69,7 +69,6 @@ export const publishFolderContent = (folder: Folder) => async (dispatch: any => 
   const response = await folderAPIService.patchFolderById(folder.id, changes)
   if (!response.ok) console.error(`Couldn't publish folder with id ${folder.id}`)
   if (!response.ok) {
-    console.log(response)
     return
   }
   dispatch(resetFolder())

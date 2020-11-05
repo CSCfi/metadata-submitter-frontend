@@ -11,7 +11,7 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 import { increment } from "features/wizardStepSlice"
-import { createNewDraftFolder } from "features/wizardSubmissionFolderSlice"
+import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,36 +36,14 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const { isSubmitting } = formState
 
   const onSubmit = data => {
-    dispatch(createNewDraftFolder(data))
+    if (folder) {
+      dispatch(updateNewDraftFolder(Object.assign({ ...data, folder })))
+    } else {
+      dispatch(createNewDraftFolder(data))
+    }
     dispatch(increment())
   }
 
-  if (folder) {
-    return (
-      <form className={classes.root}>
-        <MuiTextField
-          name="name"
-          label="Folder Name"
-          variant="outlined"
-          fullWidth
-          required
-          disabled
-          defaultValue={folder.name}
-        />
-        <MuiTextField
-          name="description"
-          label="Folder Description"
-          variant="outlined"
-          fullWidth
-          required
-          disabled
-          defaultValue={folder.description}
-          multiline
-          rows={5}
-        />
-      </form>
-    )
-  }
   return (
     <form className={classes.root} onSubmit={handleSubmit(onSubmit)} ref={createFolderFormRef}>
       <MuiTextField
@@ -77,6 +55,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         helperText={errors.name ? "Please give a name for folder." : null}
         error={errors.name}
         disabled={isSubmitting}
+        defaultValue={folder ? folder.name : ""}
       ></MuiTextField>
       <MuiTextField
         name="description"
@@ -89,6 +68,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         helperText={errors.description ? "Please give a description for folder." : null}
         error={errors.description}
         disabled={isSubmitting}
+        defaultValue={folder ? folder.description : ""}
       ></MuiTextField>
     </form>
   )

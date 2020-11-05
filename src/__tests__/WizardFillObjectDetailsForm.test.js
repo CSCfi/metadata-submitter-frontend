@@ -50,6 +50,7 @@ describe("WizardFillObjectDetailsForm", () => {
         <WizardFillObjectDetailsForm />
       </Provider>
     )
+    expect(Object.keys(localStorage.__STORE__).length).toBe(1);
     await waitFor(() => screen.getByText("Study Description"))
     expect(screen.getByText("Study Description")).toBeDefined()
   })

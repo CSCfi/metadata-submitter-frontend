@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   summary: {
     padding: theme.spacing(1),
     width: theme.spacing(100),
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
   schemaTitleRow: {
     display: "flex",
@@ -62,7 +65,7 @@ const WizardShowSummaryStep = () => {
   const classes = useStyles()
   return (
     <>
-      <WizardHeader headerText="Create new draft folder" />
+      <WizardHeader headerText="Create new folder" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>

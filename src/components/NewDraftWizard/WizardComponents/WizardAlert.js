@@ -93,7 +93,7 @@ const CancelFormDialog = ({
           dialogContent = "Folder has been saved"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
+              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
                 <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
                   Return to homepage
                 </Button>

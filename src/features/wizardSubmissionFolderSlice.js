@@ -59,7 +59,6 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
-    console.log(response)
     return
   }
   dispatch(addObject(objectDetails))

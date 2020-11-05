@@ -180,15 +180,12 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         variant="outlined"
         onClick={async () => {
           if (createFolderFormRef?.current) {
-            await createFolderFormRef.current.submitForm()
+            await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true }))
           }
           if (wizardStep === 1 && formState.trim().length > 0) {
             setDirection("next")
             setAlert(true)
-          } else if (
-            wizardStep !== 2 &&
-            (!createFolderFormRef?.current || Object.entries(createFolderFormRef?.current?.errors).length === 0)
-          ) {
+          } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
             dispatch(increment())
           }
         }}

@@ -3,16 +3,12 @@ import React, { useState } from "react"
 
 import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
-import { useDispatch } from "react-redux"
-
-import { setErrorMessage } from "features/wizardErrorMessageSlice"
 
 /*
- * Error messages are shown both in snackbar and Formik form errors. Latter needs error message from state
+ * Error messages
  */
 const ErrorHandler = ({ response, prefixText }: { response: any, prefixText: string }) => {
   const [openStatus, setOpenStatus] = useState(true)
-  const dispatch = useDispatch()
   let message = ""
   switch (response.status) {
     case 504:
@@ -24,7 +20,6 @@ const ErrorHandler = ({ response, prefixText }: { response: any, prefixText: str
     default:
       message = "Unfortunately an unexpected error happened on our servers"
   }
-  dispatch(setErrorMessage(message))
   return (
     <div>
       <Snackbar open={openStatus}>

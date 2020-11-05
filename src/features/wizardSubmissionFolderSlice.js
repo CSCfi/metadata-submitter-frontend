@@ -1,5 +1,6 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
+import _extend from "lodash/extend"
 
 import objectAPIService from "../services/objectAPI"
 
@@ -24,6 +25,7 @@ export default wizardSubmissionFolderSlice.reducer
 type FolderFromForm = {
   name: string,
   description: string,
+  id?: string,
 }
 
 type ObjectInFolder = {
@@ -53,6 +55,14 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
     id: response.data.folderId,
   }
   dispatch(setFolder(folder))
+}
+
+export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (dispatch: any => void) => {
+  const updatedFolder = _extend(
+    { ...folderDetails.folder },
+    { name: folderDetails.name, description: folderDetails.description }
+  )
+  dispatch(setFolder(updatedFolder))
 }
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {

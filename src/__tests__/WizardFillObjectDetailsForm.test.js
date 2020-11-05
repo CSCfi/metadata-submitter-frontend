@@ -42,7 +42,8 @@ describe("WizardFillObjectDetailsForm", () => {
     },
   })
 
-  localStorage.__STORE__["cached_study_schema"] = JSON.stringify(schema)
+  localStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
+
 
   it("should create study form from schema in localStorage", async () => {
     render(
@@ -50,7 +51,8 @@ describe("WizardFillObjectDetailsForm", () => {
         <WizardFillObjectDetailsForm />
       </Provider>
     )
-    expect(Object.keys(localStorage.__STORE__).length).toBe(1);
+    expect(localStorage.getItem).toBeCalledWith('cached_study_schema')
+    expect(localStorage.getItem.mock.calls.length).toBe(1)
     await waitFor(() => screen.getByText("Study Description"))
     expect(screen.getByText("Study Description")).toBeDefined()
   })

@@ -1,6 +1,5 @@
 import React from "react"
 
-require("jest-localstorage-mock")
 import "@testing-library/jest-dom/extend-expect"
 import { render, screen, waitFor } from "@testing-library/react"
 import { Provider } from "react-redux"
@@ -44,16 +43,27 @@ describe("WizardFillObjectDetailsForm", () => {
 
   localStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
 
-
-  it("should create study form from schema in localStorage", async () => {
+  it("should create study form from schema in localstorage", async () => {
     render(
       <Provider store={store}>
         <WizardFillObjectDetailsForm />
       </Provider>
     )
-    expect(localStorage.getItem).toBeCalledWith('cached_study_schema')
-    expect(localStorage.getItem.mock.calls.length).toBe(1)
     await waitFor(() => screen.getByText("Study Description"))
     expect(screen.getByText("Study Description")).toBeDefined()
+  })
+
+  // Note: If this test runs before form creation, form creation fails because getItem spy messes localstorage init somehow
+  it("should call localstorage", async () => {
+    const spy = jest.spyOn(Storage.prototype, "getItem")
+    render(
+      <Provider store={store}>
+        <WizardFillObjectDetailsForm />
+      </Provider>
+    )
+    expect(spy).toBeCalledWith("cached_study_schema")
+    await waitFor(() => {
+      expect(spy.mock.calls.length).toBe(1)
+    })
   })
 })

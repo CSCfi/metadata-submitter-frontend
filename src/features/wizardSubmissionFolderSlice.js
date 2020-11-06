@@ -1,6 +1,7 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 import _extend from "lodash/extend"
+import _reject from "lodash/reject"
 
 import objectAPIService from "../services/objectAPI"
 
@@ -16,10 +17,16 @@ const wizardSubmissionFolderSlice = createSlice({
     addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
+    deleteObject: (state, action) => {
+      state.metadataObjects = _reject(state.metadataObjects, function (o) {
+        return o.accessionId === action.payload
+      })
+      state.metadataObjects.filter(obj => obj.accessionId !== action.payload)
+    },
     resetFolder: () => initialState,
   },
 })
-export const { setFolder, addObject, resetFolder } = wizardSubmissionFolderSlice.actions
+export const { setFolder, addObject, deleteObject, resetFolder } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
 
 type FolderFromForm = {
@@ -72,6 +79,14 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
     return
   }
   dispatch(addObject(objectDetails))
+}
+
+export const deleteObjectFromFolder = (objectId: string, objectType: string) => async (dispatch: any => void) => {
+  const response = await objectAPIService.deleteObjectByAccessionId(objectType, objectId)
+  if (!response.ok) {
+    return
+  }
+  dispatch(deleteObject(objectId))
 }
 
 export const publishFolderContent = (folder: Folder) => async (dispatch: any => void) => {

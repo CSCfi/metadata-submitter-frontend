@@ -1,34 +1,66 @@
 //@flow
 import React from "react"
 
-import Button from "@material-ui/core/Button"
-import Alert from "@material-ui/lab/Alert"
+import IconButton from "@material-ui/core/IconButton"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
+import ListItemText from "@material-ui/core/ListItemText"
+import { makeStyles } from "@material-ui/core/styles"
+import ClearIcon from "@material-ui/icons/Clear"
+import { useSelector, useDispatch } from "react-redux"
+
+import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
+
+const useStyles = makeStyles(theme => ({
+  objectList: {
+    padding: "0 1rem",
+    width: "25%",
+  },
+  objectListItems: {
+    border: "none",
+    borderRadius: 3,
+    margin: theme.spacing(1, 0),
+    boxShadow: "0px 3px 10px -5px rgba(0,0,0,0.49)",
+    alignItems: "flex-start",
+    padding: ".5rem",
+  },
+}))
 
 /**
- * Show selection for object and submission types and correct form based on users choice.
+ * List objects by submission type. Enables deletion of objects
  */
 const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionType: string, submissions: any }) => {
-  const handleObjectDelete = id => {
-    console.log(id)
+  const classes = useStyles()
+  const dispatch = useDispatch()
+  const objectType = useSelector(state => state.objectType)
+  const handleObjectDelete = objectId => {
+    dispatch(deleteObjectFromFolder(objectId, objectType))
   }
 
   return (
-    <div>
-      Submitted {submissionType} items
-      {submissions.map(submission => {
-        return (
-          <Alert severity="success" key={submission.accessionId}>
-            {submission.accessionId}
-            <Button
-              onClick={() => {
-                handleObjectDelete(submission.accessionId)
-              }}
-            >
-              x
-            </Button>
-          </Alert>
-        )
-      })}
+    <div className={classes.objectList}>
+      <h3>Submitted {submissionType} items</h3>
+      <List>
+        {submissions.map(submission => {
+          return (
+            <ListItem key={submission.accessionId} className={classes.objectListItems}>
+              <ListItemText primary={submission.accessionId} />
+              <ListItemSecondaryAction>
+                <IconButton
+                  onClick={() => {
+                    handleObjectDelete(submission.accessionId)
+                  }}
+                  edge="end"
+                  aria-label="delete"
+                >
+                  <ClearIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          )
+        })}
+      </List>
     </div>
   )
 }

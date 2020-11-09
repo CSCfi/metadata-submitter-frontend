@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
     padding: "0 1rem",
     width: "25%",
   },
+  header: {
+    marginBlockEnd: "0",
+  },
   objectListItems: {
     border: "none",
     borderRadius: 3,
@@ -25,7 +28,32 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start",
     padding: ".5rem",
   },
+  addedMessage: {
+    color: theme.palette.success.main,
+    visibility: "visible",
+    opacity: "1",
+    transition: "opacity 2s linear",
+  },
+  hidden: {
+    color: theme.palette.success.main,
+    visibility: "hidden",
+    opacity: "0",
+    transition: "visibility 0s .2s, opacity .2s linear",
+  },
 }))
+
+const ToggleMessage = ({ delay, children }: { delay: Number, children: any }) => {
+  const classes = useStyles()
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(false)
+    }, delay)
+  }, [delay])
+
+  return <span className={visible ? classes.addedMessage : classes.hidden}>{children}</span>
+}
 
 /**
  * List objects by submission type. Enables deletion of objects
@@ -37,16 +65,16 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
   const handleObjectDelete = objectId => {
     dispatch(deleteObjectFromFolder(objectId, objectType))
   }
-
   return (
     <div className={classes.objectList}>
-      <h3>Submitted {submissionType} items</h3>
+      <h3 className={classes.header}>Submitted {submissionType} items</h3>
       <List>
         {submissions.map(submission => {
           return (
             <ListItem key={submission.accessionId} className={classes.objectListItems}>
               <ListItemText primary={submission.accessionId} />
               <ListItemSecondaryAction>
+                {submission.new && <ToggleMessage delay={5000}>Added!</ToggleMessage>}
                 <IconButton
                   onClick={() => {
                     handleObjectDelete(submission.accessionId)

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+// import { setDraftStatus } from "features/draftStatusSlice"
 import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"

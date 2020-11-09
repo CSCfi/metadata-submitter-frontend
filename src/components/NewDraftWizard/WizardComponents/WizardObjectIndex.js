@@ -137,6 +137,7 @@ const WizardObjectIndex = () => {
   const [cancelFormOpen, setCancelFormOpen] = useState(false)
   const currentObjectType = useSelector(state => state.objectType)
   const currentSubmissionType = useSelector(state => state.submissionType)
+  const draftStatus = useSelector(state => state.draftStatus)
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
@@ -148,7 +149,7 @@ const WizardObjectIndex = () => {
       dispatch(setObjectType(expandedObjectType))
     } else {
       setClickedSubmissionType(submissionType)
-      setCancelFormOpen(true)
+      if (draftStatus === "notSaved") setCancelFormOpen(true)
     }
   }
 

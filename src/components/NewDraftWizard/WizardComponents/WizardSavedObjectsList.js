@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ToggleMessage = ({ delay, children }: { delay: Number, children: any }) => {
+const ToggleMessage = ({ delay, children }: { delay: number, children: any }) => {
   const classes = useStyles()
   const [visible, setVisible] = useState(true)
 

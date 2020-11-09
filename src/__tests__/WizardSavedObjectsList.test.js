@@ -17,7 +17,7 @@ describe("WizardStepper", () => {
 
   const submissions = [
     { accessionId: "EDAG1", schema: "sample" },
-    { accessionId: "EDAG2", schema: "sample", new: true },
+    { accessionId: "EDAG2", schema: "sample" },
   ]
 
   it("should have 'Added!' message rendered on item that has 'new' property", () => {
@@ -26,6 +26,8 @@ describe("WizardStepper", () => {
         <WizardSavedObjectsList submissions={submissions} submissionType="sample" />
       </Provider>
     )
-    expect(screen.getByText("Added!")).toBeInTheDocument()
+    submissions.forEach(item => {
+      expect(screen.getByText(item.accessionId)).toBeInTheDocument()
+    })
   })
 })

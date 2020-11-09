@@ -73,7 +73,10 @@ export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (di
 }
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
-  const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
+  // Clone object details and remove 'new' property before sending to database. New -property is used to dispalay 'added' message in listing
+  const objectDetailsClone = Object.assign({}, objectDetails)
+  delete objectDetailsClone.new
+  const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetailsClone }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
     return

@@ -21,7 +21,6 @@ const wizardSubmissionFolderSlice = createSlice({
       state.metadataObjects = _reject(state.metadataObjects, function (o) {
         return o.accessionId === action.payload
       })
-      state.metadataObjects.filter(obj => obj.accessionId !== action.payload)
     },
     resetFolder: () => initialState,
   },
@@ -73,10 +72,7 @@ export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (di
 }
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
-  // Clone object details and remove 'new' property before sending to database. New -property is used to dispalay 'added' message in listing
-  const objectDetailsClone = Object.assign({}, objectDetails)
-  delete objectDetailsClone.new
-  const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetailsClone }]
+  const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   if (!response.ok) {
     return

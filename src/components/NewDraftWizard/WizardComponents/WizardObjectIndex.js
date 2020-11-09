@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
+import { setDraftStatus } from "features/draftStatusSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -138,6 +139,7 @@ const WizardObjectIndex = () => {
   const currentObjectType = useSelector(state => state.objectType)
   const currentSubmissionType = useSelector(state => state.submissionType)
   const draftStatus = useSelector(state => state.draftStatus)
+  // console.log("ds: ", draftStatus)
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
@@ -148,8 +150,14 @@ const WizardObjectIndex = () => {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(expandedObjectType))
     } else {
-      setClickedSubmissionType(submissionType)
-      if (draftStatus === "notSaved") setCancelFormOpen(true)
+      if (draftStatus === "notSaved") {
+        setCancelFormOpen(true)
+        setClickedSubmissionType(submissionType)
+      } else {
+        dispatch(setDraftStatus(""))
+        dispatch(setSubmissionType(submissionType))
+        dispatch(setObjectType(expandedObjectType))
+      }
     }
   }
 

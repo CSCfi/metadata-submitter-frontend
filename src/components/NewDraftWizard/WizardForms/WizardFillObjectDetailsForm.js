@@ -130,7 +130,6 @@ const WizardFillObjectDetailsForm = () => {
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
-          new: true,
         })
       )
     } else {

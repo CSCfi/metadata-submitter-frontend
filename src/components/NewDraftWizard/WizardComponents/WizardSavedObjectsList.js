@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 
 import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
@@ -45,7 +45,6 @@ const useStyles = makeStyles(theme => ({
 const ToggleMessage = ({ delay, children }: { delay: number, children: any }) => {
   const classes = useStyles()
   const [visible, setVisible] = useState(true)
-
   useEffect(() => {
     setTimeout(() => {
       setVisible(false)
@@ -59,12 +58,17 @@ const ToggleMessage = ({ delay, children }: { delay: number, children: any }) =>
  * List objects by submission type. Enables deletion of objects
  */
 const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionType: string, submissions: any }) => {
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = submissions
+  })
   const classes = useStyles()
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
   const handleObjectDelete = objectId => {
     dispatch(deleteObjectFromFolder(objectId, objectType))
   }
+  const newObject = submissions.filter(x => !ref.current?.includes(x))
   return (
     <div className={classes.objectList}>
       <h3 className={classes.header}>Submitted {submissionType} items</h3>
@@ -74,7 +78,9 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
             <ListItem key={submission.accessionId} className={classes.objectListItems}>
               <ListItemText primary={submission.accessionId} />
               <ListItemSecondaryAction>
-                {submission.new && <ToggleMessage delay={5000}>Added!</ToggleMessage>}
+                {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
+                  <ToggleMessage delay={5000}>Added!</ToggleMessage>
+                )}
                 <IconButton
                   onClick={() => {
                     handleObjectDelete(submission.accessionId)

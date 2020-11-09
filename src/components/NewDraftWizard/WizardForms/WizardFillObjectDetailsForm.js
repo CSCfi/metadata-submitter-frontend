@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 
 import Button from "@material-ui/core/Button"
 import CircularProgress from "@material-ui/core/CircularProgress"
@@ -74,7 +74,16 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
   const dispatch = useDispatch()
-  console.log(methods.formState.isDirty) // methods.formState.isDirty ? submit : no submit
+  const currentObjectType = useSelector(state => state.objectType)
+
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = formSchema
+  })
+  if (currentObjectType !== ref.current?.title) {
+    console.log(methods.formState.isDirty) // methods.formState.isDirty ? submit : no submit
+  }
+
   methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
   return (
     <FormProvider {...methods}>
@@ -178,7 +187,6 @@ const WizardFillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
   if (error) return <Alert severity="error">{errorPrefix}</Alert>
-
   return (
     <Container maxWidth="md">
       <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />

@@ -17,6 +17,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { setDraftStatus } from "features/draftStatusSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
@@ -72,6 +73,9 @@ type FormContentProps = {
 const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
+  const dispatch = useDispatch()
+  console.log(methods.formState.isDirty) // methods.formState.isDirty ? submit : no submit
+  methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
@@ -100,6 +104,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
  */
 const WizardFillObjectDetailsForm = () => {
   const objectType = useSelector(state => state.objectType)
+  //const draftStatus = useSelector(state => state.draftStatus)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorPrefix, setErrorPrefix] = useState("")
@@ -132,9 +137,11 @@ const WizardFillObjectDetailsForm = () => {
           schema: objectType,
         })
       )
+      dispatch(setDraftStatus("saved"))
     } else {
       setSuccessStatus("error")
       setErrorPrefix("Validation failed")
+      dispatch(setDraftStatus("notSaved"))
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)

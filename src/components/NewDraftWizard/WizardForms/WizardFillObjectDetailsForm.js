@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import CircularProgress from "@material-ui/core/CircularProgress"
@@ -74,14 +74,9 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
   const dispatch = useDispatch()
-  const currentObjectType = useSelector(state => state.objectType)
 
-  const ref = useRef()
-  useEffect(() => {
-    ref.current = formSchema
-  })
-  if (currentObjectType !== ref.current?.title) {
-    console.log(methods.formState.isDirty) // methods.formState.isDirty ? submit : no submit
+  const resetForm = () => {
+    methods.reset()
   }
 
   methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
@@ -95,7 +90,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
             color="secondary"
             size="small"
             className={classes.formButton}
-            onClick={methods.reset}
+            onClick={() => resetForm()}
           >
             Clear form
           </Button>
@@ -113,7 +108,6 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
  */
 const WizardFillObjectDetailsForm = () => {
   const objectType = useSelector(state => state.objectType)
-  //const draftStatus = useSelector(state => state.draftStatus)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorPrefix, setErrorPrefix] = useState("")
@@ -146,11 +140,9 @@ const WizardFillObjectDetailsForm = () => {
           schema: objectType,
         })
       )
-      dispatch(setDraftStatus("saved"))
     } else {
       setSuccessStatus("error")
       setErrorPrefix("Validation failed")
-      dispatch(setDraftStatus("notSaved"))
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
@@ -187,6 +179,7 @@ const WizardFillObjectDetailsForm = () => {
   if (isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
   if (error) return <Alert severity="error">{errorPrefix}</Alert>
+
   return (
     <Container maxWidth="md">
       <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />

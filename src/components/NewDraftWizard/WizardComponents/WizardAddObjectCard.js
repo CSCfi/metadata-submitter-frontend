@@ -87,7 +87,7 @@ const WizardAddObjectCard = () => {
   const cards = {
     form: {
       title: "Fill form",
-      component: <WizardFillObjectDetailsForm />,
+      component: <WizardFillObjectDetailsForm key={Math.floor(Math.random() * Math.floor(1000))} />, // Use random number as key, this destroys the component and prevents memory leaks. TODO: Use more convenient key
       testId: "form",
     },
     xml: {

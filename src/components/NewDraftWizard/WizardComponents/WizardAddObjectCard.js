@@ -92,7 +92,7 @@ const WizardAddObjectCard = () => {
     },
     xml: {
       title: "Upload XML file",
-      component: <WizardUploadObjectXMLForm />,
+      component: <WizardUploadObjectXMLForm key={Math.floor(Math.random() * Math.floor(1000))} />, // Use random number as key, this destroys the component and prevents memory leaks. TODO: Use more convenient key
       testId: "xml",
     },
     existing: {

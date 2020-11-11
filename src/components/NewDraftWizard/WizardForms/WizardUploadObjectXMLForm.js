@@ -56,10 +56,7 @@ const WizardUploadObjectXMLForm = () => {
   const { register, errors, watch, handleSubmit, formState } = useForm({ mode: "onChange" })
 
   useEffect(() => {
-    formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
-    if (!formState.isValid) {
-      dispatch(resetDraftStatus())
-    }
+    formState.isDirty && formState.isValid ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
   }, [formState.isDirty, formState.isValid, dispatch])
 
   const watchFile = watch("fileUpload")

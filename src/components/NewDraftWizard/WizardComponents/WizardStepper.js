@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardAlert from "./WizardAlert"
 
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
+import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { decrement, increment } from "features/wizardStepSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
@@ -129,10 +130,12 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const formState = useSelector(state => state.submissionType)
   const [alert, setAlert] = useState(false)
   const [direction, setDirection] = useState("")
+  const draftStatus = useSelector(state => state.draftStatus)
 
   const handleNavigation = (step: boolean) => {
     setDirection("")
     setAlert(false)
+    dispatch(resetDraftStatus())
     if (step) {
       direction === "previous" ? dispatch(decrement()) : dispatch(increment())
       dispatch(resetObjectType())
@@ -149,7 +152,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         variant="outlined"
         disabled={wizardStep < 1}
         onClick={() => {
-          if (wizardStep === 1 && formState.trim().length > 0) {
+          if (wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
             setDirection("previous")
             setAlert(true)
           } else {
@@ -182,7 +185,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
           if (createFolderFormRef?.current) {
             await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true }))
           }
-          if (wizardStep === 1 && formState.trim().length > 0) {
+          if (wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {

@@ -78,8 +78,11 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const resetForm = () => {
     methods.reset()
   }
+  console.log(methods.formState.isDirty)
+  useEffect(() => {
+    methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
+  }, [methods.formState.isDirty])
 
-  methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>

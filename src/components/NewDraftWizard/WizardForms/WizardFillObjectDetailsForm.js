@@ -17,6 +17,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
@@ -72,6 +73,16 @@ type FormContentProps = {
 const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
+  const dispatch = useDispatch()
+
+  const resetForm = () => {
+    methods.reset()
+  }
+
+  useEffect(() => {
+    methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
+  }, [methods.formState.isDirty, dispatch])
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
@@ -82,7 +93,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
             color="secondary"
             size="small"
             className={classes.formButton}
-            onClick={methods.reset}
+            onClick={() => resetForm()}
           >
             Clear form
           </Button>
@@ -138,6 +149,7 @@ const WizardFillObjectDetailsForm = () => {
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
+    dispatch(resetDraftStatus())
   }
 
   /*

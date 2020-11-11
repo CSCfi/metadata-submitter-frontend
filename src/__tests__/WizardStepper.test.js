@@ -27,6 +27,7 @@ describe("WizardStepper", () => {
     const store = mockStore({
       submissionType: "form",
       wizardStep: 1,
+      draftStatus: "notSaved",
     })
     render(
       <Provider store={store}>

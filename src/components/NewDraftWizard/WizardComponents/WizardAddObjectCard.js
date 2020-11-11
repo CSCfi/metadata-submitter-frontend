@@ -84,15 +84,16 @@ const CustomCardHeader = ({ title }: { title: string }) => {
 const WizardAddObjectCard = () => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
+  const objectType = useSelector(state => state.objectType)
   const cards = {
     form: {
       title: "Fill form",
-      component: <WizardFillObjectDetailsForm />,
+      component: <WizardFillObjectDetailsForm key={objectType + submissionType} />,
       testId: "form",
     },
     xml: {
       title: "Upload XML file",
-      component: <WizardUploadObjectXMLForm />,
+      component: <WizardUploadObjectXMLForm key={objectType + submissionType} />,
       testId: "xml",
     },
     existing: {

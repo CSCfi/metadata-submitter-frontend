@@ -24,13 +24,14 @@ describe("WizardStepper", () => {
     },
   })
 
-  it("should have send button disabled when there's no validated xml file", () => {
+  it("should have send button disabled when there's no validated xml file", async () => {
     render(
       <Provider store={store}>
         <WizardUploadObjectXMLForm />
       </Provider>
     )
-    expect(screen.getByRole("button", { name: /save/i })).toHaveAttribute("disabled")
+    const button = await screen.findByRole("button", { name: /save/i })
+    expect(button).toHaveAttribute("disabled")
   })
 
   it("should have uploaded file in input", async () => {
@@ -40,7 +41,7 @@ describe("WizardStepper", () => {
         <WizardUploadObjectXMLForm />
       </Provider>
     )
-    const input = screen.getByRole("textbox")
+    const input = await screen.findByRole("textbox")
     userEvent.upload(input, file)
 
     expect(input.files[0]).toStrictEqual(file)

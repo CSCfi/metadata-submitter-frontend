@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-// import { setDraftStatus } from "features/draftStatusSlice"
+import { setDraftStatus } from "features/draftStatusSlice"
 import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
@@ -53,7 +53,11 @@ const WizardUploadObjectXMLForm = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  const { register, errors, watch, handleSubmit } = useForm({ mode: "onChange" })
+  const { register, errors, watch, handleSubmit, formState } = useForm({ mode: "onChange" })
+
+  useEffect(() => {
+    formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
+  }, [formState.isDirty])
 
   const watchFile = watch("fileUpload")
 

@@ -46,9 +46,10 @@ const ToggleMessage = ({ delay, children }: { delay: number, children: any }) =>
   const classes = useStyles()
   const [visible, setVisible] = useState(true)
   useEffect(() => {
-    setTimeout(() => {
+    const toggle = setTimeout(() => {
       setVisible(false)
     }, delay)
+    return () => clearTimeout(toggle)
   }, [delay])
 
   return <span className={visible ? classes.addedMessage : classes.hidden}>{children}</span>

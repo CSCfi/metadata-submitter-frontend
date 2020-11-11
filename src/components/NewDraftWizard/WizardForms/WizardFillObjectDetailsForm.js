@@ -17,7 +17,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { setDraftStatus } from "features/draftStatusSlice"
+import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
@@ -149,6 +149,7 @@ const WizardFillObjectDetailsForm = () => {
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
+    dispatch(resetDraftStatus())
   }
 
   /*

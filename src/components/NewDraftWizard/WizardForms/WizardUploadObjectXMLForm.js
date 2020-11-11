@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { setDraftStatus } from "features/draftStatusSlice"
+import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
@@ -56,8 +56,11 @@ const WizardUploadObjectXMLForm = () => {
   const { register, errors, watch, handleSubmit, formState } = useForm({ mode: "onChange" })
 
   useEffect(() => {
-    formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
-  }, [formState.isDirty])
+    formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
+    if (!formState.isValid) {
+      dispatch(resetDraftStatus())
+    }
+  }, [formState.isDirty, formState.isValid])
 
   const watchFile = watch("fileUpload")
 
@@ -84,6 +87,7 @@ const WizardUploadObjectXMLForm = () => {
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
+    dispatch(resetDraftStatus())
   }
 
   return (
@@ -130,7 +134,7 @@ const WizardUploadObjectXMLForm = () => {
           variant="outlined"
           color="primary"
           className={classes.submitButton}
-          disabled={isSubmitting || !watchFile || errors.fileUpload != null}
+          disabled={isSubmitting || watchFile?.length === 0 || errors.fileUpload != null}
           onClick={handleSubmit(onSubmit)}
         >
           Save

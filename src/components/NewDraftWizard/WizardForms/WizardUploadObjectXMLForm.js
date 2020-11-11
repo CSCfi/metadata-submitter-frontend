@@ -60,7 +60,7 @@ const WizardUploadObjectXMLForm = () => {
     if (!formState.isValid) {
       dispatch(resetDraftStatus())
     }
-  }, [formState.isDirty, formState.isValid])
+  }, [formState.isDirty, formState.isValid, dispatch])
 
   const watchFile = watch("fileUpload")
 

@@ -81,7 +81,7 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
 
   useEffect(() => {
     methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
-  }, [methods.formState.isDirty])
+  }, [methods.formState.isDirty, dispatch])
 
   return (
     <FormProvider {...methods}>

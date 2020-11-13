@@ -74,7 +74,6 @@ export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (di
     { ...folderDetails.folder },
     { name: folderDetails.name, description: folderDetails.description }
   )
-  console.log(updatedFolder)
   dispatch(setFolder(updatedFolder))
 }
 

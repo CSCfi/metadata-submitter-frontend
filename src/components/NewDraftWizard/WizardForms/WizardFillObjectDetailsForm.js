@@ -136,13 +136,18 @@ const WizardFillObjectDetailsForm = () => {
     setResponseInfo(response)
 
     if (response.ok) {
-      setSuccessStatus("success")
       dispatch(
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
         })
       )
+        .then(() => setSuccessStatus("success"))
+        .catch(error => {
+          setSuccessStatus("error")
+          setResponseInfo(error)
+          setErrorPrefix("Cannot connect to folder API")
+        })
     } else {
       setSuccessStatus("error")
       setErrorPrefix("Validation failed")

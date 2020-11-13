@@ -10,6 +10,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import ClearIcon from "@material-ui/icons/Clear"
 import { useSelector, useDispatch } from "react-redux"
 
+import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
+
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
@@ -66,10 +68,19 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
   const classes = useStyles()
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
-  const handleObjectDelete = objectId => {
-    dispatch(deleteObjectFromFolder(objectId, objectType))
-  }
+  const [connError, setConnError] = useState(false)
+  const [responseError, setResponseError] = useState({})
+  const [errorPrefix, setErrorPrefix] = useState("")
   const newObject = submissions.filter(x => !ref.current?.includes(x))
+
+  const handleObjectDelete = objectId => {
+    dispatch(deleteObjectFromFolder(objectId, objectType)).catch(error => {
+      setConnError(true)
+      setResponseError(JSON.parse(error))
+      setErrorPrefix("Can't delete object")
+    })
+  }
+
   return (
     <div className={classes.objectList}>
       <h3 className={classes.header}>Submitted {submissionType} items</h3>
@@ -96,6 +107,9 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
           )
         })}
       </List>
+      {connError && (
+        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+      )}
     </div>
   )
 }

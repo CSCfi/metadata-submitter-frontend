@@ -81,7 +81,6 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           defaultValue={folder ? folder.description : ""}
         ></MuiTextField>
       </form>
-      {/* {connError && <p>error</p>} */}
       {connError && <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText="" />}
     </>
   )

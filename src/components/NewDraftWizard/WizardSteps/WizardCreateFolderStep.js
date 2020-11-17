@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 import type { ElementRef } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
+import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
 import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
@@ -31,46 +32,57 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
-
+  const [connError, setConnError] = useState(false)
+  const [responseError, setResponseError] = useState({})
   const { register, errors, handleSubmit, formState } = useForm()
   const { isSubmitting } = formState
 
   const onSubmit = data => {
+    setConnError(false)
     if (folder) {
-      dispatch(updateNewDraftFolder(Object.assign({ ...data, folder })))
+      dispatch(updateNewDraftFolder(Object.assign({ ...data, folder }))).then(dispatch(increment()))
     } else {
       dispatch(createNewDraftFolder(data))
+        .then(() => {
+          dispatch(increment())
+        })
+        .catch(error => {
+          setConnError(true)
+          setResponseError(JSON.parse(error))
+        })
     }
-    dispatch(increment())
   }
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit(onSubmit)} ref={createFolderFormRef}>
-      <MuiTextField
-        name="name"
-        label="Folder Name *"
-        variant="outlined"
-        fullWidth
-        inputRef={register({ required: true, validate: { name: value => value.length > 0 } })}
-        helperText={errors.name ? "Please give a name for folder." : null}
-        error={errors.name}
-        disabled={isSubmitting}
-        defaultValue={folder ? folder.name : ""}
-      ></MuiTextField>
-      <MuiTextField
-        name="description"
-        label="Folder Description *"
-        variant="outlined"
-        fullWidth
-        multiline
-        rows={5}
-        inputRef={register({ required: true, validate: { description: value => value.length > 0 } })}
-        helperText={errors.description ? "Please give a description for folder." : null}
-        error={errors.description}
-        disabled={isSubmitting}
-        defaultValue={folder ? folder.description : ""}
-      ></MuiTextField>
-    </form>
+    <>
+      <form className={classes.root} onSubmit={handleSubmit(onSubmit)} ref={createFolderFormRef}>
+        <MuiTextField
+          name="name"
+          label="Folder Name *"
+          variant="outlined"
+          fullWidth
+          inputRef={register({ required: true, validate: { name: value => value.length > 0 } })}
+          helperText={errors.name ? "Please give a name for folder." : null}
+          error={errors.name}
+          disabled={isSubmitting}
+          defaultValue={folder ? folder.name : ""}
+        ></MuiTextField>
+        <MuiTextField
+          name="description"
+          label="Folder Description *"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={5}
+          inputRef={register({ required: true, validate: { description: value => value.length > 0 } })}
+          helperText={errors.description ? "Please give a description for folder." : null}
+          error={errors.description}
+          disabled={isSubmitting}
+          defaultValue={folder ? folder.description : ""}
+        ></MuiTextField>
+      </form>
+      {connError && <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText="" />}
+    </>
   )
 }
 

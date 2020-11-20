@@ -88,7 +88,10 @@ const WizardUploadObjectXMLForm = () => {
   }
 
   const handleButton = () => {
-    document.getElementById("file-select-button")?.click()
+    //document.getElementById("file-select-button") ? document.getElementById("file-select-button").click() : null
+    // document.getElementById("file-select-button").click() //tested with change name of id and changing places of id and this function, no success.
+    // document.getElementsByName("fileUpload")[0].click() //ok
+    //console.log(document.getElementById("file-select-button")) //ok <input type="file" name="fileUpload" id="file-select-button" hidden="">
   }
 
   return (

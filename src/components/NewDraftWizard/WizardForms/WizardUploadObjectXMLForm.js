@@ -88,7 +88,16 @@ const WizardUploadObjectXMLForm = () => {
   }
 
   const handleButton = () => {
-    document.getElementById("file-select-button")?.click()
+    // there is a problem with flow and it complains about null values
+    // solution from: https://stackoverflow.com/questions/44979394/why-flow-still-complains-about-null-values-for-document-getelementbyid 
+    const fileSelect = document && document.getElementById("file-select-button");
+
+    if(fileSelect && fileSelect.click()) {
+      fileSelect.click();
+    }
+    // document.getElementById("file-select-button").click() //tested with change name of id and changing places of id and this function, no success.
+    // document.getElementsByName("fileUpload")[0].click() //ok
+    //console.log(document.getElementById("file-select-button")) //ok <input type="file" name="fileUpload" id="file-select-button" hidden="">
   }
 
   return (

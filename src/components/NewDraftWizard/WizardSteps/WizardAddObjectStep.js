@@ -7,6 +7,7 @@ import { useSelector } from "react-redux"
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardObjectIndex from "../WizardComponents/WizardObjectIndex"
+import WizardSavedObjectsList from "../WizardComponents/WizardSavedObjectsList"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 const useStyles = makeStyles(theme => ({
@@ -18,7 +19,10 @@ const useStyles = makeStyles(theme => ({
   formBox: {
     display: "flex",
     justifyContent: "center",
-    width: "100%",
+    width: "60%",
+  },
+  objectList: {
+    width: "40%",
   },
   objectInfo: {
     margin: theme.spacing(2),
@@ -31,6 +35,10 @@ const useStyles = makeStyles(theme => ({
 const WizardAddObjectStep = () => {
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)
+  const currentSubmissionType = useSelector(state => state.objectType)
+  const folder = useSelector(state => state.submissionFolder)
+  const submissions = folder?.metadataObjects?.filter(obj => obj.schema === currentSubmissionType)
+
   return (
     <>
       <WizardHeader headerText="Create New Folder" />
@@ -47,6 +55,9 @@ const WizardAddObjectStep = () => {
             <WizardAddObjectCard />
           )}
         </div>
+        {submissions?.length > 0 && (
+          <WizardSavedObjectsList submissionType={currentSubmissionType} submissions={submissions} />
+        )}
       </div>
     </>
   )

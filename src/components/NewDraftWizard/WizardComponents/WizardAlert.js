@@ -7,9 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
-import Link from "@material-ui/core/Link"
 import { useSelector } from "react-redux"
-import { Link as RouterLink } from "react-router-dom"
 
 /*
  * Dialog contents are rendered based on parent component location and alert type
@@ -79,11 +77,14 @@ const CancelFormDialog = ({
               <Button variant="outlined" onClick={() => handleDialog(false)} color="primary" autoFocus>
                 No, continue creating the folder
               </Button>
-              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/home">
-                <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
-                  Yes, cancel creating folder
-                </Button>
-              </Link>
+              <Button
+                variant="contained"
+                aria-label="Cancel a new folder and move to frontpage"
+                onClick={() => handleDialog(true)}
+                color="primary"
+              >
+                Yes, cancel creating folder
+              </Button>
             </DialogActions>
           )
           break
@@ -93,11 +94,31 @@ const CancelFormDialog = ({
           dialogContent = "Folder has been saved"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <Link component={RouterLink} aria-label="Cancel a new folder and move to frontpage" to="/">
-                <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
-                  Return to homepage
-                </Button>
-              </Link>
+              <Button
+                variant="contained"
+                aria-label="Save a new folder and move to frontpage"
+                onClick={() => handleDialog(true)}
+                color="primary"
+              >
+                Return to homepage
+              </Button>
+            </DialogActions>
+          )
+          break
+        }
+        case "publish": {
+          dialogTitle = "Publishing objects"
+          dialogContent = "Objects in this folder will be published"
+          dialogActions = (
+            <DialogActions style={{ justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                aria-label="Publish folder contents and move to frontpage"
+                onClick={() => handleDialog(true)}
+                color="primary"
+              >
+                Publish
+              </Button>
             </DialogActions>
           )
           break

@@ -87,14 +87,25 @@ const WizardUploadObjectXMLForm = () => {
     dispatch(resetDraftStatus())
   }
 
+  const handleButton = () => {
+    const fileSelect = document && document.getElementById("file-select-button")
+
+    if (fileSelect && fileSelect.click()) {
+      fileSelect.click()
+    }
+  }
+
   return (
     <div>
       {/* React Hook Form */}
       <form>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
-            <TextField placeholder={watchFile ? watchFile[0]?.name : "Name"} inputProps={{ readOnly: true }} />
-            <Button htmlFor="file-select-button" variant="contained" color="primary" component="label">
+            <TextField
+              placeholder={watchFile ? watchFile[0]?.name : "Name"}
+              inputProps={{ readOnly: true, tabIndex: -1 }}
+            />
+            <Button variant="contained" color="primary" component="label" onClick={() => handleButton()}>
               Choose file
             </Button>
             <input

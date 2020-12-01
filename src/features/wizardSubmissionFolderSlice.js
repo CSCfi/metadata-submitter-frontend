@@ -38,12 +38,12 @@ type ObjectInFolder = {
   accessionId: string,
   schema: string,
 }
-
 type FolderNoId = {
   name: string,
   description: string,
   published: boolean,
   metadataObjects: Array<ObjectInFolder>,
+  drafts: Array<ObjectInFolder>,
 }
 
 type Folder = FolderNoId & { id: string }
@@ -53,6 +53,7 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
     ...folderDetails,
     published: false,
     metadataObjects: [],
+    drafts: [],
   }
   const response = await folderAPIService.createNewFolder(folderForBackend)
   return new Promise((resolve, reject) => {
@@ -79,6 +80,7 @@ export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (di
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
+  console.log(changes)
   const response = await folderAPIService.patchFolderById(folderID, changes)
   return new Promise((resolve, reject) => {
     if (response.ok) {
@@ -88,6 +90,17 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
       reject(JSON.stringify(response))
     }
   })
+}
+
+export const addObjectToDrafts = (objectType: string, folderID: string, objectDetails: ObjectInFolder) => async () => {
+  console.log(objectDetails)
+  const response = await objectAPIService.createFromJSON(objectType, objectDetails)
+  console.log(response)
+
+  // const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
+  // // console.log(changes)
+  // const response = await folderAPIService.patchFolderById(folderID, changes)
+  // console.log(response)
 }
 
 export const deleteObjectFromFolder = (objectId: string, objectType: string) => async (dispatch: any => void) => {

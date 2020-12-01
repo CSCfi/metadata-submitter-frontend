@@ -7,7 +7,9 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+
+import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
 
 /*
  * Dialog contents are rendered based on parent component location and alert type
@@ -23,6 +25,14 @@ const CancelFormDialog = ({
   parentLocation: string,
   currentSubmissionType: string,
 }) => {
+  const submissionFolder = useSelector(state => state.submissionFolder)
+  const draftObject = useSelector(state => state.draftObject)
+  const currentObjectType = useSelector(state => state.objectType)
+  const dispatch = useDispatch()
+  const saveDraft = () => {
+    dispatch(addObjectToDrafts(currentObjectType, submissionFolder.id, draftObject))
+  }
+
   let [dialogTitle, dialogContent] = ["", ""]
   let dialogActions
   const formContent = "If you save form as a draft, you can continue filling it later."
@@ -59,7 +69,14 @@ const CancelFormDialog = ({
           <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Do not save
           </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+          <Button
+            variant="contained"
+            onClick={() => {
+              handleDialog(true)
+              saveDraft()
+            }}
+            color="primary"
+          >
             Save
           </Button>
         </DialogActions>

@@ -18,6 +18,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
+import { setDraftObject } from "features/wizardDraftObjectSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
@@ -79,9 +80,20 @@ const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
     methods.reset()
   }
 
+  const { dirtyFields } = methods.formState
+
   useEffect(() => {
     methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
   }, [methods.formState.isDirty, dispatch])
+
+  useEffect(() => {
+    if (Object.keys(dirtyFields).length > 0) {
+      // console.log(dirtyFields)
+      const cleanedValues = JSONSchemaParser.cleanUpFormValues(methods.getValues())
+      console.log(cleanedValues)
+      dispatch(setDraftObject(cleanedValues))
+    }
+  }, [methods.formState])
 
   return (
     <FormProvider {...methods}>

@@ -126,6 +126,7 @@ const WizardFillObjectDetailsForm = () => {
    * Submit form with cleaned values and check for response errors
    */
   const onSubmit = async data => {
+    setSuccessStatus(undefined)
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
       setSuccessStatus("info")

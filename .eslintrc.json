@@ -52,5 +52,8 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules/*", "build/*"]
+  "ignorePatterns": ["node_modules/*", "build/*"],
+  "globals": {
+    "cy": true
+  }
 }

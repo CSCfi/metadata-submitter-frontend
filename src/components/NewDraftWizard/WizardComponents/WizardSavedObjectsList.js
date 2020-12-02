@@ -74,6 +74,7 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
   const newObject = submissions.filter(x => !ref.current?.includes(x))
 
   const handleObjectDelete = objectId => {
+    setConnError(false)
     dispatch(deleteObjectFromFolder(objectId, objectType)).catch(error => {
       setConnError(true)
       setResponseError(JSON.parse(error))

@@ -4,26 +4,30 @@ describe("Basic e2e", function () {
     cy.get('[alt="CSC Login"]').click()
   })
 
-  it("should create new folder", () => {
+  it("should create new folder, add study form and publish folder", () => {
     cy.visit("http://localhost:3000/newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()
 
     // Add folder name & description, navigate to submissions
-    cy.get('input[name="name"]').type("Test name")
-    cy.get('textarea[name="description"]').type("Test description")
+    cy.get("input[name='name']").type("Test name")
+    cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
     // Fill a study form and save object
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get('input[name="descriptor.studyTitle"]').type("Test title")
-    cy.get('select[name="descriptor.studyType"]').select("Metagenomics")
+    cy.get("input[name='descriptor.studyTitle']").type("Test title")
+    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Save").click()
+
+    // Saved objects list should have newly added item
+    cy.get(".MuiListItem-container").should("have.length", 1)
 
     // Navigate to summary and publish
     cy.get("button[type=button]").contains("Next").click()
     cy.get("button[type=button]").contains("Publish").click()
+    cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
   })
 })

@@ -23,9 +23,9 @@ describe("Basic e2e", function () {
     cy.get("button[type=submit]").contains("Save").click()
 
     // Saved objects list should have newly added item
-    cy.get(".MuiListItem-container").should("have.length", 1)
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
-    // Navigate to summary and publish
+    // // Navigate to summary and publish
     cy.get("button[type=button]").contains("Next").click()
     cy.get("button[type=button]").contains("Publish").click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()

@@ -62,6 +62,7 @@ const WizardUploadObjectXMLForm = () => {
   const watchFile = watch("fileUpload")
 
   const onSubmit = async data => {
+    setSuccessStatus(undefined)
     setSubmitting(true)
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {

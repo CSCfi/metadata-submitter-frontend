@@ -95,8 +95,6 @@ const WizardUploadObjectXMLForm = () => {
     }
   }
 
-  console.log(watchFile)
-
   return (
     <div>
       {/* React Hook Form */}

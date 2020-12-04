@@ -6,6 +6,8 @@ If you're reading this, it means you saw something that is not right, you want t
 
 We have a handful of unit tests and integration tests. In our Git workflow unit tests are run on every Push and Pull Request, while integration tests run on every Pull Request.
 
+We use Cypress for e2e testing.
+
 ### Submitting Issues
 
 We have templates for submitting new issues, that you can fill out. For example if you found a bug, use the following [template to report a bug](https://github.com/CSCfi/metadata-submitter-frontend/issues/new?template=bug_report.md).

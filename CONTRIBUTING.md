@@ -6,7 +6,7 @@ If you're reading this, it means you saw something that is not right, you want t
 
 We have a handful of unit tests and integration tests. In our Git workflow unit tests are run on every Push and Pull Request, while integration tests run on every Pull Request.
 
-We use Cypress for e2e testing.
+We use [Cypress](https://www.cypress.io/) for e2e testing.
 
 ### Submitting Issues
 

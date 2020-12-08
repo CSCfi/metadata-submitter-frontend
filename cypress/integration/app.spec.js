@@ -1,11 +1,13 @@
 describe("Basic e2e", function () {
+  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
+
   it("should navigate to home with click of login button", () => {
-    cy.visit("http://localhost:5430/")
+    cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
   })
 
   it("should create new folder, add study form and publish folder", () => {
-    cy.visit("http://localhost:5430/newdraft")
+    cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()
@@ -21,9 +23,10 @@ describe("Basic e2e", function () {
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Save").click()
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
-    // Upload an xml file. Need to wait for save. TODO: Better logic for waiting until last save is done
-    cy.wait(2000).get("div[role=button]").contains("Upload XML File").click()
+    // Upload an xml file.
+    cy.get("div[role=button]").contains("Upload XML File").click()
     cy.fixture("study_test.xml").then(fileContent => {
       cy.get('input[type="file"]').attachFile({
         fileContent: fileContent.toString(),

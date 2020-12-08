@@ -1,6 +1,5 @@
 name: End-to-end tests
-
-on: [push] # Change to pull_request when up & running
+on: [pull_request]
 
 jobs:
   cypress-e2e-chrome-headless:
@@ -10,23 +9,22 @@ jobs:
       matrix:
         node: ["14"]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Build Frontend
+        run: npm install && npm run build
+      - name: Setup and Run backend
+        run: |
+          git clone https://github.com/CSCfi/metadata-submitter
+          cd metadata-submitter/metadata_backend
+          mkdir -p frontend
+          cp -r ../../build/* frontend/
+          ls -al frontend
+          cd ../
+          docker-compose up -d --build
+          sleep 30
+      - name: Check running containers
+        run: docker ps -a
       - uses: cypress-io/github-action@v2
         with:
-          start: npm start
-          browser: chrome
-  cypress-e2e-firefox:
-    name: Cypress e2e on Firefox
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ["14"]
-    container:
-      image: cypress/browsers:node12.16.1-chrome80-ff73
-      options: --user 1001 # The only way to run Firefox is to use --user 1001
-    steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-        with:
-          start: npm start
-          browser: firefox
+          browser: ${{ matrix.browser }}
+          headless: true

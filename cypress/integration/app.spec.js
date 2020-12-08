@@ -1,11 +1,11 @@
 describe("Basic e2e", function () {
   it("should navigate to home with click of login button", () => {
-    cy.visit("http://localhost:3000/")
+    cy.visit("http://localhost:5430/")
     cy.get('[alt="CSC Login"]').click()
   })
 
   it("should create new folder, add study form and publish folder", () => {
-    cy.visit("http://localhost:3000/newdraft")
+    cy.visit("http://localhost:5430/newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()

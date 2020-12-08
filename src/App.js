@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 import Nav from "components/Nav"
+import Page401 from "views/ErrorPages/Page401"
 import Page404 from "views/ErrorPages/Page404"
 import Page500 from "views/ErrorPages/Page500"
 import Home from "views/Home"
@@ -51,6 +52,9 @@ const App = () => {
             <Container component="main" maxWidth={false} className={classes.wizardContent}>
               <NewDraftWizard />
             </Container>
+          </Route>
+          <Route path="/error401">
+            <Page401 />
           </Route>
           <Route path="/error500">
             <Page500 />

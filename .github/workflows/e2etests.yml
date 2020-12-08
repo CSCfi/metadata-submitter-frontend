@@ -1,0 +1,28 @@
+name: End-to-end tests
+on: [pull_request]
+
+jobs:
+  cypress-e2e-chrome-headless:
+    name: Cypress e2e on Chrome
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["14"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Frontend
+        run: npm install && npm run build
+      - name: Setup and Run backend
+        run: |
+          git clone https://github.com/CSCfi/metadata-submitter
+          cd metadata-submitter/metadata_backend
+          mkdir -p frontend
+          cp -r ../../build/* frontend/
+          cd ../
+          docker-compose up -d --build
+          sleep 30
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: ${{ matrix.browser }}
+          headless: true
+          env: port=5430

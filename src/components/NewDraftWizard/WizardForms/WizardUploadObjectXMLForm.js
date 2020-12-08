@@ -53,7 +53,7 @@ const WizardUploadObjectXMLForm = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  const { register, errors, watch, handleSubmit, formState } = useForm({ mode: "onChange" })
+  const { register, errors, watch, handleSubmit, formState } = useForm<{ watchFile: any }>({ mode: "onChange" })
 
   useEffect(() => {
     formState.isDirty && formState.isValid ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
@@ -90,7 +90,6 @@ const WizardUploadObjectXMLForm = () => {
 
   const handleButton = () => {
     const fileSelect = document && document.getElementById("file-select-button")
-
     if (fileSelect && fileSelect.click()) {
       fileSelect.click()
     }
@@ -99,11 +98,11 @@ const WizardUploadObjectXMLForm = () => {
   return (
     <div>
       {/* React Hook Form */}
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
             <TextField
-              placeholder={watchFile ? watchFile[0]?.name : "Name"}
+              placeholder={watchFile && watchFile[0] ? watchFile[0].name : "Name"}
               inputProps={{ readOnly: true, tabIndex: -1 }}
             />
             <Button variant="contained" color="primary" component="label" onClick={() => handleButton()}>
@@ -143,6 +142,7 @@ const WizardUploadObjectXMLForm = () => {
           variant="outlined"
           color="primary"
           className={classes.submitButton}
+          type="button"
           disabled={isSubmitting || watchFile?.length === 0 || errors.fileUpload != null}
           onClick={handleSubmit(onSubmit)}
         >

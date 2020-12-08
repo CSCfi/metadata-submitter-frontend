@@ -53,7 +53,7 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules/*", "build/*"],
+  "ignorePatterns": ["node_modules/*", "build/*", ".github/*"],
   "globals": {
     "cy": true,
     "cypress/globals": true

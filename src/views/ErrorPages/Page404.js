@@ -9,8 +9,9 @@ import { useLocation } from "react-router-dom"
 
 const Page404 = () => {
   const location = useLocation()
+
   return (
-    <Grid container direction="row" justify="center" alignItems="stretch">
+    <Grid container direction="row" justify="center">
       <Grid item xs={6}>
         <Card>
           <CardHeader title="404 Not Found" />

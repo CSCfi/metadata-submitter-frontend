@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 import { Redirect } from "react-router-dom"
 
-const Page401 = () => {
+const Page403 = () => {
   const [countdownTime, setCountdownTime] = useState(10)
   const [redirect, setRedirect] = useState(false)
 
@@ -24,18 +24,18 @@ const Page401 = () => {
     }
   }, [countdownTime])
 
-  const ButtonToMainPage = <Button href="/">Main Page</Button>
+  const ButtonToHomePage = <Button href="/home">Home Page</Button>
 
   return redirect ? (
-    <Redirect to="/" />
+    <Redirect to="/home" />
   ) : (
     <Grid container direction="row" justify="center" alignItems="stretch">
       <Grid item xs={6}>
         <Card>
-          <CardHeader title="401 Authorization Error" />
+          <CardHeader title="403 Forbidden Error" />
           <CardContent>
-            <Typography>You have attempted to access a page for which you are not authorized. </Typography>
-            <Typography>You can go back to {ButtonToMainPage}</Typography>
+            <Typography>Sorry, this page is currently not valid. </Typography>
+            <Typography>Please go back to {ButtonToHomePage}</Typography>
             <Typography>Automatically redirect in {countdownTime}s.</Typography>
           </CardContent>
         </Card>
@@ -44,4 +44,4 @@ const Page401 = () => {
   )
 }
 
-export default Page401
+export default Page403

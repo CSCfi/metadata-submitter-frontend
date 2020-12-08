@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 import Nav from "components/Nav"
 import Page401 from "views/ErrorPages/Page401"
+import Page403 from "views/ErrorPages/Page403"
 import Page404 from "views/ErrorPages/Page404"
 import Page500 from "views/ErrorPages/Page500"
 import Home from "views/Home"
@@ -34,6 +35,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     height: "100%",
   },
+  errorContent: {
+    width: "100%",
+    marginTop: theme.spacing(10),
+  },
 }))
 
 /**
@@ -54,10 +59,19 @@ const App = () => {
             </Container>
           </Route>
           <Route path="/error401">
-            <Page401 />
+            <Container component="main" maxWidth={false} className={classes.errorContent}>
+              <Page401 />
+            </Container>
+          </Route>
+          <Route path="/error403">
+            <Container component="main" maxWidth={false} className={classes.errorContent}>
+              <Page403 />
+            </Container>
           </Route>
           <Route path="/error500">
-            <Page500 />
+            <Container component="main" maxWidth={false} className={classes.errorContent}>
+              <Page500 />
+            </Container>
           </Route>
           <Route exact path="/">
             <Container component="main" maxWidth={false} className={classes.loginContent}>
@@ -70,7 +84,9 @@ const App = () => {
             </Container>
           </Route>
           <Route path="*">
-            <Page404 />
+            <Container component="main" maxWidth={false} className={classes.errorContent}>
+              <Page404 />
+            </Container>
           </Route>
         </Switch>
       </React.Fragment>

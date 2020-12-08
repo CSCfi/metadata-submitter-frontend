@@ -18,12 +18,9 @@ jobs:
           cd metadata-submitter/metadata_backend
           mkdir -p frontend
           cp -r ../../build/* frontend/
-          ls -al frontend
           cd ../
           docker-compose up -d --build
           sleep 30
-      - name: Check running containers
-        run: docker ps -a
       - uses: cypress-io/github-action@v2
         with:
           browser: ${{ matrix.browser }}

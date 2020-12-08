@@ -2,12 +2,13 @@ name: End-to-end tests
 on: [pull_request]
 
 jobs:
-  cypress-e2e-chrome-headless:
-    name: Cypress e2e on Chrome
+  cypress-e2e-headless:
+    name: Cypress e2e
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node: ["14"]
+        browser: ["firefox", "chrome"]
     steps:
       - uses: actions/checkout@v2
       - name: Build Frontend

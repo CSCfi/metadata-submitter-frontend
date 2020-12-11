@@ -17,15 +17,30 @@ const wizardSubmissionFolderSlice = createSlice({
     addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
+    addDraftObject: (state, action) => {
+      state.drafts.push(action.payload)
+    },
     deleteObject: (state, action) => {
       state.metadataObjects = _reject(state.metadataObjects, function (o) {
+        return o.accessionId === action.payload
+      })
+    },
+    deleteDraftObject: (state, action) => {
+      state.drafts = _reject(state.drafts, function (o) {
         return o.accessionId === action.payload
       })
     },
     resetFolder: () => initialState,
   },
 })
-export const { setFolder, addObject, deleteObject, resetFolder } = wizardSubmissionFolderSlice.actions
+export const {
+  setFolder,
+  addObject,
+  addDraftObject,
+  deleteObject,
+  deleteDraftObject,
+  resetFolder,
+} = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
 
 type FolderFromForm = {
@@ -80,7 +95,6 @@ export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (di
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
-  console.log(changes)
   const response = await folderAPIService.patchFolderById(folderID, changes)
   return new Promise((resolve, reject) => {
     if (response.ok) {
@@ -92,15 +106,18 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
   })
 }
 
-export const addObjectToDrafts = (objectType: string, folderID: string, objectDetails: ObjectInFolder) => async () => {
-  console.log(objectDetails)
-  const response = await objectAPIService.createFromJSON(objectType, objectDetails)
-  console.log(response)
+export const addObjectToDrafts = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
+  const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
+  const folderResponse = await folderAPIService.patchFolderById(folderID, changes)
 
-  // const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
-  // // console.log(changes)
-  // const response = await folderAPIService.patchFolderById(folderID, changes)
-  // console.log(response)
+  return new Promise((resolve, reject) => {
+    if (folderResponse.ok) {
+      dispatch(addDraftObject(objectDetails))
+      resolve(folderResponse)
+    } else {
+      reject(JSON.stringify(folderResponse))
+    }
+  })
 }
 
 export const deleteObjectFromFolder = (objectId: string, objectType: string) => async (dispatch: any => void) => {

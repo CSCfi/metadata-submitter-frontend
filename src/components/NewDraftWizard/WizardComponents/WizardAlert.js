@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import Dialog from "@material-ui/core/Dialog"
@@ -10,6 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
+import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
@@ -251,7 +252,15 @@ const WizardAlert = ({
   alertType: string,
 }) => {
   const currentSubmissionType = useSelector(state => state.submissionType)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(setAlert())
+  }, [])
+
   const handleDialog = (action: boolean) => {
+    dispatch(resetAlert())
     onAlert(action)
   }
 

@@ -82,6 +82,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   const [cleanedValues, setCleanedValues] = useState({})
   const [timer, setTimer] = useState(0)
   const increment = useRef(null)
+  const alert = useSelector(state => state.alert)
 
   const resetForm = () => {
     methods.reset()
@@ -158,6 +159,9 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   }
 
   useEffect(() => {
+    if (alert) {
+      clearInterval(increment.current)
+    }
     if (timer >= 5) {
       saveDraft()
       clearInterval(increment.current)

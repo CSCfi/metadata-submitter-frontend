@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import Dialog from "@material-ui/core/Dialog"
@@ -7,9 +7,18 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
+import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
+import { resetDraftObject } from "features/wizardDraftObjectSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
+import draftAPIService from "services/draftAPI"
+
+// Simple template for error messages
+const ErrorMessage = () => {
+  return <Alert severity="error">Connection error, cannot save draft.</Alert>
+}
 
 /*
  * Dialog contents are rendered based on parent component location and alert type
@@ -27,10 +36,34 @@ const CancelFormDialog = ({
 }) => {
   const submissionFolder = useSelector(state => state.submissionFolder)
   const draftObject = useSelector(state => state.draftObject)
-  const currentObjectType = useSelector(state => state.objectType)
+  const objectType = useSelector(state => state.objectType)
+  const [error, setError] = useState(false)
   const dispatch = useDispatch()
-  const saveDraft = () => {
-    dispatch(addObjectToDrafts(currentObjectType, submissionFolder.id, draftObject))
+
+  // Draft save logic. Get response depending on submission type
+  const saveDraft = async () => {
+    setError(false)
+    const response = await draftAPIService.createFromJSON(objectType, draftObject)
+    dispatch(
+      updateStatus({
+        successStatus: "success",
+        response: response,
+        errorPrefix: "",
+      })
+    )
+
+    if (response.ok) {
+      dispatch(
+        addObjectToDrafts(submissionFolder.id, {
+          accessionId: response.data.accessionId,
+          schema: objectType,
+        })
+      )
+      dispatch(resetDraftObject())
+      handleDialog(true)
+    } else {
+      setError(true)
+    }
   }
 
   let [dialogTitle, dialogContent] = ["", ""]
@@ -72,7 +105,6 @@ const CancelFormDialog = ({
           <Button
             variant="contained"
             onClick={() => {
-              handleDialog(true)
               saveDraft()
             }}
             color="primary"
@@ -199,6 +231,7 @@ const CancelFormDialog = ({
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
       </DialogContent>
+      {error && <ErrorMessage />}
       {dialogActions}
     </Dialog>
   )

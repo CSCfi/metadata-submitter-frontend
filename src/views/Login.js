@@ -58,7 +58,7 @@ const Login = () => {
   const classes = useStyles()
   let loginRoute = "/aai"
   if (process.env.NODE_ENV === "development") {
-    loginRoute = "/home"
+    loginRoute = "http://localhost:5430/aai"
   }
 
   return (

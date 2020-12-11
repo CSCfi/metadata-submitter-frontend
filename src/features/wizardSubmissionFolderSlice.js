@@ -6,6 +6,7 @@ import _reject from "lodash/reject"
 import objectAPIService from "../services/objectAPI"
 
 import folderAPIService from "services/folderAPI"
+import publishAPIService from "services/publishAPI"
 
 const initialState = null
 
@@ -133,9 +134,7 @@ export const deleteObjectFromFolder = (objectId: string, objectType: string) => 
 }
 
 export const publishFolderContent = (folder: Folder) => async () => {
-  const changes = [{ op: "replace", path: "/published", value: true }]
-  const response = await folderAPIService.patchFolderById(folder.id, changes)
-
+  const response = await publishAPIService.publishFolderById(folder.id)
   return new Promise((resolve, reject) => {
     if (response.ok) {
       resolve(response)

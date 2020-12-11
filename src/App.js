@@ -58,21 +58,6 @@ const App = () => {
               <NewDraftWizard />
             </Container>
           </Route>
-          <Route path="/error401">
-            <Container component="main" maxWidth={false} className={classes.errorContent}>
-              <Page401 />
-            </Container>
-          </Route>
-          <Route path="/error403">
-            <Container component="main" maxWidth={false} className={classes.errorContent}>
-              <Page403 />
-            </Container>
-          </Route>
-          <Route path="/error500">
-            <Container component="main" maxWidth={false} className={classes.errorContent}>
-              <Page500 />
-            </Container>
-          </Route>
           <Route exact path="/">
             <Container component="main" maxWidth={false} className={classes.loginContent}>
               <Login />
@@ -83,10 +68,17 @@ const App = () => {
               <Home />
             </Container>
           </Route>
+          <Route path="/error401">
+            <Page401 />
+          </Route>
+          <Route path="/error403">
+            <Page403 />
+          </Route>
+          <Route path="/error500">
+            <Page500 />
+          </Route>
           <Route path="*">
-            <Container component="main" maxWidth={false} className={classes.errorContent}>
-              <Page404 />
-            </Container>
+            <Page404 />
           </Route>
         </Switch>
       </React.Fragment>

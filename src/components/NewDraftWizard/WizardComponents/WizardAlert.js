@@ -157,7 +157,8 @@ const CancelFormDialog = ({
         }
         case "publish": {
           dialogTitle = "Publishing objects"
-          dialogContent = "Objects in this folder will be published"
+          dialogContent =
+            "Objects in this folder will be published. Publishing will remove saved drafts from this folder."
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
               <Button
@@ -207,7 +208,7 @@ const CancelFormDialog = ({
           <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Navigate without saving
           </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+          <Button variant="contained" onClick={() => saveDraft()} color="primary">
             Save and navigate
           </Button>
         </DialogActions>

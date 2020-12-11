@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
+import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
@@ -61,6 +62,9 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
 const NewDraftWizard = () => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)
+  const statusDetails = useSelector(state =>
+    state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
+  )
   const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: Function })>(null)
 
   return (
@@ -68,6 +72,13 @@ const NewDraftWizard = () => {
       <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
         <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
       </Paper>
+      {statusDetails && (
+        <WizardStatusMessageHandler
+          successStatus={statusDetails.successStatus}
+          response={statusDetails.response}
+          prefixText={statusDetails.errorPrefix}
+        />
+      )}
       <WizardFooter />
     </Container>
   )

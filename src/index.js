@@ -5,6 +5,7 @@ import { ThemeProvider } from "@material-ui/core/styles"
 import ReactDOM from "react-dom"
 import { Provider } from "react-redux"
 import "style.css"
+import { BrowserRouter as Router } from "react-router-dom"
 
 import CSCtheme from "./theme"
 
@@ -18,7 +19,9 @@ const render = () => {
   ReactDOM.render(
     <Provider store={store}>
       <ThemeProvider theme={CSCtheme}>
-        <App />
+        <Router>
+          <App />
+        </Router>
       </ThemeProvider>
     </Provider>,
     document.getElementById("root")

@@ -7,20 +7,18 @@ import { Redirect } from "react-router-dom"
 
 import ErrorPageContainer from "../../components/ErrorPageContainer"
 
+import { getCountdownTime } from "./ErrorPagesHelper"
+
 const Page403 = () => {
-  const [countdownTime, setCountdownTime] = useState(10)
   const [redirect, setRedirect] = useState(false)
 
+  let countdownTime = getCountdownTime(10, 1000)
+
   useEffect(() => {
-    let timer
-    if (countdownTime > 0) {
-      timer = setInterval(() => setCountdownTime(countdownTime - 1), 1000)
-      return () => clearInterval(timer)
-    }
     if (countdownTime === 0) {
       setRedirect(true)
     }
-  }, [countdownTime])
+  })
 
   const ButtonToHomePage = <Button href="/home">Home Page</Button>
 

@@ -10,7 +10,7 @@ const Page404 = () => {
 
   return (
     <ErrorPageContainer title="404 Not Found">
-      Oops! Page <code>{location.pathname}</code> could not be found.
+      Oops! Page <code data-testid="location-pathname">{location.pathname}</code> could not be found.
     </ErrorPageContainer>
   )
 }

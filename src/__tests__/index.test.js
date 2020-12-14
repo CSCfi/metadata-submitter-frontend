@@ -4,6 +4,7 @@ import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
+import { BrowserRouter as Router } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
 import App from "../App"
@@ -18,7 +19,9 @@ describe("App", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={CSCtheme}>
-          <App />
+          <Router>
+            <App />
+          </Router>
         </ThemeProvider>
       </Provider>
     )

@@ -29,7 +29,7 @@ const Page403 = () => {
   return redirect ? (
     <Redirect to="/home" />
   ) : (
-    <ErrorPageContainer title="403 Forbidden Error">
+    <ErrorPageContainer title="403 Forbidden Error" errorType="error">
       <Typography variant="body2">Sorry, this page is currently not valid. </Typography>
       <Typography variant="body2">Please go back to {ButtonToHomePage}</Typography>
       <Typography variant="body2">Automatically redirect in {countdownTime}s.</Typography>

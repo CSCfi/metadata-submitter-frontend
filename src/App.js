@@ -4,7 +4,7 @@ import React from "react"
 import Container from "@material-ui/core/Container"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
-import { Switch, Route } from "react-router-dom"
+import { Switch, Route, useLocation } from "react-router-dom"
 
 import Nav from "components/Nav"
 import Page401 from "views/ErrorPages/Page401"
@@ -41,16 +41,28 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+// paths that don't show navigation menu on top
+const pathsWithoutNav = ["/error401", "/error403", "/error500"]
+
+const NavigationMenu = () => {
+  let location = useLocation()
+  if (pathsWithoutNav.indexOf(location.pathname) !== -1) {
+    return null
+  }
+  return <Nav />
+}
+
 /**
  * Set up React router and app structure.
  * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
  */
 const App = () => {
   const classes = useStyles()
+
   return (
     <React.Fragment>
       <CssBaseline />
-      <Nav />
+      <NavigationMenu />
       <Switch>
         <Route path="/newdraft">
           <Container component="main" maxWidth={false} className={classes.wizardContent}>

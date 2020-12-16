@@ -9,7 +9,7 @@ const Page500 = () => {
   const errorLink = "https://github.com/CSCfi/metadata-submitter/issues"
 
   return (
-    <ErrorPageContainer title="500 Internal Server Error">
+    <ErrorPageContainer title="500 Internal Server Error" errorType="error">
       <Typography variant="body2">
         Oops, this means our server caused some sort of error we have not thought of.{" "}
       </Typography>

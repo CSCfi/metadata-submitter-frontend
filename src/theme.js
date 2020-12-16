@@ -35,6 +35,12 @@ const CSCtheme = createMuiTheme({
     success: {
       main: "#62c480",
     },
+    errors: {
+      yellowErrorBackground: "#FFD534",
+      yellowErrorText: "#6A4C15",
+      redErrorBackground: "#E71D32",
+      redErrorText: "#FFFFFF",
+    },
   },
   props: {
     MuiTextField: {

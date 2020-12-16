@@ -29,7 +29,7 @@ const Page401 = () => {
   return redirect ? (
     <Redirect to="/" />
   ) : (
-    <ErrorPageContainer title="401 Authorization Error">
+    <ErrorPageContainer title="401 Authorization Error" errorType="warning">
       <Typography variant="body2">You have attempted to access a page for which you are not authorized. </Typography>
       <Typography variant="body2">You can go back to {ButtonToMainPage}</Typography>
       <Typography variant="body2">Automatically redirect in {countdownTime}s.</Typography>

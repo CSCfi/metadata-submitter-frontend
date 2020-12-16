@@ -20,15 +20,19 @@ const Page403 = () => {
     }
   })
 
-  const ButtonToHomePage = <Button href="/home">Home Page</Button>
+  const ButtonToHomePage = (
+    <Button href="/home" color="primary">
+      Home Page
+    </Button>
+  )
 
   return redirect ? (
     <Redirect to="/home" />
   ) : (
     <ErrorPageContainer title="403 Forbidden Error">
-      <Typography>Sorry, this page is currently not valid. </Typography>
-      <Typography>Please go back to {ButtonToHomePage}</Typography>
-      <Typography>Automatically redirect in {countdownTime}s.</Typography>
+      <Typography variant="body2">Sorry, this page is currently not valid. </Typography>
+      <Typography variant="body2">Please go back to {ButtonToHomePage}</Typography>
+      <Typography variant="body2">Automatically redirect in {countdownTime}s.</Typography>
     </ErrorPageContainer>
   )
 }

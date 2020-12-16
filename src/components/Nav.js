@@ -42,12 +42,16 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+// paths that don't show navigation menu on top
+const pathsWithoutNavMenu = ["/", "/error401", "/error403", "/error500"]
+
 const Menu = () => {
   const classes = useStyles()
   let location = useLocation()
-  if (location.pathname === "/") {
+  if (pathsWithoutNavMenu.indexOf(location.pathname) !== -1) {
     return null
   }
+
   return (
     <nav className={classes.nav}>
       <IconButton

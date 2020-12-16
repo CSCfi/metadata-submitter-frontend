@@ -1,12 +1,11 @@
 //@flow
 import React from "react"
 
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
-import CardHeader from "@material-ui/core/CardHeader"
 import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
+import Alert from "@material-ui/lab/Alert"
+import AlertTitle from "@material-ui/lab/AlertTitle"
 
 type ErrorPageProps = {
   children: any,
@@ -26,10 +25,10 @@ const ErrorPage = ({ title, children }: ErrorPageProps) => {
     <Container component="main" maxWidth={false} className={classes.errorContent}>
       <Grid container direction="row" justify="center" alignItems="stretch">
         <Grid item xs={6}>
-          <Card>
-            <CardHeader title={title} />
-            <CardContent>{children}</CardContent>
-          </Card>
+          <Alert severity="error">
+            <AlertTitle>{title}</AlertTitle>
+            {children}
+          </Alert>
         </Grid>
       </Grid>
     </Container>

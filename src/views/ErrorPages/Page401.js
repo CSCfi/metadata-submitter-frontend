@@ -20,15 +20,19 @@ const Page401 = () => {
     }
   })
 
-  const ButtonToMainPage = <Button href="/">Main Page</Button>
+  const ButtonToMainPage = (
+    <Button href="/" color="primary">
+      Main Page
+    </Button>
+  )
 
   return redirect ? (
     <Redirect to="/" />
   ) : (
     <ErrorPageContainer title="401 Authorization Error">
-      <Typography>You have attempted to access a page for which you are not authorized. </Typography>
-      <Typography>You can go back to {ButtonToMainPage}</Typography>
-      <Typography>Automatically redirect in {countdownTime}s.</Typography>
+      <Typography variant="body2">You have attempted to access a page for which you are not authorized. </Typography>
+      <Typography variant="body2">You can go back to {ButtonToMainPage}</Typography>
+      <Typography variant="body2">Automatically redirect in {countdownTime}s.</Typography>
     </ErrorPageContainer>
   )
 }

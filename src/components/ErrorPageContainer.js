@@ -34,15 +34,11 @@ const useStyles = makeStyles(theme => ({
   },
   errorTitle: {
     backgroundColor: props =>
-      props.errorType === "warning"
-        ? theme.palette.errors.yellowErrorBackground
-        : theme.palette.errors.redErrorBackground,
-    color: props =>
-      props.errorType === "warning" ? theme.palette.errors.yellowErrorText : theme.palette.errors.redErrorText,
+      props.errorType === "warning" ? theme.errors.yellowErrorBackground : theme.errors.redErrorBackground,
+    color: props => (props.errorType === "warning" ? theme.errors.yellowErrorText : theme.errors.redErrorText),
   },
   errorIcon: {
-    color: props =>
-      props.errorType === "warning" ? theme.palette.errors.yellowErrorText : theme.palette.errors.redErrorText,
+    color: props => (props.errorType === "warning" ? theme.errors.yellowErrorText : theme.errors.redErrorText),
   },
 }))
 

@@ -12,7 +12,11 @@ import Page401 from "views/ErrorPages/Page401"
 
 describe("Page401", () => {
   test("renders Page401 component", () => {
-    render(<Page401 />)
+    render(
+      <ThemeProvider theme={CSCtheme}>
+        <Page401 />
+      </ThemeProvider>
+    )
     screen.getByText("401 Authorization Error")
     expect(screen.getByText("401 Authorization Error")).toBeInTheDocument()
     screen.getByText("Main Page")

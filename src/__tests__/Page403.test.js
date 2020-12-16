@@ -12,7 +12,11 @@ import Page403 from "views/ErrorPages/Page403"
 
 describe("Page403", () => {
   test("renders Page403 component", () => {
-    render(<Page403 />)
+    render(
+      <ThemeProvider theme={CSCtheme}>
+        <Page403 />
+      </ThemeProvider>
+    )
     screen.getByText("403 Forbidden Error")
     expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
     screen.getByText("Home Page")

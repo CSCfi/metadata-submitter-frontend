@@ -1,9 +1,12 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen } from "@testing-library/react"
 import { createMemoryHistory } from "history"
 import { Router } from "react-router-dom"
+
+import CSCtheme from "../theme"
 
 import Page404 from "views/ErrorPages/Page404"
 
@@ -14,7 +17,9 @@ describe("Page404", () => {
     history.push(route)
     render(
       <Router history={history}>
-        <Page404 />
+        <ThemeProvider theme={CSCtheme}>
+          <Page404 />
+        </ThemeProvider>
       </Router>
     )
     screen.getByText("404 Not Found")

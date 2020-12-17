@@ -37,12 +37,12 @@ describe("WizardStatusMessageHandler", () => {
   })
 
   it("should render success message", () => {
-    const responseMock = { data: { accessionId: "TESTID1234" } }
+    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/drafts" } }
     render(
       <Provider store={store}>
         <WizardStatusMessageHandler response={responseMock} successStatus={"success"} />
       </Provider>
     )
-    expect(screen.getByText(/Submitted with accessionid TESTID1234/i)).toBeDefined()
+    expect(screen.getByText(/Draft saved with accessionid TESTID1234/i)).toBeDefined()
   })
 })

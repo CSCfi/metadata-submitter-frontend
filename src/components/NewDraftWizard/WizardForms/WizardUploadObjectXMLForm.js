@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -53,11 +51,7 @@ const WizardUploadObjectXMLForm = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  const { register, errors, watch, handleSubmit, formState } = useForm<{ watchFile: any }>({ mode: "onChange" })
-
-  useEffect(() => {
-    formState.isDirty && formState.isValid ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
-  }, [formState.isDirty, formState.isValid, dispatch])
+  const { register, errors, watch, handleSubmit } = useForm({ mode: "onChange" })
 
   const watchFile = watch("fileUpload")
 
@@ -79,13 +73,11 @@ const WizardUploadObjectXMLForm = () => {
           schema: objectType,
         })
       )
-      dispatch(resetErrorMessage())
     } else {
       setSuccessStatus("error")
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
-    dispatch(resetDraftStatus())
   }
 
   const handleButton = () => {
@@ -143,7 +135,7 @@ const WizardUploadObjectXMLForm = () => {
           color="primary"
           className={classes.submitButton}
           type="button"
-          disabled={isSubmitting || watchFile?.length === 0 || errors.fileUpload != null}
+          disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
           onClick={handleSubmit(onSubmit)}
         >
           Save

@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import Dialog from "@material-ui/core/Dialog"
@@ -7,7 +7,19 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
-import { useSelector } from "react-redux"
+import Alert from "@material-ui/lab/Alert"
+import { useDispatch, useSelector } from "react-redux"
+
+import { setAlert, resetAlert } from "features/wizardAlertSlice"
+import { resetDraftObject } from "features/wizardDraftObjectSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
+import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
+import draftAPIService from "services/draftAPI"
+
+// Simple template for error messages
+const ErrorMessage = () => {
+  return <Alert severity="error">Connection error, cannot save draft.</Alert>
+}
 
 /*
  * Dialog contents are rendered based on parent component location and alert type
@@ -23,6 +35,38 @@ const CancelFormDialog = ({
   parentLocation: string,
   currentSubmissionType: string,
 }) => {
+  const submissionFolder = useSelector(state => state.submissionFolder)
+  const draftObject = useSelector(state => state.draftObject)
+  const objectType = useSelector(state => state.objectType)
+  const [error, setError] = useState(false)
+  const dispatch = useDispatch()
+
+  // Draft save logic. Get response depending on submission type
+  const saveDraft = async () => {
+    setError(false)
+    const response = await draftAPIService.createFromJSON(objectType, draftObject)
+    dispatch(
+      updateStatus({
+        successStatus: "success",
+        response: response,
+        errorPrefix: "",
+      })
+    )
+
+    if (response.ok) {
+      dispatch(
+        addObjectToDrafts(submissionFolder.id, {
+          accessionId: response.data.accessionId,
+          schema: objectType,
+        })
+      )
+      dispatch(resetDraftObject())
+      handleDialog(true)
+    } else {
+      setError(true)
+    }
+  }
+
   let [dialogTitle, dialogContent] = ["", ""]
   let dialogActions
   const formContent = "If you save form as a draft, you can continue filling it later."
@@ -59,7 +103,13 @@ const CancelFormDialog = ({
           <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Do not save
           </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+          <Button
+            variant="contained"
+            onClick={() => {
+              saveDraft()
+            }}
+            color="primary"
+          >
             Save
           </Button>
         </DialogActions>
@@ -108,7 +158,8 @@ const CancelFormDialog = ({
         }
         case "publish": {
           dialogTitle = "Publishing objects"
-          dialogContent = "Objects in this folder will be published"
+          dialogContent =
+            "Objects in this folder will be published. Publishing will remove saved drafts from this folder."
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
               <Button
@@ -158,7 +209,7 @@ const CancelFormDialog = ({
           <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
             Navigate without saving
           </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+          <Button variant="contained" onClick={() => saveDraft()} color="primary">
             Save and navigate
           </Button>
         </DialogActions>
@@ -182,6 +233,7 @@ const CancelFormDialog = ({
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
       </DialogContent>
+      {error && <ErrorMessage />}
       {dialogActions}
     </Dialog>
   )
@@ -200,7 +252,15 @@ const WizardAlert = ({
   alertType: string,
 }) => {
   const currentSubmissionType = useSelector(state => state.submissionType)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(setAlert())
+  }, [])
+
   const handleDialog = (action: boolean) => {
+    dispatch(resetAlert())
     onAlert(action)
   }
 

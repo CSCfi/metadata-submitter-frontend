@@ -3,6 +3,9 @@ import React, { useState } from "react"
 
 import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
+import { useDispatch } from "react-redux"
+
+import { resetStatusDetails } from "features/wizardStatusMessageSlice"
 
 /*
  * Error messages
@@ -16,7 +19,6 @@ const ErrorHandler = ({
   prefixText: string,
   handleClose: boolean => void,
 }) => {
-  // const [openStatus, setOpenStatus] = useState(true)
   let message = ""
   switch (response.status) {
     case 504:
@@ -52,7 +54,10 @@ const InfoHandler = ({ handleClose }: { handleClose: boolean => void }) => {
 
 // Success messages
 const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
-  const message = `Submitted with accessionid ${response.data.accessionId}`
+  const message =
+    response.config.baseURL === "/drafts"
+      ? `Draft saved with accessionid ${response.data.accessionId}`
+      : `Submitted with accessionid ${response.data.accessionId}`
   return (
     <Alert onClose={() => handleClose(false)} severity="success">
       {message}
@@ -70,7 +75,7 @@ const WizardStatusMessageHandler = ({
   prefixText: string,
 }) => {
   const [openStatus, setOpenStatus] = useState(true)
-
+  const dispatch = useDispatch()
   const messageTemplate = status => {
     switch (status) {
       case "success":
@@ -86,11 +91,12 @@ const WizardStatusMessageHandler = ({
 
   const handleClose = status => {
     setOpenStatus(status)
+    dispatch(resetStatusDetails())
   }
 
   return (
     <div>
-      <Snackbar autoHideDuration={6000} open={openStatus} onClose={() => setOpenStatus(false)}>
+      <Snackbar autoHideDuration={6000} open={openStatus} onClose={() => handleClose()}>
         {!Array.isArray(response) && messageTemplate(successStatus)}
       </Snackbar>
     </div>

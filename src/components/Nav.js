@@ -48,6 +48,7 @@ const Menu = () => {
   if (location.pathname === "/") {
     return null
   }
+
   return (
     <nav className={classes.nav}>
       <IconButton

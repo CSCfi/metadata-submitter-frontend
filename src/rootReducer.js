@@ -3,6 +3,7 @@
 import { combineReducers } from "@reduxjs/toolkit"
 
 import draftStatusReducer from "features/draftStatusSlice"
+import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import draftObjectReducer from "features/wizardDraftObjectSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   submissionType: submissionTypeReducer,
   draftStatus: draftStatusReducer,
   draftObject: draftObjectReducer,
+  user: userReducer,
 })
 
 export default rootReducer

@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
@@ -15,6 +15,9 @@ import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
+import { useDispatch, useSelector } from "react-redux"
+
+import { fetchUserById } from "features/userSlice"
 
 const useStyles = makeStyles(theme => ({
   cardGrid: {
@@ -97,6 +100,8 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
 }
 
 const Home = () => {
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
   const classes = useStyles()
   const draftCard = [
     {
@@ -112,10 +117,15 @@ const Home = () => {
       submissions: ["Published1", "Published2", "Published3", "Published4", "Published5"],
     },
   ]
+
+  useEffect(() => {
+    dispatch(fetchUserById("current"))
+  }, [])
+
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
-        Logged in as: User
+        Logged in as: {user.name}
       </Grid>
       {draftCard.map(card => {
         return (

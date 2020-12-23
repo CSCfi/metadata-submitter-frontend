@@ -3,12 +3,18 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen, act } from "@testing-library/react"
+import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
+import configureStore from "redux-mock-store"
+import thunk from "redux-thunk"
 
 import CSCtheme from "../theme"
 
 import App from "App"
 import Page403 from "views/ErrorPages/Page403"
+
+const middlewares = [thunk]
+const mockStore = configureStore(middlewares)
 
 describe("Page403", () => {
   test("renders Page403 component", () => {
@@ -27,12 +33,17 @@ describe("Page403", () => {
 
   test("redirects to Home Page after 10s", () => {
     jest.useFakeTimers()
+    const store = mockStore({
+      user: { name: "test" },
+    })
     let component = render(
-      <ThemeProvider theme={CSCtheme}>
-        <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
-          <App />
-        </MemoryRouter>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider theme={CSCtheme}>
+          <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
+            <App />
+          </MemoryRouter>
+        </ThemeProvider>
+      </Provider>
     )
 
     expect(component.getByText("403 Forbidden Error")).toBeInTheDocument()

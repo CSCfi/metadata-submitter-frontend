@@ -1,7 +1,11 @@
 //@flow
 import { create } from "apisauce"
 
+import { errorMonitor } from "./errorMonitor"
+
 const api = create({ baseURL: "/folders" })
+
+api.addMonitor(errorMonitor)
 
 const createNewFolder = async (folder: any) => {
   return await api.post(null, folder)

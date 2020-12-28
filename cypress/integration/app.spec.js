@@ -7,6 +7,8 @@ describe("Basic e2e", function () {
   })
 
   it("should create new folder, add study form and publish folder", () => {
+    cy.visit(baseUrl)
+    cy.get('[alt="CSC Login"]').click()
     cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation

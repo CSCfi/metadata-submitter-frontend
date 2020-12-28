@@ -15,7 +15,13 @@ jobs:
         run: npm install && npm run build
       - name: Setup and Run backend
         run: |
-          git clone https://github.com/CSCfi/metadata-submitter
+          BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+          if [[ $BRANCH == master ]]; then
+            VERSION=master
+          else
+            VERSION=develop
+          fi
+          git clone --branch $VERSION https://github.com/CSCfi/metadata-submitter
           cd metadata-submitter/metadata_backend
           mkdir -p frontend
           cp -r ../../build/* frontend/

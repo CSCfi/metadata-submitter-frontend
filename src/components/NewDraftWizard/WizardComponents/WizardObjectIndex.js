@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
+import MuiBadge from "@material-ui/core/Badge"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -39,6 +40,11 @@ const useStyles = makeStyles(theme => ({
   },
   selectedAccordion: {
     backgroundColor: theme.palette.primary.main,
+  },
+  badge: {
+    marginLeft: "auto",
+    marginRight: theme.spacing(2),
+    zIndex: 0,
   },
 }))
 
@@ -86,6 +92,13 @@ const AccordionDetails = withStyles({
     padding: 0,
   },
 })(MuiAccordionDetails)
+
+const Badge = withStyles(theme => ({
+  badge: {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
+  },
+}))(MuiBadge)
 
 /*
  * Render list of submission types to be used in accordions
@@ -188,6 +201,14 @@ const WizardObjectIndex = () => {
               id="type-header"
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
+              <Badge
+                anchorOrigin={{
+                  vertical: "middle",
+                  horizontal: "middle",
+                }}
+                badgeContent={1}
+                className={classes.badge}
+              />
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

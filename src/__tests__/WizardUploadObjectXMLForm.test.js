@@ -21,6 +21,7 @@ describe("WizardStepper", () => {
       id: "FOL90524783",
       name: "Testname",
       published: false,
+      drafts: [{ accessionId: "TESTID1234", schema: "study" }],
     },
   })
 
@@ -30,7 +31,7 @@ describe("WizardStepper", () => {
         <WizardUploadObjectXMLForm />
       </Provider>
     )
-    const button = await screen.findByRole("button", { name: /save/i })
+    const button = await screen.findByRole("button", { name: /submit/i })
     expect(button).toHaveAttribute("disabled")
   })
 

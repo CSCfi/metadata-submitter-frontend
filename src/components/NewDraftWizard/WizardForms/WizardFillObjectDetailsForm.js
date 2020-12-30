@@ -205,7 +205,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
             Clear form
           </Button>
           <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButtonSubmit}>
-            Submit
+            Submit {objectType}
           </Button>
         </div>
       </form>

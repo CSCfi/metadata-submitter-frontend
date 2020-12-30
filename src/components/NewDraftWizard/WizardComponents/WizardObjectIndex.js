@@ -96,6 +96,7 @@ const Badge = withStyles(theme => ({
   badge: {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
+    fontWeight: theme.typography.fontWeightBold,
   },
 }))(MuiBadge)
 
@@ -153,6 +154,8 @@ const WizardObjectIndex = () => {
   const draftStatus = useSelector(state => state.draftStatus)
 
   const folder = useSelector(state => state.submissionFolder)
+  // Get draft objects of current folder
+  // and count the amount of drafts of each existing objectType
   const draftObjects = folder.drafts
     .map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})

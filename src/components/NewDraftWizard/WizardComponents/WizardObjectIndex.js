@@ -42,8 +42,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
   },
   badge: {
-    marginLeft: "auto",
-    marginRight: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, "auto"),
     zIndex: 0,
   },
 }))
@@ -153,8 +152,17 @@ const WizardObjectIndex = () => {
   const currentSubmissionType = useSelector(state => state.submissionType)
   const draftStatus = useSelector(state => state.draftStatus)
 
+  const folder = useSelector(state => state.submissionFolder)
+  const draftObjects = folder.drafts
+    .map(draft => draft.schema)
+    .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
+
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
+  }
+
+  const getBadgeContent = (objectType: string) => {
+    return draftObjects[objectType] ? draftObjects[objectType] : 0
   }
 
   const handleSubmissionTypeChange = (submissionType: string) => {
@@ -201,14 +209,7 @@ const WizardObjectIndex = () => {
               id="type-header"
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
-              <Badge
-                anchorOrigin={{
-                  vertical: "middle",
-                  horizontal: "middle",
-                }}
-                badgeContent={1}
-                className={classes.badge}
-              />
+              <Badge badgeContent={getBadgeContent(objectType)} className={classes.badge} />
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

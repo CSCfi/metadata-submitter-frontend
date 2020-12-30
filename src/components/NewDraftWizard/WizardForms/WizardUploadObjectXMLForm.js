@@ -138,7 +138,7 @@ const WizardUploadObjectXMLForm = () => {
           disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
           onClick={handleSubmit(onSubmit)}
         >
-          Save
+          Submit
         </Button>
       </form>
 

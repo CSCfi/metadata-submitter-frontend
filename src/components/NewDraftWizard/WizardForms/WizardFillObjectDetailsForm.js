@@ -56,10 +56,19 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  formButton: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+  formButtonContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  formButtonSave: {
+    margin: theme.spacing(2, "auto", 2, 1),
+    marginRight: "auto",
+  },
+  formButtonClear: {
+    margin: theme.spacing(2, 1, 2, "auto"),
+  },
+  formButtonSubmit: {
+    margin: theme.spacing(2, 1, 2, 1),
   },
 }))
 
@@ -162,7 +171,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     if (alert) {
       clearInterval(increment.current)
     }
-    if (timer >= 5) {
+    if (timer >= 60) {
       saveDraft()
       clearInterval(increment.current)
     }
@@ -176,18 +185,27 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
         onChange={() => handleChange()}
       >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
-        <div>
+        <div className={classes.formButtonContainer}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.formButtonSave}
+            onClick={() => saveDraft()}
+          >
+            Save as Draft
+          </Button>
           <Button
             variant="contained"
             color="secondary"
             size="small"
-            className={classes.formButton}
+            className={classes.formButtonClear}
             onClick={() => resetForm()}
           >
             Clear form
           </Button>
-          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButton}>
-            Save
+          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButtonSubmit}>
+            Submit
           </Button>
         </div>
       </form>

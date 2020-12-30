@@ -212,7 +212,7 @@ const WizardObjectIndex = () => {
               id="type-header"
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
-              <Badge badgeContent={getBadgeContent(objectType)} className={classes.badge} />
+              <Badge badgeContent={getBadgeContent(objectType)} className={classes.badge} data-testid="badge" />
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

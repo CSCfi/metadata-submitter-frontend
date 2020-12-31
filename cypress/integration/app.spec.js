@@ -17,12 +17,12 @@ describe("Basic e2e", function () {
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
-    // Fill a study form and save object
+    // Fill a study form and submit object
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
-    cy.get("button[type=submit]").contains("Save").click()
+    cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Upload an xml file.

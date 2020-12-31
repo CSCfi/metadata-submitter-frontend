@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
+import MuiBadge from "@material-ui/core/Badge"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -39,6 +40,10 @@ const useStyles = makeStyles(theme => ({
   },
   selectedAccordion: {
     backgroundColor: theme.palette.primary.main,
+  },
+  badge: {
+    margin: theme.spacing(2, 2, 2, "auto"),
+    zIndex: 0,
   },
 }))
 
@@ -86,6 +91,14 @@ const AccordionDetails = withStyles({
     padding: 0,
   },
 })(MuiAccordionDetails)
+
+const Badge = withStyles(theme => ({
+  badge: {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
+    fontWeight: theme.typography.fontWeightBold,
+  },
+}))(MuiBadge)
 
 /*
  * Render list of submission types to be used in accordions
@@ -140,8 +153,19 @@ const WizardObjectIndex = () => {
   const currentSubmissionType = useSelector(state => state.submissionType)
   const draftStatus = useSelector(state => state.draftStatus)
 
+  const folder = useSelector(state => state.submissionFolder)
+  // Get draft objects of current folder
+  // and count the amount of drafts of each existing objectType
+  const draftObjects = folder.drafts
+    .map(draft => draft.schema)
+    .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
+
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
+  }
+
+  const getBadgeContent = (objectType: string) => {
+    return draftObjects[objectType] ? draftObjects[objectType] : 0
   }
 
   const handleSubmissionTypeChange = (submissionType: string) => {
@@ -188,6 +212,7 @@ const WizardObjectIndex = () => {
               id="type-header"
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
+              <Badge badgeContent={getBadgeContent(objectType)} className={classes.badge} data-testid="badge" />
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

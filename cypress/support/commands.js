@@ -26,3 +26,13 @@
 
 // File upload
 import "cypress-file-upload"
+
+Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
+  const mockAuthUrl = "http://" + Cypress.env("mockAuthHost") + ":" + Cypress.env("mockAuthPort") + "/setmock"
+
+  cy.request({
+    method: "GET",
+    url: mockAuthUrl,
+    qs: { eppn: eppnUser + "@test.fi", family: familyName, given: givenName },
+  })
+})

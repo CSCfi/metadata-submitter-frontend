@@ -9,9 +9,12 @@ import { makeStyles } from "@material-ui/core/styles"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import HomeIcon from "@material-ui/icons/Home"
+import { useDispatch } from "react-redux"
 import { Link as RouterLink, useLocation } from "react-router-dom"
 
 import logo from "../csc_logo.svg"
+
+import { resetUser } from "features/userSlice"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -44,6 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 const Menu = () => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   let location = useLocation()
   if (location.pathname === "/") {
     return null
@@ -71,6 +75,16 @@ const Menu = () => {
           Create Submission
         </Button>
       </Link>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => {
+          dispatch(resetUser())
+        }}
+        href="/logout"
+      >
+        Log out
+      </Button>
     </nav>
   )
 }

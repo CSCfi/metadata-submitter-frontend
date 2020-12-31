@@ -15,7 +15,13 @@ jobs:
         run: npm install && npm run build
       - name: Setup and Run backend
         run: |
-          git clone https://github.com/CSCfi/metadata-submitter
+          BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+          if [[ $BRANCH == master ]]; then
+            VERSION=master
+          else
+            VERSION=develop
+          fi
+          git clone --branch $VERSION https://github.com/CSCfi/metadata-submitter
           cd metadata-submitter/metadata_backend
           mkdir -p frontend
           cp -r ../../build/* frontend/
@@ -27,3 +33,13 @@ jobs:
           browser: ${{ matrix.browser }}
           headless: true
           env: port=5430
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos

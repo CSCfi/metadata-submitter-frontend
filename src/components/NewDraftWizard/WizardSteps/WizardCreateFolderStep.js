@@ -39,13 +39,13 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const onSubmit = data => {
     setConnError(false)
-    if (folder) {
-      dispatch(updateNewDraftFolder(Object.assign({ ...data, folder }))).then(dispatch(increment()))
+    if (folder && (folder.name !== data.name || folder.description !== data.description)) {
+      dispatch(updateNewDraftFolder(folder.id, Object.assign({ ...data, folder })))
+        .then(() => dispatch(increment()))
+        .catch(() => setConnError(true))
     } else {
       dispatch(createNewDraftFolder(data))
-        .then(() => {
-          dispatch(increment())
-        })
+        .then(() => dispatch(increment()))
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))

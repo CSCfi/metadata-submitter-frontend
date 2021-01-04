@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardAlert from "./WizardAlert"
 
 import { resetDraftStatus } from "features/draftStatusSlice"
+import { resetDraftObject } from "features/wizardDraftObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -116,7 +117,7 @@ const SubmissionTypeList = ({
   const submissionTypeMap = {
     form: "Fill Form",
     xml: "Upload XML File",
-    existing: "Choose existing object",
+    existing: "Choose from drafts",
   }
   const classes = useStyles()
 
@@ -169,6 +170,7 @@ const WizardObjectIndex = () => {
   }
 
   const handleSubmissionTypeChange = (submissionType: string) => {
+    dispatch(resetDraftObject())
     if (currentSubmissionType === "") {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(expandedObjectType))
@@ -177,6 +179,7 @@ const WizardObjectIndex = () => {
         setClickedSubmissionType(submissionType)
         setCancelFormOpen(true)
       } else {
+        dispatch(resetDraftObject())
         dispatch(resetDraftStatus())
         dispatch(setSubmissionType(submissionType))
         dispatch(setObjectType(expandedObjectType))

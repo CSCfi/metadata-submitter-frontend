@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import _extend from "lodash/extend"
 import _reject from "lodash/reject"
 
+import draftAPIService from "../services/draftAPI"
 import objectAPIService from "../services/objectAPI"
 
 import folderAPIService from "services/folderAPI"
@@ -54,6 +55,7 @@ type ObjectInFolder = {
   accessionId: string,
   schema: string,
 }
+
 type FolderNoId = {
   name: string,
   description: string,
@@ -86,12 +88,27 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
   })
 }
 
-export const updateNewDraftFolder = (folderDetails: FolderFromForm) => async (dispatch: any => void) => {
+export const updateNewDraftFolder = (folderId: string, folderDetails: FolderFromForm) => async (
+  dispatch: any => void
+) => {
   const updatedFolder = _extend(
     { ...folderDetails.folder },
     { name: folderDetails.name, description: folderDetails.description }
   )
-  dispatch(setFolder(updatedFolder))
+  const changes = [
+    { op: "add", path: "/name", value: folderDetails.name },
+    { op: "add", path: "/description", value: folderDetails.description },
+  ]
+  const response = await folderAPIService.patchFolderById(folderId, changes)
+
+  return new Promise((resolve, reject) => {
+    if (response.ok) {
+      dispatch(setFolder(updatedFolder))
+      resolve(response)
+    } else {
+      reject(JSON.stringify(response))
+    }
+  })
 }
 
 export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
@@ -121,11 +138,15 @@ export const addObjectToDrafts = (folderID: string, objectDetails: ObjectInFolde
   })
 }
 
-export const deleteObjectFromFolder = (objectId: string, objectType: string) => async (dispatch: any => void) => {
-  const response = await objectAPIService.deleteObjectByAccessionId(objectType, objectId)
+// Delete object from either metaDataObjects or drafts depending on savedType
+export const deleteObjectFromFolder = (savedType: string, objectId: string, objectType: string) => async (
+  dispatch: any => void
+) => {
+  const service = savedType === "submitted" ? objectAPIService : draftAPIService
+  const response = await service.deleteObjectByAccessionId(objectType, objectId)
   return new Promise((resolve, reject) => {
     if (response.ok) {
-      dispatch(deleteObject(objectId))
+      savedType === "submitted" ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
       resolve(response)
     } else {
       reject(JSON.stringify(response))

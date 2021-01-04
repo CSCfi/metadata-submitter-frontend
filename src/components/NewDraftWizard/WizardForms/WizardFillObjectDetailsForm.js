@@ -18,7 +18,7 @@ import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToFolder, addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
+import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -81,33 +81,45 @@ type FormContentProps = {
 }
 
 /*
- * Return react-hook-form based form which is rendered from schema and checked against resolver
+ * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
 const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: FormContentProps) => {
   const classes = useStyles()
-  const methods = useForm({ mode: "onBlur", resolver })
   const draftStatus = useSelector(state => state.draftStatus)
+  const draftObject = useSelector(state => state.draftObject)
+  const alert = useSelector(state => state.alert)
+  const methods = useForm({ mode: "onBlur", resolver, defaultValues: draftObject })
   const dispatch = useDispatch()
   const [cleanedValues, setCleanedValues] = useState({})
+  const [currentDraftId, setCurrentDraftId] = useState(draftObject?.accessionId)
   const [timer, setTimer] = useState(0)
   const increment = useRef(null)
-  const alert = useSelector(state => state.alert)
 
   const resetForm = () => {
     methods.reset()
   }
 
-  useEffect(() => {
-    methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
-  }, [methods.formState.isDirty])
-
-  const handleChange = () => {
-    setCleanedValues(JSONSchemaParser.cleanUpFormValues(methods.getValues()))
-    dispatch(setDraftObject(cleanedValues))
-
+  const checkDirty = () => {
     if (methods.formState.isDirty && draftStatus === "") {
       dispatch(setDraftStatus("notSaved"))
     }
+  }
+
+  useEffect(() => {
+    checkDirty()
+  }, [methods.formState.isDirty])
+
+  const handleChange = () => {
+    const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
+    setCleanedValues(values)
+    dispatch(setDraftObject(Object.assign(values, { draftId: currentDraftId })))
+    checkDirty()
+  }
+
+  const handleDraftDelete = draftId => {
+    dispatch(deleteObjectFromFolder("draft", draftId, objectType))
+    setCurrentDraftId(() => null)
+    handleChange()
   }
 
   /*
@@ -137,33 +149,65 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   }, [])
 
   const saveDraft = async () => {
-    const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
-    if (response.ok) {
-      dispatch(resetDraftStatus())
-      dispatch(
-        addObjectToDrafts(folderId, {
-          accessionId: response.data.accessionId,
-          schema: objectType,
-        })
-      )
-        .then(() => {
-          dispatch(
-            updateStatus({
-              successStatus: "success",
-              response: response,
-              errorPrefix: "",
-            })
-          )
-        })
-        .catch(error => {
-          dispatch(
-            updateStatus({
-              successStatus: "error",
-              response: error,
-              errorPrefix: "Cannot connect to folder API",
-            })
-          )
-        })
+    handleReset()
+    if (currentDraftId || draftObject.accessionId) {
+      const response = await draftAPIService.patchFromJSON(objectType, currentDraftId, cleanedValues)
+      if (response.ok) {
+        dispatch(resetDraftStatus())
+        dispatch(
+          updateStatus({
+            successStatus: "success",
+            response: response,
+            errorPrefix: "",
+          })
+        )
+      } else {
+        dispatch(
+          updateStatus({
+            successStatus: "error",
+            response: response,
+            errorPrefix: "Unexpected error",
+          })
+        )
+      }
+    } else {
+      const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
+      if (response.ok) {
+        setCurrentDraftId(response.data.accessionId)
+        dispatch(resetDraftStatus())
+        dispatch(
+          addObjectToDrafts(folderId, {
+            accessionId: response.data.accessionId,
+            schema: "draft-" + objectType,
+          })
+        )
+          .then(() => {
+            dispatch(
+              updateStatus({
+                successStatus: "success",
+                response: response,
+                errorPrefix: "",
+              })
+            )
+          })
+          .catch(error => {
+            dispatch(
+              updateStatus({
+                successStatus: "error",
+                response: error,
+                errorPrefix: "Cannot connect to folder API",
+              })
+            )
+          })
+      } else {
+        dispatch(
+          updateStatus({
+            successStatus: "error",
+            response: response,
+            errorPrefix: "Unexpected error",
+          })
+        )
+      }
     }
   }
 
@@ -204,7 +248,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
           >
             Clear form
           </Button>
-          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButtonSubmit}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            type="submit"
+            className={classes.formButtonSubmit}
+            onClick={() => {
+              handleReset()
+              if (currentDraftId) handleDraftDelete(currentDraftId)
+            }}
+          >
             Submit {objectType}
           </Button>
         </div>
@@ -270,13 +324,13 @@ const WizardFillObjectDetailsForm = () => {
    */
   useEffect(() => {
     const fetchSchema = async () => {
-      let schema = localStorage.getItem(`cached_${objectType}_schema`)
+      let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
       if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         setResponseInfo(response)
         if (response.ok) {
           schema = response.data
-          localStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
         } else {
           setError(true)
           setErrorPrefix("Unfortunately an error happened while catching form fields")

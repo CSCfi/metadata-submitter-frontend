@@ -75,7 +75,7 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
 
   const handleObjectDelete = objectId => {
     setConnError(false)
-    dispatch(deleteObjectFromFolder(objectId, objectType)).catch(error => {
+    dispatch(deleteObjectFromFolder("submitted", objectId, objectType)).catch(error => {
       setConnError(true)
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete object")

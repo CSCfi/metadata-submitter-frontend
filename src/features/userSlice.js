@@ -25,7 +25,7 @@ type User = {
 }
 
 export const fetchUserById = (userId: string) => async (dispatch: any => void) => {
-  const response = await userAPIService.getUserID(userId)
+  const response = await userAPIService.getUserById(userId)
   return new Promise((resolve, reject) => {
     if (response.ok) {
       const user: User = {

@@ -23,6 +23,7 @@ describe("WizardAddObjectStep", () => {
         published: false,
         metadataObjects: [],
         id: "FOL12341234",
+        drafts: [{ accessionId: "TESTID1234", schema: "study" }],
       },
     })
     render(
@@ -45,6 +46,7 @@ describe("WizardAddObjectStep", () => {
             id: "FOL12341234",
             name: "Testname",
             published: false,
+            drafts: [{ accessionId: "TESTID1234", schema: "study" }],
           },
         })
         render(

@@ -2,25 +2,33 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { render } from "@testing-library/react"
+import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
+import configureStore from "redux-mock-store"
 
 import Nav from "../components/Nav"
 
+const mockStore = configureStore()
+
 describe("NavBar", () => {
   let component
-
+  const store = mockStore({
+    user: { name: "test" },
+  })
   beforeEach(() => {
     component = render(
-      <MemoryRouter initialEntries={["/home"]}>
-        <Nav />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={["/home"]}>
+          <Nav />
+        </MemoryRouter>
+      </Provider>
     )
   })
 
   test("has correct nav links rendered", () => {
     const nav = component.container.querySelector("nav")
-    const expectedLinksLength = 4
-    const expectedLinks = ["Open submissions", "Submissions", "Create Submission"]
+    const expectedLinksLength = 5
+    const expectedLinks = ["Open submissions", "Submissions", "Create Submission", "Log out"]
     expect(nav.children).toHaveLength(expectedLinksLength)
     expectedLinks.forEach(link => {
       const linkElement = component.getByText(link)

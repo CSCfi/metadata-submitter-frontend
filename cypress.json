@@ -1,0 +1,7 @@
+{
+  "env": {
+    "port": "3000",
+    "mockAuthHost": "localhost",
+    "mockAuthPort": "8000"
+  }
+}

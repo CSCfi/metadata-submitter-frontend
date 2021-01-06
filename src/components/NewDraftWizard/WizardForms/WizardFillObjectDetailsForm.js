@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 
 import Button from "@material-ui/core/Button"
 import CircularProgress from "@material-ui/core/CircularProgress"
@@ -11,13 +11,15 @@ import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
-import { addObjectToFolder } from "../../../features/wizardSubmissionFolderSlice"
-
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
+import { setDraftObject } from "features/wizardDraftObjectSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
+import { addObjectToFolder, addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
+import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
@@ -54,10 +56,19 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  formButton: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+  formButtonContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  formButtonSave: {
+    margin: theme.spacing(2, "auto", 2, 1),
+    marginRight: "auto",
+  },
+  formButtonClear: {
+    margin: theme.spacing(2, 1, 2, "auto"),
+  },
+  formButtonSubmit: {
+    margin: theme.spacing(2, 1, 2, 1),
   },
 }))
 
@@ -65,40 +76,136 @@ type FormContentProps = {
   resolver: typeof WizardAjvResolver,
   formSchema: any,
   onSubmit: () => Promise<any>,
+  objectType: string,
+  folderId: string,
 }
 
 /*
  * Return react-hook-form based form which is rendered from schema and checked against resolver
  */
-const FormContent = ({ resolver, formSchema, onSubmit }: FormContentProps) => {
+const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: FormContentProps) => {
   const classes = useStyles()
   const methods = useForm({ mode: "onBlur", resolver })
+  const draftStatus = useSelector(state => state.draftStatus)
   const dispatch = useDispatch()
+  const [cleanedValues, setCleanedValues] = useState({})
+  const [timer, setTimer] = useState(0)
+  const increment = useRef(null)
+  const alert = useSelector(state => state.alert)
 
   const resetForm = () => {
     methods.reset()
   }
 
   useEffect(() => {
-    methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(setDraftStatus(""))
-  }, [methods.formState.isDirty, dispatch])
+    methods.formState.isDirty ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
+  }, [methods.formState.isDirty])
+
+  const handleChange = () => {
+    setCleanedValues(JSONSchemaParser.cleanUpFormValues(methods.getValues()))
+    dispatch(setDraftObject(cleanedValues))
+
+    if (methods.formState.isDirty && draftStatus === "") {
+      dispatch(setDraftStatus("notSaved"))
+    }
+  }
+
+  /*
+   * Logic for auto-save feature
+   */
+  const handleStart = () => {
+    increment.current = setInterval(() => {
+      setTimer(timer => timer + 1)
+    }, 1000)
+  }
+
+  const handleReset = () => {
+    clearInterval(increment.current)
+    setTimer(0)
+  }
+
+  const keyHandler = () => {
+    handleReset()
+    handleStart()
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", keyHandler)
+    return () => {
+      window.removeEventListener("keydown", keyHandler)
+    }
+  }, [])
+
+  const saveDraft = async () => {
+    const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
+    if (response.ok) {
+      dispatch(resetDraftStatus())
+      dispatch(
+        addObjectToDrafts(folderId, {
+          accessionId: response.data.accessionId,
+          schema: objectType,
+        })
+      )
+        .then(() => {
+          dispatch(
+            updateStatus({
+              successStatus: "success",
+              response: response,
+              errorPrefix: "",
+            })
+          )
+        })
+        .catch(error => {
+          dispatch(
+            updateStatus({
+              successStatus: "error",
+              response: error,
+              errorPrefix: "Cannot connect to folder API",
+            })
+          )
+        })
+    }
+  }
+
+  useEffect(() => {
+    if (alert) {
+      clearInterval(increment.current)
+    }
+    if (timer >= 60) {
+      saveDraft()
+      clearInterval(increment.current)
+    }
+  }, [timer])
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponents}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className={classes.formComponents}
+        onChange={() => handleChange()}
+      >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
-        <div>
+        <div className={classes.formButtonContainer}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.formButtonSave}
+            onClick={() => saveDraft()}
+          >
+            Save as Draft
+          </Button>
           <Button
             variant="contained"
             color="secondary"
             size="small"
-            className={classes.formButton}
+            className={classes.formButtonClear}
             onClick={() => resetForm()}
           >
             Clear form
           </Button>
-          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButton}>
-            Save
+          <Button variant="contained" color="primary" size="small" type="submit" className={classes.formButtonSubmit}>
+            Submit {objectType}
           </Button>
         </div>
       </form>
@@ -126,6 +233,7 @@ const WizardFillObjectDetailsForm = () => {
    * Submit form with cleaned values and check for response errors
    */
   const onSubmit = async data => {
+    setSuccessStatus(undefined)
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
       setSuccessStatus("info")
@@ -191,7 +299,13 @@ const WizardFillObjectDetailsForm = () => {
 
   return (
     <Container maxWidth="md">
-      <FormContent formSchema={formSchema} resolver={WizardAjvResolver(validationSchema)} onSubmit={onSubmit} />
+      <FormContent
+        formSchema={formSchema}
+        resolver={WizardAjvResolver(validationSchema)}
+        onSubmit={onSubmit}
+        objectType={objectType}
+        folderId={folderId}
+      />
       {submitting && <LinearProgress />}
       {successStatus && (
         <WizardStatusMessageHandler

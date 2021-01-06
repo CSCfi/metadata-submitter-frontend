@@ -1,7 +1,10 @@
 //@flow
 import { create } from "apisauce"
 
+import { errorMonitor } from "./errorMonitor"
+
 const api = create({ baseURL: "/objects" })
+api.addMonitor(errorMonitor)
 
 const createFromXML = async (objectType: string, XMLFile: string) => {
   let formData = new FormData()

@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { resetErrorMessage } from "features/wizardErrorMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -53,15 +51,12 @@ const WizardUploadObjectXMLForm = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
-  const { register, errors, watch, handleSubmit, formState } = useForm({ mode: "onChange" })
-
-  useEffect(() => {
-    formState.isDirty && formState.isValid ? dispatch(setDraftStatus("notSaved")) : dispatch(resetDraftStatus())
-  }, [formState.isDirty, formState.isValid, dispatch])
+  const { register, errors, watch, handleSubmit } = useForm({ mode: "onChange" })
 
   const watchFile = watch("fileUpload")
 
   const onSubmit = async data => {
+    setSuccessStatus(undefined)
     setSubmitting(true)
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
@@ -78,18 +73,15 @@ const WizardUploadObjectXMLForm = () => {
           schema: objectType,
         })
       )
-      dispatch(resetErrorMessage())
     } else {
       setSuccessStatus("error")
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
-    dispatch(resetDraftStatus())
   }
 
   const handleButton = () => {
     const fileSelect = document && document.getElementById("file-select-button")
-
     if (fileSelect && fileSelect.click()) {
       fileSelect.click()
     }
@@ -98,11 +90,11 @@ const WizardUploadObjectXMLForm = () => {
   return (
     <div>
       {/* React Hook Form */}
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
             <TextField
-              placeholder={watchFile ? watchFile[0]?.name : "Name"}
+              placeholder={watchFile && watchFile[0] ? watchFile[0].name : "Name"}
               inputProps={{ readOnly: true, tabIndex: -1 }}
             />
             <Button variant="contained" color="primary" component="label" onClick={() => handleButton()}>
@@ -142,10 +134,11 @@ const WizardUploadObjectXMLForm = () => {
           variant="outlined"
           color="primary"
           className={classes.submitButton}
-          disabled={isSubmitting || watchFile?.length === 0 || errors.fileUpload != null}
+          type="button"
+          disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
           onClick={handleSubmit(onSubmit)}
         >
-          Save
+          Submit
         </Button>
       </form>
 

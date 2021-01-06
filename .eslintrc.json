@@ -11,7 +11,8 @@
     "plugin:prettier/recommended",
     "plugin:flowtype/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "plugin:cypress/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -20,7 +21,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "jest", "flowtype", "import"],
+  "plugins": ["react", "jest", "flowtype", "import", "cypress"],
   "settings": {
     "react": {
       "version": "detect"
@@ -52,5 +53,9 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules/*", "build/*"]
+  "ignorePatterns": ["node_modules/*", "build/*", ".github/*"],
+  "globals": {
+    "cy": true,
+    "cypress/globals": true
+  }
 }

@@ -1,0 +1,45 @@
+name: End-to-end tests
+on: [pull_request]
+
+jobs:
+  cypress-e2e-headless:
+    name: Cypress e2e
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["14"]
+        browser: ["firefox", "chrome"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Frontend
+        run: npm install && npm run build
+      - name: Setup and Run backend
+        run: |
+          BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+          if [[ $BRANCH == master ]]; then
+            VERSION=master
+          else
+            VERSION=develop
+          fi
+          git clone --branch $VERSION https://github.com/CSCfi/metadata-submitter
+          cd metadata-submitter/metadata_backend
+          mkdir -p frontend
+          cp -r ../../build/* frontend/
+          cd ../
+          docker-compose up -d --build
+          sleep 30
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: ${{ matrix.browser }}
+          headless: true
+          env: port=5430
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos

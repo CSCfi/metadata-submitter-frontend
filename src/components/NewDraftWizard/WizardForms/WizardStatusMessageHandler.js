@@ -3,12 +3,22 @@ import React, { useState } from "react"
 
 import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
+import { useDispatch } from "react-redux"
+
+import { resetStatusDetails } from "features/wizardStatusMessageSlice"
 
 /*
  * Error messages
  */
-const ErrorHandler = ({ response, prefixText }: { response: any, prefixText: string }) => {
-  const [openStatus, setOpenStatus] = useState(true)
+const ErrorHandler = ({
+  response,
+  prefixText,
+  handleClose,
+}: {
+  response: any,
+  prefixText: string,
+  handleClose: boolean => void,
+}) => {
   let message = ""
   switch (response.status) {
     case 504:
@@ -22,33 +32,37 @@ const ErrorHandler = ({ response, prefixText }: { response: any, prefixText: str
   }
   return (
     <div>
-      <Snackbar open={openStatus}>
-        <Alert
-          severity="error"
-          onClose={() => {
-            setOpenStatus(false)
-          }}
-        >
-          {message}
-        </Alert>
-      </Snackbar>
+      <Alert severity="error" onClose={() => handleClose(false)}>
+        {message}
+      </Alert>
     </div>
   )
 }
 
 // Info messages
-const InfoHandler = () => {
+const InfoHandler = ({ handleClose }: { handleClose: boolean => void }) => {
   const message = `For some reason, your file is still being saved
   to our database, please wait. If saving doesn't go through in two
   minutes, please try saving the file again.`
 
-  return <Alert severity="info">{message}</Alert>
+  return (
+    <Alert onClose={() => handleClose(false)} severity="info">
+      {message}
+    </Alert>
+  )
 }
 
 // Success messages
-const SuccessHandler = ({ response }: { response: any }) => {
-  const message = `Submitted with accessionid ${response.data.accessionId}`
-  return <Alert severity="success">{message}</Alert>
+const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
+  const message =
+    response.config.baseURL === "/drafts"
+      ? `Draft saved with accessionid ${response.data.accessionId}`
+      : `Submitted with accessionid ${response.data.accessionId}`
+  return (
+    <Alert onClose={() => handleClose(false)} severity="success">
+      {message}
+    </Alert>
+  )
 }
 
 const WizardStatusMessageHandler = ({
@@ -60,20 +74,33 @@ const WizardStatusMessageHandler = ({
   response: any,
   prefixText: string,
 }) => {
+  const [openStatus, setOpenStatus] = useState(true)
+  const dispatch = useDispatch()
   const messageTemplate = status => {
     switch (status) {
       case "success":
-        return <SuccessHandler response={response}></SuccessHandler>
+        return <SuccessHandler handleClose={handleClose} response={response} />
       case "info":
-        return <InfoHandler></InfoHandler>
+        return <InfoHandler handleClose={handleClose} />
       case "error":
-        return <ErrorHandler response={response} prefixText={prefixText}></ErrorHandler>
+        return <ErrorHandler handleClose={handleClose} response={response} prefixText={prefixText} />
       default:
         return
     }
   }
 
-  return <div>{!Array.isArray(response) && messageTemplate(successStatus)}</div>
+  const handleClose = status => {
+    setOpenStatus(status)
+    dispatch(resetStatusDetails())
+  }
+
+  return (
+    <div>
+      <Snackbar autoHideDuration={6000} open={openStatus} onClose={() => handleClose()}>
+        {!Array.isArray(response) && messageTemplate(successStatus)}
+      </Snackbar>
+    </div>
+  )
 }
 
 export default WizardStatusMessageHandler

@@ -170,7 +170,6 @@ const WizardObjectIndex = () => {
   }
 
   const handleSubmissionTypeChange = (submissionType: string) => {
-    dispatch(resetDraftObject())
     if (currentSubmissionType === "") {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(expandedObjectType))
@@ -215,7 +214,11 @@ const WizardObjectIndex = () => {
               id="type-header"
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
-              <Badge badgeContent={getBadgeContent(objectType)} className={classes.badge} data-testid="badge" />
+              <Badge
+                badgeContent={getBadgeContent("draft-" + objectType)}
+                className={classes.badge}
+                data-testid="badge"
+              />
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

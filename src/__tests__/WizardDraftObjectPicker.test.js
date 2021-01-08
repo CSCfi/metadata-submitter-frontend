@@ -4,13 +4,12 @@ import "@testing-library/jest-dom/extend-expect"
 import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
-import { toMatchDiffSnapshot } from "snapshot-diff"
+import thunk from "redux-thunk"
 
 import WizardDraftObjectPicker from "../components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 
-const mockStore = configureStore([])
-
-expect.extend({ toMatchDiffSnapshot })
+const middlewares = [thunk]
+const mockStore = configureStore(middlewares)
 
 describe("WizardStepper", () => {
   const store = mockStore({

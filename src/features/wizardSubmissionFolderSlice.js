@@ -12,7 +12,7 @@ import publishAPIService from "services/publishAPI"
 const initialState = null
 
 const wizardSubmissionFolderSlice = createSlice({
-  name: "wizardStep",
+  name: "folder",
   initialState,
   reducers: {
     setFolder: (state, action) => action.payload,

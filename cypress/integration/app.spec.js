@@ -6,7 +6,7 @@ describe("Basic e2e", function () {
     cy.get('[alt="CSC Login"]').click()
   })
 
-  it("should create new folder, add study form and publish folder", () => {
+  it("should create new folder, add Study form, upload Study XML file, add Analysis form and publish folder", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
     cy.visit(baseUrl + "newdraft")
@@ -44,12 +44,8 @@ describe("Basic e2e", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
 
     // Fill an Analysis form and submit object
-    cy.get("div[role=button]")
-      .contains("Analysis")
-      .then($analysis => {
-        $analysis.click()
-        cy.get("div").contains("Fill Form").click()
-      })
+    cy.get("div[role=button]").contains("Analysis").click()
+    cy.get("div[role=button]").contains("Fill Form").click()
 
     cy.get("form").within(() => {
       // Experiment

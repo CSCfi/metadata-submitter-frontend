@@ -63,7 +63,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           fullWidth
           inputRef={register({ required: true, validate: { name: value => value.length > 0 } })}
           helperText={errors.name ? "Please give a name for folder." : null}
-          error={errors.name}
+          error={errors.name ? true : false}
           disabled={isSubmitting}
           defaultValue={folder ? folder.name : ""}
         ></MuiTextField>
@@ -76,7 +76,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           rows={5}
           inputRef={register({ required: true, validate: { description: value => value.length > 0 } })}
           helperText={errors.description ? "Please give a description for folder." : null}
-          error={errors.description}
+          error={errors.description ? true : false}
           disabled={isSubmitting}
           defaultValue={folder ? folder.description : ""}
         ></MuiTextField>

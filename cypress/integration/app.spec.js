@@ -45,7 +45,10 @@ describe("Basic e2e", function () {
 
     // Fill an Analysis form and submit object
     cy.get("div[role=button]").contains("Analysis").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
+    cy.get("div[role=button]")
+      .contains("Fill Form")
+      .should("be.visible")
+      .then($btn => $btn.click())
 
     cy.get("form").within(() => {
       // Experiment

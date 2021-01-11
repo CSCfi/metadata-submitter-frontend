@@ -52,9 +52,9 @@ describe("Basic e2e", function () {
 
     cy.get("form").within(() => {
       // Experiment
-      cy.get("input[name='experimentRef.accessionId']").type("Experiement Test Accession Id")
-      cy.get("input[name='experimentRef.identifiers.submitterId.namespace']").type("Experiement Test Namespace")
-      cy.get("input[name='experimentRef.identifiers.submitterId.value']").type("Experiement Test Value")
+      cy.get("input[name='experimentRef.accessionId']").type("Experiment Test Accession Id")
+      cy.get("input[name='experimentRef.identifiers.submitterId.namespace']").type("Experiment Test Namespace")
+      cy.get("input[name='experimentRef.identifiers.submitterId.value']").type("Experiment Test Value")
 
       // Study
       cy.get("input[name='studyRef.accessionId']").type("Study Test Accession Id")

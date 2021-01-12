@@ -129,24 +129,25 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    const fetchFolders = async () => {
-      const unpublishedArray = []
-      const publishedArray = []
-      if (folderIds) {
+    if (folderIds) {
+      const fetchFolders = async () => {
+        const unpublishedArray = []
+        const publishedArray = []
+
         for (let i = 0; i < folderIds.length; i += 1) {
           const response = await folderAPIService.getFolderById(folderIds[i])
-          if (response.ok && response.data.published && publishedArray.length <= 5) {
+          if (response.ok && response.data.published) {
             publishedArray.push(response.data.name)
-          } else if (response.ok && !response.data.published && unpublishedArray.length <= 5) {
+          } else if (response.ok && !response.data.published) {
             unpublishedArray.push(response.data.name)
           }
         }
         setUnpublishedFolders(unpublishedArray)
         setPublisedFolders(publishedArray)
       }
+      fetchFolders()
     }
-    fetchFolders()
-  }, [folderIds.join(",")])
+  }, [folderIds?.length])
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
@@ -159,7 +160,7 @@ const Home = () => {
             <SubmissionIndexCard
               title={card.title}
               folderType={card.folderType}
-              folderTitles={card.submissions}
+              folderTitles={card.submissions.slice(0, 5)}
               key={card.title}
             />
           </Grid>
@@ -172,7 +173,7 @@ const Home = () => {
             <SubmissionIndexCard
               title={card.title}
               folderType={card.folderType}
-              folderTitles={card.submissions}
+              folderTitles={card.submissions.slice(0, 5)}
               key={card.title}
             />
           </Grid>

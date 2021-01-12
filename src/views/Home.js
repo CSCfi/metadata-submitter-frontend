@@ -1,5 +1,5 @@
 //@flow
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
@@ -18,6 +18,7 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import { useDispatch, useSelector } from "react-redux"
 
 import { fetchUserById } from "features/userSlice"
+import folderAPIService from "services/folderAPI"
 
 const useStyles = makeStyles(theme => ({
   cardGrid: {
@@ -67,6 +68,7 @@ type SubmissionIndexCardProps = {
 const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
   const { title, folderType, folderTitles } = props
+  console.log("folderTitles :>> ", folderTitles)
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
@@ -76,9 +78,9 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
       />
       <CardContent className={classes.cardContent}>
         <List>
-          {folderTitles.map(folderTitle => {
+          {folderTitles.map((folderTitle, index) => {
             return (
-              <ListItem button key={folderTitle} dense className={classes.submissionsListItems}>
+              <ListItem button key={index} dense className={classes.submissionsListItems}>
                 <ListItemIcon className={classes.submissionsListIcon}>
                   {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                 </ListItemIcon>
@@ -102,7 +104,12 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
 const Home = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  console.log("user :>> ", user)
+  const folderIds = user.folders
+  // console.log("folderIds :>> ", folderIds)
   const classes = useStyles()
+  const [publishedFolders, setPublisedFolders] = useState([])
+
   const draftCard = [
     {
       title: "Your Draft Submissions",
@@ -114,13 +121,30 @@ const Home = () => {
     {
       title: "Your Published Submissions",
       folderType: "published",
-      submissions: ["Published1", "Published2", "Published3", "Published4", "Published5"],
+      submissions: publishedFolders,
     },
   ]
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
   }, [])
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      const arr = []
+      if (folderIds) {
+        for (let i = 0; i < folderIds.length && i < 5; i += 1) {
+          const response = await folderAPIService.getFolderById(folderIds[i])
+          console.log("response :>> ", response)
+          if (response.ok) {
+            arr.push(response.data.name)
+          }
+        }
+        setPublisedFolders(arr)
+      }
+    }
+    fetchFolders()
+  }, folderIds)
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">

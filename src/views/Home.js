@@ -68,7 +68,7 @@ type SubmissionIndexCardProps = {
 const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
   const { title, folderType, folderTitles } = props
-  console.log("folderTitles :>> ", folderTitles)
+
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
@@ -104,17 +104,16 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
 const Home = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  console.log("user :>> ", user)
   const folderIds = user.folders
-  // console.log("folderIds :>> ", folderIds)
   const classes = useStyles()
+  const [unpublishedFolders, setUnpublishedFolders] = useState([])
   const [publishedFolders, setPublisedFolders] = useState([])
 
   const draftCard = [
     {
       title: "Your Draft Submissions",
       folderType: "draft",
-      submissions: ["Title1", "Title2", "Title3", "Title4", "Title5"],
+      submissions: unpublishedFolders,
     },
   ]
   const publishedCard = [
@@ -131,20 +130,23 @@ const Home = () => {
 
   useEffect(() => {
     const fetchFolders = async () => {
-      const arr = []
+      const unpublishedArray = []
+      const publishedArray = []
       if (folderIds) {
-        for (let i = 0; i < folderIds.length && i < 5; i += 1) {
+        for (let i = 0; i < folderIds.length; i += 1) {
           const response = await folderAPIService.getFolderById(folderIds[i])
-          console.log("response :>> ", response)
-          if (response.ok) {
-            arr.push(response.data.name)
+          if (response.ok && response.data.published && publishedArray.length <= 5) {
+            publishedArray.push(response.data.name)
+          } else if (response.ok && !response.data.published && unpublishedArray.length <= 5) {
+            unpublishedArray.push(response.data.name)
           }
         }
-        setPublisedFolders(arr)
+        setUnpublishedFolders(unpublishedArray)
+        setPublisedFolders(publishedArray)
       }
     }
     fetchFolders()
-  }, folderIds)
+  }, [folderIds.join(",")])
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">

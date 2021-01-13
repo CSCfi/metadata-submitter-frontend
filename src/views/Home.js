@@ -17,6 +17,9 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import { useDispatch, useSelector } from "react-redux"
 
+import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
 
@@ -60,23 +63,27 @@ const useStyles = makeStyles(theme => ({
 }))
 
 type SubmissionIndexCardProps = {
-  title: string,
   folderType: string,
   folderTitles: Array<string>,
+  buttonTitle: string,
+  onClickHeader: () => void,
+  onClickContent: () => void,
+  onClickButton: () => void,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
-  const { title, folderType, folderTitles } = props
+  const { folderType, folderTitles, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
 
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
-        title={title}
+        title={folderType === "published" ? "Your Published Submissions" : "Your Draft Submissions"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
+        onClick={onClickHeader}
       />
-      <CardContent className={classes.cardContent}>
+      <CardContent className={classes.cardContent} onClick={onClickContent}>
         <List>
           {folderTitles.map((folderTitle, index) => {
             return (
@@ -92,8 +99,8 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
       </CardContent>
       <CardActions>
         <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-          <Button variant="outlined" color="primary">
-            See all
+          <Button variant="outlined" color="primary" onClick={onClickButton}>
+            {buttonTitle}
           </Button>
         </Grid>
       </CardActions>
@@ -105,24 +112,17 @@ const Home = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const folderIds = user.folders
-  const classes = useStyles()
-  const [unpublishedFolders, setUnpublishedFolders] = useState([])
-  const [publishedFolders, setPublisedFolders] = useState([])
+  const unpublishedFolders = useSelector(state => state.unpublishedFolders)
+  const publishedFolders = useSelector(state => state.publishedFolders)
 
-  const draftCard = [
-    {
-      title: "Your Draft Submissions",
-      folderType: "draft",
-      submissions: unpublishedFolders,
-    },
-  ]
-  const publishedCard = [
-    {
-      title: "Your Published Submissions",
-      folderType: "published",
-      submissions: publishedFolders,
-    },
-  ]
+  const classes = useStyles()
+
+  const [openAllUnpublished, setOpenAllUnpublished] = useState(false)
+  const [openAllPublished, setOpenAllPublished] = useState(false)
+
+  const [connError, setConnError] = useState(false)
+  const [responseError, setResponseError] = useState({})
+  const [errorPrefix, setErrorPrefix] = useState("")
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -130,55 +130,86 @@ const Home = () => {
 
   useEffect(() => {
     if (folderIds) {
+      const unpublishedArr = []
+      const publishedArr = []
       const fetchFolders = async () => {
-        const unpublishedArray = []
-        const publishedArray = []
-
         for (let i = 0; i < folderIds.length; i += 1) {
           const response = await folderAPIService.getFolderById(folderIds[i])
-          if (response.ok && response.data.published) {
-            publishedArray.push(response.data.name)
-          } else if (response.ok && !response.data.published) {
-            unpublishedArray.push(response.data.name)
+          if (response.ok) {
+            response.data.published ? publishedArr.push(response.data.name) : unpublishedArr.push(response.data.name)
+          } else {
+            setConnError(true)
+            setResponseError(response)
+            setErrorPrefix("Submissions fetching error.")
           }
         }
-        setUnpublishedFolders(unpublishedArray)
-        setPublisedFolders(publishedArray)
+        dispatch(setUnpublishedFolders(unpublishedArr))
+        dispatch(setPublishedFolders(publishedArr))
       }
       fetchFolders()
     }
   }, [folderIds?.length])
+
+  const overviewSubmissions = !openAllUnpublished && !openAllPublished && (
+    <>
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="unpublished"
+          folderTitles={unpublishedFolders.slice(0, 5)}
+          buttonTitle="See all"
+          onClickHeader={() => {}}
+          onClickContent={() => {}}
+          onClickButton={() => setOpenAllUnpublished(true)}
+        />
+      </Grid>
+      <Divider variant="middle" />
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="published"
+          folderTitles={publishedFolders.slice(0, 5)}
+          buttonTitle="See all"
+          onClickHeader={() => {}}
+          onClickContent={() => {}}
+          onClickButton={() => setOpenAllPublished(true)}
+        />
+      </Grid>
+    </>
+  )
+
+  const allUnpublishedSubmissions = openAllUnpublished && (
+    <SubmissionIndexCard
+      folderType="unpublished"
+      folderTitles={unpublishedFolders}
+      buttonTitle="Close"
+      onClickHeader={() => {}}
+      onClickContent={() => {}}
+      onClickButton={() => setOpenAllUnpublished(false)}
+    />
+  )
+
+  const allPublishedSubmissions = openAllPublished && (
+    <SubmissionIndexCard
+      folderType="publishedCard"
+      folderTitles={publishedFolders}
+      buttonTitle="Close"
+      onClickHeader={() => {}}
+      onClickContent={() => {}}
+      onClickButton={() => setOpenAllPublished(false)}
+    />
+  )
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
         Logged in as: {user.name}
       </Grid>
-      {draftCard.map(card => {
-        return (
-          <Grid item xs={12} key={card.title} className={classes.tableCard}>
-            <SubmissionIndexCard
-              title={card.title}
-              folderType={card.folderType}
-              folderTitles={card.submissions.slice(0, 5)}
-              key={card.title}
-            />
-          </Grid>
-        )
-      })}
-      <Divider variant="middle" />
-      {publishedCard.map(card => {
-        return (
-          <Grid item xs={12} key={card.title} className={classes.tableCard}>
-            <SubmissionIndexCard
-              title={card.title}
-              folderType={card.folderType}
-              folderTitles={card.submissions.slice(0, 5)}
-              key={card.title}
-            />
-          </Grid>
-        )
-      })}
+      {overviewSubmissions}
+      {allUnpublishedSubmissions}
+      {allPublishedSubmissions}
+
+      {connError && (
+        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+      )}
     </Grid>
   )
 }

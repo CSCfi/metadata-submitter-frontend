@@ -7,6 +7,7 @@ import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
 import CircularProgress from "@material-ui/core/CircularProgress"
+import Collapse from "@material-ui/core/Collapse"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import List from "@material-ui/core/List"
@@ -186,27 +187,31 @@ const Home = () => {
   )
 
   // Full list of unpublished folders
-  const allUnpublishedSubmissions = openAllUnpublished && (
-    <SubmissionIndexCard
-      folderType="unpublished"
-      folderTitles={unpublishedFolders}
-      buttonTitle="Close"
-      onClickHeader={() => {}}
-      onClickContent={() => {}}
-      onClickButton={() => setOpenAllUnpublished(false)}
-    />
+  const allUnpublishedSubmissions = (
+    <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
+      <SubmissionIndexCard
+        folderType="unpublished"
+        folderTitles={unpublishedFolders}
+        buttonTitle="Close"
+        onClickHeader={() => {}}
+        onClickContent={() => {}}
+        onClickButton={() => setOpenAllUnpublished(false)}
+      />
+    </Collapse>
   )
 
   // Full list of published folders
-  const allPublishedSubmissions = openAllPublished && (
-    <SubmissionIndexCard
-      folderType="publishedCard"
-      folderTitles={publishedFolders}
-      buttonTitle="Close"
-      onClickHeader={() => {}}
-      onClickContent={() => {}}
-      onClickButton={() => setOpenAllPublished(false)}
-    />
+  const allPublishedSubmissions = (
+    <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
+      <SubmissionIndexCard
+        folderType="publishedCard"
+        folderTitles={publishedFolders}
+        buttonTitle="Close"
+        onClickHeader={() => {}}
+        onClickContent={() => {}}
+        onClickButton={() => setOpenAllPublished(false)}
+      />
+    </Collapse>
   )
 
   return (

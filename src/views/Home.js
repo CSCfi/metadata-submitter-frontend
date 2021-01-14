@@ -6,6 +6,7 @@ import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import List from "@material-ui/core/List"
@@ -60,6 +61,9 @@ const useStyles = makeStyles(theme => ({
   loggedUser: {
     margin: theme.spacing(2, 0, 0),
   },
+  circularProgress: {
+    margin: theme.spacing(10, "auto"),
+  },
 }))
 
 type SubmissionIndexCardProps = {
@@ -98,11 +102,13 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
         </List>
       </CardContent>
       <CardActions>
-        <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-          <Button variant="outlined" color="primary" onClick={onClickButton}>
-            {buttonTitle}
-          </Button>
-        </Grid>
+        {folderTitles.length > 0 && (
+          <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+            <Button variant="outlined" color="primary" onClick={onClickButton}>
+              {buttonTitle}
+            </Button>
+          </Grid>
+        )}
       </CardActions>
     </Card>
   )
@@ -117,6 +123,7 @@ const Home = () => {
 
   const classes = useStyles()
 
+  const [isFetchingFolders, setFetchingFolders] = useState(true)
   const [openAllUnpublished, setOpenAllUnpublished] = useState(false)
   const [openAllPublished, setOpenAllPublished] = useState(false)
 
@@ -140,17 +147,19 @@ const Home = () => {
           } else {
             setConnError(true)
             setResponseError(response)
-            setErrorPrefix("Submissions fetching error.")
+            setErrorPrefix("Fetching folders error.")
           }
         }
         dispatch(setUnpublishedFolders(unpublishedArr))
         dispatch(setPublishedFolders(publishedArr))
+        setFetchingFolders(false)
       }
       fetchFolders()
     }
   }, [folderIds?.length])
 
-  const overviewSubmissions = !openAllUnpublished && !openAllPublished && (
+  // Contains both unpublished and published folders (max. 5 items/each)
+  const overviewSubmissions = !isFetchingFolders && !openAllUnpublished && !openAllPublished && (
     <>
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
@@ -176,6 +185,7 @@ const Home = () => {
     </>
   )
 
+  // Full list of unpublished folders
   const allUnpublishedSubmissions = openAllUnpublished && (
     <SubmissionIndexCard
       folderType="unpublished"
@@ -187,6 +197,7 @@ const Home = () => {
     />
   )
 
+  // Full list of published folders
   const allPublishedSubmissions = openAllPublished && (
     <SubmissionIndexCard
       folderType="publishedCard"
@@ -203,6 +214,8 @@ const Home = () => {
       <Grid item xs={12} className={classes.loggedUser}>
         Logged in as: {user.name}
       </Grid>
+
+      {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {overviewSubmissions}
       {allUnpublishedSubmissions}
       {allPublishedSubmissions}

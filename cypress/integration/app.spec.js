@@ -24,6 +24,8 @@ describe("Basic e2e", function () {
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
+
+    // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -37,7 +39,7 @@ describe("Basic e2e", function () {
         force: true,
       })
     })
-    // Hacky way to get past RHF watch -method problem that doesn't allow cypress to get updated value for file
+    // Cypress doesn't allow form validation status to update and therefore "send" button is disabled
     cy.get("form").submit()
 
     // Saved objects list should have newly added item from Study object

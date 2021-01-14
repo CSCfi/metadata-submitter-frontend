@@ -41,9 +41,9 @@ describe("WizardFillObjectDetailsForm", () => {
     },
   })
 
-  localStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
+  sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
 
-  it("should create study form from schema in localstorage", async () => {
+  it("should create study form from schema in sessionStorage", async () => {
     render(
       <Provider store={store}>
         <WizardFillObjectDetailsForm />
@@ -53,8 +53,8 @@ describe("WizardFillObjectDetailsForm", () => {
     expect(screen.getByText("Study Description")).toBeDefined()
   })
 
-  // Note: If this test runs before form creation, form creation fails because getItem spy messes localstorage init somehow
-  it("should call localstorage", async () => {
+  // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
+  it("should call sessionStorage", async () => {
     const spy = jest.spyOn(Storage.prototype, "getItem")
     render(
       <Provider store={store}>

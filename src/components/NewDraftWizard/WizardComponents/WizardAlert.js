@@ -10,6 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
+import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
@@ -17,8 +18,8 @@ import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
 
 // Simple template for error messages
-const ErrorMessage = () => {
-  return <Alert severity="error">Connection error, cannot save draft.</Alert>
+const ErrorMessage = message => {
+  return <Alert severity="error">{message}</Alert>
 }
 
 /*
@@ -39,31 +40,53 @@ const CancelFormDialog = ({
   const draftObject = useSelector(state => state.draftObject)
   const objectType = useSelector(state => state.objectType)
   const [error, setError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useDispatch()
 
-  // Draft save logic. Get response depending on submission type
+  // Draft save logic
   const saveDraft = async () => {
     setError(false)
-    const response = await draftAPIService.createFromJSON(objectType, draftObject)
-    dispatch(
-      updateStatus({
-        successStatus: "success",
-        response: response,
-        errorPrefix: "",
-      })
-    )
-
-    if (response.ok) {
-      dispatch(
-        addObjectToDrafts(submissionFolder.id, {
-          accessionId: response.data.accessionId,
-          schema: objectType,
-        })
-      )
-      dispatch(resetDraftObject())
-      handleDialog(true)
+    const err = "Connection error, cannot save draft."
+    if (draftObject.draftId) {
+      const response = await draftAPIService.patchFromJSON(objectType, draftObject.draftId, draftObject)
+      if (response.ok) {
+        dispatch(resetDraftStatus())
+        dispatch(
+          updateStatus({
+            successStatus: "success",
+            response: response,
+            errorPrefix: "",
+          })
+        )
+        dispatch(resetDraftObject())
+        handleDialog(true)
+      } else {
+        setError(true)
+        setErrorMessage(err)
+      }
     } else {
-      setError(true)
+      const response = await draftAPIService.createFromJSON(objectType, draftObject)
+      if (response.ok) {
+        dispatch(
+          updateStatus({
+            successStatus: "success",
+            response: response,
+            errorPrefix: "",
+          })
+        )
+        dispatch(resetDraftStatus())
+        dispatch(
+          addObjectToDrafts(submissionFolder.id, {
+            accessionId: response.data.accessionId,
+            schema: "draft-" + objectType,
+          })
+        )
+        dispatch(resetDraftObject())
+        handleDialog(true)
+      } else {
+        setError(true)
+        setErrorMessage(err)
+      }
     }
   }
 
@@ -233,7 +256,7 @@ const CancelFormDialog = ({
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
       </DialogContent>
-      {error && <ErrorMessage />}
+      {error && <ErrorMessage message={errorMessage} />}
       {dialogActions}
     </Dialog>
   )

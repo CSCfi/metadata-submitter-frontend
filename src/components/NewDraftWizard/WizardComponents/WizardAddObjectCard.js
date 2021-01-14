@@ -8,6 +8,7 @@ import CardHeader from "@material-ui/core/CardHeader"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
+import WizardDraftObjectPicker from "components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: "-4px",
     marginBottom: "-4px",
   },
-  cardContent: {
+  cardCenterContent: {
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
@@ -97,15 +98,17 @@ const WizardAddObjectCard = () => {
       testId: "xml",
     },
     existing: {
-      title: "Choose existing object",
-      component: <div>Not implemented yet</div>,
+      title: "Choose from drafts",
+      component: <WizardDraftObjectPicker />,
       testId: "existing",
     },
   }
   return (
     <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
       <CustomCardHeader title={cards[submissionType]["title"]} />
-      <CardContent className={classes.cardContent}>{cards[submissionType]["component"]}</CardContent>
+      <CardContent className={submissionType === "xml" ? classes.cardCenterContent : ""}>
+        {cards[submissionType]["component"]}
+      </CardContent>
     </Card>
   )
 }

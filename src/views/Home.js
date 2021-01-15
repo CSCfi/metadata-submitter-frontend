@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
+import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
@@ -15,6 +16,7 @@ import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
+import objectAPIService from "services/objectAPI"
 
 const useStyles = makeStyles(theme => ({
   tableCard: {
@@ -64,8 +66,6 @@ const Home = () => {
             setErrorPrefix("Fetching folders error.")
           }
         }
-        console.log("unpublishedArr :>> ", unpublishedArr.slice(0, 5))
-        console.log("publishedArr :>> ", publishedArr.slice(0, 5))
         dispatch(setUnpublishedFolders(unpublishedArr))
         dispatch(setPublishedFolders(publishedArr))
         setFetchingFolders(false)
@@ -74,23 +74,70 @@ const Home = () => {
     }
   }, [folderIds?.length])
 
-  const handleClickFolder = async (folderId: string, folderType: string) => {
+  const [currentObjects, setCurrentObjects] = useState([])
+  const [openSelectedFolder, setOpenSelectedFolder] = useState(false)
+
+  const handleClickFolder = async (selectedFolderId: string, folderType: string) => {
+    setOpenSelectedFolder(true)
+    const folders = folderType === "published" ? publishedFolders : unpublishedFolders
+    const selectedFolder = folders.find(folder => folder.folderId === selectedFolderId)
+    const draftObjects = selectedFolder?.drafts
+    const submittedObjects = selectedFolder?.metadataObjects
+    setConnError(false)
+
+    let thisArr = []
+
     if (folderType === "unpublished") {
-      setConnError(false)
-      const selectedFolder = unpublishedFolders.find(folder => folder.folderId === folderId)
-      const draftObjects = selectedFolder.drafts
-      for (let i = 0; i < draftObjects.length; i += 1) {
-        const response = await draftAPIService.getObjectByAccessionId(
-          draftObjects[i].schema.includes("draft-") ? draftObjects[i].schema.substr(6) : draftObjects[i].schema,
-          draftObjects[i].accessionId
-        )
-        console.log("response :>> ", response)
+      for (let i = 0; i < draftObjects?.length; i += 1) {
+        const objectType = draftObjects[i].schema.includes("draft-")
+          ? draftObjects[i].schema.substr(6)
+          : draftObjects[i].schema
+        const response = await draftAPIService.getObjectByAccessionId(objectType, draftObjects[i].accessionId)
+
+        if (response.ok) {
+          const draft = {
+            title: response.data.descriptor?.studyTitle,
+            objectType,
+            status: "Draft",
+            lastModified: response.data.dateModified,
+          }
+          thisArr.push(draft)
+        } else {
+          setConnError(true)
+          setResponseError(response)
+          setErrorPrefix("Fetching folder error.")
+        }
       }
     }
+
+    for (let j = 0; j < submittedObjects?.length; j += 1) {
+      const objectType = submittedObjects[j].schema
+      const response = await objectAPIService.getObjectByAccessionId(objectType, submittedObjects[j].accessionId)
+      if (response.ok) {
+        const submitted = {
+          title: response.data.descriptor?.studyTitle,
+          objectType,
+          status: "Submitted",
+          lastModified: response.data.dateModified,
+        }
+        thisArr.push(submitted)
+      } else {
+        setConnError(true)
+        setResponseError(response)
+        setErrorPrefix("Fetching folder error.")
+      }
+    }
+
+    console.log("thisArr :>> ", thisArr)
+    setCurrentObjects(thisArr)
   }
 
+  const handleClickBackIcon = () => {
+    setOpenSelectedFolder(false)
+    setCurrentObjects([])
+  }
   // Contains both unpublished and published folders (max. 5 items/each)
-  const overviewSubmissions = !isFetchingFolders && !openAllUnpublished && !openAllPublished && (
+  const overviewSubmissions = !isFetchingFolders && !openAllUnpublished && !openAllPublished && !openSelectedFolder && (
     <>
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
@@ -117,7 +164,7 @@ const Home = () => {
   )
 
   // Full list of unpublished folders
-  const allUnpublishedSubmissions = (
+  const allUnpublishedSubmissions = !openSelectedFolder && (
     <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
@@ -132,17 +179,27 @@ const Home = () => {
   )
 
   // Full list of published folders
-  const allPublishedSubmissions = (
+  const allPublishedSubmissions = !openSelectedFolder && (
     <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
-          folderType="publishedCard"
+          folderType="published"
           folders={publishedFolders}
           buttonTitle="Close"
           onClickContent={handleClickFolder}
           onClickButton={() => setOpenAllPublished(false)}
         />
       </Grid>
+    </Collapse>
+  )
+
+  const selectedFolderDetails = (
+    <Collapse in={openSelectedFolder} collapsedHeight={0}>
+      <SubmissionDetailTable
+        bodyRows={currentObjects}
+        folderType={"unpublished"}
+        onClickBackIcon={handleClickBackIcon}
+      />
     </Collapse>
   )
 
@@ -156,6 +213,8 @@ const Home = () => {
       {overviewSubmissions}
       {allUnpublishedSubmissions}
       {allPublishedSubmissions}
+
+      {selectedFolderDetails}
 
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />

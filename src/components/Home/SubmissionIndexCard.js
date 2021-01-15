@@ -52,7 +52,7 @@ type SubmissionIndexCardProps = {
   folders: Array<any>,
   buttonTitle: string,
   onClickHeader?: () => void,
-  onClickContent: (folderId: string, folderType: string) => void,
+  onClickContent: (folderId: string, folderType: string) => Promise<void>,
   onClickButton: () => void,
 }
 

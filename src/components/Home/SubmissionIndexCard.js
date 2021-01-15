@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.5em",
     padding: 0,
     marginTop: theme.spacing(1),
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
   cardContent: {
     flexGrow: 1,
@@ -46,16 +49,16 @@ const useStyles = makeStyles(theme => ({
 
 type SubmissionIndexCardProps = {
   folderType: string,
-  folderTitles: Array<string>,
+  folders: Array<any>,
   buttonTitle: string,
-  onClickHeader: () => void,
-  onClickContent: () => void,
+  onClickHeader?: () => void,
+  onClickContent: (folderId: string, folderType: string) => void,
   onClickButton: () => void,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
-  const { folderType, folderTitles, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
+  const { folderType, folders, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
 
   return (
     <Card className={classes.card} variant="outlined">
@@ -65,22 +68,28 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
         className={classes.cardTitle}
         onClick={onClickHeader}
       />
-      <CardContent className={classes.cardContent} onClick={onClickContent}>
+      <CardContent className={classes.cardContent}>
         <List>
-          {folderTitles.map((folderTitle, index) => {
+          {folders.map((folder, index) => {
             return (
-              <ListItem button key={index} dense className={classes.submissionsListItems}>
+              <ListItem
+                button
+                key={index}
+                dense
+                className={classes.submissionsListItems}
+                onClick={() => onClickContent(folder.folderId, folderType)}
+              >
                 <ListItemIcon className={classes.submissionsListIcon}>
                   {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                 </ListItemIcon>
-                <ListItemText primary={folderTitle} />
+                <ListItemText primary={folder.name} />
               </ListItem>
             )
           })}
         </List>
       </CardContent>
       <CardActions>
-        {folderTitles.length > 0 && (
+        {folders.length > 0 && (
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
             <Button variant="outlined" color="primary" onClick={onClickButton}>
               {buttonTitle}

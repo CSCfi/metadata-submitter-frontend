@@ -13,6 +13,7 @@ import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/Wi
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
+import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 
 const useStyles = makeStyles(theme => ({
@@ -56,13 +57,15 @@ const Home = () => {
         for (let i = 0; i < folderIds.length; i += 1) {
           const response = await folderAPIService.getFolderById(folderIds[i])
           if (response.ok) {
-            response.data.published ? publishedArr.push(response.data.name) : unpublishedArr.push(response.data.name)
+            response.data.published ? publishedArr.push(response.data) : unpublishedArr.push(response.data)
           } else {
             setConnError(true)
             setResponseError(response)
             setErrorPrefix("Fetching folders error.")
           }
         }
+        console.log("unpublishedArr :>> ", unpublishedArr.slice(0, 5))
+        console.log("publishedArr :>> ", publishedArr.slice(0, 5))
         dispatch(setUnpublishedFolders(unpublishedArr))
         dispatch(setPublishedFolders(publishedArr))
         setFetchingFolders(false)
@@ -71,16 +74,31 @@ const Home = () => {
     }
   }, [folderIds?.length])
 
+  const handleClickFolder = async (folderId: string, folderType: string) => {
+    if (folderType === "unpublished") {
+      setConnError(false)
+      const selectedFolder = unpublishedFolders.find(folder => folder.folderId === folderId)
+      const draftObjects = selectedFolder.drafts
+      for (let i = 0; i < draftObjects.length; i += 1) {
+        const response = await draftAPIService.getObjectByAccessionId(
+          draftObjects[i].schema.includes("draft-") ? draftObjects[i].schema.substr(6) : draftObjects[i].schema,
+          draftObjects[i].accessionId
+        )
+        console.log("response :>> ", response)
+      }
+    }
+  }
+
   // Contains both unpublished and published folders (max. 5 items/each)
   const overviewSubmissions = !isFetchingFolders && !openAllUnpublished && !openAllPublished && (
     <>
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
           folderType="unpublished"
-          folderTitles={unpublishedFolders.slice(0, 5)}
+          folders={unpublishedFolders.slice(0, 5)}
           buttonTitle="See all"
-          onClickHeader={() => {}}
-          onClickContent={() => {}}
+          onClickHeader={() => setOpenAllUnpublished(true)}
+          onClickContent={handleClickFolder}
           onClickButton={() => setOpenAllUnpublished(true)}
         />
       </Grid>
@@ -88,10 +106,10 @@ const Home = () => {
       <Grid item xs={12} className={classes.tableCard}>
         <SubmissionIndexCard
           folderType="published"
-          folderTitles={publishedFolders.slice(0, 5)}
+          folders={publishedFolders.slice(0, 5)}
           buttonTitle="See all"
-          onClickHeader={() => {}}
-          onClickContent={() => {}}
+          onClickHeader={() => setOpenAllPublished(true)}
+          onClickContent={handleClickFolder}
           onClickButton={() => setOpenAllPublished(true)}
         />
       </Grid>
@@ -101,28 +119,30 @@ const Home = () => {
   // Full list of unpublished folders
   const allUnpublishedSubmissions = (
     <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <SubmissionIndexCard
-        folderType="unpublished"
-        folderTitles={unpublishedFolders}
-        buttonTitle="Close"
-        onClickHeader={() => {}}
-        onClickContent={() => {}}
-        onClickButton={() => setOpenAllUnpublished(false)}
-      />
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="unpublished"
+          folders={unpublishedFolders}
+          buttonTitle="Close"
+          onClickContent={handleClickFolder}
+          onClickButton={() => setOpenAllUnpublished(false)}
+        />
+      </Grid>
     </Collapse>
   )
 
   // Full list of published folders
   const allPublishedSubmissions = (
     <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <SubmissionIndexCard
-        folderType="publishedCard"
-        folderTitles={publishedFolders}
-        buttonTitle="Close"
-        onClickHeader={() => {}}
-        onClickContent={() => {}}
-        onClickButton={() => setOpenAllPublished(false)}
-      />
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="publishedCard"
+          folders={publishedFolders}
+          buttonTitle="Close"
+          onClickContent={handleClickFolder}
+          onClickButton={() => setOpenAllPublished(false)}
+        />
+      </Grid>
     </Collapse>
   )
 

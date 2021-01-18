@@ -4,6 +4,10 @@ import React from "react"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
+import ListItemText from "@material-ui/core/ListItemText"
+import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import Table from "@material-ui/core/Table"
 import TableBody from "@material-ui/core/TableBody"
@@ -11,6 +15,8 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import FolderIcon from "@material-ui/icons/Folder"
+import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 
 const useStyles = makeStyles(theme => ({
@@ -31,14 +37,31 @@ const useStyles = makeStyles(theme => ({
       cursor: "pointer",
     },
   },
+  tableHeader: {
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+  },
+  tableIcon: {
+    minWidth: 35,
+    minHeight: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.palette.common.white,
+    marginRight: theme.spacing(1),
+  },
+  headRows: {
+    fontWeight: "bold",
+  },
 }))
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
 type SubmissionDetailTableProps = {
+  folderTitle: string,
   bodyRows: Array<any>,
   folderType: string,
-  onClickBackIcon: () => void,
+  onClickCardHeader: () => void,
 }
 
 const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
@@ -48,22 +71,39 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
     <Card className={classes.card} variant="outlined">
       <CardHeader
         className={classes.cardHeader}
-        avatar={<KeyboardBackspaceIcon className={classes.backIcon} onClick={props.onClickBackIcon} />}
-        title={`Your ${props.folderType} folders`}
+        avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
+        title={`Your ${props.folderType} submissions`}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
+        onClick={props.onClickCardHeader}
       />
       <CardContent>
-        <TableContainer>
-          <Table aria-label="simple table">
+        <TableContainer component={Paper}>
+          <Table>
             <TableHead>
               <TableRow>
+                <TableCell align="left" colSpan={8} padding="none">
+                  <ListItem dense className={classes.tableHeader}>
+                    <ListItemIcon className={classes.tableIcon}>
+                      {props.folderType === "published" ? (
+                        <FolderIcon color="primary" />
+                      ) : (
+                        <FolderOpenIcon color="primary" />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={props.folderTitle} />
+                  </ListItem>
+                </TableCell>
+              </TableRow>
+              <TableRow>
                 {headRows.map((row, index) => (
-                  <TableCell key={index}>{row}</TableCell>
+                  <TableCell key={index} className={classes.headRows}>
+                    {row}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.bodyRows.map((row, index) => (
+              {props.bodyRows?.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell component="th" scope="row">
                     {row.title}

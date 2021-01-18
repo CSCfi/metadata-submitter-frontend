@@ -34,7 +34,6 @@ export const fetchUserById = (userId: string) => async (dispatch: any => void) =
         drafts: response.data.drafts,
         folders: response.data.folders,
       }
-      console.log("response :>> ", response)
       dispatch(setUser(user))
       resolve(response)
     } else {

@@ -12,6 +12,7 @@ import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { setSelectedFolder, resetSelectedFolder } from "features/selectedFolderSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import draftAPIService from "services/draftAPI"
@@ -36,12 +37,14 @@ const Home = () => {
   const folderIds = user.folders
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
+  const selectedFolder = useSelector(state => state.selectedFolder)
 
   const classes = useStyles()
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
   const [openAllUnpublished, setOpenAllUnpublished] = useState(false)
   const [openAllPublished, setOpenAllPublished] = useState(false)
+  const [openSelectedFolder, setOpenSelectedFolder] = useState(false)
 
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
@@ -74,18 +77,16 @@ const Home = () => {
     }
   }, [folderIds?.length])
 
-  const [currentObjects, setCurrentObjects] = useState([])
-  const [openSelectedFolder, setOpenSelectedFolder] = useState(false)
-
   const handleClickFolder = async (selectedFolderId: string, folderType: string) => {
     setOpenSelectedFolder(true)
     const folders = folderType === "published" ? publishedFolders : unpublishedFolders
     const selectedFolder = folders.find(folder => folder.folderId === selectedFolderId)
+
     const draftObjects = selectedFolder?.drafts
     const submittedObjects = selectedFolder?.metadataObjects
     setConnError(false)
 
-    let thisArr = []
+    const objectsArr = []
 
     if (folderType === "unpublished") {
       for (let i = 0; i < draftObjects?.length; i += 1) {
@@ -101,7 +102,7 @@ const Home = () => {
             status: "Draft",
             lastModified: response.data.dateModified,
           }
-          thisArr.push(draft)
+          objectsArr.push(draft)
         } else {
           setConnError(true)
           setResponseError(response)
@@ -120,85 +121,100 @@ const Home = () => {
           status: "Submitted",
           lastModified: response.data.dateModified,
         }
-        thisArr.push(submitted)
+        objectsArr.push(submitted)
       } else {
         setConnError(true)
         setResponseError(response)
         setErrorPrefix("Fetching folder error.")
       }
     }
-
-    console.log("thisArr :>> ", thisArr)
-    setCurrentObjects(thisArr)
+    dispatch(
+      setSelectedFolder({
+        id: selectedFolder.folderId,
+        name: selectedFolder.name,
+        description: selectedFolder.description,
+        published: selectedFolder.published,
+        objects: objectsArr,
+      })
+    )
   }
 
-  const handleClickBackIcon = () => {
+  // Handle from <SelectedFolderDetails /> back to <OverviewSubmissions />
+  const handleGoBack = () => {
     setOpenSelectedFolder(false)
-    setCurrentObjects([])
+    dispatch(resetSelectedFolder())
   }
+
   // Contains both unpublished and published folders (max. 5 items/each)
-  const overviewSubmissions = !isFetchingFolders && !openAllUnpublished && !openAllPublished && !openSelectedFolder && (
-    <>
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="unpublished"
-          folders={unpublishedFolders.slice(0, 5)}
-          buttonTitle="See all"
-          onClickHeader={() => setOpenAllUnpublished(true)}
-          onClickContent={handleClickFolder}
-          onClickButton={() => setOpenAllUnpublished(true)}
-        />
-      </Grid>
-      <Divider variant="middle" />
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="published"
-          folders={publishedFolders.slice(0, 5)}
-          buttonTitle="See all"
-          onClickHeader={() => setOpenAllPublished(true)}
-          onClickContent={handleClickFolder}
-          onClickButton={() => setOpenAllPublished(true)}
-        />
-      </Grid>
-    </>
-  )
+  const OverviewSubmissions = () =>
+    !isFetchingFolders &&
+    !openAllUnpublished &&
+    !openAllPublished &&
+    !openSelectedFolder && (
+      <>
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="unpublished"
+            folders={unpublishedFolders.slice(0, 5)}
+            buttonTitle="See all"
+            onClickHeader={() => setOpenAllUnpublished(true)}
+            onClickContent={handleClickFolder}
+            onClickButton={() => setOpenAllUnpublished(true)}
+          />
+        </Grid>
+        <Divider variant="middle" />
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="published"
+            folders={publishedFolders.slice(0, 5)}
+            buttonTitle="See all"
+            onClickHeader={() => setOpenAllPublished(true)}
+            onClickContent={handleClickFolder}
+            onClickButton={() => setOpenAllPublished(true)}
+          />
+        </Grid>
+      </>
+    )
 
   // Full list of unpublished folders
-  const allUnpublishedSubmissions = !openSelectedFolder && (
-    <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="unpublished"
-          folders={unpublishedFolders}
-          buttonTitle="Close"
-          onClickContent={handleClickFolder}
-          onClickButton={() => setOpenAllUnpublished(false)}
-        />
-      </Grid>
-    </Collapse>
-  )
+  const AllUnpublishedSubmissions = () =>
+    !openSelectedFolder && (
+      <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="unpublished"
+            folders={unpublishedFolders}
+            buttonTitle="Close"
+            onClickContent={handleClickFolder}
+            onClickButton={() => setOpenAllUnpublished(false)}
+          />
+        </Grid>
+      </Collapse>
+    )
 
   // Full list of published folders
-  const allPublishedSubmissions = !openSelectedFolder && (
-    <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="published"
-          folders={publishedFolders}
-          buttonTitle="Close"
-          onClickContent={handleClickFolder}
-          onClickButton={() => setOpenAllPublished(false)}
-        />
-      </Grid>
-    </Collapse>
-  )
+  const AllPublishedSubmissions = () =>
+    !openSelectedFolder && (
+      <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="published"
+            folders={publishedFolders}
+            buttonTitle="Close"
+            onClickContent={handleClickFolder}
+            onClickButton={() => setOpenAllPublished(false)}
+          />
+        </Grid>
+      </Collapse>
+    )
 
-  const selectedFolderDetails = (
+  const SelectedFolderDetails = () => (
     <Collapse in={openSelectedFolder} collapsedHeight={0}>
       <SubmissionDetailTable
-        bodyRows={currentObjects}
-        folderType={"unpublished"}
-        onClickBackIcon={handleClickBackIcon}
+        bodyRows={selectedFolder.objects}
+        folderTitle={selectedFolder.name}
+        folderType={selectedFolder.published ? "published" : "draft"}
+        onClickCardHeader={handleGoBack}
       />
     </Collapse>
   )
@@ -210,11 +226,11 @@ const Home = () => {
       </Grid>
 
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
-      {overviewSubmissions}
-      {allUnpublishedSubmissions}
-      {allPublishedSubmissions}
+      <OverviewSubmissions />
+      <AllUnpublishedSubmissions />
+      <AllPublishedSubmissions />
 
-      {selectedFolderDetails}
+      <SelectedFolderDetails />
 
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />

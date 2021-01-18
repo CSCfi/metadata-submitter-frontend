@@ -67,6 +67,14 @@ type SubmissionDetailTableProps = {
 const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
   const classes = useStyles()
 
+  const getDateFormat = (date: string) => {
+    const d = new Date(date)
+    const day = d.getDate()
+    const month = d.getMonth() + 1
+    const year = d.getFullYear()
+    return `${day}.${month}.${year}`
+  }
+
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
@@ -110,7 +118,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                   </TableCell>
                   <TableCell>{row.objectType}</TableCell>
                   <TableCell>{row.status}</TableCell>
-                  <TableCell>{row.lastModified}</TableCell>
+                  <TableCell>{getDateFormat(row.lastModified)}</TableCell>
                   <TableCell>View</TableCell>
                   <TableCell>Edit</TableCell>
                   <TableCell>Delete</TableCell>

@@ -53,6 +53,11 @@ const useStyles = makeStyles(theme => ({
   headRows: {
     fontWeight: "bold",
   },
+  objectType: {
+    "&:first-letter": {
+      textTransform: "capitalize",
+    },
+  },
 }))
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
@@ -116,7 +121,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                   <TableCell component="th" scope="row">
                     {row.title}
                   </TableCell>
-                  <TableCell>{row.objectType}</TableCell>
+                  <TableCell className={classes.objectType}>{row.objectType}</TableCell>
                   <TableCell>{row.status}</TableCell>
                   <TableCell>{getDateFormat(row.lastModified)}</TableCell>
                   <TableCell>View</TableCell>

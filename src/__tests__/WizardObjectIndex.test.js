@@ -14,10 +14,10 @@ describe("WizardObjectIndex", () => {
     const store = mockStore({
       submissionFolder: {
         drafts: [
-          { accessionId: "TESTID1234", schema: "study" },
-          { accessionId: "TESTID5678", schema: "study" },
-          { accessionId: "TESTID0101", schema: "analysis" },
-          { accessionId: "TESTID0202", schema: "experiment" },
+          { accessionId: "TESTID1234", schema: "draft-study" },
+          { accessionId: "TESTID5678", schema: "draft-study" },
+          { accessionId: "TESTID0101", schema: "draft-analysis" },
+          { accessionId: "TESTID0202", schema: "draft-experiment" },
         ],
       },
     })

@@ -20,7 +20,7 @@ describe("WizardStepper", () => {
     { accessionId: "EDAG2", schema: "sample" },
   ]
 
-  it("should have 'Added!' message rendered on item that has 'new' property", () => {
+  it("should have saved objects listed", () => {
     render(
       <Provider store={store}>
         <WizardSavedObjectsList submissions={submissions} submissionType="sample" />

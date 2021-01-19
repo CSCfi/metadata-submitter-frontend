@@ -39,13 +39,13 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const onSubmit = data => {
     setConnError(false)
-    if (folder) {
-      dispatch(updateNewDraftFolder(Object.assign({ ...data, folder }))).then(dispatch(increment()))
+    if (folder && (folder.name !== data.name || folder.description !== data.description)) {
+      dispatch(updateNewDraftFolder(folder.id, Object.assign({ ...data, folder })))
+        .then(() => dispatch(increment()))
+        .catch(() => setConnError(true))
     } else {
       dispatch(createNewDraftFolder(data))
-        .then(() => {
-          dispatch(increment())
-        })
+        .then(() => dispatch(increment()))
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))
@@ -63,7 +63,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           fullWidth
           inputRef={register({ required: true, validate: { name: value => value.length > 0 } })}
           helperText={errors.name ? "Please give a name for folder." : null}
-          error={errors.name}
+          error={errors.name ? true : false}
           disabled={isSubmitting}
           defaultValue={folder ? folder.name : ""}
         ></MuiTextField>
@@ -76,7 +76,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           rows={5}
           inputRef={register({ required: true, validate: { description: value => value.length > 0 } })}
           helperText={errors.description ? "Please give a description for folder." : null}
-          error={errors.description}
+          error={errors.description ? true : false}
           disabled={isSubmitting}
           defaultValue={folder ? folder.description : ""}
         ></MuiTextField>

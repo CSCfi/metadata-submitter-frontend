@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
-type BodyRows = {
+type DetailObject = {
   accessionId: string,
   lastModified: string,
   objectType: string,
@@ -73,7 +73,7 @@ type BodyRows = {
 
 type SubmissionDetailTableProps = {
   folderTitle: string,
-  bodyRows: Array<BodyRows>,
+  bodyRows: Array<DetailObject>,
   folderType: string,
   onClickCardHeader: () => void,
   onDelete: (objectId: string, objectType: string, objectStatus: string) => void,

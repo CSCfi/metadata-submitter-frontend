@@ -47,9 +47,23 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+type ObjectInFolder = {
+  accessionId: string,
+  schema: string,
+}
+
+type Folder = {
+  folderId: string,
+  name: string,
+  description: string,
+  published: boolean,
+  drafts: Array<ObjectInFolder>,
+  metadataObjects: Array<ObjectInFolder>,
+}
+
 type SubmissionIndexCardProps = {
   folderType: string,
-  folders: Array<any>,
+  folders: Array<Folder>,
   buttonTitle: string,
   onClickHeader?: () => void,
   onClickContent: (folderId: string, folderType: string) => Promise<void>,

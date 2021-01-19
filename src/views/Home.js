@@ -213,6 +213,7 @@ const Home = () => {
       </Collapse>
     )
 
+  // Detail of selected folder, list all of its objects (draft + submitted)
   const SelectedFolderDetails = () => (
     <Collapse in={openSelectedFolder} collapsedHeight={0}>
       <SubmissionDetailTable

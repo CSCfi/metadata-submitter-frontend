@@ -12,8 +12,8 @@ import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
-import { setSelectedFolder, resetSelectedFolder } from "features/selectedFolderSlice"
-import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
+import { setSelectedFolder, resetSelectedFolder, deleteObjectFromSelectedFolder } from "features/selectedFolderSlice"
+import { setUnpublishedFolders, updateFolderToUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
@@ -84,6 +84,7 @@ const Home = () => {
 
     const draftObjects = selectedFolder?.drafts
     const submittedObjects = selectedFolder?.metadataObjects
+
     setConnError(false)
 
     const objectsArr = []
@@ -97,6 +98,7 @@ const Home = () => {
 
         if (response.ok) {
           const draft = {
+            accessionId: draftObjects[i].accessionId,
             title: response.data.descriptor?.studyTitle,
             objectType,
             status: "Draft",
@@ -116,6 +118,7 @@ const Home = () => {
       const response = await objectAPIService.getObjectByAccessionId(objectType, submittedObjects[j].accessionId)
       if (response.ok) {
         const submitted = {
+          accessionId: submittedObjects[j].accessionId,
           title: response.data.descriptor?.studyTitle,
           objectType,
           status: "Submitted",
@@ -128,21 +131,23 @@ const Home = () => {
         setErrorPrefix("Fetching folder error.")
       }
     }
-    dispatch(
-      setSelectedFolder({
-        id: selectedFolder.folderId,
-        name: selectedFolder.name,
-        description: selectedFolder.description,
-        published: selectedFolder.published,
-        objects: objectsArr,
-      })
-    )
+    dispatch(setSelectedFolder({ ...selectedFolder, allObjects: objectsArr }))
   }
 
   // Handle from <SelectedFolderDetails /> back to <OverviewSubmissions />
   const handleGoBack = () => {
     setOpenSelectedFolder(false)
     dispatch(resetSelectedFolder())
+  }
+
+  // Delete object from current selectedFolder
+  const handleDeleteObject = (objectId: string, objectType: string, objectStatus: string) => {
+    dispatch(deleteObjectFromSelectedFolder(objectId, objectType, objectStatus)).catch(error => {
+      setConnError(true)
+      setResponseError(JSON.parse(error))
+      setErrorPrefix("Can't delete object")
+    })
+    dispatch(updateFolderToUnpublishedFolders(selectedFolder, objectId, objectType, objectStatus))
   }
 
   // Contains both unpublished and published folders (max. 5 items/each)
@@ -211,10 +216,11 @@ const Home = () => {
   const SelectedFolderDetails = () => (
     <Collapse in={openSelectedFolder} collapsedHeight={0}>
       <SubmissionDetailTable
-        bodyRows={selectedFolder.objects}
+        bodyRows={selectedFolder.allObjects}
         folderTitle={selectedFolder.name}
         folderType={selectedFolder.published ? "published" : "draft"}
         onClickCardHeader={handleGoBack}
+        onDelete={handleDeleteObject}
       />
     </Collapse>
   )

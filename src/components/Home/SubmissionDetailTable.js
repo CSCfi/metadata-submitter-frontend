@@ -1,6 +1,7 @@
 //@flow
 import React from "react"
 
+import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -62,15 +63,25 @@ const useStyles = makeStyles(theme => ({
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
+type BodyRows = {
+  accessionId: string,
+  lastModified: string,
+  objectType: string,
+  status: string,
+  title: string,
+}
+
 type SubmissionDetailTableProps = {
   folderTitle: string,
-  bodyRows: Array<any>,
+  bodyRows: Array<BodyRows>,
   folderType: string,
   onClickCardHeader: () => void,
+  onDelete: (objectId: string, objectType: string, objectStatus: string) => void,
 }
 
 const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
   const classes = useStyles()
+  const { bodyRows, folderTitle, folderType, onClickCardHeader, onDelete } = props
 
   const getDateFormat = (date: string) => {
     const d = new Date(date)
@@ -85,9 +96,9 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
       <CardHeader
         className={classes.cardHeader}
         avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
-        title={`Your ${props.folderType} submissions`}
+        title={`Your ${folderType} submissions`}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        onClick={props.onClickCardHeader}
+        onClick={onClickCardHeader}
       />
       <CardContent>
         <TableContainer component={Paper}>
@@ -97,13 +108,9 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                 <TableCell align="left" colSpan={8} padding="none">
                   <ListItem dense className={classes.tableHeader}>
                     <ListItemIcon className={classes.tableIcon}>
-                      {props.folderType === "published" ? (
-                        <FolderIcon color="primary" />
-                      ) : (
-                        <FolderOpenIcon color="primary" />
-                      )}
+                      {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                     </ListItemIcon>
-                    <ListItemText primary={props.folderTitle} />
+                    <ListItemText primary={folderTitle} />
                   </ListItem>
                 </TableCell>
               </TableRow>
@@ -116,7 +123,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.bodyRows?.map((row, index) => (
+              {bodyRows?.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell component="th" scope="row">
                     {row.title}
@@ -124,10 +131,23 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                   <TableCell className={classes.objectType}>{row.objectType}</TableCell>
                   <TableCell>{row.status}</TableCell>
                   <TableCell>{getDateFormat(row.lastModified)}</TableCell>
-                  <TableCell>View</TableCell>
-                  <TableCell>Edit</TableCell>
-                  <TableCell>Delete</TableCell>
-                  <TableCell>Show details</TableCell>
+                  <TableCell>
+                    <Button>View</Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button disabled={folderType === "published"}>Edit</Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      disabled={folderType === "published"}
+                      onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button>Show details</Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

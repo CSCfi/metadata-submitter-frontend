@@ -77,13 +77,13 @@ const Home = () => {
     }
   }, [folderIds?.length])
 
-  const handleClickFolder = async (selectedFolderId: string, folderType: string) => {
+  const handleClickFolder = async (currentFolderId: string, folderType: string) => {
     setOpenSelectedFolder(true)
     const folders = folderType === "published" ? publishedFolders : unpublishedFolders
-    const selectedFolder = folders.find(folder => folder.folderId === selectedFolderId)
+    const currentFolder = folders.find(folder => folder.folderId === currentFolderId)
 
-    const draftObjects = selectedFolder?.drafts
-    const submittedObjects = selectedFolder?.metadataObjects
+    const draftObjects = currentFolder?.drafts
+    const submittedObjects = currentFolder?.metadataObjects
 
     setConnError(false)
 
@@ -97,14 +97,14 @@ const Home = () => {
         const response = await draftAPIService.getObjectByAccessionId(objectType, draftObjects[i].accessionId)
 
         if (response.ok) {
-          const draft = {
+          const draftObjectDetails = {
             accessionId: draftObjects[i].accessionId,
             title: response.data.descriptor?.studyTitle,
             objectType,
             status: "Draft",
             lastModified: response.data.dateModified,
           }
-          objectsArr.push(draft)
+          objectsArr.push(draftObjectDetails)
         } else {
           setConnError(true)
           setResponseError(response)
@@ -117,21 +117,21 @@ const Home = () => {
       const objectType = submittedObjects[j].schema
       const response = await objectAPIService.getObjectByAccessionId(objectType, submittedObjects[j].accessionId)
       if (response.ok) {
-        const submitted = {
+        const submittedObjectDetails = {
           accessionId: submittedObjects[j].accessionId,
           title: response.data.descriptor?.studyTitle,
           objectType,
           status: "Submitted",
           lastModified: response.data.dateModified,
         }
-        objectsArr.push(submitted)
+        objectsArr.push(submittedObjectDetails)
       } else {
         setConnError(true)
         setResponseError(response)
         setErrorPrefix("Fetching folder error.")
       }
     }
-    dispatch(setSelectedFolder({ ...selectedFolder, allObjects: objectsArr }))
+    dispatch(setSelectedFolder({ ...currentFolder, allObjects: objectsArr }))
   }
 
   // Handle from <SelectedFolderDetails /> back to <OverviewSubmissions />
@@ -147,7 +147,7 @@ const Home = () => {
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete object")
     })
-    dispatch(updateFolderToUnpublishedFolders(selectedFolder, objectId, objectType, objectStatus))
+    dispatch(updateFolderToUnpublishedFolders(selectedFolder, objectId, objectStatus))
   }
 
   // Contains both unpublished and published folders (max. 5 items/each)

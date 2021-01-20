@@ -27,7 +27,7 @@ type ObjectInFolder = {
   schema: string,
 }
 
-type DetailObject = {
+type ObjectDetails = {
   accessionId: string,
   lastModified: string,
   objectType: string,
@@ -42,13 +42,12 @@ type SelectedFolder = {
   published: boolean,
   drafts: Array<ObjectInFolder>,
   metadataObjects: Array<ObjectInFolder>,
-  allObjects?: Array<DetailObject>,
+  allObjects?: Array<ObjectDetails>,
 }
 
 export const updateFolderToUnpublishedFolders = (
   selectedFolder: SelectedFolder,
   objectId: string,
-  objectType: string,
   objectStatus: string
 ) => (dispatch: any => void) => {
   const updatedFolder =

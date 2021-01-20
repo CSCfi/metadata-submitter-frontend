@@ -105,12 +105,18 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="left" colSpan={8} padding="none">
+                <TableCell colSpan={8} padding="none">
                   <ListItem dense className={classes.tableHeader}>
                     <ListItemIcon className={classes.tableIcon}>
                       {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                     </ListItemIcon>
                     <ListItemText primary={folderTitle} />
+                    <Button color="secondary" disabled>
+                      Edit
+                    </Button>
+                    <Button variant="contained" disabled>
+                      Publish
+                    </Button>
                   </ListItem>
                 </TableCell>
               </TableRow>

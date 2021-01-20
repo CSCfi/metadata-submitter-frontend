@@ -35,6 +35,7 @@ const Home = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const folderIds = user.folders
+
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
   const selectedFolder = useSelector(state => state.selectedFolder)
@@ -42,9 +43,8 @@ const Home = () => {
   const classes = useStyles()
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
-  const [openAllUnpublished, setOpenAllUnpublished] = useState(false)
-  const [openAllPublished, setOpenAllPublished] = useState(false)
-  const [openSelectedFolder, setOpenSelectedFolder] = useState(false)
+  // Use deepLevel to indicate which parts of Home to render
+  const [deepLevel, setDeepLevel] = useState(0)
 
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
@@ -58,6 +58,7 @@ const Home = () => {
     if (folderIds) {
       const unpublishedArr = []
       const publishedArr = []
+      // Handle fetching details of all folders belong to current user
       const fetchFolders = async () => {
         for (let i = 0; i < folderIds.length; i += 1) {
           const response = await folderAPIService.getFolderById(folderIds[i])
@@ -77,8 +78,9 @@ const Home = () => {
     }
   }, [folderIds?.length])
 
+  // Handle fetching details of all objects (drafts + metadata) of the clicked folder
   const handleClickFolder = async (currentFolderId: string, folderType: string) => {
-    setOpenSelectedFolder(true)
+    setDeepLevel(3)
     const folders = folderType === "published" ? publishedFolders : unpublishedFolders
     const currentFolder = folders.find(folder => folder.folderId === currentFolderId)
 
@@ -136,7 +138,7 @@ const Home = () => {
 
   // Handle from <SelectedFolderDetails /> back to <OverviewSubmissions />
   const handleGoBack = () => {
-    setOpenSelectedFolder(false)
+    selectedFolder.published ? setDeepLevel(2) : setDeepLevel(1)
     dispatch(resetSelectedFolder())
   }
 
@@ -153,18 +155,16 @@ const Home = () => {
   // Contains both unpublished and published folders (max. 5 items/each)
   const OverviewSubmissions = () =>
     !isFetchingFolders &&
-    !openAllUnpublished &&
-    !openAllPublished &&
-    !openSelectedFolder && (
+    deepLevel === 0 && (
       <>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
             folderType="unpublished"
             folders={unpublishedFolders.slice(0, 5)}
             buttonTitle="See all"
-            onClickHeader={() => setOpenAllUnpublished(true)}
+            onClickHeader={() => setDeepLevel(1)}
             onClickContent={handleClickFolder}
-            onClickButton={() => setOpenAllUnpublished(true)}
+            onClickButton={() => setDeepLevel(1)}
           />
         </Grid>
         <Divider variant="middle" />
@@ -173,49 +173,47 @@ const Home = () => {
             folderType="published"
             folders={publishedFolders.slice(0, 5)}
             buttonTitle="See all"
-            onClickHeader={() => setOpenAllPublished(true)}
+            onClickHeader={() => setDeepLevel(2)}
             onClickContent={handleClickFolder}
-            onClickButton={() => setOpenAllPublished(true)}
+            onClickButton={() => setDeepLevel(2)}
           />
         </Grid>
       </>
     )
 
   // Full list of unpublished folders
-  const AllUnpublishedSubmissions = () =>
-    !openSelectedFolder && (
-      <Collapse in={openAllUnpublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-        <Grid item xs={12} className={classes.tableCard}>
-          <SubmissionIndexCard
-            folderType="unpublished"
-            folders={unpublishedFolders}
-            buttonTitle="Close"
-            onClickContent={handleClickFolder}
-            onClickButton={() => setOpenAllUnpublished(false)}
-          />
-        </Grid>
-      </Collapse>
-    )
+  const AllUnpublishedSubmissions = () => (
+    <Collapse in={deepLevel === 1} collapsedHeight={0} timeout={{ enter: 1500 }}>
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="unpublished"
+          folders={unpublishedFolders}
+          buttonTitle="Close"
+          onClickContent={handleClickFolder}
+          onClickButton={() => setDeepLevel(0)}
+        />
+      </Grid>
+    </Collapse>
+  )
 
   // Full list of published folders
-  const AllPublishedSubmissions = () =>
-    !openSelectedFolder && (
-      <Collapse in={openAllPublished} collapsedHeight={0} timeout={{ enter: 1500 }}>
-        <Grid item xs={12} className={classes.tableCard}>
-          <SubmissionIndexCard
-            folderType="published"
-            folders={publishedFolders}
-            buttonTitle="Close"
-            onClickContent={handleClickFolder}
-            onClickButton={() => setOpenAllPublished(false)}
-          />
-        </Grid>
-      </Collapse>
-    )
+  const AllPublishedSubmissions = () => (
+    <Collapse in={deepLevel === 2} collapsedHeight={0} timeout={{ enter: 1500 }}>
+      <Grid item xs={12} className={classes.tableCard}>
+        <SubmissionIndexCard
+          folderType="published"
+          folders={publishedFolders}
+          buttonTitle="Close"
+          onClickContent={handleClickFolder}
+          onClickButton={() => setDeepLevel(0)}
+        />
+      </Grid>
+    </Collapse>
+  )
 
   // Detail of selected folder, list all of its objects (draft + submitted)
   const SelectedFolderDetails = () => (
-    <Collapse in={openSelectedFolder} collapsedHeight={0}>
+    <Collapse in={deepLevel === 3} collapsedHeight={0}>
       <SubmissionDetailTable
         bodyRows={selectedFolder.allObjects}
         folderTitle={selectedFolder.name}

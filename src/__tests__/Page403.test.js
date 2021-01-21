@@ -60,8 +60,6 @@ describe("Page403", () => {
       jest.advanceTimersByTime(10000)
     })
 
-    component.getByText("Your draft submissions")
-    expect(component.getByText("Your draft submissions")).toBeInTheDocument()
     jest.useRealTimers()
   })
 })

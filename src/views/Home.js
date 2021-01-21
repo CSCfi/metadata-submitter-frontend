@@ -214,17 +214,18 @@ const Home = () => {
     )
 
   // Detail of selected folder, list all of its objects (draft + submitted)
-  const SelectedFolderDetails = () => (
-    <Collapse in={deepLevel === 3} collapsedHeight={0}>
-      <SubmissionDetailTable
-        bodyRows={selectedFolder.allObjects}
-        folderTitle={selectedFolder.name}
-        folderType={selectedFolder.published ? "published" : "draft"}
-        onClickCardHeader={handleGoBack}
-        onDelete={handleDeleteObject}
-      />
-    </Collapse>
-  )
+  const SelectedFolderDetails = () =>
+    deepLevel === 3 && (
+      <Collapse in={deepLevel === 3} collapsedHeight={0}>
+        <SubmissionDetailTable
+          bodyRows={selectedFolder.allObjects}
+          folderTitle={selectedFolder.name}
+          folderType={selectedFolder.published ? "published" : "draft"}
+          onClickCardHeader={handleGoBack}
+          onDelete={handleDeleteObject}
+        />
+      </Collapse>
+    )
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">

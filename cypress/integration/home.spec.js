@@ -60,9 +60,9 @@ describe("Home e2e", function () {
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .last()
+          .filter(':contains("Test unpublished folder")')
           .should("be.visible")
-          .then($el => $el.click())
+          .then($el => $el.last().click())
       )
 
     // Check the selected folder has the correct amount of objects
@@ -140,9 +140,9 @@ describe("Home e2e", function () {
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .last()
+          .filter(':contains("Test published folder")')
           .should("be.visible")
-          .then($el => $el.click())
+          .then($el => $el.last().click())
       )
 
     // Check the selected folder has the correct amount of objects

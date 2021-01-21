@@ -105,7 +105,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
       <CardActions>
         {folders.length > 0 && (
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-            <Button variant="outlined" color="primary" onClick={onClickButton}>
+            <Button variant="outlined" color="primary" aria-label="Open or Close folders list" onClick={onClickButton}>
               {buttonTitle}
             </Button>
           </Grid>

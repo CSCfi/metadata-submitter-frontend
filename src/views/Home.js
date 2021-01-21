@@ -182,34 +182,36 @@ const Home = () => {
     )
 
   // Full list of unpublished folders
-  const AllUnpublishedSubmissions = () => (
-    <Collapse in={deepLevel === 1} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="unpublished"
-          folders={unpublishedFolders}
-          buttonTitle="Close"
-          onClickContent={handleClickFolder}
-          onClickButton={() => setDeepLevel(0)}
-        />
-      </Grid>
-    </Collapse>
-  )
+  const AllUnpublishedSubmissions = () =>
+    deepLevel === 1 && (
+      <Collapse in={deepLevel === 1} collapsedHeight={0} timeout={{ enter: 1500 }}>
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="unpublished"
+            folders={unpublishedFolders}
+            buttonTitle="Close"
+            onClickContent={handleClickFolder}
+            onClickButton={() => setDeepLevel(0)}
+          />
+        </Grid>
+      </Collapse>
+    )
 
   // Full list of published folders
-  const AllPublishedSubmissions = () => (
-    <Collapse in={deepLevel === 2} collapsedHeight={0} timeout={{ enter: 1500 }}>
-      <Grid item xs={12} className={classes.tableCard}>
-        <SubmissionIndexCard
-          folderType="published"
-          folders={publishedFolders}
-          buttonTitle="Close"
-          onClickContent={handleClickFolder}
-          onClickButton={() => setDeepLevel(0)}
-        />
-      </Grid>
-    </Collapse>
-  )
+  const AllPublishedSubmissions = () =>
+    deepLevel === 2 && (
+      <Collapse in={deepLevel === 2} collapsedHeight={0} timeout={{ enter: 1500 }}>
+        <Grid item xs={12} className={classes.tableCard}>
+          <SubmissionIndexCard
+            folderType="published"
+            folders={publishedFolders}
+            buttonTitle="Close"
+            onClickContent={handleClickFolder}
+            onClickButton={() => setDeepLevel(0)}
+          />
+        </Grid>
+      </Collapse>
+    )
 
   // Detail of selected folder, list all of its objects (draft + submitted)
   const SelectedFolderDetails = () => (

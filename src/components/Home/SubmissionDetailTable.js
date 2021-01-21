@@ -111,10 +111,10 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                       {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                     </ListItemIcon>
                     <ListItemText primary={folderTitle} />
-                    <Button color="secondary" disabled>
+                    <Button color="secondary" disabled aria-label="Edit current folder">
                       Edit
                     </Button>
-                    <Button variant="contained" disabled>
+                    <Button variant="contained" disabled aria-label="Publish current folder">
                       Publish
                     </Button>
                   </ListItem>
@@ -141,11 +141,14 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                     <Button>View</Button>
                   </TableCell>
                   <TableCell>
-                    <Button disabled={folderType === "published"}>Edit</Button>
+                    <Button disabled={folderType === "published"} aria-label="Edit this object">
+                      Edit
+                    </Button>
                   </TableCell>
                   <TableCell>
                     <Button
                       disabled={folderType === "published"}
+                      aria-label="Delete this object"
                       onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
                     >
                       Delete

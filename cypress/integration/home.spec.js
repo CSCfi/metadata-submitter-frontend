@@ -57,9 +57,9 @@ describe("Home e2e", function () {
     // Check the created folder existing in the list and navigate to see its details
     cy.get("ul.MuiList-root")
       .should("be.visible")
-      .then($el =>
-        $el
-          .children()
+      .within(() =>
+        cy
+          .get("div.MuiButtonBase-root")
           .last()
           .contains("Test unpublished folder", { timeout: 10000 })
           .should("be.visible")
@@ -138,11 +138,11 @@ describe("Home e2e", function () {
     // Check the created folder existing in the list and navigate to see its details
     cy.get("ul.MuiList-root")
       .should("be.visible")
-      .then($el =>
-        $el
-          .children()
+      .within(() =>
+        cy
+          .get("div.MuiButtonBase-root")
           .last()
-          .contains("Test published folder")
+          .contains("Test published folder", { timeout: 10000 })
           .should("be.visible")
           .then($el => $el.click())
       )

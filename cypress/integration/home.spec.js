@@ -41,10 +41,11 @@ describe("Home e2e", function () {
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 
-    // Navigate to publish
+    // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
+    cy.reload()
     // Click "See all" button to navigate to all unpublished folders list
     cy.get("div.MuiCardActions-root", { timeout: 30000 })
       .first()
@@ -125,6 +126,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Publish").click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
+    cy.reload()
     // Click "See all" button to navigate to all published folders list
     cy.get("div.MuiCardActions-root", { timeout: 30000 })
       .last()

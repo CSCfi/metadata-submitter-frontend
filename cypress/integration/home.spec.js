@@ -60,7 +60,7 @@ describe("Home e2e", function () {
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .filter(':contains("Test unpublished folder")')
+          .filter(':contains("Test unpublished folder")', { timeout: 30000 })
           .should("be.visible")
           .then($el => $el.last().click())
       )
@@ -140,7 +140,7 @@ describe("Home e2e", function () {
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .filter(':contains("Test published folder")')
+          .filter(':contains("Test published folder")', { timeout: 30000 })
           .should("be.visible")
           .then($el => $el.last().click())
       )

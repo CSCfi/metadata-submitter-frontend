@@ -1,4 +1,4 @@
-describe("home test", function () {
+describe("Home e2e", function () {
   const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
 
   beforeEach(() => {
@@ -56,11 +56,15 @@ describe("home test", function () {
 
     // Check the created folder existing in the list and navigate to see its details
     cy.get("ul.MuiList-root")
-      .children()
-      .last()
-      .contains("Test unpublished folder", { timeout: 10000 })
       .should("be.visible")
-      .then($el => $el.click())
+      .then($el =>
+        $el
+          .children()
+          .last()
+          .contains("Test unpublished folder", { timeout: 10000 })
+          .should("be.visible")
+          .then($el => $el.click())
+      )
 
     // Check the selected folder has the correct amount of objects
     cy.get("table", { timeout: 10000 }).should("be.visible")
@@ -133,11 +137,15 @@ describe("home test", function () {
 
     // Check the created folder existing in the list and navigate to see its details
     cy.get("ul.MuiList-root")
-      .children()
-      .last()
-      .contains("Test published folder")
       .should("be.visible")
-      .then($el => $el.click())
+      .then($el =>
+        $el
+          .children()
+          .last()
+          .contains("Test published folder")
+          .should("be.visible")
+          .then($el => $el.click())
+      )
 
     // Check the selected folder has the correct amount of objects
     cy.get("table", { timeout: 10000 }).should("be.visible")

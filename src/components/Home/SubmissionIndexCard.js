@@ -111,7 +111,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   )
 
   // Renders when there is no folders in the list
-  const EmptyFolder = () => (
+  const EmptyList = () => (
     <CardContent className={classes.cardContent}>
       <Typography align="center" variant="body2">
         Currently there are no {folderType} submissions
@@ -127,7 +127,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
         className={classes.cardTitle}
         onClick={onClickHeader}
       />
-      {folders.length > 0 ? <FolderList /> : <EmptyFolder />}
+      {folders.length > 0 ? <FolderList /> : <EmptyList />}
     </Card>
   )
 }

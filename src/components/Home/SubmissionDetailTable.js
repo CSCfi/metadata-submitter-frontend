@@ -16,6 +16,7 @@ import TableCell from "@material-ui/core/TableCell"
 import TableContainer from "@material-ui/core/TableContainer"
 import TableHead from "@material-ui/core/TableHead"
 import TableRow from "@material-ui/core/TableRow"
+import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
@@ -91,6 +92,82 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
     return `${day}.${month}.${year}`
   }
 
+  // Renders when current folder has the object(s)
+  const CurrentFolder = () => (
+    <CardContent>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell colSpan={8} padding="none">
+                <ListItem dense className={classes.tableHeader}>
+                  <ListItemIcon className={classes.tableIcon}>
+                    {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
+                  </ListItemIcon>
+                  <ListItemText primary={folderTitle} />
+                  <Button color="secondary" disabled aria-label="Edit current folder">
+                    Edit
+                  </Button>
+                  <Button variant="contained" disabled aria-label="Publish current folder">
+                    Publish
+                  </Button>
+                </ListItem>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              {headRows.map((row, index) => (
+                <TableCell key={index} className={classes.headRows}>
+                  {row}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {bodyRows?.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell component="th" scope="row">
+                  {row.title}
+                </TableCell>
+                <TableCell className={classes.objectType}>{row.objectType}</TableCell>
+                <TableCell>{row.status}</TableCell>
+                <TableCell>{getDateFormat(row.lastModified)}</TableCell>
+                <TableCell>
+                  <Button>View</Button>
+                </TableCell>
+                <TableCell>
+                  <Button disabled={folderType === "published"} aria-label="Edit this object">
+                    Edit
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    disabled={folderType === "published"}
+                    aria-label="Delete this object"
+                    onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button>Show details</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </CardContent>
+  )
+
+  // Renders when current folder is empty
+  const EmptyFolder = () => (
+    <CardContent>
+      <Typography align="center" variant="body2">
+        Current folder is empty
+      </Typography>
+    </CardContent>
+  )
+
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
@@ -100,69 +177,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         onClick={onClickCardHeader}
       />
-      <CardContent>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={8} padding="none">
-                  <ListItem dense className={classes.tableHeader}>
-                    <ListItemIcon className={classes.tableIcon}>
-                      {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
-                    </ListItemIcon>
-                    <ListItemText primary={folderTitle} />
-                    <Button color="secondary" disabled aria-label="Edit current folder">
-                      Edit
-                    </Button>
-                    <Button variant="contained" disabled aria-label="Publish current folder">
-                      Publish
-                    </Button>
-                  </ListItem>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                {headRows.map((row, index) => (
-                  <TableCell key={index} className={classes.headRows}>
-                    {row}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {bodyRows?.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell component="th" scope="row">
-                    {row.title}
-                  </TableCell>
-                  <TableCell className={classes.objectType}>{row.objectType}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                  <TableCell>{getDateFormat(row.lastModified)}</TableCell>
-                  <TableCell>
-                    <Button>View</Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button disabled={folderType === "published"} aria-label="Edit this object">
-                      Edit
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      disabled={folderType === "published"}
-                      aria-label="Delete this object"
-                      onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button>Show details</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CardContent>
+      {bodyRows?.length > 0 ? <CurrentFolder /> : <EmptyFolder />}
     </Card>
   )
 }

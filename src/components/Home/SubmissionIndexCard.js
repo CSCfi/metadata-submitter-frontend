@@ -12,6 +12,7 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 
@@ -74,14 +75,9 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   const classes = useStyles()
   const { folderType, folders, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
 
-  return (
-    <Card className={classes.card} variant="outlined">
-      <CardHeader
-        title={folderType === "published" ? "Your Published Submissions" : "Your Draft Submissions"}
-        titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        className={classes.cardTitle}
-        onClick={onClickHeader}
-      />
+  // Renders when there is folder list
+  const FolderList = () => (
+    <>
       <CardContent className={classes.cardContent}>
         <List>
           {folders.map((folder, index) => {
@@ -111,6 +107,27 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
           </Grid>
         )}
       </CardActions>
+    </>
+  )
+
+  // Renders when there is no folders in the list
+  const EmptyFolder = () => (
+    <CardContent className={classes.cardContent}>
+      <Typography align="center" variant="body2">
+        Currently there are no {folderType} submissions
+      </Typography>
+    </CardContent>
+  )
+
+  return (
+    <Card className={classes.card} variant="outlined">
+      <CardHeader
+        title={folderType === "published" ? "Your Published Submissions" : "Your Draft Submissions"}
+        titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
+        className={classes.cardTitle}
+        onClick={onClickHeader}
+      />
+      {folders.length > 0 ? <FolderList /> : <EmptyFolder />}
     </Card>
   )
 }

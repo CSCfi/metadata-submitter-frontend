@@ -91,7 +91,7 @@ const Home = () => {
 
     const objectsArr = []
 
-    if (folderType === "unpublished") {
+    if (folderType === "draft") {
       for (let i = 0; i < draftObjects?.length; i += 1) {
         const objectType = draftObjects[i].schema.includes("draft-")
           ? draftObjects[i].schema.substr(6)
@@ -159,7 +159,7 @@ const Home = () => {
       <>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="unpublished"
+            folderType="draft"
             folders={unpublishedFolders.slice(0, 5)}
             buttonTitle="See all"
             onClickHeader={() => setDeepLevel(1)}
@@ -187,7 +187,7 @@ const Home = () => {
       <Collapse in={deepLevel === 1} collapsedHeight={0} timeout={{ enter: 1500 }}>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="unpublished"
+            folderType="draft"
             folders={unpublishedFolders}
             buttonTitle="Close"
             onClickContent={handleClickFolder}

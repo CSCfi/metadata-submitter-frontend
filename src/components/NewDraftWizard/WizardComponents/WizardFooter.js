@@ -89,6 +89,18 @@ const WizardFooter = () => {
     setDialogOpen(false)
   }
 
+  const disablePublishButton = () => {
+    if (wizardStep !== 2) {
+      return true
+    }
+    if (wizardStep === 2) {
+      const { metadataObjects } = folder
+      if (metadataObjects.length === 0) {
+        return true
+      }
+    }
+  }
+
   return (
     <div>
       <div className={classes.phantom} />
@@ -132,7 +144,7 @@ const WizardFooter = () => {
             <Button
               variant="contained"
               color="primary"
-              disabled={wizardStep !== 2}
+              disabled={disablePublishButton()}
               onClick={() => {
                 setDialogOpen(true)
                 setAlertType("publish")

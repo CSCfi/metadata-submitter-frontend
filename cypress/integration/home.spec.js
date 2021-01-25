@@ -41,10 +41,11 @@ describe("Home e2e", function () {
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 
-    // Navigate to publish
+    // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
+    cy.reload()
     // Click "See all" button to navigate to all unpublished folders list
     cy.get("div.MuiCardActions-root", { timeout: 30000 })
       .first()
@@ -55,15 +56,14 @@ describe("Home e2e", function () {
       .then($btn => $btn.click())
 
     // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root")
+    cy.get("ul.MuiList-root", { timeout: 10000 })
       .should("be.visible")
-      .then($el =>
-        $el
-          .children()
-          .last()
-          .contains("Test unpublished folder", { timeout: 10000 })
+      .within(() =>
+        cy
+          .get("div.MuiButtonBase-root")
+          .filter(':contains("Test unpublished folder")', { timeout: 30000 })
           .should("be.visible")
-          .then($el => $el.click())
+          .then($el => $el.last().click())
       )
 
     // Check the selected folder has the correct amount of objects
@@ -126,6 +126,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Publish").click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
+    cy.reload()
     // Click "See all" button to navigate to all published folders list
     cy.get("div.MuiCardActions-root", { timeout: 30000 })
       .last()
@@ -136,15 +137,14 @@ describe("Home e2e", function () {
       .then($btn => $btn.click())
 
     // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root")
+    cy.get("ul.MuiList-root", { timeout: 10000 })
       .should("be.visible")
-      .then($el =>
-        $el
-          .children()
-          .last()
-          .contains("Test published folder")
+      .within(() =>
+        cy
+          .get("div.MuiButtonBase-root")
+          .filter(':contains("Test published folder")', { timeout: 30000 })
           .should("be.visible")
-          .then($el => $el.click())
+          .then($el => $el.last().click())
       )
 
     // Check the selected folder has the correct amount of objects

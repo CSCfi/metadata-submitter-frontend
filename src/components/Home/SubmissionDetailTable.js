@@ -105,10 +105,10 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                     {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
                   </ListItemIcon>
                   <ListItemText primary={folderTitle} />
-                  <Button color="secondary" disabled aria-label="Edit current folder">
+                  <Button color="secondary" disabled={folderType === "published"} aria-label="Edit current folder">
                     Edit
                   </Button>
-                  <Button variant="contained" disabled aria-label="Publish current folder">
+                  <Button disabled={folderType === "published"} aria-label="Publish current folder" variant="contained">
                     Publish
                   </Button>
                 </ListItem>

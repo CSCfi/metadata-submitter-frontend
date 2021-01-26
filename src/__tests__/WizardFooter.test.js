@@ -14,7 +14,7 @@ describe("WizardStepper", () => {
   let store
   let wrapper
 
-  beforeEach(() => {
+  it("should open dialog on click of cancel", () => {
     store = mockStore({
       submissionType: "form",
       wizardStep: 1,
@@ -26,12 +26,35 @@ describe("WizardStepper", () => {
         </Provider>
       </BrowserRouter>
     )
-  })
-
-  it("should open dialog on click of cancel", () => {
     render(wrapper)
     const button = screen.getByRole("button", { name: /Cancel/i })
     fireEvent.click(button)
     expect(screen.getByRole("dialog")).toBeDefined()
-  })
+  }),
+    it("should disable Publish button if there is no submitted objects", () => {
+      store = mockStore({
+        submissionType: "form",
+        wizardStep: 2,
+        submissionFolder: {
+          id: "FOL001",
+          name: "Test folder",
+          description: "Test folder",
+          published: false,
+          drafts: [],
+          metadataObjects: [],
+        },
+      })
+
+      wrapper = (
+        <BrowserRouter>
+          <Provider store={store}>
+            <WizardFooter />
+          </Provider>
+        </BrowserRouter>
+      )
+
+      render(wrapper)
+      const publishButton = screen.getByRole("button", { name: /Publish/i })
+      expect(publishButton).toBeDisabled()
+    })
 })

@@ -15,6 +15,14 @@ const mockStore = configureStore(middlewares)
 describe("HomePage", () => {
   const store = mockStore({
     user: { name: "Test User" },
+    selectedFolder: {
+      folderId: "Test folderId",
+      name: "Test name",
+      description: "Test description",
+      drafts: [],
+      metadataObjects: [],
+      allObjects: [],
+    },
   })
   beforeEach(() => {
     render(

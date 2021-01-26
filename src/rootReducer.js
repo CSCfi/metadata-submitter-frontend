@@ -3,6 +3,9 @@
 import { combineReducers } from "@reduxjs/toolkit"
 
 import draftStatusReducer from "features/draftStatusSlice"
+import publishedFoldersReducer from "features/publishedFoldersSlice"
+import selectedFolderReducer from "features/selectedFolderSlice"
+import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import draftObjectReducer from "features/wizardDraftObjectSlice"
@@ -22,6 +25,9 @@ const rootReducer = combineReducers({
   draftStatus: draftStatusReducer,
   draftObject: draftObjectReducer,
   user: userReducer,
+  unpublishedFolders: unpublishedFoldersReducer,
+  publishedFolders: publishedFoldersReducer,
+  selectedFolder: selectedFolderReducer,
 })
 
 export default rootReducer

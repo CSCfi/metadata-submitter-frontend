@@ -158,7 +158,7 @@ const WizardObjectIndex = () => {
   // Get draft objects of current folder
   // and count the amount of drafts of each existing objectType
   const draftObjects = folder.drafts
-    .map(draft => draft.schema)
+    ?.map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 
   const handlePanelChange = panel => (event, newExpanded) => {

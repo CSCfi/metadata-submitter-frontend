@@ -40,12 +40,18 @@ describe("Draft operations", function () {
 
     // Delete a draft
     cy.get("button[aria-label='Delete draft']").first().click()
-    cy.get("div[data-testid='existing']").find("li").should("have.length", 1)
+    cy.get("div[data-testid='existing']").find("li", { timeout: 10000 }).should("have.length", 1)
 
     // Continue draft
+    // Clear
     cy.get("button[aria-label='Continue draft']").first().click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title 2 second save")
-    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
+    cy.get("input[name='descriptor.studyTitle']")
+    cy.get("button[type=button]", { timeout: 10000 }).contains("Clear form").click()
+
+    // Fill
+    cy.get("input[name='descriptor.studyTitle']").type("New title")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
+    cy.get("select[name='descriptor.studyType']").select("Metagenomics").blur()
 
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()

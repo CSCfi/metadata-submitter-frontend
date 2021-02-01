@@ -26,6 +26,9 @@ describe("Basic e2e", function () {
 
     // Fill a Study form and submit object
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
+    cy.get("button[type=button]").contains("Clear form").click()
+    cy.get("input[name='descriptor.studyTitle']").type("New title")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
 
     // Submit form

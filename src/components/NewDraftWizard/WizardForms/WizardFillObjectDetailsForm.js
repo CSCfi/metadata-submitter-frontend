@@ -96,7 +96,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   const increment = useRef(null)
 
   const resetForm = () => {
-    methods.reset()
+    methods.reset(formSchema)
   }
 
   const checkDirty = () => {
@@ -256,7 +256,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
             className={classes.formButtonSubmit}
             onClick={() => {
               handleReset()
-              if (currentDraftId) handleDraftDelete(currentDraftId)
+              if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
             }}
           >
             Submit {objectType}
@@ -304,7 +304,10 @@ const WizardFillObjectDetailsForm = () => {
           schema: objectType,
         })
       )
-        .then(() => setSuccessStatus("success"))
+        .then(() => {
+          setSuccessStatus("success")
+          dispatch(resetDraftStatus())
+        })
         .catch(error => {
           setSuccessStatus("error")
           setResponseInfo(error)
@@ -316,7 +319,6 @@ const WizardFillObjectDetailsForm = () => {
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
-    dispatch(resetDraftStatus())
   }
 
   /*

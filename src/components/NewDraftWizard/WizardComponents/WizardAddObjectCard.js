@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useRef, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardDraftObjectPicker from "components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import { resetFocus } from "features/focusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -54,6 +55,13 @@ const useStyles = makeStyles(theme => ({
 const CustomCardHeader = ({ title }: { title: string }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+  const focusTarget = useRef(null)
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
+
   return (
     <CardHeader
       title={title}
@@ -70,7 +78,11 @@ const CustomCardHeader = ({ title }: { title: string }) => {
           onClick={() => {
             dispatch(resetObjectType())
             dispatch(resetSubmissionType())
+            dispatch(resetFocus())
           }}
+          ref={focusTarget}
+          onBlur={() => dispatch(resetFocus())}
+          focusRipple={shouldFocus}
         >
           Hide
         </Button>

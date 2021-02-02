@@ -19,9 +19,12 @@ describe("Basic e2e", function () {
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
-    // Fill a Study form and submit object
+    // Skip-link
     cy.get("div[role=button]").contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
+    cy.get("div[role=button]").contains("Fill Form").type("{enter}")
+    cy.get("div[role=button]").contains("Skip to form")
+
+    // Fill a Study form and submit object
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
 

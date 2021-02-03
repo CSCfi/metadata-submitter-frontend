@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react"
 
 import Button from "@material-ui/core/Button"
+import CardHeader from "@material-ui/core/CardHeader"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import LinearProgress from "@material-ui/core/LinearProgress"
@@ -24,7 +25,33 @@ import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    margin: 0,
+    padding: 0,
+    maxHeight: "70vh",
+    position: "relative",
+    overflow: "scroll",
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFF",
+    fontWeight: "bold",
+    position: "sticky",
+    top: 0,
+  },
+  cardHeaderAction: {
+    marginTop: "-4px",
+    marginBottom: "-4px",
+  },
+  buttonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    "& > :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  },
   formComponents: {
+    margin: theme.spacing(2),
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -78,6 +105,54 @@ type FormContentProps = {
   onSubmit: () => Promise<any>,
   objectType: string,
   folderId: string,
+}
+
+/*
+ * Create header for form card with button to close the card
+ */
+const CustomCardHeader = ({ title }: { title: string }) => {
+  const classes = useStyles()
+  // const dispatch = useDispatch()
+  const buttonGroup = (
+    <div className={classes.buttonGroup}>
+      <Button variant="contained" aria-label="creat new form" size="small">
+        New form
+      </Button>
+      <Button variant="contained" aria-label="clear form" size="small">
+        Clear form
+      </Button>
+      <Button variant="contained" aria-label="save form as draft" size="small">
+        Save as Draft
+      </Button>
+      <Button variant="contained" aria-label="submit form" size="small">
+        Submit
+      </Button>
+    </div>
+  )
+  return (
+    <CardHeader
+      title={title}
+      titleTypographyProps={{ variant: "inherit" }}
+      classes={{
+        root: classes.cardHeader,
+        action: classes.cardHeaderAction,
+      }}
+      // action={
+      //   <Button
+      //     variant="outlined"
+      //     aria-label="hide card"
+      //     className={classes.hideButton}
+      //     // onClick={() => {
+      //     //   dispatch(resetObjectType())
+      //     //   dispatch(resetSubmissionType())
+      //     // }}
+      //   >
+      //     Hide
+      //   </Button>
+      // }
+      action={buttonGroup}
+    />
+  )
 }
 
 /*
@@ -271,6 +346,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
 const WizardFillObjectDetailsForm = () => {
+  const classes = useStyles()
+
   const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -354,7 +431,8 @@ const WizardFillObjectDetailsForm = () => {
   if (error) return <Alert severity="error">{errorPrefix}</Alert>
 
   return (
-    <Container maxWidth="md">
+    <Container className={classes.container}>
+      <CustomCardHeader title="Fill form" />
       <FormContent
         formSchema={formSchema}
         resolver={WizardAjvResolver(validationSchema)}

@@ -17,7 +17,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { setDraftObject } from "features/wizardDraftObjectSlice"
+import { setDraftObject, resetDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
@@ -158,6 +158,14 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const increment = useRef(null)
 
+  const createNewForm = () => {
+    handleReset()
+    resetForm()
+    setCurrentDraftId(null)
+    dispatch(resetDraftStatus())
+    dispatch(resetDraftObject())
+  }
+
   const resetForm = () => {
     methods.reset(formSchema)
   }
@@ -181,8 +189,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const handleDraftDelete = draftId => {
     dispatch(deleteObjectFromFolder("draft", draftId, objectType))
-    setCurrentDraftId(() => null)
-    handleChange()
+    setCurrentDraftId(null)
   }
 
   /*
@@ -295,7 +302,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
       <CustomCardHeader
         objectType={objectType}
         title="Fill form"
-        onClickNewForm={() => {}}
+        onClickNewForm={() => createNewForm()}
         onClickClearForm={() => resetForm()}
         onClickSaveDraft={() => saveDraft()}
         onClickSubmit={() => submitForm()}

@@ -83,21 +83,16 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  formButtonContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  formButtonSave: {
-    margin: theme.spacing(2, "auto", 2, 1),
-    marginRight: "auto",
-  },
-  formButtonClear: {
-    margin: theme.spacing(2, 1, 2, "auto"),
-  },
-  formButtonSubmit: {
-    margin: theme.spacing(2, 1, 2, 1),
-  },
 }))
+
+type CustomCardHeaderProps = {
+  objectType: string,
+  title: string,
+  onClickNewForm: () => void,
+  onClickClearForm: () => void,
+  onClickSaveDraft: () => Promise<void>,
+  onClickSubmit: () => void,
+}
 
 type FormContentProps = {
   resolver: typeof WizardAjvResolver,
@@ -110,25 +105,27 @@ type FormContentProps = {
 /*
  * Create header for form card with button to close the card
  */
-const CustomCardHeader = ({ title }: { title: string }) => {
+const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  // const dispatch = useDispatch()
+  const { objectType, title, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
+
   const buttonGroup = (
     <div className={classes.buttonGroup}>
-      <Button variant="contained" aria-label="creat new form" size="small">
+      <Button variant="contained" aria-label="create new form" size="small" onClick={onClickNewForm}>
         New form
       </Button>
-      <Button variant="contained" aria-label="clear form" size="small">
+      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
         Clear form
       </Button>
-      <Button variant="contained" aria-label="save form as draft" size="small">
+      <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
         Save as Draft
       </Button>
-      <Button variant="contained" aria-label="submit form" size="small">
-        Submit
+      <Button variant="contained" aria-label="submit form" size="small" type="submit" onClick={onClickSubmit}>
+        Submit {objectType}
       </Button>
     </div>
   )
+
   return (
     <CardHeader
       title={title}
@@ -137,19 +134,6 @@ const CustomCardHeader = ({ title }: { title: string }) => {
         root: classes.cardHeader,
         action: classes.cardHeaderAction,
       }}
-      // action={
-      //   <Button
-      //     variant="outlined"
-      //     aria-label="hide card"
-      //     className={classes.hideButton}
-      //     // onClick={() => {
-      //     //   dispatch(resetObjectType())
-      //     //   dispatch(resetSubmissionType())
-      //     // }}
-      //   >
-      //     Hide
-      //   </Button>
-      // }
       action={buttonGroup}
     />
   )
@@ -160,14 +144,18 @@ const CustomCardHeader = ({ title }: { title: string }) => {
  */
 const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: FormContentProps) => {
   const classes = useStyles()
+
   const draftStatus = useSelector(state => state.draftStatus)
   const draftObject = useSelector(state => state.draftObject)
   const alert = useSelector(state => state.alert)
+
   const methods = useForm({ mode: "onBlur", resolver, defaultValues: draftObject })
+
   const dispatch = useDispatch()
   const [cleanedValues, setCleanedValues] = useState({})
   const [currentDraftId, setCurrentDraftId] = useState(draftObject?.accessionId)
   const [timer, setTimer] = useState(0)
+
   const increment = useRef(null)
 
   const resetForm = () => {
@@ -296,47 +284,24 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     }
   }, [timer])
 
+  const submitForm = () => {
+    methods.handleSubmit(onSubmit)()
+    handleReset()
+    if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
+  }
+
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit)}
-        className={classes.formComponents}
-        onChange={() => handleChange()}
-      >
+      <CustomCardHeader
+        objectType={objectType}
+        title="Fill form"
+        onClickNewForm={() => {}}
+        onClickClearForm={() => resetForm()}
+        onClickSaveDraft={() => saveDraft()}
+        onClickSubmit={() => submitForm()}
+      />
+      <form className={classes.formComponents} onChange={() => handleChange()}>
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
-        <div className={classes.formButtonContainer}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.formButtonSave}
-            onClick={() => saveDraft()}
-          >
-            Save as Draft
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            className={classes.formButtonClear}
-            onClick={() => resetForm()}
-          >
-            Clear form
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            type="submit"
-            className={classes.formButtonSubmit}
-            onClick={() => {
-              handleReset()
-              if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
-            }}
-          >
-            Submit {objectType}
-          </Button>
-        </div>
       </form>
     </FormProvider>
   )
@@ -432,7 +397,6 @@ const WizardFillObjectDetailsForm = () => {
 
   return (
     <Container className={classes.container}>
-      <CustomCardHeader title="Fill form" />
       <FormContent
         formSchema={formSchema}
         resolver={WizardAjvResolver(validationSchema)}

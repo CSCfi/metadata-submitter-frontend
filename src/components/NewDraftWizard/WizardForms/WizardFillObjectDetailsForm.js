@@ -7,6 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
+import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
@@ -49,6 +50,9 @@ const useStyles = makeStyles(theme => ({
     "& > :not(:last-child)": {
       marginRight: theme.spacing(1),
     },
+  },
+  addIcon: {
+    marginRight: theme.spacing(1),
   },
   formComponents: {
     margin: theme.spacing(3, 2),
@@ -112,6 +116,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const buttonGroup = (
     <div className={classes.buttonGroup}>
       <Button variant="contained" aria-label="create new form" size="small" onClick={onClickNewForm}>
+        <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
         New form
       </Button>
       <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>

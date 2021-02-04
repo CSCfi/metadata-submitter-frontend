@@ -3,11 +3,14 @@ import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
+import CardHeader from "@material-ui/core/CardHeader"
+import Container from "@material-ui/core/Container"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
 import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
@@ -18,9 +21,18 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    width: "100%",
+    padding: 0,
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFF",
+    fontWeight: "bold",
+    marginBottom: theme.spacing(3),
+  },
   objectList: {
     padding: "0 1rem",
-    width: "100%",
   },
   objectListItems: {
     border: "none",
@@ -75,9 +87,14 @@ const WizardDraftObjectPicker = () => {
   }
 
   return (
-    <div className={classes.objectList}>
+    <Container className={classes.container}>
+      <CardHeader
+        title="Choose from drafts"
+        titleTypographyProps={{ variant: "inherit" }}
+        className={classes.cardHeader}
+      />
       {currentObjectTypeDrafts.length > 0 ? (
-        <List>
+        <List className={classes.objectList}>
           {currentObjectTypeDrafts.map(submission => {
             return (
               <ListItem key={submission.accessionId} className={classes.objectListItems}>
@@ -105,13 +122,15 @@ const WizardDraftObjectPicker = () => {
           })}
         </List>
       ) : (
-        <h3>No {objectType} drafts.</h3>
+        <Typography variant="subtitle1" align="center">
+          No {objectType} drafts.
+        </Typography>
       )}
 
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
       )}
-    </div>
+    </Container>
   )
 }
 

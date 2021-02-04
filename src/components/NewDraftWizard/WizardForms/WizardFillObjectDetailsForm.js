@@ -294,6 +294,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   const submitForm = () => {
     methods.handleSubmit(onSubmit)()
     handleReset()
+    dispatch(resetDraftObject())
     if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
   }
 

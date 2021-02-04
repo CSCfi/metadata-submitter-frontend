@@ -2,6 +2,8 @@
 import React, { useState } from "react"
 
 import Button from "@material-ui/core/Button"
+import CardHeader from "@material-ui/core/CardHeader"
+import Container from "@material-ui/core/Container"
 import FormControl from "@material-ui/core/FormControl"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
@@ -17,11 +19,23 @@ import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    padding: 0,
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  cardHeaderAction: {
+    marginTop: "-4px",
+    marginBottom: "-4px",
+  },
   root: {
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(2),
+      margin: theme.spacing(5, "auto"),
     },
   },
   hiddenInput: {
@@ -87,8 +101,28 @@ const WizardUploadObjectXMLForm = () => {
     }
   }
 
+  const submitButton = (
+    <Button
+      variant="contained"
+      className={classes.submitButton}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
+      onClick={handleSubmit(onSubmit)}
+    >
+      Submit
+    </Button>
+  )
+
   return (
-    <div>
+    <Container className={classes.container}>
+      <CardHeader
+        title="Upload XML File"
+        titleTypographyProps={{ variant: "inherit" }}
+        classes={{
+          root: classes.cardHeader,
+          action: classes.cardHeaderAction,
+        }}
+        action={submitButton}
+      />
       {/* React Hook Form */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
@@ -129,17 +163,6 @@ const WizardUploadObjectXMLForm = () => {
           {/* Progress bar */}
           {isSubmitting && <LinearProgress />}
         </FormControl>
-
-        <Button
-          variant="outlined"
-          color="primary"
-          className={classes.submitButton}
-          type="button"
-          disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
-          onClick={handleSubmit(onSubmit)}
-        >
-          Submit
-        </Button>
       </form>
 
       {successStatus && (
@@ -149,7 +172,7 @@ const WizardUploadObjectXMLForm = () => {
           prefixText=""
         ></WizardStatusMessageHandler>
       )}
-    </div>
+    </Container>
   )
 }
 

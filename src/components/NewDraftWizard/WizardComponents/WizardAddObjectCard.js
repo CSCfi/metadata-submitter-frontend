@@ -16,15 +16,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(4),
     padding: 0,
   },
-  cardCenterContent: {
-    flexGrow: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "40vh",
-    border: "1px solid blue",
-    padding: 0,
-  },
   submissionTypeButton: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),

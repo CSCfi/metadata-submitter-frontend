@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   formComponents: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(3, 2),
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),

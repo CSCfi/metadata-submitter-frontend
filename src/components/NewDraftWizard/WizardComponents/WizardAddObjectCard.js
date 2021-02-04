@@ -46,17 +46,14 @@ const WizardAddObjectCard = () => {
   const objectType = useSelector(state => state.objectType)
   const cards = {
     form: {
-      title: "Fill form",
       component: <WizardFillObjectDetailsForm key={objectType + submissionType} />,
       testId: "form",
     },
     xml: {
-      title: "Upload XML file",
       component: <WizardUploadObjectXMLForm key={objectType + submissionType} />,
       testId: "xml",
     },
     existing: {
-      title: "Choose from drafts",
       component: <WizardDraftObjectPicker />,
       testId: "existing",
     },

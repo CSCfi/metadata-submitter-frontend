@@ -3,6 +3,7 @@
 import { combineReducers } from "@reduxjs/toolkit"
 
 import draftStatusReducer from "features/draftStatusSlice"
+import focusReducer from "features/focusSlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
@@ -17,6 +18,7 @@ import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
 const rootReducer = combineReducers({
   alert: wizardAlertReducer,
+  focus: focusReducer,
   statusDetails: wizardStatusMessageReducer,
   objectType: objectTypeReducer,
   wizardStep: wizardStepReducer,

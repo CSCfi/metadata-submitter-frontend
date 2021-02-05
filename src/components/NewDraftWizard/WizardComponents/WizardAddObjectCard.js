@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(4),
     padding: 0,
+    overflow: "visible",
   },
   submissionTypeButton: {
     paddingTop: theme.spacing(2),

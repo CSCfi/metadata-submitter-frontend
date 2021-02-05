@@ -29,16 +29,14 @@ const useStyles = makeStyles(theme => ({
   container: {
     margin: 0,
     padding: 0,
-    maxHeight: "70vh",
-    position: "relative",
-    overflow: "scroll",
   },
   cardHeader: {
     backgroundColor: theme.palette.primary.main,
     color: "#FFF",
     fontWeight: "bold",
     position: "sticky",
-    top: 0,
+    top: theme.spacing(8),
+    zIndex: 2,
   },
   cardHeaderAction: {
     marginTop: "-4px",

@@ -96,6 +96,7 @@ type CustomCardHeaderProps = {
   onClickClearForm: () => void,
   onClickSaveDraft: () => Promise<void>,
   onClickSubmit: () => void,
+  refForm: any,
 }
 
 type FormContentProps = {
@@ -111,7 +112,7 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const { objectType, title, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
+  const { objectType, title, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
 
   const buttonGroup = (
     <div className={classes.buttonGroup}>
@@ -125,7 +126,14 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
         Save as Draft
       </Button>
-      <Button variant="contained" aria-label="submit form" size="small" type="submit" onClick={onClickSubmit}>
+      <Button
+        variant="contained"
+        aria-label="submit form"
+        size="small"
+        type="submit"
+        onClick={onClickSubmit}
+        form={refForm}
+      >
         Submit {objectType}
       </Button>
     </div>
@@ -297,7 +305,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   }, [timer])
 
   const submitForm = () => {
-    methods.handleSubmit(onSubmit)()
     handleReset()
     dispatch(resetDraftObject())
     if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
@@ -308,12 +315,18 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
       <CustomCardHeader
         objectType={objectType}
         title="Fill form"
+        refForm="hook-form"
         onClickNewForm={() => createNewForm()}
         onClickClearForm={() => resetForm()}
         onClickSaveDraft={() => saveDraft()}
         onClickSubmit={() => submitForm()}
       />
-      <form className={classes.formComponents} onChange={() => handleChange()}>
+      <form
+        id="hook-form"
+        className={classes.formComponents}
+        onChange={() => handleChange()}
+        onSubmit={methods.handleSubmit(onSubmit)}
+      >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
       </form>
     </FormProvider>

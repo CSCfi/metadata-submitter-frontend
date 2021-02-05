@@ -1,5 +1,5 @@
 //@flow
-import React, { useRef, useEffect } from "react"
+import React from "react"
 
 import Card from "@material-ui/core/Card"
 import { makeStyles } from "@material-ui/core/styles"

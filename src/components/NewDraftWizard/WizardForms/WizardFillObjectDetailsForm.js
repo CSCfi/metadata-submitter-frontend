@@ -144,6 +144,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   useEffect(() => {
     window.addEventListener("keydown", keyHandler)
     return () => {
+      handleReset()
       window.removeEventListener("keydown", keyHandler)
     }
   }, [])

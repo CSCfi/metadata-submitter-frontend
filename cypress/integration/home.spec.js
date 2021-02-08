@@ -126,7 +126,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Publish").click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
-    cy.reload()
+    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
     // Click "See all" button to navigate to all published folders list
     cy.get("div.MuiCardActions-root", { timeout: 30000 })
       .last()

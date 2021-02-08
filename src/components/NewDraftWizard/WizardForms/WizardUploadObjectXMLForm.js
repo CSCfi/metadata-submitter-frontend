@@ -85,6 +85,7 @@ const WizardUploadObjectXMLForm = () => {
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
+          tags: { submissionType: "XML" },
         })
       )
     } else {

@@ -35,9 +35,8 @@ const useStyles = makeStyles(theme => ({
 const WizardAddObjectStep = () => {
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)
-  const currentSubmissionType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
-  const submissions = folder?.metadataObjects?.filter(obj => obj.schema === currentSubmissionType)
+  const submissions = folder?.metadataObjects?.filter(obj => obj.schema === objectType)
 
   return (
     <>
@@ -55,9 +54,7 @@ const WizardAddObjectStep = () => {
             <WizardAddObjectCard />
           )}
         </div>
-        {submissions?.length > 0 && (
-          <WizardSavedObjectsList submissionType={currentSubmissionType} submissions={submissions} />
-        )}
+        {submissions?.length > 0 && <WizardSavedObjectsList submissions={submissions} />}
       </div>
     </>
   )

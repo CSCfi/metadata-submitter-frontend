@@ -60,18 +60,25 @@ const ToggleMessage = ({ delay, children }: { delay: number, children: any }) =>
 /**
  * List objects by submission type. Enables deletion of objects
  */
-const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionType: string, submissions: any }) => {
+const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
   const ref = useRef()
   useEffect(() => {
     ref.current = submissions
   })
+
   const classes = useStyles()
+
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
   const newObject = submissions.filter(x => !ref.current?.includes(x))
+  // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
+  const submissionTypes = submissions
+    .map(obj => obj.tags.submissionType)
+    .filter((val, ind, arr) => arr.indexOf(val) === ind)
+    .sort()
 
   const handleObjectDelete = objectId => {
     setConnError(false)
@@ -84,30 +91,37 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
 
   return (
     <div className={classes.objectList}>
-      <h3 className={classes.header}>Submitted {submissionType} items</h3>
-      <List>
-        {submissions.map(submission => {
-          return (
-            <ListItem key={submission.accessionId} className={classes.objectListItems}>
-              <ListItemText primary={submission.accessionId} />
-              <ListItemSecondaryAction>
-                {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
-                  <ToggleMessage delay={5000}>Added!</ToggleMessage>
-                )}
-                <IconButton
-                  onClick={() => {
-                    handleObjectDelete(submission.accessionId)
-                  }}
-                  edge="end"
-                  aria-label="delete"
-                >
-                  <ClearIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          )
-        })}
-      </List>
+      {submissionTypes.map(submissionType => (
+        <>
+          <h3 className={classes.header}>
+            Submitted {objectType} {submissionType}
+          </h3>
+          <List>
+            {submissions.map(
+              submission =>
+                submission.tags.submissionType === submissionType && (
+                  <ListItem key={submission.accessionId} className={classes.objectListItems}>
+                    <ListItemText primary={submission.accessionId} />
+                    <ListItemSecondaryAction>
+                      {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
+                        <ToggleMessage delay={5000}>Added!</ToggleMessage>
+                      )}
+                      <IconButton
+                        onClick={() => {
+                          handleObjectDelete(submission.accessionId)
+                        }}
+                        edge="end"
+                        aria-label="delete"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                )
+            )}
+          </List>
+        </>
+      ))}
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
       )}

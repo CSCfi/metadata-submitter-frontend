@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { resetFocus } from "features/focusSlice"
 import { setDraftObject } from "features/wizardDraftObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
@@ -64,7 +65,16 @@ const WizardDraftObjectPicker = () => {
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
 
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && draftRefs[0]) draftRefs[0].focus()
+  }, [shouldFocus])
+
+  const draftRefs = []
+
   const handleObjectContinue = async objectId => {
+    if (shouldFocus) dispatch(resetFocus())
     setConnError(false)
     const response = await draftAPIService.getObjectByAccessionId(objectType, objectId)
     if (response.ok) {
@@ -86,6 +96,10 @@ const WizardDraftObjectPicker = () => {
     })
   }
 
+  const setRef = ref => {
+    draftRefs.push(ref)
+  }
+
   return (
     <Container className={classes.container}>
       <CardHeader
@@ -105,6 +119,8 @@ const WizardDraftObjectPicker = () => {
                       className={classes.buttonContinue}
                       aria-label="Continue draft"
                       onClick={() => handleObjectContinue(submission.accessionId)}
+                      onBlur={() => dispatch(resetFocus())}
+                      ref={setRef}
                     >
                       Continue
                     </Button>

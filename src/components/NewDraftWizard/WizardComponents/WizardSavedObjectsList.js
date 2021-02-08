@@ -92,35 +92,33 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
   return (
     <div className={classes.objectList}>
       {submissionTypes.map(submissionType => (
-        <>
+        <List key={submissionType} aria-label={submissionType}>
           <h3 className={classes.header}>
-            Submitted {objectType} {submissionType}
+            Submitted {`${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`} {submissionType}
           </h3>
-          <List>
-            {submissions.map(
-              submission =>
-                submission.tags.submissionType === submissionType && (
-                  <ListItem key={submission.accessionId} className={classes.objectListItems}>
-                    <ListItemText primary={submission.accessionId} />
-                    <ListItemSecondaryAction>
-                      {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
-                        <ToggleMessage delay={5000}>Added!</ToggleMessage>
-                      )}
-                      <IconButton
-                        onClick={() => {
-                          handleObjectDelete(submission.accessionId)
-                        }}
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                )
-            )}
-          </List>
-        </>
+          {submissions.map(
+            submission =>
+              submission.tags.submissionType === submissionType && (
+                <ListItem key={submission.accessionId} className={classes.objectListItems}>
+                  <ListItemText primary={submission.accessionId} />
+                  <ListItemSecondaryAction>
+                    {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
+                      <ToggleMessage delay={5000}>Added!</ToggleMessage>
+                    )}
+                    <IconButton
+                      onClick={() => {
+                        handleObjectDelete(submission.accessionId)
+                      }}
+                      edge="end"
+                      aria-label="delete"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+          )}
+        </List>
       ))}
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />

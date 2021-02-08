@@ -80,6 +80,12 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
     .filter((val, ind, arr) => arr.indexOf(val) === ind)
     .sort()
 
+  // group submissions according to their submissionType
+  const groupedSubmissions = submissionTypes.map(submissionType => ({
+    submissionType,
+    submittedItems: submissions.filter(obj => obj.tags.submissionType === submissionType),
+  }))
+
   const handleObjectDelete = objectId => {
     setConnError(false)
     dispatch(deleteObjectFromFolder("submitted", objectId, objectType)).catch(error => {
@@ -89,35 +95,47 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
     })
   }
 
+  const displayObjectType = (objectType: string) => {
+    return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
+  }
+
+  const displaySubmissionType = (submission: { submissionType: string, submittedItems: any }) => {
+    switch (submission.submissionType) {
+      case "Form":
+        return submission.submittedItems.length >= 2 ? "Forms" : "Form"
+      case "XML":
+        return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
+      default:
+        break
+    }
+  }
+
   return (
     <div className={classes.objectList}>
-      {submissionTypes.map(submissionType => (
-        <List key={submissionType} aria-label={submissionType}>
+      {groupedSubmissions.map(group => (
+        <List key={group.submissionType} aria-label={group.submissionType}>
           <h3 className={classes.header}>
-            Submitted {`${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`} {submissionType}
+            Submitted {displayObjectType(objectType)} {displaySubmissionType(group)}
           </h3>
-          {submissions.map(
-            submission =>
-              submission.tags.submissionType === submissionType && (
-                <ListItem key={submission.accessionId} className={classes.objectListItems}>
-                  <ListItemText primary={submission.accessionId} />
-                  <ListItemSecondaryAction>
-                    {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
-                      <ToggleMessage delay={5000}>Added!</ToggleMessage>
-                    )}
-                    <IconButton
-                      onClick={() => {
-                        handleObjectDelete(submission.accessionId)
-                      }}
-                      edge="end"
-                      aria-label="delete"
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )
-          )}
+          {group.submittedItems.map(item => (
+            <ListItem key={item.accessionId} className={classes.objectListItems}>
+              <ListItemText primary={item.accessionId} />
+              <ListItemSecondaryAction>
+                {newObject.length === 1 && newObject[0]?.accessionId === item.accessionId && (
+                  <ToggleMessage delay={5000}>Added!</ToggleMessage>
+                )}
+                <IconButton
+                  onClick={() => {
+                    handleObjectDelete(item.accessionId)
+                  }}
+                  edge="end"
+                  aria-label="delete"
+                >
+                  <ClearIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
         </List>
       ))}
       {connError && (

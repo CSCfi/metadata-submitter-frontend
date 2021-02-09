@@ -34,7 +34,6 @@ const useStyles = makeStyles(theme => ({
 const Home = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  const folderIds = user.folders
 
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
@@ -55,28 +54,24 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    if (folderIds) {
-      const unpublishedArr = []
-      const publishedArr = []
-      // Handle fetching details of all folders belong to current user
-      const fetchFolders = async () => {
-        for (let i = 0; i < folderIds.length; i += 1) {
-          const response = await folderAPIService.getFolderById(folderIds[i])
-          if (response.ok) {
-            response.data.published ? publishedArr.push(response.data) : unpublishedArr.push(response.data)
-          } else {
-            setConnError(true)
-            setResponseError(response)
-            setErrorPrefix("Fetching folders error.")
-          }
-        }
-        dispatch(setUnpublishedFolders(unpublishedArr))
-        dispatch(setPublishedFolders(publishedArr))
+    let isMounted = true
+    const getFolders = async () => {
+      const response = await folderAPIService.getFolders()
+      if (response.ok && isMounted) {
+        dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
+        dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
         setFetchingFolders(false)
+      } else {
+        setConnError(true)
+        setResponseError(response)
+        setErrorPrefix("Fetching folders error.")
       }
-      fetchFolders()
     }
-  }, [folderIds?.length])
+    getFolders()
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   // Handle fetching details of all objects (drafts + metadata) of the clicked folder
   const handleClickFolder = async (currentFolderId: string, folderType: string) => {

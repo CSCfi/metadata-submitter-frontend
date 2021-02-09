@@ -22,9 +22,14 @@ const deleteFolderById = async (folderId: string) => {
   return await api.delete(`/${folderId}`)
 }
 
+const getFolders = async () => {
+  return await api.get()
+}
+
 export default {
   createNewFolder,
   getFolderById,
   patchFolderById,
   deleteFolderById,
+  getFolders,
 }

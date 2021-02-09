@@ -6,7 +6,7 @@ describe("Basic e2e", function () {
     cy.get('[alt="CSC Login"]').click()
   })
 
-  it("should create new folder, add Study form, upload Study XML file, add Analysis form and publish folder", () => {
+  it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
     cy.visit(baseUrl + "newdraft")
@@ -118,9 +118,9 @@ describe("Basic e2e", function () {
             "Processed Sequence Accession Id"
           )
         })
-      cy.root().submit()
     })
-
+    // Submit form
+    cy.get("button[type=submit]").contains("Submit").click()
     // Saved objects list should have newly added item from Analysis object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 

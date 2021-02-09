@@ -2,10 +2,12 @@
 import React, { useEffect, useState, useRef } from "react"
 
 import Button from "@material-ui/core/Button"
+import CardHeader from "@material-ui/core/CardHeader"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Container from "@material-ui/core/Container"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
+import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
@@ -16,7 +18,8 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { setDraftObject } from "features/wizardDraftObjectSlice"
+import { resetFocus } from "features/focusSlice"
+import { setDraftObject, resetDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
@@ -24,7 +27,34 @@ import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    margin: 0,
+    padding: 0,
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFF",
+    fontWeight: "bold",
+    position: "sticky",
+    top: theme.spacing(8),
+    zIndex: 2,
+  },
+  cardHeaderAction: {
+    marginTop: "-4px",
+    marginBottom: "-4px",
+  },
+  buttonGroup: {
+    display: "flex",
+    flexDirection: "row",
+    "& > :not(:last-child)": {
+      marginRight: theme.spacing(1),
+    },
+  },
+  addIcon: {
+    marginRight: theme.spacing(1),
+  },
   formComponents: {
+    margin: theme.spacing(3, 2),
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -56,21 +86,17 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  formButtonContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  formButtonSave: {
-    margin: theme.spacing(2, "auto", 2, 1),
-    marginRight: "auto",
-  },
-  formButtonClear: {
-    margin: theme.spacing(2, 1, 2, "auto"),
-  },
-  formButtonSubmit: {
-    margin: theme.spacing(2, 1, 2, 1),
-  },
 }))
+
+type CustomCardHeaderProps = {
+  objectType: string,
+  title: string,
+  onClickNewForm: () => void,
+  onClickClearForm: () => void,
+  onClickSaveDraft: () => Promise<void>,
+  onClickSubmit: () => void,
+  refForm: any,
+}
 
 type FormContentProps = {
   resolver: typeof WizardAjvResolver,
@@ -81,19 +107,97 @@ type FormContentProps = {
 }
 
 /*
+ * Create header for form card with button to close the card
+ */
+const CustomCardHeader = (props: CustomCardHeaderProps) => {
+  const classes = useStyles()
+  const { objectType, title, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
+
+  const dispatch = useDispatch()
+
+  const focusTarget = useRef(null)
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
+
+  const handleClick = () => {
+    onClickNewForm()
+    dispatch(resetFocus())
+  }
+
+  const buttonGroup = (
+    <div className={classes.buttonGroup}>
+      <Button
+        ref={focusTarget}
+        variant="contained"
+        aria-label="create new form"
+        size="small"
+        onClick={() => handleClick()}
+        onBlur={() => dispatch(resetFocus())}
+      >
+        <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
+        New form
+      </Button>
+      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
+        Clear form
+      </Button>
+      <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
+        Save as Draft
+      </Button>
+      <Button
+        variant="contained"
+        aria-label="submit form"
+        size="small"
+        type="submit"
+        onClick={onClickSubmit}
+        form={refForm}
+      >
+        Submit {objectType}
+      </Button>
+    </div>
+  )
+
+  return (
+    <CardHeader
+      title={title}
+      titleTypographyProps={{ variant: "inherit" }}
+      classes={{
+        root: classes.cardHeader,
+        action: classes.cardHeaderAction,
+      }}
+      action={buttonGroup}
+    />
+  )
+}
+
+/*
  * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
 const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: FormContentProps) => {
   const classes = useStyles()
+
   const draftStatus = useSelector(state => state.draftStatus)
   const draftObject = useSelector(state => state.draftObject)
   const alert = useSelector(state => state.alert)
+
   const methods = useForm({ mode: "onBlur", resolver, defaultValues: draftObject })
+
   const dispatch = useDispatch()
   const [cleanedValues, setCleanedValues] = useState({})
   const [currentDraftId, setCurrentDraftId] = useState(draftObject?.accessionId)
   const [timer, setTimer] = useState(0)
+
   const increment = useRef(null)
+
+  const createNewForm = () => {
+    handleReset()
+    resetForm()
+    setCurrentDraftId(null)
+    dispatch(resetDraftStatus())
+    dispatch(resetDraftObject())
+  }
 
   const resetForm = () => {
     methods.reset(formSchema)
@@ -118,8 +222,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const handleDraftDelete = draftId => {
     dispatch(deleteObjectFromFolder("draft", draftId, objectType))
-    setCurrentDraftId(() => null)
-    handleChange()
+    setCurrentDraftId(null)
   }
 
   /*
@@ -221,47 +324,30 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     }
   }, [timer])
 
+  const submitForm = () => {
+    handleReset()
+    dispatch(resetDraftObject())
+    if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
+  }
+
   return (
     <FormProvider {...methods}>
+      <CustomCardHeader
+        objectType={objectType}
+        title="Fill form"
+        refForm="hook-form"
+        onClickNewForm={() => createNewForm()}
+        onClickClearForm={() => resetForm()}
+        onClickSaveDraft={() => saveDraft()}
+        onClickSubmit={() => submitForm()}
+      />
       <form
-        onSubmit={methods.handleSubmit(onSubmit)}
+        id="hook-form"
         className={classes.formComponents}
         onChange={() => handleChange()}
+        onSubmit={methods.handleSubmit(onSubmit)}
       >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
-        <div className={classes.formButtonContainer}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.formButtonSave}
-            onClick={() => saveDraft()}
-          >
-            Save as Draft
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            className={classes.formButtonClear}
-            onClick={() => resetForm()}
-          >
-            Clear form
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            type="submit"
-            className={classes.formButtonSubmit}
-            onClick={() => {
-              handleReset()
-              if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
-            }}
-          >
-            Submit {objectType}
-          </Button>
-        </div>
       </form>
     </FormProvider>
   )
@@ -271,6 +357,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
 const WizardFillObjectDetailsForm = () => {
+  const classes = useStyles()
+
   const objectType = useSelector(state => state.objectType)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -354,7 +442,7 @@ const WizardFillObjectDetailsForm = () => {
   if (error) return <Alert severity="error">{errorPrefix}</Alert>
 
   return (
-    <Container maxWidth="md">
+    <Container className={classes.container}>
       <FormContent
         formSchema={formSchema}
         resolver={WizardAjvResolver(validationSchema)}

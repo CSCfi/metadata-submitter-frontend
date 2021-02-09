@@ -51,14 +51,39 @@ describe("Draft operations", function () {
     // Fill
     cy.get("input[name='descriptor.studyTitle']").type("New title")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("select[name='descriptor.studyType']").select("Metagenomics").blur()
+    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
+    cy.get("button[type=button]").contains("Save as Draft").click()
 
-    // Submit form
+    // Create a new form and save as draft
+    cy.get("button").contains("New form").click()
+    cy.get("input[name='descriptor.studyTitle']").should("contain.text", "")
+    cy.get("input[name='descriptor.studyTitle']").type("New title 2")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title 2")
+    cy.get("select[name='descriptor.studyType']").select("Resequencing")
+    cy.get("button[type=button]").contains("Save as Draft").click()
+
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
+
+    // Check that there are 2 drafts saved in "Choose from drafts"
+    cy.get("div[role=button]").contains("Choose from drafts").click()
+    cy.get("div[data-testid='existing']").find("li").should("have.length", 2)
+
+    // Submit first form draft
+    cy.get("button[aria-label='Continue draft']").first().click()
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
+    // Submit second form draft
+    cy.get("div[role=button]").contains("Choose from drafts").click()
+    cy.get("div[data-testid='existing']").find("li").should("have.length", 1)
+    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.get("button[type=submit]").contains("Submit").click()
+
+    // Check that there are 2 submitted objects
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+
     // Drafts should be empty
     cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("h3").contains("No study drafts.")
+    cy.get("div").contains("No study drafts.")
   })
 })

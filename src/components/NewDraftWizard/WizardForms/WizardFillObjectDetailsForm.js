@@ -18,6 +18,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
+import { resetFocus } from "features/focusSlice"
 import { setDraftObject, resetDraftObject } from "features/wizardDraftObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
@@ -112,9 +113,30 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
   const { objectType, title, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
 
+  const dispatch = useDispatch()
+
+  const focusTarget = useRef(null)
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
+
+  const handleClick = () => {
+    onClickNewForm()
+    dispatch(resetFocus())
+  }
+
   const buttonGroup = (
     <div className={classes.buttonGroup}>
-      <Button variant="contained" aria-label="create new form" size="small" onClick={onClickNewForm}>
+      <Button
+        ref={focusTarget}
+        variant="contained"
+        aria-label="create new form"
+        size="small"
+        onClick={() => handleClick()}
+        onBlur={() => dispatch(resetFocus())}
+      >
         <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
         New form
       </Button>

@@ -115,10 +115,12 @@ const SubmissionTypeList = ({
   handleSubmissionTypeChange,
   isCurrentObjectType,
   currentSubmissionType,
+  draftCount,
 }: {
   handleSubmissionTypeChange: string => void,
   isCurrentObjectType: boolean,
   currentSubmissionType: string,
+  draftCount: number,
 }) => {
   const submissionTypes = ["form", "xml", "existing"]
   const submissionTypeMap = {
@@ -130,9 +132,13 @@ const SubmissionTypeList = ({
   const [showSkipLink, setSkipLinkVisible] = useState(false)
   const dispatch = useDispatch()
 
-  const handleSkipLink = event => {
+  const handleSkipLink = (event, submissionType) => {
     if (event.key === "Enter") {
-      setSkipLinkVisible(true)
+      if (submissionType === "existing" && draftCount === 0) {
+        setSkipLinkVisible(false)
+      } else {
+        setSkipLinkVisible(true)
+      }
     }
   }
 
@@ -184,7 +190,7 @@ const SubmissionTypeList = ({
           key={submissionType}
           button
           onClick={event => {
-            handleSkipLink(event)
+            handleSkipLink(event, submissionType)
             handleSubmissionTypeChange(submissionType)
           }}
           className={classes.submissionTypeListItem}
@@ -228,7 +234,7 @@ const WizardObjectIndex = () => {
     setExpandedObjectType(newExpanded ? panel : false)
   }
 
-  const getBadgeContent = (objectType: string) => {
+  const getDraftCount = (objectType: string) => {
     return draftObjects[objectType] ? draftObjects[objectType] : 0
   }
 
@@ -278,7 +284,7 @@ const WizardObjectIndex = () => {
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
               <Badge
-                badgeContent={getBadgeContent("draft-" + objectType)}
+                badgeContent={getDraftCount("draft-" + objectType)}
                 className={classes.badge}
                 data-testid="badge"
               />
@@ -288,6 +294,7 @@ const WizardObjectIndex = () => {
                 handleSubmissionTypeChange={handleSubmissionTypeChange}
                 isCurrentObjectType={isCurrentObjectType}
                 currentSubmissionType={currentSubmissionType}
+                draftCount={getDraftCount("draft-" + objectType)}
               />
             </AccordionDetails>
           </Accordion>

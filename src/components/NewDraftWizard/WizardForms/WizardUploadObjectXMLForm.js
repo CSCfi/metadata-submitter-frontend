@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { resetFocus } from "features/focusSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -69,6 +70,13 @@ const WizardUploadObjectXMLForm = () => {
 
   const watchFile = watch("fileUpload")
 
+  const focusTarget = useRef(null)
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
+
   const onSubmit = async data => {
     setSuccessStatus(undefined)
     setSubmitting(true)
@@ -99,6 +107,7 @@ const WizardUploadObjectXMLForm = () => {
     if (fileSelect && fileSelect.click()) {
       fileSelect.click()
     }
+    dispatch(resetFocus())
   }
 
   const submitButton = (
@@ -131,7 +140,14 @@ const WizardUploadObjectXMLForm = () => {
               placeholder={watchFile && watchFile[0] ? watchFile[0].name : "Name"}
               inputProps={{ readOnly: true, tabIndex: -1 }}
             />
-            <Button variant="contained" color="primary" component="label" onClick={() => handleButton()}>
+            <Button
+              ref={focusTarget}
+              variant="contained"
+              color="primary"
+              component="label"
+              onClick={() => handleButton()}
+              onBlur={() => dispatch(resetFocus())}
+            >
               Choose file
             </Button>
             <input

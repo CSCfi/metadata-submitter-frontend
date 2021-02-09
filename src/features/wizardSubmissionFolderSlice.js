@@ -74,6 +74,7 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
     drafts: [],
   }
   const response = await folderAPIService.createNewFolder(folderForBackend)
+
   return new Promise((resolve, reject) => {
     if (response.ok) {
       const folder: Folder = {

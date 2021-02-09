@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     borderTop: "solid 1px #ccc",
     backgroundColor: "#FFF",
     position: "fixed",
+    zIndex: 1,
     left: 0,
     bottom: 0,
     padding: "10px",

@@ -60,18 +60,31 @@ const ToggleMessage = ({ delay, children }: { delay: number, children: any }) =>
 /**
  * List objects by submission type. Enables deletion of objects
  */
-const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionType: string, submissions: any }) => {
+const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
   const ref = useRef()
   useEffect(() => {
     ref.current = submissions
   })
+
   const classes = useStyles()
+
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
   const newObject = submissions.filter(x => !ref.current?.includes(x))
+  // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
+  const submissionTypes = submissions
+    .map(obj => obj.tags.submissionType)
+    .filter((val, ind, arr) => arr.indexOf(val) === ind)
+    .sort()
+
+  // group submissions according to their submissionType
+  const groupedSubmissions = submissionTypes.map(submissionType => ({
+    submissionType,
+    submittedItems: submissions.filter(obj => obj.tags.submissionType === submissionType),
+  }))
 
   const handleObjectDelete = objectId => {
     setConnError(false)
@@ -82,21 +95,38 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
     })
   }
 
+  const displayObjectType = (objectType: string) => {
+    return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
+  }
+
+  const displaySubmissionType = (submission: { submissionType: string, submittedItems: any }) => {
+    switch (submission.submissionType) {
+      case "Form":
+        return submission.submittedItems.length >= 2 ? "Forms" : "Form"
+      case "XML":
+        return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
+      default:
+        break
+    }
+  }
+
   return (
     <div className={classes.objectList}>
-      <h3 className={classes.header}>Submitted {submissionType} items</h3>
-      <List>
-        {submissions.map(submission => {
-          return (
-            <ListItem key={submission.accessionId} className={classes.objectListItems}>
-              <ListItemText primary={submission.accessionId} />
+      {groupedSubmissions.map(group => (
+        <List key={group.submissionType} aria-label={group.submissionType}>
+          <h3 className={classes.header}>
+            Submitted {displayObjectType(objectType)} {displaySubmissionType(group)}
+          </h3>
+          {group.submittedItems.map(item => (
+            <ListItem key={item.accessionId} className={classes.objectListItems}>
+              <ListItemText primary={item.accessionId} />
               <ListItemSecondaryAction>
-                {newObject.length === 1 && newObject[0]?.accessionId === submission.accessionId && (
+                {newObject.length === 1 && newObject[0]?.accessionId === item.accessionId && (
                   <ToggleMessage delay={5000}>Added!</ToggleMessage>
                 )}
                 <IconButton
                   onClick={() => {
-                    handleObjectDelete(submission.accessionId)
+                    handleObjectDelete(item.accessionId)
                   }}
                   edge="end"
                   aria-label="delete"
@@ -105,9 +135,9 @@ const WizardSavedObjectsList = ({ submissionType, submissions }: { submissionTyp
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
-          )
-        })}
-      </List>
+          ))}
+        </List>
+      ))}
       {connError && (
         <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
       )}

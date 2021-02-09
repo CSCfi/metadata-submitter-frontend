@@ -361,6 +361,7 @@ const WizardFillObjectDetailsForm = () => {
   const classes = useStyles()
 
   const objectType = useSelector(state => state.objectType)
+
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorPrefix, setErrorPrefix] = useState("")
@@ -391,6 +392,7 @@ const WizardFillObjectDetailsForm = () => {
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
+          tags: { submissionType: "Form" },
         })
       )
         .then(() => {

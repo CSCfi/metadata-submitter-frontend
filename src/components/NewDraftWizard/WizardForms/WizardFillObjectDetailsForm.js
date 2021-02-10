@@ -200,6 +200,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const resetForm = () => {
     methods.reset(formSchema)
+    setCleanedValues({})
     dispatch(resetDraftStatus())
     handleReset()
   }

@@ -200,6 +200,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const resetForm = () => {
     methods.reset(formSchema)
+    dispatch(resetDraftStatus())
+    handleReset()
   }
 
   // Check if the form is empty
@@ -339,7 +341,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     if (alert) {
       clearInterval(increment.current)
     }
-    if (timer >= 5) {
+    if (timer >= 60) {
       saveDraft()
       clearInterval(increment.current)
     }

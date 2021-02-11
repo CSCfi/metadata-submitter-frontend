@@ -63,6 +63,21 @@ describe("Basic e2e", function () {
     // Saved objects list should have newly added item from Study object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
 
+    // Replace XML
+    cy.get("button[type=button]").contains("Replace").click()
+    cy.get(".MuiCardHeader-action").contains("Replace")
+    cy.fixture("study_test_modified.xml").then(fileContent => {
+      cy.get('input[type="file"]').attachFile({
+        fileContent: fileContent.toString(),
+        fileName: "testFile_replace.xml",
+        mimeType: "text/xml",
+        force: true,
+      })
+    })
+    cy.get("form").submit()
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+    cy.get(".MuiAlert-message", { timeout: 30000 }).contains("Object replaced")
+
     // Fill an Analysis form and submit object
     cy.get("div[role=button]").contains("Analysis").click()
     cy.get("div[role=button]")

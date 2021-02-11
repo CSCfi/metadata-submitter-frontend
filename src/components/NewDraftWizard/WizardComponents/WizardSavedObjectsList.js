@@ -1,18 +1,23 @@
 //@flow
 import React, { useEffect, useState, useRef } from "react"
 
-import IconButton from "@material-ui/core/IconButton"
+import Button from "@material-ui/core/Button"
+import ButtonGroup from "@material-ui/core/ButtonGroup"
+// import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
-import ClearIcon from "@material-ui/icons/Clear"
+// import ClearIcon from "@material-ui/icons/Clear"
 import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
+import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
+import objectAPIService from "services/objectAPI"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -30,32 +35,22 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start",
     padding: ".5rem",
   },
-  addedMessage: {
-    color: theme.palette.success.main,
-    visibility: "visible",
-    opacity: "1",
-    transition: "opacity 2s linear",
+  listItemText: {
+    display: "inline-block",
+    maxWidth: "50%",
+    "& span": {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
   },
-  hidden: {
-    color: theme.palette.success.main,
-    visibility: "hidden",
-    opacity: "0",
-    transition: "visibility 0s .2s, opacity .2s linear",
+  buttonEdit: {
+    color: "#007bff",
+  },
+  buttonDelete: {
+    color: "#dc3545",
   },
 }))
-
-const ToggleMessage = ({ delay, children }: { delay: number, children: any }) => {
-  const classes = useStyles()
-  const [visible, setVisible] = useState(true)
-  useEffect(() => {
-    const toggle = setTimeout(() => {
-      setVisible(false)
-    }, delay)
-    return () => clearTimeout(toggle)
-  }, [delay])
-
-  return <span className={visible ? classes.addedMessage : classes.hidden}>{children}</span>
-}
 
 /**
  * List objects by submission type. Enables deletion of objects
@@ -73,7 +68,9 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
-  const newObject = submissions.filter(x => !ref.current?.includes(x))
+
+  const currentObject = useSelector(state => state.currentObject)
+
   // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
   const submissionTypes = submissions
     .map(obj => obj.tags.submissionType)
@@ -86,13 +83,42 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
     submittedItems: submissions.filter(obj => obj.tags.submissionType === submissionType),
   }))
 
-  const handleObjectDelete = objectId => {
+  const handleObjectEdit = async (objectId, submissionType, tags) => {
+    setConnError(false)
+    const response = await objectAPIService.getObjectByAccessionId(objectType, objectId)
+    if (response.ok) {
+      dispatch(
+        setCurrentObject({
+          ...response.data,
+          type: "saved",
+          tags: tags,
+          index: submissions.findIndex(item => item.accessionId === objectId),
+        })
+      )
+      dispatch(setSubmissionType(submissionType.toLowerCase()))
+    } else {
+      setConnError(true)
+      setResponseError(response)
+      setErrorPrefix("Object fetching error")
+    }
+  }
+
+  const handleObjectDelete = (objectId, submissionType) => {
     setConnError(false)
     dispatch(deleteObjectFromFolder("submitted", objectId, objectType)).catch(error => {
       setConnError(true)
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete object")
     })
+
+    if (
+      submissions.filter(item => item.tags.submissionType === submissionType).length - 1 === 555 &&
+      currentObject.tags.submissionType === submissionType.toLowerCase()
+    ) {
+      dispatch(resetCurrentObject())
+    }
+
+    if (currentObject.accessionId === objectId) dispatch(resetCurrentObject())
   }
 
   const displayObjectType = (objectType: string) => {
@@ -119,20 +145,24 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
           </h3>
           {group.submittedItems.map(item => (
             <ListItem key={item.accessionId} className={classes.objectListItems}>
-              <ListItemText primary={item.accessionId} />
+              <ListItemText className={classes.listItemText} primary={item.accessionId} />
               <ListItemSecondaryAction>
-                {newObject.length === 1 && newObject[0]?.accessionId === item.accessionId && (
-                  <ToggleMessage delay={5000}>Added!</ToggleMessage>
-                )}
-                <IconButton
-                  onClick={() => {
-                    handleObjectDelete(item.accessionId)
-                  }}
-                  edge="end"
-                  aria-label="delete"
-                >
-                  <ClearIcon />
-                </IconButton>
+                <ButtonGroup aria-label="Draft actions button group">
+                  <Button
+                    className={classes.buttonEdit}
+                    aria-label="Edit submission"
+                    onClick={() => handleObjectEdit(item.accessionId, group?.submissionType, item.tags)}
+                  >
+                    {group.submissionType === "Form" ? "Edit" : "Replace"}
+                  </Button>
+                  <Button
+                    className={classes.buttonDelete}
+                    aria-label="Delete submission"
+                    onClick={() => handleObjectDelete(item.accessionId, group?.submissionType)}
+                  >
+                    Delete
+                  </Button>
+                </ButtonGroup>
               </ListItemSecondaryAction>
             </ListItem>
           ))}

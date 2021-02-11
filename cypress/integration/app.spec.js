@@ -35,6 +35,18 @@ describe("Basic e2e", function () {
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
+    // Edit saved submission
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
+    cy.get("input[name='descriptor.studyTitle']").type(" edited")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
+    cy.get("button[type=button]").contains("Update").click()
+    cy.get("div[role=alert]").contains("Object updated")
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
+
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Upload XML File").click()
     cy.fixture("study_test.xml").then(fileContent => {

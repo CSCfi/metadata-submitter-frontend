@@ -54,10 +54,38 @@ const InfoHandler = ({ handleClose }: { handleClose: boolean => void }) => {
 
 // Success messages
 const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
-  const message =
-    response.config.baseURL === "/drafts"
-      ? `Draft saved with accessionid ${response.data.accessionId}`
-      : `Submitted with accessionid ${response.data.accessionId}`
+  let message = ""
+
+  switch (response.config.baseURL) {
+    case "/drafts": {
+      switch (response.config.method) {
+        case "patch": {
+          message = `Draft updated with accessionid ${response.data.accessionId}`
+          break
+        }
+        default: {
+          message = `Draft saved with accessionid ${response.data.accessionId}`
+        }
+      }
+      break
+    }
+    case "/objects": {
+      switch (response.config.method) {
+        case "patch": {
+          message = `Object updated with accessionid ${response.data.accessionId}`
+          break
+        }
+        case "put": {
+          message = `Object replaced with accessionid ${response.data.accessionId}`
+          break
+        }
+        default: {
+          message = `Submitted with accessionid ${response.data.accessionId}`
+        }
+      }
+    }
+  }
+
   return (
     <Alert onClose={() => handleClose(false)} severity="success">
       {message}

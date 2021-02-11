@@ -10,6 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
+import { cloneDeep } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -19,7 +20,7 @@ import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
-import { setDraftObject, resetDraftObject } from "features/wizardDraftObjectSlice"
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
@@ -90,6 +91,7 @@ const useStyles = makeStyles(theme => ({
 
 type CustomCardHeaderProps = {
   objectType: string,
+  currentObject: any,
   title: string,
   onClickNewForm: () => void,
   onClickClearForm: () => void,
@@ -104,6 +106,7 @@ type FormContentProps = {
   onSubmit: () => Promise<any>,
   objectType: string,
   folderId: string,
+  currentObject: any,
 }
 
 /*
@@ -111,7 +114,16 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const { objectType, title, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
+  const {
+    objectType,
+    currentObject,
+    title,
+    refForm,
+    onClickNewForm,
+    onClickClearForm,
+    onClickSaveDraft,
+    onClickSubmit,
+  } = props
 
   const dispatch = useDispatch()
 
@@ -150,11 +162,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         variant="contained"
         aria-label="submit form"
         size="small"
-        type="submit"
+        type={currentObject?.type === "saved" ? "button" : "submit"}
         onClick={onClickSubmit}
         form={refForm}
       >
-        Submit {objectType}
+        {currentObject?.type === "saved" ? "Update" : "Submit"} {objectType}
       </Button>
     </div>
   )
@@ -175,28 +187,39 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 /*
  * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
-const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: FormContentProps) => {
+const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, currentObject }: FormContentProps) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
   const draftStatus = useSelector(state => state.draftStatus)
-  const draftObject = useSelector(state => state.draftObject)
   const alert = useSelector(state => state.alert)
 
-  const methods = useForm({ mode: "onBlur", resolver, defaultValues: draftObject })
+  const methods = useForm({ mode: "onBlur", resolver })
 
-  const dispatch = useDispatch()
   const [cleanedValues, setCleanedValues] = useState({})
-  const [currentDraftId, setCurrentDraftId] = useState(draftObject?.accessionId)
+  const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
+
   const [timer, setTimer] = useState(0)
 
   const increment = useRef(null)
 
+  // Set form default values
+  useEffect(() => {
+    methods.reset(currentObject)
+    setCleanedValues(currentObject)
+  }, [currentObject?.accessionId])
+
+  // Check if form has been edited
+  useEffect(() => {
+    checkDirty()
+  }, [methods.formState.isDirty])
+
   const createNewForm = () => {
     handleReset()
     resetForm()
-    setCurrentDraftId(null)
+    setCurrentObjectId(null)
     dispatch(resetDraftStatus())
-    dispatch(resetDraftObject())
+    dispatch(resetCurrentObject())
   }
 
   const resetForm = () => {
@@ -209,20 +232,33 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     }
   }
 
-  useEffect(() => {
-    checkDirty()
-  }, [methods.formState.isDirty])
-
+  // Draft data is set to state on every change to form
   const handleChange = () => {
+    const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
-    dispatch(setDraftObject(Object.assign(values, { draftId: currentDraftId })))
+
+    // Original values have protected keys
+    Object.keys(values).forEach(item => (clone[item] = values[item]))
+
+    !currentObject.accessionId && currentObjectId
+      ? dispatch(
+          setCurrentObject({
+            ...clone,
+            cleanedValues: values,
+            type: currentObject.type || "draft",
+            objectId: currentObjectId,
+          })
+        )
+      : dispatch(setCurrentObject({ ...clone, cleanedValues: values }))
+
     checkDirty()
   }
 
   const handleDraftDelete = draftId => {
     dispatch(deleteObjectFromFolder("draft", draftId, objectType))
-    setCurrentDraftId(null)
+    setCurrentObjectId(() => null)
+    handleChange()
   }
 
   /*
@@ -252,32 +288,40 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     }
   }, [])
 
+  // Form actions
+  const patchHandler = response => {
+    if (response.ok) {
+      dispatch(resetDraftStatus())
+      dispatch(
+        updateStatus({
+          successStatus: "success",
+          response: response,
+          errorPrefix: "",
+        })
+      )
+    } else {
+      dispatch(
+        updateStatus({
+          successStatus: "error",
+          response: response,
+          errorPrefix: "Unexpected error",
+        })
+      )
+    }
+  }
+
+  /*
+   * Update or save new draft depending on object status
+   */
   const saveDraft = async () => {
     handleReset()
-    if (currentDraftId || draftObject.accessionId) {
-      const response = await draftAPIService.patchFromJSON(objectType, currentDraftId, cleanedValues)
-      if (response.ok) {
-        dispatch(resetDraftStatus())
-        dispatch(
-          updateStatus({
-            successStatus: "success",
-            response: response,
-            errorPrefix: "",
-          })
-        )
-      } else {
-        dispatch(
-          updateStatus({
-            successStatus: "error",
-            response: response,
-            errorPrefix: "Unexpected error",
-          })
-        )
-      }
+    if ((currentObjectId || currentObject?.accessionId) && currentObject?.type === "draft") {
+      const response = await draftAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
+      patchHandler(response)
     } else {
       const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
       if (response.ok) {
-        setCurrentDraftId(response.data.accessionId)
+        if (currentObject?.type !== "saved") setCurrentObjectId(response.data.accessionId)
         dispatch(resetDraftStatus())
         dispatch(
           addObjectToDrafts(folderId, {
@@ -315,6 +359,13 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     }
   }
 
+  const patchObject = async () => {
+    handleReset()
+    const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
+    patchHandler(response)
+  }
+
+  // Clear auto-save timer
   useEffect(() => {
     if (alert) {
       clearInterval(increment.current)
@@ -326,15 +377,18 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   }, [timer])
 
   const submitForm = () => {
+    if (currentObject?.type === "saved") patchObject()
+    if (currentObject?.type === "draft" && currentObjectId && Object.keys(currentObject).length > 0)
+      handleDraftDelete(currentObjectId)
+
     handleReset()
-    dispatch(resetDraftObject())
-    if (currentDraftId && methods.formState.isValid) handleDraftDelete(currentDraftId)
   }
 
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
         objectType={objectType}
+        currentObject={currentObject}
         title="Fill form"
         refForm="hook-form"
         onClickNewForm={() => createNewForm()}
@@ -372,6 +426,7 @@ const WizardFillObjectDetailsForm = () => {
   const dispatch = useDispatch()
   const { id: folderId } = useSelector(state => state.submissionFolder)
   const [responseInfo, setResponseInfo] = useState([])
+  const currentObject = useSelector(state => state.currentObject)
 
   /*
    * Submit form with cleaned values and check for response errors
@@ -398,6 +453,7 @@ const WizardFillObjectDetailsForm = () => {
         .then(() => {
           setSuccessStatus("success")
           dispatch(resetDraftStatus())
+          dispatch(resetCurrentObject())
         })
         .catch(error => {
           setSuccessStatus("error")
@@ -452,6 +508,8 @@ const WizardFillObjectDetailsForm = () => {
         onSubmit={onSubmit}
         objectType={objectType}
         folderId={folderId}
+        currentObject={currentObject}
+        key={currentObject?.accessionId || folderId}
       />
       {submitting && <LinearProgress />}
       {successStatus && (

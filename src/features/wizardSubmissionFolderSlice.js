@@ -32,6 +32,9 @@ const wizardSubmissionFolderSlice = createSlice({
         return o.accessionId === action.payload
       })
     },
+    modifyObjectTags: (state, action) => {
+      state.metadataObjects.find(item => item.accessionId === action.payload.accessionId).tags = action.payload.tags
+    },
     resetFolder: () => initialState,
   },
 })
@@ -41,6 +44,7 @@ export const {
   addDraftObject,
   deleteObject,
   deleteDraftObject,
+  modifyObjectTags,
   resetFolder,
 } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
@@ -117,6 +121,24 @@ export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolde
   return new Promise((resolve, reject) => {
     if (response.ok) {
       dispatch(addObject(objectDetails))
+      resolve(response)
+    } else {
+      reject(JSON.stringify(response))
+    }
+  })
+}
+
+export const replaceObjectInFolder = (
+  folderID: string,
+  accessionId: string,
+  index: number,
+  tags: { submissionType: string, fileName: string }
+) => async (dispatch: any => void) => {
+  const changes = [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
+  const response = await folderAPIService.patchFolderById(folderID, changes)
+  return new Promise((resolve, reject) => {
+    if (response.ok) {
+      dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
       resolve(response)
     } else {
       reject(JSON.stringify(response))

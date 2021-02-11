@@ -39,7 +39,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const onSubmit = data => {
     setConnError(false)
-    if (folder && (folder.name !== data.name || folder.description !== data.description)) {
+    if (folder && folder?.id) {
       dispatch(updateNewDraftFolder(folder.id, Object.assign({ ...data, folder })))
         .then(() => dispatch(increment()))
         .catch(() => setConnError(true))

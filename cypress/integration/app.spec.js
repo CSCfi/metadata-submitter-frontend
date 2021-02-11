@@ -76,7 +76,6 @@ describe("Basic e2e", function () {
     })
     cy.get("form").submit()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
-    cy.get(".MuiAlert-message", { timeout: 60000 }).contains("Object replaced")
 
     // Fill an Analysis form and submit object
     cy.get("div[role=button]").contains("Analysis").click()

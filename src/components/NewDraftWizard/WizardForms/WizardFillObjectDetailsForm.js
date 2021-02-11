@@ -90,7 +90,6 @@ const useStyles = makeStyles(theme => ({
 
 type CustomCardHeaderProps = {
   objectType: string,
-  title: string,
   onClickNewForm: () => void,
   onClickClearForm: () => void,
   onClickSaveDraft: () => Promise<void>,
@@ -111,7 +110,7 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const { objectType, title, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
+  const { objectType, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } = props
 
   const dispatch = useDispatch()
 
@@ -161,7 +160,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   return (
     <CardHeader
-      title={title}
+      title="Fill form"
       titleTypographyProps={{ variant: "inherit" }}
       classes={{
         root: classes.cardHeader,
@@ -201,10 +200,18 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const resetForm = () => {
     methods.reset(formSchema)
+    setCleanedValues({})
+    dispatch(resetDraftStatus())
+    handleReset()
+  }
+
+  // Check if the form is empty
+  const checkFormCleanedValuesEmpty = (cleanedValues: any) => {
+    return Object.keys(cleanedValues).length > 0
   }
 
   const checkDirty = () => {
-    if (methods.formState.isDirty && draftStatus === "") {
+    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(cleanedValues)) {
       dispatch(setDraftStatus("notSaved"))
     }
   }
@@ -216,8 +223,14 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
   const handleChange = () => {
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
-    dispatch(setDraftObject(Object.assign(values, { draftId: currentDraftId })))
-    checkDirty()
+
+    if (checkFormCleanedValuesEmpty(values)) {
+      dispatch(setDraftObject(Object.assign(values, { draftId: currentDraftId })))
+      checkDirty()
+    } else {
+      dispatch(resetDraftStatus())
+      handleReset()
+    }
   }
 
   const handleDraftDelete = draftId => {
@@ -254,64 +267,74 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
 
   const saveDraft = async () => {
     handleReset()
-    if (currentDraftId || draftObject.accessionId) {
-      const response = await draftAPIService.patchFromJSON(objectType, currentDraftId, cleanedValues)
-      if (response.ok) {
-        dispatch(resetDraftStatus())
-        dispatch(
-          updateStatus({
-            successStatus: "success",
-            response: response,
-            errorPrefix: "",
-          })
-        )
+    if (checkFormCleanedValuesEmpty(cleanedValues)) {
+      if (currentDraftId || draftObject.accessionId) {
+        const response = await draftAPIService.patchFromJSON(objectType, currentDraftId, cleanedValues)
+        if (response.ok) {
+          dispatch(resetDraftStatus())
+          dispatch(
+            updateStatus({
+              successStatus: "success",
+              response: response,
+              errorPrefix: "",
+            })
+          )
+        } else {
+          dispatch(
+            updateStatus({
+              successStatus: "error",
+              response: response,
+              errorPrefix: "Unexpected error",
+            })
+          )
+        }
       } else {
-        dispatch(
-          updateStatus({
-            successStatus: "error",
-            response: response,
-            errorPrefix: "Unexpected error",
-          })
-        )
+        const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
+        if (response.ok) {
+          setCurrentDraftId(response.data.accessionId)
+          dispatch(resetDraftStatus())
+          dispatch(
+            addObjectToDrafts(folderId, {
+              accessionId: response.data.accessionId,
+              schema: "draft-" + objectType,
+            })
+          )
+            .then(() => {
+              dispatch(
+                updateStatus({
+                  successStatus: "success",
+                  response: response,
+                  errorPrefix: "",
+                })
+              )
+            })
+            .catch(error => {
+              dispatch(
+                updateStatus({
+                  successStatus: "error",
+                  response: error,
+                  errorPrefix: "Cannot connect to folder API",
+                })
+              )
+            })
+        } else {
+          dispatch(
+            updateStatus({
+              successStatus: "error",
+              response: response,
+              errorPrefix: "Unexpected error",
+            })
+          )
+        }
       }
     } else {
-      const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
-      if (response.ok) {
-        setCurrentDraftId(response.data.accessionId)
-        dispatch(resetDraftStatus())
-        dispatch(
-          addObjectToDrafts(folderId, {
-            accessionId: response.data.accessionId,
-            schema: "draft-" + objectType,
-          })
-        )
-          .then(() => {
-            dispatch(
-              updateStatus({
-                successStatus: "success",
-                response: response,
-                errorPrefix: "",
-              })
-            )
-          })
-          .catch(error => {
-            dispatch(
-              updateStatus({
-                successStatus: "error",
-                response: error,
-                errorPrefix: "Cannot connect to folder API",
-              })
-            )
-          })
-      } else {
-        dispatch(
-          updateStatus({
-            successStatus: "error",
-            response: response,
-            errorPrefix: "Unexpected error",
-          })
-        )
-      }
+      dispatch(
+        updateStatus({
+          successStatus: "info",
+          response: "",
+          errorPrefix: "An empty form cannot be saved. Please fill in the form before saving it.",
+        })
+      )
     }
   }
 
@@ -335,7 +358,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId }: F
     <FormProvider {...methods}>
       <CustomCardHeader
         objectType={objectType}
-        title="Fill form"
         refForm="hook-form"
         onClickNewForm={() => createNewForm()}
         onClickClearForm={() => resetForm()}

@@ -24,6 +24,16 @@ const getAllObjectsByObjectType = async (objectType: string) => {
   return await api.get(`/${objectType}`)
 }
 
+const patchFromJSON = async (objectType: string, accessionId: any, JSONContent: any) => {
+  return await api.patch(`/${objectType}/${accessionId}`, JSONContent)
+}
+
+const replaceXML = async (objectType: string, accessionId: string, XMLFile: string) => {
+  let formData = new FormData()
+  formData.append(objectType, XMLFile)
+  return await api.put(`/${objectType}/${accessionId}`, formData)
+}
+
 const deleteObjectByAccessionId = async (objectType: string, accessionId: string) => {
   return await api.delete(`/${objectType}/${accessionId}`)
 }
@@ -33,5 +43,7 @@ export default {
   createFromJSON,
   getObjectByAccessionId,
   getAllObjectsByObjectType,
+  patchFromJSON,
+  replaceXML,
   deleteObjectByAccessionId,
 }

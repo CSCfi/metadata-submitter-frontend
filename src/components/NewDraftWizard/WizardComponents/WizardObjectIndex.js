@@ -17,7 +17,7 @@ import WizardAlert from "./WizardAlert"
 
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { resetDraftObject } from "features/wizardDraftObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -247,7 +247,7 @@ const WizardObjectIndex = () => {
         setClickedSubmissionType(submissionType)
         setCancelFormOpen(true)
       } else {
-        dispatch(resetDraftObject())
+        dispatch(resetCurrentObject())
         dispatch(resetDraftStatus())
         dispatch(setSubmissionType(submissionType))
         dispatch(setObjectType(expandedObjectType))
@@ -262,6 +262,7 @@ const WizardObjectIndex = () => {
       dispatch(resetDraftStatus())
       dispatch(setSubmissionType(clickedSubmissionType))
       dispatch(setObjectType(expandedObjectType))
+      dispatch(resetCurrentObject())
     }
   }
 

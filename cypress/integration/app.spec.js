@@ -35,6 +35,18 @@ describe("Basic e2e", function () {
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
+    // Edit saved submission
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
+    cy.get("input[name='descriptor.studyTitle']").type(" edited")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
+    cy.get("button[type=button]").contains("Update").click()
+    cy.get("div[role=alert]").contains("Object updated")
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
+
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Upload XML File").click()
     cy.fixture("study_test.xml").then(fileContent => {
@@ -50,6 +62,21 @@ describe("Basic e2e", function () {
 
     // Saved objects list should have newly added item from Study object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+
+    // Replace XML
+    cy.get("button[type=button]").contains("Replace").click()
+    cy.get(".MuiCardHeader-action").contains("Replace")
+    cy.fixture("study_test_modified.xml").then(fileContent => {
+      cy.get('input[type="file"]').attachFile({
+        fileContent: fileContent.toString(),
+        fileName: "testFile_replace.xml",
+        mimeType: "text/xml",
+        force: true,
+      })
+    })
+    cy.get("form").submit()
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+    cy.contains(".MuiAlert-message", "Object replaced")
 
     // Fill an Analysis form and submit object
     cy.get("div[role=button]").contains("Analysis").click()

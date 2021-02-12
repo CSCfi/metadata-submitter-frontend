@@ -12,14 +12,15 @@ import { useDispatch, useSelector } from "react-redux"
 
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
-import { resetDraftObject } from "features/wizardDraftObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
+import objectAPIService from "services/objectAPI"
 
 // Simple template for error messages
 const ErrorMessage = message => {
-  return <Alert severity="error">{message}</Alert>
+  return <Alert severity="error">{message.message}</Alert>
 }
 
 /*
@@ -37,7 +38,7 @@ const CancelFormDialog = ({
   currentSubmissionType: string,
 }) => {
   const submissionFolder = useSelector(state => state.submissionFolder)
-  const draftObject = useSelector(state => state.draftObject)
+  const currentObject = useSelector(state => state.currentObject)
   const objectType = useSelector(state => state.objectType)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -47,8 +48,13 @@ const CancelFormDialog = ({
   const saveDraft = async () => {
     setError(false)
     const err = "Connection error, cannot save draft."
-    if (draftObject.draftId) {
-      const response = await draftAPIService.patchFromJSON(objectType, draftObject.draftId, draftObject)
+
+    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === "draft") {
+      const response = await draftAPIService.patchFromJSON(
+        objectType,
+        currentObject.accessionId || currentObject.objectId,
+        currentObject.cleanedValues
+      )
       if (response.ok) {
         dispatch(resetDraftStatus())
         dispatch(
@@ -58,14 +64,14 @@ const CancelFormDialog = ({
             errorPrefix: "",
           })
         )
-        dispatch(resetDraftObject())
+        dispatch(resetCurrentObject())
         handleDialog(true)
       } else {
         setError(true)
         setErrorMessage(err)
       }
     } else {
-      const response = await draftAPIService.createFromJSON(objectType, draftObject)
+      const response = await draftAPIService.createFromJSON(objectType, currentObject)
       if (response.ok) {
         dispatch(
           updateStatus({
@@ -81,7 +87,7 @@ const CancelFormDialog = ({
             schema: "draft-" + objectType,
           })
         )
-        dispatch(resetDraftObject())
+        dispatch(resetCurrentObject())
         handleDialog(true)
       } else {
         setError(true)
@@ -90,53 +96,112 @@ const CancelFormDialog = ({
     }
   }
 
+  const updateForm = async () => {
+    const err = "Connection error, cannot update object"
+    const response = await objectAPIService.patchFromJSON(
+      objectType,
+      currentObject.accessionId,
+      currentObject.cleanedValues
+    )
+    if (response.ok) {
+      dispatch(resetDraftStatus())
+      dispatch(
+        updateStatus({
+          successStatus: "success",
+          response: response,
+          errorPrefix: "",
+        })
+      )
+      dispatch(resetCurrentObject())
+      handleDialog(true)
+    } else {
+      setError(true)
+      setErrorMessage(err)
+    }
+  }
+
   let [dialogTitle, dialogContent] = ["", ""]
   let dialogActions
   const formContent = "If you save form as a draft, you can continue filling it later."
   const xmlContent = "If you save xml as a draft, you can upload it later."
   const objectContent = "If you save object as a draft, you can upload it later."
+
   switch (parentLocation) {
     case "submission": {
-      switch (alertType) {
-        case "form": {
-          dialogTitle = "Would you like to save draft version of this form"
-          dialogContent = formContent
-          break
+      if (currentObject?.type === "saved") {
+        dialogTitle = "Would you like to save edited form data?"
+        dialogContent = "Unsaved changes will be lost. If you save form as a draft, you can continue filling it later."
+        dialogActions = (
+          <DialogActions>
+            <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+              Do not save
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                saveDraft()
+              }}
+              color="primary"
+            >
+              Save as a draft
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                updateForm()
+              }}
+              color="primary"
+            >
+              Update
+            </Button>
+          </DialogActions>
+        )
+      } else {
+        switch (alertType) {
+          case "form": {
+            dialogTitle = "Would you like to save draft version of this form"
+            dialogContent = formContent
+            break
+          }
+          case "xml": {
+            dialogTitle = "Would you like to save draft version of this xml upload"
+            dialogContent = xmlContent
+            break
+          }
+          case "existing": {
+            dialogTitle = "Would you like to save draft version of this existing object upload"
+            dialogContent = objectContent
+            break
+          }
+          default: {
+            dialogTitle = "default"
+            dialogContent = "default content"
+          }
         }
-        case "xml": {
-          dialogTitle = "Would you like to save draft version of this xml upload"
-          dialogContent = xmlContent
-          break
-        }
-        case "existing": {
-          dialogTitle = "Would you like to save draft version of this existing object upload"
-          dialogContent = objectContent
-          break
-        }
-        default: {
-          dialogTitle = "default"
-          dialogContent = "default content"
-        }
+        dialogActions = (
+          <DialogActions>
+            <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
+              Do not save
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                saveDraft()
+              }}
+              color="primary"
+            >
+              Save
+            </Button>
+          </DialogActions>
+        )
       }
-      dialogActions = (
-        <DialogActions>
-          <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
-            Do not save
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              saveDraft()
-            }}
-            color="primary"
-          >
-            Save
-          </Button>
-        </DialogActions>
-      )
+
       break
     }
     case "footer": {

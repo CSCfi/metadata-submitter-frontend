@@ -1,13 +1,16 @@
 //@flow
 import React from "react"
 
+import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import { useSelector } from "react-redux"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
+import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 const useStyles = makeStyles(theme => ({
@@ -28,6 +31,9 @@ const useStyles = makeStyles(theme => ({
       fontWeight: "bold",
     },
   },
+  listGroup: {
+    padding: "0",
+  },
   objectListItems: {
     border: "solid 1px #ccc",
     borderRadius: 3,
@@ -39,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 
 type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
 
-type GroupedBySchema = {| [Schema]: string[] |}
+type GroupedBySchema = {| [Schema]: Object[] |}
 
 /**
  * Show summary of objects added to folder
@@ -55,11 +61,9 @@ const WizardShowSummaryStep = () => {
     "Analysis",
     "DAC",
     "Policy",
-  ].map((schema: string) => {
+  ].map((schema: Object) => {
     return {
-      [(schema: string)]: metadataObjects
-        .filter(object => object.schema.toLowerCase() === schema.toLowerCase())
-        .map(object => object.accessionId),
+      [(schema: Object)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
     }
   })
   const classes = useStyles()
@@ -72,7 +76,7 @@ const WizardShowSummaryStep = () => {
         {groupedObjects.map(group => {
           const schema = Object.keys(group)[0]
           return (
-            <div key={schema}>
+            <List key={schema} aria-label={schema} className={classes.listGroup}>
               <div className={classes.schemaTitleRow}>
                 <Typography variant="subtitle1" fontWeight="fontWeightBold">
                   {schema}
@@ -80,13 +84,23 @@ const WizardShowSummaryStep = () => {
                 <div className="objectAmount">{group[schema].length}</div>
               </div>
               <div>
-                {group[schema].map(accessionId => (
-                  <ListItem button key={accessionId} dense className={classes.objectListItems}>
-                    <ListItemText primary={accessionId} />
+                {group[schema].map(item => (
+                  <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
+                    <ListItemText primary={item.accessionId} />
+                    <ListItemSecondaryAction>
+                      <WizardSavedObjectActions
+                        submissions={metadataObjects}
+                        objectType={schema.toLowerCase()}
+                        objectId={item.accessionId}
+                        submissionType={item.tags?.submissionType.toLowerCase()}
+                        tags={item.tags}
+                        summary={true}
+                      />
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </div>
-            </div>
+            </List>
           )
         })}
       </div>

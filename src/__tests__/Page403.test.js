@@ -35,6 +35,14 @@ describe("Page403", () => {
     jest.useFakeTimers()
     const store = mockStore({
       user: { name: "test" },
+      selectedFolder: {
+        folderId: "Test folderId",
+        name: "Test name",
+        description: "Test description",
+        drafts: [],
+        metadataObjects: [],
+        allObjects: [],
+      },
     })
     let component = render(
       <Provider store={store}>
@@ -52,8 +60,6 @@ describe("Page403", () => {
       jest.advanceTimersByTime(10000)
     })
 
-    component.getByText("Your Draft Submissions")
-    expect(component.getByText("Your Draft Submissions")).toBeInTheDocument()
     jest.useRealTimers()
   })
 })

@@ -1,7 +1,9 @@
 //@flow
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 
 import Button from "@material-ui/core/Button"
+import CardHeader from "@material-ui/core/CardHeader"
+import Container from "@material-ui/core/Container"
 import FormControl from "@material-ui/core/FormControl"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import { makeStyles } from "@material-ui/core/styles"
@@ -12,16 +14,30 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
+import { resetFocus } from "features/focusSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    padding: 0,
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  cardHeaderAction: {
+    marginTop: "-4px",
+    marginBottom: "-4px",
+  },
   root: {
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(2),
+      margin: theme.spacing(5, "auto"),
     },
   },
   hiddenInput: {
@@ -50,10 +66,33 @@ const WizardUploadObjectXMLForm = () => {
   const { id: folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
-
-  const { register, errors, watch, handleSubmit } = useForm({ mode: "onChange" })
+  const currentObject = useSelector(state => state.currentObject)
+  const { register, errors, watch, handleSubmit, reset } = useForm({ mode: "onChange" })
+  const [placeHolder, setPlaceHolder] = useState("Name")
 
   const watchFile = watch("fileUpload")
+
+  const focusTarget = useRef(null)
+  const shouldFocus = useSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
+
+  useEffect(() => {
+    if (watchFile && watchFile[0] && watchFile[0].name) {
+      setPlaceHolder(watchFile[0].name)
+    } else {
+      setPlaceHolder(currentObject?.tags?.fileName || "Name")
+    }
+  }, [currentObject, watchFile])
+
+  const resetForm = () => {
+    reset()
+    setPlaceHolder("Name")
+  }
+
+  const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
 
   const onSubmit = async data => {
     setSuccessStatus(undefined)
@@ -63,18 +102,43 @@ const WizardUploadObjectXMLForm = () => {
       setSuccessStatus("info")
     }, 5000)
 
-    const response = await objectAPIService.createFromXML(objectType, file)
-    setResponseStatus(response)
-    if (response.ok) {
-      setSuccessStatus("success")
-      dispatch(
-        addObjectToFolder(folderId, {
-          accessionId: response.data.accessionId,
-          schema: objectType,
-        })
-      )
+    if (currentObject.accessionId) {
+      const response = await objectAPIService.replaceXML(objectType, currentObject.accessionId, file)
+      setResponseStatus(response)
+      if (response.ok) {
+        dispatch(
+          replaceObjectInFolder(folderId, currentObject.accessionId, currentObject.index, {
+            submissionType: "XML",
+            fileName: fileName,
+          })
+        )
+          .then(() => {
+            setSuccessStatus("success")
+            resetForm()
+            dispatch(resetCurrentObject())
+          })
+          .catch(() => {
+            setSuccessStatus("error")
+          })
+      } else {
+        setSuccessStatus("error")
+      }
     } else {
-      setSuccessStatus("error")
+      const response = await objectAPIService.createFromXML(objectType, file)
+      setResponseStatus(response)
+      if (response.ok) {
+        setSuccessStatus("success")
+        dispatch(
+          addObjectToFolder(folderId, {
+            accessionId: response.data.accessionId,
+            schema: objectType,
+            tags: { submissionType: "XML", fileName },
+          })
+        )
+        resetForm()
+      } else {
+        setSuccessStatus("error")
+      }
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
@@ -85,19 +149,44 @@ const WizardUploadObjectXMLForm = () => {
     if (fileSelect && fileSelect.click()) {
       fileSelect.click()
     }
+    dispatch(resetFocus())
   }
 
+  const submitButton = (
+    <Button
+      variant="contained"
+      className={classes.submitButton}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
+      onClick={handleSubmit(onSubmit)}
+    >
+      {currentObject?.type === "saved" ? "Replace" : "Submit"}
+    </Button>
+  )
+
   return (
-    <div>
+    <Container className={classes.container}>
+      <CardHeader
+        title="Upload XML File"
+        titleTypographyProps={{ variant: "inherit" }}
+        classes={{
+          root: classes.cardHeader,
+          action: classes.cardHeaderAction,
+        }}
+        action={submitButton}
+      />
       {/* React Hook Form */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
-            <TextField
-              placeholder={watchFile && watchFile[0] ? watchFile[0].name : "Name"}
-              inputProps={{ readOnly: true, tabIndex: -1 }}
-            />
-            <Button variant="contained" color="primary" component="label" onClick={() => handleButton()}>
+            <TextField placeholder={placeHolder} inputProps={{ readOnly: true, tabIndex: -1 }} />
+            <Button
+              ref={focusTarget}
+              variant="contained"
+              color="primary"
+              component="label"
+              onClick={() => handleButton()}
+              onBlur={() => dispatch(resetFocus())}
+            >
               Choose file
             </Button>
             <input
@@ -129,17 +218,6 @@ const WizardUploadObjectXMLForm = () => {
           {/* Progress bar */}
           {isSubmitting && <LinearProgress />}
         </FormControl>
-
-        <Button
-          variant="outlined"
-          color="primary"
-          className={classes.submitButton}
-          type="button"
-          disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
-          onClick={handleSubmit(onSubmit)}
-        >
-          Submit
-        </Button>
       </form>
 
       {successStatus && (
@@ -149,7 +227,7 @@ const WizardUploadObjectXMLForm = () => {
           prefixText=""
         ></WizardStatusMessageHandler>
       )}
-    </div>
+    </Container>
   )
 }
 

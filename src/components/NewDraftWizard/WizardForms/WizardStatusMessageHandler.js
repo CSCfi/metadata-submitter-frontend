@@ -40,24 +40,56 @@ const ErrorHandler = ({
 }
 
 // Info messages
-const InfoHandler = ({ handleClose }: { handleClose: boolean => void }) => {
-  const message = `For some reason, your file is still being saved
+const InfoHandler = ({ handleClose, prefixText }: { handleClose: boolean => void, prefixText?: string }) => {
+  const defaultMessage = `For some reason, your file is still being saved
   to our database, please wait. If saving doesn't go through in two
   minutes, please try saving the file again.`
 
+  const messageTemplate = (prefixText?: string) => {
+    return prefixText ? prefixText : defaultMessage
+  }
+
   return (
     <Alert onClose={() => handleClose(false)} severity="info">
-      {message}
+      {messageTemplate(prefixText)}
     </Alert>
   )
 }
 
 // Success messages
 const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
-  const message =
-    response.config.baseURL === "/drafts"
-      ? `Draft saved with accessionid ${response.data.accessionId}`
-      : `Submitted with accessionid ${response.data.accessionId}`
+  let message = ""
+
+  switch (response.config.baseURL) {
+    case "/drafts": {
+      switch (response.config.method) {
+        case "patch": {
+          message = `Draft updated with accessionid ${response.data.accessionId}`
+          break
+        }
+        default: {
+          message = `Draft saved with accessionid ${response.data.accessionId}`
+        }
+      }
+      break
+    }
+    case "/objects": {
+      switch (response.config.method) {
+        case "patch": {
+          message = `Object updated with accessionid ${response.data.accessionId}`
+          break
+        }
+        case "put": {
+          message = `Object replaced with accessionid ${response.data.accessionId}`
+          break
+        }
+        default: {
+          message = `Submitted with accessionid ${response.data.accessionId}`
+        }
+      }
+    }
+  }
+
   return (
     <Alert onClose={() => handleClose(false)} severity="success">
       {message}
@@ -81,7 +113,7 @@ const WizardStatusMessageHandler = ({
       case "success":
         return <SuccessHandler handleClose={handleClose} response={response} />
       case "info":
-        return <InfoHandler handleClose={handleClose} />
+        return <InfoHandler handleClose={handleClose} prefixText={prefixText} />
       case "error":
         return <ErrorHandler handleClose={handleClose} response={response} prefixText={prefixText} />
       default:

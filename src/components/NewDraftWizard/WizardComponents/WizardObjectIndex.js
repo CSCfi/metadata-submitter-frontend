@@ -16,7 +16,8 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardAlert from "./WizardAlert"
 
 import { resetDraftStatus } from "features/draftStatusSlice"
-import { resetDraftObject } from "features/wizardDraftObjectSlice"
+import { setFocus } from "features/focusSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 
@@ -45,6 +46,12 @@ const useStyles = makeStyles(theme => ({
   badge: {
     margin: theme.spacing(2, 2, 2, "auto"),
     zIndex: 0,
+  },
+  skipLink: {
+    color: theme.palette.primary.main,
+    "&:hover, &:focus": {
+      textDecoration: "underline",
+    },
   },
 }))
 
@@ -108,10 +115,12 @@ const SubmissionTypeList = ({
   handleSubmissionTypeChange,
   isCurrentObjectType,
   currentSubmissionType,
+  draftCount,
 }: {
   handleSubmissionTypeChange: string => void,
   isCurrentObjectType: boolean,
   currentSubmissionType: string,
+  draftCount: number,
 }) => {
   const submissionTypes = ["form", "xml", "existing"]
   const submissionTypeMap = {
@@ -120,6 +129,57 @@ const SubmissionTypeList = ({
     existing: "Choose from drafts",
   }
   const classes = useStyles()
+  const [showSkipLink, setSkipLinkVisible] = useState(false)
+  const dispatch = useDispatch()
+
+  const handleSkipLink = (event, submissionType) => {
+    if (event.key === "Enter") {
+      if (submissionType === "existing" && draftCount === 0) {
+        setSkipLinkVisible(false)
+      } else {
+        setSkipLinkVisible(true)
+      }
+    }
+  }
+
+  const toggleFocusWithEnter = event => {
+    if (event.key === "Enter") {
+      dispatch(setFocus())
+    }
+  }
+
+  const skipToSubmissionLink = () => {
+    let target = ""
+    switch (currentSubmissionType) {
+      case "form": {
+        target = "form"
+        break
+      }
+      case "xml": {
+        target = "XML upload"
+        break
+      }
+      case "existing": {
+        target = "drafts"
+        break
+      }
+      default: {
+        target = "main content"
+      }
+    }
+    return (
+      <a
+        className={classes.skipLink}
+        role="button"
+        tabIndex="0"
+        onBlur={() => setSkipLinkVisible(false)}
+        onClick={() => dispatch(setFocus())}
+        onKeyDown={event => toggleFocusWithEnter(event)}
+      >
+        Skip to {target}
+      </a>
+    )
+  }
 
   return (
     <List dense className={classes.submissionTypeList}>
@@ -129,10 +189,19 @@ const SubmissionTypeList = ({
           divider
           key={submissionType}
           button
-          onClick={() => handleSubmissionTypeChange(submissionType)}
+          onClick={event => {
+            handleSkipLink(event, submissionType)
+            handleSubmissionTypeChange(submissionType)
+          }}
           className={classes.submissionTypeListItem}
         >
-          <ListItemText primary={submissionTypeMap[submissionType]} primaryTypographyProps={{ variant: "subtitle1" }} />
+          <ListItemText
+            primary={submissionTypeMap[submissionType]}
+            primaryTypographyProps={{ variant: "subtitle1" }}
+            secondary={
+              showSkipLink && isCurrentObjectType && currentSubmissionType === submissionType && skipToSubmissionLink()
+            }
+          />
         </ListItem>
       ))}
     </List>
@@ -158,14 +227,14 @@ const WizardObjectIndex = () => {
   // Get draft objects of current folder
   // and count the amount of drafts of each existing objectType
   const draftObjects = folder.drafts
-    .map(draft => draft.schema)
+    ?.map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
   }
 
-  const getBadgeContent = (objectType: string) => {
+  const getDraftCount = (objectType: string) => {
     return draftObjects[objectType] ? draftObjects[objectType] : 0
   }
 
@@ -178,7 +247,7 @@ const WizardObjectIndex = () => {
         setClickedSubmissionType(submissionType)
         setCancelFormOpen(true)
       } else {
-        dispatch(resetDraftObject())
+        dispatch(resetCurrentObject())
         dispatch(resetDraftStatus())
         dispatch(setSubmissionType(submissionType))
         dispatch(setObjectType(expandedObjectType))
@@ -193,6 +262,7 @@ const WizardObjectIndex = () => {
       dispatch(resetDraftStatus())
       dispatch(setSubmissionType(clickedSubmissionType))
       dispatch(setObjectType(expandedObjectType))
+      dispatch(resetCurrentObject())
     }
   }
 
@@ -215,7 +285,7 @@ const WizardObjectIndex = () => {
             >
               <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
               <Badge
-                badgeContent={getBadgeContent("draft-" + objectType)}
+                badgeContent={getDraftCount("draft-" + objectType)}
                 className={classes.badge}
                 data-testid="badge"
               />
@@ -225,6 +295,7 @@ const WizardObjectIndex = () => {
                 handleSubmissionTypeChange={handleSubmissionTypeChange}
                 isCurrentObjectType={isCurrentObjectType}
                 currentSubmissionType={currentSubmissionType}
+                draftCount={getDraftCount("draft-" + objectType)}
               />
             </AccordionDetails>
           </Accordion>

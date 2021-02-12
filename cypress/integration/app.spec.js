@@ -6,7 +6,7 @@ describe("Basic e2e", function () {
     cy.get('[alt="CSC Login"]').click()
   })
 
-  it("should create new folder, add Study form, upload Study XML file, add Analysis form and publish folder", () => {
+  it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
     cy.visit(baseUrl + "newdraft")
@@ -19,15 +19,33 @@ describe("Basic e2e", function () {
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
-    // Fill a Study form and submit object
+    // Skip-link
     cy.get("div[role=button]").contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
+    cy.get("div[role=button]").contains("Fill Form").type("{enter}")
+    cy.get("div[role=button]").contains("Skip to form")
+
+    // Fill a Study form and submit object
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
+    cy.get("button[type=button]").contains("Clear form").click()
+    cy.get("input[name='descriptor.studyTitle']").type("New title")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
 
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
+    // Edit saved submission
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
+    cy.get("input[name='descriptor.studyTitle']").type(" edited")
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
+    cy.get("button[type=button]").contains("Update").click()
+    cy.get("div[role=alert]").contains("Object updated")
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
 
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Upload XML File").click()
@@ -44,6 +62,21 @@ describe("Basic e2e", function () {
 
     // Saved objects list should have newly added item from Study object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+
+    // Replace XML
+    cy.get("button[type=button]").contains("Replace").click()
+    cy.get(".MuiCardHeader-action").contains("Replace")
+    cy.fixture("study_test_modified.xml").then(fileContent => {
+      cy.get('input[type="file"]').attachFile({
+        fileContent: fileContent.toString(),
+        fileName: "testFile_replace.xml",
+        mimeType: "text/xml",
+        force: true,
+      })
+    })
+    cy.get("form").submit()
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+    cy.contains(".MuiAlert-message", "Object replaced")
 
     // Fill an Analysis form and submit object
     cy.get("div[role=button]").contains("Analysis").click()
@@ -112,9 +145,9 @@ describe("Basic e2e", function () {
             "Processed Sequence Accession Id"
           )
         })
-      cy.root().submit()
     })
-
+    // Submit form
+    cy.get("button[type=submit]").contains("Submit").click()
     // Saved objects list should have newly added item from Analysis object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 

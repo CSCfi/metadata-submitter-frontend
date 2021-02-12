@@ -1,23 +1,14 @@
 //@flow
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 
-import Button from "@material-ui/core/Button"
-import ButtonGroup from "@material-ui/core/ButtonGroup"
-// import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
-// import ClearIcon from "@material-ui/icons/Clear"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 
-import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
-
-import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
-import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
-import objectAPIService from "services/objectAPI"
+import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -62,14 +53,7 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
   })
 
   const classes = useStyles()
-
-  const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
-
-  const currentObject = useSelector(state => state.currentObject)
 
   // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
   const submissionTypes = submissions
@@ -82,44 +66,6 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
     submissionType,
     submittedItems: submissions.filter(obj => obj.tags.submissionType === submissionType),
   }))
-
-  const handleObjectEdit = async (objectId, submissionType, tags) => {
-    setConnError(false)
-    const response = await objectAPIService.getObjectByAccessionId(objectType, objectId)
-    if (response.ok) {
-      dispatch(
-        setCurrentObject({
-          ...response.data,
-          type: "saved",
-          tags: tags,
-          index: submissions.findIndex(item => item.accessionId === objectId),
-        })
-      )
-      dispatch(setSubmissionType(submissionType.toLowerCase()))
-    } else {
-      setConnError(true)
-      setResponseError(response)
-      setErrorPrefix("Object fetching error")
-    }
-  }
-
-  const handleObjectDelete = (objectId, submissionType) => {
-    setConnError(false)
-    dispatch(deleteObjectFromFolder("submitted", objectId, objectType)).catch(error => {
-      setConnError(true)
-      setResponseError(JSON.parse(error))
-      setErrorPrefix("Can't delete object")
-    })
-
-    if (
-      submissions.filter(item => item.tags.submissionType === submissionType).length - 1 === 555 &&
-      currentObject.tags.submissionType === submissionType.toLowerCase()
-    ) {
-      dispatch(resetCurrentObject())
-    }
-
-    if (currentObject.accessionId === objectId) dispatch(resetCurrentObject())
-  }
 
   const displayObjectType = (objectType: string) => {
     return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
@@ -147,30 +93,18 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
             <ListItem key={item.accessionId} className={classes.objectListItems}>
               <ListItemText className={classes.listItemText} primary={item.accessionId} />
               <ListItemSecondaryAction>
-                <ButtonGroup aria-label="Draft actions button group">
-                  <Button
-                    className={classes.buttonEdit}
-                    aria-label="Edit submission"
-                    onClick={() => handleObjectEdit(item.accessionId, group?.submissionType, item.tags)}
-                  >
-                    {group.submissionType === "Form" ? "Edit" : "Replace"}
-                  </Button>
-                  <Button
-                    className={classes.buttonDelete}
-                    aria-label="Delete submission"
-                    onClick={() => handleObjectDelete(item.accessionId, group?.submissionType)}
-                  >
-                    Delete
-                  </Button>
-                </ButtonGroup>
+                <WizardSavedObjectActions
+                  submissions={submissions}
+                  objectType={objectType}
+                  objectId={item.accessionId}
+                  submissionType={group?.submissionType.toLowerCase()}
+                  tags={item.tags}
+                />
               </ListItemSecondaryAction>
             </ListItem>
           ))}
         </List>
       ))}
-      {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
-      )}
     </div>
   )
 }

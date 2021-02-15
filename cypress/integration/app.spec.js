@@ -36,7 +36,6 @@ describe("Basic e2e", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Edit saved submission
-    cy.get("button[type=button]").contains("New form").click()
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("input[name='descriptor.studyTitle']").type(" edited")

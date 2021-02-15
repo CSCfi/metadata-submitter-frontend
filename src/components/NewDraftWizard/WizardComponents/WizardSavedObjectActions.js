@@ -6,6 +6,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
+import { SubmissionTypes } from "constants/submissions"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
@@ -76,11 +77,11 @@ const WizardSavedObjectActions = (props: any) => {
 
     if (currentObject.accessionId === props.objectId) dispatch(resetCurrentObject())
   }
-
+  console.log("props.submissionType :>> ", props.submissionType)
   return (
     <ButtonGroup aria-label="Draft actions button group">
       <Button className={classes.buttonEdit} aria-label="Edit submission" onClick={() => handleObjectEdit()}>
-        {props.submissionType === "form" ? "Edit" : "Replace"}
+        {props.submissionType === SubmissionTypes.form ? "Edit" : "Replace"}
       </Button>
       <Button className={classes.buttonDelete} aria-label="Delete submission" onClick={() => handleObjectDelete()}>
         Delete

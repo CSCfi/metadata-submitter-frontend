@@ -23,7 +23,7 @@ describe("Draft operations", function () {
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
     cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='existing']").find("li").should("have.length", 1)
+    cy.get("div[data-testid=Existing").find("li").should("have.length", 1)
 
     // Save another draft
     cy.get("div[role=button]").contains("Fill Form").click()
@@ -36,11 +36,11 @@ describe("Draft operations", function () {
     cy.get("div[role=button]").contains("Choose from drafts").click()
     cy.get("h2").contains("Would you like to save draft version of this form")
     cy.get("div[role=dialog]").contains("Save").click()
-    cy.get("div[data-testid='existing']").find("li").should("have.length", 2)
+    cy.get("div[data-testid='Existing']").find("li").should("have.length", 2)
 
     // Delete a draft
     cy.get("button[aria-label='Delete draft']").first().click()
-    cy.get("div[data-testid='existing']").find("li", { timeout: 10000 }).should("have.length", 1)
+    cy.get("div[data-testid='Existing']").find("li", { timeout: 10000 }).should("have.length", 1)
 
     // Continue draft
     // Clear
@@ -66,7 +66,7 @@ describe("Draft operations", function () {
 
     // Check that there are 2 drafts saved in "Choose from drafts"
     cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='existing']").find("li").should("have.length", 2)
+    cy.get("div[data-testid='Existing']").find("li").should("have.length", 2)
 
     // Submit first form draft
     cy.get("button[aria-label='Continue draft']").first().click()
@@ -75,7 +75,7 @@ describe("Draft operations", function () {
 
     // Submit second form draft
     cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='existing']").find("li").should("have.length", 1)
+    cy.get("div[data-testid='Existing']").find("li").should("have.length", 1)
     cy.get("button[aria-label='Continue draft']").first().click()
     cy.get("button[type=submit]").contains("Submit").click()
 

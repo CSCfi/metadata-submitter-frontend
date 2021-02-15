@@ -8,6 +8,8 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 
+import { SubmissionTypes } from "constants/submissions"
+
 const mockStore = configureStore([])
 
 expect.extend({ toMatchDiffSnapshot })
@@ -16,7 +18,7 @@ describe("WizardAddObjectStep", () => {
   it("should not render any cards if no selected object type", () => {
     const store = mockStore({
       objectType: "",
-      submissionType: "xml",
+      submissionType: SubmissionTypes.xml,
       submissionFolder: {
         name: "folder name",
         description: "folder description",
@@ -35,7 +37,7 @@ describe("WizardAddObjectStep", () => {
   })
 
   it("should render appropriate card", async () => {
-    const typeList = ["form", "xml", "existing"]
+    const typeList = [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing]
     await act(async () => {
       typeList.forEach(typeName => {
         const store = mockStore({

@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { SubmissionTypes } from "constants/submissions"
 import { resetFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
@@ -108,7 +109,7 @@ const WizardUploadObjectXMLForm = () => {
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(folderId, currentObject.accessionId, currentObject.index, {
-            submissionType: "XML",
+            submissionType: SubmissionTypes.xml,
             fileName: fileName,
           })
         )
@@ -132,7 +133,7 @@ const WizardUploadObjectXMLForm = () => {
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
             schema: objectType,
-            tags: { submissionType: "XML", fileName },
+            tags: { submissionType: SubmissionTypes.xml, fileName },
           })
         )
         resetForm()

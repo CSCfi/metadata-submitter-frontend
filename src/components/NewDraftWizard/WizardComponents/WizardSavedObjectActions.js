@@ -77,7 +77,7 @@ const WizardSavedObjectActions = (props: any) => {
 
     if (currentObject.accessionId === props.objectId) dispatch(resetCurrentObject())
   }
-  console.log("props.submissionType :>> ", props.submissionType)
+
   return (
     <ButtonGroup aria-label="Draft actions button group">
       <Button className={classes.buttonEdit} aria-label="Edit submission" onClick={() => handleObjectEdit()}>

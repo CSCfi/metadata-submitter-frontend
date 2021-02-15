@@ -19,8 +19,8 @@ describe("WizardStepper", () => {
 
   const submissions = [
     { accessionId: "EDAG1", schema: "sample", tags: { submissionType: SubmissionTypes.form } },
-    { accessionId: "EDAG2", schema: "sample", tags: { submissionType: SubmissionTypes.form } },
-    { accessionId: "EDAG3", schema: "sample", tags: { submissionType: SubmissionTypes.existing } },
+    { accessionId: "EDAG2", schema: "sample", tags: { submissionType: SubmissionTypes.xml } },
+    { accessionId: "EDAG3", schema: "sample", tags: { submissionType: SubmissionTypes.xml } },
   ]
 
   beforeEach(() => {

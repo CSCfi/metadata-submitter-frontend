@@ -9,13 +9,15 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardUploadObjectXMLForm from "../components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
 
+import { SubmissionTypes } from "constants/submissions"
+
 const mockStore = configureStore([])
 
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardStepper", () => {
   const store = mockStore({
-    submissionType: "form",
+    submissionType: SubmissionTypes.form,
     submissionFolder: {
       description: "AWD",
       id: "FOL90524783",

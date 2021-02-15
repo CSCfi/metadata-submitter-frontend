@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
+import { SubmissionTypes } from "constants/submissions"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -122,11 +123,11 @@ const SubmissionTypeList = ({
   currentSubmissionType: string,
   draftCount: number,
 }) => {
-  const submissionTypes = ["form", "xml", "existing"]
+  const submissionTypes = [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing]
   const submissionTypeMap = {
-    form: "Fill Form",
-    xml: "Upload XML File",
-    existing: "Choose from drafts",
+    [SubmissionTypes.form]: "Fill Form",
+    [SubmissionTypes.xml]: "Upload XML File",
+    [SubmissionTypes.existing]: "Choose from drafts",
   }
   const classes = useStyles()
   const [showSkipLink, setSkipLinkVisible] = useState(false)
@@ -134,7 +135,7 @@ const SubmissionTypeList = ({
 
   const handleSkipLink = (event, submissionType) => {
     if (event.key === "Enter") {
-      if (submissionType === "existing" && draftCount === 0) {
+      if (submissionType === SubmissionTypes.existing && draftCount === 0) {
         setSkipLinkVisible(false)
       } else {
         setSkipLinkVisible(true)
@@ -151,15 +152,15 @@ const SubmissionTypeList = ({
   const skipToSubmissionLink = () => {
     let target = ""
     switch (currentSubmissionType) {
-      case "form": {
+      case SubmissionTypes.form: {
         target = "form"
         break
       }
-      case "xml": {
+      case SubmissionTypes.xml: {
         target = "XML upload"
         break
       }
-      case "existing": {
+      case SubmissionTypes.existing: {
         target = "drafts"
         break
       }

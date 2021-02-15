@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { SubmissionTypes } from "constants/submissions"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
@@ -79,7 +80,7 @@ const WizardDraftObjectPicker = () => {
     const response = await draftAPIService.getObjectByAccessionId(objectType, objectId)
     if (response.ok) {
       dispatch(setCurrentObject({ ...response.data, type: "draft" }))
-      dispatch(setSubmissionType("form"))
+      dispatch(setSubmissionType(SubmissionTypes.form))
     } else {
       setConnError(true)
       setResponseError(response)

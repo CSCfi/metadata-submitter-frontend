@@ -8,6 +8,7 @@ import { useSelector } from "react-redux"
 import WizardDraftObjectPicker from "components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import { SubmissionTypes } from "constants/submissions"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -36,20 +37,22 @@ const WizardAddObjectCard = () => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
   const objectType = useSelector(state => state.objectType)
+
   const cards = {
-    form: {
+    [SubmissionTypes.form]: {
       component: <WizardFillObjectDetailsForm key={objectType + submissionType} />,
-      testId: "form",
+      testId: SubmissionTypes.form,
     },
-    xml: {
+    [SubmissionTypes.xml]: {
       component: <WizardUploadObjectXMLForm key={objectType + submissionType} />,
-      testId: "xml",
+      testId: SubmissionTypes.xml,
     },
-    existing: {
+    [SubmissionTypes.existing]: {
       component: <WizardDraftObjectPicker />,
-      testId: "existing",
+      testId: SubmissionTypes.existing,
     },
   }
+
   return (
     <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
       {cards[submissionType]["component"]}

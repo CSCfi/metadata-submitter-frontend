@@ -18,6 +18,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { SubmissionTypes } from "constants/submissions"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -465,7 +466,7 @@ const WizardFillObjectDetailsForm = () => {
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
-          tags: { submissionType: "Form" },
+          tags: { submissionType: SubmissionTypes.form },
         })
       )
         .then(() => {

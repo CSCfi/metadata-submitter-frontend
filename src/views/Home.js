@@ -57,14 +57,16 @@ const Home = () => {
     let isMounted = true
     const getFolders = async () => {
       const response = await folderAPIService.getFolders()
-      if (response.ok && isMounted) {
-        dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
-        dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
-        setFetchingFolders(false)
-      } else {
-        setConnError(true)
-        setResponseError(response)
-        setErrorPrefix("Fetching folders error.")
+      if (isMounted) {
+        if (response.ok) {
+          dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
+          dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
+          setFetchingFolders(false)
+        } else {
+          setConnError(true)
+          setResponseError(response)
+          setErrorPrefix("Fetching folders error.")
+        }
       }
     }
     getFolders()

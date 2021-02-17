@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardAlert from "../components/NewDraftWizard/WizardComponents/WizardAlert"
 
-import { SubmissionTypes } from "constants/submissions"
+import { SubmissionsArray } from "constants/submissions"
 
 const mockStore = configureStore([])
 
@@ -18,9 +18,9 @@ describe("WizardAlert", () => {
 
   it("should render appropriate dialogs", () => {
     const alerts = [
-      { submission: { types: [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing] } },
+      { submission: { types: SubmissionsArray } },
       { footer: { types: ["cancel", "save"] } },
-      { stepper: { types: [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing] } },
+      { stepper: { types: SubmissionsArray } },
     ]
     alerts.forEach(item => {
       item[Object.keys(item)].types.forEach(type => {

@@ -15,7 +15,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectsArray } from "constants/objects"
+import { SubmissionTypes, SubmissionsArray } from "constants/submissions"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -123,7 +124,6 @@ const SubmissionTypeList = ({
   currentSubmissionType: string,
   draftCount: number,
 }) => {
-  const submissionTypes = [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing]
   const submissionTypeMap = {
     [SubmissionTypes.form]: "Fill Form",
     [SubmissionTypes.xml]: "Upload XML File",
@@ -184,7 +184,7 @@ const SubmissionTypeList = ({
 
   return (
     <List dense className={classes.submissionTypeList}>
-      {submissionTypes.map(submissionType => (
+      {SubmissionsArray.map(submissionType => (
         <ListItem
           selected={isCurrentObjectType && currentSubmissionType === submissionType}
           divider
@@ -215,7 +215,6 @@ const SubmissionTypeList = ({
 const WizardObjectIndex = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   const [expandedObjectType, setExpandedObjectType] = useState("")
   const [clickedSubmissionType, setClickedSubmissionType] = useState("")
@@ -269,7 +268,7 @@ const WizardObjectIndex = () => {
 
   return (
     <div className={classes.index}>
-      {objectTypes.map(objectType => {
+      {ObjectsArray.map(objectType => {
         const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
         const isCurrentObjectType = objectType === currentObjectType
         return (

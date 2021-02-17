@@ -7,13 +7,14 @@ import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
 
+import { ObjectTypes } from "constants/objects"
 import { SubmissionTypes } from "constants/submissions"
 
 const mockStore = configureStore([])
 
 describe("WizardStepper", () => {
   const store = mockStore({
-    objectType: "sample",
+    objectType: ObjectTypes.sample,
     wizardStep: 1,
   })
 

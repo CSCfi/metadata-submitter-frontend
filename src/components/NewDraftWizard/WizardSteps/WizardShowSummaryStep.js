@@ -13,6 +13,8 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
+import { ObjectTypes, ObjectsArray } from "constants/objects"
+
 const useStyles = makeStyles(theme => ({
   summary: {
     padding: theme.spacing(1),
@@ -43,7 +45,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
+type Schema =
+  | ObjectTypes.study
+  | ObjectTypes.schema
+  | ObjectTypes.experiment
+  | ObjectTypes.run
+  | ObjectTypes.analysis
+  | ObjectTypes.dac
+  | ObjectTypes.policy
+  | ObjectTypes.dataset
 
 type GroupedBySchema = {| [Schema]: Object[] |}
 
@@ -53,19 +63,12 @@ type GroupedBySchema = {| [Schema]: Object[] |}
 const WizardShowSummaryStep = () => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
-  const groupedObjects: Array<GroupedBySchema> = [
-    "Study",
-    "Sample",
-    "Experiment",
-    "Run",
-    "Analysis",
-    "DAC",
-    "Policy",
-  ].map((schema: Object) => {
+  const groupedObjects: Array<GroupedBySchema> = ObjectsArray.map((schema: string) => {
     return {
-      [(schema: Object)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
+      [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
     }
   })
+
   const classes = useStyles()
   return (
     <>
@@ -79,7 +82,7 @@ const WizardShowSummaryStep = () => {
             <List key={schema} aria-label={schema} className={classes.listGroup}>
               <div className={classes.schemaTitleRow}>
                 <Typography variant="subtitle1" fontWeight="fontWeightBold">
-                  {schema}
+                  {schema.charAt(0).toUpperCase() + schema.substring(1)}
                 </Typography>
                 <div className="objectAmount">{group[schema].length}</div>
               </div>
@@ -90,9 +93,9 @@ const WizardShowSummaryStep = () => {
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions
                         submissions={metadataObjects}
-                        objectType={schema.toLowerCase()}
+                        objectType={schema}
                         objectId={item.accessionId}
-                        submissionType={item.tags?.submissionType.toLowerCase()}
+                        submissionType={item.tags?.submissionType}
                         tags={item.tags}
                         summary={true}
                       />

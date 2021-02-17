@@ -8,7 +8,8 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectTypes } from "constants/objects"
+import { SubmissionTypes, SubmissionsArray } from "constants/submissions"
 
 const mockStore = configureStore([])
 
@@ -37,11 +38,10 @@ describe("WizardAddObjectStep", () => {
   })
 
   it("should render appropriate card", async () => {
-    const typeList = [SubmissionTypes.form, SubmissionTypes.xml, SubmissionTypes.existing]
     await act(async () => {
-      typeList.forEach(typeName => {
+      SubmissionsArray.forEach(typeName => {
         const store = mockStore({
-          objectType: "study",
+          objectType: ObjectTypes.study,
           submissionType: typeName,
           submissionFolder: {
             description: "Test",

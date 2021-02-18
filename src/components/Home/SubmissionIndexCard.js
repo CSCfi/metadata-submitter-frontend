@@ -16,7 +16,7 @@ import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 
-import { SubmissionStatus } from "constants/submissions"
+import { FolderSubmissionStatus } from "constants/folder"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -92,7 +92,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
                 onClick={() => onClickContent(folder.folderId, folderType)}
               >
                 <ListItemIcon className={classes.submissionsListIcon}>
-                  {folderType === SubmissionStatus.published ? (
+                  {folderType === FolderSubmissionStatus.published ? (
                     <FolderIcon color="primary" />
                   ) : (
                     <FolderOpenIcon color="primary" />
@@ -128,7 +128,9 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
-        title={folderType === SubmissionStatus.published ? "Your Published Submissions" : "Your Draft Submissions"}
+        title={
+          folderType === FolderSubmissionStatus.published ? "Your Published Submissions" : "Your Draft Submissions"
+        }
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
         onClick={onClickHeader}

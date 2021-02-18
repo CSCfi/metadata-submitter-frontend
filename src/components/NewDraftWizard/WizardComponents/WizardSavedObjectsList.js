@@ -10,7 +10,7 @@ import { useSelector } from "react-redux"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectSubmissionTypes } from "constants/object"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -75,9 +75,9 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
 
   const displaySubmissionType = (submission: { submissionType: string, submittedItems: any }) => {
     switch (submission.submissionType) {
-      case SubmissionTypes.form:
+      case ObjectSubmissionTypes.form:
         return submission.submittedItems.length >= 2 ? "Forms" : "Form"
-      case SubmissionTypes.xml:
+      case ObjectSubmissionTypes.xml:
         return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
       default:
         break

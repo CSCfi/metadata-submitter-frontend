@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
@@ -145,7 +146,11 @@ const WizardDraftObjectPicker = () => {
       )}
 
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </Container>
   )

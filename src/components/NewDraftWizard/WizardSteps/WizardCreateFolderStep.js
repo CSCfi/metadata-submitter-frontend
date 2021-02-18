@@ -11,6 +11,7 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { WizardStatus } from "constants/wizardStatus"
 import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 
@@ -81,7 +82,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           defaultValue={folder ? folder.description : ""}
         ></MuiTextField>
       </form>
-      {connError && <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText="" />}
+      {connError && (
+        <WizardStatusMessageHandler successStatus={WizardStatus.error} response={responseError} prefixText="" />
+      )}
     </>
   )
 }

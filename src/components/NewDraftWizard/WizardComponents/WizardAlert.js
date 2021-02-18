@@ -11,6 +11,7 @@ import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -60,7 +61,7 @@ const CancelFormDialog = ({
         dispatch(resetDraftStatus())
         dispatch(
           updateStatus({
-            successStatus: "success",
+            successStatus: WizardStatus.success,
             response: response,
             errorPrefix: "",
           })
@@ -76,7 +77,7 @@ const CancelFormDialog = ({
       if (response.ok) {
         dispatch(
           updateStatus({
-            successStatus: "success",
+            successStatus: WizardStatus.success,
             response: response,
             errorPrefix: "",
           })
@@ -108,7 +109,7 @@ const CancelFormDialog = ({
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: "success",
+          successStatus: WizardStatus.success,
           response: response,
           errorPrefix: "",
         })

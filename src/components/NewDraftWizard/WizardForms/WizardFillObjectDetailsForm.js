@@ -19,6 +19,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -304,7 +305,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: "success",
+          successStatus: WizardStatus.success,
           response: response,
           errorPrefix: "",
         })
@@ -312,7 +313,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     } else {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: response,
           errorPrefix: "Unexpected error",
         })
@@ -343,7 +344,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
             .then(() => {
               dispatch(
                 updateStatus({
-                  successStatus: "success",
+                  successStatus: WizardStatus.success,
                   response: response,
                   errorPrefix: "",
                 })
@@ -352,7 +353,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
             .catch(error => {
               dispatch(
                 updateStatus({
-                  successStatus: "error",
+                  successStatus: WizardStatus.error,
                   response: error,
                   errorPrefix: "Cannot connect to folder API",
                 })
@@ -361,7 +362,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         } else {
           dispatch(
             updateStatus({
-              successStatus: "error",
+              successStatus: WizardStatus.error,
               response: response,
               errorPrefix: "Unexpected error",
             })
@@ -371,7 +372,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     } else {
       dispatch(
         updateStatus({
-          successStatus: "info",
+          successStatus: WizardStatus.info,
           response: "",
           errorPrefix: "An empty form cannot be saved. Please fill in the form before saving it.",
         })
@@ -454,7 +455,7 @@ const WizardFillObjectDetailsForm = () => {
     setSuccessStatus(undefined)
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus("info")
+      setSuccessStatus(WizardStatus.info)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
     const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
@@ -470,17 +471,17 @@ const WizardFillObjectDetailsForm = () => {
         })
       )
         .then(() => {
-          setSuccessStatus("success")
+          setSuccessStatus(WizardStatus.success)
           dispatch(resetDraftStatus())
           dispatch(resetCurrentObject())
         })
         .catch(error => {
-          setSuccessStatus("error")
+          setSuccessStatus(WizardStatus.error)
           setResponseInfo(error)
           setErrorPrefix("Cannot connect to folder API")
         })
     } else {
-      setSuccessStatus("error")
+      setSuccessStatus(WizardStatus.error)
       setErrorPrefix("Validation failed")
     }
     clearTimeout(waitForServertimer)

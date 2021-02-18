@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
@@ -100,7 +101,7 @@ const WizardUploadObjectXMLForm = () => {
     setSubmitting(true)
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus("info")
+      setSuccessStatus(WizardStatus.info)
     }, 5000)
 
     if (currentObject.accessionId) {
@@ -114,21 +115,21 @@ const WizardUploadObjectXMLForm = () => {
           })
         )
           .then(() => {
-            setSuccessStatus("success")
+            setSuccessStatus(WizardStatus.success)
             resetForm()
             dispatch(resetCurrentObject())
           })
           .catch(() => {
-            setSuccessStatus("error")
+            setSuccessStatus(WizardStatus.error)
           })
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     } else {
       const response = await objectAPIService.createFromXML(objectType, file)
       setResponseStatus(response)
       if (response.ok) {
-        setSuccessStatus("success")
+        setSuccessStatus(WizardStatus.success)
         dispatch(
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
@@ -138,7 +139,7 @@ const WizardUploadObjectXMLForm = () => {
         )
         resetForm()
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     }
     clearTimeout(waitForServertimer)

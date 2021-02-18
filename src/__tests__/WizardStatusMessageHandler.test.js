@@ -6,6 +6,8 @@ import configureStore from "redux-mock-store"
 
 import WizardStatusMessageHandler from "../components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 
+import { WizardStatus } from "constants/wizardStatus"
+
 const mockStore = configureStore([])
 
 describe("WizardStatusMessageHandler", () => {
@@ -18,7 +20,11 @@ describe("WizardStatusMessageHandler", () => {
     const prefixTextMock = "Test prefix"
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler successStatus={"error"} response={responseMock} prefixText={prefixTextMock} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseMock}
+          prefixText={prefixTextMock}
+        />
       </Provider>
     )
     expect(screen.getByRole("alert")).toBeDefined()
@@ -28,7 +34,7 @@ describe("WizardStatusMessageHandler", () => {
   it("should render info message", () => {
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler successStatus={"info"} />
+        <WizardStatusMessageHandler successStatus={WizardStatus.info} />
       </Provider>
     )
     expect(
@@ -40,7 +46,7 @@ describe("WizardStatusMessageHandler", () => {
     const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/drafts" } }
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler response={responseMock} successStatus={"success"} />
+        <WizardStatusMessageHandler response={responseMock} successStatus={WizardStatus.success} />
       </Provider>
     )
     expect(screen.getByText(/Draft saved with accessionid TESTID1234/i)).toBeDefined()

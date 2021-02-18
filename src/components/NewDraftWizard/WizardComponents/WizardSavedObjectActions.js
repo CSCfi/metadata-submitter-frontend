@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
@@ -49,7 +50,7 @@ const WizardSavedObjectActions = (props: any) => {
     } else {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: response,
           errorPrefix: "Object fetching error",
         })
@@ -61,7 +62,7 @@ const WizardSavedObjectActions = (props: any) => {
     dispatch(deleteObjectFromFolder(ObjectStatus.submitted, props.objectId, props.objectType)).catch(error => {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: error,
           errorPrefix: "Can't delete object",
         })

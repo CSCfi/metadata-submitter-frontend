@@ -13,6 +13,7 @@ import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { FolderSubmissionStatus } from "constants/folder"
 import { ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setSelectedFolder, resetSelectedFolder, deleteObjectFromSelectedFolder } from "features/selectedFolderSlice"
 import { setUnpublishedFolders, updateFolderToUnpublishedFolders } from "features/unpublishedFoldersSlice"
@@ -240,7 +241,11 @@ const Home = () => {
       <SelectedFolderDetails />
 
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </Grid>
   )

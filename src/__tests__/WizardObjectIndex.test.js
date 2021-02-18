@@ -7,6 +7,8 @@ import configureStore from "redux-mock-store"
 
 import WizardObjectIndex from "../components/NewDraftWizard/WizardComponents/WizardObjectIndex"
 
+import { ObjectTypes } from "constants/object"
+
 const mockStore = configureStore([])
 
 describe("WizardObjectIndex", () => {
@@ -14,10 +16,10 @@ describe("WizardObjectIndex", () => {
     const store = mockStore({
       submissionFolder: {
         drafts: [
-          { accessionId: "TESTID1234", schema: "draft-study" },
-          { accessionId: "TESTID5678", schema: "draft-study" },
-          { accessionId: "TESTID0101", schema: "draft-analysis" },
-          { accessionId: "TESTID0202", schema: "draft-experiment" },
+          { accessionId: "TESTID1234", schema: `draft-${ObjectTypes.study}` },
+          { accessionId: "TESTID5678", schema: `draft-${ObjectTypes.study}` },
+          { accessionId: "TESTID0101", schema: `draft-${ObjectTypes.analysis}` },
+          { accessionId: "TESTID0202", schema: `draft-${ObjectTypes.experiment}` },
         ],
       },
     })

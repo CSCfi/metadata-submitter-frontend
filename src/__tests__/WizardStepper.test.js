@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
 
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectSubmissionTypes } from "constants/object"
 
 const mockStore = configureStore([])
 
@@ -27,7 +27,7 @@ describe("WizardStepper", () => {
   })
   it("should open dialog if form or upload in progress", () => {
     const store = mockStore({
-      submissionType: SubmissionTypes.form,
+      submissionType: ObjectSubmissionTypes.form,
       wizardStep: 1,
       draftStatus: "notSaved",
     })

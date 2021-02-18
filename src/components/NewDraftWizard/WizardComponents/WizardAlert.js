@@ -10,7 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectSubmissionTypes } from "constants/object"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -162,17 +162,17 @@ const CancelFormDialog = ({
         )
       } else {
         switch (alertType) {
-          case SubmissionTypes.form: {
+          case ObjectSubmissionTypes.form: {
             dialogTitle = "Would you like to save draft version of this form"
             dialogContent = formContent
             break
           }
-          case SubmissionTypes.xml: {
+          case ObjectSubmissionTypes.xml: {
             dialogTitle = "Would you like to save draft version of this xml upload"
             dialogContent = xmlContent
             break
           }
-          case SubmissionTypes.existing: {
+          case ObjectSubmissionTypes.existing: {
             dialogTitle = "Would you like to save draft version of this existing object upload"
             dialogContent = objectContent
             break
@@ -274,15 +274,15 @@ const CancelFormDialog = ({
       dialogTitle = "Move to " + alertType + " step?"
       dialogContent = "You have unsaved data. You can save current form as draft"
       switch (currentSubmissionType) {
-        case SubmissionTypes.form: {
+        case ObjectSubmissionTypes.form: {
           dialogContent = formContent
           break
         }
-        case SubmissionTypes.xml: {
+        case ObjectSubmissionTypes.xml: {
           dialogContent = xmlContent
           break
         }
-        case SubmissionTypes.existing: {
+        case ObjectSubmissionTypes.existing: {
           dialogContent = objectContent
           break
         }

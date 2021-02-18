@@ -7,8 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
 
-import { ObjectTypes } from "constants/objects"
-import { SubmissionTypes } from "constants/submissions"
+import { ObjectTypes, ObjectSubmissionTypes } from "constants/object"
 
 const mockStore = configureStore([])
 
@@ -19,9 +18,9 @@ describe("WizardStepper", () => {
   })
 
   const submissions = [
-    { accessionId: "EDAG1", schema: "sample", tags: { submissionType: SubmissionTypes.form } },
-    { accessionId: "EDAG2", schema: "sample", tags: { submissionType: SubmissionTypes.xml } },
-    { accessionId: "EDAG3", schema: "sample", tags: { submissionType: SubmissionTypes.xml } },
+    { accessionId: "EDAG1", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.form } },
+    { accessionId: "EDAG2", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
+    { accessionId: "EDAG3", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
   ]
 
   beforeEach(() => {
@@ -42,7 +41,7 @@ describe("WizardStepper", () => {
     screen.getByText(/Submitted sample form/i)
     expect(screen.getByText(/Submitted sample form/i)).toBeInTheDocument()
 
-    const formList = screen.getByRole("list", { name: SubmissionTypes.form })
+    const formList = screen.getByRole("list", { name: ObjectSubmissionTypes.form })
     expect(formList).toBeInTheDocument()
 
     const { getAllByRole } = within(formList)
@@ -54,7 +53,7 @@ describe("WizardStepper", () => {
     screen.getByText(/Submitted sample xml/i)
     expect(screen.getByText(/Submitted sample xml/i)).toBeInTheDocument()
 
-    const xmlList = screen.getByRole("list", { name: SubmissionTypes.xml })
+    const xmlList = screen.getByRole("list", { name: ObjectSubmissionTypes.xml })
     expect(xmlList).toBeInTheDocument()
 
     const { getAllByRole } = within(xmlList)

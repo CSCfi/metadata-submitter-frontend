@@ -19,3 +19,15 @@ export const ObjectsArray = [
   ObjectTypes.policy,
   ObjectTypes.dataset,
 ]
+
+export const ObjectSubmissionTypes = {
+  form: "Form",
+  xml: "XML",
+  existing: "Existing",
+}
+
+export const ObjectSubmissionsArray = [
+  ObjectSubmissionTypes.form,
+  ObjectSubmissionTypes.xml,
+  ObjectSubmissionTypes.existing,
+]

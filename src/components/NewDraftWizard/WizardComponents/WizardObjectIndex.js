@@ -15,8 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { ObjectsArray } from "constants/objects"
-import { SubmissionTypes, SubmissionsArray } from "constants/submissions"
+import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectsArray } from "constants/object"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -125,9 +124,9 @@ const SubmissionTypeList = ({
   draftCount: number,
 }) => {
   const submissionTypeMap = {
-    [SubmissionTypes.form]: "Fill Form",
-    [SubmissionTypes.xml]: "Upload XML File",
-    [SubmissionTypes.existing]: "Choose from drafts",
+    [ObjectSubmissionTypes.form]: "Fill Form",
+    [ObjectSubmissionTypes.xml]: "Upload XML File",
+    [ObjectSubmissionTypes.existing]: "Choose from drafts",
   }
   const classes = useStyles()
   const [showSkipLink, setSkipLinkVisible] = useState(false)
@@ -135,7 +134,7 @@ const SubmissionTypeList = ({
 
   const handleSkipLink = (event, submissionType) => {
     if (event.key === "Enter") {
-      if (submissionType === SubmissionTypes.existing && draftCount === 0) {
+      if (submissionType === ObjectSubmissionTypes.existing && draftCount === 0) {
         setSkipLinkVisible(false)
       } else {
         setSkipLinkVisible(true)
@@ -152,15 +151,15 @@ const SubmissionTypeList = ({
   const skipToSubmissionLink = () => {
     let target = ""
     switch (currentSubmissionType) {
-      case SubmissionTypes.form: {
+      case ObjectSubmissionTypes.form: {
         target = "form"
         break
       }
-      case SubmissionTypes.xml: {
+      case ObjectSubmissionTypes.xml: {
         target = "XML upload"
         break
       }
-      case SubmissionTypes.existing: {
+      case ObjectSubmissionTypes.existing: {
         target = "drafts"
         break
       }
@@ -184,7 +183,7 @@ const SubmissionTypeList = ({
 
   return (
     <List dense className={classes.submissionTypeList}>
-      {SubmissionsArray.map(submissionType => (
+      {ObjectSubmissionsArray.map(submissionType => (
         <ListItem
           selected={isCurrentObjectType && currentSubmissionType === submissionType}
           divider

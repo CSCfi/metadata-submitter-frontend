@@ -8,6 +8,8 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 
+import { ObjectTypes } from "constants/object"
+
 const mockStore = configureStore([])
 
 expect.extend({ toMatchDiffSnapshot })
@@ -22,8 +24,8 @@ describe("WizardShowSummaryStep", () => {
         description: "AWD",
         id: "FOL90524783",
         metadataObjects: [
-          { accessionId: "EDAG2584421211413887", schema: "study" },
-          { accessionId: "EDAG9880663174234413", schema: "study" },
+          { accessionId: "EDAG2584421211413887", schema: ObjectTypes.study },
+          { accessionId: "EDAG9880663174234413", schema: ObjectTypes.study },
         ],
         name: "AA",
         published: false,

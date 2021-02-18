@@ -9,6 +9,7 @@ import thunk from "redux-thunk"
 import WizardDraftObjectPicker from "../components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 
 import { ObjectTypes } from "constants/objects"
+import { SubmissionTypes } from "constants/submissions"
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
@@ -16,7 +17,7 @@ const mockStore = configureStore(middlewares)
 describe("WizardStepper", () => {
   const store = mockStore({
     objectType: ObjectTypes.study,
-    submissionType: "existing",
+    submissionType: SubmissionTypes.existing,
     submissionFolder: {
       description: "AWD",
       id: "FOL90524783",

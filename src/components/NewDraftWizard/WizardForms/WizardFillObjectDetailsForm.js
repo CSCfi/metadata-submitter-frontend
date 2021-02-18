@@ -18,7 +18,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -161,11 +161,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         variant="contained"
         aria-label="submit form"
         size="small"
-        type={currentObject?.type === "saved" ? "button" : "submit"}
+        type={currentObject?.type === ObjectStatus.submitted ? "button" : "submit"}
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.type === "saved" ? "Update" : "Submit"} {objectType}
+        {currentObject?.type === ObjectStatus.submitted ? "Update" : "Submit"} {objectType}
       </Button>
     </div>
   )
@@ -253,7 +253,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
             setCurrentObject({
               ...clone,
               cleanedValues: values,
-              type: currentObject.type || "draft",
+              type: currentObject.type || ObjectStatus.draft,
               objectId: currentObjectId,
             })
           )
@@ -266,7 +266,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const handleDraftDelete = draftId => {
-    dispatch(deleteObjectFromFolder("draft", draftId, objectType))
+    dispatch(deleteObjectFromFolder(ObjectStatus.draft, draftId, objectType))
     setCurrentObjectId(() => null)
     handleChange()
   }
@@ -326,13 +326,13 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const saveDraft = async () => {
     handleReset()
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
-      if ((currentObjectId || currentObject?.accessionId) && currentObject?.type === "draft") {
+      if ((currentObjectId || currentObject?.accessionId) && currentObject?.type === ObjectStatus.draft) {
         const response = await draftAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
         patchHandler(response)
       } else {
         const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
         if (response.ok) {
-          if (currentObject?.type !== "saved") setCurrentObjectId(response.data.accessionId)
+          if (currentObject?.type !== ObjectStatus.submitted) setCurrentObjectId(response.data.accessionId)
           dispatch(resetDraftStatus())
           dispatch(
             addObjectToDrafts(folderId, {
@@ -397,8 +397,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }, [timer])
 
   const submitForm = () => {
-    if (currentObject?.type === "saved") patchObject()
-    if (currentObject?.type === "draft" && currentObjectId && Object.keys(currentObject).length > 0)
+    if (currentObject?.type === ObjectStatus.submitted) patchObject()
+    if (currentObject?.type === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
       handleDraftDelete(currentObjectId)
 
     handleReset()

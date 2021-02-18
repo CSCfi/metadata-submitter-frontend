@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
 import { resetFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
@@ -160,7 +160,7 @@ const WizardUploadObjectXMLForm = () => {
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >
-      {currentObject?.type === "saved" ? "Replace" : "Submit"}
+      {currentObject?.type === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
   )
 

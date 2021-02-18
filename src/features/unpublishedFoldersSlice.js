@@ -1,6 +1,8 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
+import { ObjectStatus } from "constants/object"
+
 const initialState = []
 
 const unpublishedFoldersSlice = createSlice({
@@ -51,7 +53,7 @@ export const updateFolderToUnpublishedFolders = (
   objectStatus: string
 ) => (dispatch: any => void) => {
   const updatedFolder =
-    objectStatus === "Draft"
+    objectStatus === ObjectStatus.draft
       ? {
           ...selectedFolder,
           drafts: selectedFolder.drafts.filter(draft => draft.accessionId !== objectId),

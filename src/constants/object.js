@@ -20,6 +20,11 @@ export const ObjectsArray = [
   ObjectTypes.dataset,
 ]
 
+export const ObjectStatus = {
+  draft: "Draft",
+  submitted: "Submitted",
+}
+
 export const ObjectSubmissionTypes = {
   form: "Form",
   xml: "XML",

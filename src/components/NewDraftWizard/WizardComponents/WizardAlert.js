@@ -10,7 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -50,7 +50,7 @@ const CancelFormDialog = ({
     setError(false)
     const err = "Connection error, cannot save draft."
 
-    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === "draft") {
+    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === ObjectStatus.draft) {
       const response = await draftAPIService.patchFromJSON(
         objectType,
         currentObject.accessionId || currentObject.objectId,
@@ -129,7 +129,7 @@ const CancelFormDialog = ({
 
   switch (parentLocation) {
     case "submission": {
-      if (currentObject?.type === "saved") {
+      if (currentObject?.type === ObjectStatus.submitted) {
         dialogTitle = "Would you like to save edited form data?"
         dialogContent = "Unsaved changes will be lost. If you save form as a draft, you can continue filling it later."
         dialogActions = (

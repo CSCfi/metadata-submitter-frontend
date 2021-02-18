@@ -12,6 +12,7 @@ import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { FolderSubmissionStatus } from "constants/folder"
+import { ObjectStatus } from "constants/object"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setSelectedFolder, resetSelectedFolder, deleteObjectFromSelectedFolder } from "features/selectedFolderSlice"
 import { setUnpublishedFolders, updateFolderToUnpublishedFolders } from "features/unpublishedFoldersSlice"
@@ -101,7 +102,7 @@ const Home = () => {
             accessionId: draftObjects[i].accessionId,
             title: response.data.descriptor?.studyTitle,
             objectType,
-            status: "Draft",
+            status: ObjectStatus.draft,
             lastModified: response.data.dateModified,
           }
           objectsArr.push(draftObjectDetails)
@@ -121,7 +122,7 @@ const Home = () => {
           accessionId: submittedObjects[j].accessionId,
           title: response.data.descriptor?.studyTitle,
           objectType,
-          status: "Submitted",
+          status: ObjectStatus.submitted,
           lastModified: response.data.dateModified,
         }
         objectsArr.push(submittedObjectDetails)

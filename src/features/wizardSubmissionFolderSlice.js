@@ -6,6 +6,7 @@ import _reject from "lodash/reject"
 import draftAPIService from "../services/draftAPI"
 import objectAPIService from "../services/objectAPI"
 
+import { ObjectStatus } from "constants/object"
 import folderAPIService from "services/folderAPI"
 import publishAPIService from "services/publishAPI"
 
@@ -165,11 +166,11 @@ export const addObjectToDrafts = (folderID: string, objectDetails: ObjectInFolde
 export const deleteObjectFromFolder = (savedType: string, objectId: string, objectType: string) => async (
   dispatch: any => void
 ) => {
-  const service = savedType === "submitted" ? objectAPIService : draftAPIService
+  const service = savedType === ObjectStatus.submitted ? objectAPIService : draftAPIService
   const response = await service.deleteObjectByAccessionId(objectType, objectId)
   return new Promise((resolve, reject) => {
     if (response.ok) {
-      savedType === "submitted" ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
+      savedType === ObjectStatus.submitted ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
       resolve(response)
     } else {
       reject(JSON.stringify(response))

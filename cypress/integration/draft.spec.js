@@ -40,7 +40,7 @@ describe("Draft operations", function () {
 
     // Delete a draft
     cy.get("button[aria-label='Delete draft']").first().click()
-    cy.get("div[data-testid='Existing']").find("li", { timeout: 10000 }).should("have.length", 1)
+    cy.get("div[data-testid='Existing']").find("li", { timeout: 60000 }).should("have.length", 1)
 
     // Continue draft
     // Clear

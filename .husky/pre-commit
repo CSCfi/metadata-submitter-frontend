@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run concurrently -- "npm:lint:check" "npm:format:check" "npm:flow:check" "npm:test:noninteractive" 

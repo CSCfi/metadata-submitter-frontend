@@ -10,6 +10,8 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -49,7 +51,7 @@ const CancelFormDialog = ({
     setError(false)
     const err = "Connection error, cannot save draft."
 
-    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === "draft") {
+    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === ObjectStatus.draft) {
       const response = await draftAPIService.patchFromJSON(
         objectType,
         currentObject.accessionId || currentObject.objectId,
@@ -59,7 +61,7 @@ const CancelFormDialog = ({
         dispatch(resetDraftStatus())
         dispatch(
           updateStatus({
-            successStatus: "success",
+            successStatus: WizardStatus.success,
             response: response,
             errorPrefix: "",
           })
@@ -75,7 +77,7 @@ const CancelFormDialog = ({
       if (response.ok) {
         dispatch(
           updateStatus({
-            successStatus: "success",
+            successStatus: WizardStatus.success,
             response: response,
             errorPrefix: "",
           })
@@ -107,7 +109,7 @@ const CancelFormDialog = ({
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: "success",
+          successStatus: WizardStatus.success,
           response: response,
           errorPrefix: "",
         })
@@ -128,7 +130,7 @@ const CancelFormDialog = ({
 
   switch (parentLocation) {
     case "submission": {
-      if (currentObject?.type === "saved") {
+      if (currentObject?.type === ObjectStatus.submitted) {
         dialogTitle = "Would you like to save edited form data?"
         dialogContent = "Unsaved changes will be lost. If you save form as a draft, you can continue filling it later."
         dialogActions = (
@@ -161,17 +163,17 @@ const CancelFormDialog = ({
         )
       } else {
         switch (alertType) {
-          case "form": {
+          case ObjectSubmissionTypes.form: {
             dialogTitle = "Would you like to save draft version of this form"
             dialogContent = formContent
             break
           }
-          case "xml": {
+          case ObjectSubmissionTypes.xml: {
             dialogTitle = "Would you like to save draft version of this xml upload"
             dialogContent = xmlContent
             break
           }
-          case "existing": {
+          case ObjectSubmissionTypes.existing: {
             dialogTitle = "Would you like to save draft version of this existing object upload"
             dialogContent = objectContent
             break
@@ -273,15 +275,15 @@ const CancelFormDialog = ({
       dialogTitle = "Move to " + alertType + " step?"
       dialogContent = "You have unsaved data. You can save current form as draft"
       switch (currentSubmissionType) {
-        case "form": {
+        case ObjectSubmissionTypes.form: {
           dialogContent = formContent
           break
         }
-        case "xml": {
+        case ObjectSubmissionTypes.xml: {
           dialogContent = xmlContent
           break
         }
-        case "existing": {
+        case ObjectSubmissionTypes.existing: {
           dialogContent = objectContent
           break
         }

@@ -36,10 +36,9 @@ describe("Basic e2e", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Edit saved submission
-    cy.get("button[type=button]").contains("New form").click()
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']").type(" edited")
+    cy.get("input[name='descriptor.studyTitle']").type(" edited").blur()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
@@ -128,7 +127,7 @@ describe("Basic e2e", function () {
           )
           cy.get("button").contains("Add new item").click()
           cy.get("input[name='analysisType.sequenceVariation.sequence[0].accessionId']").type(
-            "Squence Sequence Accession Id"
+            "Sequence Sequence Accession Id"
           )
         })
 

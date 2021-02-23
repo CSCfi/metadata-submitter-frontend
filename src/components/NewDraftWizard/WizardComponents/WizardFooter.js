@@ -11,6 +11,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 
 import WizardAlert from "./WizardAlert"
 
+import { WizardStatus } from "constants/wizardStatus"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
@@ -158,7 +159,11 @@ const WizardFooter = () => {
       </div>
       {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </div>
   )

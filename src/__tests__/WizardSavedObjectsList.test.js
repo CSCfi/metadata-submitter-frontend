@@ -7,18 +7,20 @@ import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
 
+import { ObjectTypes, ObjectSubmissionTypes } from "constants/object"
+
 const mockStore = configureStore([])
 
 describe("WizardStepper", () => {
   const store = mockStore({
-    objectType: "sample",
+    objectType: ObjectTypes.sample,
     wizardStep: 1,
   })
 
   const submissions = [
-    { accessionId: "EDAG1", schema: "sample", tags: { submissionType: "Form" } },
-    { accessionId: "EDAG2", schema: "sample", tags: { submissionType: "XML" } },
-    { accessionId: "EDAG3", schema: "sample", tags: { submissionType: "XML" } },
+    { accessionId: "EDAG1", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.form } },
+    { accessionId: "EDAG2", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
+    { accessionId: "EDAG3", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
   ]
 
   beforeEach(() => {
@@ -39,7 +41,7 @@ describe("WizardStepper", () => {
     screen.getByText(/Submitted sample form/i)
     expect(screen.getByText(/Submitted sample form/i)).toBeInTheDocument()
 
-    const formList = screen.getByRole("list", { name: "Form" })
+    const formList = screen.getByRole("list", { name: ObjectSubmissionTypes.form })
     expect(formList).toBeInTheDocument()
 
     const { getAllByRole } = within(formList)
@@ -51,7 +53,7 @@ describe("WizardStepper", () => {
     screen.getByText(/Submitted sample xml/i)
     expect(screen.getByText(/Submitted sample xml/i)).toBeInTheDocument()
 
-    const xmlList = screen.getByRole("list", { name: "XML" })
+    const xmlList = screen.getByRole("list", { name: ObjectSubmissionTypes.xml })
     expect(xmlList).toBeInTheDocument()
 
     const { getAllByRole } = within(xmlList)

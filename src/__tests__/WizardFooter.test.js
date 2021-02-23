@@ -8,6 +8,8 @@ import configureStore from "redux-mock-store"
 
 import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
 
+import { ObjectSubmissionTypes } from "constants/object"
+
 const mockStore = configureStore([])
 
 describe("WizardStepper", () => {
@@ -16,7 +18,7 @@ describe("WizardStepper", () => {
 
   it("should open dialog on click of cancel", () => {
     store = mockStore({
-      submissionType: "form",
+      submissionType: ObjectSubmissionTypes.form,
       wizardStep: 1,
     })
     wrapper = (
@@ -33,7 +35,7 @@ describe("WizardStepper", () => {
   }),
     it("should disable Publish button if there is no submitted objects", () => {
       store = mockStore({
-        submissionType: "form",
+        submissionType: ObjectSubmissionTypes.form,
         wizardStep: 2,
         submissionFolder: {
           id: "FOL001",

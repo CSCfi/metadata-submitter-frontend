@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
@@ -99,7 +101,7 @@ const WizardUploadObjectXMLForm = () => {
     setSubmitting(true)
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus("info")
+      setSuccessStatus(WizardStatus.info)
     }, 5000)
 
     if (currentObject.accessionId) {
@@ -108,36 +110,36 @@ const WizardUploadObjectXMLForm = () => {
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(folderId, currentObject.accessionId, currentObject.index, {
-            submissionType: "XML",
+            submissionType: ObjectSubmissionTypes.xml,
             fileName: fileName,
           })
         )
           .then(() => {
-            setSuccessStatus("success")
+            setSuccessStatus(WizardStatus.success)
             resetForm()
             dispatch(resetCurrentObject())
           })
           .catch(() => {
-            setSuccessStatus("error")
+            setSuccessStatus(WizardStatus.error)
           })
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     } else {
       const response = await objectAPIService.createFromXML(objectType, file)
       setResponseStatus(response)
       if (response.ok) {
-        setSuccessStatus("success")
+        setSuccessStatus(WizardStatus.success)
         dispatch(
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
             schema: objectType,
-            tags: { submissionType: "XML", fileName },
+            tags: { submissionType: ObjectSubmissionTypes.xml, fileName },
           })
         )
         resetForm()
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     }
     clearTimeout(waitForServertimer)
@@ -159,7 +161,7 @@ const WizardUploadObjectXMLForm = () => {
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >
-      {currentObject?.type === "saved" ? "Replace" : "Submit"}
+      {currentObject?.type === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
   )
 

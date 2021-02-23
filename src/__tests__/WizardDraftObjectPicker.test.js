@@ -8,22 +8,24 @@ import thunk from "redux-thunk"
 
 import WizardDraftObjectPicker from "../components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/object"
+
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
 
 describe("WizardStepper", () => {
   const store = mockStore({
-    objectType: "study",
-    submissionType: "existing",
+    objectType: ObjectTypes.study,
+    submissionType: ObjectSubmissionTypes.existing,
     submissionFolder: {
       description: "AWD",
       id: "FOL90524783",
       name: "Testname",
       published: false,
       drafts: [
-        { accessionId: "TESTID1", schema: "draft-study" },
-        { accessionId: "TESTID2", schema: "draft-study" },
-        { accessionId: "TESTID3", schema: "draft-sample" },
+        { accessionId: "TESTID1", schema: `draft-${ObjectTypes.study}` },
+        { accessionId: "TESTID2", schema: `draft-${ObjectTypes.study}` },
+        { accessionId: "TESTID3", schema: `draft-${ObjectTypes.sample}` },
       ],
     },
   })

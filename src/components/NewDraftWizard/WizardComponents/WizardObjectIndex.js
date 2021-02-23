@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
+import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectsArray } from "constants/object"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -122,11 +123,10 @@ const SubmissionTypeList = ({
   currentSubmissionType: string,
   draftCount: number,
 }) => {
-  const submissionTypes = ["form", "xml", "existing"]
   const submissionTypeMap = {
-    form: "Fill Form",
-    xml: "Upload XML File",
-    existing: "Choose from drafts",
+    [ObjectSubmissionTypes.form]: "Fill Form",
+    [ObjectSubmissionTypes.xml]: "Upload XML File",
+    [ObjectSubmissionTypes.existing]: "Choose from drafts",
   }
   const classes = useStyles()
   const [showSkipLink, setSkipLinkVisible] = useState(false)
@@ -134,7 +134,7 @@ const SubmissionTypeList = ({
 
   const handleSkipLink = (event, submissionType) => {
     if (event.key === "Enter") {
-      if (submissionType === "existing" && draftCount === 0) {
+      if (submissionType === ObjectSubmissionTypes.existing && draftCount === 0) {
         setSkipLinkVisible(false)
       } else {
         setSkipLinkVisible(true)
@@ -151,15 +151,15 @@ const SubmissionTypeList = ({
   const skipToSubmissionLink = () => {
     let target = ""
     switch (currentSubmissionType) {
-      case "form": {
+      case ObjectSubmissionTypes.form: {
         target = "form"
         break
       }
-      case "xml": {
+      case ObjectSubmissionTypes.xml: {
         target = "XML upload"
         break
       }
-      case "existing": {
+      case ObjectSubmissionTypes.existing: {
         target = "drafts"
         break
       }
@@ -183,7 +183,7 @@ const SubmissionTypeList = ({
 
   return (
     <List dense className={classes.submissionTypeList}>
-      {submissionTypes.map(submissionType => (
+      {ObjectSubmissionsArray.map(submissionType => (
         <ListItem
           selected={isCurrentObjectType && currentSubmissionType === submissionType}
           divider
@@ -214,7 +214,6 @@ const SubmissionTypeList = ({
 const WizardObjectIndex = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const objectTypes = ["study", "sample", "experiment", "run", "analysis", "dac", "policy", "dataset"]
 
   const [expandedObjectType, setExpandedObjectType] = useState("")
   const [clickedSubmissionType, setClickedSubmissionType] = useState("")
@@ -268,7 +267,7 @@ const WizardObjectIndex = () => {
 
   return (
     <div className={classes.index}>
-      {objectTypes.map(objectType => {
+      {ObjectsArray.map(objectType => {
         const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
         const isCurrentObjectType = objectType === currentObjectType
         return (

@@ -21,6 +21,8 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 
+import { FolderSubmissionStatus } from "constants/folder"
+
 const useStyles = makeStyles(theme => ({
   backIcon: {
     "&:hover": {
@@ -102,13 +104,25 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
               <TableCell colSpan={8} padding="none">
                 <ListItem dense className={classes.tableHeader}>
                   <ListItemIcon className={classes.tableIcon}>
-                    {folderType === "published" ? <FolderIcon color="primary" /> : <FolderOpenIcon color="primary" />}
+                    {folderType === FolderSubmissionStatus.published ? (
+                      <FolderIcon color="primary" />
+                    ) : (
+                      <FolderOpenIcon color="primary" />
+                    )}
                   </ListItemIcon>
                   <ListItemText primary={folderTitle} />
-                  <Button color="secondary" disabled={folderType === "published"} aria-label="Edit current folder">
+                  <Button
+                    color="secondary"
+                    disabled={folderType === FolderSubmissionStatus.published}
+                    aria-label="Edit current folder"
+                  >
                     Edit
                   </Button>
-                  <Button disabled={folderType === "published"} aria-label="Publish current folder" variant="contained">
+                  <Button
+                    disabled={folderType === FolderSubmissionStatus.published}
+                    aria-label="Publish current folder"
+                    variant="contained"
+                  >
                     Publish
                   </Button>
                 </ListItem>
@@ -135,13 +149,13 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
                   <Button>View</Button>
                 </TableCell>
                 <TableCell>
-                  <Button disabled={folderType === "published"} aria-label="Edit this object">
+                  <Button disabled={folderType === FolderSubmissionStatus.published} aria-label="Edit this object">
                     Edit
                   </Button>
                 </TableCell>
                 <TableCell>
                   <Button
-                    disabled={folderType === "published"}
+                    disabled={folderType === FolderSubmissionStatus.published}
                     aria-label="Delete this object"
                     onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
                   >

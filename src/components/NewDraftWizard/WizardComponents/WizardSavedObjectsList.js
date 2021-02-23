@@ -10,6 +10,8 @@ import { useSelector } from "react-redux"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
+import { ObjectSubmissionTypes } from "constants/object"
+
 const useStyles = makeStyles(theme => ({
   objectList: {
     padding: "0 1rem",
@@ -73,9 +75,9 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
 
   const displaySubmissionType = (submission: { submissionType: string, submittedItems: any }) => {
     switch (submission.submissionType) {
-      case "Form":
+      case ObjectSubmissionTypes.form:
         return submission.submittedItems.length >= 2 ? "Forms" : "Form"
-      case "XML":
+      case ObjectSubmissionTypes.xml:
         return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
       default:
         break
@@ -97,7 +99,7 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
                   submissions={submissions}
                   objectType={objectType}
                   objectId={item.accessionId}
-                  submissionType={group?.submissionType.toLowerCase()}
+                  submissionType={group?.submissionType}
                   tags={item.tags}
                 />
               </ListItemSecondaryAction>

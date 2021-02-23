@@ -15,6 +15,8 @@ import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
@@ -78,8 +80,8 @@ const WizardDraftObjectPicker = () => {
     setConnError(false)
     const response = await draftAPIService.getObjectByAccessionId(objectType, objectId)
     if (response.ok) {
-      dispatch(setCurrentObject({ ...response.data, type: "draft" }))
-      dispatch(setSubmissionType("form"))
+      dispatch(setCurrentObject({ ...response.data, type: ObjectStatus.draft }))
+      dispatch(setSubmissionType(ObjectSubmissionTypes.form))
     } else {
       setConnError(true)
       setResponseError(response)
@@ -89,7 +91,7 @@ const WizardDraftObjectPicker = () => {
 
   const handleObjectDelete = objectId => {
     setConnError(false)
-    dispatch(deleteObjectFromFolder("draft", objectId, objectType)).catch(error => {
+    dispatch(deleteObjectFromFolder(ObjectStatus.draft, objectId, objectType)).catch(error => {
       setConnError(true)
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete draft")
@@ -144,7 +146,11 @@ const WizardDraftObjectPicker = () => {
       )}
 
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </Container>
   )

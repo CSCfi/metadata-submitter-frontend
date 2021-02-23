@@ -11,6 +11,9 @@ import { useDispatch, useSelector } from "react-redux"
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { FolderSubmissionStatus } from "constants/folder"
+import { ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setSelectedFolder, resetSelectedFolder, deleteObjectFromSelectedFolder } from "features/selectedFolderSlice"
 import { setUnpublishedFolders, updateFolderToUnpublishedFolders } from "features/unpublishedFoldersSlice"
@@ -57,14 +60,16 @@ const Home = () => {
     let isMounted = true
     const getFolders = async () => {
       const response = await folderAPIService.getFolders()
-      if (response.ok && isMounted) {
-        dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
-        dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
-        setFetchingFolders(false)
-      } else {
-        setConnError(true)
-        setResponseError(response)
-        setErrorPrefix("Fetching folders error.")
+      if (isMounted) {
+        if (response.ok) {
+          dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
+          dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
+          setFetchingFolders(false)
+        } else {
+          setConnError(true)
+          setResponseError(response)
+          setErrorPrefix("Fetching folders error.")
+        }
       }
     }
     getFolders()
@@ -76,7 +81,7 @@ const Home = () => {
   // Handle fetching details of all objects (drafts + metadata) of the clicked folder
   const handleClickFolder = async (currentFolderId: string, folderType: string) => {
     setDeepLevel(3)
-    const folders = folderType === "published" ? publishedFolders : unpublishedFolders
+    const folders = folderType === FolderSubmissionStatus.published ? publishedFolders : unpublishedFolders
     const currentFolder = folders.find(folder => folder.folderId === currentFolderId)
 
     const draftObjects = currentFolder?.drafts
@@ -86,7 +91,7 @@ const Home = () => {
 
     const objectsArr = []
 
-    if (folderType === "draft") {
+    if (folderType === FolderSubmissionStatus.unpublished) {
       for (let i = 0; i < draftObjects?.length; i += 1) {
         const objectType = draftObjects[i].schema.includes("draft-")
           ? draftObjects[i].schema.substr(6)
@@ -98,7 +103,7 @@ const Home = () => {
             accessionId: draftObjects[i].accessionId,
             title: response.data.descriptor?.studyTitle,
             objectType,
-            status: "Draft",
+            status: ObjectStatus.draft,
             lastModified: response.data.dateModified,
           }
           objectsArr.push(draftObjectDetails)
@@ -118,7 +123,7 @@ const Home = () => {
           accessionId: submittedObjects[j].accessionId,
           title: response.data.descriptor?.studyTitle,
           objectType,
-          status: "Submitted",
+          status: ObjectStatus.submitted,
           lastModified: response.data.dateModified,
         }
         objectsArr.push(submittedObjectDetails)
@@ -154,7 +159,7 @@ const Home = () => {
       <>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="draft"
+            folderType={FolderSubmissionStatus.unpublished}
             folders={unpublishedFolders.slice(0, 5)}
             buttonTitle="See all"
             onClickHeader={() => setDeepLevel(1)}
@@ -165,7 +170,7 @@ const Home = () => {
         <Divider variant="middle" />
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="published"
+            folderType={FolderSubmissionStatus.published}
             folders={publishedFolders.slice(0, 5)}
             buttonTitle="See all"
             onClickHeader={() => setDeepLevel(2)}
@@ -182,7 +187,7 @@ const Home = () => {
       <Collapse in={deepLevel === 1} collapsedHeight={0} timeout={{ enter: 1500 }}>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="draft"
+            folderType={FolderSubmissionStatus.unpublished}
             folders={unpublishedFolders}
             buttonTitle="Close"
             onClickContent={handleClickFolder}
@@ -198,7 +203,7 @@ const Home = () => {
       <Collapse in={deepLevel === 2} collapsedHeight={0} timeout={{ enter: 1500 }}>
         <Grid item xs={12} className={classes.tableCard}>
           <SubmissionIndexCard
-            folderType="published"
+            folderType={FolderSubmissionStatus.published}
             folders={publishedFolders}
             buttonTitle="Close"
             onClickContent={handleClickFolder}
@@ -215,7 +220,7 @@ const Home = () => {
         <SubmissionDetailTable
           bodyRows={selectedFolder.allObjects}
           folderTitle={selectedFolder.name}
-          folderType={selectedFolder.published ? "published" : "draft"}
+          folderType={selectedFolder.published ? FolderSubmissionStatus.published : FolderSubmissionStatus.unpublished}
           onClickCardHeader={handleGoBack}
           onDelete={handleDeleteObject}
         />
@@ -236,7 +241,11 @@ const Home = () => {
       <SelectedFolderDetails />
 
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </Grid>
   )

@@ -6,6 +6,8 @@ import ButtonGroup from "@material-ui/core/ButtonGroup"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { WizardStatus } from "constants/wizardStatus"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
@@ -34,7 +36,7 @@ const WizardSavedObjectActions = (props: any) => {
       dispatch(
         setCurrentObject({
           ...response.data,
-          type: "saved",
+          type: ObjectStatus.submitted,
           tags: props.tags,
           index: props.submissions.findIndex(item => item.accessionId === props.objectId),
         })
@@ -48,7 +50,7 @@ const WizardSavedObjectActions = (props: any) => {
     } else {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: response,
           errorPrefix: "Object fetching error",
         })
@@ -57,10 +59,10 @@ const WizardSavedObjectActions = (props: any) => {
   }
 
   const handleObjectDelete = () => {
-    dispatch(deleteObjectFromFolder("submitted", props.objectId, props.objectType)).catch(error => {
+    dispatch(deleteObjectFromFolder(ObjectStatus.submitted, props.objectId, props.objectType)).catch(error => {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: error,
           errorPrefix: "Can't delete object",
         })
@@ -69,7 +71,7 @@ const WizardSavedObjectActions = (props: any) => {
 
     if (
       props.submissions.filter(item => item.tags.submissionType === props.submissionType).length - 1 === 0 &&
-      currentObject.tags.submissionType === props.submissionType
+      currentObject?.tags?.submissionType === props.submissionType
     ) {
       dispatch(resetCurrentObject())
     }
@@ -80,7 +82,7 @@ const WizardSavedObjectActions = (props: any) => {
   return (
     <ButtonGroup aria-label="Draft actions button group">
       <Button className={classes.buttonEdit} aria-label="Edit submission" onClick={() => handleObjectEdit()}>
-        {props.submissionType === "form" ? "Edit" : "Replace"}
+        {props.submissionType === ObjectSubmissionTypes.form ? "Edit" : "Replace"}
       </Button>
       <Button className={classes.buttonDelete} aria-label="Delete submission" onClick={() => handleObjectDelete()}>
         Delete

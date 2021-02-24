@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 /*
  * Render correct form to add objects based on submission type in store
  */
-const WizardAddObjectCard = () => {
+const WizardAddObjectCard = (): React$Element<typeof Card> => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
   const objectType = useSelector(state => state.objectType)

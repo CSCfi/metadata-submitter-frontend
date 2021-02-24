@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit"
 
 import rootReducer from "rootReducer"
 
-const store = configureStore({
+const store: any = configureStore({
   reducer: rootReducer,
 })
 

@@ -13,7 +13,7 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
-import { ObjectTypes, ObjectsArray } from "constants/object"
+import { ObjectsArray } from "constants/object"
 
 const useStyles = makeStyles(theme => ({
   summary: {
@@ -45,22 +45,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type Schema =
-  | ObjectTypes.study
-  | ObjectTypes.schema
-  | ObjectTypes.experiment
-  | ObjectTypes.run
-  | ObjectTypes.analysis
-  | ObjectTypes.dac
-  | ObjectTypes.policy
-  | ObjectTypes.dataset
+type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
 
 type GroupedBySchema = {| [Schema]: Object[] |}
 
 /**
  * Show summary of objects added to folder
  */
-const WizardShowSummaryStep = () => {
+const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
   const groupedObjects: Array<GroupedBySchema> = ObjectsArray.map((schema: string) => {

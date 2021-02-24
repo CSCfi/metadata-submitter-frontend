@@ -44,7 +44,7 @@ const NewObjectTooltip = withStyles(theme => ({
 /**
  * Show selection to create new folder or add single metadata object
  */
-const WizardFrontpageStep = () => {
+const WizardFrontpageStep = (): React$Element<typeof Grid> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const submitObjectHelpText =

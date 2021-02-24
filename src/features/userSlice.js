@@ -5,7 +5,7 @@ import userAPIService from "services/usersAPI"
 
 const initialState = {}
 
-const userSlice = createSlice({
+const userSlice: any = createSlice({
   name: "user",
   initialState,
   reducers: {
@@ -24,7 +24,9 @@ type User = {
   folders: Array<string>,
 }
 
-export const fetchUserById = (userId: string) => async (dispatch: any => void) => {
+export const fetchUserById = (userId: string): ((dispatch: (any) => void) => Promise<any>) => async (
+  dispatch: any => void
+) => {
   const response = await userAPIService.getUserById(userId)
   return new Promise((resolve, reject) => {
     if (response.ok) {

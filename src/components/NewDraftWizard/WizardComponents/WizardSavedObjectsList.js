@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * List objects by submission type. Enables deletion of objects
  */
-const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
+const WizardSavedObjectsList = ({ submissions }: { submissions: any }): React$Element<any> => {
   const ref = useRef()
   useEffect(() => {
     ref.current = submissions

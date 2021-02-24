@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Login = () => {
+const Login = (): React$Element<typeof Container> => {
   const classes = useStyles()
   let loginRoute = "/aai"
   if (process.env.NODE_ENV === "development") {

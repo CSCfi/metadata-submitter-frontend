@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const WizardSavedObjectActions = (props: any) => {
+const WizardSavedObjectActions = (props: any): React$Element<typeof ButtonGroup> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const currentObject = useSelector(state => state.currentObject)

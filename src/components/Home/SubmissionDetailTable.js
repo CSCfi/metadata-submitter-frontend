@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import * as React from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
@@ -82,7 +82,7 @@ type SubmissionDetailTableProps = {
   onDelete: (objectId: string, objectType: string, objectStatus: string) => void,
 }
 
-const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
+const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node => {
   const classes = useStyles()
   const { bodyRows, folderTitle, folderType, onClickCardHeader, onDelete } = props
 

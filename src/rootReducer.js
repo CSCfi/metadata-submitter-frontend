@@ -16,7 +16,7 @@ import wizardStepReducer from "features/wizardStepSlice"
 import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
-const rootReducer = combineReducers({
+const rootReducer: any = combineReducers({
   alert: wizardAlertReducer,
   focus: focusReducer,
   statusDetails: wizardStatusMessageReducer,

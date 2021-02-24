@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = []
 
-const publishedFoldersSlice = createSlice({
+const publishedFoldersSlice: any = createSlice({
   name: "publishedFolders",
   initialState,
   reducers: {

@@ -5,7 +5,7 @@ import { ObjectStatus } from "constants/object"
 
 const initialState = []
 
-const unpublishedFoldersSlice = createSlice({
+const unpublishedFoldersSlice: any = createSlice({
   name: "unpublishedFolders",
   initialState,
   reducers: {
@@ -51,7 +51,7 @@ export const updateFolderToUnpublishedFolders = (
   selectedFolder: SelectedFolder,
   objectId: string,
   objectStatus: string
-) => (dispatch: any => void) => {
+): ((dispatch: (any) => void) => void) => (dispatch: any => void) => {
   const updatedFolder =
     objectStatus === ObjectStatus.draft
       ? {

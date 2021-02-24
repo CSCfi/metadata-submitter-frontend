@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 /*
  * Return React Hook Form based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
-const WizardUploadObjectXMLForm = () => {
+const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   const [successStatus, setSuccessStatus] = useState("")
   const [isSubmitting, setSubmitting] = useState(false)
   const [responseStatus, setResponseStatus] = useState([])

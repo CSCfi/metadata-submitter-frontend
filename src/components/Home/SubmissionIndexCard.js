@@ -73,7 +73,7 @@ type SubmissionIndexCardProps = {
   onClickButton: () => void,
 }
 
-const SubmissionIndexCard = (props: SubmissionIndexCardProps) => {
+const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
   const classes = useStyles()
   const { folderType, folders, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
 

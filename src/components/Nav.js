@@ -89,7 +89,7 @@ const Menu = () => {
   )
 }
 
-const Nav = () => {
+const Nav = (): React$Element<typeof AppBar> => {
   const classes = useStyles()
   return (
     <AppBar className={classes.appBar} elevation={1}>

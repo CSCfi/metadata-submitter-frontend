@@ -340,7 +340,7 @@ const WizardAlert = ({
   onAlert: boolean => void,
   parentLocation: string,
   alertType: string,
-}) => {
+}): React$Element<any> => {
   const currentSubmissionType = useSelector(state => state.submissionType)
 
   const dispatch = useDispatch()

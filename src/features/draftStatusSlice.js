@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const draftStatusSlice = createSlice({
+const draftStatusSlice: any = createSlice({
   name: "draftStatus",
   initialState,
   reducers: {

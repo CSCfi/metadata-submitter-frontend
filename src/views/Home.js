@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Home = () => {
+const Home = (): React$Element<typeof Grid> => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
 

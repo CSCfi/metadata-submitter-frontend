@@ -9,7 +9,7 @@ import ErrorPageContainer from "../../components/ErrorPageContainer"
 
 import { getCountdownTime } from "./ErrorPagesHelper"
 
-const Page401 = () => {
+const Page401 = (): React$Element<any> => {
   const [redirect, setRedirect] = useState(false)
 
   let countdownTime = getCountdownTime(10, 1000)

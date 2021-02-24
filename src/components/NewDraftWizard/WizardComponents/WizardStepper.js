@@ -122,7 +122,7 @@ const useStyles = makeStyles({
  * Show info about wizard steps to user.
  * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
  */
-const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }) => {
+const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)

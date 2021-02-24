@@ -59,7 +59,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  *
  * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
-const NewDraftWizard = () => {
+const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
   const wizardStep = useSelector(state => state.wizardStep)
   const statusDetails = useSelector(state =>

@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography"
 
 import ErrorPageContainer from "../../components/ErrorPageContainer"
 
-const Page500 = () => {
+const Page500 = (): React$Element<typeof ErrorPageContainer> => {
   const errorLink = "https://github.com/CSCfi/metadata-submitter/issues"
 
   return (

@@ -106,7 +106,7 @@ const WizardStatusMessageHandler = ({
   successStatus: string,
   response: any,
   prefixText: string,
-}) => {
+}): React$Element<any> => {
   const [openStatus, setOpenStatus] = useState(true)
   const dispatch = useDispatch()
   const messageTemplate = status => {

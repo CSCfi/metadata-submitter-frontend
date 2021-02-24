@@ -431,7 +431,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = () => {
+const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const classes = useStyles()
 
   const objectType = useSelector(state => state.objectType)

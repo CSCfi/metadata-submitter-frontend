@@ -93,7 +93,11 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
  * Show form to create folder as first step of new draft wizard
  */
 
-const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
+const WizardCreateFolderStep = ({
+  createFolderFormRef,
+}: {
+  createFolderFormRef: CreateFolderFormRef,
+}): React$Element<any> => (
   <>
     <WizardHeader headerText="Create New Folder" />
     <WizardStepper createFolderFormRef={createFolderFormRef} />

@@ -17,6 +17,7 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 
 import { FolderSubmissionStatus } from "constants/folder"
+import type { FolderDetailsWithId } from "types"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -50,23 +51,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type ObjectInFolder = {
-  accessionId: string,
-  schema: string,
-}
-
-type Folder = {
-  folderId: string,
-  name: string,
-  description: string,
-  published: boolean,
-  drafts: Array<ObjectInFolder>,
-  metadataObjects: Array<ObjectInFolder>,
-}
-
 type SubmissionIndexCardProps = {
   folderType: string,
-  folders: Array<Folder>,
+  folders: Array<FolderDetailsWithId>,
   buttonTitle: string,
   onClickHeader?: () => void,
   onClickContent: (folderId: string, folderType: string) => Promise<void>,

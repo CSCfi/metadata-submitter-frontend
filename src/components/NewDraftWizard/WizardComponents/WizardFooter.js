@@ -83,7 +83,7 @@ const WizardFooter = (): React$Element<any> => {
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folder.id}`)
+          setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
         })
     } else {
       setDialogOpen(false)

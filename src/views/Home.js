@@ -16,7 +16,7 @@ import { ObjectStatus } from "constants/object"
 import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setSelectedFolder, resetSelectedFolder, deleteObjectFromSelectedFolder } from "features/selectedFolderSlice"
-import { setUnpublishedFolders, updateFolderToUnpublishedFolders } from "features/unpublishedFoldersSlice"
+import { setUnpublishedFolders, deleteFolderFromUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
@@ -149,7 +149,7 @@ const Home = (): React$Element<typeof Grid> => {
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete object")
     })
-    dispatch(updateFolderToUnpublishedFolders(selectedFolder, objectId, objectStatus))
+    dispatch(deleteFolderFromUnpublishedFolders(selectedFolder, objectId, objectStatus))
   }
 
   // Contains both unpublished and published folders (max. 5 items/each)

@@ -65,7 +65,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   const [isSubmitting, setSubmitting] = useState(false)
   const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
-  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const { folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
   const currentObject = useSelector(state => state.currentObject)

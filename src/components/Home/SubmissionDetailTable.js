@@ -22,6 +22,7 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 
 import { FolderSubmissionStatus } from "constants/folder"
+import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({
   backIcon: {
@@ -65,14 +66,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
-
-type ObjectDetails = {
-  accessionId: string,
-  lastModified: string,
-  objectType: string,
-  status: string,
-  title: string,
-}
 
 type SubmissionDetailTableProps = {
   folderTitle: string,

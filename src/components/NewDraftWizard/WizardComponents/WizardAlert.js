@@ -84,7 +84,7 @@ const CancelFormDialog = ({
         )
         dispatch(resetDraftStatus())
         dispatch(
-          addObjectToDrafts(submissionFolder.id, {
+          addObjectToDrafts(submissionFolder.folderId, {
             accessionId: response.data.accessionId,
             schema: "draft-" + objectType,
           })

@@ -14,6 +14,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 import { WizardStatus } from "constants/wizardStatus"
 import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
+import type { FolderDataFromForm } from "types"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,10 +39,10 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const { register, errors, handleSubmit, formState } = useForm()
   const { isSubmitting } = formState
 
-  const onSubmit = data => {
+  const onSubmit = (data: FolderDataFromForm) => {
     setConnError(false)
-    if (folder && folder?.id) {
-      dispatch(updateNewDraftFolder(folder.id, Object.assign({ ...data, folder })))
+    if (folder && folder?.folderId) {
+      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
         .then(() => dispatch(increment()))
         .catch(() => setConnError(true))
     } else {

@@ -444,7 +444,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const [validationSchema, setValidationSchema] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const dispatch = useDispatch()
-  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const { folderId } = useSelector(state => state.submissionFolder)
   const [responseInfo, setResponseInfo] = useState([])
   const currentObject = useSelector(state => state.currentObject)
 

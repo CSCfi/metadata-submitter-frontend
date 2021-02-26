@@ -1,7 +1,7 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = ""
+const initialState: string = ""
 
 const wizardObjectTypeSlice: any = createSlice({
   name: "objectType",

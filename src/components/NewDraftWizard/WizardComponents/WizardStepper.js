@@ -15,12 +15,11 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { decrement, increment } from "features/wizardStepSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
-
+import type { CreateFolderFormRef } from "types"
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
  */

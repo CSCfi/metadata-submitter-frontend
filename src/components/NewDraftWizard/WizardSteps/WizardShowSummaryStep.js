@@ -14,6 +14,7 @@ import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActio
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 import { ObjectsArray } from "constants/object"
+import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({
   summary: {
@@ -47,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 
 type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
 
-type GroupedBySchema = {| [Schema]: Object[] |}
+type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
 
 /**
  * Show summary of objects added to folder
@@ -62,6 +63,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
   })
 
   const classes = useStyles()
+
   return (
     <>
       <WizardHeader headerText="Create new folder" />

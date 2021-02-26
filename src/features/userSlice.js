@@ -3,7 +3,14 @@ import { createSlice } from "@reduxjs/toolkit"
 
 import userAPIService from "services/usersAPI"
 
-const initialState = {}
+type User = {
+  id: string,
+  name: string,
+  drafts: Array<string>,
+  folders: Array<string>,
+}
+
+const initialState: {} | User = {}
 
 const userSlice: any = createSlice({
   name: "user",
@@ -16,13 +23,6 @@ const userSlice: any = createSlice({
 
 export const { setUser, resetUser } = userSlice.actions
 export default userSlice.reducer
-
-type User = {
-  id: string,
-  name: string,
-  drafts: Array<string>,
-  folders: Array<string>,
-}
 
 export const fetchUserById = (userId: string): ((dispatch: (any) => void) => Promise<any>) => async (
   dispatch: any => void

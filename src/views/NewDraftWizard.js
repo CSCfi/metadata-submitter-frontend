@@ -10,9 +10,9 @@ import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFoote
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
-import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
+import type { CreateFolderFormRef } from "types"
 
 const useStyles = makeStyles(theme => ({
   paper: {

@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { ObjectStatus } from "constants/object"
 import type { FolderDetailsWithId } from "types"
 
-const initialState = []
+const initialState: [] | Array<FolderDetailsWithId> = []
 
 const unpublishedFoldersSlice: any = createSlice({
   name: "unpublishedFolders",

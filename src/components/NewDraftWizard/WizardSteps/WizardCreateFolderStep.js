@@ -1,6 +1,5 @@
 //@flow
 import React, { useState } from "react"
-import type { ElementRef } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
@@ -14,7 +13,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 import { WizardStatus } from "constants/wizardStatus"
 import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
-import type { FolderDataFromForm } from "types"
+import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,8 +23,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
 }))
-
-export type CreateFolderFormRef = ElementRef<typeof useForm>
 
 /**
  * Define React Hook Form for adding new folder. Ref is added to RHF so submission can be triggered outside this component.

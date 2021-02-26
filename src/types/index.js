@@ -1,4 +1,8 @@
 //@flow
+import type { ElementRef } from "react"
+
+import { useForm } from "react-hook-form"
+
 export type ObjectDetails = {
   accessionId: string,
   lastModified: string,
@@ -16,6 +20,13 @@ export type ObjectInsideFolder = {
   schema: string,
 }
 
+export type ObjectTags = {
+  submissionType: string,
+  fileName?: string,
+}
+
+export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }
+
 export type FolderDetails = {
   name: string,
   description: string,
@@ -31,3 +42,5 @@ export type FolderDataFromForm = {
   name: string,
   description: string,
 }
+
+export type CreateFolderFormRef = ElementRef<typeof useForm>

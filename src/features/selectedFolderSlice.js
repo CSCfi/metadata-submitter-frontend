@@ -5,8 +5,9 @@ import _reject from "lodash/reject"
 import { ObjectStatus } from "constants/object"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
+import type { FolderDetailsWithId } from "types"
 
-const initialState = {}
+const initialState: {} | FolderDetailsWithId = {}
 
 const selectedFolderSlice: any = createSlice({
   name: "selectedFolder",

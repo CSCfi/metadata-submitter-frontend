@@ -15,6 +15,7 @@ import { decrement } from "features/wizardStepSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import objectAPIService from "services/objectAPI"
+import type { ObjectInsideFolderWithTags, ObjectTags } from "types"
 
 const useStyles = makeStyles(() => ({
   buttonEdit: {
@@ -25,7 +26,16 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const WizardSavedObjectActions = (props: any): React$Element<typeof ButtonGroup> => {
+type WizardSavedObjectActionsProps = {
+  objectId: string,
+  objectType: string,
+  submissionType: string,
+  submissions: Array<ObjectInsideFolderWithTags>,
+  tags: ObjectTags,
+  summary?: boolean,
+}
+
+const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$Element<typeof ButtonGroup> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const currentObject = useSelector(state => state.currentObject)
@@ -70,7 +80,7 @@ const WizardSavedObjectActions = (props: any): React$Element<typeof ButtonGroup>
     })
 
     if (
-      props.submissions.filter(item => item.tags.submissionType === props.submissionType).length - 1 === 0 &&
+      props.submissions.filter(item => item.tags?.submissionType === props.submissionType).length - 1 === 0 &&
       currentObject?.tags?.submissionType === props.submissionType
     ) {
       dispatch(resetCurrentObject())

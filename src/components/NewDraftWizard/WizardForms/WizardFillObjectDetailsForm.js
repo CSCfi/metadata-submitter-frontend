@@ -245,7 +245,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
-
     if (checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
@@ -431,7 +430,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = () => {
+const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const classes = useStyles()
 
   const objectType = useSelector(state => state.objectType)
@@ -444,7 +443,7 @@ const WizardFillObjectDetailsForm = () => {
   const [validationSchema, setValidationSchema] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const dispatch = useDispatch()
-  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const { folderId } = useSelector(state => state.submissionFolder)
   const [responseInfo, setResponseInfo] = useState([])
   const currentObject = useSelector(state => state.currentObject)
 

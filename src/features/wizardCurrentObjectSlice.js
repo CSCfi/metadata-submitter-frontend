@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = {}
+const initialState: {} = {}
 
-const wizardCurrentObjectSlice = createSlice({
+const wizardCurrentObjectSlice: any = createSlice({
   name: "currentObject",
   initialState,
   reducers: {

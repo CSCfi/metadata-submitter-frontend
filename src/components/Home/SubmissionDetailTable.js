@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import * as React from "react"
 
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
@@ -22,6 +22,7 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 
 import { FolderSubmissionStatus } from "constants/folder"
+import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({
   backIcon: {
@@ -66,14 +67,6 @@ const useStyles = makeStyles(theme => ({
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
-type ObjectDetails = {
-  accessionId: string,
-  lastModified: string,
-  objectType: string,
-  status: string,
-  title: string,
-}
-
 type SubmissionDetailTableProps = {
   folderTitle: string,
   bodyRows: Array<ObjectDetails>,
@@ -82,7 +75,7 @@ type SubmissionDetailTableProps = {
   onDelete: (objectId: string, objectType: string, objectStatus: string) => void,
 }
 
-const SubmissionDetailTable = (props: SubmissionDetailTableProps) => {
+const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node => {
   const classes = useStyles()
   const { bodyRows, folderTitle, folderType, onClickCardHeader, onDelete } = props
 

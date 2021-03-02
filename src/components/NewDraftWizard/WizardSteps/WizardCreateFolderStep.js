@@ -1,6 +1,5 @@
 //@flow
 import React, { useState } from "react"
-import type { ElementRef } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
@@ -14,6 +13,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 import { WizardStatus } from "constants/wizardStatus"
 import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
+import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,8 +23,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
 }))
-
-export type CreateFolderFormRef = ElementRef<typeof useForm>
 
 /**
  * Define React Hook Form for adding new folder. Ref is added to RHF so submission can be triggered outside this component.
@@ -38,10 +36,10 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const { register, errors, handleSubmit, formState } = useForm()
   const { isSubmitting } = formState
 
-  const onSubmit = data => {
+  const onSubmit = (data: FolderDataFromForm) => {
     setConnError(false)
-    if (folder && folder?.id) {
-      dispatch(updateNewDraftFolder(folder.id, Object.assign({ ...data, folder })))
+    if (folder && folder?.folderId) {
+      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
         .then(() => dispatch(increment()))
         .catch(() => setConnError(true))
     } else {
@@ -93,7 +91,11 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
  * Show form to create folder as first step of new draft wizard
  */
 
-const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
+const WizardCreateFolderStep = ({
+  createFolderFormRef,
+}: {
+  createFolderFormRef: CreateFolderFormRef,
+}): React$Element<any> => (
   <>
     <WizardHeader headerText="Create New Folder" />
     <WizardStepper createFolderFormRef={createFolderFormRef} />

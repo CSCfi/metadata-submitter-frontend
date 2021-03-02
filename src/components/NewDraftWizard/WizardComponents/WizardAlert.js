@@ -84,7 +84,7 @@ const CancelFormDialog = ({
         )
         dispatch(resetDraftStatus())
         dispatch(
-          addObjectToDrafts(submissionFolder.id, {
+          addObjectToDrafts(submissionFolder.folderId, {
             accessionId: response.data.accessionId,
             schema: "draft-" + objectType,
           })
@@ -340,7 +340,7 @@ const WizardAlert = ({
   onAlert: boolean => void,
   parentLocation: string,
   alertType: string,
-}) => {
+}): React$Element<any> => {
   const currentSubmissionType = useSelector(state => state.submissionType)
 
   const dispatch = useDispatch()

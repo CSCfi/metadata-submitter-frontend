@@ -21,7 +21,7 @@ import { useFieldArray, useFormContext } from "react-hook-form"
 /*
  * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
  */
-const dereferenceSchema = async (schema: any) => {
+const dereferenceSchema = async (schema: any): Promise<any> => {
   let dereferenced = JSON.parse(JSON.stringify(schema))
   await $RefParser.dereference(dereferenced)
   delete dereferenced["definitions"]
@@ -31,7 +31,7 @@ const dereferenceSchema = async (schema: any) => {
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
  */
-const cleanUpFormValues = (data: any) => {
+const cleanUpFormValues = (data: any): {} => {
   const cleanedData = JSON.parse(JSON.stringify(data))
   return traverseFormValuesForCleanUp(cleanedData)
 }
@@ -100,7 +100,7 @@ const traverseValues = (object: any) => {
  * Build react-hook-form fields based on given schema
  */
 
-const buildFields = (schema: any) => {
+const buildFields = (schema: any): ?React.Node => {
   try {
     return traverseFields(schema, [])
   } catch (error) {

@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Define wizard footer with changing button actions.
  */
-const WizardFooter = () => {
+const WizardFooter = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -83,7 +83,7 @@ const WizardFooter = () => {
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folder.id}`)
+          setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
         })
     } else {
       setDialogOpen(false)

@@ -1,5 +1,6 @@
 //@flow
 import React, { useState, useEffect } from "react"
+import type { Node } from "react"
 
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
@@ -56,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * List drafts by submission type. Enables fetch and deletion of drafts
  */
-const WizardDraftObjectPicker = () => {
+const WizardDraftObjectPicker = (): Node => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)

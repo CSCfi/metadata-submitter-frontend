@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = ""
+const initialState: string = ""
 
-const wizardSubmissionTypeSlice = createSlice({
+const wizardSubmissionTypeSlice: any = createSlice({
   name: "submissionType",
   initialState,
   reducers: {

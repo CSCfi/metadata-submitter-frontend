@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = null
 
-const wizardStatusMessageSlice = createSlice({
+const wizardStatusMessageSlice: any = createSlice({
   name: "wizardStatusMessage",
   initialState,
   reducers: {
@@ -20,6 +20,8 @@ type StatusDetails = {
   errorPrefix: string,
 }
 
-export const updateStatus = (statusDetails: StatusDetails) => async (dispatch: any => void) => {
+export const updateStatus = (statusDetails: StatusDetails): ((dispatch: (any) => void) => Promise<void>) => async (
+  dispatch: any => void
+) => {
   dispatch(setStatusDetails(JSON.stringify(statusDetails)))
 }

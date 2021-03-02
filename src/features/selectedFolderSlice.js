@@ -5,10 +5,11 @@ import _reject from "lodash/reject"
 import { ObjectStatus } from "constants/object"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
+import type { FolderDetailsWithId } from "types"
 
-const initialState = {}
+const initialState: {} | FolderDetailsWithId = {}
 
-const selectedFolderSlice = createSlice({
+const selectedFolderSlice: any = createSlice({
   name: "selectedFolder",
   initialState,
   reducers: {
@@ -42,9 +43,11 @@ export const {
 export default selectedFolderSlice.reducer
 
 // Delete object from selectedFolder only available for Unpublished folder atm
-export const deleteObjectFromSelectedFolder = (objectId: string, objectType: string, objectStatus: string) => async (
-  dispatch: any => void
-) => {
+export const deleteObjectFromSelectedFolder = (
+  objectId: string,
+  objectType: string,
+  objectStatus: string
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const service = objectStatus === ObjectStatus.draft ? draftAPIService : objectAPIService
   const response = await service.deleteObjectByAccessionId(objectType, objectId)
   return new Promise((resolve, reject) => {

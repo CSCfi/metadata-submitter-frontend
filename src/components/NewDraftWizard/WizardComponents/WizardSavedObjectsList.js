@@ -11,6 +11,7 @@ import { useSelector } from "react-redux"
 import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
 import { ObjectSubmissionTypes } from "constants/object"
+import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -48,7 +49,10 @@ const useStyles = makeStyles(theme => ({
 /**
  * List objects by submission type. Enables deletion of objects
  */
-const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
+
+type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+
+const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): React$Element<any> => {
   const ref = useRef()
   useEffect(() => {
     ref.current = submissions
@@ -73,7 +77,10 @@ const WizardSavedObjectsList = ({ submissions }: { submissions: any }) => {
     return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
   }
 
-  const displaySubmissionType = (submission: { submissionType: string, submittedItems: any }) => {
+  const displaySubmissionType = (submission: {
+    submissionType: string,
+    submittedItems: Array<ObjectInsideFolderWithTags>,
+  }) => {
     switch (submission.submissionType) {
       case ObjectSubmissionTypes.form:
         return submission.submittedItems.length >= 2 ? "Forms" : "Form"

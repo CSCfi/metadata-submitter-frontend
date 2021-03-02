@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = false
+const initialState: boolean = false
 
-const wizardAlertSlice = createSlice({
+const wizardAlertSlice: any = createSlice({
   name: "wizardAlert",
   initialState,
   reducers: {

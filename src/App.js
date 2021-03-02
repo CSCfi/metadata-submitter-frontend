@@ -56,7 +56,7 @@ const NavigationMenu = () => {
  * Set up React router and app structure.
  * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
  */
-const App = () => {
+const App = (): React$Element<typeof React.Fragment> => {
   const classes = useStyles()
 
   return (

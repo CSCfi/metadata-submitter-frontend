@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = -1
+const initialState: number = -1
 
-const wizardStepSlice = createSlice({
+const wizardStepSlice: any = createSlice({
   name: "wizardStep",
   initialState,
   reducers: {

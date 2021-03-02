@@ -2,10 +2,11 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 import { ObjectStatus } from "constants/object"
+import type { FolderDetailsWithId } from "types"
 
-const initialState = []
+const initialState: [] | Array<FolderDetailsWithId> = []
 
-const unpublishedFoldersSlice = createSlice({
+const unpublishedFoldersSlice: any = createSlice({
   name: "unpublishedFolders",
   initialState,
   reducers: {
@@ -24,34 +25,12 @@ export const {
 } = unpublishedFoldersSlice.actions
 export default unpublishedFoldersSlice.reducer
 
-type ObjectInFolder = {
-  accessionId: string,
-  schema: string,
-}
-
-type ObjectDetails = {
-  accessionId: string,
-  lastModified: string,
-  objectType: string,
-  status: string,
-  title: string,
-}
-
-type SelectedFolder = {
-  folderId: string,
-  name: string,
-  description: string,
-  published: boolean,
-  drafts: Array<ObjectInFolder>,
-  metadataObjects: Array<ObjectInFolder>,
-  allObjects?: Array<ObjectDetails>,
-}
-
-export const updateFolderToUnpublishedFolders = (
-  selectedFolder: SelectedFolder,
+// Remove folder from Unpublished folders when it is deleted
+export const deleteFolderFromUnpublishedFolders = (
+  selectedFolder: FolderDetailsWithId,
   objectId: string,
   objectStatus: string
-) => (dispatch: any => void) => {
+): ((dispatch: (any) => void) => void) => (dispatch: any => void) => {
   const updatedFolder =
     objectStatus === ObjectStatus.draft
       ? {

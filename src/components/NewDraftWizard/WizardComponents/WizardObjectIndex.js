@@ -211,7 +211,7 @@ const SubmissionTypeList = ({
 /**
  * Render accordion for choosing object type and submission type
  */
-const WizardObjectIndex = () => {
+const WizardObjectIndex = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
 

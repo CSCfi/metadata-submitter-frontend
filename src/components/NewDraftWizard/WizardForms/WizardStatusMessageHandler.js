@@ -16,7 +16,7 @@ const ErrorHandler = ({
   prefixText,
   handleClose,
 }: {
-  response: any,
+  response: Object,
   prefixText: string,
   handleClose: boolean => void,
 }) => {
@@ -58,7 +58,7 @@ const InfoHandler = ({ handleClose, prefixText }: { handleClose: boolean => void
 }
 
 // Success messages
-const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
+const SuccessHandler = ({ response, handleClose }: { response: Object, handleClose: boolean => void }) => {
   let message = ""
 
   switch (response.config.baseURL) {
@@ -104,9 +104,9 @@ const WizardStatusMessageHandler = ({
   prefixText,
 }: {
   successStatus: string,
-  response: any,
+  response: Object,
   prefixText: string,
-}) => {
+}): React$Element<any> => {
   const [openStatus, setOpenStatus] = useState(true)
   const dispatch = useDispatch()
   const messageTemplate = status => {

@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ErrorPage = ({ title, children, errorType }: ErrorPageProps) => {
+const ErrorPage = ({ title, children, errorType }: ErrorPageProps): React$Element<typeof Container> => {
   const classes = useStyles({ errorType })
   const errorIcon = <ErrorOutlineOutlinedIcon className={classes.errorIcon} />
 

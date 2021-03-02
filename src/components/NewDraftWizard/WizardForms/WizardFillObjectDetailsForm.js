@@ -432,20 +432,60 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
  */
 const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
+  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const currentObject = useSelector(state => state.currentObject)
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [errorPrefix, setErrorPrefix] = useState("")
+  // States that will update in useEffect()
+  const [states, setStates] = useState({
+    error: false,
+    errorPrefix: "",
+    formSchema: {},
+    validationSchema: {},
+    isLoading: true,
+  })
+
   const [successStatus, setSuccessStatus] = useState("")
-  const [formSchema, setFormSchema] = useState({})
-  const [validationSchema, setValidationSchema] = useState({})
   const [submitting, setSubmitting] = useState(false)
-  const dispatch = useDispatch()
   const { folderId } = useSelector(state => state.submissionFolder)
   const [responseInfo, setResponseInfo] = useState([])
-  const currentObject = useSelector(state => state.currentObject)
+
+  console.log("WizardForm", states)
+
+  /*
+   * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.
+   */
+  useEffect(() => {
+    const fetchSchema = async () => {
+      let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
+        const response = await schemaAPIService.getSchemaByObjectType(objectType)
+        if (response.ok) {
+          schema = response.data
+          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+        } else {
+          setStates({
+            ...states,
+            error: true,
+            errorPrefix: "Unfortunately an error happened while catching form fields",
+            isLoading: false,
+          })
+          return
+        }
+      } else {
+        schema = JSON.parse(schema)
+      }
+      setStates({
+        ...states,
+        formSchema: await JSONSchemaParser.dereferenceSchema(schema),
+        validationSchema: schema,
+        isLoading: false,
+      })
+    }
+    fetchSchema()
+  }, [objectType])
 
   /*
    * Submit form with cleaned values and check for response errors
@@ -477,53 +517,25 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         .catch(error => {
           setSuccessStatus(WizardStatus.error)
           setResponseInfo(error)
-          setErrorPrefix("Cannot connect to folder API")
+          setStates({ ...states, errorPrefix: "Cannot connect to folder API" })
         })
     } else {
       setSuccessStatus(WizardStatus.error)
-      setErrorPrefix("Validation failed")
+      setStates({ ...states, errorPrefix: "Validation failed" })
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
   }
 
-  /*
-   * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.
-   */
-  useEffect(() => {
-    const fetchSchema = async () => {
-      let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
-      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
-        const response = await schemaAPIService.getSchemaByObjectType(objectType)
-        setResponseInfo(response)
-        if (response.ok) {
-          schema = response.data
-          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
-        } else {
-          setError(true)
-          setErrorPrefix("Unfortunately an error happened while catching form fields")
-          setIsLoading(false)
-          return
-        }
-      } else {
-        schema = JSON.parse(schema)
-      }
-      setFormSchema(await JSONSchemaParser.dereferenceSchema(schema))
-      setValidationSchema(schema)
-      setIsLoading(false)
-    }
-    fetchSchema()
-  }, [objectType])
-
-  if (isLoading) return <CircularProgress />
+  if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
-  if (error) return <Alert severity="error">{errorPrefix}</Alert>
+  if (states.error) return <Alert severity="error">{states.errorPrefix}</Alert>
 
   return (
     <Container className={classes.container}>
       <FormContent
-        formSchema={formSchema}
-        resolver={WizardAjvResolver(validationSchema)}
+        formSchema={states.formSchema}
+        resolver={WizardAjvResolver(states.validationSchema)}
         onSubmit={onSubmit}
         objectType={objectType}
         folderId={folderId}
@@ -535,7 +547,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         <WizardStatusMessageHandler
           successStatus={successStatus}
           response={responseInfo}
-          prefixText={errorPrefix}
+          prefixText={states.errorPrefix}
         ></WizardStatusMessageHandler>
       )}
     </Container>

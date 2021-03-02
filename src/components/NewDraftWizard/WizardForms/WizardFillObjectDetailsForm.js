@@ -435,7 +435,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const { folderId } = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
 
   // States that will update in useEffect()
@@ -449,10 +449,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
   const [successStatus, setSuccessStatus] = useState("")
   const [submitting, setSubmitting] = useState(false)
-  const { folderId } = useSelector(state => state.submissionFolder)
   const [responseInfo, setResponseInfo] = useState([])
-
-  console.log("WizardForm", states)
 
   /*
    * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.

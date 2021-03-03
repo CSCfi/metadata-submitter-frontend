@@ -32,7 +32,7 @@
     "format:check": "prettier --check \"**/*.+(json|yml|yaml|css|md)\"",
     "flow:check": "flow check",
     "concurrently": "concurrently",
-    "postinstall": "husky install"
+    "postinstall": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky install"
   },
   "eslintConfig": {
     "extends": [

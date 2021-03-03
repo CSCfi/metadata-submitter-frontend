@@ -199,9 +199,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const [cleanedValues, setCleanedValues] = useState({})
   const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
 
-  const [timer, setTimer] = useState(0)
+  const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
-  const increment = useRef(null)
+  const autoSaveTimer = useRef(null)
+  let timer = 0
 
   // Set form default values
   useEffect(() => {
@@ -215,7 +216,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }, [methods.formState.isDirty])
 
   const createNewForm = () => {
-    handleReset()
+    resetTimer()
     resetForm()
     setCurrentObjectId(null)
     dispatch(resetDraftStatus())
@@ -226,7 +227,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     methods.reset(formSchema)
     setCleanedValues({})
     dispatch(resetDraftStatus())
-    handleReset()
+    resetTimer()
   }
 
   // Check if the form is empty
@@ -245,6 +246,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
+
     if (checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
@@ -261,7 +263,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
       checkDirty()
     } else {
       dispatch(resetDraftStatus())
-      handleReset()
+      resetTimer()
     }
   }
 
@@ -272,33 +274,51 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   /*
-   * Logic for auto-save feature
+   * Logic for auto-save feature.
+   * We use setDraftAutoSaveAllowed state change to render form before save.
+   * This helps with getting current accession ID and form data without rendering on every timer increment.
    */
-  const handleStart = () => {
-    increment.current = setInterval(() => {
-      setTimer(timer => timer + 1)
+  const startTimer = () => {
+    autoSaveTimer.current = setInterval(() => {
+      timer = timer + 1
+
+      if (timer >= 60) {
+        setDraftAutoSaveAllowed(true)
+      }
     }, 1000)
   }
 
-  const handleReset = () => {
-    clearInterval(increment.current)
-    setTimer(0)
+  const resetTimer = () => {
+    setDraftAutoSaveAllowed(false)
+    clearInterval(autoSaveTimer.current)
+    timer = 0
   }
 
+  useEffect(() => {
+    if (alert) resetTimer()
+
+    if (draftAutoSaveAllowed) {
+      saveDraft()
+      resetTimer()
+    }
+  }, [draftAutoSaveAllowed, alert])
+
   const keyHandler = () => {
-    handleReset()
-    handleStart()
+    resetTimer()
+    startTimer()
   }
 
   useEffect(() => {
     window.addEventListener("keydown", keyHandler)
     return () => {
-      handleReset()
+      resetTimer()
       window.removeEventListener("keydown", keyHandler)
     }
   }, [])
 
-  // Form actions
+  /*
+   * Draft save and object patch use both same response handler
+   */
   const patchHandler = response => {
     if (response.ok) {
       dispatch(resetDraftStatus())
@@ -324,7 +344,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
    * Update or save new draft depending on object status
    */
   const saveDraft = async () => {
-    handleReset()
+    resetTimer()
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       if ((currentObjectId || currentObject?.accessionId) && currentObject?.type === ObjectStatus.draft) {
         const response = await draftAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
@@ -380,28 +400,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const patchObject = async () => {
-    handleReset()
+    resetTimer()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
     patchHandler(response)
   }
-
-  // Clear auto-save timer
-  useEffect(() => {
-    if (alert) {
-      clearInterval(increment.current)
-    }
-    if (timer >= 60) {
-      saveDraft()
-      clearInterval(increment.current)
-    }
-  }, [timer])
 
   const submitForm = () => {
     if (currentObject?.type === ObjectStatus.submitted) patchObject()
     if (currentObject?.type === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
       handleDraftDelete(currentObjectId)
 
-    handleReset()
+    resetTimer()
   }
 
   return (

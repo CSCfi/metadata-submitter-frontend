@@ -461,7 +461,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const [responseInfo, setResponseInfo] = useState([])
 
   /*
-   * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.
+   * Fetch json schema from either session storage or API, set schema and dereferenced version to component state.
    */
   useEffect(() => {
     const fetchSchema = async () => {

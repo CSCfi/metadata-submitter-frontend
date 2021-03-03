@@ -35,9 +35,16 @@
     "postinstall": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky install"
   },
   "eslintConfig": {
+    "env": {
+      "cypress/globals": true
+    },
     "extends": [
       "react-app",
+      "plugin:prettier/recommended",
       "plugin:cypress/recommended"
+    ],
+    "plugins": [
+      "cypress"
     ],
     "rules": {
       "additional-rule": "warn"
@@ -60,6 +67,7 @@
     "concurrently": "^6.0.0",
     "cypress": "^6.6.0",
     "cypress-file-upload": "^5.0.2",
+    "eslint": "7.21.0",
     "eslint-config-prettier": "^8.0.0",
     "eslint-plugin-cypress": "^2.11.2",
     "eslint-plugin-flowtype": "^5.2.2",

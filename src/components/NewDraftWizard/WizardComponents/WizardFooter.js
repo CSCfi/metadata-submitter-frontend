@@ -13,7 +13,6 @@ import WizardAlert from "./WizardAlert"
 
 import { WizardStatus } from "constants/wizardStatus"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetWizard } from "features/wizardStepSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +59,7 @@ const WizardFooter = (): React$Element<any> => {
 
   const resetDispatch = () => {
     history.push("/home")
-    dispatch(resetWizard())
+    //dispatch(resetWizard())
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }

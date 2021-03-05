@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
+import { useParams } from "react-router-dom"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -49,8 +50,9 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
       return <WizardAddObjectStep />
     case 2:
       return <WizardShowSummaryStep />
-    default:
+    default: {
       throw new Error("Unknown step")
+    }
   }
 }
 
@@ -61,7 +63,9 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  */
 const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-  const wizardStep = useSelector(state => state.wizardStep)
+  // const wizardStep = useSelector(state => state.wizardStep)
+  const { step } = useParams()
+  const urlStep = Number(step)
   const statusDetails = useSelector(state =>
     state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
   )
@@ -69,8 +73,8 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
 
   return (
     <Container maxWidth={false} className={classes.container}>
-      <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
-        <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
+      <Paper className={urlStep < 0 ? classes.paperFirstStep : classes.paper} elevation={urlStep < 0 ? 2 : 0}>
+        <div className={classes.paperContent}>{getStepContent(urlStep, createFolderFormRef)}</div>
       </Paper>
       {statusDetails && (
         <WizardStatusMessageHandler

@@ -66,7 +66,7 @@ const App = (): React$Element<typeof React.Fragment> => {
       <CssBaseline />
       <NavigationMenu />
       <Switch>
-        <Route path="/newdraft">
+        <Route path="/newdraft/:step">
           <Container component="main" maxWidth={false} className={classes.wizardContent}>
             <NewDraftWizard />
           </Container>

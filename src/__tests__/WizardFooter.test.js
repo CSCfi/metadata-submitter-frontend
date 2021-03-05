@@ -8,7 +8,7 @@ import configureStore from "redux-mock-store"
 
 import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"

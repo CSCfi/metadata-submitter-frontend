@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectsArray } from "constants/object"
+import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectsArray } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"

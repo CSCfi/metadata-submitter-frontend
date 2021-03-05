@@ -10,7 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/object"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"

@@ -11,6 +11,51 @@ Form components are crucial part of the application:
 - All submissions and folder creation are made with `react-hook-form`. Latter uses form as a reference so submission can be triggered outside the form.
 - Form for json schema based forms are created with custom json schema parser, which builds `react-hook-form` based forms from given json schema. Json schema-based forms are validated against json schema with `Ajv`. React-hook-form is used for performance reasons: it uses uncontrolled components so adding a lot of fields to array doesn't slow rendering of the application.
 
+### Constants
+
+Folder `src/constants` holds all the constants used in the application. Within `src/constants`, constants are uniquely defined and separated into different files according its related context. For example, `constants/wizardObject.js` file contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
+
+The purposes of using these `constants` are:
+
+- to avoid hard-code the values of variables repeatedly
+- to keep the consistency when defining the values of variables
+- to reuse those predefined values across the application
+
+Example of defining and using a constant:
+
+- First, define the constant `ObjectSubmissionTypes` in `constants/wizardObject.js`
+
+```
+export const ObjectSubmissionTypes = {
+  form: "Form",
+  xml: "XML",
+  existing: "Existing",
+}
+```
+
+- Then, use this constant in `WizardComponents/WizardObjectIndex`:
+
+```
+import { ObjectSubmissionTypes } from "constants/wizardObject"
+
+  switch (currentSubmissionType) {
+    case ObjectSubmissionTypes.form: {
+      target = "form"
+      break
+    }
+    case ObjectSubmissionTypes.xml: {
+      target = "XML upload"
+      break
+    }
+    case ObjectSubmissionTypes.existing: {
+      target = "drafts"
+      break
+    }
+  }
+```
+
+### Data Types
+
 ## Redux store
 
 Redux is handled with [Redux Toolkit](https://redux-toolkit.js.org/) and app is using following redux toolkit features:

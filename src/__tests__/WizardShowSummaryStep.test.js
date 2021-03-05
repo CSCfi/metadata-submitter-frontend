@@ -8,7 +8,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 
-import { ObjectTypes } from "constants/object"
+import { ObjectTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

@@ -13,7 +13,7 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
-import { ObjectsArray } from "constants/object"
+import { ObjectsArray } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({

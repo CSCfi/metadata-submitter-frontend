@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import _reject from "lodash/reject"
 
-import { ObjectStatus } from "constants/object"
+import { ObjectStatus } from "constants/wizardObject"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import type { FolderDetailsWithId } from "types"

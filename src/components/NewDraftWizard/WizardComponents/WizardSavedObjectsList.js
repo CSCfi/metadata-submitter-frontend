@@ -10,7 +10,7 @@ import { useSelector } from "react-redux"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({

@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardFillObjectDetailsForm from "../components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

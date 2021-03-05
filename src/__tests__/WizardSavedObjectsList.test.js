@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
 
-import { ObjectTypes, ObjectSubmissionTypes } from "constants/object"
+import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

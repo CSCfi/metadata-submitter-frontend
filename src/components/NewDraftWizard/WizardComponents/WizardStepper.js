@@ -124,7 +124,6 @@ const useStyles = makeStyles({
 const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  //const wizardStep = useSelector(state => state.wizardStep)
   const steps = ["Folder Name & Description", "Add Objects", "Summary"]
   const formState = useSelector(state => state.submissionType)
   const [alert, setAlert] = useState(false)

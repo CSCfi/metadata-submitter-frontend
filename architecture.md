@@ -13,17 +13,17 @@ Form components are crucial part of the application:
 
 ### Constants
 
-Folder `src/constants` holds all the constants used in the application. Within `src/constants`, constants are uniquely defined and separated into different files according its related context. For example, `constants/wizardObject.js` file contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
+Folder `src/constants` holds all the constants used in the application. The constants are uniquely defined and separated into different files according to its related context. For example, the file `constants/wizardObject.js` contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
 
 The purposes of using these `constants` are:
 
-- to avoid hard-code the values of variables repeatedly
+- to avoid hard coding the values of variables repeatedly
 - to keep the consistency when defining the values of variables
 - to reuse those predefined values across the application
 
 Example of defining and using a constant:
 
-- First, define the constant `ObjectSubmissionTypes` in `constants/wizardObject.js`
+- First, define the constant object `ObjectSubmissionTypes` in `constants/wizardObject.js`
 
 ```
 export const ObjectSubmissionTypes = {
@@ -54,7 +54,61 @@ import { ObjectSubmissionTypes } from "constants/wizardObject"
   }
 ```
 
-### Data Types
+### Commonly used data types
+
+All commonly used data types of variables are defined in the file `index.js` in folder `src/types`. The purposes are:
+
+- to avoid hard coding the same data types frequently in different files
+- to keep track and consistency of the data types across different files
+
+For example:
+
+- declare and export these data types in `src/types/index.js`
+
+```
+export type ObjectInsideFolder = {
+  accessionId: string,
+  schema: string,
+}
+
+export type ObjectTags = {
+  submissionType: string,
+  fileName?: string,
+}
+
+export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }
+```
+
+- import and reuse the data types in different files:
+  - Reuse type `ObjectInsideFolder` in `features/wizardSubmissionFolderSlice.js`:
+
+```
+import type { ObjectInsideFolder } from "types"
+
+export const addObjectToFolder = (
+  folderID: string,
+  objectDetails: ObjectInsideFolder
+) => {}
+
+export const addObjectToDrafts = (
+  folderID: string,
+  objectDetails: ObjectInsideFolder
+) => {}
+```
+
+- Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
+
+```
+import type { ObjectInsideFolderWithTags } from "types"
+
+type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+```
+
+```
+import type { ObjectInsideFolderWithTags } from "types"
+
+type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
+```
 
 ## Redux store
 

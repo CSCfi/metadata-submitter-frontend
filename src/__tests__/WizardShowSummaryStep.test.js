@@ -63,13 +63,6 @@ describe("WizardShowSummaryStep", () => {
       },
     })
     wrapper = (
-<<<<<<< HEAD
-      <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardShowSummaryStep />
-        </ThemeProvider>
-      </Provider>
-=======
       <MemoryRouter initialEntries={["/newdraft/2"]}>
         <Provider store={store}>
           <Route path="/newdraft/:step">
@@ -77,7 +70,6 @@ describe("WizardShowSummaryStep", () => {
           </Route>
         </Provider>
       </MemoryRouter>
->>>>>>> modify tests to follow URL params
     )
     render(wrapper)
   })

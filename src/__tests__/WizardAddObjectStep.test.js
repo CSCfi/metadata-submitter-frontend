@@ -78,13 +78,6 @@ describe("WizardAddObjectStep", () => {
           },
         })
         render(
-<<<<<<< HEAD
-          <Provider store={store}>
-            <ThemeProvider theme={CSCtheme}>
-              <WizardAddObjectStep />
-            </ThemeProvider>
-          </Provider>
-=======
           <MemoryRouter initialEntries={["/newdraft/1"]}>
             <Provider store={store}>
               <Route path="/newdraft/:step">
@@ -92,7 +85,6 @@ describe("WizardAddObjectStep", () => {
               </Route>
             </Provider>
           </MemoryRouter>
->>>>>>> modify tests to follow URL params
         )
         expect(screen.getByTestId(typeName)).toBeInTheDocument()
       })

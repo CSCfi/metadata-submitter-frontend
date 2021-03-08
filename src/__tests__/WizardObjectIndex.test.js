@@ -12,8 +12,18 @@ import { ObjectTypes } from "constants/wizardObject"
 const mockStore = configureStore([])
 
 describe("WizardObjectIndex", () => {
-  it("should render badge with number correctly", () => {
+  it("should render badge with number correctly", async () => {
     const store = mockStore({
+      objectsArray: [
+        ObjectTypes.study,
+        ObjectTypes.sample,
+        ObjectTypes.experiment,
+        ObjectTypes.run,
+        ObjectTypes.analysis,
+        ObjectTypes.dac,
+        ObjectTypes.policy,
+        ObjectTypes.dataset,
+      ],
       submissionFolder: {
         drafts: [
           { accessionId: "TESTID1234", schema: `draft-${ObjectTypes.study}` },
@@ -23,12 +33,14 @@ describe("WizardObjectIndex", () => {
         ],
       },
     })
+
     render(
       <Provider store={store}>
         <WizardObjectIndex />
       </Provider>
     )
-    const badge = screen.queryAllByTestId("badge")
+
+    const badge = await screen.queryAllByTestId("badge")
     expect(badge).toHaveLength(8)
     const studyBadge = screen.queryAllByTestId("badge")[0]
     expect(studyBadge).toHaveTextContent(2)

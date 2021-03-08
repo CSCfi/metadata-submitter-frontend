@@ -20,6 +20,16 @@ describe("WizardShowSummaryStep", () => {
 
   beforeEach(() => {
     store = mockStore({
+      objectsArray: [
+        ObjectTypes.study,
+        ObjectTypes.sample,
+        ObjectTypes.experiment,
+        ObjectTypes.run,
+        ObjectTypes.analysis,
+        ObjectTypes.dac,
+        ObjectTypes.policy,
+        ObjectTypes.dataset,
+      ],
       submissionFolder: {
         description: "AWD",
         id: "FOL90524783",

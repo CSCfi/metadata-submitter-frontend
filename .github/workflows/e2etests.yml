@@ -12,7 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build Frontend
-        run: npm install && npm run build
+        run: |
+          sudo npm install -g npm@7.6.0
+          npx --quiet pinst --disable
+          npm install --production
+          npm run build --production
       - name: Setup and Run backend
         run: |
           BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
@@ -22,11 +26,9 @@ jobs:
             VERSION=develop
           fi
           git clone --branch $VERSION https://github.com/CSCfi/metadata-submitter
-          cd metadata-submitter/metadata_backend
-          mkdir -p frontend
-          cp -r ../../build/* frontend/
-          cd ../
-          docker-compose up -d --build
+          mkdir -p metadata-submitter/metadata_backend/frontend
+          cp -r build/* metadata-submitter/metadata_backend/frontend/
+          docker-compose -f metadata-submitter/docker-compose.yml up -d --build
           sleep 30
       - uses: cypress-io/github-action@v2
         with:
@@ -38,8 +40,10 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+          retention-days: 5
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-videos
           path: cypress/videos
+          retention-days: 5

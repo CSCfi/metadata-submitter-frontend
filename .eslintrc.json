@@ -8,11 +8,9 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
     "plugin:flowtype/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:cypress/recommended"
+    "plugin:import/warnings"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -21,7 +19,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "jest", "flowtype", "import", "cypress"],
+  "plugins": ["react", "jest", "flowtype", "import"],
   "settings": {
     "react": {
       "version": "detect"
@@ -56,6 +54,6 @@
   "ignorePatterns": ["node_modules/*", "build/*", ".github/*"],
   "globals": {
     "cy": true,
-    "cypress/globals": true
+    "Cypress": true
   }
 }

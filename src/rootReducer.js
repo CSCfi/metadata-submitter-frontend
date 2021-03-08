@@ -4,6 +4,7 @@ import { combineReducers } from "@reduxjs/toolkit"
 
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
+import objectsArrayReducer from "features/objectsArraySlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
@@ -30,6 +31,7 @@ const rootReducer: any = combineReducers({
   unpublishedFolders: unpublishedFoldersReducer,
   publishedFolders: publishedFoldersReducer,
   selectedFolder: selectedFolderReducer,
+  objectsArray: objectsArrayReducer,
 })
 
 export default rootReducer

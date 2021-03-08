@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectsArray } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectSubmissionsArray, getObjectsArray } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -128,6 +128,7 @@ const SubmissionTypeList = ({
     [ObjectSubmissionTypes.xml]: "Upload XML File",
     [ObjectSubmissionTypes.existing]: "Choose from drafts",
   }
+
   const classes = useStyles()
   const [showSkipLink, setSkipLinkVisible] = useState(false)
   const dispatch = useDispatch()
@@ -215,6 +216,8 @@ const WizardObjectIndex = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
+  const objectsArray = getObjectsArray()
+
   const [expandedObjectType, setExpandedObjectType] = useState("")
   const [clickedSubmissionType, setClickedSubmissionType] = useState("")
   const [cancelFormOpen, setCancelFormOpen] = useState(false)
@@ -267,7 +270,7 @@ const WizardObjectIndex = (): React$Element<any> => {
 
   return (
     <div className={classes.index}>
-      {ObjectsArray.map(objectType => {
+      {objectsArray.map(objectType => {
         const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
         const isCurrentObjectType = objectType === currentObjectType
         return (

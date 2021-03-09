@@ -6,7 +6,7 @@ import _reject from "lodash/reject"
 import draftAPIService from "../services/draftAPI"
 import objectAPIService from "../services/objectAPI"
 
-import { ObjectStatus } from "constants/object"
+import { ObjectStatus } from "constants/wizardObject"
 import folderAPIService from "services/folderAPI"
 import publishAPIService from "services/publishAPI"
 import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolder } from "types"

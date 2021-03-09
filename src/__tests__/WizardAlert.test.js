@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardAlert from "../components/NewDraftWizard/WizardComponents/WizardAlert"
 
-import { ObjectSubmissionsArray } from "constants/object"
+import { ObjectSubmissionsArray } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

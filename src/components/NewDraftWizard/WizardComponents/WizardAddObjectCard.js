@@ -8,7 +8,7 @@ import { useSelector } from "react-redux"
 import WizardDraftObjectPicker from "components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 
 const useStyles = makeStyles(theme => ({
   card: {

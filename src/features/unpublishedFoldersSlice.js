@@ -1,7 +1,7 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-import { ObjectStatus } from "constants/object"
+import { ObjectStatus } from "constants/wizardObject"
 import type { FolderDetailsWithId } from "types"
 
 const initialState: [] | Array<FolderDetailsWithId> = []

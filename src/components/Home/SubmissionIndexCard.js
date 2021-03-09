@@ -16,7 +16,7 @@ import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 
-import { FolderSubmissionStatus } from "constants/folder"
+import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { FolderDetailsWithId } from "types"
 
 const useStyles = makeStyles(theme => ({

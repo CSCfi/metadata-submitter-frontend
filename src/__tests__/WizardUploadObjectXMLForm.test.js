@@ -9,7 +9,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardUploadObjectXMLForm from "../components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

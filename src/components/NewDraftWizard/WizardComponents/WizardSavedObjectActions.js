@@ -17,12 +17,12 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideFolderWithTags, ObjectTags } from "types"
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   buttonEdit: {
-    color: "#007bff",
+    color: theme.palette.button.edit,
   },
   buttonDelete: {
-    color: "#dc3545",
+    color: theme.palette.button.delete,
   },
 }))
 

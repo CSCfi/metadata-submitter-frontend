@@ -14,6 +14,7 @@ import Page500 from "views/ErrorPages/Page500"
 import Home from "views/Home"
 import Login from "views/Login"
 import NewDraftWizard from "views/NewDraftWizard"
+// import Submissions from "views/Submissions"
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -75,6 +76,16 @@ const App = (): React$Element<typeof React.Fragment> => {
           </Container>
         </Route>
         <Route exact path="/home">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <Home />
+          </Container>
+        </Route>
+        <Route exact path="/home/drafts">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <Home />
+          </Container>
+        </Route>
+        <Route exact path="/home/published">
           <Container component="main" maxWidth="md" className={classes.content}>
             <Home />
           </Container>

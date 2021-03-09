@@ -66,7 +66,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
 
   return (
     <>
-      <WizardHeader headerText="Create new folder" />
+      <WizardHeader headerText="Create Submission" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>

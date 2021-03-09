@@ -7,6 +7,7 @@ import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
+import { useLocation } from "react-router-dom"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
@@ -52,9 +53,27 @@ const Home = (): React$Element<typeof Grid> => {
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
 
+  const location = useLocation().pathname.split("/").pop()
+
   useEffect(() => {
     dispatch(fetchUserById("current"))
   }, [])
+
+  useEffect(() => {
+    switch (location) {
+      case "drafts": {
+        setDeepLevel(1)
+        break
+      }
+      case "published": {
+        setDeepLevel(2)
+        break
+      }
+      default: {
+        setDeepLevel(0)
+      }
+    }
+  }, [location])
 
   useEffect(() => {
     let isMounted = true
@@ -161,6 +180,7 @@ const Home = (): React$Element<typeof Grid> => {
           <SubmissionIndexCard
             folderType={FolderSubmissionStatus.unpublished}
             folders={unpublishedFolders.slice(0, 5)}
+            location="drafts"
             buttonTitle="See all"
             onClickHeader={() => setDeepLevel(1)}
             onClickContent={handleClickFolder}
@@ -172,6 +192,7 @@ const Home = (): React$Element<typeof Grid> => {
           <SubmissionIndexCard
             folderType={FolderSubmissionStatus.published}
             folders={publishedFolders.slice(0, 5)}
+            location="published"
             buttonTitle="See all"
             onClickHeader={() => setDeepLevel(2)}
             onClickContent={handleClickFolder}
@@ -189,9 +210,7 @@ const Home = (): React$Element<typeof Grid> => {
           <SubmissionIndexCard
             folderType={FolderSubmissionStatus.unpublished}
             folders={unpublishedFolders}
-            buttonTitle="Close"
             onClickContent={handleClickFolder}
-            onClickButton={() => setDeepLevel(0)}
           />
         </Grid>
       </Collapse>
@@ -205,9 +224,7 @@ const Home = (): React$Element<typeof Grid> => {
           <SubmissionIndexCard
             folderType={FolderSubmissionStatus.published}
             folders={publishedFolders}
-            buttonTitle="Close"
             onClickContent={handleClickFolder}
-            onClickButton={() => setDeepLevel(0)}
           />
         </Grid>
       </Collapse>
@@ -229,16 +246,21 @@ const Home = (): React$Element<typeof Grid> => {
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
-      <Grid item xs={12} className={classes.loggedUser}>
-        Logged in as: {user.name}
-      </Grid>
+      {location === "home" && (
+        <Grid item xs={12} className={classes.loggedUser}>
+          Logged in as: {user.name}
+        </Grid>
+      )}
 
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
-      <OverviewSubmissions />
-      <AllUnpublishedSubmissions />
-      <AllPublishedSubmissions />
-
-      <SelectedFolderDetails />
+      {!isFetchingFolders && (
+        <>
+          <OverviewSubmissions />
+          <AllUnpublishedSubmissions />
+          <AllPublishedSubmissions />
+          <SelectedFolderDetails />
+        </>
+      )}
 
       {connError && (
         <WizardStatusMessageHandler

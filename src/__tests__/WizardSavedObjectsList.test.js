@@ -1,11 +1,13 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen, within } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
+import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/object"
 
@@ -26,7 +28,9 @@ describe("WizardStepper", () => {
   beforeEach(() => {
     render(
       <Provider store={store}>
-        <WizardSavedObjectsList submissions={submissions} />
+        <ThemeProvider theme={CSCtheme}>
+          <WizardSavedObjectsList submissions={submissions} />
+        </ThemeProvider>
       </Provider>
     )
   })

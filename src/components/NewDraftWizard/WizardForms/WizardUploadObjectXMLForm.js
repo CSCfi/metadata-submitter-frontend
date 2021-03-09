@@ -26,14 +26,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-  },
+  cardHeader: theme.wizard.cardHeader,
   cardHeaderAction: {
-    marginTop: "-4px",
-    marginBottom: "-4px",
+    margin: theme.spacing(-0.5, 0),
   },
   root: {
     display: "flex",
@@ -158,6 +153,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
     <Button
       variant="contained"
       className={classes.submitButton}
+      size="small"
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >
@@ -166,7 +162,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   )
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <CardHeader
         title="Upload XML File"
         titleTypographyProps={{ variant: "inherit" }}

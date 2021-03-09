@@ -26,8 +26,8 @@ import type { CreateFolderFormRef } from "types"
 const QontoConnector = withStyles(theme => ({
   alternativeLabel: {
     top: 10,
-    left: "calc(-50% + 16px)",
-    right: "calc(50% + 16px)",
+    left: `calc(-50% + ${theme.spacing(2)})`,
+    right: `calc(50% + ${theme.spacing(2)})`,
   },
   active: {
     "& $line": {
@@ -69,7 +69,7 @@ const useQontoStepIconStyles = makeStyles(theme => ({
   },
   floating: {
     border: "solid 1px #000",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     boxShadow: 0,
   },
 }))

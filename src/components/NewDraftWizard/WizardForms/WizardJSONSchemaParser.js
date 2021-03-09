@@ -4,6 +4,7 @@ import { useState } from "react"
 
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { FormControl } from "@material-ui/core"
+import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
@@ -11,12 +12,23 @@ import FormGroup from "@material-ui/core/FormGroup"
 import FormHelperText from "@material-ui/core/FormHelperText"
 import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
+import { withStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
 import * as _ from "lodash"
 import { useFieldArray, useFormContext } from "react-hook-form"
+
+/*
+ * Highlight style for required fields
+ */
+const highlightStyle = theme => {
+  return {
+    borderColor: theme.palette.primary.main,
+    borderWidth: 2,
+  }
+}
 
 /*
  * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
@@ -276,6 +288,15 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
 }
 
 /*
+ * Highlight required input fields
+ */
+const ValidationTextField = withStyles(theme => ({
+  root: {
+    "& input:invalid:not(:valid) + fieldset": highlightStyle(theme),
+  },
+}))(TextField)
+
+/*
  * FormTextField is the most usual type, rendered for strings, integers and numbers.
  */
 const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
@@ -284,7 +305,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
-        <TextField
+        <ValidationTextField
           name={name}
           label={label}
           inputRef={register}
@@ -302,6 +323,15 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
 )
 
 /*
+ * Highlight required select fields
+ */
+const ValidationSelectField = withStyles(theme => ({
+  root: {
+    "& select:required:not(:valid) + svg + fieldset": highlightStyle(theme),
+  },
+}))(TextField)
+
+/*
  * FormSelectField is rendered for choosing one from many options
  */
 const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
@@ -309,7 +339,7 @@ const FormSelectField = ({ name, label, required, options }: FormSelectFieldProp
     {({ register, errors }) => {
       const error = _.get(errors, name)
       return (
-        <TextField
+        <ValidationSelectField
           name={name}
           label={label}
           inputRef={register}
@@ -326,7 +356,7 @@ const FormSelectField = ({ name, label, required, options }: FormSelectFieldProp
               {option}
             </option>
           ))}
-        </TextField>
+        </ValidationSelectField>
       )
     }}
   </ConnectForm>
@@ -340,12 +370,14 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
     {({ register, errors }) => {
       const error = _.get(errors, name)
       return (
-        <FormControl error={!!error} required={required}>
-          <FormGroup>
-            <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
-            <FormHelperText>{error?.message}</FormHelperText>
-          </FormGroup>
-        </FormControl>
+        <Box display="inline" px={1}>
+          <FormControl error={!!error} required={required}>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+              <FormHelperText>{error?.message}</FormHelperText>
+            </FormGroup>
+          </FormControl>
+        </Box>
       )
     }}
   </ConnectForm>
@@ -355,7 +387,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
  * FormSelectField is rendered for selection from options where it's possible to choose many options
  */
 const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldProps) => (
-  <div>
+  <Box px={1}>
     <p>
       <strong>{label}</strong> - check from following options
     </p>
@@ -378,7 +410,7 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
         )
       }}
     </ConnectForm>
-  </div>
+  </Box>
 )
 
 type FormArrayProps = {
@@ -408,7 +440,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
         const properties = object.items.properties
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
-            <Paper elevation={2}>
+            <Paper name="asd" elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
                 return traverseFields(properties[item], pathForThisIndex)

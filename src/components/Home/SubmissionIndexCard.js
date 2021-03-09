@@ -7,6 +7,7 @@ import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -15,6 +16,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
+import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/folder"
 import type { FolderDetailsWithId } from "types"
@@ -54,15 +56,14 @@ const useStyles = makeStyles(theme => ({
 type SubmissionIndexCardProps = {
   folderType: string,
   folders: Array<FolderDetailsWithId>,
-  buttonTitle: string,
+  location?: string,
   onClickHeader?: () => void,
   onClickContent: (folderId: string, folderType: string) => Promise<void>,
-  onClickButton: () => void,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
   const classes = useStyles()
-  const { folderType, folders, buttonTitle, onClickHeader, onClickContent, onClickButton } = props
+  const { folderType, folders, location, onClickHeader, onClickContent } = props
 
   // Renders when there is folder list
   const FolderList = () => (
@@ -91,15 +92,17 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
           })}
         </List>
       </CardContent>
-      <CardActions>
-        {folders.length > 0 && (
+      {location && (
+        <CardActions>
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-            <Button variant="outlined" color="primary" aria-label="Open or Close folders list" onClick={onClickButton}>
-              {buttonTitle}
-            </Button>
+            <Link component={RouterLink} to={`/home/${location}`} className={classes.link}>
+              <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
+                See all
+              </Button>
+            </Link>
           </Grid>
-        )}
-      </CardActions>
+        </CardActions>
+      )}
     </>
   )
 

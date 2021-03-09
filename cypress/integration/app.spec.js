@@ -85,6 +85,8 @@ describe("Basic e2e", function () {
       .then($btn => $btn.click())
 
     cy.get("form").within(() => {
+
+      cy.get("input[name='title']").type("Test title")
       // Experiment
       cy.get("input[name='experimentRef.accessionId']").type("Experiment Test Accession Id")
       cy.get("input[name='experimentRef.identifiers.submitterId.namespace']").type("Experiment Test Namespace")

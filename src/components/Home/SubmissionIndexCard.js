@@ -18,7 +18,7 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import { Link as RouterLink } from "react-router-dom"
 
-import { FolderSubmissionStatus } from "constants/folder"
+import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { FolderDetailsWithId } from "types"
 
 const useStyles = makeStyles(theme => ({

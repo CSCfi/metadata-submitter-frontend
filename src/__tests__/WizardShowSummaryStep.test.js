@@ -10,7 +10,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import CSCtheme from "../theme"
 
-import { ObjectTypes } from "constants/object"
+import { ObjectTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 
@@ -22,6 +22,16 @@ describe("WizardShowSummaryStep", () => {
 
   beforeEach(() => {
     store = mockStore({
+      objectsArray: [
+        ObjectTypes.study,
+        ObjectTypes.sample,
+        ObjectTypes.experiment,
+        ObjectTypes.run,
+        ObjectTypes.analysis,
+        ObjectTypes.dac,
+        ObjectTypes.policy,
+        ObjectTypes.dataset,
+      ],
       submissionFolder: {
         description: "AWD",
         id: "FOL90524783",

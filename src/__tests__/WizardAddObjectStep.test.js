@@ -10,7 +10,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 import WizardAddObjectStep from "../components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 
@@ -20,6 +20,16 @@ describe("WizardAddObjectStep", () => {
   it("should not render any cards if no selected object type", () => {
     const store = mockStore({
       objectType: "",
+      objectsArray: [
+        ObjectTypes.study,
+        ObjectTypes.sample,
+        ObjectTypes.experiment,
+        ObjectTypes.run,
+        ObjectTypes.analysis,
+        ObjectTypes.dac,
+        ObjectTypes.policy,
+        ObjectTypes.dataset,
+      ],
       submissionType: ObjectSubmissionTypes.xml,
       submissionFolder: {
         name: "folder name",
@@ -43,6 +53,16 @@ describe("WizardAddObjectStep", () => {
       ObjectSubmissionsArray.forEach(typeName => {
         const store = mockStore({
           objectType: ObjectTypes.study,
+          objectsArray: [
+            ObjectTypes.study,
+            ObjectTypes.sample,
+            ObjectTypes.experiment,
+            ObjectTypes.run,
+            ObjectTypes.analysis,
+            ObjectTypes.dac,
+            ObjectTypes.policy,
+            ObjectTypes.dataset,
+          ],
           submissionType: typeName,
           submissionFolder: {
             description: "Test",

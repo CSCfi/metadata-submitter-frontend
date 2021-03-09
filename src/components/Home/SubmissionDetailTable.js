@@ -21,7 +21,7 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 
-import { FolderSubmissionStatus } from "constants/folder"
+import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({

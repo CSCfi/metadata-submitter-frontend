@@ -7,7 +7,7 @@ import configureStore from "redux-mock-store"
 
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
 
-import { ObjectSubmissionTypes } from "constants/object"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

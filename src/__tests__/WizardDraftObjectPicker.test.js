@@ -10,7 +10,7 @@ import thunk from "redux-thunk"
 import WizardDraftObjectPicker from "../components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/object"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)

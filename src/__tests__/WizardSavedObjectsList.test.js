@@ -9,7 +9,7 @@ import configureStore from "redux-mock-store"
 import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
 import CSCtheme from "../theme"
 
-import { ObjectTypes, ObjectSubmissionTypes } from "constants/object"
+import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 

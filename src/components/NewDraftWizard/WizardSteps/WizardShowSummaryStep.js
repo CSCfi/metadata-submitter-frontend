@@ -13,7 +13,6 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
-import { ObjectsArray } from "constants/object"
 import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({
@@ -56,7 +55,8 @@ type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
 const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
-  const groupedObjects: Array<GroupedBySchema> = ObjectsArray.map((schema: string) => {
+  const objectsArray = useSelector(state => state.objectsArray)
+  const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
     return {
       [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
     }

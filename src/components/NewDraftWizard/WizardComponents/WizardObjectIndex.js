@@ -12,7 +12,6 @@ import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
-import NoteAddIcon from "@material-ui/icons/NoteAdd"
 import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
@@ -220,7 +219,11 @@ const SubmissionTypeList = ({
               showSkipLink && isCurrentObjectType && currentSubmissionType === submissionType && skipToSubmissionLink()
             }
           />
-          {submissionType === "Existing" && draftCount > 0 && <Badge color="primary" badgeContent={draftCount} />}
+          {submissionType === "Existing" && draftCount > 0 && (
+            <Tooltip title="Saved draft objects">
+              <Badge color="primary" badgeContent={draftCount} />
+            </Tooltip>
+          )}
         </ListItem>
       ))}
     </List>
@@ -309,7 +312,7 @@ const WizardObjectIndex = (): React$Element<any> => {
               aria-controls="type-content"
               id="type-header"
             >
-              <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
+              <Typography variant="subtitle1">{typeCapitalized}</Typography>
               {getSavedObjectCount(objectType) > 0 && (
                 <Tooltip title="Saved objects">
                   <ObjectCountBadge

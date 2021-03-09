@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
   fileField: {
     display: "inline-flex",
   },
+  submitButton: {
+    backgroundColor: "#FFF",
+  },
 }))
 
 /*

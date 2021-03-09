@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     "& > :not(:last-child)": {
       marginRight: theme.spacing(1),
     },
+    "& button": {
+      backgroundColor: "#FFF",
+    },
   },
   addIcon: {
     marginRight: theme.spacing(1),

@@ -37,11 +37,9 @@ const useStyles = makeStyles(theme => ({
     padding: "0",
   },
   objectListItems: {
-    border: "solid 1px #ccc",
-    borderRadius: 3,
-    margin: theme.spacing(1, 0),
-    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
     alignItems: "flex-start",
+    padding: theme.spacing(1.5),
   },
 }))
 

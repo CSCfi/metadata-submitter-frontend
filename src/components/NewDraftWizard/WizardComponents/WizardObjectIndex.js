@@ -356,7 +356,7 @@ const WizardObjectIndex = (): React$Element<any> => {
             >
               <Typography variant="subtitle1">{typeCapitalized}</Typography>
               {getSavedObjectCount(objectType) > 0 && (
-                <Tooltip title="Saved objects">
+                <Tooltip title="Submitted objects">
                   <ObjectCountBadge
                     badgeContent={getSavedObjectCount(objectType)}
                     className={classes.badge}

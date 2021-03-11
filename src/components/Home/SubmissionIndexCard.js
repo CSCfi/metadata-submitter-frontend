@@ -33,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.5em",
     padding: 0,
     marginTop: theme.spacing(1),
-    "&:hover": {
-      cursor: "pointer",
-    },
   },
   cardContent: {
     flexGrow: 1,
@@ -47,6 +44,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 0),
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
     alignItems: "flex-start",
+    color: theme.palette.font.main,
   },
   submissionsListIcon: {
     minWidth: 35,
@@ -57,13 +55,12 @@ type SubmissionIndexCardProps = {
   folderType: string,
   folders: Array<FolderDetailsWithId>,
   location?: string,
-  onClickHeader?: () => void,
-  onClickContent: (folderId: string, folderType: string) => Promise<void>,
+  displayButton?: boolean,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
   const classes = useStyles()
-  const { folderType, folders, location, onClickHeader, onClickContent } = props
+  const { folderType, folders, location = "", displayButton } = props
 
   // Renders when there is folder list
   const FolderList = () => (
@@ -72,30 +69,26 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
         <List>
           {folders.map((folder, index) => {
             return (
-              <ListItem
-                button
-                key={index}
-                dense
-                className={classes.submissionsListItems}
-                onClick={() => onClickContent(folder.folderId, folderType)}
-              >
-                <ListItemIcon className={classes.submissionsListIcon}>
-                  {folderType === FolderSubmissionStatus.published ? (
-                    <FolderIcon color="primary" />
-                  ) : (
-                    <FolderOpenIcon color="primary" />
-                  )}
-                </ListItemIcon>
-                <ListItemText primary={folder.name} />
-              </ListItem>
+              <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
+                <ListItem button dense className={classes.submissionsListItems}>
+                  <ListItemIcon className={classes.submissionsListIcon}>
+                    {folderType === FolderSubmissionStatus.published ? (
+                      <FolderIcon color="primary" />
+                    ) : (
+                      <FolderOpenIcon color="primary" />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText primary={folder.name} />
+                </ListItem>
+              </Link>
             )
           })}
         </List>
       </CardContent>
-      {location && (
+      {displayButton && (
         <CardActions>
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-            <Link component={RouterLink} to={`/home/${location}`} className={classes.link}>
+            <Link component={RouterLink} to={`/home/${location}`}>
               <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
                 See all
               </Button>
@@ -123,7 +116,6 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
         }
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
-        onClick={onClickHeader}
       />
       {folders.length > 0 ? <FolderList /> : <EmptyList />}
     </Card>

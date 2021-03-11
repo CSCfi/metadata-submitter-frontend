@@ -29,6 +29,9 @@ const palette = {
     redErrorBackground: "#E71D32",
     redErrorText: "#FFFFFF",
   },
+  font: {
+    main: "rgba(0, 0, 0, 0.87);",
+  },
 }
 
 /**

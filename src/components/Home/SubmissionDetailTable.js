@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
+import Link from "@material-ui/core/Link"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -20,6 +21,7 @@ import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
+import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { ObjectDetails } from "types"
@@ -41,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       cursor: "pointer",
     },
+  },
+  headerLink: {
+    color: theme.palette.font.main,
   },
   tableHeader: {
     padding: theme.spacing(1),
@@ -71,14 +76,13 @@ type SubmissionDetailTableProps = {
   folderTitle: string,
   bodyRows: Array<ObjectDetails>,
   folderType: string,
-  onClickCardHeader: () => void,
-  onDelete: (objectId: string, objectType: string, objectStatus: string) => void,
+  location: string,
+  onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
 }
 
 const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node => {
   const classes = useStyles()
-  const { bodyRows, folderTitle, folderType, onClickCardHeader, onDelete } = props
-
+  const { bodyRows, folderTitle, folderType, location, onDelete } = props
   const getDateFormat = (date: string) => {
     const d = new Date(date)
     const day = d.getDate()
@@ -87,7 +91,6 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node =>
     return `${day}.${month}.${year}`
   }
 
-  // Renders when current folder has the object(s)
   const CurrentFolder = () => (
     <CardContent>
       <TableContainer component={Paper}>
@@ -166,7 +169,6 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node =>
     </CardContent>
   )
 
-  // Renders when current folder is empty
   const EmptyFolder = () => (
     <CardContent>
       <Typography align="center" variant="body2">
@@ -177,13 +179,15 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React.Node =>
 
   return (
     <Card className={classes.card} variant="outlined">
-      <CardHeader
-        className={classes.cardHeader}
-        avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
-        title={`Your ${folderType} submissions`}
-        titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        onClick={onClickCardHeader}
-      />
+      <Link component={RouterLink} to={`/home/${location}`} className={classes.headerLink}>
+        <CardHeader
+          className={classes.cardHeader}
+          avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
+          title={`Your ${folderType} submissions`}
+          titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
+        />
+      </Link>
+
       {bodyRows?.length > 0 ? <CurrentFolder /> : <EmptyFolder />}
     </Card>
   )

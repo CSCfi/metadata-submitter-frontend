@@ -12,7 +12,6 @@ describe("Home e2e", function () {
     cy.contains("Your Published Submissions").should("be.visible")
 
     cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
-    cy.get("ul.MuiList-root").eq(1).children().should("have.length.at.most", 5)
 
     // Create a new Unpublished folder
     cy.get("button").contains("Create Submission").click()
@@ -82,16 +81,6 @@ describe("Home e2e", function () {
     cy.contains("Your draft submissions")
       .should("be.visible")
       .then($el => $el.click())
-
-    // Close unpublished folders list
-    cy.get("div.MuiCardActions-root")
-      .contains("Close")
-      .should("be.visible")
-      .then($btn => $btn.click())
-
-    // Check Overview submissions page is shown
-    cy.contains("Your Draft Submissions").should("be.visible")
-    cy.contains("Your Published Submissions").should("be.visible")
   })
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
@@ -157,15 +146,5 @@ describe("Home e2e", function () {
     cy.contains("Your published submissions")
       .should("be.visible")
       .then($el => $el.click())
-
-    // Close published folders list
-    cy.get("div.MuiCardActions-root")
-      .contains("Close")
-      .should("be.visible")
-      .then($btn => $btn.click())
-
-    // Check Overview submissions page is shown
-    cy.contains("Your Draft Submissions").should("be.visible")
-    cy.contains("Your Published Submissions").should("be.visible")
   })
 })

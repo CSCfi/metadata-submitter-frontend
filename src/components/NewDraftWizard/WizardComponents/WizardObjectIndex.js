@@ -222,7 +222,7 @@ const SubmissionTypeList = ({
               showSkipLink && isCurrentObjectType && currentSubmissionType === submissionType && skipToSubmissionLink()
             }
           />
-          {submissionType === "Existing" && draftCount > 0 && (
+          {submissionType === ObjectSubmissionTypes.existing && draftCount > 0 && (
             <Tooltip title="Saved draft objects">
               <Badge color="primary" badgeContent={draftCount} />
             </Tooltip>

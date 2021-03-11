@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react"
 
 import CircularProgress from "@material-ui/core/CircularProgress"
-import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
+import { useLocation } from "react-router-dom"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -28,9 +28,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Home = (): React$Element<typeof Grid> => {
+const SubmissionFolderList = (): React$Element<typeof Grid> => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
 
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
@@ -42,6 +41,8 @@ const Home = (): React$Element<typeof Grid> => {
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
+
+  const location = useLocation().pathname.split("/").pop()
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -69,33 +70,23 @@ const Home = (): React$Element<typeof Grid> => {
     }
   }, [])
 
-  // Contains both unpublished and published folders (max. 5 items/each)
+  // Full list of folders
+  const Submissions = () => (
+    <Grid item xs={12} className={classes.tableCard}>
+      <SubmissionIndexCard
+        folderType={location === "drafts" ? FolderSubmissionStatus.unpublished : FolderSubmissionStatus.published}
+        folders={location === "drafts" ? unpublishedFolders : publishedFolders}
+        location={location}
+      />
+    </Grid>
+  )
+
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
-      <Grid item xs={12} className={classes.loggedUser}>
-        Logged in as: {user.name}
-      </Grid>
-
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {!isFetchingFolders && (
         <>
-          <Grid item xs={12} className={classes.tableCard}>
-            <SubmissionIndexCard
-              folderType={FolderSubmissionStatus.unpublished}
-              folders={unpublishedFolders.slice(0, 5)}
-              location="drafts"
-              displayButton={true}
-            />
-          </Grid>
-          <Divider variant="middle" />
-          <Grid item xs={12} className={classes.tableCard}>
-            <SubmissionIndexCard
-              folderType={FolderSubmissionStatus.published}
-              folders={publishedFolders.slice(0, 5)}
-              location="published"
-              displayButton={true}
-            />
-          </Grid>
+          <Submissions />
         </>
       )}
 
@@ -110,4 +101,4 @@ const Home = (): React$Element<typeof Grid> => {
   )
 }
 
-export default Home
+export default SubmissionFolderList

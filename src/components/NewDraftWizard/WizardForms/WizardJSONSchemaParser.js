@@ -55,7 +55,7 @@ const traverseFormValuesForCleanUp = (data: any) => {
  * Parse initial values from given object
  */
 const traverseValues = (object: any) => {
-  if (object["oneOf"]) return
+  if (object["oneOf"]) return object
   switch (object["type"]) {
     case "object": {
       let values = {}
@@ -405,6 +405,19 @@ const FormArray = ({ object, path }: FormArrayProps) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+        if (items.oneOf) {
+          const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
+          return (
+            <div className="arrayRow" key={`${name}[${index}]`}>
+              <Paper elevation={2}>
+                <FormOneOfField key={`${name}[${index}]`} path={pathForThisIndex} object={items} />
+              </Paper>
+              <IconButton onClick={() => remove(index)}>
+                <RemoveIcon />
+              </IconButton>
+            </div>
+          )
+        }
         const properties = object.items.properties
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>

@@ -13,7 +13,7 @@ import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
 import { useDispatch, useSelector } from "react-redux"
-import { ObjectSubmissionTypes } from "constants/wizardObject"
+
 import WizardAlert from "./WizardAlert"
 
 import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"

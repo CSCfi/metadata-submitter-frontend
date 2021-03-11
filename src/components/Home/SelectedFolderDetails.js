@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
-// import { useDispatch } from "react-redux"
 import { useLocation } from "react-router-dom"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
@@ -12,7 +11,6 @@ import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/Wi
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
-// import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
@@ -28,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   const classes = useStyles()
-  // const dispatch = useDispatch()
+
   const [isFetchingFolder, setFetchingFolder] = useState(true)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
@@ -125,22 +123,6 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       setErrorPrefix("Can't delete object")
     }
   }
-
-  // const handleDeleteObject = (objectId: string, objectType: string, objectStatus: string) => {
-  //   setConnError(false)
-  //   dispatch(deleteObjectFromFolder(objectStatus, objectId, objectType))
-  //     .then(() => {
-  //       const updatedFolder = { ...selectedFolder }
-  //       updatedFolder.allObjects = selectedFolder.allObjects.filter(item => item.accessionId !== objectId)
-  //       setSelectedFolder(updatedFolder)
-  //     })
-  //     .catch(error => {
-  //       console.log(error)
-  //       setConnError(true)
-  //       setResponseError(JSON.parse(error))
-  //       setErrorPrefix("Can't delete object")
-  //     })
-  // }
 
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch" className={classes.tableGrid}>

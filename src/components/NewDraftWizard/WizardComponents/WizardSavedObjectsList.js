@@ -1,6 +1,8 @@
 //@flow
 import React, { useEffect, useRef } from "react"
 
+import Box from "@material-ui/core/Box"
+import CardHeader from "@material-ui/core/CardHeader"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
@@ -15,20 +17,15 @@ import type { ObjectInsideFolderWithTags } from "types"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
-    padding: "0 1rem",
+    paddingLeft: theme.spacing(2),
     width: "25%",
+    flex: "auto",
   },
   header: {
     marginBlockEnd: "0",
   },
-  objectListItems: {
-    border: "none",
-    borderRadius: 3,
-    margin: theme.spacing(1, 0),
-    boxShadow: "0px 3px 10px -5px rgba(0,0,0,0.49)",
-    alignItems: "flex-start",
-    padding: ".5rem",
-  },
+  cardHeader: theme.wizard.cardHeader,
+  objectListItem: theme.wizard.objectListItem,
   listItemText: {
     display: "inline-block",
     maxWidth: "50%",
@@ -87,32 +84,36 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
       case ObjectSubmissionTypes.xml:
         return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
       default:
-        break
+        return ""
     }
   }
 
   return (
     <div className={classes.objectList}>
       {groupedSubmissions.map(group => (
-        <List key={group.submissionType} aria-label={group.submissionType}>
-          <h3 className={classes.header}>
-            Submitted {displayObjectType(objectType)} {displaySubmissionType(group)}
-          </h3>
-          {group.submittedItems.map(item => (
-            <ListItem key={item.accessionId} className={classes.objectListItems}>
-              <ListItemText className={classes.listItemText} primary={item.accessionId} />
-              <ListItemSecondaryAction>
-                <WizardSavedObjectActions
-                  submissions={submissions}
-                  objectType={objectType}
-                  objectId={item.accessionId}
-                  submissionType={group?.submissionType}
-                  tags={item.tags}
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+        <Box pt={0} key={group.submissionType}>
+          <CardHeader
+            title={`Submitted ${displayObjectType(objectType)} ${displaySubmissionType(group)}`}
+            titleTypographyProps={{ variant: "inherit" }}
+            className={classes.cardHeader}
+          />
+          <List aria-label={group.submissionType}>
+            {group.submittedItems.map(item => (
+              <ListItem key={item.accessionId} className={classes.objectListItem}>
+                <ListItemText className={classes.listItemText} primary={item.accessionId} />
+                <ListItemSecondaryAction>
+                  <WizardSavedObjectActions
+                    submissions={submissions}
+                    objectType={objectType}
+                    objectId={item.accessionId}
+                    submissionType={group?.submissionType}
+                    tags={item.tags}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       ))}
     </div>
   )

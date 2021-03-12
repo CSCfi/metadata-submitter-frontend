@@ -31,6 +31,12 @@ describe("WizardObjectIndex", () => {
           { accessionId: "TESTID0101", schema: `draft-${ObjectTypes.analysis}` },
           { accessionId: "TESTID0202", schema: `draft-${ObjectTypes.experiment}` },
         ],
+        metadataObjects: [
+          { accessionId: "TESTID1234", schema: ObjectTypes.study },
+          { accessionId: "TESTID5678", schema: ObjectTypes.study },
+          { accessionId: "TESTID0101", schema: ObjectTypes.analysis },
+          { accessionId: "TESTID0202", schema: ObjectTypes.experiment },
+        ],
       },
     })
 
@@ -41,10 +47,10 @@ describe("WizardObjectIndex", () => {
     )
 
     const badge = await screen.queryAllByTestId("badge")
-    expect(badge).toHaveLength(8)
+    expect(badge).toHaveLength(3)
     const studyBadge = screen.queryAllByTestId("badge")[0]
     expect(studyBadge).toHaveTextContent(2)
-    const analysisBadge = screen.queryAllByTestId("badge")[4]
+    const analysisBadge = screen.queryAllByTestId("badge")[1]
     expect(analysisBadge).toHaveTextContent(1)
     const experimentBadge = screen.queryAllByTestId("badge")[2]
     expect(experimentBadge).toHaveTextContent(1)

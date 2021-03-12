@@ -34,14 +34,7 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-    position: "sticky",
-    top: theme.spacing(8),
-    zIndex: 2,
-  },
+  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(8), zIndex: 2 },
   cardHeaderAction: {
     marginTop: "-4px",
     marginBottom: "-4px",
@@ -52,12 +45,18 @@ const useStyles = makeStyles(theme => ({
     "& > :not(:last-child)": {
       marginRight: theme.spacing(1),
     },
+    "& button": {
+      backgroundColor: "#FFF",
+    },
   },
   addIcon: {
     marginRight: theme.spacing(1),
   },
   formComponents: {
     margin: theme.spacing(3, 2),
+    "& .MuiTextField-root > .Mui-required": {
+      color: theme.palette.primary.main,
+    },
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -69,7 +68,7 @@ const useStyles = makeStyles(theme => ({
     },
     "& .MuiTypography-h2": {
       width: "100%",
-      color: theme.palette.secondary.main,
+      color: theme.palette.primary.light,
       borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
     "& .MuiTypography-h3": {
@@ -77,7 +76,6 @@ const useStyles = makeStyles(theme => ({
     },
     "& .array": {
       margin: theme.spacing(1),
-      width: "45%",
       "& .arrayRow": {
         display: "flex",
         alignItems: "center",
@@ -86,6 +84,9 @@ const useStyles = makeStyles(theme => ({
         "& .MuiTextField-root": {
           width: "95%",
         },
+      },
+      "& h2, h3, h4": {
+        margin: theme.spacing(1, 0),
       },
     },
   },
@@ -246,7 +247,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
-
     if (checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
@@ -538,7 +538,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   if (states.error) return <Alert severity="error">{states.errorPrefix}</Alert>
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <FormContent
         formSchema={states.formSchema}
         resolver={WizardAjvResolver(states.validationSchema)}

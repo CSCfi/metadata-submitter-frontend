@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     flexShrink: 0,
     borderTop: "solid 1px #ccc",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     position: "fixed",
     zIndex: 1,
     left: 0,

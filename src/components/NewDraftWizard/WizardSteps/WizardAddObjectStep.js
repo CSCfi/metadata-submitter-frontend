@@ -40,7 +40,7 @@ const WizardAddObjectStep = (): React$Element<any> => {
 
   return (
     <>
-      <WizardHeader headerText="Create New Folder" />
+      <WizardHeader headerText="Create Submission" />
       <WizardStepper />
       <div className={classes.formRow}>
         <WizardObjectIndex />

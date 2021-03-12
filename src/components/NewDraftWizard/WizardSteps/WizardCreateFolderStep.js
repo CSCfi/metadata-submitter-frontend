@@ -97,7 +97,7 @@ const WizardCreateFolderStep = ({
   createFolderFormRef: CreateFolderFormRef,
 }): React$Element<any> => (
   <>
-    <WizardHeader headerText="Create New Folder" />
+    <WizardHeader headerText="Create Submission" />
     <WizardStepper createFolderFormRef={createFolderFormRef} />
     <CreateFolderForm createFolderFormRef={createFolderFormRef} />
   </>

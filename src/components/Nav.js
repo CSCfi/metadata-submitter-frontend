@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
     color: theme.palette.text.primary,
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
   },
   logo: {
     height: "auto",
@@ -64,10 +64,10 @@ const Menu = () => {
       >
         <HomeIcon />
       </IconButton>
-      <Link href="#" className={classes.link}>
+      <Link component={RouterLink} to="/home/drafts" className={classes.link}>
         Open submissions
       </Link>
-      <Link href="#" className={classes.link}>
+      <Link component={RouterLink} to="/home/published" className={classes.link}>
         Submissions
       </Link>
       <Link component={RouterLink} aria-label="Create Submission" to="/newdraft">

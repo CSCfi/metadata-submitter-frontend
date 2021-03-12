@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react"
 import type { Node } from "react"
 
+import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -29,28 +30,16 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-    marginBottom: theme.spacing(3),
-  },
+  cardHeader: theme.wizard.cardHeader,
   objectList: {
-    padding: "0 1rem",
+    padding: theme.spacing(0, 2),
   },
-  objectListItems: {
-    border: "none",
-    borderRadius: 3,
-    margin: theme.spacing(1, 0),
-    boxShadow: "0px 3px 10px -5px rgba(0,0,0,0.49)",
-    alignItems: "flex-start",
-    padding: ".5rem",
-  },
+  objectListItem: theme.wizard.objectListItem,
   buttonContinue: {
-    color: "#007bff",
+    color: theme.palette.button.edit,
   },
   buttonDelete: {
-    color: "#dc3545",
+    color: theme.palette.button.delete,
   },
 }))
 
@@ -104,7 +93,7 @@ const WizardDraftObjectPicker = (): Node => {
   }
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <CardHeader
         title="Choose from drafts"
         titleTypographyProps={{ variant: "inherit" }}
@@ -114,7 +103,7 @@ const WizardDraftObjectPicker = (): Node => {
         <List className={classes.objectList}>
           {currentObjectTypeDrafts.map(submission => {
             return (
-              <ListItem key={submission.accessionId} className={classes.objectListItems}>
+              <ListItem key={submission.accessionId} className={classes.objectListItem}>
                 <ListItemText primary={submission.accessionId} />
                 <ListItemSecondaryAction>
                   <ButtonGroup aria-label="Draft actions button group">
@@ -141,9 +130,11 @@ const WizardDraftObjectPicker = (): Node => {
           })}
         </List>
       ) : (
-        <Typography variant="subtitle1" align="center">
-          No {objectType} drafts.
-        </Typography>
+        <Box pt={5}>
+          <Typography component="h2" variant="subtitle1" align="center">
+            No {objectType} drafts.
+          </Typography>
+        </Box>
       )}
 
       {connError && (

@@ -1,12 +1,14 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
+import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"
 
@@ -43,7 +45,9 @@ describe("WizardShowSummaryStep", () => {
     })
     wrapper = (
       <Provider store={store}>
-        <WizardShowSummaryStep />
+        <ThemeProvider theme={CSCtheme}>
+          <WizardShowSummaryStep />
+        </ThemeProvider>
       </Provider>
     )
   })

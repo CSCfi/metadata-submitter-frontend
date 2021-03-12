@@ -9,8 +9,9 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
+import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
-import NoteAddIcon from "@material-ui/icons/NoteAdd"
+import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
 import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
@@ -71,6 +72,9 @@ const Accordion = withStyles({
     "&$expanded": {
       margin: "auto",
     },
+    "&:first-of-type": {
+      borderTop: "none",
+    },
   },
   expanded: {},
 })(MuiAccordion)
@@ -87,9 +91,15 @@ const AccordionSummary = withStyles(theme => ({
     color: "#FFF",
     fontWeight: "bold",
     "&$expanded": {
-      margin: `${theme.spacing(2)} 0`,
+      margin: `${theme.spacing(2)}px 0`,
     },
     "& .MuiSvgIcon-root": {
+      height: "auto",
+    },
+    "& .MuiTypography-subtitle1": {
+      alignSelf: "center",
+    },
+    "&:not(.MuiBadge-root) > .MuiSvgIcon-root": {
       marginRight: theme.spacing(2),
     },
   },
@@ -103,11 +113,18 @@ const AccordionDetails = withStyles({
   },
 })(MuiAccordionDetails)
 
-const Badge = withStyles(theme => ({
+const ObjectCountBadge = withStyles(theme => ({
   badge: {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
     fontWeight: theme.typography.fontWeightBold,
+  },
+}))(MuiBadge)
+
+const Badge = withStyles(theme => ({
+  badge: {
+    fontWeight: theme.typography.fontWeightBold,
+    marginRight: theme.spacing(1),
   },
 }))(MuiBadge)
 
@@ -205,6 +222,11 @@ const SubmissionTypeList = ({
               showSkipLink && isCurrentObjectType && currentSubmissionType === submissionType && skipToSubmissionLink()
             }
           />
+          {submissionType === ObjectSubmissionTypes.existing && draftCount > 0 && (
+            <Tooltip title="Saved draft objects">
+              <Badge color="primary" badgeContent={draftCount} />
+            </Tooltip>
+          )}
         </ListItem>
       ))}
     </List>
@@ -234,6 +256,9 @@ const WizardObjectIndex = (): React$Element<any> => {
     ?.map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 
+  const savedObjects = folder.metadataObjects
+    ?.map(draft => draft.schema)
+    .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
   // Fetch array of schemas from backend and store it in frontend
   // Fetch only if the initial array is empty
   // if there is any errors while fetching, it will return a manually created ObjectsArray instead
@@ -277,7 +302,11 @@ const WizardObjectIndex = (): React$Element<any> => {
   }
 
   const getDraftCount = (objectType: string) => {
-    return draftObjects[objectType] ? draftObjects[objectType] : 0
+    return draftObjects && draftObjects[objectType] ? draftObjects[objectType] : 0
+  }
+
+  const getSavedObjectCount = (objectType: string) => {
+    return savedObjects && savedObjects[objectType] ? savedObjects[objectType] : 0
   }
 
   const handleSubmissionTypeChange = (submissionType: string) => {
@@ -325,12 +354,18 @@ const WizardObjectIndex = (): React$Element<any> => {
               aria-controls="type-content"
               id="type-header"
             >
-              <NoteAddIcon /> <Typography variant="subtitle1">{typeCapitalized}</Typography>
-              <Badge
-                badgeContent={getDraftCount("draft-" + objectType)}
-                className={classes.badge}
-                data-testid="badge"
-              />
+              <Typography variant="subtitle1">{typeCapitalized}</Typography>
+              {getSavedObjectCount(objectType) > 0 && (
+                <Tooltip title="Submitted objects">
+                  <ObjectCountBadge
+                    badgeContent={getSavedObjectCount(objectType)}
+                    className={classes.badge}
+                    data-testid="badge"
+                  >
+                    <DescriptionRoundedIcon />
+                  </ObjectCountBadge>
+                </Tooltip>
+              )}
             </AccordionSummary>
             <AccordionDetails>
               <SubmissionTypeList

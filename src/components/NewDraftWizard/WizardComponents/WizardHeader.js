@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     color: "#FFF",
     width: "100%",
     padding: theme.spacing(3),
-    backgroundColor: "#9b416b",
+    backgroundColor: theme.palette.primary.light,
   },
 }))
 

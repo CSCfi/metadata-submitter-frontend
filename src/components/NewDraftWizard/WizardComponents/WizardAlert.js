@@ -10,14 +10,14 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch, useSelector } from "react-redux"
 
+import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
+
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
-import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 
 // Simple template for error messages
@@ -49,52 +49,21 @@ const CancelFormDialog = ({
   // Draft save logic
   const saveDraft = async () => {
     setError(false)
-    const err = "Connection error, cannot save draft."
 
-    if ((currentObject.accessionId || currentObject.objectId) && currentObject.type === ObjectStatus.draft) {
-      const response = await draftAPIService.patchFromJSON(
-        objectType,
-        currentObject.accessionId || currentObject.objectId,
-        currentObject.cleanedValues
-      )
-      if (response.ok) {
-        dispatch(resetDraftStatus())
-        dispatch(
-          updateStatus({
-            successStatus: WizardStatus.success,
-            response: response,
-            errorPrefix: "",
-          })
-        )
-        dispatch(resetCurrentObject())
-        handleDialog(true)
-      } else {
-        setError(true)
-        setErrorMessage(err)
-      }
+    const handleSave = await saveDraftHook(
+      currentObject.accessionId || currentObject.objectId,
+      objectType,
+      currentObject.status,
+      submissionFolder.folderId,
+      currentObject.cleanedValues || currentObject,
+      dispatch
+    )
+
+    if (handleSave.ok) {
+      handleDialog(true)
     } else {
-      const response = await draftAPIService.createFromJSON(objectType, currentObject)
-      if (response.ok) {
-        dispatch(
-          updateStatus({
-            successStatus: WizardStatus.success,
-            response: response,
-            errorPrefix: "",
-          })
-        )
-        dispatch(resetDraftStatus())
-        dispatch(
-          addObjectToDrafts(submissionFolder.folderId, {
-            accessionId: response.data.accessionId,
-            schema: "draft-" + objectType,
-          })
-        )
-        dispatch(resetCurrentObject())
-        handleDialog(true)
-      } else {
-        setError(true)
-        setErrorMessage(err)
-      }
+      setError(true)
+      setErrorMessage("Connection error, cannot save draft.")
     }
   }
 
@@ -130,7 +99,7 @@ const CancelFormDialog = ({
 
   switch (parentLocation) {
     case "submission": {
-      if (currentObject?.type === ObjectStatus.submitted) {
+      if (currentObject?.status === ObjectStatus.submitted) {
         dialogTitle = "Would you like to save edited form data?"
         dialogContent = "Unsaved changes will be lost. If you save form as a draft, you can continue filling it later."
         dialogActions = (

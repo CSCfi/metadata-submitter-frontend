@@ -81,7 +81,7 @@ const WizardDraftObjectPicker = (): Node => {
     setConnError(false)
     const response = await draftAPIService.getObjectByAccessionId(objectType, objectId)
     if (response.ok) {
-      dispatch(setCurrentObject({ ...response.data, type: ObjectStatus.draft }))
+      dispatch(setCurrentObject({ ...response.data, status: ObjectStatus.draft }))
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
     } else {
       setConnError(true)

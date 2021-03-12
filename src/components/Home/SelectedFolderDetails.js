@@ -1,10 +1,13 @@
 //@flow
 import React, { useEffect, useState } from "react"
 
+import Breadcrumbs from "@material-ui/core/Breadcrumbs"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
-import { useLocation } from "react-router-dom"
+import Typography from "@material-ui/core/Typography"
+import { useLocation, Link as RouterLink } from "react-router-dom"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -17,7 +20,7 @@ import objectAPIService from "services/objectAPI"
 
 const useStyles = makeStyles(theme => ({
   tableGrid: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(2, 0),
   },
   circularProgress: {
     margin: theme.spacing(10, "auto"),
@@ -34,7 +37,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   const [selectedFolder, setSelectedFolder] = useState({
     folderTitle: "",
     allObjects: [],
-     published: boolean
+    published: false,
   })
 
   const folderId = useLocation().pathname.split("/").pop()
@@ -110,7 +113,6 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
 
   // Delete object from current folder
   const handleDeleteObject = async (objectId: string, objectType: string, objectStatus: string) => {
-    console.log(objectStatus)
     const service = objectStatus === ObjectStatus.draft ? draftAPIService : objectAPIService
     const response = await service.deleteObjectByAccessionId(objectType, objectId)
     if (response.ok) {
@@ -128,13 +130,30 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
     <Grid container direction="column" justify="space-between" alignItems="stretch" className={classes.tableGrid}>
       {isFetchingFolder && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {!isFetchingFolder && (
-        <SubmissionDetailTable
-          bodyRows={selectedFolder.allObjects}
-          folderTitle={selectedFolder.folderTitle}
-          folderType={selectedFolder.published ? FolderSubmissionStatus.published : FolderSubmissionStatus.unpublished}
-          location={selectedFolder.published ? "published" : "drafts"}
-          onDelete={handleDeleteObject}
-        />
+        <>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" component={RouterLink} to={`/home`}>
+              Home
+            </Link>
+            <Link
+              color="inherit"
+              component={RouterLink}
+              to={`/home/${selectedFolder.published ? "published" : "drafts"}`}
+            >
+              {selectedFolder.published ? "Published" : "Drafts"}
+            </Link>
+            <Typography color="textPrimary">{selectedFolder.folderTitle}</Typography>
+          </Breadcrumbs>
+          <SubmissionDetailTable
+            bodyRows={selectedFolder.allObjects}
+            folderTitle={selectedFolder.folderTitle}
+            folderType={
+              selectedFolder.published ? FolderSubmissionStatus.published : FolderSubmissionStatus.unpublished
+            }
+            location={selectedFolder.published ? "published" : "drafts"}
+            onDelete={handleDeleteObject}
+          />
+        </>
       )}
       {connError && (
         <WizardStatusMessageHandler

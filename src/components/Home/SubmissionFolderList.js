@@ -1,11 +1,14 @@
 //@flow
 import React, { useEffect, useState } from "react"
 
+import Breadcrumbs from "@material-ui/core/Breadcrumbs"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
 import { useDispatch, useSelector } from "react-redux"
-import { useLocation } from "react-router-dom"
+import { useLocation, Link as RouterLink } from "react-router-dom"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -17,6 +20,9 @@ import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
 
 const useStyles = makeStyles(theme => ({
+  folderGrid: {
+    margin: theme.spacing(2, 0),
+  },
   tableCard: {
     margin: theme.spacing(1, 0),
   },
@@ -82,7 +88,13 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
   )
 
   return (
-    <Grid container direction="column" justify="space-between" alignItems="stretch">
+    <Grid className={classes.folderGrid} container direction="column" justify="space-between" alignItems="stretch">
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link color="inherit" component={RouterLink} to={`/home`}>
+          Home
+        </Link>
+        <Typography color="textPrimary">{location.charAt(0).toUpperCase() + location.slice(1)}</Typography>
+      </Breadcrumbs>
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {!isFetchingFolders && (
         <>

@@ -5,6 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
 import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
@@ -73,7 +74,7 @@ const Home = (): React$Element<typeof Grid> => {
   return (
     <Grid container direction="column" justify="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
-        Logged in as: {user.name}
+        <Typography color="textPrimary">Logged in as: {user.name}</Typography>
       </Grid>
 
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}

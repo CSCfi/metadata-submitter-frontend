@@ -34,7 +34,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   const [selectedFolder, setSelectedFolder] = useState({
     folderTitle: "",
     allObjects: [],
-    published: "",
+     published: boolean
   })
 
   const folderId = useLocation().pathname.split("/").pop()

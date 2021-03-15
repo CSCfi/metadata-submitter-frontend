@@ -157,7 +157,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         Clear form
       </Button>
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
-        {currentObject?.status === "Draft" ? "Update draft" : " Save as Draft"}
+{currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
       <Button
         variant="contained"

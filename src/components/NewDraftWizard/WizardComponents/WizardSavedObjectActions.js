@@ -46,7 +46,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
       dispatch(
         setCurrentObject({
           ...response.data,
-          type: ObjectStatus.submitted,
+          status: ObjectStatus.submitted,
           tags: props.tags,
           index: props.submissions.findIndex(item => item.accessionId === props.objectId),
         })

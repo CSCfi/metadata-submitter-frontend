@@ -160,7 +160,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >
-      {currentObject?.type === ObjectStatus.submitted ? "Replace" : "Submit"}
+      {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
   )
 

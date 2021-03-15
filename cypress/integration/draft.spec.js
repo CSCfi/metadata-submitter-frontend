@@ -52,7 +52,7 @@ describe("Draft operations", function () {
     cy.get("input[name='descriptor.studyTitle']").type("New title")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
-    cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.get("button[type=button]").contains("Update draft").click()
 
     // Create a new form and save as draft
     cy.get("button").contains("New form").click()

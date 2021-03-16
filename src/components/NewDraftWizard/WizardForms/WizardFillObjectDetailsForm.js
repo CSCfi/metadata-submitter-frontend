@@ -26,9 +26,10 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToFolder, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
+import { addObjectToFolder, deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
+import { getObjectDisplayTitle } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -158,7 +159,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         Clear form
       </Button>
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
-{currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
+        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
       <Button
         variant="contained"
@@ -320,8 +321,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   /*
    * Draft save and object patch use both same response handler
    */
-  const patchHandler = response => {
+  const patchHandler = (response, cleanedValues) => {
     if (response.ok) {
+      dispatch(
+        modifyObjectTags({
+          accessionId: currentObject.accessionId,
+          tags: {
+            submissionType: currentObject.tags.submissionType,
+            displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
+          },
+        })
+      )
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
@@ -372,7 +382,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const patchObject = async () => {
     resetTimer()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-    patchHandler(response)
+    patchHandler(response, cleanedValues)
   }
 
   const submitForm = () => {
@@ -478,11 +488,13 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     setResponseInfo(response)
 
     if (response.ok) {
+      const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues)
+
       dispatch(
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
-          tags: { submissionType: ObjectSubmissionTypes.form },
+          tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: objectDisplayTitle },
         })
       )
         .then(() => {

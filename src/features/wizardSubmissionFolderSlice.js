@@ -9,7 +9,7 @@ import objectAPIService from "../services/objectAPI"
 import { ObjectStatus } from "constants/wizardObject"
 import folderAPIService from "services/folderAPI"
 import publishAPIService from "services/publishAPI"
-import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolder } from "types"
+import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolderWithTags } from "types"
 
 const initialState: null | FolderDetailsWithId = null
 
@@ -102,7 +102,7 @@ export const updateNewDraftFolder = (
 
 export const addObjectToFolder = (
   folderID: string,
-  objectDetails: ObjectInsideFolder
+  objectDetails: ObjectInsideFolderWithTags
 ): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
@@ -136,7 +136,7 @@ export const replaceObjectInFolder = (
 
 export const addObjectToDrafts = (
   folderID: string,
-  objectDetails: ObjectInsideFolder
+  objectDetails: ObjectInsideFolderWithTags
 ): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
   const folderResponse = await folderAPIService.patchFolderById(folderID, changes)

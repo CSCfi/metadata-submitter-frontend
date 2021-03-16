@@ -21,8 +21,9 @@ export type ObjectInsideFolder = {
 }
 
 export type ObjectTags = {
-  submissionType: string,
+  submissionType?: string,
   fileName?: string,
+  displayTitle?: string,
 }
 
 export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }

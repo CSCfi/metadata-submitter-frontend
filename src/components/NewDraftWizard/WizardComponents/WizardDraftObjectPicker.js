@@ -24,6 +24,8 @@ import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
+import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -51,7 +53,9 @@ const WizardDraftObjectPicker = (): Node => {
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
-  const currentObjectTypeDrafts = folder.drafts.filter(draft => draft.schema === "draft-" + objectType)
+  const currentObjectTypeDrafts: Array<ObjectInsideFolderWithTags> = folder.drafts.filter(
+    draft => draft.schema === "draft-" + objectType
+  )
 
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
@@ -104,7 +108,7 @@ const WizardDraftObjectPicker = (): Node => {
           {currentObjectTypeDrafts.map(submission => {
             return (
               <ListItem key={submission.accessionId} className={classes.objectListItem}>
-                <ListItemText primary={submission.accessionId} />
+                <ListItemText primary={getItemPrimaryText(submission)} secondary={submission.accessionId} />
                 <ListItemSecondaryAction>
                   <ButtonGroup aria-label="Draft actions button group">
                     <Button

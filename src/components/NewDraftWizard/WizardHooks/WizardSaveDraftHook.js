@@ -6,6 +6,7 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
+import { getObjectDisplayTitle } from "utils"
 
 const saveDraftHook = async (
   accessionId?: string,
@@ -42,6 +43,7 @@ const saveDraftHook = async (
   } else {
     const response = await draftAPIService.createFromJSON(objectType, values)
     if (response.ok) {
+      const draftDisplayTitle = getObjectDisplayTitle(objectType, values)
       dispatch(
         updateStatus({
           successStatus: WizardStatus.success,
@@ -54,6 +56,7 @@ const saveDraftHook = async (
         addObjectToDrafts(folderId, {
           accessionId: response.data.accessionId,
           schema: "draft-" + objectType,
+          tags: { displayTitle: draftDisplayTitle },
         })
       )
       dispatch(resetCurrentObject())

@@ -14,6 +14,7 @@ import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   listItemText: {
     display: "inline-block",
     maxWidth: "50%",
-    "& span": {
+    "& span, & p": {
       whiteSpace: "nowrap",
       overflow: "hidden",
       textOverflow: "ellipsis",
@@ -60,15 +61,17 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
 
   // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
   const submissionTypes = submissions
-    .map(obj => obj.tags.submissionType)
+    .map(obj => (obj.tags.submissionType ? obj.tags.submissionType : ""))
     .filter((val, ind, arr) => arr.indexOf(val) === ind)
     .sort()
 
   // group submissions according to their submissionType
-  const groupedSubmissions = submissionTypes.map(submissionType => ({
-    submissionType,
-    submittedItems: submissions.filter(obj => obj.tags.submissionType === submissionType),
-  }))
+  const groupedSubmissions =
+    submissionTypes.length > 0 &&
+    submissionTypes.map(submissionType => ({
+      submissionType,
+      submittedItems: submissions.filter(obj => obj.tags.submissionType && obj.tags.submissionType === submissionType),
+    }))
 
   const displayObjectType = (objectType: string) => {
     return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
@@ -90,31 +93,36 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
 
   return (
     <div className={classes.objectList}>
-      {groupedSubmissions.map(group => (
-        <Box pt={0} key={group.submissionType}>
-          <CardHeader
-            title={`Submitted ${displayObjectType(objectType)} ${displaySubmissionType(group)}`}
-            titleTypographyProps={{ variant: "inherit" }}
-            className={classes.cardHeader}
-          />
-          <List aria-label={group.submissionType}>
-            {group.submittedItems.map(item => (
-              <ListItem key={item.accessionId} className={classes.objectListItem}>
-                <ListItemText className={classes.listItemText} primary={item.accessionId} />
-                <ListItemSecondaryAction>
-                  <WizardSavedObjectActions
-                    submissions={submissions}
-                    objectType={objectType}
-                    objectId={item.accessionId}
-                    submissionType={group?.submissionType}
-                    tags={item.tags}
+      {groupedSubmissions &&
+        groupedSubmissions.map(group => (
+          <Box pt={0} key={group.submissionType}>
+            <CardHeader
+              title={`Submitted ${displayObjectType(objectType)} ${displaySubmissionType(group)}`}
+              titleTypographyProps={{ variant: "inherit" }}
+              className={classes.cardHeader}
+            />
+            <List aria-label={group.submissionType}>
+              {group.submittedItems.map(item => (
+                <ListItem key={item.accessionId} className={classes.objectListItem}>
+                  <ListItemText
+                    className={classes.listItemText}
+                    primary={getItemPrimaryText(item)}
+                    secondary={item.accessionId}
                   />
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      ))}
+                  <ListItemSecondaryAction>
+                    <WizardSavedObjectActions
+                      submissions={submissions}
+                      objectType={objectType}
+                      objectId={item.accessionId}
+                      submissionType={group?.submissionType}
+                      tags={item.tags}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        ))}
     </div>
   )
 }

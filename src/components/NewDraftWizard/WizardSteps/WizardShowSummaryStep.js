@@ -14,6 +14,7 @@ import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActio
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   summary: {
@@ -81,13 +82,13 @@ const WizardShowSummaryStep = (): React$Element<any> => {
               <div>
                 {group[schema].map(item => (
                   <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
-                    <ListItemText primary={item.accessionId} />
+                    <ListItemText primary={getItemPrimaryText(item)} secondary={item.accessionId} />
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions
                         submissions={metadataObjects}
                         objectType={schema}
                         objectId={item.accessionId}
-                        submissionType={item.tags?.submissionType}
+                        submissionType={item.tags?.submissionType ? item.tags.submissionType : ""}
                         tags={item.tags}
                         summary={true}
                       />

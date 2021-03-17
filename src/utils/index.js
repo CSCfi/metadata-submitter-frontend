@@ -6,11 +6,11 @@ import type { ObjectInsideFolderWithTags } from "types"
 export const getObjectDisplayTitle = (objectType: string, cleanedValues: any): string => {
   switch (objectType) {
     case ObjectTypes.study:
-      return cleanedValues.descriptor.studyTitle
+      return cleanedValues.descriptor?.studyTitle || ""
     case ObjectTypes.dac:
-      return cleanedValues.contacts.find(contact => contact.mainContact).name
+      return cleanedValues.contacts?.find(contact => contact.mainContact).name || ""
     default:
-      return cleanedValues.title
+      return cleanedValues.title || ""
   }
 }
 

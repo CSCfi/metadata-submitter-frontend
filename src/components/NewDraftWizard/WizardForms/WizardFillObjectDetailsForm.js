@@ -220,13 +220,12 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const createNewForm = () => {
     resetTimer()
-    resetForm()
+    clearForm()
     setCurrentObjectId(null)
-    dispatch(resetDraftStatus())
     dispatch(resetCurrentObject())
   }
 
-  const resetForm = () => {
+  const clearForm = () => {
     methods.reset(formSchema)
     setCleanedValues({})
     dispatch(resetDraftStatus())
@@ -362,7 +361,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         objectType,
         currentObject.status,
         folderId,
-        currentObject.cleanedValues || currentObject,
+        cleanedValues || currentObject.cleanedValues,
         dispatch
       )
       if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
@@ -400,7 +399,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         currentObject={currentObject}
         refForm="hook-form"
         onClickNewForm={() => createNewForm()}
-        onClickClearForm={() => resetForm()}
+        onClickClearForm={() => clearForm()}
         onClickSaveDraft={() => saveDraft()}
         onClickSubmit={() => submitForm()}
       />

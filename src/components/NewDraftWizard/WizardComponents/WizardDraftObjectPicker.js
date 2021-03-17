@@ -104,7 +104,7 @@ const WizardDraftObjectPicker = (): Node => {
         className={classes.cardHeader}
       />
       {currentObjectTypeDrafts.length > 0 ? (
-        <List className={classes.objectList}>
+        <List className={classes.objectList} aria-label={objectType}>
           {currentObjectTypeDrafts.map(submission => {
             return (
               <ListItem key={submission.accessionId} className={classes.objectListItem}>

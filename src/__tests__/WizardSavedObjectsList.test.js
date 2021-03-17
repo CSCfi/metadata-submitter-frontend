@@ -20,9 +20,21 @@ describe("WizardStepper", () => {
   })
 
   const submissions = [
-    { accessionId: "EDAG1", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.form } },
-    { accessionId: "EDAG2", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
-    { accessionId: "EDAG3", schema: ObjectTypes.sample, tags: { submissionType: ObjectSubmissionTypes.xml } },
+    {
+      accessionId: "EDAG1",
+      schema: ObjectTypes.sample,
+      tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: "Sample 1" },
+    },
+    {
+      accessionId: "EDAG2",
+      schema: ObjectTypes.sample,
+      tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample2.xml" },
+    },
+    {
+      accessionId: "EDAG3",
+      schema: ObjectTypes.sample,
+      tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample3.xml" },
+    },
   ]
 
   beforeEach(() => {
@@ -41,6 +53,23 @@ describe("WizardStepper", () => {
     })
   })
 
+  it("should display correct submitted form' displayTitle", () => {
+    submissions.forEach(item => {
+      if (item.tags.submissionType === ObjectSubmissionTypes.form) {
+        expect(screen.getByText(item.tags.displayTitle)).toBeInTheDocument()
+        expect(screen.getByText(item.tags.displayTitle)).toHaveTextContent("Sample 1")
+      }
+    })
+  })
+
+  it("should display correct submitted xml' displayTitle", () => {
+    submissions.forEach(item => {
+      if (item.tags.submissionType === ObjectSubmissionTypes.xml) {
+        expect(screen.getByText(item.tags.fileName)).toBeInTheDocument()
+      }
+    })
+  })
+
   it("should have correct amount of submitted forms", () => {
     screen.getByText(/Submitted sample form/i)
     expect(screen.getByText(/Submitted sample form/i)).toBeInTheDocument()
@@ -53,7 +82,7 @@ describe("WizardStepper", () => {
     expect(submittedForms.length).toBe(1)
   })
 
-  it("should have correct amount of submitted forms", () => {
+  it("should have correct amount of submitted xml", () => {
     screen.getByText(/Submitted sample xml/i)
     expect(screen.getByText(/Submitted sample xml/i)).toBeInTheDocument()
 

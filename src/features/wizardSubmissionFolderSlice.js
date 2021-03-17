@@ -37,9 +37,13 @@ const wizardSubmissionFolderSlice: any = createSlice({
     modifyObjectTags: (state, action) => {
       state.metadataObjects.find(item => item.accessionId === action.payload.accessionId).tags = action.payload.tags
     },
+    modifyDraftObjectTags: (state, action) => {
+      state.drafts.find(item => item.accessionId === action.payload.accessionId).tags = action.payload.tags
+    },
     resetFolder: () => initialState,
   },
 })
+
 export const {
   setFolder,
   addObject,
@@ -47,6 +51,7 @@ export const {
   deleteObject,
   deleteDraftObject,
   modifyObjectTags,
+  modifyDraftObjectTags,
   resetFolder,
 } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer

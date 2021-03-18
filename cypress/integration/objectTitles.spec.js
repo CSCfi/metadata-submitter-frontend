@@ -29,7 +29,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Check the submitted object has correct displayTitle
-    cy.get("div[data-testid='study']", { timeout: 10000 }).should("contain.text", "Test title")
+    cy.get("div[data-schema='study']", { timeout: 10000 }).should("contain.text", "Test title")
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
@@ -40,14 +40,14 @@ describe("draft and submitted objects' titles", function () {
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check the submitted object has correctly updated displayTitle
-    cy.get("div[data-testid='study']", { timeout: 10000 }).should("contain.text", "Test title 2")
+    cy.get("div[data-schema='study']", { timeout: 10000 }).should("contain.text", "Test title 2")
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
 
     // Check the submitted object has correct displayTitle
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
-    cy.get("div[data-testid='study']", { timeout: 10000 }).should("contain.text", "Test title 2")
+    cy.get("div[data-schema='study']", { timeout: 10000 }).should("contain.text", "Test title 2")
   })
 
   it("should show correct Draft object's displayTitle", () => {
@@ -67,7 +67,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("div[data-testid=Existing").find("li").should("have.length", 1)
 
     // Check the draft object has correct displayTitle
-    cy.get("div[data-testid='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title")
+    cy.get("div[data-schema='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title")
 
     // Edit draft object's title
     cy.get("button[aria-label='Continue draft']").first().click()
@@ -78,6 +78,6 @@ describe("draft and submitted objects' titles", function () {
     // Check the draft object has correctly updated displayTitle
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated")
     cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title 2")
+    cy.get("div[data-schema='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title 2")
   })
 })

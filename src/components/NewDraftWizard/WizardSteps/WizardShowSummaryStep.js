@@ -85,7 +85,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
                     <ListItemText
                       primary={getItemPrimaryText(item)}
                       secondary={item.accessionId}
-                      data-testid={item.schema}
+                      data-schema={item.schema}
                     />
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions

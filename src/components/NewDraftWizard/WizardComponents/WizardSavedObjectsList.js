@@ -108,7 +108,7 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
                     className={classes.listItemText}
                     primary={getItemPrimaryText(item)}
                     secondary={item.accessionId}
-                    data-testid={item.schema}
+                    data-schema={item.schema}
                   />
                   <ListItemSecondaryAction>
                     <WizardSavedObjectActions

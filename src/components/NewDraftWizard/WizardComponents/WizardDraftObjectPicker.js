@@ -111,7 +111,7 @@ const WizardDraftObjectPicker = (): Node => {
                 <ListItemText
                   primary={getItemPrimaryText(submission)}
                   secondary={submission.accessionId}
-                  data-testid={submission.schema}
+                  data-schema={submission.schema}
                 />
                 <ListItemSecondaryAction>
                   <ButtonGroup aria-label="Draft actions button group">

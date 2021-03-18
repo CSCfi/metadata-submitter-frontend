@@ -108,7 +108,11 @@ const WizardDraftObjectPicker = (): Node => {
           {currentObjectTypeDrafts.map(submission => {
             return (
               <ListItem key={submission.accessionId} className={classes.objectListItem}>
-                <ListItemText primary={getItemPrimaryText(submission)} secondary={submission.accessionId} />
+                <ListItemText
+                  primary={getItemPrimaryText(submission)}
+                  secondary={submission.accessionId}
+                  data-testid={submission.schema}
+                />
                 <ListItemSecondaryAction>
                   <ButtonGroup aria-label="Draft actions button group">
                     <Button

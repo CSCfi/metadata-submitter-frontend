@@ -82,7 +82,11 @@ const WizardShowSummaryStep = (): React$Element<any> => {
               <div>
                 {group[schema].map(item => (
                   <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
-                    <ListItemText primary={getItemPrimaryText(item)} secondary={item.accessionId} />
+                    <ListItemText
+                      primary={getItemPrimaryText(item)}
+                      secondary={item.accessionId}
+                      data-testid={item.schema}
+                    />
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions
                         submissions={metadataObjects}

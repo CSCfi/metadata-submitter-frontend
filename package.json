@@ -74,7 +74,7 @@
     "eslint-plugin-cypress": "^2.11.2",
     "eslint-plugin-flowtype": "^5.3.1",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.1.5",
+    "eslint-plugin-jest": "^24.3.2",
     "eslint-plugin-prettier": "^3.3.1",
     "flow-bin": "^0.146.0",
     "http-proxy-middleware": "^1.0.6",

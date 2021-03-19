@@ -4,6 +4,7 @@ import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen, act } from "@testing-library/react"
 import { Provider } from "react-redux"
+import { MemoryRouter, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
@@ -41,9 +42,13 @@ describe("WizardAddObjectStep", () => {
       },
     })
     render(
-      <Provider store={store}>
-        <WizardAddObjectStep />
-      </Provider>
+      <MemoryRouter initialEntries={["/newdraft/1"]}>
+        <Provider store={store}>
+          <Route path="/newdraft/:step">
+            <WizardAddObjectStep />
+          </Route>
+        </Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")).toBeInTheDocument()
   })
@@ -73,11 +78,21 @@ describe("WizardAddObjectStep", () => {
           },
         })
         render(
+<<<<<<< HEAD
           <Provider store={store}>
             <ThemeProvider theme={CSCtheme}>
               <WizardAddObjectStep />
             </ThemeProvider>
           </Provider>
+=======
+          <MemoryRouter initialEntries={["/newdraft/1"]}>
+            <Provider store={store}>
+              <Route path="/newdraft/:step">
+                <WizardAddObjectStep />
+              </Route>
+            </Provider>
+          </MemoryRouter>
+>>>>>>> modify tests to follow URL params
         )
         expect(screen.getByTestId(typeName)).toBeInTheDocument()
       })

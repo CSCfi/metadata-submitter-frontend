@@ -63,7 +63,6 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  */
 const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-  // const wizardStep = useSelector(state => state.wizardStep)
   const { step } = useParams()
   const urlStep = Number(step)
   const statusDetails = useSelector(state =>

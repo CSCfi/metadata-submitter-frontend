@@ -3,7 +3,7 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
-import { BrowserRouter } from "react-router-dom"
+import { Route, MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
 import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
@@ -12,21 +12,23 @@ import { ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 
-describe("WizardStepper", () => {
+describe("WizardFooter", () => {
   let store
   let wrapper
 
   it("should open dialog on click of cancel", () => {
     store = mockStore({
       submissionType: ObjectSubmissionTypes.form,
-      wizardStep: 1,
     })
+
     wrapper = (
-      <BrowserRouter>
+      <MemoryRouter initialEntries={["/newdraft/1"]}>
         <Provider store={store}>
-          <WizardFooter />
+          <Route path="/newdraft/:step">
+            <WizardFooter />
+          </Route>
         </Provider>
-      </BrowserRouter>
+      </MemoryRouter>
     )
     render(wrapper)
     const button = screen.getByRole("button", { name: /Cancel/i })
@@ -36,7 +38,6 @@ describe("WizardStepper", () => {
     it("should disable Publish button if there is no submitted objects", () => {
       store = mockStore({
         submissionType: ObjectSubmissionTypes.form,
-        wizardStep: 2,
         submissionFolder: {
           id: "FOL001",
           name: "Test folder",
@@ -48,11 +49,13 @@ describe("WizardStepper", () => {
       })
 
       wrapper = (
-        <BrowserRouter>
+        <MemoryRouter initialEntries={["/newdraft/2"]}>
           <Provider store={store}>
-            <WizardFooter />
+            <Route path="/newdraft/:step">
+              <WizardFooter />
+            </Route>
           </Provider>
-        </BrowserRouter>
+        </MemoryRouter>
       )
 
       render(wrapper)

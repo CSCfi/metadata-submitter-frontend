@@ -61,7 +61,6 @@ const WizardFooter = (): React$Element<any> => {
 
   const resetDispatch = () => {
     history.push("/home")
-    //dispatch(resetWizard())
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }

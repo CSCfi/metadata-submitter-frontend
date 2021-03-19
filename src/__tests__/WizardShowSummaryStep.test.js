@@ -4,6 +4,7 @@ import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen, within } from "@testing-library/react"
 import { Provider } from "react-redux"
+import { MemoryRouter, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
@@ -62,11 +63,13 @@ describe("WizardShowSummaryStep", () => {
       },
     })
     wrapper = (
-      <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardShowSummaryStep />
-        </ThemeProvider>
-      </Provider>
+      <MemoryRouter initialEntries={["/newdraft/2"]}>
+        <Provider store={store}>
+          <Route path="/newdraft/:step">
+            <WizardShowSummaryStep />
+          </Route>
+        </Provider>
+      </MemoryRouter>
     )
     render(wrapper)
   })

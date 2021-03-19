@@ -6,12 +6,14 @@ import _reject from "lodash/reject"
 import draftAPIService from "../services/draftAPI"
 import objectAPIService from "../services/objectAPI"
 
+import { ObjectStatus } from "constants/wizardObject"
 import folderAPIService from "services/folderAPI"
 import publishAPIService from "services/publishAPI"
+import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolderWithTags } from "types"
 
-const initialState = null
+const initialState: null | FolderDetailsWithId = null
 
-const wizardSubmissionFolderSlice = createSlice({
+const wizardSubmissionFolderSlice: any = createSlice({
   name: "folder",
   initialState,
   reducers: {
@@ -35,9 +37,13 @@ const wizardSubmissionFolderSlice = createSlice({
     modifyObjectTags: (state, action) => {
       state.metadataObjects.find(item => item.accessionId === action.payload.accessionId).tags = action.payload.tags
     },
+    modifyDraftObjectTags: (state, action) => {
+      state.drafts.find(item => item.accessionId === action.payload.accessionId).tags = action.payload.tags
+    },
     resetFolder: () => initialState,
   },
 })
+
 export const {
   setFolder,
   addObject,
@@ -45,33 +51,15 @@ export const {
   deleteObject,
   deleteDraftObject,
   modifyObjectTags,
+  modifyDraftObjectTags,
   resetFolder,
 } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
 
-type FolderFromForm = {
-  name: string,
-  description: string,
-  folder?: Object,
-}
-
-type ObjectInFolder = {
-  accessionId: string,
-  schema: string,
-}
-
-type FolderNoId = {
-  name: string,
-  description: string,
-  published: boolean,
-  metadataObjects: Array<ObjectInFolder>,
-  drafts: Array<ObjectInFolder>,
-}
-
-type Folder = FolderNoId & { id: string }
-
-export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (dispatch: any => void) => {
-  const folderForBackend: FolderNoId = {
+export const createNewDraftFolder = (
+  folderDetails: FolderDataFromForm
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
+  const folderForBackend: FolderDetails = {
     ...folderDetails,
     published: false,
     metadataObjects: [],
@@ -81,9 +69,9 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
 
   return new Promise((resolve, reject) => {
     if (response.ok) {
-      const folder: Folder = {
+      const folder: FolderDetailsWithId = {
         ...folderForBackend,
-        id: response.data.folderId,
+        folderId: response.data.folderId,
       }
       dispatch(setFolder(folder))
       resolve(response)
@@ -93,9 +81,10 @@ export const createNewDraftFolder = (folderDetails: FolderFromForm) => async (di
   })
 }
 
-export const updateNewDraftFolder = (folderId: string, folderDetails: FolderFromForm) => async (
-  dispatch: any => void
-) => {
+export const updateNewDraftFolder = (
+  folderId: string,
+  folderDetails: FolderDataFromForm & { folder: Object }
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const updatedFolder = _extend(
     { ...folderDetails.folder },
     { name: folderDetails.name, description: folderDetails.description }
@@ -116,7 +105,10 @@ export const updateNewDraftFolder = (folderId: string, folderDetails: FolderFrom
   })
 }
 
-export const addObjectToFolder = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
+export const addObjectToFolder = (
+  folderID: string,
+  objectDetails: ObjectInsideFolderWithTags
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   return new Promise((resolve, reject) => {
@@ -134,7 +126,7 @@ export const replaceObjectInFolder = (
   accessionId: string,
   index: number,
   tags: { submissionType: string, fileName: string }
-) => async (dispatch: any => void) => {
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const changes = [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
   const response = await folderAPIService.patchFolderById(folderID, changes)
   return new Promise((resolve, reject) => {
@@ -147,7 +139,10 @@ export const replaceObjectInFolder = (
   })
 }
 
-export const addObjectToDrafts = (folderID: string, objectDetails: ObjectInFolder) => async (dispatch: any => void) => {
+export const addObjectToDrafts = (
+  folderID: string,
+  objectDetails: ObjectInsideFolderWithTags
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
   const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
   const folderResponse = await folderAPIService.patchFolderById(folderID, changes)
 
@@ -162,14 +157,16 @@ export const addObjectToDrafts = (folderID: string, objectDetails: ObjectInFolde
 }
 
 // Delete object from either metaDataObjects or drafts depending on savedType
-export const deleteObjectFromFolder = (savedType: string, objectId: string, objectType: string) => async (
-  dispatch: any => void
-) => {
-  const service = savedType === "submitted" ? objectAPIService : draftAPIService
+export const deleteObjectFromFolder = (
+  savedType: string,
+  objectId: string,
+  objectType: string
+): ((dispatch: (any) => void) => Promise<any>) => async (dispatch: any => void) => {
+  const service = savedType === ObjectStatus.submitted ? objectAPIService : draftAPIService
   const response = await service.deleteObjectByAccessionId(objectType, objectId)
   return new Promise((resolve, reject) => {
     if (response.ok) {
-      savedType === "submitted" ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
+      savedType === ObjectStatus.submitted ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
       resolve(response)
     } else {
       reject(JSON.stringify(response))
@@ -177,8 +174,8 @@ export const deleteObjectFromFolder = (savedType: string, objectId: string, obje
   })
 }
 
-export const publishFolderContent = (folder: Folder) => async () => {
-  const response = await publishAPIService.publishFolderById(folder.id)
+export const publishFolderContent = (folder: FolderDetailsWithId): (() => Promise<any>) => async () => {
+  const response = await publishAPIService.publishFolderById(folder.folderId)
   return new Promise((resolve, reject) => {
     if (response.ok) {
       resolve(response)
@@ -188,11 +185,11 @@ export const publishFolderContent = (folder: Folder) => async () => {
   })
 }
 
-export const deleteFolderAndContent = (folder: Folder) => async () => {
+export const deleteFolderAndContent = (folder: FolderDetailsWithId): (() => Promise<any>) => async () => {
   let message = ""
   if (folder) {
-    const response = await folderAPIService.deleteFolderById(folder.id)
-    if (!response.ok) message = `Couldn't delete folder with id ${folder.id}`
+    const response = await folderAPIService.deleteFolderById(folder.folderId)
+    if (!response.ok) message = `Couldn't delete folder with id ${folder.folderId}`
     if (folder.metadataObjects) {
       await Promise.all(
         folder.metadataObjects.map(async object => {

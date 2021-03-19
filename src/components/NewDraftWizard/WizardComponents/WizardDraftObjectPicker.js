@@ -1,6 +1,8 @@
 //@flow
 import React, { useState, useEffect } from "react"
+import type { Node } from "react"
 
+import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import CardHeader from "@material-ui/core/CardHeader"
@@ -15,51 +17,45 @@ import { useSelector, useDispatch } from "react-redux"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
+import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
     width: "100%",
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-    marginBottom: theme.spacing(3),
-  },
+  cardHeader: theme.wizard.cardHeader,
   objectList: {
-    padding: "0 1rem",
+    padding: theme.spacing(0, 2),
   },
-  objectListItems: {
-    border: "none",
-    borderRadius: 3,
-    margin: theme.spacing(1, 0),
-    boxShadow: "0px 3px 10px -5px rgba(0,0,0,0.49)",
-    alignItems: "flex-start",
-    padding: ".5rem",
-  },
+  objectListItem: theme.wizard.objectListItem,
   buttonContinue: {
-    color: "#007bff",
+    color: theme.palette.button.edit,
   },
   buttonDelete: {
-    color: "#dc3545",
+    color: theme.palette.button.delete,
   },
 }))
 
 /**
  * List drafts by submission type. Enables fetch and deletion of drafts
  */
-const WizardDraftObjectPicker = () => {
+const WizardDraftObjectPicker = (): Node => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const objectType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
-  const currentObjectTypeDrafts = folder.drafts.filter(draft => draft.schema === "draft-" + objectType)
+  const currentObjectTypeDrafts: Array<ObjectInsideFolderWithTags> = folder.drafts.filter(
+    draft => draft.schema === "draft-" + objectType
+  )
 
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
@@ -78,8 +74,8 @@ const WizardDraftObjectPicker = () => {
     setConnError(false)
     const response = await draftAPIService.getObjectByAccessionId(objectType, objectId)
     if (response.ok) {
-      dispatch(setCurrentObject({ ...response.data, type: "draft" }))
-      dispatch(setSubmissionType("form"))
+      dispatch(setCurrentObject({ ...response.data, status: ObjectStatus.draft }))
+      dispatch(setSubmissionType(ObjectSubmissionTypes.form))
     } else {
       setConnError(true)
       setResponseError(response)
@@ -89,7 +85,7 @@ const WizardDraftObjectPicker = () => {
 
   const handleObjectDelete = objectId => {
     setConnError(false)
-    dispatch(deleteObjectFromFolder("draft", objectId, objectType)).catch(error => {
+    dispatch(deleteObjectFromFolder(ObjectStatus.draft, objectId, objectType)).catch(error => {
       setConnError(true)
       setResponseError(JSON.parse(error))
       setErrorPrefix("Can't delete draft")
@@ -101,18 +97,22 @@ const WizardDraftObjectPicker = () => {
   }
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <CardHeader
         title="Choose from drafts"
         titleTypographyProps={{ variant: "inherit" }}
         className={classes.cardHeader}
       />
       {currentObjectTypeDrafts.length > 0 ? (
-        <List className={classes.objectList}>
+        <List className={classes.objectList} aria-label={objectType}>
           {currentObjectTypeDrafts.map(submission => {
             return (
-              <ListItem key={submission.accessionId} className={classes.objectListItems}>
-                <ListItemText primary={submission.accessionId} />
+              <ListItem key={submission.accessionId} className={classes.objectListItem}>
+                <ListItemText
+                  primary={getItemPrimaryText(submission)}
+                  secondary={submission.accessionId}
+                  data-schema={submission.schema}
+                />
                 <ListItemSecondaryAction>
                   <ButtonGroup aria-label="Draft actions button group">
                     <Button
@@ -138,13 +138,19 @@ const WizardDraftObjectPicker = () => {
           })}
         </List>
       ) : (
-        <Typography variant="subtitle1" align="center">
-          No {objectType} drafts.
-        </Typography>
+        <Box pt={5}>
+          <Typography component="h2" variant="subtitle1" align="center">
+            No {objectType} drafts.
+          </Typography>
+        </Box>
       )}
 
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </Container>
   )

@@ -11,6 +11,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 
 import WizardAlert from "./WizardAlert"
 
+import { WizardStatus } from "constants/wizardStatus"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetWizard } from "features/wizardStepSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     flexShrink: 0,
     borderTop: "solid 1px #ccc",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     position: "fixed",
     zIndex: 1,
     left: 0,
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Define wizard footer with changing button actions.
  */
-const WizardFooter = () => {
+const WizardFooter = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)
@@ -82,7 +83,7 @@ const WizardFooter = () => {
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folder.id}`)
+          setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
         })
     } else {
       setDialogOpen(false)
@@ -158,7 +159,11 @@ const WizardFooter = () => {
       </div>
       {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
       {connError && (
-        <WizardStatusMessageHandler successStatus="error" response={responseError} prefixText={errorPrefix} />
+        <WizardStatusMessageHandler
+          successStatus={WizardStatus.error}
+          response={responseError}
+          prefixText={errorPrefix}
+        />
       )}
     </div>
   )

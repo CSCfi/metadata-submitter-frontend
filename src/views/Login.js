@@ -25,12 +25,12 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
   },
   whiteBanner: {
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     color: "#000",
     padding: "15px",
   },
   whiteBanner2: {
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     color: theme.palette.primary.main,
     padding: "15px",
   },
@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Login = () => {
+const Login = (): React$Element<typeof Container> => {
   const classes = useStyles()
   let loginRoute = "/aai"
   if (process.env.NODE_ENV === "development") {

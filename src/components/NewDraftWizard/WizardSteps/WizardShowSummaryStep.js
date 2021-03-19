@@ -13,6 +13,9 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
+import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
+
 const useStyles = makeStyles(theme => ({
   summary: {
     padding: theme.spacing(1),
@@ -35,41 +38,34 @@ const useStyles = makeStyles(theme => ({
     padding: "0",
   },
   objectListItems: {
-    border: "solid 1px #ccc",
-    borderRadius: 3,
-    margin: theme.spacing(1, 0),
-    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
     alignItems: "flex-start",
+    padding: theme.spacing(1.5),
   },
 }))
 
-type Schema = "Study" | "Sample" | "Experiment" | "Run" | "Analysis" | "DAC" | "Policy"
+type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
 
-type GroupedBySchema = {| [Schema]: Object[] |}
+type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
 
 /**
  * Show summary of objects added to folder
  */
-const WizardShowSummaryStep = () => {
+const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
-  const groupedObjects: Array<GroupedBySchema> = [
-    "Study",
-    "Sample",
-    "Experiment",
-    "Run",
-    "Analysis",
-    "DAC",
-    "Policy",
-  ].map((schema: Object) => {
+  const objectsArray = useSelector(state => state.objectsArray)
+  const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
     return {
-      [(schema: Object)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
+      [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
     }
   })
+
   const classes = useStyles()
+
   return (
     <>
-      <WizardHeader headerText="Create new folder" />
+      <WizardHeader headerText="Create Submission" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>
@@ -79,20 +75,24 @@ const WizardShowSummaryStep = () => {
             <List key={schema} aria-label={schema} className={classes.listGroup}>
               <div className={classes.schemaTitleRow}>
                 <Typography variant="subtitle1" fontWeight="fontWeightBold">
-                  {schema}
+                  {schema.charAt(0).toUpperCase() + schema.substring(1)}
                 </Typography>
                 <div className="objectAmount">{group[schema].length}</div>
               </div>
               <div>
                 {group[schema].map(item => (
                   <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
-                    <ListItemText primary={item.accessionId} />
+                    <ListItemText
+                      primary={getItemPrimaryText(item)}
+                      secondary={item.accessionId}
+                      data-schema={item.schema}
+                    />
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions
                         submissions={metadataObjects}
-                        objectType={schema.toLowerCase()}
+                        objectType={schema}
                         objectId={item.accessionId}
-                        submissionType={item.tags?.submissionType.toLowerCase()}
+                        submissionType={item.tags?.submissionType ? item.tags.submissionType : ""}
                         tags={item.tags}
                         summary={true}
                       />

@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom"
 
 import ErrorPageContainer from "../../components/ErrorPageContainer"
 
-const Page404 = () => {
+const Page404 = (): React$Element<typeof ErrorPageContainer> => {
   const location = useLocation()
 
   return (

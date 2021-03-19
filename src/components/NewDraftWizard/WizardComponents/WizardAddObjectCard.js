@@ -8,6 +8,7 @@ import { useSelector } from "react-redux"
 import WizardDraftObjectPicker from "components/NewDraftWizard/WizardComponents/WizardDraftObjectPicker"
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -32,24 +33,26 @@ const useStyles = makeStyles(theme => ({
 /*
  * Render correct form to add objects based on submission type in store
  */
-const WizardAddObjectCard = () => {
+const WizardAddObjectCard = (): React$Element<typeof Card> => {
   const classes = useStyles()
   const submissionType = useSelector(state => state.submissionType)
   const objectType = useSelector(state => state.objectType)
+
   const cards = {
-    form: {
+    [ObjectSubmissionTypes.form]: {
       component: <WizardFillObjectDetailsForm key={objectType + submissionType} />,
-      testId: "form",
+      testId: ObjectSubmissionTypes.form,
     },
-    xml: {
+    [ObjectSubmissionTypes.xml]: {
       component: <WizardUploadObjectXMLForm key={objectType + submissionType} />,
-      testId: "xml",
+      testId: ObjectSubmissionTypes.xml,
     },
-    existing: {
+    [ObjectSubmissionTypes.existing]: {
       component: <WizardDraftObjectPicker />,
-      testId: "existing",
+      testId: ObjectSubmissionTypes.existing,
     },
   }
+
   return (
     <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
       {cards[submissionType]["component"]}

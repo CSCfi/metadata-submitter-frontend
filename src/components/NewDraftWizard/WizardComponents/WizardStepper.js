@@ -15,20 +15,19 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import type { CreateFolderFormRef } from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { decrement, increment } from "features/wizardStepSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
-
+import type { CreateFolderFormRef } from "types"
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
  */
 const QontoConnector = withStyles(theme => ({
   alternativeLabel: {
     top: 10,
-    left: "calc(-50% + 16px)",
-    right: "calc(50% + 16px)",
+    left: `calc(-50% + ${theme.spacing(2)})`,
+    right: `calc(50% + ${theme.spacing(2)})`,
   },
   active: {
     "& $line": {
@@ -70,7 +69,7 @@ const useQontoStepIconStyles = makeStyles(theme => ({
   },
   floating: {
     border: "solid 1px #000",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.palette.background.default,
     boxShadow: 0,
   },
 }))
@@ -122,7 +121,7 @@ const useStyles = makeStyles({
  * Show info about wizard steps to user.
  * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
  */
-const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }) => {
+const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const wizardStep = useSelector(state => state.wizardStep)

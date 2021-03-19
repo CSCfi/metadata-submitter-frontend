@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = false
+const initialState: boolean = false
 
-const focusSlice = createSlice({
+const focusSlice: any = createSlice({
   name: "focusSlice",
   initialState,
   reducers: {

@@ -6,6 +6,8 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
 import { Switch, Route, useLocation } from "react-router-dom"
 
+import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
+import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
 import Page401 from "views/ErrorPages/Page401"
 import Page403 from "views/ErrorPages/Page403"
@@ -56,7 +58,7 @@ const NavigationMenu = () => {
  * Set up React router and app structure.
  * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
  */
-const App = () => {
+const App = (): React$Element<typeof React.Fragment> => {
   const classes = useStyles()
 
   return (
@@ -77,6 +79,26 @@ const App = () => {
         <Route exact path="/home">
           <Container component="main" maxWidth="md" className={classes.content}>
             <Home />
+          </Container>
+        </Route>
+        <Route exact path="/home/drafts">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <SubmissionFolderList />
+          </Container>
+        </Route>
+        <Route path="/home/drafts/:folderId">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <SelectedFolderDetails />
+          </Container>
+        </Route>
+        <Route exact path="/home/published">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <SubmissionFolderList />
+          </Container>
+        </Route>
+        <Route path="/home/published/:folderId">
+          <Container component="main" maxWidth="md" className={classes.content}>
+            <SelectedFolderDetails />
           </Container>
         </Route>
         <Route path="/error401">

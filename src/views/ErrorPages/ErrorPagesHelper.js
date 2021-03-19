@@ -1,7 +1,7 @@
 //@flow
 import { useEffect, useState } from "react"
 
-export const getCountdownTime = (value: number, delay: number) => {
+export const getCountdownTime = (value: number, delay: number): number => {
   const [time, setTime] = useState(value)
   useEffect(() => {
     let handler = setInterval(() => {

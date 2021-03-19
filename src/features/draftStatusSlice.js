@@ -1,9 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = ""
+const initialState: string = ""
 
-const draftStatusSlice = createSlice({
+const draftStatusSlice: any = createSlice({
   name: "draftStatus",
   initialState,
   reducers: {

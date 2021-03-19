@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
@@ -24,14 +26,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-  },
+  cardHeader: theme.wizard.cardHeader,
   cardHeaderAction: {
-    marginTop: "-4px",
-    marginBottom: "-4px",
+    margin: theme.spacing(-0.5, 0),
   },
   root: {
     display: "flex",
@@ -53,17 +50,20 @@ const useStyles = makeStyles(theme => ({
   fileField: {
     display: "inline-flex",
   },
+  submitButton: {
+    backgroundColor: "#FFF",
+  },
 }))
 
 /*
  * Return React Hook Form based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
-const WizardUploadObjectXMLForm = () => {
+const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   const [successStatus, setSuccessStatus] = useState("")
   const [isSubmitting, setSubmitting] = useState(false)
   const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
-  const { id: folderId } = useSelector(state => state.submissionFolder)
+  const { folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
   const currentObject = useSelector(state => state.currentObject)
@@ -99,7 +99,7 @@ const WizardUploadObjectXMLForm = () => {
     setSubmitting(true)
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus("info")
+      setSuccessStatus(WizardStatus.info)
     }, 5000)
 
     if (currentObject.accessionId) {
@@ -108,36 +108,36 @@ const WizardUploadObjectXMLForm = () => {
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(folderId, currentObject.accessionId, currentObject.index, {
-            submissionType: "XML",
+            submissionType: ObjectSubmissionTypes.xml,
             fileName: fileName,
           })
         )
           .then(() => {
-            setSuccessStatus("success")
+            setSuccessStatus(WizardStatus.success)
             resetForm()
             dispatch(resetCurrentObject())
           })
           .catch(() => {
-            setSuccessStatus("error")
+            setSuccessStatus(WizardStatus.error)
           })
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     } else {
       const response = await objectAPIService.createFromXML(objectType, file)
       setResponseStatus(response)
       if (response.ok) {
-        setSuccessStatus("success")
+        setSuccessStatus(WizardStatus.success)
         dispatch(
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
             schema: objectType,
-            tags: { submissionType: "XML", fileName },
+            tags: { submissionType: ObjectSubmissionTypes.xml, fileName },
           })
         )
         resetForm()
       } else {
-        setSuccessStatus("error")
+        setSuccessStatus(WizardStatus.error)
       }
     }
     clearTimeout(waitForServertimer)
@@ -156,15 +156,16 @@ const WizardUploadObjectXMLForm = () => {
     <Button
       variant="contained"
       className={classes.submitButton}
+      size="small"
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >
-      {currentObject?.type === "saved" ? "Replace" : "Submit"}
+      {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
   )
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <CardHeader
         title="Upload XML File"
         titleTypographyProps={{ variant: "inherit" }}

@@ -6,7 +6,7 @@ import { errorMonitor } from "./errorMonitor"
 const api = create({ baseURL: "/publish" })
 api.addMonitor(errorMonitor)
 
-const publishFolderById = async (folderId: string) => {
+const publishFolderById = async (folderId: string): Promise<any> => {
   return await api.patch(`/${folderId}`)
 }
 

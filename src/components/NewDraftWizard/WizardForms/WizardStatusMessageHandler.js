@@ -5,6 +5,7 @@ import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch } from "react-redux"
 
+import { WizardStatus } from "constants/wizardStatus"
 import { resetStatusDetails } from "features/wizardStatusMessageSlice"
 
 /*
@@ -15,7 +16,7 @@ const ErrorHandler = ({
   prefixText,
   handleClose,
 }: {
-  response: any,
+  response: Object,
   prefixText: string,
   handleClose: boolean => void,
 }) => {
@@ -57,7 +58,7 @@ const InfoHandler = ({ handleClose, prefixText }: { handleClose: boolean => void
 }
 
 // Success messages
-const SuccessHandler = ({ response, handleClose }: { response: any, handleClose: boolean => void }) => {
+const SuccessHandler = ({ response, handleClose }: { response: Object, handleClose: boolean => void }) => {
   let message = ""
 
   switch (response.config.baseURL) {
@@ -103,18 +104,18 @@ const WizardStatusMessageHandler = ({
   prefixText,
 }: {
   successStatus: string,
-  response: any,
+  response: Object,
   prefixText: string,
-}) => {
+}): React$Element<any> => {
   const [openStatus, setOpenStatus] = useState(true)
   const dispatch = useDispatch()
   const messageTemplate = status => {
     switch (status) {
-      case "success":
+      case WizardStatus.success:
         return <SuccessHandler handleClose={handleClose} response={response} />
-      case "info":
+      case WizardStatus.info:
         return <InfoHandler handleClose={handleClose} prefixText={prefixText} />
-      case "error":
+      case WizardStatus.error:
         return <ErrorHandler handleClose={handleClose} response={response} prefixText={prefixText} />
       default:
         return

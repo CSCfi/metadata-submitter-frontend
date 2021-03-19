@@ -14,32 +14,29 @@ import { cloneDeep } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
+import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
+
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToFolder, addObjectToDrafts, deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
-import draftAPIService from "services/draftAPI"
+import { addObjectToFolder, deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
+import { getObjectDisplayTitle } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
     margin: 0,
     padding: 0,
   },
-  cardHeader: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#FFF",
-    fontWeight: "bold",
-    position: "sticky",
-    top: theme.spacing(8),
-    zIndex: 2,
-  },
+  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(8), zIndex: 2 },
   cardHeaderAction: {
     marginTop: "-4px",
     marginBottom: "-4px",
@@ -50,12 +47,18 @@ const useStyles = makeStyles(theme => ({
     "& > :not(:last-child)": {
       marginRight: theme.spacing(1),
     },
+    "& button": {
+      backgroundColor: "#FFF",
+    },
   },
   addIcon: {
     marginRight: theme.spacing(1),
   },
   formComponents: {
     margin: theme.spacing(3, 2),
+    "& .MuiTextField-root > .Mui-required": {
+      color: theme.palette.primary.main,
+    },
     "& .MuiTextField-root": {
       width: "48%",
       margin: theme.spacing(1),
@@ -67,7 +70,7 @@ const useStyles = makeStyles(theme => ({
     },
     "& .MuiTypography-h2": {
       width: "100%",
-      color: theme.palette.secondary.main,
+      color: theme.palette.primary.light,
       borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
     "& .MuiTypography-h3": {
@@ -75,7 +78,6 @@ const useStyles = makeStyles(theme => ({
     },
     "& .array": {
       margin: theme.spacing(1),
-      width: "45%",
       "& .arrayRow": {
         display: "flex",
         alignItems: "center",
@@ -84,6 +86,9 @@ const useStyles = makeStyles(theme => ({
         "& .MuiTextField-root": {
           width: "95%",
         },
+      },
+      "& h2, h3, h4": {
+        margin: theme.spacing(1, 0),
       },
     },
   },
@@ -154,17 +159,17 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         Clear form
       </Button>
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
-        Save as Draft
+        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
       <Button
         variant="contained"
         aria-label="submit form"
         size="small"
-        type={currentObject?.type === "saved" ? "button" : "submit"}
+        type={currentObject?.status === ObjectStatus.submitted ? "button" : "submit"}
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.type === "saved" ? "Update" : "Submit"} {objectType}
+        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {objectType}
       </Button>
     </div>
   )
@@ -197,9 +202,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const [cleanedValues, setCleanedValues] = useState({})
   const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
 
-  const [timer, setTimer] = useState(0)
+  const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
-  const increment = useRef(null)
+  const autoSaveTimer = useRef(null)
+  let timer = 0
 
   // Set form default values
   useEffect(() => {
@@ -213,18 +219,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }, [methods.formState.isDirty])
 
   const createNewForm = () => {
-    handleReset()
-    resetForm()
+    resetTimer()
+    clearForm()
     setCurrentObjectId(null)
-    dispatch(resetDraftStatus())
     dispatch(resetCurrentObject())
   }
 
-  const resetForm = () => {
+  const clearForm = () => {
     methods.reset(formSchema)
     setCleanedValues({})
     dispatch(resetDraftStatus())
-    handleReset()
+    resetTimer()
   }
 
   // Check if the form is empty
@@ -243,7 +248,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
     setCleanedValues(values)
-
     if (checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
@@ -252,7 +256,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
             setCurrentObject({
               ...clone,
               cleanedValues: values,
-              type: currentObject.type || "draft",
+              status: currentObject.status || ObjectStatus.draft,
               objectId: currentObjectId,
             })
           )
@@ -260,50 +264,77 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
       checkDirty()
     } else {
       dispatch(resetDraftStatus())
-      handleReset()
+      resetTimer()
     }
   }
 
   const handleDraftDelete = draftId => {
-    dispatch(deleteObjectFromFolder("draft", draftId, objectType))
+    dispatch(deleteObjectFromFolder(ObjectStatus.draft, draftId, objectType))
     setCurrentObjectId(() => null)
     handleChange()
   }
 
   /*
-   * Logic for auto-save feature
+   * Logic for auto-save feature.
+   * We use setDraftAutoSaveAllowed state change to render form before save.
+   * This helps with getting current accession ID and form data without rendering on every timer increment.
    */
-  const handleStart = () => {
-    increment.current = setInterval(() => {
-      setTimer(timer => timer + 1)
+  const startTimer = () => {
+    autoSaveTimer.current = setInterval(() => {
+      timer = timer + 1
+
+      if (timer >= 60) {
+        setDraftAutoSaveAllowed(true)
+      }
     }, 1000)
   }
 
-  const handleReset = () => {
-    clearInterval(increment.current)
-    setTimer(0)
+  const resetTimer = () => {
+    setDraftAutoSaveAllowed(false)
+    clearInterval(autoSaveTimer.current)
+    timer = 0
   }
 
+  useEffect(() => {
+    if (alert) resetTimer()
+
+    if (draftAutoSaveAllowed) {
+      saveDraft()
+      resetTimer()
+    }
+  }, [draftAutoSaveAllowed, alert])
+
   const keyHandler = () => {
-    handleReset()
-    handleStart()
+    resetTimer()
+    startTimer()
   }
 
   useEffect(() => {
     window.addEventListener("keydown", keyHandler)
     return () => {
-      handleReset()
+      resetTimer()
       window.removeEventListener("keydown", keyHandler)
     }
   }, [])
 
-  // Form actions
-  const patchHandler = response => {
+  /*
+   * Draft save and object patch use both same response handler
+   */
+  const patchHandler = (response, cleanedValues) => {
     if (response.ok) {
+      dispatch(
+        modifyObjectTags({
+          accessionId: currentObject.accessionId,
+          tags: {
+            submissionType: currentObject.tags.submissionType,
+            displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
+          },
+        })
+      )
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: "success",
+          successStatus: WizardStatus.success,
           response: response,
           errorPrefix: "",
         })
@@ -311,7 +342,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     } else {
       dispatch(
         updateStatus({
-          successStatus: "error",
+          successStatus: WizardStatus.error,
           response: response,
           errorPrefix: "Unexpected error",
         })
@@ -323,54 +354,23 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
    * Update or save new draft depending on object status
    */
   const saveDraft = async () => {
-    handleReset()
+    resetTimer()
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
-      if ((currentObjectId || currentObject?.accessionId) && currentObject?.type === "draft") {
-        const response = await draftAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-        patchHandler(response)
-      } else {
-        const response = await draftAPIService.createFromJSON(objectType, cleanedValues)
-        if (response.ok) {
-          if (currentObject?.type !== "saved") setCurrentObjectId(response.data.accessionId)
-          dispatch(resetDraftStatus())
-          dispatch(
-            addObjectToDrafts(folderId, {
-              accessionId: response.data.accessionId,
-              schema: "draft-" + objectType,
-            })
-          )
-            .then(() => {
-              dispatch(
-                updateStatus({
-                  successStatus: "success",
-                  response: response,
-                  errorPrefix: "",
-                })
-              )
-            })
-            .catch(error => {
-              dispatch(
-                updateStatus({
-                  successStatus: "error",
-                  response: error,
-                  errorPrefix: "Cannot connect to folder API",
-                })
-              )
-            })
-        } else {
-          dispatch(
-            updateStatus({
-              successStatus: "error",
-              response: response,
-              errorPrefix: "Unexpected error",
-            })
-          )
-        }
+      const handleSave = await saveDraftHook(
+        currentObject.accessionId || currentObject.objectId,
+        objectType,
+        currentObject.status,
+        folderId,
+        cleanedValues || currentObject.cleanedValues,
+        dispatch
+      )
+      if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
+        setCurrentObjectId(handleSave.data.accessionId)
       }
     } else {
       dispatch(
         updateStatus({
-          successStatus: "info",
+          successStatus: WizardStatus.info,
           response: "",
           errorPrefix: "An empty form cannot be saved. Please fill in the form before saving it.",
         })
@@ -379,28 +379,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const patchObject = async () => {
-    handleReset()
+    resetTimer()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-    patchHandler(response)
+    patchHandler(response, cleanedValues)
   }
 
-  // Clear auto-save timer
-  useEffect(() => {
-    if (alert) {
-      clearInterval(increment.current)
-    }
-    if (timer >= 60) {
-      saveDraft()
-      clearInterval(increment.current)
-    }
-  }, [timer])
-
   const submitForm = () => {
-    if (currentObject?.type === "saved") patchObject()
-    if (currentObject?.type === "draft" && currentObjectId && Object.keys(currentObject).length > 0)
+    if (currentObject?.status === ObjectStatus.submitted) patchObject()
+    if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
       handleDraftDelete(currentObjectId)
 
-    handleReset()
+    resetTimer()
   }
 
   return (
@@ -410,7 +399,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         currentObject={currentObject}
         refForm="hook-form"
         onClickNewForm={() => createNewForm()}
-        onClickClearForm={() => resetForm()}
+        onClickClearForm={() => clearForm()}
         onClickSaveDraft={() => saveDraft()}
         onClickSubmit={() => submitForm()}
       />
@@ -429,22 +418,59 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = () => {
+const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [errorPrefix, setErrorPrefix] = useState("")
-  const [successStatus, setSuccessStatus] = useState("")
-  const [formSchema, setFormSchema] = useState({})
-  const [validationSchema, setValidationSchema] = useState({})
-  const [submitting, setSubmitting] = useState(false)
-  const dispatch = useDispatch()
-  const { id: folderId } = useSelector(state => state.submissionFolder)
-  const [responseInfo, setResponseInfo] = useState([])
+  const { folderId } = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
+
+  // States that will update in useEffect()
+  const [states, setStates] = useState({
+    error: false,
+    errorPrefix: "",
+    formSchema: {},
+    validationSchema: {},
+    isLoading: true,
+  })
+
+  const [successStatus, setSuccessStatus] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [responseInfo, setResponseInfo] = useState([])
+
+  /*
+   * Fetch json schema from either session storage or API, set schema and dereferenced version to component state.
+   */
+  useEffect(() => {
+    const fetchSchema = async () => {
+      let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
+        const response = await schemaAPIService.getSchemaByObjectType(objectType)
+        if (response.ok) {
+          schema = response.data
+          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+        } else {
+          setStates({
+            ...states,
+            error: true,
+            errorPrefix: "Unfortunately an error happened while catching form fields",
+            isLoading: false,
+          })
+          return
+        }
+      } else {
+        schema = JSON.parse(schema)
+      }
+      setStates({
+        ...states,
+        formSchema: await JSONSchemaParser.dereferenceSchema(schema),
+        validationSchema: schema,
+        isLoading: false,
+      })
+    }
+    fetchSchema()
+  }, [objectType])
 
   /*
    * Submit form with cleaned values and check for response errors
@@ -453,7 +479,7 @@ const WizardFillObjectDetailsForm = () => {
     setSuccessStatus(undefined)
     setSubmitting(true)
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus("info")
+      setSuccessStatus(WizardStatus.info)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
     const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
@@ -461,68 +487,42 @@ const WizardFillObjectDetailsForm = () => {
     setResponseInfo(response)
 
     if (response.ok) {
+      const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues)
+
       dispatch(
         addObjectToFolder(folderId, {
           accessionId: response.data.accessionId,
           schema: objectType,
-          tags: { submissionType: "Form" },
+          tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: objectDisplayTitle },
         })
       )
         .then(() => {
-          setSuccessStatus("success")
+          setSuccessStatus(WizardStatus.success)
           dispatch(resetDraftStatus())
           dispatch(resetCurrentObject())
         })
         .catch(error => {
-          setSuccessStatus("error")
+          setSuccessStatus(WizardStatus.error)
           setResponseInfo(error)
-          setErrorPrefix("Cannot connect to folder API")
+          setStates({ ...states, errorPrefix: "Cannot connect to folder API" })
         })
     } else {
-      setSuccessStatus("error")
-      setErrorPrefix("Validation failed")
+      setSuccessStatus(WizardStatus.error)
+      setStates({ ...states, errorPrefix: "Validation failed" })
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
   }
 
-  /*
-   * Fetch json schema from either local storage or API, set schema and dereferenced version to component state.
-   */
-  useEffect(() => {
-    const fetchSchema = async () => {
-      let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
-      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
-        const response = await schemaAPIService.getSchemaByObjectType(objectType)
-        setResponseInfo(response)
-        if (response.ok) {
-          schema = response.data
-          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
-        } else {
-          setError(true)
-          setErrorPrefix("Unfortunately an error happened while catching form fields")
-          setIsLoading(false)
-          return
-        }
-      } else {
-        schema = JSON.parse(schema)
-      }
-      setFormSchema(await JSONSchemaParser.dereferenceSchema(schema))
-      setValidationSchema(schema)
-      setIsLoading(false)
-    }
-    fetchSchema()
-  }, [objectType])
-
-  if (isLoading) return <CircularProgress />
+  if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
-  if (error) return <Alert severity="error">{errorPrefix}</Alert>
+  if (states.error) return <Alert severity="error">{states.errorPrefix}</Alert>
 
   return (
-    <Container className={classes.container}>
+    <Container maxWidth={false} className={classes.container}>
       <FormContent
-        formSchema={formSchema}
-        resolver={WizardAjvResolver(validationSchema)}
+        formSchema={states.formSchema}
+        resolver={WizardAjvResolver(states.validationSchema)}
         onSubmit={onSubmit}
         objectType={objectType}
         folderId={folderId}
@@ -534,7 +534,7 @@ const WizardFillObjectDetailsForm = () => {
         <WizardStatusMessageHandler
           successStatus={successStatus}
           response={responseInfo}
-          prefixText={errorPrefix}
+          prefixText={states.errorPrefix}
         ></WizardStatusMessageHandler>
       )}
     </Container>

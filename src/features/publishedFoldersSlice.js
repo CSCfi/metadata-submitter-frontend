@@ -1,9 +1,11 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = []
+import type { FolderDetailsWithId } from "types"
 
-const publishedFoldersSlice = createSlice({
+const initialState: [] | Array<FolderDetailsWithId> = []
+
+const publishedFoldersSlice: any = createSlice({
   name: "publishedFolders",
   initialState,
   reducers: {

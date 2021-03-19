@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
-const WizardAddObjectStep = () => {
+const WizardAddObjectStep = (): React$Element<any> => {
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
@@ -40,7 +40,7 @@ const WizardAddObjectStep = () => {
 
   return (
     <>
-      <WizardHeader headerText="Create New Folder" />
+      <WizardHeader headerText="Create Submission" />
       <WizardStepper />
       <div className={classes.formRow}>
         <WizardObjectIndex />

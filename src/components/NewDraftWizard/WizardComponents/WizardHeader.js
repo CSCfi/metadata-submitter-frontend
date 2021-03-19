@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     color: "#FFF",
     width: "100%",
     padding: theme.spacing(3),
-    backgroundColor: "#9b416b",
+    backgroundColor: theme.palette.primary.light,
   },
 }))
 
@@ -21,7 +21,7 @@ type DraftHeaderProps = {
 /**
  * Render header component for wizards.
  */
-const WizardHeader = ({ headerText }: DraftHeaderProps) => {
+const WizardHeader = ({ headerText }: DraftHeaderProps): React$Element<typeof Typography> => {
   const classes = useStyles()
   return (
     <Typography component="h1" variant="h6" align="center" className={classes.paperTitle}>

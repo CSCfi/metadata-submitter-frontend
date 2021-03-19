@@ -4,8 +4,9 @@ import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToDrafts } from "features/wizardSubmissionFolderSlice"
+import { addObjectToDrafts, modifyDraftObjectTags } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
+import { getObjectDisplayTitle } from "utils"
 
 const saveDraftHook = async (
   accessionId?: string,
@@ -15,10 +16,19 @@ const saveDraftHook = async (
   values: any,
   dispatch: function
 ): any => {
+  const draftDisplayTitle = getObjectDisplayTitle(objectType, values)
   if (accessionId && objectStatus === ObjectStatus.draft) {
     const response = await draftAPIService.patchFromJSON(objectType, accessionId, values)
     if (response.ok) {
       dispatch(resetDraftStatus())
+      dispatch(
+        modifyDraftObjectTags({
+          accessionId,
+          tags: {
+            displayTitle: draftDisplayTitle,
+          },
+        })
+      )
       dispatch(
         updateStatus({
           successStatus: WizardStatus.success,
@@ -54,6 +64,7 @@ const saveDraftHook = async (
         addObjectToDrafts(folderId, {
           accessionId: response.data.accessionId,
           schema: "draft-" + objectType,
+          tags: { displayTitle: draftDisplayTitle },
         })
       )
       dispatch(resetCurrentObject())

@@ -66,7 +66,9 @@ describe("WizardShowSummaryStep", () => {
       <MemoryRouter initialEntries={["/newdraft/2"]}>
         <Provider store={store}>
           <Route path="/newdraft/:step">
+          <ThemeProvider theme={CSCtheme}>
             <WizardShowSummaryStep />
+          </ThemeProvider>
           </Route>
         </Provider>
       </MemoryRouter>

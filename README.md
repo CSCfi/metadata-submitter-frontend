@@ -22,6 +22,7 @@ Install and run frontend either with:
 - Docker by running `docker-compose up --build` (add `-d` flag to run container in the background).
   - By default, frontend tries to connect to docker-container running the backend. Feel free to modify `docker-compose.yml` if you want to use some other setup.
 - Local node setup by running `npm install` followed with `npm start`.
+  - If `npm install` leaves corrupted package-lock.json, try to fix with `npm ci`
 
 After installing and running, frontend can be found from `http://localhost:3000`.
 

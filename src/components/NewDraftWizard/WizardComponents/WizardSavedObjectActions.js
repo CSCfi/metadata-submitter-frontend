@@ -42,6 +42,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
 
   const handleObjectEdit = async () => {
     const response = await objectAPIService.getObjectByAccessionId(props.objectType, props.objectId)
+
     if (response.ok) {
       dispatch(
         setCurrentObject({

@@ -134,10 +134,18 @@ const ConnectForm = ({ children }: { children: any }) => {
 const pathToName = (path: string[]) => path.join(".")
 
 /*
+ * Get defaultValue for options in a form. Used when rendering a saved/submitted form
+ */
+const getDefaultValue = (nestedField?: any, name: string) => {
+  return nestedField ? nestedField[name.split(".")[1]] : ""
+}
+
+/*
  * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
  */
-const traverseFields = (object: any, path: string[], requiredProperties?: string[]) => {
+const traverseFields = (object: any, path: string[], requiredProperties?: string[], nestedField?: any) => {
   const name = pathToName(path)
+
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} />
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -150,16 +158,23 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey]
             const required = object?.else?.required ?? object.required
-            return traverseFields(property, [...path, propertyKey], required)
+            return traverseFields(property, [...path, propertyKey], required, nestedField)
           })}
         </FormSection>
       )
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField key={name} name={name} label={label} options={object.enum} required={required} />
+        <FormSelectField
+          key={name}
+          name={name}
+          label={label}
+          options={object.enum}
+          required={required}
+          nestedField={nestedField}
+        />
       ) : (
-        <FormTextField key={name} name={name} label={label} required={required} />
+        <FormTextField key={name} name={name} label={label} required={required} nestedField={nestedField} />
       )
     }
     case "integer": {
@@ -239,19 +254,27 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
-type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
+type FormSelectFieldProps = FormFieldBaseProps & { options: string[], nestedField?: any }
 
 /*
  * FormOneOfField is rendered if property can be choosed from many possible.
  */
-const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
-  const [field, setField] = useState("")
-  const handleChange = event => setField(event.target.value)
+const FormOneOfField = ({ path, object, nestedField }: { path: string[], object: any, nestedField?: any }) => {
+  const options = object.oneOf
+  // Get the fieldValue when rendering a saved/submitted form
+  // For e.g. obj.required is ["label", "url"] and nestedField is {id: "sth1", label: "sth2", url: "sth3"}
+  let fieldValue = ""
+  if (nestedField) {
+    for (let obj of options) {
+      obj.required.every(val => Object.keys(nestedField).includes(val)) ? (fieldValue = obj.title) : ""
+    }
+  }
+  const [field, setField] = useState(fieldValue)
 
+  const handleChange = event => setField(event.target.value)
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
-  const options = object.oneOf
 
   return (
     <ConnectForm>
@@ -262,7 +285,7 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
             <TextField
               name={name}
               label={label}
-              defaultValue=""
+              defaultValue={field}
               select
               SelectProps={{ native: true }}
               onChange={handleChange}
@@ -279,7 +302,7 @@ const FormOneOfField = ({ path, object }: { path: string[], object: any }) => {
                 )
               })}
             </TextField>
-            {field ? traverseFields(options.filter(option => option.title === field)[0], path) : null}
+            {field ? traverseFields(options.filter(option => option.title === field)[0], path, [], nestedField) : null}
           </div>
         )
       }}
@@ -299,7 +322,13 @@ const ValidationTextField = withStyles(theme => ({
 /*
  * FormTextField is the most usual type, rendered for strings, integers and numbers.
  */
-const FormTextField = ({ name, label, required, type = "string" }: FormFieldBaseProps & { type?: string }) => (
+const FormTextField = ({
+  name,
+  label,
+  required,
+  type = "string",
+  nestedField,
+}: FormFieldBaseProps & { type?: string, nestedField?: any }) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -309,7 +338,7 @@ const FormTextField = ({ name, label, required, type = "string" }: FormFieldBase
           name={name}
           label={label}
           inputRef={register}
-          defaultValue=""
+          defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
           required={required}
@@ -334,7 +363,7 @@ const ValidationSelectField = withStyles(theme => ({
 /*
  * FormSelectField is rendered for choosing one from many options
  */
-const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
+const FormSelectField = ({ name, label, required, options, nestedField }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -343,7 +372,7 @@ const FormSelectField = ({ name, label, required, options }: FormSelectFieldProp
           name={name}
           label={label}
           inputRef={register}
-          defaultValue=""
+          defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
           required={required}
@@ -428,6 +457,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
   const items = (traverseValues(object.items): any)
   const level = path.length + 1
   const { fields, append, remove } = useFieldArray({ name })
+
   return (
     <div className="array" key={`${name}-array`}>
       <Typography key={`${name}-header`} variant={`h${level}`}>
@@ -439,10 +469,11 @@ const FormArray = ({ object, path }: FormArrayProps) => {
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
         if (items.oneOf) {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
+
           return (
             <div className="arrayRow" key={`${name}[${index}]`}>
               <Paper elevation={2}>
-                <FormOneOfField key={`${name}[${index}]`} path={pathForThisIndex} object={items} />
+                <FormOneOfField key={`${name}[${index}]`} nestedField={field} path={pathForThisIndex} object={items} />
               </Paper>
               <IconButton onClick={() => remove(index)}>
                 <RemoveIcon />

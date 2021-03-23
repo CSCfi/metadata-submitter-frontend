@@ -333,6 +333,7 @@ const FormTextField = ({
     {({ register, errors }) => {
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+
       return (
         <ValidationTextField
           name={name}
@@ -482,12 +483,13 @@ const FormArray = ({ object, path }: FormArrayProps) => {
           )
         }
         const properties = object.items.properties
+
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
             <Paper name="asd" elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(properties[item], pathForThisIndex)
+                return traverseFields(properties[item], pathForThisIndex, [], field)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

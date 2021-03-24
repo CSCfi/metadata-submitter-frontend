@@ -182,7 +182,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         variant="outlined"
         onClick={async () => {
           if (createFolderFormRef?.current) {
-            await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true }))
+            await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
           }
           if (wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
             setDirection("next")

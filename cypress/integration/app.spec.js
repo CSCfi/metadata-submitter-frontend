@@ -38,7 +38,7 @@ describe("Basic e2e", function () {
     // Edit saved submission
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']").type(" edited").blur()
+    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).type(" edited")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
@@ -85,7 +85,6 @@ describe("Basic e2e", function () {
       .then($btn => $btn.click())
 
     cy.get("form").within(() => {
-
       cy.get("input[name='title']").type("Test title")
       // Experiment
       cy.get("input[name='experimentRef.accessionId']").type("Experiment Test Accession Id")

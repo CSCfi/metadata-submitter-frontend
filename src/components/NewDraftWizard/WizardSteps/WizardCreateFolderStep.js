@@ -41,11 +41,11 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     setConnError(false)
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
-        .then(() => history.push({ pathname: "/newdraft/1" }))
+        .then(() => history.push({ pathname: "/newdraft/step1" }))
         .catch(() => setConnError(true))
     } else {
       dispatch(createNewDraftFolder(data))
-        .then(() => history.push({ pathname: "/newdraft/1" }))
+        .then(() => history.push({ pathname: "/newdraft/step1" }))
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))

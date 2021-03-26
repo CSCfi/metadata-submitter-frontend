@@ -4,7 +4,7 @@ describe("Draft operations", function () {
   it("should create new folder, save, delete and continue draft", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft/-1")
+    cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()

@@ -42,7 +42,7 @@ describe("WizardAddObjectStep", () => {
       },
     })
     render(
-      <MemoryRouter initialEntries={["/newdraft/1"]}>
+      <MemoryRouter initialEntries={["/newdraft/step1"]}>
         <Provider store={store}>
           <Route path="/newdraft/:step">
             <WizardAddObjectStep />
@@ -78,7 +78,7 @@ describe("WizardAddObjectStep", () => {
           },
         })
         render(
-          <MemoryRouter initialEntries={["/newdraft/1"]}>
+          <MemoryRouter initialEntries={["/newdraft/step1"]}>
             <Provider store={store}>
               <Route path="/newdraft/:step">
                 <ThemeProvider theme={CSCtheme}>

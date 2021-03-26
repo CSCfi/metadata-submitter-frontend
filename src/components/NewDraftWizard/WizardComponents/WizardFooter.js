@@ -57,7 +57,8 @@ const WizardFooter = (): React$Element<any> => {
   let history = useHistory()
 
   const { step } = useParams()
-  const urlStep = Number(step)
+  const urlStep = ((typeof step)==="undefined") ? -1 : Number(step.toString().slice(-1))
+
 
   const resetDispatch = () => {
     history.push("/home")

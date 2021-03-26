@@ -50,9 +50,8 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
       return <WizardAddObjectStep />
     case 2:
       return <WizardShowSummaryStep />
-    default: {
-      throw new Error("Unknown step")
-    }
+    default: 
+      throw new Error("Unknown step") //THIS ERROR IS NOT CATCHED
   }
 }
 
@@ -61,10 +60,11 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  *
  * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
-const NewDraftWizard = (): React$Element<typeof Container> => {
+ const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
   const { step } = useParams()
-  const urlStep = Number(step)
+  const urlStep = ((typeof step)==="undefined") ? -1 : Number(step.toString().slice(-1))
+
   const statusDetails = useSelector(state =>
     state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
   )

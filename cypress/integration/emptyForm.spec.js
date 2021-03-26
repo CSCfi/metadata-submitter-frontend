@@ -4,7 +4,7 @@ describe("empty form should not be alerted or saved", function () {
   it("should not show draft saving alert when form is empty, should not save an empty form", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft/-1")
+    cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()

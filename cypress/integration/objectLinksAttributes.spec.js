@@ -4,7 +4,7 @@ describe("render objects' links and attributes ", function () {
   it("should render correct Study Links and Attributes", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft/-1")
+    cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()

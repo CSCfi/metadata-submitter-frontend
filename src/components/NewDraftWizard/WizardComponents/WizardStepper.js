@@ -131,14 +131,14 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const draftStatus = useSelector(state => state.draftStatus)
   const history = useHistory()
   const { step } = useParams()
-  const urlStep = Number(step)
+  const urlStep = Number(step.toString().slice(-1))
 
   const handleNavigation = (step: boolean) => {
     setDirection("")
     setAlert(false)
     dispatch(resetDraftStatus())
     if (step) {
-      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft/2" })
+      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft/step2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -190,7 +190,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("next")
             setAlert(true)
           } else if (urlStep !== 2 && !createFolderFormRef?.current) {
-            history.push({ pathname: "/newdraft/2" })
+            history.push({ pathname: "/newdraft/step2" })
           }
         }}
       >

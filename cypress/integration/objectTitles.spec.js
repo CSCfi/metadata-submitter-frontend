@@ -4,7 +4,7 @@ describe("draft and submitted objects' titles", function () {
   beforeEach(() => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft/-1")
+    cy.visit(baseUrl + "newdraft")
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()

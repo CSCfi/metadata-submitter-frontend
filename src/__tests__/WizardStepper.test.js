@@ -18,9 +18,9 @@ describe("WizardStepper", () => {
       submissionType: "",
     })
     render(
-      <MemoryRouter initialEntries={["/newdraft/step0"]}>
+      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=0" }]}>
         <Provider store={store}>
-          <Route path="/newdraft/:step">
+          <Route path="/newdraft">
             <WizardStepper />
           </Route>
         </Provider>
@@ -35,9 +35,9 @@ describe("WizardStepper", () => {
       draftStatus: "notSaved",
     })
     render(
-      <MemoryRouter initialEntries={["/newdraft/step1"]}>
+      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=1" }]}>
         <Provider store={store}>
-          <Route path="/newdraft/:step">
+          <Route path="/newdraft">
             <WizardStepper />
           </Route>
         </Provider>

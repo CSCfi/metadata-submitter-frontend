@@ -61,7 +61,7 @@ const WizardFrontpageStep = (): React$Element<typeof Grid> => {
           color="primary"
           className={classes.newDraftButton}
           disableElevation
-          onClick={() => history.push({ pathname: "/newdraft/step0" })}
+          onClick={() => history.push({ pathname: "/newdraft", search: "step=0" })}
         >
           New folder
         </Button>

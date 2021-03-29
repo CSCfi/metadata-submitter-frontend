@@ -5,7 +5,6 @@ import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -14,6 +13,7 @@ import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/Wizard
 import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import type { CreateFolderFormRef } from "types"
+import { useQuery } from "utils"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -50,7 +50,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
       return <WizardAddObjectStep />
     case 2:
       return <WizardShowSummaryStep />
-    default: 
+    default:
       throw new Error("Unknown step") //THIS ERROR IS NOT CATCHED
   }
 }
@@ -60,10 +60,13 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  *
  * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
- const NewDraftWizard = (): React$Element<typeof Container> => {
+const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-  const { step } = useParams()
-  const urlStep = ((typeof step)==="undefined") ? -1 : Number(step.toString().slice(-1))
+
+  const queryParams = useQuery()
+  const step = queryParams.get("step")
+
+  const wizardStep = step ? Number(step) : -1
 
   const statusDetails = useSelector(state =>
     state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
@@ -72,8 +75,8 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
 
   return (
     <Container maxWidth={false} className={classes.container}>
-      <Paper className={urlStep < 0 ? classes.paperFirstStep : classes.paper} elevation={urlStep < 0 ? 2 : 0}>
-        <div className={classes.paperContent}>{getStepContent(urlStep, createFolderFormRef)}</div>
+      <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
+        <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
       </Paper>
       {statusDetails && (
         <WizardStatusMessageHandler

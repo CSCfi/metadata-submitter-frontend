@@ -12,7 +12,7 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory, useParams } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
@@ -20,6 +20,7 @@ import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 import type { CreateFolderFormRef } from "types"
+import { useQuery } from "utils"
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
  */
@@ -130,15 +131,19 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const [direction, setDirection] = useState("")
   const draftStatus = useSelector(state => state.draftStatus)
   const history = useHistory()
-  const { step } = useParams()
-  const urlStep = Number(step.toString().slice(-1))
+
+  const queryParams = useQuery()
+  const wizardStep = Number(queryParams.get("step"))
+
+  const unsavedSubmission = wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved"
 
   const handleNavigation = (step: boolean) => {
     setDirection("")
     setAlert(false)
     dispatch(resetDraftStatus())
+
     if (step) {
-      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft/step2" })
+      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft", search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -151,13 +156,13 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         disableElevation
         color="primary"
         variant="outlined"
-        disabled={urlStep < 1}
+        disabled={wizardStep < 1}
         onClick={() => {
-          if (urlStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
+          if (unsavedSubmission) {
             setDirection("previous")
             setAlert(true)
           } else {
-            history.go(-1)
+            history.push({ pathname: "/newdraft", search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -165,7 +170,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         Back
       </Button>
       <Stepper
-        activeStep={urlStep}
+        activeStep={wizardStep}
         className={classes.stepperContainer}
         alternativeLabel
         connector={<QontoConnector />}
@@ -177,7 +182,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         ))}
       </Stepper>
       <Button
-        disabled={createFolderFormRef?.current?.isSubmitting || urlStep >= 2}
+        disabled={createFolderFormRef?.current?.isSubmitting || wizardStep >= 2}
         className={classes.centeredStepButton}
         disableElevation
         color="primary"
@@ -186,18 +191,18 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
           if (createFolderFormRef?.current) {
             await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
           }
-          if (urlStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
+          if (unsavedSubmission) {
             setDirection("next")
             setAlert(true)
-          } else if (urlStep !== 2 && !createFolderFormRef?.current) {
-            history.push({ pathname: "/newdraft/step2" })
+          } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
+            history.push({ pathname: "/newdraft", search: "step=2" })
           }
         }}
       >
         Next
         <ArrowForwardIosIcon fontSize="large" />
       </Button>
-      {urlStep === 1 && alert && (
+      {wizardStep === 1 && alert && (
         <WizardAlert onAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
       )}
     </div>

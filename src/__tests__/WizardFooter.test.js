@@ -22,9 +22,9 @@ describe("WizardFooter", () => {
     })
 
     wrapper = (
-      <MemoryRouter initialEntries={["/newdraft/step1"]}>
+      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
         <Provider store={store}>
-          <Route path="/newdraft/:step">
+          <Route path="/newdraft">
             <WizardFooter />
           </Route>
         </Provider>
@@ -49,9 +49,9 @@ describe("WizardFooter", () => {
       })
 
       wrapper = (
-        <MemoryRouter initialEntries={["/newdraft/step2"]}>
+        <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
           <Provider store={store}>
-            <Route path="/newdraft/:step">
+            <Route path="/newdraft">
               <WizardFooter />
             </Route>
           </Provider>

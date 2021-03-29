@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory, useParams, Link as RouterLink } from "react-router-dom"
+import { useHistory, Link as RouterLink } from "react-router-dom"
 
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
@@ -14,6 +14,7 @@ import WizardAlert from "./WizardAlert"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { useQuery } from "utils"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -54,11 +55,12 @@ const WizardFooter = (): React$Element<any> => {
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
+
   let history = useHistory()
 
-  const { step } = useParams()
-  const urlStep = ((typeof step)==="undefined") ? -1 : Number(step.toString().slice(-1))
-
+  const queryParams = useQuery()
+  const step = Number(queryParams.get("step"))
+  const wizardStep = typeof step === "undefined" ? -1 : Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
     history.push("/home")
@@ -93,10 +95,10 @@ const WizardFooter = (): React$Element<any> => {
   }
 
   const disablePublishButton = () => {
-    if (urlStep !== 2) {
+    if (wizardStep !== 2) {
       return true
     }
-    if (urlStep === 2) {
+    if (wizardStep === 2) {
       const { metadataObjects } = folder
       if (metadataObjects.length === 0) {
         return true
@@ -109,14 +111,14 @@ const WizardFooter = (): React$Element<any> => {
       <div className={classes.phantom} />
       <div className={classes.footerRow}>
         <div>
-          {urlStep < 0 && (
+          {wizardStep < 0 && (
             <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
               <Button variant="contained" color="secondary" className={classes.footerButton}>
                 Cancel
               </Button>
             </Link>
           )}
-          {urlStep >= 0 && (
+          {wizardStep >= 0 && (
             <Button
               variant="contained"
               color="secondary"
@@ -130,12 +132,12 @@ const WizardFooter = (): React$Element<any> => {
             </Button>
           )}
         </div>
-        {urlStep >= 0 && (
+        {wizardStep >= 0 && (
           <div>
             <Button
               variant="contained"
               color="primary"
-              disabled={urlStep < 1}
+              disabled={wizardStep < 1}
               className={classes.footerButton}
               onClick={() => {
                 setDialogOpen(true)

@@ -15,6 +15,7 @@ import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFro
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import type { CreateFolderFormRef } from "types"
 import { useQuery } from "utils"
+import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -52,7 +53,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
     case 2:
       return <WizardShowSummaryStep />
     default:
-      throw new Error("Unknown step") //THIS ERROR IS NOT CATCHED
+      return <Page404 />
   }
 }
 
@@ -78,7 +79,7 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
   // Fallback if no folder in state
   const folder = useSelector(state => state.submissionFolder)
 
-  if (!folder && wizardStep > 0) {
+  if (!folder && (wizardStep === 1 || wizardStep ===2)) {
     wizardStep = -1
     history.push({ pathname: "/newdraft" })
   }

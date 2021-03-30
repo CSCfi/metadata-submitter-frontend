@@ -44,7 +44,6 @@ const NewObjectTooltip = withStyles(theme => ({
  */
 const WizardFrontpageStep = (): React$Element<typeof Grid> => {
   const classes = useStyles()
-  //const dispatch = useDispatch()
   const history = useHistory()
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"

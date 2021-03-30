@@ -98,7 +98,7 @@ const WizardFooter = (): React$Element<any> => {
     if (wizardStep !== 2) {
       return true
     }
-    if (wizardStep === 2) {
+    if (folder && wizardStep === 2) {
       const { metadataObjects } = folder
       if (metadataObjects.length === 0) {
         return true

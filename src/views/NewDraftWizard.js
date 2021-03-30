@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -62,16 +63,25 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  */
 const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-
+  const history = useHistory()
   const queryParams = useQuery()
+
   const step = queryParams.get("step")
 
-  const wizardStep = step ? Number(step) : -1
+  let wizardStep = step ? Number(step) : -1
 
   const statusDetails = useSelector(state =>
     state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
   )
   const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: Function })>(null)
+
+  // Fallback if no folder in state
+  const folder = useSelector(state => state.submissionFolder)
+
+  if (!folder && wizardStep > 0) {
+    wizardStep = -1
+    history.push({ pathname: "/newdraft" })
+  }
 
   return (
     <Container maxWidth={false} className={classes.container}>

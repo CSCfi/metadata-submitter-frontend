@@ -9,8 +9,8 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
  */
 const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
   Array.isArray(validationError.errors)
-    ? validationError.errors.reduce((previous, { dataPath, message = "", params, propertyName = "" }) => {
-        const path = dataPath.replace(/\//g, ".").replace(/^\./, "") || propertyName
+    ? validationError.errors.reduce((previous, { instancePath, message = "", params, propertyName = "" }) => {
+        const path = instancePath.replace(/\//g, ".").replace(/^\./, "") || propertyName
         return {
           ...previous,
           ...(path

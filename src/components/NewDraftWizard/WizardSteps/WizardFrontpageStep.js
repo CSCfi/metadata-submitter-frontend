@@ -8,9 +8,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
-import { useDispatch } from "react-redux"
-
-import { increment } from "../../../features/wizardStepSlice"
+import { useHistory } from "react-router-dom"
 
 const useStyles = makeStyles(theme => ({
   newDraftButton: {
@@ -46,7 +44,7 @@ const NewObjectTooltip = withStyles(theme => ({
  */
 const WizardFrontpageStep = (): React$Element<typeof Grid> => {
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const history = useHistory()
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
   return (
@@ -62,7 +60,7 @@ const WizardFrontpageStep = (): React$Element<typeof Grid> => {
           color="primary"
           className={classes.newDraftButton}
           disableElevation
-          onClick={() => dispatch(increment())}
+          onClick={() => history.push({ pathname: "/newdraft", search: "step=0" })}
         >
           New folder
         </Button>

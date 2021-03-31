@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
@@ -13,6 +14,8 @@ import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/Wizard
 import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import type { CreateFolderFormRef } from "types"
+import { useQuery } from "utils"
+import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -50,7 +53,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
     case 2:
       return <WizardShowSummaryStep />
     default:
-      throw new Error("Unknown step")
+      return <Page404 />
   }
 }
 
@@ -61,11 +64,25 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  */
 const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-  const wizardStep = useSelector(state => state.wizardStep)
+  const history = useHistory()
+  const queryParams = useQuery()
+
+  const step = queryParams.get("step")
+
+  let wizardStep = step ? Number(step) : -1
+
   const statusDetails = useSelector(state =>
     state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
   )
   const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: Function })>(null)
+
+  // Fallback if no folder in state
+  const folder = useSelector(state => state.submissionFolder)
+
+  if (!folder && (wizardStep === 1 || wizardStep ===2)) {
+    wizardStep = -1
+    history.push({ pathname: "/newdraft" })
+  }
 
   return (
     <Container maxWidth={false} className={classes.container}>

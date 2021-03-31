@@ -12,14 +12,15 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { decrement, increment } from "features/wizardStepSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 import type { CreateFolderFormRef } from "types"
+import { useQuery } from "utils"
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
  */
@@ -124,19 +125,25 @@ const useStyles = makeStyles({
 const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFolderFormRef }): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const wizardStep = useSelector(state => state.wizardStep)
   const steps = ["Folder Name & Description", "Add Objects", "Summary"]
   const formState = useSelector(state => state.submissionType)
   const [alert, setAlert] = useState(false)
   const [direction, setDirection] = useState("")
   const draftStatus = useSelector(state => state.draftStatus)
+  const history = useHistory()
+
+  const queryParams = useQuery()
+  const wizardStep = Number(queryParams.get("step"))
+
+  const unsavedSubmission = wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved"
 
   const handleNavigation = (step: boolean) => {
     setDirection("")
     setAlert(false)
     dispatch(resetDraftStatus())
+
     if (step) {
-      direction === "previous" ? dispatch(decrement()) : dispatch(increment())
+      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft", search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -151,11 +158,11 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
         variant="outlined"
         disabled={wizardStep < 1}
         onClick={() => {
-          if (wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
+          if (unsavedSubmission) {
             setDirection("previous")
             setAlert(true)
           } else {
-            dispatch(decrement())
+            history.push({ pathname: "/newdraft", search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -184,11 +191,11 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
           if (createFolderFormRef?.current) {
             await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
           }
-          if (wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved") {
+          if (unsavedSubmission) {
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            dispatch(increment())
+            history.push({ pathname: "/newdraft", search: "step=2" })
           }
         }}
       >

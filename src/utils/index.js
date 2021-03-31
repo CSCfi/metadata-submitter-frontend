@@ -1,4 +1,5 @@
 //@flow
+import { useLocation } from "react-router-dom"
 
 import { ObjectTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
@@ -27,4 +28,8 @@ export const getItemPrimaryText = (item: ObjectInsideFolderWithTags): string => 
     return item.tags.fileName
   }
   return ""
+}
+
+export const useQuery = (): URLSearchParams => {
+  return new URLSearchParams(useLocation().search)
 }

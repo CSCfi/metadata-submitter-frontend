@@ -5,13 +5,13 @@ import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { decrement } from "features/wizardStepSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import objectAPIService from "services/objectAPI"
@@ -39,6 +39,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
   const classes = useStyles()
   const dispatch = useDispatch()
   const currentObject = useSelector(state => state.currentObject)
+  const history = useHistory()
 
   const handleObjectEdit = async () => {
     const response = await objectAPIService.getObjectByAccessionId(props.objectType, props.objectId)
@@ -56,7 +57,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
 
       if (props.summary) {
         dispatch(setObjectType(props.objectType))
-        dispatch(decrement())
+        history.go(-1)
       }
     } else {
       dispatch(

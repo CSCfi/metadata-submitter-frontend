@@ -5,13 +5,13 @@ import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
 import { WizardStatus } from "constants/wizardStatus"
-import { increment } from "features/wizardStepSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 
@@ -35,16 +35,17 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const [responseError, setResponseError] = useState({})
   const { register, errors, handleSubmit, formState } = useForm()
   const { isSubmitting } = formState
+  const history = useHistory()
 
   const onSubmit = (data: FolderDataFromForm) => {
     setConnError(false)
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
-        .then(() => dispatch(increment()))
+        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(() => setConnError(true))
     } else {
       dispatch(createNewDraftFolder(data))
-        .then(() => dispatch(increment()))
+        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))

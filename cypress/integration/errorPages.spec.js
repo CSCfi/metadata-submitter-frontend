@@ -22,7 +22,9 @@ describe("catch error codes and display corresponding error page", function () {
   })
 
   it("should redirect to 404 page on unknown route", () => {
-    cy.visit(baseUrl + "unknownroute")
+    cy.visit(baseUrl)
+    cy.get('[alt="CSC Login"]').click()
+    cy.visit(baseUrl + "home/unknownroute")
     cy.contains(".MuiAlert-message", "404 Not Found")
   })
 

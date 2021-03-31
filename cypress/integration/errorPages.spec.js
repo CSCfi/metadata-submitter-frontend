@@ -25,7 +25,7 @@ describe("catch error codes and display corresponding error page", function () {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
     cy.visit(baseUrl + "unknownroute")
-    cy.contains(".MuiAlert-message", "404 Not Found")
+    cy.get(".MuiAlert-message", { timeout: 30000 }).contains("404 Not Found")
   })
 
   it("should redirect to 500 page if response status code is 500 ", () => {

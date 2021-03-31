@@ -3,7 +3,6 @@ import React from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 import WizardHeader from "../WizardComponents/WizardHeader"
@@ -38,13 +37,11 @@ const WizardAddObjectStep = (): React$Element<any> => {
   const objectType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
   const submissions = folder?.metadataObjects?.filter(obj => obj.schema === objectType)
-  const { step } = useParams()
-  const urlStep = Number(step)
 
   return (
     <>
       <WizardHeader headerText="Create Submission" />
-      <WizardStepper step={urlStep} />
+      <WizardStepper />
       <div className={classes.formRow}>
         <WizardObjectIndex />
         <div className={classes.formBox}>

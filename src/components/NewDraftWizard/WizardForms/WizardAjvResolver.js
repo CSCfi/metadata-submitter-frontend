@@ -44,7 +44,7 @@ export const WizardAjvResolver = validationSchema => {
     throw new Error("Undefined schema, not able to validate")
   }
   const ajv = new Ajv({ allErrors: true, coerceTypes: true, strict: false })
-  addFormats(ajv,  {mode: "fast", formats: ["email", "uri"], keywords: true})
+  addFormats(ajv, { mode: "fast", formats: ["email", "uri"], keywords: true })
   return async values => {
     const validate = ajv.compile(validationSchema)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)

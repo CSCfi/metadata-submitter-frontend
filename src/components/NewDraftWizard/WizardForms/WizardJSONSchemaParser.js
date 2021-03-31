@@ -337,7 +337,9 @@ const FormTextField = ({
       return (
         <ValidationTextField
           name={name}
+          inputProps={{ "data-testid": name }}
           label={label}
+          role="textbox"
           inputRef={register}
           defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}

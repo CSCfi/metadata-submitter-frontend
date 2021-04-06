@@ -226,7 +226,7 @@ const CancelFormDialog = ({
 
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <WizardDraftSelections onHandleDialog={formData => handleDialog(true, formData)} onPublish={() => {}} />
+              <WizardDraftSelections onHandleDialog={handleDialog} />
             </DialogActions>
           )
           break

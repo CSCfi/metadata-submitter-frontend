@@ -10,8 +10,15 @@ import FormLabel from "@material-ui/core/FormLabel"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { useHistory } from "react-router-dom"
 
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { WizardStatus } from "constants/wizardStatus"
+import { setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
+import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
+import draftAPIService from "services/draftAPI"
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText } from "utils"
 
@@ -59,13 +66,15 @@ const ConnectForm = ({ children }) => {
 }
 
 type WizardDraftSelectionsProps = {
-  onHandleDialog: (data: Array<ObjectInsideFolderWithTags>) => void,
+  onHandleDialog: (boolean, data?: Array<ObjectInsideFolderWithTags>) => void,
 }
 
 const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element<any> => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
   const objectsArray = useSelector(state => state.objectsArray)
+  const history = useHistory()
 
   // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
   const draftObjects = objectsArray.flatMap((schema: string) => {
@@ -83,7 +92,27 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
       const checkedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(item =>
         folder.drafts.find(draft => draft.accessionId === item)
       )
-      props.onHandleDialog(checkedDrafts)
+      props.onHandleDialog(true, checkedDrafts)
+    }
+  }
+
+  const handleViewButton = async (draftSchema: string, draftId: string) => {
+    const objectType = draftSchema.slice(draftSchema.indexOf("-") + 1)
+    const response = await draftAPIService.getObjectByAccessionId(objectType, draftId)
+
+    if (response.ok) {
+      dispatch(setCurrentObject({ ...response.data, status: ObjectStatus.draft }))
+      dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+      props.onHandleDialog(false)
+      history.push({ pathname: "/newdraft", search: "step=1" })
+    } else {
+      dispatch(
+        updateStatus({
+          successStatus: WizardStatus.error,
+          response: response,
+          errorPrefix: "Error fetching current draft",
+        })
+      )
     }
   }
 
@@ -122,7 +151,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
                               aria-label="View draft"
                               variant="outlined"
                               size="small"
-                              onClick={() => {}}
+                              onClick={() => handleViewButton(item.schema, item.accessionId)}
                             >
                               View
                             </Button>

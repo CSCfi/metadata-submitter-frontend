@@ -24,8 +24,9 @@ import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   formComponent: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2),
     padding: 0,
+    overflow: "scroll",
   },
   formControl: { marginBottom: theme.spacing(1) },
   formLabel: {
@@ -33,11 +34,12 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[900],
     padding: theme.spacing(1),
     borderBottom: `3px solid ${theme.palette.primary.main}`,
+    textTransform: "capitalize",
   },
   formControlLabel: {
-    margin: 0,
-    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
     padding: 0,
+    margin: theme.spacing(1, 0),
+    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
   },
   label: {
     display: "flex",
@@ -47,9 +49,15 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.button.edit,
     margin: theme.spacing(1.5, 0),
   },
-  publishButton: {
+  buttonGroup: {
     marginTop: theme.spacing(2),
-    float: "right",
+    display: "flex",
+    flexDirection: "row-re",
+    justifyContent: "space-between",
+    position: "sticky",
+    zIndex: 1,
+    backgroundColor: theme.palette.background.default,
+    bottom: 0,
   },
 }))
 
@@ -88,12 +96,10 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
   const onSubmit = data => {
     const checkedBoxValues = Object.values(data).filter(data => data)
 
-    if (checkedBoxValues.length > 0) {
-      const checkedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(item =>
-        folder.drafts.find(draft => draft.accessionId === item)
-      )
-      props.onHandleDialog(true, checkedDrafts)
-    }
+    const selectedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(item =>
+      folder.drafts.find(draft => draft.accessionId === item)
+    )
+    props.onHandleDialog(true, selectedDrafts)
   }
 
   const handleViewButton = async (draftSchema: string, draftId: string) => {
@@ -122,7 +128,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
         {draftObjects.map(draft => {
           const schema = Object.keys(draft)[0]
           return (
-            <ConnectForm key={schema} className={classes.connectionForm}>
+            <ConnectForm key={schema}>
               {({ register }) => (
                 <FormControl className={classes.formControl} fullWidth>
                   <FormLabel className={classes.formLabel}>{schema}</FormLabel>
@@ -165,15 +171,24 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
             </ConnectForm>
           )
         })}
-        <Button
-          className={classes.publishButton}
-          variant="contained"
-          aria-label="Publish folder contents and move to frontpage"
-          color="primary"
-          type="submit"
-        >
-          Publish
-        </Button>
+        <div className={classes.buttonGroup}>
+          <Button
+            variant="contained"
+            aria-label="Cancel publishing folder contents"
+            color="secondary"
+            onClick={() => props.onHandleDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            aria-label="Publish folder contents and move to frontpage"
+            color="primary"
+            type="submit"
+          >
+            Publish
+          </Button>
+        </div>
       </form>
     </FormProvider>
   )

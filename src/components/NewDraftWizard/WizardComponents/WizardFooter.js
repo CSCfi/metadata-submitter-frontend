@@ -92,11 +92,13 @@ const WizardFooter = (): React$Element<any> => {
           setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
         })
 
-      dispatch(addDraftsToUser("current", formData)).catch(error => {
-        setConnError(true)
-        setResponseError(JSON.parse(error))
-        setErrorPrefix("Can't save drafts for user")
-      })
+      formData && formData?.length > 0
+        ? dispatch(addDraftsToUser("current", formData)).catch(error => {
+            setConnError(true)
+            setResponseError(JSON.parse(error))
+            setErrorPrefix("Can't save drafts for user")
+          })
+        : null
     } else {
       setDialogOpen(false)
     }

@@ -223,12 +223,7 @@ const CancelFormDialog = ({
           dialogTitle = "Publishing objects"
           dialogContent =
             "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
-
-          dialogActions = (
-            <DialogActions style={{ justifyContent: "center" }}>
-              <WizardDraftSelections onHandleDialog={handleDialog} />
-            </DialogActions>
-          )
+          dialogActions = <WizardDraftSelections onHandleDialog={handleDialog} />
           break
         }
         default: {
@@ -289,7 +284,6 @@ const CancelFormDialog = ({
       <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
-        {/* {draftSelections} */}
       </DialogContent>
       {error && <ErrorMessage message={errorMessage} />}
       {dialogActions}

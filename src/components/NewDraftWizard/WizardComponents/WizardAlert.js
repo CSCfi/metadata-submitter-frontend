@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux"
 
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 
+import WizardDraftSelections from "./WizardDraftSelections"
+
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
@@ -19,6 +21,7 @@ import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import objectAPIService from "services/objectAPI"
+import type { ObjectInsideFolderWithTags } from "types"
 
 // Simple template for error messages
 const ErrorMessage = message => {
@@ -34,7 +37,7 @@ const CancelFormDialog = ({
   parentLocation,
   currentSubmissionType,
 }: {
-  handleDialog: boolean => void,
+  handleDialog: (boolean, formData?: Array<ObjectInsideFolderWithTags>) => void,
   alertType: string,
   parentLocation: string,
   currentSubmissionType: string,
@@ -92,6 +95,7 @@ const CancelFormDialog = ({
   }
 
   let [dialogTitle, dialogContent] = ["", ""]
+  // let draftSelections = null
   let dialogActions
   const formContent = "If you save form as a draft, you can continue filling it later."
   const xmlContent = "If you save xml as a draft, you can upload it later."
@@ -218,17 +222,11 @@ const CancelFormDialog = ({
         case "publish": {
           dialogTitle = "Publishing objects"
           dialogContent =
-            "Objects in this folder will be published. Publishing will remove saved drafts from this folder."
+            "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
+
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                aria-label="Publish folder contents and move to frontpage"
-                onClick={() => handleDialog(true)}
-                color="primary"
-              >
-                Publish
-              </Button>
+              <WizardDraftSelections onHandleDialog={formData => handleDialog(true, formData)} onPublish={() => {}} />
             </DialogActions>
           )
           break
@@ -291,6 +289,7 @@ const CancelFormDialog = ({
       <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
+        {/* {draftSelections} */}
       </DialogContent>
       {error && <ErrorMessage message={errorMessage} />}
       {dialogActions}
@@ -306,7 +305,7 @@ const WizardAlert = ({
   parentLocation,
   alertType,
 }: {
-  onAlert: boolean => void,
+  onAlert: (boolean, formData?: Array<ObjectInsideFolderWithTags>) => void,
   parentLocation: string,
   alertType: string,
 }): React$Element<any> => {
@@ -318,9 +317,9 @@ const WizardAlert = ({
     dispatch(setAlert())
   }, [])
 
-  const handleDialog = (action: boolean) => {
+  const handleDialog = (action: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
     dispatch(resetAlert())
-    onAlert(action)
+    onAlert(action, formData)
   }
 
   return (

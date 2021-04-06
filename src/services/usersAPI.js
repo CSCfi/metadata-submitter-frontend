@@ -14,7 +14,12 @@ const deleteUserById = async (userID: string): Promise<any> => {
   return await api.delete(`/${userID}`)
 }
 
+const patchUserById = async (userID: string, changes: any): Promise<any> => {
+  return await api.patch(`/${userID}`, changes)
+}
+
 export default {
   getUserById,
   deleteUserById,
+  patchUserById,
 }

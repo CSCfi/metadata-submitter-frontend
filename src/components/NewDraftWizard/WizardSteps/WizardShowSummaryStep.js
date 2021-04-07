@@ -14,7 +14,7 @@ import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActio
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText } from "utils"
+import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   summary: {
@@ -75,7 +75,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
             <List key={schema} aria-label={schema} className={classes.listGroup}>
               <div className={classes.schemaTitleRow}>
                 <Typography variant="subtitle1" fontWeight="fontWeightBold">
-                  {schema.charAt(0).toUpperCase() + schema.substring(1)}
+                  {formatDisplayObjectType(schema)}
                 </Typography>
                 <div className="objectAmount">{group[schema].length}</div>
               </div>

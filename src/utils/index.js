@@ -33,3 +33,11 @@ export const getItemPrimaryText = (item: ObjectInsideFolderWithTags): string => 
 export const useQuery = (): URLSearchParams => {
   return new URLSearchParams(useLocation().search)
 }
+
+export const formatDisplayObjectType = (objectType: string): string => {
+  if (objectType === "dac"){
+    return `${objectType.toUpperCase()}`
+  } else {
+    return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
+  }
+}

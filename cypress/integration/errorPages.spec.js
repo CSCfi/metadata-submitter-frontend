@@ -2,7 +2,6 @@ describe("catch error codes and display corresponding error page", function () {
   const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
 
   it("should redirect to 401 page if no granted access", () => {
-    cy.contains("Log out").click()
     cy.visit(baseUrl + "folders")
     cy.contains(".MuiAlert-message", "401 Authorization Error")
   })

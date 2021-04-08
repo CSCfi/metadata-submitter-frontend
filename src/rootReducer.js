@@ -13,7 +13,6 @@ import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
 import wizardStatusMessageReducer from "features/wizardStatusMessageSlice"
-import wizardStepReducer from "features/wizardStepSlice"
 import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
@@ -22,7 +21,6 @@ const rootReducer: any = combineReducers({
   focus: focusReducer,
   statusDetails: wizardStatusMessageReducer,
   objectType: objectTypeReducer,
-  wizardStep: wizardStepReducer,
   submissionFolder: submissionFolderReducer,
   submissionType: submissionTypeReducer,
   draftStatus: draftStatusReducer,

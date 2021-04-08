@@ -13,8 +13,8 @@ import WizardAlert from "./WizardAlert"
 
 import { WizardStatus } from "constants/wizardStatus"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetWizard } from "features/wizardStepSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { useQuery } from "utils"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -49,18 +49,21 @@ const useStyles = makeStyles(theme => ({
 const WizardFooter = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const wizardStep = useSelector(state => state.wizardStep)
   const folder = useSelector(state => state.submissionFolder)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
+
   let history = useHistory()
+
+  const queryParams = useQuery()
+  const step = Number(queryParams.get("step"))
+  const wizardStep = typeof step === "undefined" ? -1 : Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
     history.push("/home")
-    dispatch(resetWizard())
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }
@@ -95,7 +98,7 @@ const WizardFooter = (): React$Element<any> => {
     if (wizardStep !== 2) {
       return true
     }
-    if (wizardStep === 2) {
+    if (folder && wizardStep === 2) {
       const { metadataObjects } = folder
       if (metadataObjects.length === 0) {
         return true

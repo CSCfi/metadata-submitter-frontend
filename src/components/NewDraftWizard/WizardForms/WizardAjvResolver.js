@@ -9,8 +9,8 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
  */
 const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
   Array.isArray(validationError.errors)
-    ? validationError.errors.reduce((previous, { dataPath, message = "", params, propertyName = "" }) => {
-        const path = dataPath.replace(/\//g, ".").replace(/^\./, "") || propertyName
+    ? validationError.errors.reduce((previous, { instancePath, message = "", params, propertyName = "" }) => {
+        const path = instancePath.replace(/\//g, ".").replace(/^\./, "") || propertyName
         return {
           ...previous,
           ...(path
@@ -44,7 +44,7 @@ export const WizardAjvResolver = validationSchema => {
     throw new Error("Undefined schema, not able to validate")
   }
   const ajv = new Ajv({ allErrors: true, coerceTypes: true, strict: false })
-  addFormats(ajv,  {mode: "fast", formats: ["email", "uri"], keywords: true})
+  addFormats(ajv, { mode: "fast", formats: ["email", "uri"], keywords: true })
   return async values => {
     const validate = ajv.compile(validationSchema)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)

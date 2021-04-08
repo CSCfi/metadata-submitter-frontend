@@ -247,8 +247,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const handleChange = () => {
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
+
     setCleanedValues(values)
-    if (checkFormCleanedValuesEmpty(values)) {
+
+    if (clone && checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
       !currentObject.accessionId && currentObjectId

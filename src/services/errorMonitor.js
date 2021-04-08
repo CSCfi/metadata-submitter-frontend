@@ -3,7 +3,7 @@ export const errorMonitor = res => {
   if (!res.ok) {
     switch (res.status) {
       case 401:
-        // window.location = "/error401"
+        window.location = "/error401"
         break
       case 403:
         window.location = "/error403"

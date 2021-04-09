@@ -26,9 +26,11 @@ const useStyles = makeStyles(theme => ({
   formComponent: {
     margin: theme.spacing(2),
     padding: 0,
-    overflow: "scroll",
+    overflowY: "auto",
   },
-  formControl: { marginBottom: theme.spacing(1) },
+  formControl: {
+    marginBottom: theme.spacing(1),
+  },
   formLabel: {
     fontWeight: "bold",
     color: theme.palette.grey[900],
@@ -42,17 +44,28 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `solid 1px ${theme.palette.secondary.main}`,
   },
   label: {
-    display: "flex",
-    flexDirection: "row",
+    margin: 0,
+    padding: 0,
+  },
+  listItemText: {
+    float: "left",
+    maxWidth: "50%",
+    "& span, & p": {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      maxWidth: "50vw",
+    },
   },
   viewButton: {
     color: theme.palette.button.edit,
     margin: theme.spacing(1.5, 0),
+    float: "right",
   },
   buttonGroup: {
     marginTop: theme.spacing(2),
     display: "flex",
-    flexDirection: "row-re",
+    flexDirection: "row",
     justifyContent: "space-between",
     position: "sticky",
     zIndex: 1,
@@ -148,6 +161,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
                         label={
                           <div className={classes.label}>
                             <ListItemText
+                              className={classes.listItemText}
                               primary={getItemPrimaryText(item)}
                               secondary={item.accessionId}
                               data-schema={item.schema}

@@ -95,7 +95,6 @@ const CancelFormDialog = ({
   }
 
   let [dialogTitle, dialogContent] = ["", ""]
-  // let draftSelections = null
   let dialogActions
   const formContent = "If you save form as a draft, you can continue filling it later."
   const xmlContent = "If you save xml as a draft, you can upload it later."

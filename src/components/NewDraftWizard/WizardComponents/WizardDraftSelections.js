@@ -16,6 +16,7 @@ import { useHistory } from "react-router-dom"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
@@ -122,6 +123,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
     if (response.ok) {
       dispatch(setCurrentObject({ ...response.data, status: ObjectStatus.draft }))
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+      dispatch(setObjectType(objectType))
       props.onHandleDialog(false)
       history.push({ pathname: "/newdraft", search: "step=1" })
     } else {

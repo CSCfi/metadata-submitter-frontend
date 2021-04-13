@@ -29,7 +29,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
-import { getObjectDisplayTitle } from "utils"
+import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -169,7 +169,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {objectType}
+        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {formatDisplayObjectType(objectType)}
       </Button>
     </div>
   )

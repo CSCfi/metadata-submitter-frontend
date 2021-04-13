@@ -24,6 +24,7 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import schemaAPIService from "services/schemaAPI"
+import {formatDisplayObjectType} from "utils"
 
 const useStyles = makeStyles(theme => ({
   index: {
@@ -340,7 +341,7 @@ const WizardObjectIndex = (): React$Element<any> => {
   return (
     <div className={classes.index}>
       {objectsArray.map(objectType => {
-        const typeCapitalized = objectType[0].toUpperCase() + objectType.substring(1)
+        const typeCapitalized = formatDisplayObjectType(objectType)
         const isCurrentObjectType = objectType === currentObjectType
         return (
           <Accordion

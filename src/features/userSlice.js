@@ -43,3 +43,19 @@ export const fetchUserById = (userId: string): ((dispatch: (any) => void) => Pro
     }
   })
 }
+
+export const addDraftsToUser = (
+  userId: string,
+  drafts: any
+): ((dispatch: (any) => void) => Promise<any>) => async () => {
+  const changes = [{ op: "add", path: "/drafts/-", value: drafts }]
+  const response = await userAPIService.patchUserById("current", changes)
+
+  return new Promise((resolve, reject) => {
+    if (response.ok) {
+      resolve(response)
+    } else {
+      reject(JSON.stringify(response))
+    }
+  })
+}

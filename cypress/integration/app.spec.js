@@ -95,9 +95,10 @@ describe("Basic e2e", function () {
       cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type("Sequence Standard Accession Id")
 
       // Experiment
-      cy.get("input[name='experimentRef.accessionId']").type("Experiment Test Accession Id")
-      cy.get("input[name='experimentRef.identifiers.submitterId.namespace']").type("Experiment Test Namespace")
-      cy.get("input[name='experimentRef.identifiers.submitterId.value']").type("Experiment Test Value")
+      cy.get("h2").contains("Experiment Reference").parent().children("button").click()
+      cy.get("input[name='experimentRef[0].accessionId']").type("Experiment Test Accession Id")
+      cy.get("input[name='experimentRef[0].identifiers.submitterId.namespace']").type("Experiment Test Namespace")
+      cy.get("input[name='experimentRef[0].identifiers.submitterId.value']").type("Experiment Test Value")
 
       // Study
       cy.get("input[name='studyRef.accessionId']").type("Study Test Accession Id")
@@ -105,19 +106,22 @@ describe("Basic e2e", function () {
       cy.get("input[name='studyRef.identifiers.submitterId.value']").type("Study Test Value")
 
       // Sample
-      cy.get("input[name='sampleRef.accessionId']").type("Sample Test Accession Id")
-      cy.get("input[name='sampleRef.identifiers.submitterId.namespace']").type("Sample Test Namespace")
-      cy.get("input[name='sampleRef.identifiers.submitterId.value']").type("Sample Test Value")
+      cy.get("h2").contains("Sample Reference").parent().children("button").click()
+      cy.get("input[name='sampleRef[0].accessionId']").type("Sample Test Accession Id")
+      cy.get("input[name='sampleRef[0].identifiers.submitterId.namespace']").type("Sample Test Namespace")
+      cy.get("input[name='sampleRef[0].identifiers.submitterId.value']").type("Sample Test Value")
 
       // Run
-      cy.get("input[name='runRef.accessionId']").type("Run Test Accession Id")
-      cy.get("input[name='runRef.identifiers.submitterId.namespace']").type("Run Test Namespace")
-      cy.get("input[name='runRef.identifiers.submitterId.value']").type("Run Test Value")
+      cy.get("h2").contains("Run Reference").parent().children("button").click()
+      cy.get("input[name='runRef[0].accessionId']").type("Run Test Accession Id")
+      cy.get("input[name='runRef[0].identifiers.submitterId.namespace']").type("Run Test Namespace")
+      cy.get("input[name='runRef[0].identifiers.submitterId.value']").type("Run Test Value")
 
       // Analysis
-      cy.get("input[name='analysisRef.accessionId']").type("Analysis Test Accession Id")
-      cy.get("input[name='analysisRef.identifiers.submitterId.namespace']").type("Analysis Test Namespace")
-      cy.get("input[name='analysisRef.identifiers.submitterId.value']").type("Analysis Test Value")
+      cy.get("h2").contains("Analysis Reference").parent().children("button").click()
+      cy.get("input[name='analysisRef[0].accessionId']").type("Analysis Test Accession Id")
+      cy.get("input[name='analysisRef[0].identifiers.submitterId.namespace']").type("Analysis Test Namespace")
+      cy.get("input[name='analysisRef[0].identifiers.submitterId.value']").type("Analysis Test Value")
 
       // Files
       cy.get("h2").contains("Files").parent().children("button").click()

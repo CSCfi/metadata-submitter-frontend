@@ -1,4 +1,5 @@
 //@flow
+
 import { useLocation } from "react-router-dom"
 
 import { ObjectTypes } from "constants/wizardObject"
@@ -15,6 +16,7 @@ export const getObjectDisplayTitle = (objectType: string, cleanedValues: any): s
   }
 }
 
+// Get Primary text for displaying item's title
 export const getItemPrimaryText = (item: ObjectInsideFolderWithTags): string => {
   if (item.tags?.displayTitle) {
     switch (item.schema) {
@@ -35,9 +37,21 @@ export const useQuery = (): URLSearchParams => {
 }
 
 export const formatDisplayObjectType = (objectType: string): string => {
-if (objectType === ObjectTypes.dac){
+  if (objectType === ObjectTypes.dac) {
     return `${objectType.toUpperCase()}`
   } else {
     return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
   }
+}
+
+// draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
+export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectsArray: Array<string>) => {
+  const draftObjects = objectsArray.flatMap((schema: string) => {
+    const draftSchema = `draft-${schema}`
+    const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
+    return draftArray.length > 0 ? [{ [`draft-${schema}`]: draftArray }] : []
+  })
+  console.log("drafts :>> ", drafts)
+  console.log("draftObjects :>> ", draftObjects)
+  return draftObjects
 }

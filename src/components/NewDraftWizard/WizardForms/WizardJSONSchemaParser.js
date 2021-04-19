@@ -137,7 +137,22 @@ const pathToName = (path: string[]) => path.join(".")
  * Get defaultValue for options in a form. Used when rendering a saved/submitted form
  */
 const getDefaultValue = (nestedField?: any, name: string) => {
-  return nestedField ? nestedField[name.split(".")[1]] : ""
+  if (nestedField) {
+    const path = name.split(".")
+    for (var i = 1, n = path.length; i < n; ++i) {
+      var k = path[i]
+      if (k in nestedField) {
+        nestedField = nestedField[k]
+      } else {
+        return
+      }
+
+    }
+    return nestedField
+  }
+  else {
+    return ""
+  }
 }
 
 /*
@@ -512,3 +527,4 @@ export default {
   buildFields,
   cleanUpFormValues,
 }
+

@@ -51,7 +51,6 @@ export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objec
     const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
     return draftArray.length > 0 ? [{ [`draft-${schema}`]: draftArray }] : []
   })
-  console.log("drafts :>> ", drafts)
-  console.log("draftObjects :>> ", draftObjects)
+
   return draftObjects
 }

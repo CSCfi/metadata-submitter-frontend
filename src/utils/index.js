@@ -39,6 +39,9 @@ export const useQuery = (): URLSearchParams => {
 export const formatDisplayObjectType = (objectType: string): string => {
   if (objectType === ObjectTypes.dac) {
     return `${objectType.toUpperCase()}`
+  } else if (objectType === `draft-${ObjectTypes.dac}`) {
+    const hyphenIndex = objectType.indexOf("-")
+    return `draft-${objectType.slice(hyphenIndex + 1).toUpperCase()}`
   } else {
     return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
   }

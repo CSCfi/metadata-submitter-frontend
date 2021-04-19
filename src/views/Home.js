@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
 const Home = (): React$Element<typeof Grid> => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  console.log("user :>> ", user)
   const objectsArray = useSelector(state => state.objectsArray)
 
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)

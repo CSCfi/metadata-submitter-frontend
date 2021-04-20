@@ -36,8 +36,8 @@ describe("draft selections and templates", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Create and Save another draft - Sample draft
-    cy.get("div[role=button]").contains("Sample").click()
-    cy.get("div[role=button]", { timeout: 10000 })
+    cy.get("div[role=button]", { timeout: 10000 }).contains("Sample").click()
+    cy.get("div[role=button]")
       .contains("Fill Form")
       .should("be.visible")
       .then($btn => $btn.click())

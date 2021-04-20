@@ -72,7 +72,7 @@ const UserDraftTemplates = (): React$Element<any> => {
   const user = useSelector(state => state.user)
   const objectsArray = useSelector(state => state.objectsArray)
 
-  const draftObjects = getDraftObjects(user.drafts, objectsArray)
+  const draftObjects = user.drafts ? getDraftObjects(user.drafts, objectsArray) : []
 
   // Render when there is user's draft template(s)
   const DraftList = () => (

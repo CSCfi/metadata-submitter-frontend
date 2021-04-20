@@ -48,7 +48,7 @@ export const formatDisplayObjectType = (objectType: string): string => {
 }
 
 // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
-export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectsArray: Array<string>) => {
+export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectsArray: Array<string>): any => {
   const draftObjects = objectsArray.flatMap((schema: string) => {
     const draftSchema = `draft-${schema}`
     const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())

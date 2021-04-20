@@ -35,12 +35,20 @@ describe("draft selections and templates", function () {
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
+    cy.get("div[role=button]").contains("Study").click()
+
     // Create and Save another draft - Sample draft
-    cy.get("div[role=button]", { timeout: 10000 }).contains("Sample").click({ force: true })
-    cy.get("div[role=button]")
-      .contains("Fill Form", { timeout: 10000 })
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.get("div[role=button]").contains("Sample", { timeout: 10000 }).click()
+    cy.wait(500)
+    cy.get("div[aria-expanded='true']")
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
 
     cy.get("input[name='title']").type("Sample draft title ")
     cy.get("input[name='sampleName.taxonId']").type(123)
@@ -103,10 +111,16 @@ describe("draft selections and templates", function () {
 
     // Create and Save another draft - Sample draft
     cy.get("div[role=button]", { timeout: 10000 }).contains("Sample").click({ force: true })
-    cy.get("div[role=button]")
-      .contains("Fill Form", { timeout: 10000 })
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.wait(500)
+    cy.get("div[aria-expanded='true']")
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
 
     cy.get("input[name='title']").type("Sample draft title")
     cy.get("input[name='sampleName.taxonId']").type(123)

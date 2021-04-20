@@ -56,7 +56,7 @@ describe("Draft operations", function () {
     cy.get("button[type=button]").contains("Update draft").click()
 
     // Create a new form and save as draft
-    cy.get("button", { timeout: 10000 }).contains("New form").click()
+    cy.get("button", { timeout: 10000 }).contains("New form").click({ force: true })
     cy.get("input[name='descriptor.studyTitle']").should("contain.text", "")
     cy.get("input[name='descriptor.studyTitle']").type("New title 2")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title 2")

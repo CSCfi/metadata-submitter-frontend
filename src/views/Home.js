@@ -79,7 +79,7 @@ const Home = (): React$Element<typeof Grid> => {
   // Fetch only if the initial array is empty
   // if there is any errors while fetching, it will return a manually created ObjectsArray instead
   useEffect(() => {
-    if (objectsArray.length === 0) {
+    if (objectsArray?.length === 0) {
       let isMounted = true
       const getSchemas = async () => {
         const response = await schemaAPIService.getAllSchemas()

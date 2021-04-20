@@ -128,7 +128,7 @@ const UserDraftTemplates = (): React$Element<any> => {
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
-        title={"Your draft templates"}
+        title={"Your Draft Templates"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />

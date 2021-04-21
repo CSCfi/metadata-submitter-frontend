@@ -226,10 +226,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const clearForm = () => {
-    methods.reset(formSchema)
+    resetTimer()
+    methods.reset({})
     setCleanedValues({})
     dispatch(resetDraftStatus())
-    resetTimer()
   }
 
   // Check if the form is empty
@@ -447,6 +447,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   useEffect(() => {
     const fetchSchema = async () => {
       let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+
       if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {

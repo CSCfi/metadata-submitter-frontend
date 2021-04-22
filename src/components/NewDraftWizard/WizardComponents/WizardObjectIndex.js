@@ -1,5 +1,5 @@
 //@flow
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 
 import MuiAccordion from "@material-ui/core/Accordion"
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
@@ -16,15 +16,13 @@ import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"
 
-import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectSubmissionsArray } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { setObjectsArray } from "features/objectsArraySlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
-import schemaAPIService from "services/schemaAPI"
-import {formatDisplayObjectType} from "utils"
+import { formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   index: {
@@ -249,8 +247,8 @@ const WizardObjectIndex = (): React$Element<any> => {
   const currentObjectType = useSelector(state => state.objectType)
   const currentSubmissionType = useSelector(state => state.submissionType)
   const draftStatus = useSelector(state => state.draftStatus)
-
   const folder = useSelector(state => state.submissionFolder)
+
   // Get draft objects of current folder
   // and count the amount of drafts of each existing objectType
   const draftObjects = folder.drafts
@@ -260,43 +258,6 @@ const WizardObjectIndex = (): React$Element<any> => {
   const savedObjects = folder.metadataObjects
     ?.map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
-  // Fetch array of schemas from backend and store it in frontend
-  // Fetch only if the initial array is empty
-  // if there is any errors while fetching, it will return a manually created ObjectsArray instead
-  useEffect(() => {
-    if (objectsArray.length === 0) {
-      let isMounted = true
-      const getSchemas = async () => {
-        const response = await schemaAPIService.getAllSchemas()
-
-        if (isMounted) {
-          if (response.ok) {
-            const schemas = response.data
-              .filter(schema => schema.title !== "Project" && schema.title !== "Submission")
-              .map(schema => schema.title.toLowerCase())
-            dispatch(setObjectsArray(schemas))
-          } else {
-            dispatch(
-              setObjectsArray([
-                ObjectTypes.study,
-                ObjectTypes.sample,
-                ObjectTypes.experiment,
-                ObjectTypes.run,
-                ObjectTypes.analysis,
-                ObjectTypes.dac,
-                ObjectTypes.policy,
-                ObjectTypes.dataset,
-              ])
-            )
-          }
-        }
-      }
-      getSchemas()
-      return () => {
-        isMounted = false
-      }
-    }
-  }, [])
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)

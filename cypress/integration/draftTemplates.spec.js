@@ -4,10 +4,10 @@ describe("draft selections and templates", function () {
   beforeEach(() => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft")
-
+    cy.wait(1000)
+    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
     // Navigate to folder creation
-    cy.get("button[type=button]").contains("New folder").click()
+    cy.get("button[type=button]", { timeout: 10000 }).contains("New folder").click()
 
     // Add folder name & description, navigate to submissions
     cy.get("input[name='name']").type("Test name")
@@ -15,9 +15,9 @@ describe("draft selections and templates", function () {
     cy.get("button[type=button]").contains("Next").click()
   })
 
-  it("should show the list of drafts before folder is published", () => {
+  it("should show the list of drafts before folder is published, and show saved drafts in Home page", () => {
     // Fill a Study form
-    cy.get("div[role=button]").contains("Study").click()
+    cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Study test title")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "Study test title")
@@ -35,12 +35,20 @@ describe("draft selections and templates", function () {
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
+    cy.get("div[role=button]").contains("Study").click()
+
     // Create and Save another draft - Sample draft
-    cy.get("div[role=button]").contains("Sample").click()
-    cy.get("div[role=button]", { timeout: 10000 })
-      .contains("Fill Form")
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.get("div[role=button]").contains("Sample", { timeout: 10000 }).click()
+    cy.wait(500)
+    cy.get("div[aria-expanded='true']")
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
 
     cy.get("input[name='title']").type("Sample draft title ")
     cy.get("input[name='sampleName.taxonId']").type(123)
@@ -64,6 +72,21 @@ describe("draft selections and templates", function () {
 
     // Navigate back to home page
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+
+    // Check if the drafts have been saved as user's templates in Home page
+    cy.contains("Your Draft Templates").should("be.visible")
+    // Check saved Study draft
+    cy.get("h6").contains("Draft-study").as("studyObject")
+    cy.get("@studyObject")
+      .should("be.visible")
+      .then($el => $el.click())
+    cy.get("div[data-schema='draft-study']").contains("Study draft title").should("be.visible")
+    // Check saved Sample draft
+    cy.get("h6").contains("Draft-sample").as("sampleObject")
+    cy.get("@sampleObject")
+      .should("be.visible")
+      .then($el => $el.click())
+    cy.get("div[data-schema='draft-sample']").contains("Sample draft title").should("be.visible")
   })
 
   it("should open the correct draft when clicking View button", () => {
@@ -87,11 +110,17 @@ describe("draft selections and templates", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Create and Save another draft - Sample draft
-    cy.get("div[role=button]").contains("Sample").click()
-    cy.get("div[role=button]", { timeout: 10000 })
-      .contains("Fill Form")
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.get("div[role=button]", { timeout: 10000 }).contains("Sample").click({ force: true })
+    cy.wait(500)
+    cy.get("div[aria-expanded='true']")
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
 
     cy.get("input[name='title']").type("Sample draft title")
     cy.get("input[name='sampleName.taxonId']").type(123)

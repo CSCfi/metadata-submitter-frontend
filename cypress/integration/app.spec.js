@@ -9,7 +9,8 @@ describe("Basic e2e", function () {
   it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft")
+    cy.wait(1000)
+    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()
@@ -38,7 +39,7 @@ describe("Basic e2e", function () {
     // Edit saved submission
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).type(" edited")
+    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).focus().type(" edited")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")

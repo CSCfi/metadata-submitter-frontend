@@ -21,7 +21,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText } from "utils"
+import { getItemPrimaryText, getDraftObjects } from "utils"
 
 const useStyles = makeStyles(theme => ({
   formComponent: {
@@ -98,12 +98,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
   const objectsArray = useSelector(state => state.objectsArray)
   const history = useHistory()
 
-  // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
-  const draftObjects = objectsArray.flatMap((schema: string) => {
-    const draftSchema = `draft-${schema}`
-    const draftArray = folder.drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
-    return draftArray.length > 0 ? [{ [`draft-${schema}`]: draftArray }] : []
-  })
+  const draftObjects = getDraftObjects(folder.drafts, objectsArray)
 
   const methods = useForm()
 

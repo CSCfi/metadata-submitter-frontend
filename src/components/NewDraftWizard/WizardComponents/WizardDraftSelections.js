@@ -139,46 +139,52 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
           const schema = Object.keys(draft)[0]
           return (
             <ConnectForm key={schema}>
-              {({ register }) => (
-                <FormControl className={classes.formControl} fullWidth>
-                  <FormLabel className={classes.formLabel}>{schema}</FormLabel>
-                  <FormGroup>
-                    {draft[schema].map(item => (
-                      <FormControlLabel
-                        key={item.accessionId}
-                        className={classes.formControlLabel}
-                        control={
-                          <Checkbox
-                            color="primary"
-                            name={item.accessionId}
-                            value={item.accessionId}
-                            inputRef={register}
+              {({ register }) => {
+                return (
+                  <FormControl className={classes.formControl} fullWidth>
+                    <FormLabel className={classes.formLabel}>{schema}</FormLabel>
+                    <FormGroup>
+                      {draft[schema].map(item => {
+                        const { ref, ...rest } = register(`${item.accessionId}`)
+                        return (
+                          <FormControlLabel
+                            key={item.accessionId}
+                            className={classes.formControlLabel}
+                            control={
+                              <Checkbox
+                                color="primary"
+                                name={item.accessionId}
+                                value={item.accessionId}
+                                {...rest}
+                                inputRef={ref}
+                              />
+                            }
+                            label={
+                              <div className={classes.label}>
+                                <ListItemText
+                                  className={classes.listItemText}
+                                  primary={getItemPrimaryText(item)}
+                                  secondary={item.accessionId}
+                                  data-schema={item.schema}
+                                />
+                                <Button
+                                  className={classes.viewButton}
+                                  aria-label="View draft"
+                                  variant="outlined"
+                                  size="small"
+                                  onClick={() => handleViewButton(item.schema, item.accessionId)}
+                                >
+                                  View
+                                </Button>
+                              </div>
+                            }
                           />
-                        }
-                        label={
-                          <div className={classes.label}>
-                            <ListItemText
-                              className={classes.listItemText}
-                              primary={getItemPrimaryText(item)}
-                              secondary={item.accessionId}
-                              data-schema={item.schema}
-                            />
-                            <Button
-                              className={classes.viewButton}
-                              aria-label="View draft"
-                              variant="outlined"
-                              size="small"
-                              onClick={() => handleViewButton(item.schema, item.accessionId)}
-                            >
-                              View
-                            </Button>
-                          </div>
-                        }
-                      />
-                    ))}
-                  </FormGroup>
-                </FormControl>
-              )}
+                        )
+                      })}
+                    </FormGroup>
+                  </FormControl>
+                )
+              }}
             </ConnectForm>
           )
         })}

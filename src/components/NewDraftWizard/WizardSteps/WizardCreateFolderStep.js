@@ -3,7 +3,7 @@ import React, { useState } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
@@ -33,8 +33,12 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const folder = useSelector(state => state.submissionFolder)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
-  const { register, errors, handleSubmit, formState } = useForm()
-  const { isSubmitting } = formState
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitting },
+  } = useForm()
+
   const history = useHistory()
 
   const onSubmit = (data: FolderDataFromForm) => {
@@ -56,30 +60,42 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   return (
     <>
       <form className={classes.root} onSubmit={handleSubmit(onSubmit)} ref={createFolderFormRef}>
-        <MuiTextField
+        <Controller
+          control={control}
           name="name"
-          label="Folder Name *"
-          variant="outlined"
-          fullWidth
-          inputRef={register({ required: true, validate: { name: value => value.length > 0 } })}
-          helperText={errors.name ? "Please give a name for folder." : null}
-          error={errors.name ? true : false}
-          disabled={isSubmitting}
           defaultValue={folder ? folder.name : ""}
-        ></MuiTextField>
-        <MuiTextField
+          render={({ field, fieldState: { error } }) => (
+            <MuiTextField
+              {...field}
+              label="Folder Name *"
+              variant="outlined"
+              fullWidth
+              error={!!error}
+              helperText={error ? "Please give a name for folder." : null}
+              disabled={isSubmitting}
+            />
+          )}
+          rules={{ required: true, validate: { name: value => value.length > 0 } }}
+        />
+        <Controller
+          control={control}
           name="description"
-          label="Folder Description *"
-          variant="outlined"
-          fullWidth
-          multiline
-          rows={5}
-          inputRef={register({ required: true, validate: { description: value => value.length > 0 } })}
-          helperText={errors.description ? "Please give a description for folder." : null}
-          error={errors.description ? true : false}
-          disabled={isSubmitting}
           defaultValue={folder ? folder.description : ""}
-        ></MuiTextField>
+          render={({ field, fieldState: { error } }) => (
+            <MuiTextField
+              {...field}
+              label="Folder Description *"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={5}
+              error={!!error}
+              helperText={error ? "Please give a description for folder." : null}
+              disabled={isSubmitting}
+            />
+          )}
+          rules={{ required: true, validate: { description: value => value.length > 0 } }}
+        />
       </form>
       {connError && (
         <WizardStatusMessageHandler successStatus={WizardStatus.error} response={responseError} prefixText="" />

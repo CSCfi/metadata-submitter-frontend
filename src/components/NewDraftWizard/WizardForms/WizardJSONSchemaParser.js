@@ -146,11 +146,9 @@ const getDefaultValue = (nestedField?: any, name: string) => {
       } else {
         return
       }
-
     }
     return nestedField
-  }
-  else {
+  } else {
     return ""
   }
 }
@@ -348,6 +346,7 @@ const FormTextField = ({
     {({ register, errors }) => {
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+      const { ref, ...rest } = register(`${name}`)
 
       return (
         <ValidationTextField
@@ -355,7 +354,8 @@ const FormTextField = ({
           inputProps={{ "data-testid": name }}
           label={label}
           role="textbox"
-          inputRef={register}
+          {...rest}
+          inputRef={ref}
           defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
@@ -385,11 +385,14 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const { ref, ...rest } = register(`${name}`)
+
       return (
         <ValidationSelectField
           name={name}
           label={label}
-          inputRef={register}
+          {...rest}
+          inputRef={ref}
           defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
@@ -416,11 +419,16 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const { ref, ...rest } = register(`${name}`)
+
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
-              <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+              <FormControlLabel
+                control={<Checkbox name={name} {...rest} inputRef={ref} defaultValue="" />}
+                label={label}
+              />
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
           </FormControl>
@@ -441,13 +449,17 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
     <ConnectForm>
       {({ register, errors }) => {
         const error = _.get(errors, name)
+        const { ref, ...rest } = register(`${name}`)
+
         return (
           <FormControl error={!!error} required={required}>
             <FormGroup>
               {options.map<React.Element<typeof FormControlLabel>>(option => (
                 <FormControlLabel
                   key={option}
-                  control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+                  control={
+                    <Checkbox name={name} {...rest} inputRef={ref} value={option} color="primary" defaultValue="" />
+                  }
                   label={option}
                 />
               ))}
@@ -527,4 +539,3 @@ export default {
   buildFields,
   cleanUpFormValues,
 }
-

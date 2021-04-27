@@ -50,7 +50,7 @@ describe("WizardStepper", () => {
         </ThemeProvider>
       </Provider>
     )
-    const input = await screen.findByRole("textbox")
+    const input = await screen.findByTestId("xml-upload")
     userEvent.upload(input, file)
 
     expect(input.files[0]).toStrictEqual(file)

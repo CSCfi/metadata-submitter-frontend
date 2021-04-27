@@ -194,6 +194,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
               type="file"
               name="fileUpload"
               id="file-select-button"
+              data-testid="xml-upload"
               hidden
               ref={register({
                 validate: {

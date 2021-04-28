@@ -70,11 +70,7 @@ const App = (): React$Element<typeof React.Fragment> => {
   // Fetch only if the initial array is empty
   // if there is any errors while fetching, it will return a manually created ObjectsArray instead
   useEffect(() => {
-<<<<<<< HEAD
     if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
-=======
-    if (location.pathname === "/") return
->>>>>>> 96bffca (Set object index array on app start)
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()

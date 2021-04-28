@@ -1,7 +1,10 @@
 //@flow
 import { create } from "apisauce"
+import { omit } from "lodash"
 
 import { errorMonitor } from "./errorMonitor"
+
+import { OmitObjectValues } from "constants/wizardObject"
 
 const api = create({ baseURL: "/objects" })
 api.addMonitor(errorMonitor)
@@ -25,7 +28,7 @@ const getAllObjectsByObjectType = async (objectType: string): Promise<any> => {
 }
 
 const patchFromJSON = async (objectType: string, accessionId: any, JSONContent: any): Promise<any> => {
-  return await api.patch(`/${objectType}/${accessionId}`, JSONContent)
+  return await api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
 }
 
 const replaceXML = async (objectType: string, accessionId: string, XMLFile: string): Promise<any> => {

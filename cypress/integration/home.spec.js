@@ -46,7 +46,7 @@ describe("Home e2e", function () {
 
     cy.reload()
     // Click "See all" button to navigate to all unpublished folders list
-    cy.get("div.MuiCardActions-root", { timeout: 30000 })
+    cy.get("div.MuiCardActions-root", { timeout: 60000 })
       .first()
       .should("be.visible")
       .find("button")
@@ -55,12 +55,12 @@ describe("Home e2e", function () {
       .then($btn => $btn.click())
 
     // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root", { timeout: 10000 })
+    cy.get("ul.MuiList-root", { timeout: 30000 })
       .should("be.visible")
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .filter(':contains("Test unpublished folder")', { timeout: 30000 })
+          .filter(':contains("Test unpublished folder")', { timeout: 60000 })
           .should("be.visible")
           .then($el => $el.last().click())
       )

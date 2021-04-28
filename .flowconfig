@@ -9,7 +9,5 @@
 [options]
 # Set up support for absolute imports
 module.name_mapper='^\([^\.].*\)$' -> '<PROJECT_ROOT>/src/\1'
-# Enable support for the use of optional chaining per the currently (Aug 2020) pending spec.
-esproposal.optional_chaining=enable
 
 [strict]

@@ -285,6 +285,7 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
   const [field, setField] = useState(fieldValue)
 
   const handleChange = event => setField(event.target.value)
+
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -346,7 +347,7 @@ const FormTextField = ({
     {({ register, errors }) => {
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
-      const { ref, ...rest } = register(`${name}`)
+      const { ref, ...rest } = register(name)
 
       return (
         <ValidationTextField
@@ -385,7 +386,7 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
-      const { ref, ...rest } = register(`${name}`)
+      const { ref, ...rest } = register(name)
 
       return (
         <ValidationSelectField
@@ -419,7 +420,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
-      const { ref, ...rest } = register(`${name}`)
+      const { ref, ...rest } = register(name)
 
       return (
         <Box display="inline" px={1}>
@@ -449,7 +450,7 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
     <ConnectForm>
       {({ register, errors }) => {
         const error = _.get(errors, name)
-        const { ref, ...rest } = register(`${name}`)
+        const { ref, ...rest } = register(name)
 
         return (
           <FormControl error={!!error} required={required}>

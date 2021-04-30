@@ -39,7 +39,7 @@ describe("Basic e2e", function () {
     // Edit saved submission
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).focus().type(" edited")
+    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).focus().type(" edited").blur()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
@@ -93,7 +93,9 @@ describe("Basic e2e", function () {
       cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
       cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
       cy.get("h4").contains("Sequence").parent().children("button").click()
-      cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type("Sequence Standard Accession Id")
+      cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type(
+        "Sequence Standard Accession Id"
+      )
 
       // Experiment
       cy.get("h2").contains("Experiment Reference").parent().children("button").click()
@@ -136,7 +138,6 @@ describe("Basic e2e", function () {
       cy.get("select[name='files[1].filetype']").select("info")
       cy.get("select[name='files[1].checksumMethod']").select("SHA256")
       cy.get("input[name='files[1].checksum']").type("c34045c1a1db8d1b3fca8a692198466952daae07eaf6104b4c87ed3b55b6af1b")
-
     })
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()

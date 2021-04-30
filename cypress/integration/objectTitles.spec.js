@@ -33,10 +33,9 @@ describe("draft and submitted objects' titles", function () {
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title")
-    cy.get("input[name='descriptor.studyTitle']").type(" 2").blur()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title").type(" 2").blur()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title 2")
-    cy.get("button[type=button]").contains("Update").click()
+    cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check the submitted object has correctly updated displayTitle

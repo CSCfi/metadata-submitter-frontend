@@ -44,7 +44,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
-    cy.reload()
+    cy.wait(500)
     // Click "See all" button to navigate to all unpublished folders list
     cy.get("div.MuiCardActions-root", { timeout: 60000 })
       .first()

@@ -12,14 +12,11 @@ import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { ObjectTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
-import { setObjectsArray } from "features/objectsArraySlice"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
-import schemaAPIService from "services/schemaAPI"
 
 const useStyles = makeStyles(theme => ({
   tableCard: {
@@ -36,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 const Home = (): React$Element<typeof Grid> => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  const objectsArray = useSelector(state => state.objectsArray)
 
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
@@ -72,44 +68,6 @@ const Home = (): React$Element<typeof Grid> => {
     getFolders()
     return () => {
       isMounted = false
-    }
-  }, [])
-
-  // Fetch array of schemas from backend and store it in frontend
-  // Fetch only if the initial array is empty
-  // if there is any errors while fetching, it will return a manually created ObjectsArray instead
-  useEffect(() => {
-    if (objectsArray?.length === 0) {
-      let isMounted = true
-      const getSchemas = async () => {
-        const response = await schemaAPIService.getAllSchemas()
-
-        if (isMounted) {
-          if (response.ok) {
-            const schemas = response.data
-              .filter(schema => schema.title !== "Project" && schema.title !== "Submission")
-              .map(schema => schema.title.toLowerCase())
-            dispatch(setObjectsArray(schemas))
-          } else {
-            dispatch(
-              setObjectsArray([
-                ObjectTypes.study,
-                ObjectTypes.sample,
-                ObjectTypes.experiment,
-                ObjectTypes.run,
-                ObjectTypes.analysis,
-                ObjectTypes.dac,
-                ObjectTypes.policy,
-                ObjectTypes.dataset,
-              ])
-            )
-          }
-        }
-      }
-      getSchemas()
-      return () => {
-        isMounted = false
-      }
     }
   }, [])
 

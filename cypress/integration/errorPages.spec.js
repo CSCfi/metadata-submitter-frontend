@@ -40,6 +40,6 @@ describe("catch error codes and display corresponding error page", function () {
     )
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.contains(".MuiAlert-message", "500 Internal Server Error")
+    cy.contains(".MuiAlert-message", "500 Internal Server Error", { timeout: 10000 })
   })
 })

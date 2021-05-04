@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep } from "lodash"
+import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -20,7 +20,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
@@ -425,7 +425,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-  const { folderId } = useSelector(state => state.submissionFolder)
+  const { folderId, metadataObjects } = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
 
   // States that will update in useEffect()
@@ -465,9 +465,22 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       } else {
         schema = JSON.parse(schema)
       }
+
+      // Override AccessionId fields
+      const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(schema)
+
+      // Experiment
+      if (schema.title.toLowerCase() === ObjectTypes.experiment) {
+        const studySubmissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === ObjectTypes.study)
+        if (studySubmissions.length > 0) {
+          const studyAccessionIds = studySubmissions.map(obj => obj.accessionId)
+          set(dereferencedSchema, "properties.studyRef.properties.accessionId.enum", studyAccessionIds)
+        }
+      }
+
       setStates({
         ...states,
-        formSchema: await JSONSchemaParser.dereferenceSchema(schema),
+        formSchema: dereferencedSchema,
         validationSchema: schema,
         isLoading: false,
       })

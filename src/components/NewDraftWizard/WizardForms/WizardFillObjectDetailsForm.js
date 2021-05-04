@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep, set } from "lodash"
+import { cloneDeep, merge } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -467,14 +467,17 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       }
 
       // Override AccessionId fields
-      const dereferencedSchema = await JSONSchemaParser.dereferenceSchema(schema)
+      let dereferencedSchema = await JSONSchemaParser.dereferenceSchema(schema)
 
       // Experiment
       if (schema.title.toLowerCase() === ObjectTypes.experiment) {
         const studySubmissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === ObjectTypes.study)
+
         if (studySubmissions.length > 0) {
           const studyAccessionIds = studySubmissions.map(obj => obj.accessionId)
-          set(dereferencedSchema, "properties.studyRef.properties.accessionId.enum", studyAccessionIds)
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
+          })
         }
       }
 

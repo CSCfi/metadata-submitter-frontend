@@ -516,7 +516,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
 
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
-            <Paper name="asd" elevation={2}>
+            <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
                 return traverseFields(properties[item], pathForThisIndex, [], field)
@@ -528,7 +528,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
           </div>
         )
       })}
-      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append(items)}>
+      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append({})}>
         Add new item
       </Button>
     </div>

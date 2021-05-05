@@ -14,6 +14,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
 import { withStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
+import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
@@ -29,6 +30,12 @@ const highlightStyle = theme => {
     borderWidth: 2,
   }
 }
+
+/*
+* To render tooltips of fields conditionally
+*/
+const TooltipWrapper = ({ title, wrapper,  children} ) => 
+  title ? wrapper(children) : children
 
 /*
  * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
@@ -150,6 +157,7 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem)
+  const description = object.description
   switch (object.type) {
     case "object": {
       const properties = object.properties
@@ -171,24 +179,25 @@ const traverseFields = (object: any, path: string[], requiredProperties?: string
           label={label}
           options={object.enum}
           required={required}
+          description={description}
           nestedField={nestedField}
         />
       ) : (
-        <FormTextField key={name} name={name} label={label} required={required} nestedField={nestedField} />
+        <FormTextField key={name} name={name} label={label} required={required} description={description} nestedField={nestedField} />
       )
     }
     case "integer": {
-      return <FormTextField key={name} name={name} label={label} required={required} />
+      return <FormTextField key={name} name={name} label={label} required={required} description={description} />
     }
     case "number": {
-      return <FormTextField key={name} name={name} label={label} required={required} type="number" />
+      return <FormTextField key={name} name={name} label={label} required={required} description={description} type="number" />
     }
     case "boolean": {
-      return <FormBooleanField key={name} name={name} label={label} required={required} />
+      return <FormBooleanField key={name} name={name} label={label} required={required} description={description} />
     }
     case "array": {
       return object.items.enum ? (
-        <FormCheckBoxArray key={name} name={name} label={label} options={object.items.enum} required={required} />
+        <FormCheckBoxArray key={name} name={name} label={label} options={object.items.enum} required={required} description={description} />
       ) : (
         <FormArray key={name} object={object} path={path} />
       )
@@ -254,13 +263,15 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
-type FormSelectFieldProps = FormFieldBaseProps & { options: string[], nestedField?: any }
+type FormSelectFieldProps = FormFieldBaseProps & { description: string, options: string[], nestedField?: any }
 
 /*
  * FormOneOfField is rendered if property can be choosed from many possible.
  */
 const FormOneOfField = ({ path, object, nestedField }: { path: string[], object: any, nestedField?: any }) => {
   const options = object.oneOf
+  const description = object.description
+
   // Get the fieldValue when rendering a saved/submitted form
   // For e.g. obj.required is ["label", "url"] and nestedField is {id: "sth1", label: "sth2", url: "sth3"}
   let fieldValue = ""
@@ -282,26 +293,28 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
         const error = _.get(errors, name)
         return (
           <div>
-            <TextField
-              name={name}
-              label={label}
-              defaultValue={field}
-              select
-              SelectProps={{ native: true }}
-              onChange={handleChange}
-              error={!!error}
-              helperText={error?.message}
-            >
-              <option aria-label="None" value="" disabled />
-              {options.map(optionObject => {
-                const option = optionObject.title
-                return (
-                  <option key={`${name}-${option}`} value={option}>
-                    {option}
-                  </option>
-                )
-              })}
-            </TextField>
+            <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
+              <TextField
+                name={name}
+                label={label}
+                defaultValue={field}
+                select
+                SelectProps={{ native: true }}
+                onChange={handleChange}
+                error={!!error}
+                helperText={error?.message}
+              >
+                <option aria-label="None" value="" disabled />
+                {options.map(optionObject => {
+                  const option = optionObject.title
+                  return (
+                    <option key={`${name}-${option}`} value={option}>
+                      {option}
+                    </option>
+                  )
+                })}
+              </TextField>
+            </TooltipWrapper>
             {field ? traverseFields(options.filter(option => option.title === field)[0], path, [], nestedField) : null}
           </div>
         )
@@ -326,29 +339,32 @@ const FormTextField = ({
   name,
   label,
   required,
+  description,
   type = "string",
   nestedField,
-}: FormFieldBaseProps & { type?: string, nestedField?: any }) => (
+}: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
 
       return (
-        <ValidationTextField
-          name={name}
-          inputProps={{ "data-testid": name }}
-          label={label}
-          role="textbox"
-          inputRef={register}
-          defaultValue={getDefaultValue(nestedField, name)}
-          error={!!error}
-          helperText={error?.message}
-          required={required}
-          type={type}
-          multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-          rows={5}
-        />
+        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
+          <ValidationTextField
+            name={name}
+            inputProps={{ "data-testid": name }}
+            label={label}
+            role="textbox"
+            inputRef={register}
+            defaultValue={getDefaultValue(nestedField, name)}
+            error={!!error}
+            helperText={error?.message}
+            required={required}
+            type={type}
+            multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+            rows={5}
+          />
+        </TooltipWrapper>
       )
     }}
   </ConnectForm>
@@ -366,11 +382,12 @@ const ValidationSelectField = withStyles(theme => ({
 /*
  * FormSelectField is rendered for choosing one from many options
  */
-const FormSelectField = ({ name, label, required, options, nestedField }: FormSelectFieldProps) => (
+const FormSelectField = ({ name, label, required, description, options, nestedField }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
       return (
+        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
         <ValidationSelectField
           name={name}
           label={label}
@@ -389,19 +406,22 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
             </option>
           ))}
         </ValidationSelectField>
+        </TooltipWrapper>
       )
     }}
   </ConnectForm>
 )
 
-/*
+/* !!! Analysis Sequence Variantion imputation checkbox does not have description
  * FormSelectField is rendered for checkboxes
  */
-const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
+const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps  & { description: string}) => (
   <ConnectForm>
     {({ register, errors }) => {
+        console.log("FormBoolean")
       const error = _.get(errors, name)
       return (
+        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
@@ -410,6 +430,7 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
             </FormGroup>
           </FormControl>
         </Box>
+        </TooltipWrapper>
       )
     }}
   </ConnectForm>

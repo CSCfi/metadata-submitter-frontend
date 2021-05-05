@@ -67,7 +67,13 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
   const classes = useStyles()
   const currentObject = useSelector(state => state.currentObject)
-  const { register, errors, watch, handleSubmit, reset } = useForm({ mode: "onChange" })
+  const {
+    register,
+    watch,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({ mode: "onChange" })
   const [placeHolder, setPlaceHolder] = useState("Name")
 
   const watchFile = watch("fileUpload")
@@ -192,11 +198,10 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
             </Button>
             <input
               type="file"
-              name="fileUpload"
               id="file-select-button"
               data-testid="xml-upload"
               hidden
-              ref={register({
+              {...register("fileUpload", {
                 validate: {
                   isFile: value => value.length > 0,
                   isXML: value => value[0]?.type === "text/xml",

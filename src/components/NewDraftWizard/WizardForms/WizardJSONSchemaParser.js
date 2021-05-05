@@ -146,11 +146,9 @@ const getDefaultValue = (nestedField?: any, name: string) => {
       } else {
         return
       }
-
     }
     return nestedField
-  }
-  else {
+  } else {
     return ""
   }
 }
@@ -287,6 +285,7 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
   const [field, setField] = useState(fieldValue)
 
   const handleChange = event => setField(event.target.value)
+
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -348,6 +347,7 @@ const FormTextField = ({
     {({ register, errors }) => {
       const error = _.get(errors, name)
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+      const { ref, ...rest } = register(name)
 
       return (
         <ValidationTextField
@@ -355,7 +355,8 @@ const FormTextField = ({
           inputProps={{ "data-testid": name }}
           label={label}
           role="textbox"
-          inputRef={register}
+          {...rest}
+          inputRef={ref}
           defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
@@ -385,11 +386,14 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const { ref, ...rest } = register(name)
+
       return (
         <ValidationSelectField
           name={name}
           label={label}
-          inputRef={register}
+          {...rest}
+          inputRef={ref}
           defaultValue={getDefaultValue(nestedField, name)}
           error={!!error}
           helperText={error?.message}
@@ -416,11 +420,16 @@ const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
+      const { ref, ...rest } = register(name)
+
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
-              <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+              <FormControlLabel
+                control={<Checkbox name={name} {...rest} inputRef={ref} defaultValue="" />}
+                label={label}
+              />
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
           </FormControl>
@@ -441,13 +450,17 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
     <ConnectForm>
       {({ register, errors }) => {
         const error = _.get(errors, name)
+        const { ref, ...rest } = register(name)
+
         return (
           <FormControl error={!!error} required={required}>
             <FormGroup>
               {options.map<React.Element<typeof FormControlLabel>>(option => (
                 <FormControlLabel
                   key={option}
-                  control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+                  control={
+                    <Checkbox name={name} {...rest} inputRef={ref} value={option} color="primary" defaultValue="" />
+                  }
                   label={option}
                 />
               ))}
@@ -503,7 +516,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
 
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
-            <Paper name="asd" elevation={2}>
+            <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
                 return traverseFields(properties[item], pathForThisIndex, [], field)
@@ -515,7 +528,7 @@ const FormArray = ({ object, path }: FormArrayProps) => {
           </div>
         )
       })}
-      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append(items)}>
+      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append({})}>
         Add new item
       </Button>
     </div>
@@ -527,4 +540,3 @@ export default {
   buildFields,
   cleanUpFormValues,
 }
-

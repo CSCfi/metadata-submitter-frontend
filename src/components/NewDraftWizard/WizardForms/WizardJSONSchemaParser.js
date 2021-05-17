@@ -343,7 +343,7 @@ const FormTextField = ({
       return (
         <ValidationTextField
           name={name}
-          inputProps={{ "data-testid": name }, {"title": description}}
+          inputProps={{ "data-testid": name, "title": description}}
           label={label}
           role="textbox"
           inputRef={register}

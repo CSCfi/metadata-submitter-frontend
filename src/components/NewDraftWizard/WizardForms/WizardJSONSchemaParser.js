@@ -14,7 +14,6 @@ import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
 import { withStyles } from "@material-ui/core/styles"
 import TextField from "@material-ui/core/TextField"
-import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
@@ -30,12 +29,6 @@ const highlightStyle = theme => {
     borderWidth: 2,
   }
 }
-
-/*
-* To render tooltips of fields conditionally
-*/
-const TooltipWrapper = ({ title, wrapper,  children} ) => 
-  title ? wrapper(children) : children
 
 /*
  * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
@@ -293,9 +286,9 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
         const error = _.get(errors, name)
         return (
           <div>
-            <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
               <TextField
                 name={name}
+              inputProps={{"title": description}}
                 label={label}
                 defaultValue={field}
                 select
@@ -314,7 +307,6 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
                   )
                 })}
               </TextField>
-            </TooltipWrapper>
             {field ? traverseFields(options.filter(option => option.title === field)[0], path, [], nestedField) : null}
           </div>
         )
@@ -349,10 +341,9 @@ const FormTextField = ({
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
 
       return (
-        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
           <ValidationTextField
             name={name}
-            inputProps={{ "data-testid": name }}
+            inputProps={{ "data-testid": name }, {"title": description}}
             label={label}
             role="textbox"
             inputRef={register}
@@ -364,7 +355,6 @@ const FormTextField = ({
             multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
             rows={5}
           />
-        </TooltipWrapper>
       )
     }}
   </ConnectForm>
@@ -387,9 +377,9 @@ const FormSelectField = ({ name, label, required, description, options, nestedFi
     {({ register, errors }) => {
       const error = _.get(errors, name)
       return (
-        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
         <ValidationSelectField
           name={name}
+          inputProps={{"title": description}}
           label={label}
           inputRef={register}
           defaultValue={getDefaultValue(nestedField, name)}
@@ -406,7 +396,6 @@ const FormSelectField = ({ name, label, required, description, options, nestedFi
             </option>
           ))}
         </ValidationSelectField>
-        </TooltipWrapper>
       )
     }}
   </ConnectForm>
@@ -421,16 +410,14 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
         console.log("FormBoolean")
       const error = _.get(errors, name)
       return (
-        <TooltipWrapper title={description} wrapper={(children) => <Tooltip title={description} placement="top">{children}</Tooltip>} >
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
-              <FormControlLabel control={<Checkbox name={name} inputRef={register} defaultValue="" />} label={label} />
+              <FormControlLabel control={<Checkbox name={name} inputProps={{"title": description}} inputRef={register} defaultValue="" />} label={label} />
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
           </FormControl>
         </Box>
-        </TooltipWrapper>
       )
     }}
   </ConnectForm>

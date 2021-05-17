@@ -286,27 +286,27 @@ const FormOneOfField = ({ path, object, nestedField }: { path: string[], object:
         const error = _.get(errors, name)
         return (
           <div>
-              <TextField
-                name={name}
+            <TextField
+              name={name}
               inputProps={{"title": description}}
-                label={label}
-                defaultValue={field}
-                select
-                SelectProps={{ native: true }}
-                onChange={handleChange}
-                error={!!error}
-                helperText={error?.message}
-              >
-                <option aria-label="None" value="" disabled />
-                {options.map(optionObject => {
-                  const option = optionObject.title
-                  return (
-                    <option key={`${name}-${option}`} value={option}>
-                      {option}
-                    </option>
-                  )
-                })}
-              </TextField>
+              label={label}
+              defaultValue={field}
+              select
+              SelectProps={{ native: true }}
+              onChange={handleChange}
+              error={!!error}
+              helperText={error?.message}
+            >
+              <option aria-label="None" value="" disabled />
+              {options.map(optionObject => {
+                const option = optionObject.title
+                return (
+                  <option key={`${name}-${option}`} value={option}>
+                    {option}
+                  </option>
+                )
+              })}
+            </TextField>
             {field ? traverseFields(options.filter(option => option.title === field)[0], path, [], nestedField) : null}
           </div>
         )
@@ -341,20 +341,20 @@ const FormTextField = ({
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
 
       return (
-          <ValidationTextField
-            name={name}
-            inputProps={{ "data-testid": name }, {"title": description}}
-            label={label}
-            role="textbox"
-            inputRef={register}
-            defaultValue={getDefaultValue(nestedField, name)}
-            error={!!error}
-            helperText={error?.message}
-            required={required}
-            type={type}
-            multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-            rows={5}
-          />
+        <ValidationTextField
+          name={name}
+          inputProps={{ "data-testid": name }, {"title": description}}
+          label={label}
+          role="textbox"
+          inputRef={register}
+          defaultValue={getDefaultValue(nestedField, name)}
+          error={!!error}
+          helperText={error?.message}
+          required={required}
+          type={type}
+          multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+          rows={5}
+        />
       )
     }}
   </ConnectForm>
@@ -426,7 +426,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
 /*
  * FormSelectField is rendered for selection from options where it's possible to choose many options
  */
-const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldProps) => (
+const FormCheckBoxArray = ({ name, label, required, options, description }: FormSelectFieldProps  & { description: string}) => (
   <Box px={1}>
     <p>
       <strong>{label}</strong> - check from following options
@@ -440,7 +440,7 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
               {options.map<React.Element<typeof FormControlLabel>>(option => (
                 <FormControlLabel
                   key={option}
-                  control={<Checkbox name={name} inputRef={register} value={option} color="primary" defaultValue="" />}
+                  control={<Checkbox name={name} inputProps={{"title": description}} inputRef={register} value={option} color="primary" defaultValue="" />}
                   label={option}
                 />
               ))}

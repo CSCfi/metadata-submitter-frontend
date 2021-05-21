@@ -181,7 +181,11 @@ const traverseFields = (
             let requireFirstItem = false
 
             // Require first field of section if parent section is a required property
-            if (requiredProperties?.includes(name) || requiredProperties?.includes((Object.keys(properties): any)[0])) {
+            if (
+              requireFirst ||
+              requiredProperties?.includes(name) ||
+              requiredProperties?.includes((Object.keys(properties): any)[0])
+            ) {
               requireFirstItem = (Object.values(properties): any)[0].title === property.title ? true : false
             }
 
@@ -324,11 +328,52 @@ const FormOneOfField = ({
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
 
+  const getChildObjects = (obj?: any) => {
+    if (obj) {
+      let childProps
+      for (const key in obj) {
+        // Check if object has nested "properties"
+        if (key === "properties") {
+          childProps = obj.properties
+          const childPropsValues = Object.values(childProps)[0]
+          if (Object.prototype.hasOwnProperty.call(childPropsValues, "properties")) {
+            getChildObjects(childPropsValues)
+          }
+        }
+      }
+
+      const firstProp = childProps ? Object.keys(childProps)[0] : ""
+      return { obj, firstProp }
+    }
+    return {}
+  }
+
   return (
     <ConnectForm>
       {({ errors }) => {
         const error = _.get(errors, name)
-        const properties = Object.keys(options.filter(option => option.title === field)[0]?.properties || {})[0]
+        // Selected option
+        const selectedOption = options.filter(option => option.title === field)[0]?.properties || {}
+        const selectedOptionValues = Object.values(selectedOption)
+
+        let childObject: any
+        let requiredProp: string
+
+        // If selectedOption has many nested "properties"
+        if (
+          selectedOptionValues.length > 0 &&
+          Object.prototype.hasOwnProperty.call(selectedOptionValues[0], "properties")
+        ) {
+          const { obj, firstProp } = getChildObjects(Object.values(selectedOption)[0])
+          childObject = obj
+          requiredProp = firstProp
+        }
+        // Else if selectedOption has no nested "properties"
+        else {
+          childObject = options.filter(option => option.title === field)[0]
+          requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
+        }
+
         return (
           <div>
             <ValidationSelectField
@@ -354,10 +399,10 @@ const FormOneOfField = ({
             </ValidationSelectField>
             {field
               ? traverseFields(
-                  options.filter(option => option.title === field)[0],
+                  childObject,
                   path,
-                  required ? [properties] : [],
-                  true,
+                  required && requiredProp ? requiredProp.split(",") : [],
+                  childObject?.required ? false : true,
                   nestedField
                 )
               : null}
@@ -523,8 +568,10 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   const label = object.title ?? lastPathItem
   const items = (traverseValues(object.items): any)
   const level = path.length + 1
-  const { fields, append, remove } = useFieldArray({ name })
+  console.log("name :>> ", name)
 
+  const { fields, append, remove } = useFieldArray({ name })
+  console.log("fields :>> ", fields)
   return (
     <div className="array" key={`${name}-array`}>
       <Typography key={`${name}-header`} variant={`h${level}`}>
@@ -555,7 +602,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(properties[item], pathForThisIndex, [], field)
+                return traverseFields(properties[item], pathForThisIndex, [], false, field)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

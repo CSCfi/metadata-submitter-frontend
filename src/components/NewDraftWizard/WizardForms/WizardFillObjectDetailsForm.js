@@ -230,6 +230,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     methods.reset({})
     setCleanedValues({})
     dispatch(resetDraftStatus())
+    dispatch(resetCurrentObject())
   }
 
   // Check if the form is empty

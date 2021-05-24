@@ -90,11 +90,12 @@ describe("Basic e2e", function () {
 
       // Analysis type
       cy.get("select[name='analysisType']").select("Reference Alignment")
-      cy.get("select[name='analysisType']", { timeout: 10000 }).should("have.value", "Reference Alignment")
-      cy.get("select[name='analysisType.assembly']").select("Standard")
-      cy.get("input[name='analysisType.assembly.accessionId']").type("Standard Accession Id")
-      cy.get("h3").contains("Sequence").parent().children("button").click()
-      cy.get("input[name='analysisType.sequence[0].accessionId']").type("Sequence Standard Accession Id")
+      cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
+      cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
+      cy.get("h4").contains("Sequence").parent().children("button").click()
+      cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type(
+        "Sequence Standard Accession Id"
+      )
 
       // Experiment
       cy.get("h2").contains("Experiment Reference").parent().children("button").click()

@@ -399,7 +399,7 @@ const FormOneOfField = ({
             </ValidationSelectField>
             {field
               ? traverseFields(
-                  childObject,
+                  options.filter(option => option.title === field)[0],
                   path,
                   required && requiredProp ? requiredProp.split(",") : [],
                   childObject?.required ? false : true,
@@ -568,10 +568,9 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   const label = object.title ?? lastPathItem
   const items = (traverseValues(object.items): any)
   const level = path.length + 1
-  console.log("name :>> ", name)
 
   const { fields, append, remove } = useFieldArray({ name })
-  console.log("fields :>> ", fields)
+
   return (
     <div className="array" key={`${name}-array`}>
       <Typography key={`${name}-header`} variant={`h${level}`}>

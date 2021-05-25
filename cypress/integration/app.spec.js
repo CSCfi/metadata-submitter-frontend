@@ -139,7 +139,7 @@ describe("Basic e2e", function () {
       cy.get("h2").contains("Files").parent().children("button").click()
       cy.get("input[name='files[1].filename']").type("filename 2")
       cy.get("select[name='files[1].filetype']").select("info")
-      cy.get("select[name='files[1].checksumMethod']").select("SHA256")
+      cy.get("select[name='files[1].checksumMethod']").select("SHA-256")
       cy.get("input[name='files[1].checksum']").type("c34045c1a1db8d1b3fca8a692198466952daae07eaf6104b4c87ed3b55b6af1b")
     })
     // Submit form

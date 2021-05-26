@@ -401,7 +401,7 @@ const FormSelectField = ({ name, label, required, description, options, nestedFi
   </ConnectForm>
 )
 
-/* !!! Analysis Sequence Variantion imputation checkbox does not have description
+/*
  * FormSelectField is rendered for checkboxes
  */
 const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps  & { description: string}) => (

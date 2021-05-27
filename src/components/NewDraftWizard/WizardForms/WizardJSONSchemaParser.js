@@ -563,7 +563,7 @@ type FormArrayProps = {
  * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
  */
 const FormArray = ({ object, path, required }: FormArrayProps) => {
-  const name = pathToName(path)
+  const name = path.length === 1 ? pathToName(path) : path[path.length - 1]
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
   const items = (traverseValues(object.items): any)

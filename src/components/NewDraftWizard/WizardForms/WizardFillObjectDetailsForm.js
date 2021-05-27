@@ -87,21 +87,18 @@ const useStyles = makeStyles(theme => ({
           width: "95%",
         },
       },
-      "& h2, h3, h4": {
+      "& h2, h3, h4, h5, h6": {
         margin: theme.spacing(1, 0),
       },
-<<<<<<< HEAD
-=======
       "& .MuiPaper-elevation2": {
         paddingRight: theme.spacing(1),
         "& .array": { margin: 0 },
-        "& h2, h3, h4": { margin: theme.spacing(1), width: "95%" },
+        "& h3, h4": { margin: theme.spacing(1) },
         "& button": { margin: theme.spacing(0, 1) },
       },
       "& .MuiSelect-outlined": {
         marginRight: 0,
       },
->>>>>>> 4fe3185 (Form edit E2E tests)
     },
   },
 }))

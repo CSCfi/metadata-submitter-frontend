@@ -571,6 +571,8 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
   const { fields, append, remove } = useFieldArray({ name })
 
+  const currentObject = useSelector(state => state.currentObject) || {}
+
   return (
     <div className="array" key={`${name}-array`}>
       <Typography key={`${name}-header`} variant={`h${level}`}>
@@ -610,6 +612,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           </div>
         )
       })}
+
       <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append({})}>
         Add new item
       </Button>

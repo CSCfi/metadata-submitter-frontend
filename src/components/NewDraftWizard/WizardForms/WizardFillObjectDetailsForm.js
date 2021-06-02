@@ -463,7 +463,6 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       let dereferencedSchema: Promise<any> = await JSONSchemaParser.dereferenceSchema(schema)
       dereferencedSchema = getLinkedDereferencedSchema(schema.title.toLowerCase(), dereferencedSchema)
 
-      console.log("dereferencedSchema :>> ", dereferencedSchema)
       setStates({
         ...states,
         formSchema: dereferencedSchema,
@@ -480,7 +479,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     return accessionIds
   }
 
-  const getLinkedDereferencedSchema = (schemaTitle: string, dereferencedSchema: Promise<any>) => {
+  const getLinkedDereferencedSchema = (objectType: string, dereferencedSchema: Promise<any>) => {
     // AccessionIds of submitted objects
     const studyAccessionIds = getAccessionIds(ObjectTypes.study)
     const sampleAccessionIds = getAccessionIds(ObjectTypes.sample)
@@ -490,7 +489,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     const policyAccessionIds = getAccessionIds(ObjectTypes.policy)
     const dacAccessionIds = getAccessionIds(ObjectTypes.dac)
 
-    switch (schemaTitle) {
+    switch (objectType) {
       case ObjectTypes.experiment:
         // Study Link
         if (studyAccessionIds.length > 0) {

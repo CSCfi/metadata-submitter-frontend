@@ -213,6 +213,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     setCleanedValues(currentObject)
   }, [currentObject?.accessionId])
 
+  console.log("formSchema :>> ", formSchema)
   // Check if form has been edited
   useEffect(() => {
     checkDirty()

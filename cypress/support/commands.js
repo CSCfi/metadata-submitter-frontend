@@ -28,7 +28,7 @@
 import "cypress-file-upload"
 
 // Reusable commands
-const baseUrl = Cypress.env("baseUrl")
+const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
 
 Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
   const mockAuthUrl = "http://" + Cypress.env("mockAuthHost") + ":" + Cypress.env("mockAuthPort") + "/setmock"

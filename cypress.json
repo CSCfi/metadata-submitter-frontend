@@ -2,7 +2,6 @@
   "env": {
     "port": "3000",
     "mockAuthHost": "localhost",
-    "mockAuthPort": "8000",
-    "baseUrl": "http://localhost:3000/"
+    "mockAuthPort": "8000"
   }
 }

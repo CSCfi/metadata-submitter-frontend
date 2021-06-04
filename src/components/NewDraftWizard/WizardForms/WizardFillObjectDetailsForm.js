@@ -118,15 +118,8 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const {
-    objectType,
-    currentObject,
-    refForm,
-    onClickNewForm,
-    onClickClearForm,
-    onClickSaveDraft,
-    onClickSubmit,
-  } = props
+  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
+    props
 
   const dispatch = useDispatch()
 
@@ -213,7 +206,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     setCleanedValues(currentObject)
   }, [currentObject?.accessionId])
 
-  console.log("formSchema :>> ", formSchema)
   // Check if form has been edited
   useEffect(() => {
     checkDirty()

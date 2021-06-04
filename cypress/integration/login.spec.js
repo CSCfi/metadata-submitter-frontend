@@ -3,7 +3,7 @@ describe("Login e2e", function () {
     cy.setMockUser("frontend.test", "FrontendTest", "E2EUser")
   })
 
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
+  const baseUrl = Cypress.env("baseUrl")
 
   it("should contain session cookie", () => {
     cy.visit(baseUrl)

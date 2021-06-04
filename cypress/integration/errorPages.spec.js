@@ -1,5 +1,5 @@
 describe("catch error codes and display corresponding error page", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
+  const baseUrl = Cypress.env("baseUrl")
 
   it("should redirect to 401 page if no granted access", () => {
     cy.visit(baseUrl + "folders")

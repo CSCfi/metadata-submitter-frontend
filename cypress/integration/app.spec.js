@@ -1,15 +1,11 @@
 describe("Basic e2e", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   it("should navigate to home with click of login button", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
   })
 
   it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
+    cy.login()
+
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
@@ -68,11 +64,7 @@ describe("Basic e2e", function () {
     cy.contains(".MuiAlert-message", "Object replaced")
 
     // Fill an Analysis form and submit object
-    cy.get("div[role=button]").contains("Analysis").click()
-    cy.get("div[role=button]")
-      .contains("Fill Form")
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.clickFillForm("Analysis")
 
     cy.get("form").within(() => {
       cy.get("input[name='title']").type("Test title")

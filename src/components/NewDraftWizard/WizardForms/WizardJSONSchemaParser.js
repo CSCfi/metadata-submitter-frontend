@@ -507,17 +507,25 @@ const ValidationFormControlLabel = withStyles(theme => ({
  */
 const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
-    {({ register, errors }) => {
+    {({ register, errors, getValues }) => {
       const error = _.get(errors, name)
       const { ref, ...rest } = register(name)
-
+      // DAC form: "values" of MainContact checkbox
+      const values = getValues(name)
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
               <ValidationFormControlLabel
                 control={
-                  <Checkbox name={name} {...rest} required={required} inputRef={ref} color="primary" defaultValue="" />
+                  <Checkbox
+                    name={name}
+                    {...rest}
+                    required={required}
+                    inputRef={ref}
+                    color="primary"
+                    checked={values || false}
+                  />
                 }
                 label={
                   <label>
@@ -611,8 +619,9 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
             </div>
           )
         }
+
         const properties = object.items.properties
-        const requiredProperties = object.contains?.allOf?.flatMap(item => item.required)
+        const requiredProperties = index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : []
 
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>

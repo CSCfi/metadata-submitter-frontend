@@ -621,7 +621,8 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         }
 
         const properties = object.items.properties
-        const requiredProperties = index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : []
+        const requiredProperties =
+          index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
 
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>

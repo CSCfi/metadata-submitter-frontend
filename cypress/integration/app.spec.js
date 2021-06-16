@@ -107,7 +107,6 @@ describe("Basic e2e", function () {
       cy.get("input[name='experimentRef[0].identifiers.submitterId.value']").type("Experiment Test Value")
 
       // Study
-      cy.get("input[name='studyRef.accessionId']").type("Study Test Accession Id")
       cy.get("input[name='studyRef.identifiers.submitterId.namespace']").type("Study Test Namespace")
       cy.get("input[name='studyRef.identifiers.submitterId.value']").type("Study Test Value")
 

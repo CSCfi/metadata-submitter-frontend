@@ -10,7 +10,7 @@ export const getObjectDisplayTitle = (objectType: string, cleanedValues: any): s
     case ObjectTypes.study:
       return cleanedValues.descriptor?.studyTitle || ""
     case ObjectTypes.dac:
-      return cleanedValues.contacts?.find(contact => contact.mainContact).name || ""
+      return cleanedValues.contacts?.find(contact => contact.mainContact)?.name || ""
     default:
       return cleanedValues.title || ""
   }

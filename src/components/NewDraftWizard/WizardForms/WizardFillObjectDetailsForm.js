@@ -118,15 +118,8 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const {
-    objectType,
-    currentObject,
-    refForm,
-    onClickNewForm,
-    onClickClearForm,
-    onClickSaveDraft,
-    onClickSubmit,
-  } = props
+  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
+    props
 
   const dispatch = useDispatch()
 

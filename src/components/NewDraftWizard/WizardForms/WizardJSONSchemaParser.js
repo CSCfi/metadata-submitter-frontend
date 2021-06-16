@@ -494,21 +494,45 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
 )
 
 /*
+ * Highlight required Checkbox
+ */
+const ValidationFormControlLabel = withStyles(theme => ({
+  label: {
+    "& span": { color: theme.palette.primary.main },
+  },
+}))(FormControlLabel)
+
+/*
  * FormSelectField is rendered for checkboxes
  */
 const FormBooleanField = ({ name, label, required }: FormFieldBaseProps) => (
   <ConnectForm>
-    {({ register, errors }) => {
+    {({ register, errors, getValues }) => {
       const error = _.get(errors, name)
       const { ref, ...rest } = register(name)
-
+      // DAC form: "values" of MainContact checkbox
+      const values = getValues(name)
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
             <FormGroup>
-              <FormControlLabel
-                control={<Checkbox name={name} {...rest} inputRef={ref} defaultValue="" />}
-                label={label}
+              <ValidationFormControlLabel
+                control={
+                  <Checkbox
+                    name={name}
+                    {...rest}
+                    required={required}
+                    inputRef={ref}
+                    color="primary"
+                    checked={values || false}
+                  />
+                }
+                label={
+                  <label>
+                    {label}
+                    <span>{required ? ` * ` : ""}</span>
+                  </label>
+                }
               />
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
@@ -580,6 +604,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+
         if (items.oneOf) {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
@@ -594,14 +619,18 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
             </div>
           )
         }
+
         const properties = object.items.properties
+        const requiredProperties =
+          index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
 
         return (
           <div className="arrayRow" key={`${name}[${index}]`}>
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                return traverseFields(properties[item], pathForThisIndex, [], false, field)
+                const requiredField = requiredProperties ? requiredProperties.filter(prop => prop === item) : []
+                return traverseFields(properties[item], pathForThisIndex, requiredField, false, field)
               })}
             </Paper>
             <IconButton onClick={() => remove(index)}>

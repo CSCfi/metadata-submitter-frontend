@@ -73,6 +73,11 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("select[name='design.sampleDescriptor']").select(testData.sampleReference)
     cy.get("input[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
     // Expected Base Call Table
+    cy.get("div").contains("Expected Base Call Table").parent().children("button").click()
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].baseCall']").type("Test base call")
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").type(
+      "Test read group tag"
+    )
     cy.get("select[name='processing']").select(testData.singleProcessing)
     cy.get("input[data-testid='processing']").type(testData.singleProcessingLabel)
 
@@ -88,6 +93,14 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("textarea[name='design.designDescription']").should("have.value", testData.designDescription)
     cy.get("select[name='design.sampleDescriptor']").should("have.value", testData.sampleReference)
     cy.get("input[data-testid='design.sampleDescriptor.label']").should("have.value", testData.individualSampleLabel)
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].baseCall']").should(
+      "have.value",
+      "Test base call"
+    )
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").should(
+      "have.value",
+      "Test read group tag"
+    )
     cy.get("select[name='processing']").should("have.value", testData.singleProcessing)
     cy.get("input[data-testid='processing']").should("have.value", testData.singleProcessingLabel)
   })

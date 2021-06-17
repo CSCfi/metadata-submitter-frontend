@@ -36,3 +36,8 @@ Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
     qs: { eppn: eppnUser + "@test.fi", family: familyName, given: givenName },
   })
 })
+
+// Turn off all uncaught exception handling
+Cypress.on("uncaught:exception", () => {
+  return false
+})

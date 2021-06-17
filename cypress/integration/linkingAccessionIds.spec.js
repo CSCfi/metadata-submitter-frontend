@@ -1,7 +1,7 @@
 describe("Linking Accession Ids", function () {
   const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
 
-  it("should ...", () => {
+  it("should link correct accessionIds to the related objects", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
     cy.wait(1000)
@@ -23,7 +23,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("select[name='descriptor.studyType']").should("have.value", "Metagenomics")
 
-    // Submit form
+    // Submit Study form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -45,7 +45,7 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
     cy.get("input[name='sampleName.taxonId']").type(123)
-    // Submit Study form
+    // Submit Sample form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -87,7 +87,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='design.libraryDescriptor.librarySource']").select("GENOMIC")
     cy.get("select[name='design.libraryDescriptor.librarySelection']").select("CAGE")
     cy.get("select[name='platform']").select("AB 5500 Genetic Analyzer")
-    // Submit sample form
+    // Submit Experiment form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -118,7 +118,7 @@ describe("Linking Accession Ids", function () {
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
-    // Get experimentAccessionId
+    // Get runAccessionId
     cy.get(".MuiListItem-container > div > div > p")
       .then($el => $el.text())
       .as("runAccessionId")
@@ -164,6 +164,7 @@ describe("Linking Accession Ids", function () {
     // Submit Analysis form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
     // Get analysisAccessionId
     cy.get(".MuiListItem-container > div > div > p")
       .then($el => $el.text())

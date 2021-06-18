@@ -36,9 +36,10 @@ const highlightStyle = theme => {
 
 const helpIconStyle = makeStyles(theme => ({
   fieldTip: {
+    bordercolor: "#FF00000",
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
-  },
+  }
 }))
 
 const FieldTooltip = withStyles(theme => ({

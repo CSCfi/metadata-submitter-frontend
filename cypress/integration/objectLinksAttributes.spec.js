@@ -1,10 +1,7 @@
 describe("render objects' links and attributes ", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   it("should render correct Study Links and Attributes", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
+    cy.login()
+
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation

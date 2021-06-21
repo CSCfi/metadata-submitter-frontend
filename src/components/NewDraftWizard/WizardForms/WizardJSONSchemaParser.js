@@ -18,7 +18,9 @@ import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
 import * as _ from "lodash"
-import { useFieldArray, useFormContext } from "react-hook-form"
+import { get } from "lodash"
+import { useFieldArray, useFormContext, useForm } from "react-hook-form"
+import { useSelector } from "react-redux"
 
 /*
  * Highlight style for required fields
@@ -76,6 +78,7 @@ const traverseValues = (object: any) => {
         const property = properties[propertyKey]
         values[propertyKey] = traverseValues(property)
       }
+
       return ((values: any): typeof object)
     }
     case "string": {
@@ -99,7 +102,7 @@ const traverseValues = (object: any) => {
     default: {
       console.error(`
       No initial value parsing support for type ${object["type"]} yet.
-      
+
       Pretty printed version of object with unsupported type:
       ${JSON.stringify(object, null, 2)}
       `)
@@ -230,7 +233,7 @@ const traverseFields = (
     default: {
       console.error(`
       No field parsing support for type ${object.type} yet.
-      
+
       Pretty printed version of object with unsupported type:
       ${JSON.stringify(object, null, 2)}
       `)
@@ -251,6 +254,7 @@ type FormSectionProps = {
  */
 const FormSection = (props: FormSectionProps) => {
   const { name, label, level } = props
+
   return (
     <ConnectForm>
       {({ errors }) => {
@@ -312,16 +316,68 @@ const FormOneOfField = ({
   required?: any,
 }) => {
   const options = object.oneOf
+
   // Get the fieldValue when rendering a saved/submitted form
   // For e.g. obj.required is ["label", "url"] and nestedField is {id: "sth1", label: "sth2", url: "sth3"}
+  // Get object from state and set default values if child of oneOf field has values
+  // Fetching current object values from state rather than via getValues() method gets values on first call. The getValues method results in empty object on first call
+  const currentObject = useSelector(state => state.currentObject) || {}
+
+  const values = currentObject[path]
+    ? currentObject
+    : currentObject[Object.keys(currentObject).filter(item => path.includes(item))] || {}
+
   let fieldValue = ""
-  if (nestedField) {
-    for (let obj of options) {
-      obj.required.every(val => Object.keys(nestedField).includes(val)) ? (fieldValue = obj.title) : ""
+
+  const flattenObject = (obj, prefix = "") =>
+    Object.keys(obj).reduce((acc, k) => {
+      const pre = prefix.length ? prefix + "." : ""
+      if (typeof obj[k] === "object") Object.assign(acc, flattenObject(obj[k], pre + k))
+      else acc[pre + k] = obj[k]
+      return acc
+    }, {})
+
+  if (Object.keys(values).length > 0) {
+    for (const item of path) {
+      if (values[item]) {
+        const itemValues = values[item]
+        const parentPath = Object.keys(itemValues) ? Object.keys(itemValues) : ""
+
+        // Match key from currentObject to option property.
+        // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
+        if (isNaN(parentPath[0])) {
+          fieldValue = (
+            options.find(option => option.properties[parentPath])
+              ? // Eg. Sample > Sample Names > Sample Data Type
+                options.find(option => option.properties[parentPath])
+              : // Eg. Run > Run Type > Reference Alignment
+                options.find(
+                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+                )
+          )?.title
+        } else {
+          // Eg. Experiment > Expected Base Call Table > Processing > Single Processing
+          if (typeof itemValues === "string") {
+            fieldValue = options.find(option => option.type === "string").title
+          }
+          // Eg. Experiment > Expected Base Call Table > Processing > Complex Processing
+          else {
+            const fieldKey = Object.keys(values[item][0])[0]
+            fieldValue = options.find(option => option.items?.properties[fieldKey]).title
+          }
+        }
+      }
     }
   }
-  const [field, setField] = useState(fieldValue)
 
+  // Eg. Study > Study Links
+  if (nestedField) {
+    for (let option of options) {
+      option.required.every(val => Object.keys(nestedField).includes(val)) ? (fieldValue = option.title) : ""
+    }
+  }
+
+  const [field, setField] = useState(fieldValue)
   const handleChange = event => setField(event.target.value)
 
   const name = pathToName(path)
@@ -552,7 +608,9 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
       <strong>{label}</strong> - check from following options
     </p>
     <ConnectForm>
-      {({ register, errors }) => {
+      {({ register, errors, getValues }) => {
+        const values = getValues()[name]
+
         const error = _.get(errors, name)
         const { ref, ...rest } = register(name)
 
@@ -563,7 +621,15 @@ const FormCheckBoxArray = ({ name, label, required, options }: FormSelectFieldPr
                 <FormControlLabel
                   key={option}
                   control={
-                    <Checkbox name={name} {...rest} inputRef={ref} value={option} color="primary" defaultValue="" />
+                    <Checkbox
+                      name={name}
+                      {...rest}
+                      inputRef={ref}
+                      value={option}
+                      checked={values && values?.includes(option) ? true : false}
+                      color="primary"
+                      defaultValue=""
+                    />
                   }
                   label={option}
                 />
@@ -587,13 +653,29 @@ type FormArrayProps = {
  * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
  */
 const FormArray = ({ object, path, required }: FormArrayProps) => {
-  const name = path.length === 1 ? pathToName(path) : path[path.length - 1]
+  const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
-  const items = (traverseValues(object.items): any)
   const level = path.length + 1
 
-  const { fields, append, remove } = useFieldArray({ name })
+  // Get currentObject and the values of current field
+  const currentObject = useSelector(state => state.currentObject) || {}
+  const fieldValues = get(currentObject, name)
+
+  const items = (traverseValues(object.items): any)
+
+  // Needs to use "control" from useForm()
+  const { control, setValue } = useForm()
+
+  const { fields, append, remove } = useFieldArray({ control, name })
+
+  // Set the correct values to the equivalent fields when editing form
+  // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
+  React.useEffect(() => {
+    if (fieldValues?.length > 0 && fields?.length === 0) {
+      setValue(name, fieldValues)
+    }
+  }, [setValue, fields])
 
   return (
     <div className="array" key={`${name}-array`}>
@@ -625,7 +707,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
 
         return (
-          <div className="arrayRow" key={`${name}[${index}]`}>
+          <Box px={1} className="arrayRow" key={`${name}[${index}]`}>
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
@@ -636,9 +718,10 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
             <IconButton onClick={() => remove(index)}>
               <RemoveIcon />
             </IconButton>
-          </div>
+          </Box>
         )
       })}
+
       <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append({})}>
         Add new item
       </Button>

@@ -1,12 +1,13 @@
 //@flow
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { FormControl } from "@material-ui/core"
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormGroup from "@material-ui/core/FormGroup"
 import FormHelperText from "@material-ui/core/FormHelperText"
@@ -19,10 +20,13 @@ import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import RemoveIcon from "@material-ui/icons/Remove"
+import Autocomplete from "@material-ui/lab/Autocomplete"
 import * as _ from "lodash"
 import { get } from "lodash"
 import { useFieldArray, useFormContext, useForm, Controller } from "react-hook-form"
 import { useSelector } from "react-redux"
+
+import rorAPIService from "services/rorAPI"
 
 /*
  * Highlight style for required fields
@@ -195,6 +199,7 @@ const traverseFields = (
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem) || requireFirst || false
   const description = object.description
+  const autoCompleteIdentifiers = ["organisation"]
 
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
 
@@ -232,6 +237,8 @@ const traverseFields = (
           required={required}
           description={description}
         />
+      ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
+        <FormAutocompleteField key={name} name={name} label={label} required={required} nestedField={nestedField} />
       ) : (
         <FormTextField
           key={name}
@@ -605,6 +612,117 @@ const FormTextField = ({
           control={control}
           defaultValue={getDefaultValue(nestedField, name)}
           rules={{ required: required }}
+        />
+      )
+    }}
+  </ConnectForm>
+)
+
+/*
+ * FormAutocompleteField uses ROR API to fetch organisations
+ */
+const FormAutocompleteField = ({
+  name,
+  label,
+  required,
+}: FormFieldBaseProps & { type?: string, nestedField?: any }) => (
+  <ConnectForm>
+    {({ errors, getValues, control, setValue }) => {
+      const error = _.get(errors, name)
+
+      const [selection, setSelection] = useState(null)
+      const [open, setOpen] = useState(false)
+      const [options, setOptions] = useState([])
+      const [inputValue, setInputValue] = useState("")
+      const [loading, setLoading] = useState(false)
+
+      const defaultValue = getValues(name) || ""
+
+      const fetchOrganisations = async searchTerm => {
+        const response = await rorAPIService.getOrganisations(searchTerm)
+
+        if (response) setLoading(false)
+
+        if (response.ok) {
+          const mappedOrganisations = response.data.items.map(org => ({ name: org.name }))
+          setOptions(mappedOrganisations)
+        }
+      }
+
+      const debouncedSearch = useCallback(
+        _.debounce(newInput => {
+          if (newInput.length > 0) fetchOrganisations(newInput)
+        }, 0),
+        []
+      )
+
+      useEffect(() => {
+        let active = true
+
+        if (inputValue === "") {
+          setOptions([])
+          return undefined
+        }
+
+        if (active && open) {
+          setLoading(true)
+          debouncedSearch(inputValue)
+        }
+
+        return () => {
+          active = false
+          setLoading(false)
+        }
+      }, [selection, inputValue, fetch])
+
+      return (
+        <Controller
+          render={() => (
+            <Autocomplete
+              freeSolo
+              open={open}
+              onOpen={() => {
+                setOpen(true)
+              }}
+              onClose={() => {
+                setOpen(false)
+              }}
+              options={options}
+              getOptionLabel={option => option.name || defaultValue}
+              data-testid={name}
+              disableClearable={inputValue.length === 0}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label={label}
+                  variant="outlined"
+                  error={!!error}
+                  required={required}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
+                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
+                />
+              )}
+              onChange={(event, option) => {
+                setSelection(option)
+                setValue(name, option?.name)
+              }}
+              onInputChange={(event, newInputValue) => {
+                setOptions([])
+                setInputValue(newInputValue)
+                setValue(name, newInputValue)
+              }}
+              value={defaultValue}
+            />
+          )}
+          name={name}
+          control={control}
         />
       )
     }}

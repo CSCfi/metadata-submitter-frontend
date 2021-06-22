@@ -127,8 +127,15 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
-    props
+  const {
+    objectType,
+    currentObject,
+    refForm,
+    onClickNewForm,
+    onClickClearForm,
+    onClickSaveDraft,
+    onClickSubmit,
+  } = props
 
   const dispatch = useDispatch()
 
@@ -211,7 +218,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   // Set form default values
   useEffect(() => {
-    methods.reset(currentObject)
+    methods.reset(cloneDeep(currentObject))
     setCleanedValues(currentObject)
   }, [currentObject?.accessionId])
 

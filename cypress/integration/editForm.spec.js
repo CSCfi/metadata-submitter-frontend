@@ -63,6 +63,11 @@ describe("Populate form and render form elements by object data", function () {
       individualSampleLabel: "Individual Sample test label",
       singleProcessing: "Single Processing",
       singleProcessingLabel: "Single Processing label",
+      complexProcessing: "Complex Processing",
+      stepIndex: "Step Index",
+      stringValue: "String value",
+      nullValue: "Null value",
+      prevStepIndexValue: "Test prev index",
     }
 
     cy.clickFillForm("Experiment")
@@ -78,8 +83,13 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").type(
       "Test read group tag"
     )
-    cy.get("select[name='processing']").select(testData.singleProcessing)
-    cy.get("input[data-testid='processing']").type(testData.singleProcessingLabel)
+    // Select and fill complex processing
+    cy.get("select[name='processing']").select(testData.complexProcessing)
+    cy.get(":nth-child(7) > .array > .MuiButtonBase-root > .MuiButton-label").click()
+    cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").type(testData.stepIndex)
+    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']").select(testData.stringValue)
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").type(testData.prevStepIndexValue)
 
     // Save Experiment form
     cy.get("button[type='button']").contains("Save as Draft").click()
@@ -88,6 +98,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.chooseFromDrafts()
     cy.get("button[aria-label='Continue draft']").first().click()
 
+    // Test that values exist
     cy.get("input[data-testid='title']").should("have.value", testData.title)
     cy.get("textarea[data-testid='description']").should("have.value", testData.description)
     cy.get("textarea[name='design.designDescription']").should("have.value", testData.designDescription)
@@ -101,8 +112,27 @@ describe("Populate form and render form elements by object data", function () {
       "have.value",
       "Test read group tag"
     )
-    cy.get("select[name='processing']").should("have.value", testData.singleProcessing)
-    cy.get("input[data-testid='processing']").should("have.value", testData.singleProcessingLabel)
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").should(
+      "have.value",
+      testData.stepIndex
+    )
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").should(
+      "have.value",
+      testData.prevStepIndexValue
+    )
+
+    // Change Prev Step Index from string value to null
+    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']").select(testData.nullValue)
+
+    // Save Experiment form 2nd time
+    cy.get("button[type='button']").contains("Update draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
+
+    cy.chooseFromDrafts()
+    cy.get("button[aria-label='Continue draft']").first().click()
+
+    // Test that Prev Step Index is nulled
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").should("not.exist")
   })
 
   it("should render Run form correctly when editing", () => {

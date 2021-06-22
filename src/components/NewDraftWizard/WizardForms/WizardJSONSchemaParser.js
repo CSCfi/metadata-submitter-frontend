@@ -316,6 +316,7 @@ const FormOneOfField = ({
   required?: any,
 }) => {
   const options = object.oneOf
+  const [lastPathItem] = path.slice(-1)
 
   // Get the fieldValue when rendering a saved/submitted form
   // For e.g. obj.required is ["label", "url"] and nestedField is {id: "sth1", label: "sth2", url: "sth3"}
@@ -346,14 +347,13 @@ const FormOneOfField = ({
         // Match key from currentObject to option property.
         // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
         if (isNaN(parentPath[0])) {
-          fieldValue = (
-            options.find(option => option.properties[parentPath])
-              ? // Eg. Sample > Sample Names > Sample Data Type
-                options.find(option => option.properties[parentPath])
-              : // Eg. Run > Run Type > Reference Alignment
-                options.find(
-                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
-                )
+          fieldValue = (options.find(option => option.properties[parentPath])
+            ? // Eg. Sample > Sample Names > Sample Data Type
+              options.find(option => option.properties[parentPath])
+            : // Eg. Run > Run Type > Reference Alignment
+              options.find(
+                option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+              )
           )?.title
         } else {
           // Eg. Experiment > Expected Base Call Table > Processing > Single Processing
@@ -377,11 +377,25 @@ const FormOneOfField = ({
     }
   }
 
-  const [field, setField] = useState(fieldValue)
-  const handleChange = event => setField(event.target.value)
+  // Special handling for Expected Base Call Table > Processing > Complex Processing > Pipeline > Pipe Section > Prev Step Index
+  // Can be extended to other fields if needed
+  const itemValue = get(currentObject, pathToName(path))
 
+  if (itemValue) {
+    switch (lastPathItem) {
+      case "prevStepIndex": {
+        fieldValue = "String value"
+      }
+    }
+  }
+
+  // Option change handling
+  const [field, setField] = useState(fieldValue)
+  const handleChange = event => {
+    setField(event.target.value)
+  }
   const name = pathToName(path)
-  const [lastPathItem] = path.slice(-1)
+
   const label = object.title ?? lastPathItem
 
   const getChildObjects = (obj?: any) => {
@@ -406,7 +420,7 @@ const FormOneOfField = ({
 
   return (
     <ConnectForm>
-      {({ errors }) => {
+      {({ errors, unregister }) => {
         const error = _.get(errors, name)
         // Selected option
         const selectedOption = options.filter(option => option.title === field)[0]?.properties || {}
@@ -438,7 +452,11 @@ const FormOneOfField = ({
               defaultValue={field}
               select
               SelectProps={{ native: true }}
-              onChange={handleChange}
+              onChange={event => {
+                handleChange(event)
+                // Unregister if nullable field
+                if (event.target.value === "Null value") unregister(name)
+              }}
               error={!!error}
               helperText={error?.message}
               required={required}
@@ -672,7 +690,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   // Set the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
   React.useEffect(() => {
-    if (fieldValues?.length > 0 && fields?.length === 0) {
+    if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object") {
       setValue(name, fieldValues)
     }
   }, [setValue, fields])

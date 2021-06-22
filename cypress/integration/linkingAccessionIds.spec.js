@@ -170,6 +170,23 @@ describe("Linking Accession Ids", function () {
       .then($el => $el.text())
       .as("analysisAccessionId")
 
+    // Another Analysis form
+    cy.get("button[type=button]").contains("New form").click()
+    cy.get("select[name='analysisType']").select("Reference Alignment")
+    cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
+    cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard accessionId 2")
+
+    // Select the other Analysis AccessionId
+    cy.get("div").contains("Analysis Reference").parent().children("button").click()
+    cy.get("select[name='analysisRef[0].accessionId']").then($el => {
+      const analysisAccessionId = cy.get("@analysisAccessionId")
+      $el.select(analysisAccessionId)
+    })
+
+    // Submit Analysis form
+    cy.get("button[type=submit]").contains("Submit").click()
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+
     // Fill DAC form
     cy.get("div[role=button]").contains("DAC").click()
     cy.wait(500)

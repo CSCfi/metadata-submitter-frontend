@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep, merge } from "lodash"
+import { cloneDeep, merge, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -479,13 +479,30 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     return accessionIds
   }
 
+  // All Analysis AccessionIds
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis)
+
+  useEffect(() => {
+    if (ObjectTypes.analysis) {
+      if (analysisAccessionIds.length > 0) {
+        // Link other Analysis AccessionIds to current Analysis form
+        setStates(prevState => {
+          return set(
+            prevState,
+            `formSchema.properties.analysisRef.items.properties.accessionId.enum`,
+            analysisAccessionIds.filter(id => id !== currentObject?.accessionId)
+          )
+        })
+      }
+    }
+  }, [currentObject?.accessionId, analysisAccessionIds?.length])
+
   const getLinkedDereferencedSchema = (objectType: string, dereferencedSchema: Promise<any>) => {
     // AccessionIds of submitted objects
     const studyAccessionIds = getAccessionIds(ObjectTypes.study)
     const sampleAccessionIds = getAccessionIds(ObjectTypes.sample)
     const runAccessionIds = getAccessionIds(ObjectTypes.run)
     const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment)
-    const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis)
     const policyAccessionIds = getAccessionIds(ObjectTypes.policy)
     const dacAccessionIds = getAccessionIds(ObjectTypes.dac)
 
@@ -550,6 +567,21 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
               experimentRef: {
                 items: {
                   properties: { accessionId: { enum: experimentAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Other Analysis Link
+        if (analysisAccessionIds.length > 0) {
+          const currentAnalysisAccessionIds = currentObject.accessionId || null
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              analysisRef: {
+                items: {
+                  properties: {
+                    accessionId: { enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds) },
+                  },
                 },
               },
             },

@@ -474,8 +474,8 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   }, [objectType])
 
   const getAccessionIds = (objectType: string) => {
-    const submissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === objectType)
-    const accessionIds = submissions.map(obj => obj.accessionId)
+    const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
+    const accessionIds = submissions?.map(obj => obj.accessionId)
     return accessionIds
   }
 
@@ -484,7 +484,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
   useEffect(() => {
     if (ObjectTypes.analysis) {
-      if (analysisAccessionIds.length > 0) {
+      if (analysisAccessionIds?.length > 0) {
         // Link other Analysis AccessionIds to current Analysis form
         setStates(prevState => {
           return set(

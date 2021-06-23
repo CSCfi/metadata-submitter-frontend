@@ -451,7 +451,10 @@ const FormTextField = ({
                 multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
                 rows={5}
                 value={field.value || ""}
-                onChange={e => field.onChange(e.target.value.toString())}
+                onChange={e => {
+                  const val = e.target.value
+                  field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
+                }}
               />
             )
           }}

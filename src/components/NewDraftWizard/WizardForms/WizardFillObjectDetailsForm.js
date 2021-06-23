@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep, merge } from "lodash"
+import { cloneDeep } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -20,7 +20,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
@@ -477,22 +477,8 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       setSuccessStatus(WizardStatus.info)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
-    let formattedCleanedValues
 
-    if (objectType === ObjectTypes.dac) {
-      const { contacts } = cleanedValues
-      const formattedContacts = contacts?.map(contact => {
-        return {
-          ...contact,
-          telephoneNumber: contact.telephoneNumber.toString(),
-        }
-      })
-      formattedCleanedValues = merge({}, cleanedValues, { contacts: formattedContacts })
-    }
-
-    const values = objectType === ObjectTypes.dac ? formattedCleanedValues : cleanedValues
-
-    const response = await objectAPIService.createFromJSON(objectType, values)
+    const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
 
     setResponseInfo(response)
 

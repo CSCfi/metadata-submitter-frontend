@@ -18,7 +18,7 @@ import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import RemoveIcon from "@material-ui/icons/Remove"
 import * as _ from "lodash"
-import { useFieldArray, useFormContext } from "react-hook-form"
+import { useFieldArray, useFormContext, Controller } from "react-hook-form"
 
 /*
  * Highlight style for required fields
@@ -56,7 +56,7 @@ const traverseFormValuesForCleanUp = (data: any) => {
     }
     if (data[key] === "") {
       delete data[key]
-    } else if (typeof data[key] === "string" && !isNaN(data[key])) {
+    } else if (typeof data[key] === "string" && !isNaN(data[key]) && key !== "telephoneNumber") {
       data[key] = Number(data[key])
     }
   })
@@ -433,26 +433,32 @@ const FormTextField = ({
   nestedField,
 }: FormFieldBaseProps & { type?: string, nestedField?: any }) => (
   <ConnectForm>
-    {({ register, errors }) => {
-      const error = _.get(errors, name)
+    {({ control }) => {
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
-      const { ref, ...rest } = register(name)
-
       return (
-        <ValidationTextField
+        <Controller
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <ValidationTextField
+                {...field}
+                inputProps={{ "data-testid": name }}
+                label={label}
+                role="textbox"
+                error={!!error}
+                helperText={error?.message}
+                required={required}
+                type={type}
+                multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+                rows={5}
+                value={field.value || ""}
+                onChange={e => field.onChange(e.target.value.toString())}
+              />
+            )
+          }}
           name={name}
-          inputProps={{ "data-testid": name }}
-          label={label}
-          role="textbox"
-          {...rest}
-          inputRef={ref}
+          control={control}
           defaultValue={getDefaultValue(nestedField, name)}
-          error={!!error}
-          helperText={error?.message}
-          required={required}
-          type={type}
-          multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-          rows={5}
+          rules={{ required: required }}
         />
       )
     }}

@@ -6,10 +6,9 @@ describe("Basic e2e", function () {
     cy.get('[alt="CSC Login"]').click()
   })
 
-  it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
+  it("should create new folder, add Study form, upload Study XML file, add Analysis form, add DAC form, and publish folder", () => {
     cy.visit(baseUrl)
     cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
@@ -142,6 +141,30 @@ describe("Basic e2e", function () {
       cy.get("select[name='files[1].checksumMethod']").select("SHA-256")
       cy.get("input[name='files[1].checksum']").type("c34045c1a1db8d1b3fca8a692198466952daae07eaf6104b4c87ed3b55b6af1b")
     })
+    // Submit form
+    cy.get("button[type=submit]").contains("Submit").click()
+    // Saved objects list should have newly added item from Analysis object
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
+    // DAC form
+    cy.get("div[role=button]", { timeout: 10000 }).contains("DAC").click({ force: true })
+    cy.get("div[aria-expanded='true']", { timeout: 10000 })
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
+
+    cy.get("h2").contains("Contacts").parent().children("button").click()
+    cy.get("[data-testid='contacts[0].name']").type("Test contact name")
+    cy.get("[data-testid='contacts[0].email']").type("email@test.com")
+    cy.get("[data-testid='contacts[0].telephoneNumber']").type(123456789)
+    cy.get("[data-testid='contacts[0].organisation']").type("Test organization")
+    cy.get("input[name='contacts[0].mainContact']").check()
+
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     // Saved objects list should have newly added item from Analysis object

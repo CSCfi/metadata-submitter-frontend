@@ -84,6 +84,24 @@ describe("WizardFillObjectDetailsForm", () => {
     })
   })
 
+  it("should show tooltip on mouse over", async () => {
+    render(
+      <Provider store={store}>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </Provider>
+    )
+    await waitFor(() => {
+      const tooltip = screen.getByTitle("Title of the study as would be used in a publication.")
+      fireEvent.mouseOver(tooltip)
+      expect(tooltip).toBeVisible()
+    }
+    )
+  }
+
+  )
+
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
   it("should call sessionStorage", async () => {
     const spy = jest.spyOn(Storage.prototype, "getItem")

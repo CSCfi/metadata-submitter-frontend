@@ -383,7 +383,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const patchObject = async () => {
-    resetTimer()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
     patchHandler(response, cleanedValues)
   }
@@ -675,6 +674,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       setSuccessStatus(WizardStatus.info)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+
     const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
 
     setResponseInfo(response)

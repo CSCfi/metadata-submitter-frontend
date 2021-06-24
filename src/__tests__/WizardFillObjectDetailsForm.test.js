@@ -47,6 +47,10 @@ describe("WizardFillObjectDetailsForm", () => {
       id: "FOL90524783",
       name: "Testname",
       published: false,
+      metadataObjects: [
+        { accessionId: "id1", schema: ObjectTypes.study },
+        { accessionId: "id2", schema: ObjectTypes.sample },
+      ],
     },
   })
 

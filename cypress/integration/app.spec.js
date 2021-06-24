@@ -1,14 +1,12 @@
 describe("Basic e2e", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   it("should navigate to home with click of login button", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
   })
 
+
   it("should create new folder, add Study form, upload Study XML file, add Analysis form, add DAC form, and publish folder", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
+
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
@@ -34,20 +32,6 @@ describe("Basic e2e", function () {
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
-
-    // Clear form
-    cy.get("button[type=button]").contains("Clear").click()
-
-    // Edit saved submission
-    cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).focus().type(" edited").blur()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
-    cy.get("button[type=button]").contains("Update").click()
-    cy.get("div[role=alert]").contains("Object updated")
-    cy.get("button[type=button]").contains("New form").click()
-    cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
 
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Upload XML File").click()
@@ -81,11 +65,7 @@ describe("Basic e2e", function () {
     cy.contains(".MuiAlert-message", "Object replaced")
 
     // Fill an Analysis form and submit object
-    cy.get("div[role=button]").contains("Analysis").click()
-    cy.get("div[role=button]")
-      .contains("Fill Form")
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.clickFillForm("Analysis")
 
     cy.get("form").within(() => {
       cy.get("input[name='title']").type("Test title")
@@ -106,7 +86,6 @@ describe("Basic e2e", function () {
       cy.get("input[name='experimentRef[0].identifiers.submitterId.value']").type("Experiment Test Value")
 
       // Study
-      cy.get("input[name='studyRef.accessionId']").type("Study Test Accession Id")
       cy.get("input[name='studyRef.identifiers.submitterId.namespace']").type("Study Test Namespace")
       cy.get("input[name='studyRef.identifiers.submitterId.value']").type("Study Test Value")
 

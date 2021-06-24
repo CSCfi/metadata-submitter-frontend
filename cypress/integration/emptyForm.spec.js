@@ -1,10 +1,7 @@
 describe("empty form should not be alerted or saved", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   beforeEach(() => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
+    cy.login()
+
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
@@ -18,17 +15,8 @@ describe("empty form should not be alerted or saved", function () {
 
   it("should have New form button and Clear form button emptied the form", () => {
     // Check Clear form button in Sample object
-    cy.get("div[role=button]").contains("Sample", { timeout: 10000 }).click()
-    cy.wait(500)
-    cy.get("div[aria-expanded='true']")
-      .siblings()
-      .within(() =>
-        cy
-          .get("div[role=button]")
-          .contains("Fill Form", { timeout: 10000 })
-          .should("be.visible")
-          .then($btn => $btn.click())
-      )
+    cy.clickFillForm("Sample")
+
     cy.get("input[data-testid='title']").type("Test sample")
     cy.get("input[data-testid='sampleName.taxonId']").type(123)
     cy.get("button[type='button']").contains("Clear form").click()
@@ -36,17 +24,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("input[data-testid='sampleName.taxonId']").should("have.value", "")
 
     // Check both New form button and Clear form button with Experiment object
-    cy.get("div[role=button]").contains("Experiment").click()
-    cy.wait(500)
-    cy.get("div[aria-expanded='true']")
-      .siblings()
-      .within(() =>
-        cy
-          .get("div[role=button]")
-          .contains("Fill Form", { timeout: 10000 })
-          .should("be.visible")
-          .then($btn => $btn.click())
-      )
+    cy.clickFillForm("Experiment")
 
     // Check if New form button can empty the form
     cy.get("form")
@@ -68,15 +46,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select the Experiment draft
-    cy.get("div[aria-expanded='true']")
-      .siblings()
-      .within(() =>
-        cy
-          .get("div[role=button]")
-          .contains("Choose from drafts", { timeout: 10000 })
-          .should("be.visible")
-          .then($btn => $btn.click())
-      )
+    cy.chooseFromDrafts()
     cy.get("button[aria-label='Continue draft']").first().click()
 
     cy.get("input[data-testid='title']").should("have.value", "Test experiment")
@@ -88,15 +58,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("textarea[data-testid='description']").should("have.value", "")
 
     // Select the Experiment draft again
-    cy.get("div[aria-expanded='true']")
-      .siblings()
-      .within(() =>
-        cy
-          .get("div[role=button]")
-          .contains("Choose from drafts", { timeout: 10000 })
-          .should("be.visible")
-          .then($btn => $btn.click())
-      )
+    cy.chooseFromDrafts()
     cy.get("button[aria-label='Continue draft']").first().click()
 
     cy.get("input[data-testid='title']").should("have.value", "Test experiment")

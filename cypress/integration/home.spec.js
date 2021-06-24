@@ -1,9 +1,6 @@
 describe("Home e2e", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   beforeEach(() => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
   })
 
   it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {

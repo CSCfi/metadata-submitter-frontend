@@ -199,14 +199,7 @@ const traverseFields = (
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField
-          key={name}
-          name={name}
-          label={label}
-          options={object.enum}
-          required={required}
-          nestedField={nestedField}
-        />
+        <FormSelectField key={name} name={name} label={label} options={object.enum} required={required} />
       ) : (
         <FormTextField key={name} name={name} label={label} required={required} nestedField={nestedField} />
       )
@@ -289,7 +282,7 @@ type FormFieldBaseProps = {
   required: boolean,
 }
 
-type FormSelectFieldProps = FormFieldBaseProps & { options: string[], nestedField?: any }
+type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 
 /*
  * Highlight required oneOf and select fields
@@ -347,13 +340,14 @@ const FormOneOfField = ({
         // Match key from currentObject to option property.
         // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
         if (isNaN(parentPath[0])) {
-          fieldValue = (options.find(option => option.properties[parentPath])
-            ? // Eg. Sample > Sample Names > Sample Data Type
-              options.find(option => option.properties[parentPath])
-            : // Eg. Run > Run Type > Reference Alignment
-              options.find(
-                option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
-              )
+          fieldValue = (
+            options.find(option => option.properties[parentPath])
+              ? // Eg. Sample > Sample Names > Sample Data Type
+                options.find(option => option.properties[parentPath])
+              : // Eg. Run > Run Type > Reference Alignment
+                options.find(
+                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+                )
           )?.title
         } else {
           // Eg. Experiment > Expected Base Call Table > Processing > Single Processing
@@ -545,7 +539,7 @@ const FormTextField = ({
 /*
  * FormSelectField is rendered for choosing one from many options
  */
-const FormSelectField = ({ name, label, required, options, nestedField }: FormSelectFieldProps) => (
+const FormSelectField = ({ name, label, required, options }: FormSelectFieldProps) => (
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -557,7 +551,7 @@ const FormSelectField = ({ name, label, required, options, nestedField }: FormSe
           label={label}
           {...rest}
           inputRef={ref}
-          defaultValue={getDefaultValue(nestedField, name)}
+          defaultValue=""
           error={!!error}
           helperText={error?.message}
           required={required}

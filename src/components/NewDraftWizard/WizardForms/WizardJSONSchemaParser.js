@@ -423,7 +423,7 @@ const FormOneOfField = ({
       {({ errors, unregister }) => {
         const error = _.get(errors, name)
         // Selected option
-        const selectedOption = options.filter(option => option.title === field)[0]?.properties || {}
+        const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
 
         let childObject: any
@@ -440,7 +440,7 @@ const FormOneOfField = ({
         }
         // Else if selectedOption has no nested "properties"
         else {
-          childObject = options.filter(option => option.title === field)[0]
+          childObject = options?.filter(option => option.title === field)[0]
           requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
         }
 
@@ -462,7 +462,7 @@ const FormOneOfField = ({
               required={required}
             >
               <option aria-label="None" value="" disabled />
-              {options.map(optionObject => {
+              {options?.map(optionObject => {
                 const option = optionObject.title
                 return (
                   <option key={`${name}-${option}`} value={option}>
@@ -473,7 +473,7 @@ const FormOneOfField = ({
             </ValidationSelectField>
             {field
               ? traverseFields(
-                  options.filter(option => option.title === field)[0],
+                  options?.filter(option => option.title === field)[0],
                   path,
                   required && requiredProp ? requiredProp.split(",") : [],
                   childObject?.required ? false : true,

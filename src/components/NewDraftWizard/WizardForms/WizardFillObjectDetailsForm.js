@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep } from "lodash"
+import { cloneDeep, merge, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -20,7 +20,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
@@ -127,15 +127,8 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const {
-    objectType,
-    currentObject,
-    refForm,
-    onClickNewForm,
-    onClickClearForm,
-    onClickSaveDraft,
-    onClickSubmit,
-  } = props
+  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
+    props
 
   const dispatch = useDispatch()
 
@@ -434,7 +427,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-  const { folderId } = useSelector(state => state.submissionFolder)
+  const { folderId, metadataObjects } = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
 
   // States that will update in useEffect()
@@ -474,15 +467,203 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       } else {
         schema = JSON.parse(schema)
       }
+
+      // Dereference Schema and link AccessionIds to equivalent objects
+      let dereferencedSchema: Promise<any> = await JSONSchemaParser.dereferenceSchema(schema)
+      dereferencedSchema = getLinkedDereferencedSchema(schema.title.toLowerCase(), dereferencedSchema)
+
       setStates({
         ...states,
-        formSchema: await JSONSchemaParser.dereferenceSchema(schema),
+        formSchema: dereferencedSchema,
         validationSchema: schema,
         isLoading: false,
       })
     }
     fetchSchema()
   }, [objectType])
+
+  const getAccessionIds = (objectType: string) => {
+    const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
+    const accessionIds = submissions?.map(obj => obj.accessionId)
+    return accessionIds
+  }
+
+  // All Analysis AccessionIds
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis)
+
+  useEffect(() => {
+    if (ObjectTypes.analysis) {
+      if (analysisAccessionIds?.length > 0) {
+        // Link other Analysis AccessionIds to current Analysis form
+        setStates(prevState => {
+          return set(
+            prevState,
+            `formSchema.properties.analysisRef.items.properties.accessionId.enum`,
+            analysisAccessionIds.filter(id => id !== currentObject?.accessionId)
+          )
+        })
+      }
+    }
+  }, [currentObject?.accessionId, analysisAccessionIds?.length])
+
+  const getLinkedDereferencedSchema = (objectType: string, dereferencedSchema: Promise<any>) => {
+    // AccessionIds of submitted objects
+    const studyAccessionIds = getAccessionIds(ObjectTypes.study)
+    const sampleAccessionIds = getAccessionIds(ObjectTypes.sample)
+    const runAccessionIds = getAccessionIds(ObjectTypes.run)
+    const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment)
+    const policyAccessionIds = getAccessionIds(ObjectTypes.policy)
+    const dacAccessionIds = getAccessionIds(ObjectTypes.dac)
+
+    switch (objectType) {
+      case ObjectTypes.experiment:
+        // Study Link
+        if (studyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
+          })
+        }
+        // Sample Link
+        if (sampleAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              design: {
+                properties: {
+                  sampleDescriptor: {
+                    oneOf: { [1]: { properties: { accessionId: { enum: sampleAccessionIds } } } },
+                  },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.analysis:
+        // Study Link
+        if (studyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
+          })
+        }
+        // Sample Link
+        if (sampleAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              sampleRef: {
+                items: {
+                  properties: { accessionId: { enum: sampleAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Run Link
+        if (runAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              runRef: {
+                items: {
+                  properties: { accessionId: { enum: runAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Experiment Link
+        if (experimentAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              experimentRef: {
+                items: {
+                  properties: { accessionId: { enum: experimentAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Other Analysis Link
+        if (analysisAccessionIds.length > 0) {
+          const currentAnalysisAccessionIds = currentObject.accessionId || null
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              analysisRef: {
+                items: {
+                  properties: {
+                    accessionId: { enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds) },
+                  },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.run:
+        // Experiment Link
+        if (experimentAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              experimentRef: {
+                items: {
+                  properties: { accessionId: { enum: experimentAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.policy:
+        // DAC Link
+        if (dacAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              dacRef: {
+                properties: { accessionId: { enum: dacAccessionIds } },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.dataset:
+        // Policy Link
+        if (policyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              policyRef: {
+                properties: { accessionId: { enum: policyAccessionIds } },
+              },
+            },
+          })
+        }
+        // Run Link
+        if (runAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              runRef: {
+                items: {
+                  properties: { accessionId: { enum: runAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Analysis Link
+        if (analysisAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              analysisRef: {
+                items: {
+                  properties: { accessionId: { enum: analysisAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        break
+      default:
+        break
+    }
+    return dereferencedSchema
+  }
 
   /*
    * Submit form with cleaned values and check for response errors

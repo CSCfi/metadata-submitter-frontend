@@ -40,6 +40,12 @@ Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
   })
 })
 
+
+// Turn off all uncaught exception handling
+Cypress.on("uncaught:exception", () => {
+  return false
+})
+
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
   cy.get('[alt="CSC Login"]').click()

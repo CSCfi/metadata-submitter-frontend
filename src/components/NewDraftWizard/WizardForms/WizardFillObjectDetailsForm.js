@@ -87,8 +87,17 @@ const useStyles = makeStyles(theme => ({
           width: "95%",
         },
       },
-      "& h2, h3, h4": {
+      "& h2, h3, h4, h5, h6": {
         margin: theme.spacing(1, 0),
+      },
+      "& .MuiPaper-elevation2": {
+        paddingRight: theme.spacing(1),
+        "& .array": { margin: 0 },
+        "& h3, h4": { margin: theme.spacing(1) },
+        "& button": { margin: theme.spacing(0, 1) },
+      },
+      "& .MuiSelect-outlined": {
+        marginRight: 0,
       },
     },
   },
@@ -202,7 +211,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   // Set form default values
   useEffect(() => {
-    methods.reset(currentObject)
+    methods.reset(cloneDeep(currentObject))
     setCleanedValues(currentObject)
   }, [currentObject?.accessionId])
 

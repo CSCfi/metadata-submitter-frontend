@@ -27,6 +27,9 @@
 // File upload
 import "cypress-file-upload"
 
+// Reusable commands
+const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
+
 Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
   const mockAuthUrl = "http://" + Cypress.env("mockAuthHost") + ":" + Cypress.env("mockAuthPort") + "/setmock"
 
@@ -37,7 +40,40 @@ Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
   })
 })
 
+
 // Turn off all uncaught exception handling
 Cypress.on("uncaught:exception", () => {
   return false
+})
+
+Cypress.Commands.add("login", () => {
+  cy.visit(baseUrl)
+  cy.get('[alt="CSC Login"]').click()
+  cy.wait(1000)
+})
+
+Cypress.Commands.add("clickFillForm", objectType => {
+  cy.get("div[role=button]").contains(objectType).click()
+  cy.wait(500)
+  cy.get("div[aria-expanded='true']")
+    .siblings()
+    .within(() =>
+      cy
+        .get("div[role=button]")
+        .contains("Fill Form", { timeout: 10000 })
+        .should("be.visible")
+        .then($btn => $btn.click())
+    )
+})
+
+Cypress.Commands.add("chooseFromDrafts", () => {
+  cy.get("div[aria-expanded='true']")
+    .siblings()
+    .within(() =>
+      cy
+        .get("div[role=button]")
+        .contains("Choose from drafts", { timeout: 10000 })
+        .should("be.visible")
+        .then($btn => $btn.click())
+    )
 })

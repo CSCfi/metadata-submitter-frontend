@@ -109,11 +109,13 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
     cy.get("div").contains("Experiment Reference").parent().children("button").click()
+    cy.get("[data-testid='experimentRef[0].label']").type("Test experiment label ref")
     // Select experimentAccessionId
     cy.get("select[name='experimentRef[0].accessionId']").then($el => {
       const experimentAccessionId = cy.get("@experimentAccessionId")
       $el.select(experimentAccessionId)
     })
+
     // Submit Run form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)

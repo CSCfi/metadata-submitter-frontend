@@ -83,7 +83,12 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").type(
       "Test read group tag"
     )
-    // Select and fill complex processing
+
+    // Select and fill Single processing
+    cy.get("select[name='processing']").select(testData.singleProcessing)
+    cy.get("[data-testid='processing']").type(testData.singleProcessingLabel)
+
+    // Switch to select and fill Complex processing
     cy.get("select[name='processing']").select(testData.complexProcessing)
     cy.get(":nth-child(7) > .array > .MuiButtonBase-root > .MuiButton-label").click()
     cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()

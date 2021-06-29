@@ -347,13 +347,14 @@ const FormOneOfField = ({
         // Match key from currentObject to option property.
         // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
         if (isNaN(parentPath[0])) {
-          fieldValue = (options.find(option => option.properties[parentPath])
-            ? // Eg. Sample > Sample Names > Sample Data Type
-              options.find(option => option.properties[parentPath])
-            : // Eg. Run > Run Type > Reference Alignment
-              options.find(
-                option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
-              )
+          fieldValue = (
+            options.find(option => option.properties[parentPath])
+              ? // Eg. Sample > Sample Names > Sample Data Type
+                options.find(option => option.properties[parentPath])
+              : // Eg. Run > Run Type > Reference Alignment
+                options.find(
+                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+                )
           )?.title
         } else {
           // Eg. Experiment > Expected Base Call Table > Processing > Single Processing
@@ -383,17 +384,14 @@ const FormOneOfField = ({
 
   if (itemValue) {
     switch (lastPathItem) {
-      case "prevStepIndex": {
-        fieldValue = "String value"
-      }
+      case "prevStepIndex":
+        {
+          fieldValue = "String value"
+        }
+        break
     }
   }
 
-  // Option change handling
-  const [field, setField] = useState(fieldValue)
-  const handleChange = event => {
-    setField(event.target.value)
-  }
   const name = pathToName(path)
 
   const label = object.title ?? lastPathItem
@@ -422,6 +420,14 @@ const FormOneOfField = ({
     <ConnectForm>
       {({ errors, unregister }) => {
         const error = _.get(errors, name)
+        // Option change handling
+        const [field, setField] = useState(fieldValue)
+        const handleChange = event => {
+          const val = event.target.value
+          setField(val)
+          // Unregister if selecting "Complex Processing", "Null value" in Experiment form
+          if (val === "Complex Processing" || val === "Null value") unregister(name)
+        }
         // Selected option
         const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
@@ -454,8 +460,6 @@ const FormOneOfField = ({
               SelectProps={{ native: true }}
               onChange={event => {
                 handleChange(event)
-                // Unregister if nullable field
-                if (event.target.value === "Null value") unregister(name)
               }}
               error={!!error}
               helperText={error?.message}
@@ -524,7 +528,7 @@ const FormTextField = ({
                 type={type}
                 multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
                 rows={5}
-                value={field.value || ""}
+                value={(typeof field.value !== "object" && field.value) || ""}
                 onChange={e => {
                   const val = e.target.value
                   field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)

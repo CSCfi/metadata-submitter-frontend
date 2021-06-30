@@ -38,7 +38,7 @@ const helpIconStyle = makeStyles(theme => ({
   fieldTip: {
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
-  }
+  },
 }))
 
 const FieldTooltip = withStyles(theme => ({
@@ -218,7 +218,14 @@ const traverseFields = (
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField key={name} name={name} label={label} options={object.enum} required={required} />
+        <FormSelectField
+          key={name}
+          name={name}
+          label={label}
+          options={object.enum}
+          required={required}
+          description={description}
+        />
       ) : (
         <FormTextField
           key={name}
@@ -228,18 +235,12 @@ const traverseFields = (
           description={description}
           nestedField={nestedField}
         />
-<<<<<<< HEAD
-=======
-      ) : (
-        <FormTextField key={name} name={name} label={label} required={required} description={description} nestedField={nestedField} />
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
       )
     }
     case "integer": {
       return <FormTextField key={name} name={name} label={label} required={required} description={description} />
     }
     case "number": {
-<<<<<<< HEAD
       return (
         <FormTextField
           key={name}
@@ -250,16 +251,12 @@ const traverseFields = (
           type="number"
         />
       )
-=======
-      return <FormTextField key={name} name={name} label={label} required={required} description={description} type="number" />
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
     }
     case "boolean": {
       return <FormBooleanField key={name} name={name} label={label} required={required} description={description} />
     }
     case "array": {
       return object.items.enum ? (
-<<<<<<< HEAD
         <FormCheckBoxArray
           key={name}
           name={name}
@@ -268,9 +265,6 @@ const traverseFields = (
           required={required}
           description={description}
         />
-=======
-        <FormCheckBoxArray key={name} name={name} label={label} options={object.items.enum} required={required} description={description} />
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
       ) : (
         <FormArray key={name} object={object} path={path} required={required} description={description} />
       )
@@ -366,10 +360,6 @@ const FormOneOfField = ({
   const options = object.oneOf
   const [lastPathItem] = path.slice(-1)
   const description = object.description
-<<<<<<< HEAD
-=======
-
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
   // Get the fieldValue when rendering a saved/submitted form
   // For e.g. obj.required is ["label", "url"] and nestedField is {id: "sth1", label: "sth2", url: "sth3"}
   // Get object from state and set default values if child of oneOf field has values
@@ -472,7 +462,6 @@ const FormOneOfField = ({
     <ConnectForm>
       {({ errors, unregister }) => {
         const error = _.get(errors, name)
-<<<<<<< HEAD
         // Option change handling
         const [field, setField] = useState(fieldValue)
         const handleChange = event => {
@@ -482,10 +471,6 @@ const FormOneOfField = ({
           if (val === "Complex Processing" || val === "Null value") unregister(name)
         }
         const classes = helpIconStyle()
-=======
-        const classes = helpIconStyle()
-
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
         // Selected option
         const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
@@ -510,7 +495,6 @@ const FormOneOfField = ({
 
         return (
           <div>
-<<<<<<< HEAD
             <ValidationSelectField
               name={name}
               label={label}
@@ -539,34 +523,6 @@ const FormOneOfField = ({
                 <HelpOutlineIcon className={classes.fieldTip} />
               </FieldTooltip>
             )}
-=======
-              <ValidationSelectField
-                name={name}
-                label={label}
-                defaultValue={field}
-                select
-                SelectProps={{ native: true }}
-                onChange={event => {
-                  handleChange(event)
-                  // Unregister if nullable field
-                  if (event.target.value === "Null value") unregister(name)
-                }}
-                error={!!error}
-                helperText={error?.message}
-                required={required}
-              >
-                <option aria-label="None" value="" disabled />
-                {options?.map(optionObject => {
-                  const option = optionObject.title
-                  return (
-                    <option key={`${name}-${option}`} value={option}>
-                      {option}
-                    </option>
-                  )
-                })}
-              </ValidationSelectField>
-              {description && <FieldTooltip title={description} placement="bottom" arrow><HelpOutlineIcon className={classes.fieldTip } /></FieldTooltip>}
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
             {field
               ? traverseFields(
                   options?.filter(option => option.title === field)[0],
@@ -608,17 +564,10 @@ const FormTextField = ({
       const classes = helpIconStyle()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
-<<<<<<< HEAD
         <>
           <Controller
             render={({ field, fieldState: { error } }) => {
               return (
-=======
-        <Controller
-            render={({ field, fieldState: { error } }) => {
-            return (
-              <div>
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
                 <ValidationTextField
                   {...field}
                   inputProps={{ "data-testid": name }}
@@ -630,17 +579,12 @@ const FormTextField = ({
                   type={type}
                   multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
                   rows={5}
-<<<<<<< HEAD
                   value={(typeof field.value !== "object" && field.value) || ""}
-=======
-                  value={field.value || ""}
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
                   onChange={e => {
                     const val = e.target.value
                     field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
                   }}
                 />
-<<<<<<< HEAD
               )
             }}
             name={name}
@@ -654,17 +598,6 @@ const FormTextField = ({
             </FieldTooltip>
           )}
         </>
-=======
-                {description && <FieldTooltip title={description} placement="bottom" arrow><HelpOutlineIcon className={classes.fieldTip } /></FieldTooltip>}
-              </div>
-            )
-          }}
-          name={name}
-          control={control}
-          defaultValue={getDefaultValue(nestedField, name)}
-          rules={{ required: required }}
-         />
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
       )
     }}
   </ConnectForm>
@@ -673,7 +606,6 @@ const FormTextField = ({
 /*
  * FormSelectField is rendered for choosing one from many options
  */
-<<<<<<< HEAD
 const FormSelectField = ({
   name,
   label,
@@ -681,9 +613,6 @@ const FormSelectField = ({
   options,
   description,
 }: FormSelectFieldProps & { description: string }) => (
-=======
-const FormSelectField = ({ name, label, required, options, nestedField, description }: FormSelectFieldProps & {description: string}) => (
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
@@ -691,21 +620,13 @@ const FormSelectField = ({ name, label, required, options, nestedField, descript
       const { ref, ...rest } = register(name)
 
       return (
-<<<<<<< HEAD
         <>
-=======
-        <div>
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
           <ValidationSelectField
             name={name}
             label={label}
             {...rest}
             inputRef={ref}
-<<<<<<< HEAD
             defaultValue=""
-=======
-            defaultValue={getDefaultValue(nestedField, name)}
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
             error={!!error}
             helperText={error?.message}
             required={required}
@@ -719,18 +640,12 @@ const FormSelectField = ({ name, label, required, options, nestedField, descript
               </option>
             ))}
           </ValidationSelectField>
-<<<<<<< HEAD
           {description && (
             <FieldTooltip title={description} placement="bottom" arrow>
               <HelpOutlineIcon className={classes.fieldTip} />
             </FieldTooltip>
           )}
         </>
-=======
-          
-          {description && <FieldTooltip title={description} placement="bottom" arrow><HelpOutlineIcon className={classes.fieldTip } /></FieldTooltip>}
-        </div>
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
       )
     }}
   </ConnectForm>
@@ -748,11 +663,7 @@ const ValidationFormControlLabel = withStyles(theme => ({
 /*
  * FormSelectField is rendered for checkboxes
  */
-<<<<<<< HEAD
 const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => (
-=======
-const FormBooleanField = ({ name, label, required,description }: FormFieldBaseProps & {description: string}) => (
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
   <ConnectForm>
     {({ register, errors, getValues }) => {
       const error = _.get(errors, name)
@@ -782,15 +693,11 @@ const FormBooleanField = ({ name, label, required,description }: FormFieldBasePr
                   </label>
                 }
               />
-<<<<<<< HEAD
               {description && (
                 <FieldTooltip title={description} placement="bottom" arrow>
                   <HelpOutlineIcon className={classes.fieldTip} />
                 </FieldTooltip>
               )}
-=======
-              {description && <FieldTooltip title={description} placement="bottom" arrow><HelpOutlineIcon className={classes.fieldTip } /></FieldTooltip>}
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
           </FormControl>
@@ -803,7 +710,6 @@ const FormBooleanField = ({ name, label, required,description }: FormFieldBasePr
 /*
  * FormSelectField is rendered for selection from options where it's possible to choose many options
  */
-<<<<<<< HEAD
 const FormCheckBoxArray = ({
   name,
   label,
@@ -811,9 +717,6 @@ const FormCheckBoxArray = ({
   options,
   description,
 }: FormSelectFieldProps & { description: string }) => (
-=======
-const FormCheckBoxArray = ({ name, label, required, options ,description }: FormSelectFieldProps & {description: string}) => (
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
   <Box px={1}>
     <p>
       <strong>{label}</strong> - check from following options
@@ -830,7 +733,6 @@ const FormCheckBoxArray = ({ name, label, required, options ,description }: Form
           <FormControl error={!!error} required={required}>
             <FormGroup>
               {options.map<React.Element<typeof FormControlLabel>>(option => (
-<<<<<<< HEAD
                 <React.Fragment key={option}>
                   <FormControlLabel
                     key={option}
@@ -853,26 +755,6 @@ const FormCheckBoxArray = ({ name, label, required, options ,description }: Form
                     </FieldTooltip>
                   )}
                 </React.Fragment>
-=======
-                <div key={option}>
-                  <FormControlLabel
-                    
-                    control={
-                      <Checkbox
-                      name={name}
-                      {...rest}
-                      inputRef={ref}
-                      value={option}
-                      checked={values && values?.includes(option) ? true : false}
-                      color="primary"
-                      defaultValue=""
-                    />
-                    }
-                    label={option}
-                  />
-                  {description && <FieldTooltip title={description} placement="bottom" arrow><HelpOutlineIcon className={classes.fieldTip } /></FieldTooltip>}
-                </div>
->>>>>>> 0439f15f37de3d54ace09530064b57fe27da0d75
               ))}
               <FormHelperText>{error?.message}</FormHelperText>
             </FormGroup>
@@ -919,7 +801,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
   return (
     <div className="array" key={`${name}-array`}>
-      <Typography key={`${name}-header`} variant={`h${level}`}>
+      <Typography key={`${name}-header`} variant={`h${level}`} data-testid={name}>
         {label} {required ? "*" : null}
       </Typography>
       {fields.map((field, index) => {

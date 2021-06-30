@@ -98,8 +98,7 @@ describe("Linking Accession Ids", function () {
 
     // Run form
     cy.get("div[role=button]").contains("Run").click()
-    cy.wait(500)
-    cy.get("div[aria-expanded='true']")
+    cy.get("div[aria-expanded='true']", { timeout: 10000 })
       .siblings()
       .within(() =>
         cy
@@ -108,7 +107,7 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
-    cy.get("div").contains("Experiment Reference").parent().children("button").click()
+    cy.get("h2[data-testid='experimentRef']").parent().children("button").click()
     cy.get("[data-testid='experimentRef[0].label']").type("Test experiment label ref")
     // Select experimentAccessionId
     cy.get("select[name='experimentRef[0].accessionId']").then($el => {
@@ -202,7 +201,7 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
 
-    cy.get("div").contains("Contacts").parent().children("button").click()
+    cy.get("h2[data-testid='contacts']").parent().children("button").click()
     cy.get("input[name='contacts[0].name']").type("Test contact name")
     cy.get("input[name='contacts[0].email']").type("contact@hotmail.com")
     cy.get("input[name='contacts[0].telephoneNumber']").type("Test phone number")

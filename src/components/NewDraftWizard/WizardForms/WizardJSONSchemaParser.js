@@ -39,6 +39,11 @@ const helpIconStyle = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
   },
+  divBaseline: {
+    display: 'flex',
+    alignItems: 'baseline',
+    flexWrap: 'wrap',
+  }
 }))
 
 const FieldTooltip = withStyles(theme => ({
@@ -495,34 +500,36 @@ const FormOneOfField = ({
 
         return (
           <div>
-            <ValidationSelectField
-              name={name}
-              label={label}
-              defaultValue={field}
-              select
-              SelectProps={{ native: true }}
-              onChange={event => {
-                handleChange(event)
-              }}
-              error={!!error}
-              helperText={error?.message}
-              required={required}
-            >
-              <option aria-label="None" value="" disabled />
-              {options?.map(optionObject => {
-                const option = optionObject.title
-                return (
-                  <option key={`${name}-${option}`} value={option}>
-                    {option}
-                  </option>
-                )
-              })}
-            </ValidationSelectField>
-            {description && (
-              <FieldTooltip title={description} placement="bottom" arrow>
-                <HelpOutlineIcon className={classes.fieldTip} />
-              </FieldTooltip>
-            )}
+            <div className={classes.divBaseline}>
+              <ValidationSelectField
+                name={name}
+                label={label}
+                defaultValue={field}
+                select
+                SelectProps={{ native: true }}
+                onChange={event => {
+                  handleChange(event)
+                }}
+                error={!!error}
+                helperText={error?.message}
+                required={required}
+              >
+                <option aria-label="None" value="" disabled />
+                {options?.map(optionObject => {
+                  const option = optionObject.title
+                  return (
+                    <option key={`${name}-${option}`} value={option}>
+                      {option}
+                    </option>
+                  )
+                })}
+              </ValidationSelectField>
+              {description && (
+                <FieldTooltip title={description} placement="top" arrow>
+                  <HelpOutlineIcon className={classes.fieldTip} />
+                </FieldTooltip>
+              )}
+            </div>
             {field
               ? traverseFields(
                   options?.filter(option => option.title === field)[0],
@@ -564,27 +571,33 @@ const FormTextField = ({
       const classes = helpIconStyle()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
-        <>
           <Controller
             render={({ field, fieldState: { error } }) => {
               return (
-                <ValidationTextField
-                  {...field}
-                  inputProps={{ "data-testid": name }}
-                  label={label}
-                  role="textbox"
-                  error={!!error}
-                  helperText={error?.message}
-                  required={required}
-                  type={type}
-                  multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-                  rows={5}
-                  value={(typeof field.value !== "object" && field.value) || ""}
-                  onChange={e => {
-                    const val = e.target.value
-                    field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
-                  }}
-                />
+                <div className={classes.divBaseline} >
+                  <ValidationTextField
+                    {...field}
+                    inputProps={{ "data-testid": name }}
+                    label={label}
+                    role="textbox"
+                    error={!!error}
+                    helperText={error?.message}
+                    required={required}
+                    type={type}
+                    multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+                    rows={5}
+                    value={(typeof field.value !== "object" && field.value) || ""}
+                    onChange={e => {
+                      const val = e.target.value
+                      field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
+                    }}
+                  />
+                  {description && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.fieldTip} />
+                    </FieldTooltip>
+                  )}
+                </div>
               )
             }}
             name={name}
@@ -592,12 +605,6 @@ const FormTextField = ({
             defaultValue={getDefaultValue(nestedField, name)}
             rules={{ required: required }}
           />
-          {description && (
-            <FieldTooltip title={description} placement="bottom" arrow>
-              <HelpOutlineIcon className={classes.fieldTip} />
-            </FieldTooltip>
-          )}
-        </>
       )
     }}
   </ConnectForm>
@@ -620,7 +627,7 @@ const FormSelectField = ({
       const { ref, ...rest } = register(name)
 
       return (
-        <>
+        <div className={classes.divBaseline}>
           <ValidationSelectField
             name={name}
             label={label}
@@ -641,11 +648,11 @@ const FormSelectField = ({
             ))}
           </ValidationSelectField>
           {description && (
-            <FieldTooltip title={description} placement="bottom" arrow>
+            <FieldTooltip title={description} placement="top" arrow>
               <HelpOutlineIcon className={classes.fieldTip} />
             </FieldTooltip>
           )}
-        </>
+        </div>
       )
     }}
   </ConnectForm>

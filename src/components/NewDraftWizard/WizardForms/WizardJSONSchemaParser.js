@@ -42,7 +42,6 @@ const helpIconStyle = makeStyles(theme => ({
   divBaseline: {
     display: 'flex',
     alignItems: 'baseline',
-    flexWrap: 'wrap',
   }
 }))
 

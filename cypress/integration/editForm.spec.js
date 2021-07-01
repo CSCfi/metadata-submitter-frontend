@@ -90,7 +90,7 @@ describe("Populate form and render form elements by object data", function () {
 
     // Switch to select and fill Complex processing
     cy.get("select[name='processing']").select(testData.complexProcessing)
-    cy.get(":nth-child(7) > .array > .MuiButtonBase-root > .MuiButton-label").click()
+    cy.get("h2[data-testid='processing']").parent().children("button").click()
     cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
     cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").type(testData.stepIndex)
     cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']").select(testData.stringValue)
@@ -137,7 +137,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("button[aria-label='Continue draft']").first().click()
 
     // Test that Prev Step Index is nulled
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").should("not.exist")
+    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").should("not.exist")
   })
 
   it("should render Run form correctly when editing", () => {

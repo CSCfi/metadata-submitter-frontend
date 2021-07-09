@@ -10,7 +10,7 @@
     "@reduxjs/toolkit": "^1.6.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
-    "ajv": "^8.6.0",
+    "ajv": "^8.6.1",
     "ajv-formats": "^2.1.0",
     "apisauce": "^2.1.1",
     "jest": "26.6.0",

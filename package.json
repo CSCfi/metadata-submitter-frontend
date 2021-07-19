@@ -76,7 +76,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-prettier": "^3.4.0",
-    "flow-bin": "^0.152.0",
+    "flow-bin": "^0.155.1",
     "http-proxy-middleware": "^2.0.1",
     "husky": "^6.0.0",
     "jest": "26.6.0",

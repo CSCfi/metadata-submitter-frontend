@@ -14,7 +14,7 @@ import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText } from "utils"
+import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
@@ -73,10 +73,6 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
       submittedItems: submissions.filter(obj => obj.tags.submissionType && obj.tags.submissionType === submissionType),
     }))
 
-  const displayObjectType = (objectType: string) => {
-    return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
-  }
-
   const displaySubmissionType = (submission: {
     submissionType: string,
     submittedItems: Array<ObjectInsideFolderWithTags>,
@@ -97,7 +93,7 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
         groupedSubmissions.map(group => (
           <Box pt={0} key={group.submissionType}>
             <CardHeader
-              title={`Submitted ${displayObjectType(objectType)} ${displaySubmissionType(group)}`}
+              title={`Submitted ${formatDisplayObjectType(objectType)} ${displaySubmissionType(group)}`}
               titleTypographyProps={{ variant: "inherit" }}
               className={classes.cardHeader}
             />

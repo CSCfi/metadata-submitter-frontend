@@ -1,9 +1,6 @@
 describe("Home e2e", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   beforeEach(() => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
   })
 
   it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
@@ -44,9 +41,9 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
-    cy.reload()
+    cy.wait(500)
     // Click "See all" button to navigate to all unpublished folders list
-    cy.get("div.MuiCardActions-root", { timeout: 30000 })
+    cy.get("div.MuiCardActions-root", { timeout: 60000 })
       .first()
       .should("be.visible")
       .find("button")
@@ -55,12 +52,12 @@ describe("Home e2e", function () {
       .then($btn => $btn.click())
 
     // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root", { timeout: 10000 })
+    cy.get("ul.MuiList-root", { timeout: 30000 })
       .should("be.visible")
       .within(() =>
         cy
           .get("div.MuiButtonBase-root")
-          .filter(':contains("Test unpublished folder")', { timeout: 30000 })
+          .filter(':contains("Test unpublished folder")', { timeout: 60000 })
           .should("be.visible")
           .then($el => $el.last().click())
       )

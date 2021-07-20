@@ -1,11 +1,7 @@
 describe("draft and submitted objects' titles", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   beforeEach(() => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft")
-
+    cy.login()
+    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()
     // Add folder name & description, navigate to submissions
@@ -33,10 +29,9 @@ describe("draft and submitted objects' titles", function () {
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title")
-    cy.get("input[name='descriptor.studyTitle']").type(" 2").blur()
+    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title").type(" 2").blur()
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title 2")
-    cy.get("button[type=button]").contains("Update").click()
+    cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check the submitted object has correctly updated displayTitle

@@ -45,6 +45,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     const response = await objectAPIService.getObjectByAccessionId(props.objectType, props.objectId)
 
     if (response.ok) {
+      dispatch(resetCurrentObject())
       dispatch(
         setCurrentObject({
           ...response.data,

@@ -188,8 +188,6 @@ export const publishFolderContent = (folder: FolderDetailsWithId): (() => Promis
 export const deleteFolderAndContent = (folder: FolderDetailsWithId): (() => Promise<any>) => async () => {
   let message = ""
   if (folder) {
-    const response = await folderAPIService.deleteFolderById(folder.folderId)
-    if (!response.ok) message = `Couldn't delete folder with id ${folder.folderId}`
     if (folder.metadataObjects) {
       await Promise.all(
         folder.metadataObjects.map(async object => {
@@ -198,6 +196,9 @@ export const deleteFolderAndContent = (folder: FolderDetailsWithId): (() => Prom
         })
       )
     }
+
+    const response = await folderAPIService.deleteFolderById(folder.folderId)
+    if (!response.ok) message = `Couldn't delete folder with id ${folder.folderId}`
     return new Promise((resolve, reject) => {
       if (response.ok) {
         resolve(response)

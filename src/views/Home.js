@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography"
 import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
+import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { WizardStatus } from "constants/wizardStatus"
@@ -96,6 +97,10 @@ const Home = (): React$Element<typeof Grid> => {
               location="published"
               displayButton={true}
             />
+          </Grid>
+          <Divider variant="middle" />
+          <Grid item xs={12} className={classes.tableCard}>
+            <UserDraftTemplates />
           </Grid>
         </>
       )}

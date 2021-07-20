@@ -12,8 +12,10 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 import WizardAlert from "./WizardAlert"
 
 import { WizardStatus } from "constants/wizardStatus"
+import { addDraftsToUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import type { ObjectInsideFolderWithTags } from "types"
 import { useQuery } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -50,6 +52,7 @@ const WizardFooter = (): React$Element<any> => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
+
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
   const [connError, setConnError] = useState(false)
@@ -68,7 +71,7 @@ const WizardFooter = (): React$Element<any> => {
     dispatch(resetFolder())
   }
 
-  const handleAlert = alertWizard => {
+  const handleAlert = (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
     setConnError(false)
     if (alertWizard && alertType === "cancel") {
       dispatch(deleteFolderAndContent(folder))
@@ -88,6 +91,14 @@ const WizardFooter = (): React$Element<any> => {
           setResponseError(JSON.parse(error))
           setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
         })
+
+      formData && formData?.length > 0
+        ? dispatch(addDraftsToUser("current", formData)).catch(error => {
+            setConnError(true)
+            setResponseError(JSON.parse(error))
+            setErrorPrefix("Can't save drafts for user")
+          })
+        : null
     } else {
       setDialogOpen(false)
     }

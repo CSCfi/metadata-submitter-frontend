@@ -13,6 +13,7 @@ import Nav from "components/Nav"
 import { ObjectTypes } from "constants/wizardObject"
 import { setObjectsArray } from "features/objectsArraySlice"
 import schemaAPIService from "services/schemaAPI"
+import Page400 from "views/ErrorPages/Page400"
 import Page401 from "views/ErrorPages/Page401"
 import Page403 from "views/ErrorPages/Page403"
 import Page404 from "views/ErrorPages/Page404"
@@ -151,6 +152,9 @@ const App = (): React$Element<typeof React.Fragment> => {
         </Route>
         <Route path="/error500">
           <Page500 />
+        </Route>
+        <Route path="*">
+          <Page400 />
         </Route>
         <Route path="*">
           <Page404 />

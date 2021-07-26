@@ -157,6 +157,9 @@ const App = (): React$Element<typeof React.Fragment> => {
           <Page400 />
         </Route>
         <Route path="*">
+          <Page400 />
+        </Route>
+        <Route path="*">
           <Page404 />
         </Route>
       </Switch>

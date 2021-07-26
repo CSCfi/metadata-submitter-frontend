@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 // paths that don't show navigation menu on top
-const pathsWithoutNav = ["/error401", "/error403", "/error500"]
+const pathsWithoutNav = ["/error400", "/error401", "/error403", "/error500"]
 
 const NavigationMenu = () => {
   let location = useLocation()

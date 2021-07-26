@@ -153,7 +153,7 @@ const App = (): React$Element<typeof React.Fragment> => {
         <Route path="/error500">
           <Page500 />
         </Route>
-        <Route path="*">
+        <Route path="/error400">
           <Page400 />
         </Route>
         <Route path="*">

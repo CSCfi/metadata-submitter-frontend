@@ -2,6 +2,9 @@
 export const errorMonitor = res => {
   if (!res.ok) {
     switch (res.status) {
+      case 400:
+        window.location = "/error400"
+        break
       case 401:
         window.location = "/error401"
         break

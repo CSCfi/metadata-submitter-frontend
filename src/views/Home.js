@@ -52,15 +52,18 @@ const Home = (): React$Element<typeof Grid> => {
   useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
-      const response = await folderAPIService.getFolders()
+      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: false })
+      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: true })
+
       if (isMounted) {
-        if (response.ok) {
-          dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
-          dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
+        if (unpublishedResponse.ok || publishedResponse.ok) {
+          dispatch(setUnpublishedFolders(unpublishedResponse.data.folders))
+          dispatch(setPublishedFolders(publishedResponse.data.folders))
           setFetchingFolders(false)
         } else {
+          if (!unpublishedFolders.ok) setResponseError(unpublishedResponse)
+          if (!publishedResponse.ok) setResponseError(publishedResponse)
           setConnError(true)
-          setResponseError(response)
           setErrorPrefix("Fetching folders error.")
         }
       }

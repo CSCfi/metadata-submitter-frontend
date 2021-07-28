@@ -13,6 +13,7 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
+import TablePagination from "@material-ui/core/TablePagination"
 import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
@@ -62,6 +63,15 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
   const classes = useStyles()
   const { folderType, folders, location = "", displayButton } = props
 
+  const Pagination = () => (
+    <TablePagination
+      rowsPerPageOptions={[20, 60, 100]}
+      count={623}
+      rowsPerPage={20}
+      page={0}
+      labelRowsPerPage="Items per page"
+    />
+  )
   // Renders when there is folder list
   const FolderList = () => (
     <>
@@ -84,13 +94,14 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
             )
           })}
         </List>
+        {!displayButton && <Pagination />}
       </CardContent>
       {displayButton && (
         <CardActions>
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
             <Link component={RouterLink} to={`/home/${location}`}>
               <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
-                See all
+                View all
               </Button>
             </Link>
           </Grid>

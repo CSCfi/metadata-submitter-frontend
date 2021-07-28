@@ -50,6 +50,9 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
 
   const location = useLocation().pathname.split("/").pop()
 
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(20)
+
   useEffect(() => {
     dispatch(fetchUserById("current"))
   }, [])
@@ -78,6 +81,42 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
     }
   }, [])
 
+  const handleFetchItemsPerPage = async (items: number, folderType: string) => {
+    const response = await folderAPIService.getFolders({
+      page: 1,
+      per_page: items,
+      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+    })
+    if (response.ok) {
+      folderType === FolderSubmissionStatus.unpublished
+        ? dispatch(setUnpublishedFolders(response.data.folders))
+        : dispatch(setPublishedFolders(response.data.folders))
+      setRowsPerPage(items)
+    } else {
+      setResponseError(response)
+      setConnError(true)
+      setErrorPrefix("Fetching folders error.")
+    }
+  }
+
+  const handleFetchPageOnChange = async (page: number, folderType: string) => {
+    const response = await folderAPIService.getFolders({
+      page,
+      per_page: rowsPerPage,
+      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+    })
+    if (response.ok) {
+      folderType === FolderSubmissionStatus.unpublished
+        ? dispatch(setUnpublishedFolders(response.data.folders))
+        : dispatch(setPublishedFolders(response.data.folders))
+      setPage(page)
+    } else {
+      setResponseError(response)
+      setConnError(true)
+      setErrorPrefix("Fetching folders error.")
+    }
+  }
+
   // Full list of folders
   const Submissions = () => (
     <Grid item xs={12} className={classes.tableCard}>
@@ -85,6 +124,10 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
         folderType={location === "drafts" ? FolderSubmissionStatus.unpublished : FolderSubmissionStatus.published}
         folders={location === "drafts" ? unpublishedFolders : publishedFolders}
         location={location}
+        fetchItemsPerPage={handleFetchItemsPerPage}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        fetchPageOnChange={handleFetchPageOnChange}
       />
     </Grid>
   )

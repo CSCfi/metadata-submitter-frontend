@@ -57,19 +57,42 @@ type SubmissionIndexCardProps = {
   folders: Array<FolderDetailsWithId>,
   location?: string,
   displayButton?: boolean,
+  rowsPerPage: number,
+  page: number,
+  fetchItemsPerPage: (items: number, folderType: string) => Promise<void>,
+  fetchPageOnChange: (page: number, folderType: string) => Promise<void>,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
   const classes = useStyles()
-  const { folderType, folders, location = "", displayButton } = props
+  const {
+    folderType,
+    folders,
+    location = "",
+    displayButton,
+    fetchItemsPerPage,
+    fetchPageOnChange,
+    page,
+    rowsPerPage,
+  } = props
+
+  const handleChangePage = (e: any, page: number) => {
+    fetchPageOnChange(page, folderType)
+  }
+
+  const handleItemsPerPageChange = (e: any) => {
+    fetchItemsPerPage(e.target.value, folderType)
+  }
 
   const Pagination = () => (
     <TablePagination
       rowsPerPageOptions={[20, 60, 100]}
       count={623}
-      rowsPerPage={20}
-      page={0}
+      rowsPerPage={rowsPerPage}
+      page={page}
       labelRowsPerPage="Items per page"
+      onChangePage={handleChangePage}
+      onChangeRowsPerPage={handleItemsPerPageChange}
     />
   )
   // Renders when there is folder list

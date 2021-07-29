@@ -14,6 +14,7 @@ import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/Wi
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
@@ -52,13 +53,19 @@ const Home = (): React$Element<typeof Grid> => {
   useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
-      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: false })
-      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: true })
+      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: false })
+      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: true })
 
       if (isMounted) {
-        if (unpublishedResponse.ok || publishedResponse.ok) {
+        if (unpublishedResponse.ok && publishedResponse.ok) {
           dispatch(setUnpublishedFolders(unpublishedResponse.data.folders))
           dispatch(setPublishedFolders(publishedResponse.data.folders))
+          dispatch(
+            setTotalFolders({
+              totalUnpublishedFolders: unpublishedResponse.data.page.totalFolders,
+              totalPublishedFolders: publishedResponse.data.page.totalFolders,
+            })
+          )
           setFetchingFolders(false)
         } else {
           if (!unpublishedFolders.ok) setResponseError(unpublishedResponse)

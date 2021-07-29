@@ -7,6 +7,7 @@ import focusReducer from "features/focusSlice"
 import objectsArrayReducer from "features/objectsArraySlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
+import totalFoldersReducer from "features/totalFoldersSlice"
 import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
@@ -30,6 +31,7 @@ const rootReducer: any = combineReducers({
   publishedFolders: publishedFoldersReducer,
   selectedFolder: selectedFolderReducer,
   objectsArray: objectsArrayReducer,
+  totalFolders: totalFoldersReducer,
 })
 
 export default rootReducer

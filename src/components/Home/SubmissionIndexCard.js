@@ -13,7 +13,10 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
+import Table from "@material-ui/core/Table"
+import TableFooter from "@material-ui/core/TableFooter"
 import TablePagination from "@material-ui/core/TablePagination"
+import TableRow from "@material-ui/core/TableRow"
 import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
@@ -57,10 +60,11 @@ type SubmissionIndexCardProps = {
   folders: Array<FolderDetailsWithId>,
   location?: string,
   displayButton?: boolean,
-  rowsPerPage: number,
-  page: number,
-  fetchItemsPerPage: (items: number, folderType: string) => Promise<void>,
-  fetchPageOnChange: (page: number, folderType: string) => Promise<void>,
+  page?: number,
+  rowsPerPage?: number,
+  totalItems?: number,
+  fetchItemsPerPage?: (items: number, folderType: string) => Promise<void>,
+  fetchPageOnChange?: (page: number, folderType: string) => Promise<void>,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
@@ -70,27 +74,38 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
     folders,
     location = "",
     displayButton,
-    fetchItemsPerPage,
-    fetchPageOnChange,
     page,
     rowsPerPage,
+    totalItems,
+    fetchItemsPerPage,
+    fetchPageOnChange,
   } = props
 
+  const getRowsPerPageOptions = () => {
+    if (totalItems) {
+      const optionAll = { value: totalItems, label: "All" }
+      if (totalItems <= 20) return []
+      else if (totalItems > 20 && totalItems <= 60) return [20, optionAll]
+      else if (totalItems > 60 && totalItems <= 100) return [20, 60, optionAll]
+      else [20, 60, 100, optionAll]
+    }
+  }
+
   const handleChangePage = (e: any, page: number) => {
-    fetchPageOnChange(page, folderType)
+    fetchPageOnChange ? fetchPageOnChange(page, folderType) : null
   }
 
   const handleItemsPerPageChange = (e: any) => {
-    fetchItemsPerPage(e.target.value, folderType)
+    fetchItemsPerPage ? fetchItemsPerPage(e.target.value, folderType) : null
   }
 
   const Pagination = () => (
     <TablePagination
-      rowsPerPageOptions={[20, 60, 100]}
-      count={623}
-      rowsPerPage={rowsPerPage}
+      rowsPerPageOptions={getRowsPerPageOptions()}
+      count={totalItems}
+      labelRowsPerPage="Items per page:"
       page={page}
-      labelRowsPerPage="Items per page"
+      rowsPerPage={rowsPerPage}
       onChangePage={handleChangePage}
       onChangeRowsPerPage={handleItemsPerPageChange}
     />
@@ -98,27 +113,37 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
   // Renders when there is folder list
   const FolderList = () => (
     <>
-      <CardContent className={classes.cardContent}>
-        <List>
-          {folders.map((folder, index) => {
-            return (
-              <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
-                <ListItem button dense className={classes.submissionsListItems}>
-                  <ListItemIcon className={classes.submissionsListIcon}>
-                    {folderType === FolderSubmissionStatus.published ? (
-                      <FolderIcon color="primary" />
-                    ) : (
-                      <FolderOpenIcon color="primary" />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={folder.name} />
-                </ListItem>
-              </Link>
-            )
-          })}
-        </List>
-        {!displayButton && <Pagination />}
-      </CardContent>
+      <>
+        <CardContent className={classes.cardContent}>
+          <List>
+            {folders.map((folder, index) => {
+              return (
+                <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
+                  <ListItem button dense className={classes.submissionsListItems}>
+                    <ListItemIcon className={classes.submissionsListIcon}>
+                      {folderType === FolderSubmissionStatus.published ? (
+                        <FolderIcon color="primary" />
+                      ) : (
+                        <FolderOpenIcon color="primary" />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={folder.name} />
+                  </ListItem>
+                </Link>
+              )
+            })}
+          </List>
+        </CardContent>
+        {!displayButton && (
+          <Table>
+            <TableFooter>
+              <TableRow>
+                <Pagination />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        )}
+      </>
       {displayButton && (
         <CardActions>
           <Grid container alignItems="flex-start" justify="flex-end" direction="row">

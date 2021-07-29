@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 import type { FolderDetailsWithId } from "types"
 
-const initialState: [] | Array<FolderDetailsWithId> = []
+const initialState: null | [] | Array<FolderDetailsWithId> = null
 
 const publishedFoldersSlice: any = createSlice({
   name: "publishedFolders",

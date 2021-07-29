@@ -111,6 +111,7 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
       setConnError(true)
       setErrorPrefix("Fetching folders error.")
     }
+    setPage(0)
   }
 
   // Fire when user selects previous/next arrows

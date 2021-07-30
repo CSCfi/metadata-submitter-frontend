@@ -13,10 +13,6 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
-import Table from "@material-ui/core/Table"
-import TableFooter from "@material-ui/core/TableFooter"
-import TablePagination from "@material-ui/core/TablePagination"
-import TableRow from "@material-ui/core/TableRow"
 import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
@@ -81,16 +77,6 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
     fetchItemsPerPage,
     fetchPageOnChange,
   } = props
-
-  const getRowsPerPageOptions = () => {
-    if (totalItems) {
-      const optionAll = { value: totalItems, label: "All" }
-      if (totalItems <= 20) return []
-      else if (totalItems > 20 && totalItems <= 60) return [20, optionAll]
-      else if (totalItems > 60 && totalItems <= 100) return [20, 60, optionAll]
-      else [20, 60, 100, optionAll]
-    }
-  }
 
   const handleChangePage = (e: any, page: number) => {
     fetchPageOnChange ? fetchPageOnChange(page) : null

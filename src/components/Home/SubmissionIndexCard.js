@@ -13,10 +13,6 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
-import Table from "@material-ui/core/Table"
-import TableFooter from "@material-ui/core/TableFooter"
-import TablePagination from "@material-ui/core/TablePagination"
-import TableRow from "@material-ui/core/TableRow"
 import Typography from "@material-ui/core/Typography"
 import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
@@ -24,6 +20,7 @@ import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { FolderDetailsWithId } from "types"
+import { Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -61,10 +58,10 @@ type SubmissionIndexCardProps = {
   location?: string,
   displayButton?: boolean,
   page?: number,
-  rowsPerPage?: number,
+  itemsPerPage?: number,
   totalItems?: number,
-  fetchItemsPerPage?: (items: number, folderType: string) => Promise<void>,
-  fetchPageOnChange?: (page: number, folderType: string) => Promise<void>,
+  fetchItemsPerPage?: (items: number) => Promise<void>,
+  fetchPageOnChange?: (page: number) => Promise<void>,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
@@ -75,41 +72,20 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
     location = "",
     displayButton,
     page,
-    rowsPerPage,
+    itemsPerPage,
     totalItems,
     fetchItemsPerPage,
     fetchPageOnChange,
   } = props
 
-  const getRowsPerPageOptions = () => {
-    if (totalItems) {
-      const optionAll = { value: totalItems, label: "All" }
-      if (totalItems <= 20) return []
-      else if (totalItems > 20 && totalItems <= 60) return [20, optionAll]
-      else if (totalItems > 60 && totalItems <= 100) return [20, 60, optionAll]
-      else [20, 60, 100, optionAll]
-    }
-  }
-
   const handleChangePage = (e: any, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page, folderType) : null
+    fetchPageOnChange ? fetchPageOnChange(page) : null
   }
 
   const handleItemsPerPageChange = (e: any) => {
-    fetchItemsPerPage ? fetchItemsPerPage(e.target.value, folderType) : null
+    fetchItemsPerPage ? fetchItemsPerPage(e.target.value) : null
   }
 
-  const Pagination = () => (
-    <TablePagination
-      rowsPerPageOptions={getRowsPerPageOptions()}
-      count={totalItems}
-      labelRowsPerPage="Items per page:"
-      page={page}
-      rowsPerPage={rowsPerPage}
-      onChangePage={handleChangePage}
-      onChangeRowsPerPage={handleItemsPerPageChange}
-    />
-  )
   // Renders when there is folder list
   const FolderList = () => (
     <>
@@ -134,14 +110,14 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
             })}
           </List>
         </CardContent>
-        {!displayButton && (
-          <Table>
-            <TableFooter>
-              <TableRow>
-                <Pagination />
-              </TableRow>
-            </TableFooter>
-          </Table>
+        {!displayButton && totalItems && page && itemsPerPage && (
+          <Pagination
+            totalNumberOfItems={totalItems}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            handleChangePage={handleChangePage}
+            handleItemsPerPageChange={handleItemsPerPageChange}
+          />
         )}
       </>
       {displayButton && (

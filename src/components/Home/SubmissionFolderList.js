@@ -52,7 +52,7 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
   const location = useLocation().pathname.split("/").pop()
 
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -61,25 +61,24 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
   useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
-      // Fetch unpublishedFolders and publishedFolders again if they are not fetched in Home
+      // Fetch either unpublishedFolders OR publishedFolders again if they are not fetched in Home
       if (unpublishedFolders === null || publishedFolders === null) {
-        const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: false })
-        const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: true })
+        const response = await folderAPIService.getFolders({
+          page: 1,
+          per_page: 10,
+          published: location === "drafts" ? false : true,
+        })
 
         if (isMounted) {
-          if (unpublishedResponse.ok || publishedResponse.ok) {
-            dispatch(setUnpublishedFolders(unpublishedResponse.data.folders))
-            dispatch(setPublishedFolders(publishedResponse.data.folders))
-            dispatch(
-              setTotalFolders({
-                totalUnpublishedFolders: unpublishedResponse.data.page.totalFolders,
-                totalPublishedFolders: publishedResponse.data.page.totalFolders,
-              })
-            )
-            setFetchingFolders(false)
+          if (response.ok) {
+            location === "drafts"
+              ? dispatch(setUnpublishedFolders(response.data.folders))
+              : dispatch(setPublishedFolders(response.data.folders))
+            location === "drafts"
+              ? dispatch(setTotalFolders({ ...totalFolders, totalUnpublishedFolders: response.data.page.totalFolders }))
+              : setTotalFolders({ ...totalFolders, totalPublishedFolders: response.data.page.totalFolders })
           } else {
-            if (!unpublishedFolders.ok) setResponseError(unpublishedResponse)
-            if (!publishedResponse.ok) setResponseError(publishedResponse)
+            if (!response.ok) setResponseError(response)
             setConnError(true)
             setErrorPrefix("Fetching folders error.")
           }
@@ -93,35 +92,36 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
     }
   }, [])
 
-  // Fire when user selects an option for showing how many items per page
-  const handleFetchItemsPerPage = async (items: number, folderType: string): any => {
+  // Fire when user selects an option from "Items per page"
+  const handleFetchItemsPerPage = async (numberOfItems: number): any => {
     const response = await folderAPIService.getFolders({
       page: 1,
-      per_page: items,
-      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      per_page: numberOfItems,
+      published: location === "drafts" ? false : true,
     })
+    setPage(0)
+
     if (response.ok) {
-      folderType === FolderSubmissionStatus.unpublished
+      location === "drafts"
         ? dispatch(setUnpublishedFolders(response.data.folders))
         : dispatch(setPublishedFolders(response.data.folders))
-      setRowsPerPage(items)
+      setItemsPerPage(numberOfItems)
     } else {
       setResponseError(response)
       setConnError(true)
       setErrorPrefix("Fetching folders error.")
     }
-    setPage(0)
   }
 
   // Fire when user selects previous/next arrows
-  const handleFetchPageOnChange = async (page: number, folderType: string): any => {
+  const handleFetchPageOnChange = async (page: number): any => {
     const response = await folderAPIService.getFolders({
       page: page + 1,
-      per_page: rowsPerPage,
-      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      per_page: itemsPerPage,
+      published: location === "drafts" ? false : true,
     })
     if (response.ok) {
-      folderType === FolderSubmissionStatus.unpublished
+      location === "drafts"
         ? dispatch(setUnpublishedFolders(response.data.folders))
         : dispatch(setPublishedFolders(response.data.folders))
       setPage(page)
@@ -140,7 +140,7 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
         folders={location === "drafts" ? unpublishedFolders : publishedFolders}
         location={location}
         page={page}
-        rowsPerPage={rowsPerPage}
+        itemsPerPage={itemsPerPage}
         totalItems={location === "drafts" ? totalFolders.totalUnpublishedFolders : totalFolders.totalPublishedFolders}
         fetchItemsPerPage={handleFetchItemsPerPage}
         fetchPageOnChange={handleFetchPageOnChange}

@@ -53,8 +53,8 @@ const Home = (): React$Element<typeof Grid> => {
   useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
-      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: false })
-      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 20, published: true })
+      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: false })
+      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: true })
 
       if (isMounted) {
         if (unpublishedResponse.ok && publishedResponse.ok) {

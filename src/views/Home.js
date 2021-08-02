@@ -83,7 +83,7 @@ const Home = (): React$Element<typeof Grid> => {
 
   // Contains both unpublished and published folders (max. 5 items/each)
   return (
-    <Grid container direction="column" justify="space-between" alignItems="stretch">
+    <Grid container direction="column" justifyContent="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
         <Typography color="textPrimary">Logged in as: {user.name}</Typography>
       </Grid>

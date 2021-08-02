@@ -149,7 +149,13 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
   )
 
   return (
-    <Grid className={classes.folderGrid} container direction="column" justify="space-between" alignItems="stretch">
+    <Grid
+      className={classes.folderGrid}
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+    >
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" component={RouterLink} to={`/home`}>
           Home

@@ -94,6 +94,7 @@ export const Pagination = ({
     <TableFooter>
       <TableRow>
         <TablePagination
+          style={{ border: "none" }}
           rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
           count={totalNumberOfItems}
           labelRowsPerPage="Items per page:"

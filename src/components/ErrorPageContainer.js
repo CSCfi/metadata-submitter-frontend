@@ -48,7 +48,7 @@ const ErrorPage = ({ title, children, errorType }: ErrorPageProps): React$Elemen
 
   return (
     <Container component="main" maxWidth={false} className={classes.errorContainer}>
-      <Grid container direction="column" justify="center" alignItems="center">
+      <Grid container direction="column" justifyContent="center" alignItems="center">
         <Grid item xs={3}>
           <Card className={classes.card}>
             <Avatar variant="square" className={classes.logo}>

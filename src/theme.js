@@ -1,6 +1,6 @@
-import { createMuiTheme } from "@material-ui/core/styles"
+import { createTheme } from "@material-ui/core/styles"
 
-const defaultTheme = createMuiTheme()
+const defaultTheme = createTheme()
 
 const palette = {
   primary: {
@@ -37,7 +37,7 @@ const palette = {
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
-const CSCtheme = createMuiTheme({
+const CSCtheme = createTheme({
   overrides: {
     MuiButton: {
       root: {

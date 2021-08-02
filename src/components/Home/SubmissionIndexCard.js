@@ -110,7 +110,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
             })}
           </List>
         </CardContent>
-        {!displayButton && totalItems && page && itemsPerPage && (
+        {!displayButton && totalItems && page !== undefined && itemsPerPage && (
           <Pagination
             totalNumberOfItems={totalItems}
             page={page}
@@ -122,7 +122,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
       </>
       {displayButton && (
         <CardActions>
-          <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+          <Grid container alignItems="flex-start" justifyContent="flex-end" direction="row">
             <Link component={RouterLink} to={`/home/${location}`}>
               <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
                 View all

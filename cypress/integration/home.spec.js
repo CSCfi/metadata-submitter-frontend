@@ -6,7 +6,7 @@ describe("Home e2e", function () {
   it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
     // Overview submissions should have 2 different list and max. 5 items each list
     cy.contains("Your Draft Submissions", { timeout: 10000 }).should("be.visible")
-    cy.contains("Your Published Submissions").should("be.visible")
+    cy.contains("Your Published Submissions", { timeout: 10000 }).should("be.visible")
 
     cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
 
@@ -40,6 +40,7 @@ describe("Home e2e", function () {
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
+    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
   })
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {

@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 0),
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
     alignItems: "flex-start",
-    color: theme.palette.font.main,
+    color: theme.palette.common.black,
   },
   submissionsListIcon: {
     minWidth: 35,
@@ -124,7 +124,12 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
         <CardActions>
           <Grid container alignItems="flex-start" justifyContent="flex-end" direction="row">
             <Link component={RouterLink} to={`/home/${location}`}>
-              <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
+              <Button
+                variant="outlined"
+                color="primary"
+                aria-label="Open or Close folders list"
+                data-testid={`ViewAll-${folderType}`}
+              >
                 View all
               </Button>
             </Link>
@@ -152,7 +157,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />
-      {folders.length > 0 ? <FolderList /> : <EmptyList />}
+      {folders?.length > 0 ? <FolderList /> : <EmptyList />}
     </Card>
   )
 }

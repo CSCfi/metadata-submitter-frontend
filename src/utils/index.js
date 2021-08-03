@@ -71,7 +71,7 @@ export const getRowsPerPageOptions = (totalItems?: number): Array<any> => {
     if (totalItems <= 10) return []
     else if (totalItems > 10 && totalItems <= 50) return [10, optionAll]
     else if (totalItems > 50 && totalItems <= 100) return [10, 50, optionAll]
-    else [10, 50, 100, optionAll]
+    else return [10, 50, 100, optionAll]
   }
   return []
 }
@@ -90,7 +90,7 @@ export const Pagination = ({
   handleChangePage: (e: any, page: number) => void,
   handleItemsPerPageChange: (e: any) => void,
 }): Node => (
-  <Table>
+  <Table data-testid="table-pagination">
     <TableFooter>
       <TableRow>
         <TablePagination
@@ -100,8 +100,8 @@ export const Pagination = ({
           labelRowsPerPage="Items per page:"
           page={page}
           rowsPerPage={itemsPerPage}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleItemsPerPageChange}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleItemsPerPageChange}
         />
       </TableRow>
     </TableFooter>

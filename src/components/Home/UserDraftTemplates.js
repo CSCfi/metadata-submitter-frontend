@@ -151,7 +151,7 @@ const UserDraftTemplates = (): React$Element<any> => {
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />
-      {draftObjects.length > 0 ? <DraftList /> : <EmptyList />}
+      {draftObjects?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>
   )
 }

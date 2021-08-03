@@ -41,41 +41,8 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
-    cy.wait(500)
-    // Click "View all" button to navigate to all unpublished folders list
-    cy.get("div.MuiCardActions-root", { timeout: 60000 })
-      .first()
-      .should("be.visible")
-      .find("button")
-      .contains("View all")
-      .should("be.visible")
-      .then($btn => $btn.click())
-
-    // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root", { timeout: 30000 })
-      .should("be.visible")
-      .within(() =>
-        cy
-          .get("div.MuiButtonBase-root")
-          .filter(':contains("Test unpublished folder")', { timeout: 60000 })
-          .should("be.visible")
-          .then($el => $el.last().click())
-      )
-
-    // Check the selected folder has the correct amount of objects
-    cy.get("table", { timeout: 10000 }).should("be.visible")
-
-    cy.get("tbody").should("be.visible")
-    cy.get("tbody>tr").should("have.length", 1)
-
-    // Delete an object inside the folder
-    cy.get("button[aria-label='Delete this object']")
-      .should("be.visible")
-      .then($btn => $btn.click())
-    cy.get("tbody>tr", { timeout: 10000 }).should("have.length", 0)
-
     // Navigate back to unpublished folders list
-    cy.contains("Your draft submissions")
+    cy.contains("Your Draft Submissions")
       .should("be.visible")
       .then($el => $el.click())
   })
@@ -113,34 +80,9 @@ describe("Home e2e", function () {
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
-    // Click "View all" button to navigate to all published folders list
-    cy.get("div.MuiCardActions-root", { timeout: 30000 })
-      .last()
-      .should("be.visible")
-      .find("button")
-      .contains("View all")
-      .should("be.visible")
-      .then($btn => $btn.click())
-
-    // Check the created folder existing in the list and navigate to see its details
-    cy.get("ul.MuiList-root", { timeout: 10000 })
-      .should("be.visible")
-      .within(() =>
-        cy
-          .get("div.MuiButtonBase-root")
-          .filter(':contains("Test published folder")', { timeout: 30000 })
-          .should("be.visible")
-          .then($el => $el.last().click())
-      )
-
-    // Check the selected folder has the correct amount of objects
-    cy.get("table", { timeout: 10000 }).should("be.visible")
-
-    cy.get("tbody").should("be.visible")
-    cy.get("tbody>tr").should("have.length", 1)
 
     // Navigate back to published folders list
-    cy.contains("Your published submissions")
+    cy.contains("Your Published Submissions")
       .should("be.visible")
       .then($el => $el.click())
   })

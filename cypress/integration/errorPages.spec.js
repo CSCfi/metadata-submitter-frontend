@@ -16,7 +16,7 @@ describe("catch error codes and display corresponding error page", function () {
     cy.intercept(
       {
         method: "GET",
-        url: "/folders",
+        url: "/folders?page=1&per_page=10&published=true",
       },
       {
         statusCode: 403,
@@ -28,7 +28,7 @@ describe("catch error codes and display corresponding error page", function () {
 
   it("should redirect to 404 page on unknown route", () => {
     cy.login()
-    cy.visit(baseUrl + "home/unknownroute")
+    cy.visit(baseUrl + "unknownroute")
     cy.contains(".MuiAlert-message", "404 Not Found")
   })
 
@@ -36,7 +36,7 @@ describe("catch error codes and display corresponding error page", function () {
     cy.intercept(
       {
         method: "GET",
-        url: "/folders",
+        url: "/folders?page=1&per_page=10&published=true",
       },
       {
         statusCode: 500,

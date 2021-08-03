@@ -40,11 +40,6 @@ describe("Home e2e", function () {
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
-
-    // Navigate back to unpublished folders list
-    cy.contains("Your Draft Submissions")
-      .should("be.visible")
-      .then($el => $el.click())
   })
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
@@ -80,10 +75,5 @@ describe("Home e2e", function () {
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
-
-    // Navigate back to published folders list
-    cy.contains("Your Published Submissions")
-      .should("be.visible")
-      .then($el => $el.click())
   })
 })

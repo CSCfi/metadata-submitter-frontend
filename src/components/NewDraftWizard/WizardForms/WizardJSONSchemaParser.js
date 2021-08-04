@@ -40,9 +40,9 @@ const helpIconStyle = makeStyles(theme => ({
     marginLeft: theme.spacing(0),
   },
   divBaseline: {
-    display: 'flex',
-    alignItems: 'baseline',
-  }
+    display: "flex",
+    alignItems: "baseline",
+  },
 }))
 
 const FieldTooltip = withStyles(theme => ({
@@ -450,7 +450,7 @@ const FormOneOfField = ({
         if (key === "properties") {
           childProps = obj.properties
           const childPropsValues = Object.values(childProps)[0]
-          if (Object.prototype.hasOwnProperty.call(childPropsValues, "properties")) {
+          if (Object.hasOwnProperty.call(childPropsValues, "properties")) {
             getChildObjects(childPropsValues)
           }
         }
@@ -483,10 +483,7 @@ const FormOneOfField = ({
         let requiredProp: string
 
         // If selectedOption has many nested "properties"
-        if (
-          selectedOptionValues.length > 0 &&
-          Object.prototype.hasOwnProperty.call(selectedOptionValues[0], "properties")
-        ) {
+        if (selectedOptionValues.length > 0 && Object.hasOwnProperty.call(selectedOptionValues[0], "properties")) {
           const { obj, firstProp } = getChildObjects(Object.values(selectedOption)[0])
           childObject = obj
           requiredProp = firstProp
@@ -570,40 +567,40 @@ const FormTextField = ({
       const classes = helpIconStyle()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
-          <Controller
-            render={({ field, fieldState: { error } }) => {
-              return (
-                <div className={classes.divBaseline} >
-                  <ValidationTextField
-                    {...field}
-                    inputProps={{ "data-testid": name }}
-                    label={label}
-                    role="textbox"
-                    error={!!error}
-                    helperText={error?.message}
-                    required={required}
-                    type={type}
-                    multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-                    rows={5}
-                    value={(typeof field.value !== "object" && field.value) || ""}
-                    onChange={e => {
-                      const val = e.target.value
-                      field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
-                    }}
-                  />
-                  {description && (
-                    <FieldTooltip title={description} placement="top" arrow>
-                      <HelpOutlineIcon className={classes.fieldTip} />
-                    </FieldTooltip>
-                  )}
-                </div>
-              )
-            }}
-            name={name}
-            control={control}
-            defaultValue={getDefaultValue(nestedField, name)}
-            rules={{ required: required }}
-          />
+        <Controller
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <div className={classes.divBaseline}>
+                <ValidationTextField
+                  {...field}
+                  inputProps={{ "data-testid": name }}
+                  label={label}
+                  role="textbox"
+                  error={!!error}
+                  helperText={error?.message}
+                  required={required}
+                  type={type}
+                  multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+                  rows={5}
+                  value={(typeof field.value !== "object" && field.value) || ""}
+                  onChange={e => {
+                    const val = e.target.value
+                    field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
+                  }}
+                />
+                {description && (
+                  <FieldTooltip title={description} placement="top" arrow>
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
+                )}
+              </div>
+            )
+          }}
+          name={name}
+          control={control}
+          defaultValue={getDefaultValue(nestedField, name)}
+          rules={{ required: required }}
+        />
       )
     }}
   </ConnectForm>
@@ -738,7 +735,7 @@ const FormCheckBoxArray = ({
         return (
           <FormControl error={!!error} required={required}>
             <FormGroup>
-              {options.map<React.Element<typeof FormControlLabel>>(option => (
+              {options.map(option => (
                 <React.Fragment key={option}>
                   <FormControlLabel
                     key={option}

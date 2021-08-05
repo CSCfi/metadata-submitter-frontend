@@ -1,5 +1,11 @@
 //@flow
+import React from "react"
+import type { Node } from "react"
 
+import Table from "@material-ui/core/Table"
+import TableFooter from "@material-ui/core/TableFooter"
+import TablePagination from "@material-ui/core/TablePagination"
+import TableRow from "@material-ui/core/TableRow"
 import { useLocation } from "react-router-dom"
 
 import { ObjectTypes } from "constants/wizardObject"
@@ -57,3 +63,47 @@ export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objec
 
   return draftObjects
 }
+
+// Get "rowsPerPageOptions" of TablePagination
+export const getRowsPerPageOptions = (totalItems?: number): Array<any> => {
+  if (totalItems) {
+    const optionAll = { value: totalItems, label: "All" }
+    if (totalItems <= 10) return []
+    else if (totalItems > 10 && totalItems <= 50) return [10, optionAll]
+    else if (totalItems > 50 && totalItems <= 100) return [10, 50, optionAll]
+    else return [10, 50, 100, optionAll]
+  }
+  return []
+}
+
+// Pagination Component
+export const Pagination = ({
+  totalNumberOfItems,
+  page,
+  itemsPerPage,
+  handleChangePage,
+  handleItemsPerPageChange,
+}: {
+  totalNumberOfItems: number,
+  page: number,
+  itemsPerPage: number,
+  handleChangePage: (e: any, page: number) => void,
+  handleItemsPerPageChange: (e: any) => void,
+}): Node => (
+  <Table data-testid="table-pagination">
+    <TableFooter>
+      <TableRow>
+        <TablePagination
+          style={{ border: "none" }}
+          rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
+          count={totalNumberOfItems}
+          labelRowsPerPage="Items per page:"
+          page={page}
+          rowsPerPage={itemsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleItemsPerPageChange}
+        />
+      </TableRow>
+    </TableFooter>
+  </Table>
+)

@@ -64,7 +64,13 @@ const Login = (): React$Element<typeof Container> => {
   return (
     <Container maxWidth={false} className={classes.container}>
       <Paper elevation={0} className={classes.banner}>
-        <Grid container direction="column" justify="center" alignItems="flex-end" className={classes.bannerContainer}>
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignItems="flex-end"
+          className={classes.bannerContainer}
+        >
           <Grid item xs={12} className={classes.whiteBanner}>
             <Typography variant="h3" component="h2" align="right">
               CSC Metadata Submission Tool

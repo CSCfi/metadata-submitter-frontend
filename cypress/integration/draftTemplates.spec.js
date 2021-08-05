@@ -71,7 +71,7 @@ describe("draft selections and templates", function () {
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
 
     // Check if the drafts have been saved as user's templates in Home page
-    cy.contains("Your Draft Templates").should("be.visible")
+    cy.contains("Your Draft Templates", { timeout: 10000 }).should("be.visible")
     // Check saved Study draft
     cy.get("h6").contains("Draft-study").as("studyObject")
     cy.get("@studyObject")

@@ -16,7 +16,7 @@ describe("catch error codes and display corresponding error page", function () {
     cy.intercept(
       {
         method: "GET",
-        url: "/folders",
+        url: "/folders?page=1&per_page=10&published=true",
       },
       {
         statusCode: 403,
@@ -36,7 +36,7 @@ describe("catch error codes and display corresponding error page", function () {
     cy.intercept(
       {
         method: "GET",
-        url: "/folders",
+        url: "/folders?page=1&per_page=10&published=true",
       },
       {
         statusCode: 500,

@@ -17,7 +17,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
 import { useSelector } from "react-redux"
 
-import { formatDisplayObjectType, getDraftObjects, getItemPrimaryText } from "utils"
+import { formatDisplayObjectType, getDraftObjects, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -71,7 +71,6 @@ const UserDraftTemplates = (): React$Element<any> => {
   const classes = useStyles()
   const user = useSelector(state => state.user)
   const objectsArray = useSelector(state => state.objectsArray)
-
   const draftObjects = user.drafts ? getDraftObjects(user.drafts, objectsArray) : []
 
   // Render when there is user's draft template(s)
@@ -81,6 +80,19 @@ const UserDraftTemplates = (): React$Element<any> => {
         {draftObjects.map(draft => {
           const schema = Object.keys(draft)[0]
           const [open, setOpen] = useState(false)
+
+          // Control Pagination
+          const [page, setPage] = useState(0)
+          const [itemsPerPage, setItemsPerPage] = useState(10)
+
+          const handleChangePage = (e: any, page: number) => {
+            setPage(page)
+          }
+
+          const handleItemsPerPageChange = (e: any) => {
+            setItemsPerPage(e.target.value)
+            setPage(0)
+          }
 
           return (
             <React.Fragment key={schema}>
@@ -97,7 +109,7 @@ const UserDraftTemplates = (): React$Element<any> => {
               <TableRow>
                 <TableCell padding="none" className={classes.listItems}>
                   <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
-                    {draft[schema].map(item => (
+                    {draft[schema].slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage).map(item => (
                       <ListItemText
                         className={classes.listItemText}
                         key={item.accessionId}
@@ -106,6 +118,13 @@ const UserDraftTemplates = (): React$Element<any> => {
                         data-schema={item.schema}
                       />
                     ))}
+                    <Pagination
+                      totalNumberOfItems={draft[schema].length}
+                      page={page}
+                      itemsPerPage={itemsPerPage}
+                      handleChangePage={handleChangePage}
+                      handleItemsPerPageChange={handleItemsPerPageChange}
+                    />
                   </Collapse>
                 </TableCell>
               </TableRow>
@@ -132,7 +151,7 @@ const UserDraftTemplates = (): React$Element<any> => {
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />
-      {draftObjects.length > 0 ? <DraftList /> : <EmptyList />}
+      {draftObjects?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>
   )
 }

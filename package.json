@@ -64,7 +64,7 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/user-event": "^13.1.9",
+    "@testing-library/user-event": "^13.2.1",
     "chokidar": "^3.5.2",
     "concurrently": "^6.2.0",
     "cypress": "^7.6.0",

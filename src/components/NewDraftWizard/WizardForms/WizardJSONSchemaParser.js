@@ -75,8 +75,10 @@ const cleanUpFormValues = (data: any): {} => {
 const traverseFormValuesForCleanUp = (data: any) => {
   Object.keys(data).forEach(key => {
     if (typeof data[key] === "object") {
-      data[key] = traverseFormValuesForCleanUp(data[key])
-      if (Object.keys(data[key]).length === 0) delete data[key]
+      if (data[key] !== null) {
+        data[key] = traverseFormValuesForCleanUp(data[key])
+        if (Object.keys(data[key]).length === 0) delete data[key]
+      }
     }
     if (data[key] === "") {
       delete data[key]
@@ -427,7 +429,6 @@ const FormOneOfField = ({
   // Special handling for Expected Base Call Table > Processing > Complex Processing > Pipeline > Pipe Section > Prev Step Index
   // Can be extended to other fields if needed
   const itemValue = get(currentObject, pathToName(path))
-
   if (itemValue) {
     switch (lastPathItem) {
       case "prevStepIndex":
@@ -464,16 +465,20 @@ const FormOneOfField = ({
 
   return (
     <ConnectForm>
-      {({ errors, unregister }) => {
+      {({ errors, unregister, setValue }) => {
         const error = _.get(errors, name)
         // Option change handling
         const [field, setField] = useState(fieldValue)
+
         const handleChange = event => {
           const val = event.target.value
           setField(val)
+
           // Unregister if selecting "Complex Processing", "Null value" in Experiment form
-          if (val === "Complex Processing" || val === "Null value") unregister(name)
+          if (val === "Complex Processing") unregister(name)
+          if (val === "Null value") setValue(name, null)
         }
+
         const classes = helpIconStyle()
         // Selected option
         const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}

@@ -7,9 +7,7 @@ const api = create({ baseURL: "http://api.ror.org" })
 api.addMonitor(errorMonitor)
 
 const getOrganisations = async (searchTerm: string): Promise<any> => {
-  const query = searchTerm?.length ? `?query=${searchTerm}` : ""
-
-  return await api.get("/organizations" + query)
+  return await api.get("/organizations", { query: searchTerm })
 }
 
 export default {

@@ -38,7 +38,7 @@ const highlightStyle = theme => {
   }
 }
 
-const helpIconStyle = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   fieldTip: {
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
@@ -46,6 +46,13 @@ const helpIconStyle = makeStyles(theme => ({
   divBaseline: {
     display: "flex",
     alignItems: "baseline",
+  },
+  autocomplete: {
+    flex: "auto",
+    alignSelf: "flex-start",
+    "& + svg": {
+      marginTop: theme.spacing(1),
+    },
   },
 }))
 
@@ -238,7 +245,14 @@ const traverseFields = (
           description={description}
         />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
-        <FormAutocompleteField key={name} name={name} label={label} required={required} nestedField={nestedField} />
+        <FormAutocompleteField
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          nestedField={nestedField}
+          description={description}
+        />
       ) : (
         <FormTextField
           key={name}
@@ -486,7 +500,7 @@ const FormOneOfField = ({
           if (val === "Null value") setValue(name, null)
         }
 
-        const classes = helpIconStyle()
+        const classes = useStyles()
         // Selected option
         const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
@@ -576,7 +590,7 @@ const FormTextField = ({
 }: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => (
   <ConnectForm>
     {({ control }) => {
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
         <Controller
@@ -625,10 +639,12 @@ const FormAutocompleteField = ({
   name,
   label,
   required,
-}: FormFieldBaseProps & { type?: string, nestedField?: any }) => (
+  description,
+}: FormFieldBaseProps & { type?: string, nestedField?: any, description: string }) => (
   <ConnectForm>
     {({ errors, getValues, control, setValue }) => {
       const error = _.get(errors, name)
+      const classes = useStyles()
 
       const [selection, setSelection] = useState(null)
       const [open, setOpen] = useState(false)
@@ -678,48 +694,57 @@ const FormAutocompleteField = ({
       return (
         <Controller
           render={() => (
-            <Autocomplete
-              freeSolo
-              open={open}
-              onOpen={() => {
-                setOpen(true)
-              }}
-              onClose={() => {
-                setOpen(false)
-              }}
-              options={options}
-              getOptionLabel={option => option.name || defaultValue}
-              data-testid={name}
-              disableClearable={inputValue.length === 0}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label={label}
-                  variant="outlined"
-                  error={!!error}
-                  required={required}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
+            <div className={classes.divBaseline}>
+              <Autocomplete
+                freeSolo
+                className={classes.autocomplete}
+                open={open}
+                onOpen={() => {
+                  setOpen(true)
+                }}
+                onClose={() => {
+                  setOpen(false)
+                }}
+                options={options}
+                getOptionLabel={option => option.name || defaultValue}
+                data-testid={name}
+                disableClearable={inputValue.length === 0}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label={label}
+                    name={name}
+                    variant="outlined"
+                    error={!!error}
+                    required={required}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
+                onChange={(event, option) => {
+                  setSelection(option)
+                  setValue(name, option?.name)
+                }}
+                onInputChange={(event, newInputValue) => {
+                  setOptions([])
+                  setInputValue(newInputValue)
+                  setValue(name, newInputValue)
+                }}
+                value={defaultValue}
+              />
+              {description && (
+                <FieldTooltip title={description} placement="top" arrow>
+                  <HelpOutlineIcon className={classes.fieldTip} />
+                </FieldTooltip>
               )}
-              onChange={(event, option) => {
-                setSelection(option)
-                setValue(name, option?.name)
-              }}
-              onInputChange={(event, newInputValue) => {
-                setOptions([])
-                setInputValue(newInputValue)
-                setValue(name, newInputValue)
-              }}
-              value={defaultValue}
-            />
+            </div>
           )}
           name={name}
           control={control}
@@ -742,7 +767,7 @@ const FormSelectField = ({
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const { ref, ...rest } = register(name)
 
       return (
@@ -793,7 +818,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
   <ConnectForm>
     {({ register, errors, getValues }) => {
       const error = _.get(errors, name)
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const { ref, ...rest } = register(name)
       // DAC form: "values" of MainContact checkbox
       const values = getValues(name)
@@ -852,7 +877,7 @@ const FormCheckBoxArray = ({
         const values = getValues()[name]
 
         const error = _.get(errors, name)
-        const classes = helpIconStyle()
+        const classes = useStyles()
         const { ref, ...rest } = register(name)
 
         return (

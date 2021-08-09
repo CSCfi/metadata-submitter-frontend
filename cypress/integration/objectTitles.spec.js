@@ -15,9 +15,12 @@ describe("draft and submitted objects' titles", function () {
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
 
+    // Variables
+    cy.get("input[name='descriptor.studyTitle']").as("studyTitle")
+
     // Fill a Study form and submit object
-    cy.get("input[name='descriptor.studyTitle']").type("Test title")
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title")
+    cy.get("@studyTitle").type("Test title")
+    cy.get("@studyTitle").should("have.value", "Test title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
 
     // Submit form
@@ -29,8 +32,9 @@ describe("draft and submitted objects' titles", function () {
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title").type(" 2").blur()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title 2")
+    cy.get("@studyTitle").should("have.value", "Test title")
+    cy.get("@studyTitle").type(" 2").blur()
+    cy.get("@studyTitle").should("have.value", "Test title 2")
     cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")
 

@@ -2,7 +2,8 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
-import { render, screen, waitFor, fireEvent, within } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
@@ -17,10 +18,9 @@ const mockStore = configureStore([])
 
 const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
 
-// MSWJS tries onUnhandledRequest method, which defaults to GraphQL query if GET call has query params
 const server = setupServer(
-  rest.get("/organizations", (req, res, ctx) => {
-    return res(ctx.json({ ok: true, data: { items: mockOrganisations } }))
+  rest.get("http://api.ror.org/organizations", (req, res, ctx) => {
+    return res(ctx.json({ items: mockOrganisations }))
   })
 )
 
@@ -76,25 +76,24 @@ describe("Test autocomplete on organisation field", () => {
       </Provider>
     )
 
-    server.listen({
-      onUnhandledRequest: "warn",
-    })
+    const autocomplete = await waitFor(() => screen.getByTestId("organisation"))
+    const input = await waitFor(() => within(autocomplete).getByRole("textbox"))
 
-    await waitFor(() => {
-      const autocomplete = screen.getByTestId("organisation")
-      const input = within(autocomplete).getByRole("textbox")
+    autocomplete.focus()
 
-      autocomplete.focus()
-      // assign value to input field
-      fireEvent.change(input, { target: { value: "test" } })
+    // Assign value to input field
+    userEvent.type(input, "test")
 
-      // navigate to the first item in the autocomplete box
-      fireEvent.keyDown(autocomplete, { key: "ArrowDown" })
+    // Find loading indicator
+    await waitFor(() => screen.getByRole("progressbar"))
 
-      // select the first item
-      fireEvent.keyDown(autocomplete, { key: "Enter" })
-      // check the new value of the input field
-      expect(input.value).toEqual(mockOrganisations[0].name)
-    })
+    // Find options wrapper
+    await waitFor(() => screen.getByRole("presentation"))
+
+    // Select first option
+    await waitFor(() => userEvent.keyboard("[ArrowDown]"))
+    await waitFor(() => userEvent.keyboard("[Enter]"))
+
+    expect(input.value).toEqual(mockOrganisations[0].name)
   })
 })

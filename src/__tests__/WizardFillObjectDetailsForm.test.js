@@ -36,6 +36,18 @@ describe("WizardFillObjectDetailsForm", () => {
           },
         },
       },
+      center: {
+        title: "Description for Center",
+        description: "More for backwards compatibility, we might not need it.",
+        type: "object",
+        properties: {
+            centerProjectName: {
+                title: "Center Project Name",
+                description: " Submitter defined project name. This field is intended for backward tracking of the study record to the submitter's LIMS.",
+                type: "string"
+            }
+        }
+    }
     },
   }
 
@@ -96,8 +108,12 @@ describe("WizardFillObjectDetailsForm", () => {
       const tooltip = screen.getByTitle("Title of the study as would be used in a publication.")
       fireEvent.mouseOver(tooltip)
       expect(tooltip).toBeVisible()
-    }
-    )
+    })
+    await waitFor(() => {
+      const tooltip = screen.getByTitle("More for backwards compatibility, we might not need it.")
+      fireEvent.mouseOver(tooltip)
+      expect(tooltip).toBeVisible()
+    })
   }
 
   )

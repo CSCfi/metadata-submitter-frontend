@@ -335,7 +335,7 @@ type FormSectionProps = {
  * FormSection is rendered for properties with type object
  */
 const FormSection = ({ name, label, level, children, description, }: FormSectionProps & { description: string }) => {
-  const classes = helpIconStyle()
+  const classes = useStyles()
 
   return (
     <ConnectForm>
@@ -352,7 +352,6 @@ const FormSection = ({ name, label, level, children, description, }: FormSection
                     </FieldTooltip>
                   )}
               </Typography>
-
               {children}
             </div>
             <div>

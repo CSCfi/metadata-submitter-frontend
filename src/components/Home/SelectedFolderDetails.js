@@ -35,8 +35,10 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
   const [selectedFolder, setSelectedFolder] = useState({
+    folderId: "",
     folderTitle: "",
     allObjects: [],
+    originalFolderData: {},
     published: false,
   })
 
@@ -95,7 +97,12 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
               setErrorPrefix("Fetching folder error.")
             }
           }
-          setSelectedFolder({ folderTitle: data.name, allObjects: objectsArr, published: data.published })
+          setSelectedFolder({
+            originalFolderData: data,
+            folderTitle: data.name,
+            allObjects: objectsArr,
+            published: data.published,
+          })
 
           setFetchingFolder(false)
         } else {
@@ -151,6 +158,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
             <Typography color="textPrimary">{selectedFolder.folderTitle}</Typography>
           </Breadcrumbs>
           <SubmissionDetailTable
+            folderData={selectedFolder.originalFolderData}
             bodyRows={selectedFolder.allObjects}
             folderTitle={selectedFolder.folderTitle}
             folderType={

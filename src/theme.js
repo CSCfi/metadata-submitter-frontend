@@ -32,6 +32,10 @@ const palette = {
   font: {
     main: "rgba(0, 0, 0, 0.87);",
   },
+  common: {
+    white: "#FFF",
+    black: "#000",
+  },
 }
 
 /**
@@ -80,6 +84,12 @@ const CSCtheme = createTheme({
       alignItems: "flex-start",
       padding: defaultTheme.spacing(1, 0, 1, 2),
     },
+  },
+  tooltip: {
+    backgroundColor: palette.common.white,
+    color: palette.common.black,
+    fontSize: defaultTheme.typography.pxToRem(14),
+    boxShadow: defaultTheme.shadows[1],
   },
 })
 

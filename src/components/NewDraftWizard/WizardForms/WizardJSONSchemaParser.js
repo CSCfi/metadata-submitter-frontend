@@ -391,7 +391,6 @@ const FormOneOfField = ({
       if (values[item]) {
         const itemValues = values[item]
         const parentPath = Object.keys(itemValues) ? Object.keys(itemValues) : ""
-
         // Match key from currentObject to option property.
         // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
         if (isNaN(parentPath[0])) {
@@ -429,6 +428,7 @@ const FormOneOfField = ({
   // Special handling for Expected Base Call Table > Processing > Complex Processing > Pipeline > Pipe Section > Prev Step Index
   // Can be extended to other fields if needed
   const itemValue = get(currentObject, pathToName(path))
+
   if (itemValue) {
     switch (lastPathItem) {
       case "prevStepIndex":
@@ -465,7 +465,7 @@ const FormOneOfField = ({
 
   return (
     <ConnectForm>
-      {({ errors, unregister, setValue }) => {
+      {({ errors, unregister, setValue, getValues, reset }) => {
         const error = _.get(errors, name)
         // Option change handling
         const [field, setField] = useState(fieldValue)
@@ -474,9 +474,15 @@ const FormOneOfField = ({
           const val = event.target.value
           setField(val)
 
+          // Get fieldValues of current path
+          const currentFieldValues = getValues(name)
           // Unregister if selecting "Complex Processing", "Null value" in Experiment form
           if (val === "Complex Processing") unregister(name)
           if (val === "Null value") setValue(name, null)
+          // Remove previous values of the same path
+          if (val !== "Complex Processing" && val !== "Null value" && currentFieldValues !== undefined) {
+            reset({ ...getValues(), [name]: "" })
+          }
         }
 
         const classes = helpIconStyle()

@@ -16,15 +16,17 @@ describe("Populate form and render form elements by object data", function () {
     const testData = {
       title: "Sample test title",
       taxonId: "123456",
-      sampleData: "Human Sample",
+      sampleData1: "Human Sample",
       gender: "unknown",
+      sampleData2: "Non Human Sample",
+      sampleTypeDescription: "Non Human Sample Description",
     }
 
     cy.clickFillForm("Sample")
 
     cy.get("input[name='title']").type(testData.title)
     cy.get("input[name='sampleName.taxonId']").type(testData.taxonId)
-    cy.get("select[name='sampleData']").select(testData.sampleData)
+    cy.get("select[name='sampleData']").select(testData.sampleData1)
     cy.get("select[name='sampleData.gender']").select(testData.gender)
 
     // Submit form
@@ -40,10 +42,19 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("input[name='title']", { timeout: 10000 }).focus().type(" edited").blur()
     cy.get("input[name='title']").should("have.value", `${testData.title} edited`)
     cy.get("input[name='sampleName.taxonId']").should("have.value", testData.taxonId)
-    cy.get("select[name='sampleData']").should("have.value", testData.sampleData)
+    cy.get("select[name='sampleData']").should("have.value", testData.sampleData1)
     cy.get("select[name='sampleData.gender']").should("have.value", testData.gender)
+
+    // Change Sample Data Type to Non Human Sample
+    cy.get("select[name='sampleData']").select(testData.sampleData2)
+    cy.get("[data-testid='sampleData.dataDescription']").type(testData.sampleTypeDescription)
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
+
+    // Check Sample form renders Non Human Sample now
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("select[name='sampleData']").should("have.value", testData.sampleData2)
+    cy.get("[data-testid='sampleData.dataDescription']").should("have.value", testData.sampleTypeDescription)
 
     // Clear object in state
     cy.get("button[type=button]").contains("New form").click()
@@ -93,7 +104,9 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("h2[data-testid='processing']").parent().children("button").click()
     cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
     cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").type(testData.stepIndex)
-    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']").select(testData.stringValue)
+    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']", { force: true }).select(
+      testData.stringValue
+    )
     cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").type(testData.prevStepIndexValue)
 
     // Save Experiment form

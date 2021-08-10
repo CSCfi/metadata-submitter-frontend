@@ -32,8 +32,8 @@ describe("draft and submitted objects' titles", function () {
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("@studyTitle").should("have.value", "Test title")
-    cy.get("@studyTitle").type(" 2").blur()
+    cy.get("@studyTitle", { timeout: 10000 }).should("have.value", "Test title").type(" 2")
+    cy.get("@studyTitle").blur()
     cy.get("@studyTitle").should("have.value", "Test title 2")
     cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")

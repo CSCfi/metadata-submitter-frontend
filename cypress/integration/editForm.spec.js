@@ -57,6 +57,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[data-testid='sampleData.dataDescription']").should("have.value", testData.sampleTypeDescription)
 
     // Clear object in state
+    cy.get("button[type=button]", { timeout: 10000 }).contains("New form").should("exist")
     cy.get("button[type=button]").contains("New form").click()
 
     // Test updated title

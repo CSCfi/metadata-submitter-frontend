@@ -201,9 +201,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const methods = useForm({ mode: "onBlur", resolver })
 
-  const [cleanedValues, setCleanedValues] = useState({})
   const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
-
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
   const autoSaveTimer = useRef(null)
@@ -211,8 +209,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   // Set form default values
   useEffect(() => {
-    methods.reset(cloneDeep(currentObject))
-    setCleanedValues(currentObject)
+    methods.reset(currentObject)
   }, [currentObject?.accessionId])
 
   // Check if form has been edited
@@ -230,7 +227,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   const clearForm = () => {
     resetTimer()
     methods.reset({})
-    setCleanedValues({})
     dispatch(resetDraftStatus())
   }
 
@@ -240,16 +236,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const checkDirty = () => {
-    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(cleanedValues)) {
+    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(getCleanedValues())) {
       dispatch(setDraftStatus("notSaved"))
     }
   }
+
+  const getCleanedValues = () => JSONSchemaParser.cleanUpFormValues(methods.getValues())
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
-    setCleanedValues(values)
 
     if (clone && checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
@@ -358,13 +355,15 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
    */
   const saveDraft = async () => {
     resetTimer()
+    const cleanedValues = getCleanedValues()
+
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const handleSave = await saveDraftHook(
         currentObject.accessionId || currentObject.objectId,
         objectType,
         currentObject.status,
         folderId,
-        cleanedValues || currentObject.cleanedValues,
+        cleanedValues,
         dispatch
       )
       if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
@@ -382,6 +381,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const patchObject = async () => {
+    resetTimer()
+    const cleanedValues = getCleanedValues()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
     patchHandler(response, cleanedValues)
   }

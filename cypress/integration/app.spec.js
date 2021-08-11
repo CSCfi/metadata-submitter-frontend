@@ -3,7 +3,6 @@ describe("Basic e2e", function () {
     cy.login()
   })
 
-
   it("should create new folder, add Study form, upload Study XML file, add Analysis form, add DAC form, and publish folder", () => {
     cy.login()
 
@@ -142,6 +141,8 @@ describe("Basic e2e", function () {
     cy.get("[data-testid='contacts[0].email']").type("email@test.com")
     cy.get("[data-testid='contacts[0].telephoneNumber']").type(123456789)
     cy.get("[data-testid='contacts[0].organisation']").type("Test organization")
+    // Click outside from organisation autocomplete field to hide suggestions
+    cy.get("[data-testid='contacts[0].telephoneNumber']").click()
     cy.get("input[name='contacts[0].mainContact']").check()
 
     // Submit form

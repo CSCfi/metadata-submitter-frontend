@@ -1,12 +1,13 @@
 //@flow
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { FormControl } from "@material-ui/core"
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormGroup from "@material-ui/core/FormGroup"
 import FormHelperText from "@material-ui/core/FormHelperText"
@@ -18,11 +19,15 @@ import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
+import LaunchIcon from "@material-ui/icons/Launch"
 import RemoveIcon from "@material-ui/icons/Remove"
+import Autocomplete from "@material-ui/lab/Autocomplete"
 import * as _ from "lodash"
 import { get } from "lodash"
 import { useFieldArray, useFormContext, useForm, Controller } from "react-hook-form"
 import { useSelector } from "react-redux"
+
+import rorAPIService from "services/rorAPI"
 
 /*
  * Highlight style for required fields
@@ -34,14 +39,29 @@ const highlightStyle = theme => {
   }
 }
 
-const helpIconStyle = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   fieldTip: {
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
   },
   divBaseline: {
     display: "flex",
+    flexDirection: "row",
     alignItems: "baseline",
+    "& label": {
+      marginRight: theme.spacing(0),
+    },
+  },
+  autocomplete: {
+    flex: "auto",
+    alignSelf: "flex-start",
+    "& + svg": {
+      marginTop: theme.spacing(1),
+    },
+  },
+  externalLink: {
+    fontSize: "1rem",
+    marginBottom: theme.spacing(-0.5),
   },
 }))
 
@@ -195,6 +215,7 @@ const traverseFields = (
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem) || requireFirst || false
   const description = object.description
+  const autoCompleteIdentifiers = ["organisation"]
 
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
 
@@ -230,6 +251,15 @@ const traverseFields = (
           label={label}
           options={object.enum}
           required={required}
+          description={description}
+        />
+      ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
+        <FormAutocompleteField
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          nestedField={nestedField}
           description={description}
         />
       ) : (
@@ -485,7 +515,7 @@ const FormOneOfField = ({
           }
         }
 
-        const classes = helpIconStyle()
+        const classes = useStyles()
         // Selected option
         const selectedOption = options?.filter(option => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
@@ -575,7 +605,7 @@ const FormTextField = ({
 }: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => (
   <ConnectForm>
     {({ control }) => {
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
       return (
         <Controller
@@ -618,6 +648,144 @@ const FormTextField = ({
 )
 
 /*
+ * FormAutocompleteField uses ROR API to fetch organisations
+ */
+const FormAutocompleteField = ({
+  name,
+  label,
+  required,
+  description,
+}: FormFieldBaseProps & { type?: string, nestedField?: any, description: string }) => (
+  <ConnectForm>
+    {({ errors, getValues, control, setValue }) => {
+      const error = _.get(errors, name)
+      const classes = useStyles()
+
+      const [selection, setSelection] = useState(null)
+      const [open, setOpen] = useState(false)
+      const [options, setOptions] = useState([])
+      const [inputValue, setInputValue] = useState("")
+      const [loading, setLoading] = useState(false)
+
+      const defaultValue = getValues(name) || ""
+
+      const fetchOrganisations = async searchTerm => {
+        const response = await rorAPIService.getOrganisations(searchTerm)
+
+        if (response) setLoading(false)
+
+        if (response.ok) {
+          const mappedOrganisations = response.data.items.map(org => ({ name: org.name }))
+          setOptions(mappedOrganisations)
+        }
+      }
+
+      const debouncedSearch = useCallback(
+        _.debounce(newInput => {
+          if (newInput.length > 0) fetchOrganisations(newInput)
+        }, 0),
+        []
+      )
+
+      useEffect(() => {
+        let active = true
+
+        if (inputValue === "") {
+          setOptions([])
+          return undefined
+        }
+
+        if (active && open) {
+          setLoading(true)
+          debouncedSearch(inputValue)
+        }
+
+        return () => {
+          active = false
+          setLoading(false)
+        }
+      }, [selection, inputValue, fetch])
+
+      return (
+        <Controller
+          render={() => (
+            <div className={classes.divBaseline}>
+              <Autocomplete
+                freeSolo
+                className={classes.autocomplete}
+                open={open}
+                onOpen={() => {
+                  setOpen(true)
+                }}
+                onClose={() => {
+                  setOpen(false)
+                }}
+                options={options}
+                getOptionLabel={option => option.name || defaultValue}
+                data-testid={name}
+                disableClearable={inputValue.length === 0}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label={label}
+                    name={name}
+                    variant="outlined"
+                    error={!!error}
+                    required={required}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </React.Fragment>
+                      ),
+                    }}
+                  />
+                )}
+                onChange={(event, option) => {
+                  setSelection(option)
+                  setValue(name, option?.name)
+                }}
+                onInputChange={(event, newInputValue) => {
+                  setOptions([])
+                  setInputValue(newInputValue)
+                  setValue(name, newInputValue)
+                }}
+                value={defaultValue}
+              />
+              {description && (
+                <FieldTooltip
+                  title={
+                    <React.Fragment>
+                      {description}
+                      <br />
+                      {"Organisations provided by "}
+                      <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                        {"ror.org"}
+                        <LaunchIcon className={classes.externalLink} />
+                      </a>
+                      {"."}
+                    </React.Fragment>
+                  }
+                  placement="top"
+                  arrow
+                  interactive
+                >
+                  <HelpOutlineIcon className={classes.fieldTip} />
+                </FieldTooltip>
+              )}
+            </div>
+          )}
+          name={name}
+          control={control}
+        />
+      )
+    }}
+  </ConnectForm>
+)
+
+/*
  * FormSelectField is rendered for choosing one from many options
  */
 const FormSelectField = ({
@@ -630,7 +798,7 @@ const FormSelectField = ({
   <ConnectForm>
     {({ register, errors }) => {
       const error = _.get(errors, name)
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const { ref, ...rest } = register(name)
 
       return (
@@ -681,14 +849,14 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
   <ConnectForm>
     {({ register, errors, getValues }) => {
       const error = _.get(errors, name)
-      const classes = helpIconStyle()
+      const classes = useStyles()
       const { ref, ...rest } = register(name)
       // DAC form: "values" of MainContact checkbox
       const values = getValues(name)
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
-            <FormGroup>
+            <FormGroup className={classes.divBaseline}>
               <ValidationFormControlLabel
                 control={
                   <Checkbox
@@ -740,7 +908,7 @@ const FormCheckBoxArray = ({
         const values = getValues()[name]
 
         const error = _.get(errors, name)
-        const classes = helpIconStyle()
+        const classes = useStyles()
         const { ref, ...rest } = register(name)
 
         return (

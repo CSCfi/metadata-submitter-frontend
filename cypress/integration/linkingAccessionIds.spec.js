@@ -206,6 +206,8 @@ describe("Linking Accession Ids", function () {
     cy.get("input[name='contacts[0].email']").type("contact@hotmail.com")
     cy.get("input[name='contacts[0].telephoneNumber']").type("Test phone number")
     cy.get("input[name='contacts[0].organisation']").type("CSC")
+    // Hide autosuggest suggestions by clicking another field
+    cy.get("input[name='contacts[0].telephoneNumber']").click()
     cy.get("input[name='contacts[0].mainContact']").check()
     // Submit DAC form
     cy.get("button[type=submit]").contains("Submit").click()

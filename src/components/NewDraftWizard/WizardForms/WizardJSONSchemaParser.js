@@ -19,6 +19,7 @@ import Tooltip from "@material-ui/core/Tooltip"
 import Typography from "@material-ui/core/Typography"
 import AddIcon from "@material-ui/icons/Add"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
+import LaunchIcon from "@material-ui/icons/Launch"
 import RemoveIcon from "@material-ui/icons/Remove"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import * as _ from "lodash"
@@ -45,7 +46,11 @@ const useStyles = makeStyles(theme => ({
   },
   divBaseline: {
     display: "flex",
+    flexDirection: "row",
     alignItems: "baseline",
+    "& label": {
+      marginRight: theme.spacing(0),
+    },
   },
   autocomplete: {
     flex: "auto",
@@ -53,6 +58,10 @@ const useStyles = makeStyles(theme => ({
     "& + svg": {
       marginTop: theme.spacing(1),
     },
+  },
+  externalLink: {
+    fontSize: "1rem",
+    marginBottom: theme.spacing(-0.5),
   },
 }))
 
@@ -746,7 +755,23 @@ const FormAutocompleteField = ({
                 value={defaultValue}
               />
               {description && (
-                <FieldTooltip title={description} placement="top" arrow>
+                <FieldTooltip
+                  title={
+                    <React.Fragment>
+                      {description}
+                      <br />
+                      {"Organisations provided by "}
+                      <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                        {"ror.org"}
+                        <LaunchIcon className={classes.externalLink} />
+                      </a>
+                      {"."}
+                    </React.Fragment>
+                  }
+                  placement="top"
+                  arrow
+                  interactive
+                >
                   <HelpOutlineIcon className={classes.fieldTip} />
                 </FieldTooltip>
               )}
@@ -831,7 +856,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
       return (
         <Box display="inline" px={1}>
           <FormControl error={!!error} required={required}>
-            <FormGroup>
+            <FormGroup className={classes.divBaseline}>
               <ValidationFormControlLabel
                 control={
                   <Checkbox

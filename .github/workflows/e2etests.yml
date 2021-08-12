@@ -13,19 +13,26 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build Frontend
         run: |
-          sudo npm install -g npm@7.6.0
+          sudo npm install -g npm@7.20.0
           npx --quiet pinst --disable
           npm install --production
           npm run build --production
-      - name: Setup and Run backend
+      - name: Set up branch
         run: |
           BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
           if [[ $BRANCH == master ]]; then
-            VERSION=master
+             echo "VERSION=master" >> $GITHUB_ENV
           else
-            VERSION=develop
+             echo "VERSION=develop" >> $GITHUB_ENV
           fi
-          git clone --branch $VERSION https://github.com/CSCfi/metadata-submitter
+      - name: Clone backend
+        uses: actions/checkout@v2
+        with:
+          repository: 'CSCfi/metadata-submitter'
+          ref: ${{ env.VERSION }}
+          path: metadata-submitter
+      - name: Set up branch
+        run: |
           mkdir -p metadata-submitter/metadata_backend/frontend
           cp -r build/* metadata-submitter/metadata_backend/frontend/
           docker-compose -f metadata-submitter/docker-compose.yml up -d --build

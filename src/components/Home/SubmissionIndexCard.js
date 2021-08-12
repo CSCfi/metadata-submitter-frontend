@@ -20,6 +20,7 @@ import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { FolderDetailsWithId } from "types"
+import { Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -39,12 +40,12 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   submissionsListItems: {
-    border: "solid 1px #ccc",
+    border: `1px solid ${theme.palette.secondary.main}`,
     borderRadius: 3,
     margin: theme.spacing(1, 0),
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
     alignItems: "flex-start",
-    color: theme.palette.font.main,
+    color: theme.palette.common.black,
   },
   submissionsListIcon: {
     minWidth: 35,
@@ -56,41 +57,80 @@ type SubmissionIndexCardProps = {
   folders: Array<FolderDetailsWithId>,
   location?: string,
   displayButton?: boolean,
+  page?: number,
+  itemsPerPage?: number,
+  totalItems?: number,
+  fetchItemsPerPage?: (items: number) => Promise<void>,
+  fetchPageOnChange?: (page: number) => Promise<void>,
 }
 
 const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typeof Card> => {
   const classes = useStyles()
-  const { folderType, folders, location = "", displayButton } = props
+  const {
+    folderType,
+    folders,
+    location = "",
+    displayButton,
+    page,
+    itemsPerPage,
+    totalItems,
+    fetchItemsPerPage,
+    fetchPageOnChange,
+  } = props
+
+  const handleChangePage = (e: any, page: number) => {
+    fetchPageOnChange ? fetchPageOnChange(page) : null
+  }
+
+  const handleItemsPerPageChange = (e: any) => {
+    fetchItemsPerPage ? fetchItemsPerPage(e.target.value) : null
+  }
 
   // Renders when there is folder list
   const FolderList = () => (
     <>
-      <CardContent className={classes.cardContent}>
-        <List>
-          {folders.map((folder, index) => {
-            return (
-              <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
-                <ListItem button dense className={classes.submissionsListItems}>
-                  <ListItemIcon className={classes.submissionsListIcon}>
-                    {folderType === FolderSubmissionStatus.published ? (
-                      <FolderIcon color="primary" />
-                    ) : (
-                      <FolderOpenIcon color="primary" />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={folder.name} />
-                </ListItem>
-              </Link>
-            )
-          })}
-        </List>
-      </CardContent>
+      <>
+        <CardContent className={classes.cardContent}>
+          <List>
+            {folders.map((folder, index) => {
+              return (
+                <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
+                  <ListItem button dense className={classes.submissionsListItems}>
+                    <ListItemIcon className={classes.submissionsListIcon}>
+                      {folderType === FolderSubmissionStatus.published ? (
+                        <FolderIcon color="primary" />
+                      ) : (
+                        <FolderOpenIcon color="primary" />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={folder.name} />
+                  </ListItem>
+                </Link>
+              )
+            })}
+          </List>
+        </CardContent>
+        {!displayButton && totalItems && page !== undefined && itemsPerPage && (
+          <Pagination
+            totalNumberOfItems={totalItems}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            handleChangePage={handleChangePage}
+            handleItemsPerPageChange={handleItemsPerPageChange}
+          />
+        )}
+      </>
       {displayButton && (
         <CardActions>
-          <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+          <Grid container alignItems="flex-start" justifyContent="flex-end" direction="row">
             <Link component={RouterLink} to={`/home/${location}`}>
-              <Button variant="outlined" color="primary" aria-label="Open or Close folders list">
-                See all
+              <Button
+                variant="outlined"
+                color="primary"
+                aria-label="Open or Close folders list"
+                data-testid={`ViewAll-${folderType}`}
+              >
+                View all
               </Button>
             </Link>
           </Grid>
@@ -117,7 +157,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />
-      {folders.length > 0 ? <FolderList /> : <EmptyList />}
+      {folders?.length > 0 ? <FolderList /> : <EmptyList />}
     </Card>
   )
 }

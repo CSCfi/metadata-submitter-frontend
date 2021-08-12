@@ -127,7 +127,13 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   }
 
   return (
-    <Grid container direction="column" justify="space-between" alignItems="stretch" className={classes.tableGrid}>
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+      className={classes.tableGrid}
+    >
       {isFetchingFolder && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {!isFetchingFolder && (
         <>

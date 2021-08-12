@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep } from "lodash"
+import { cloneDeep, merge, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -20,7 +20,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
@@ -29,7 +29,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder, deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
-import { getObjectDisplayTitle } from "utils"
+import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -87,8 +87,17 @@ const useStyles = makeStyles(theme => ({
           width: "95%",
         },
       },
-      "& h2, h3, h4": {
+      "& h2, h3, h4, h5, h6": {
         margin: theme.spacing(1, 0),
+      },
+      "& .MuiPaper-elevation2": {
+        paddingRight: theme.spacing(1),
+        "& .array": { margin: 0 },
+        "& h3, h4": { margin: theme.spacing(1) },
+        "& button": { margin: theme.spacing(0, 1) },
+      },
+      "& .MuiSelect-outlined": {
+        marginRight: 0,
       },
     },
   },
@@ -118,15 +127,8 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const {
-    objectType,
-    currentObject,
-    refForm,
-    onClickNewForm,
-    onClickClearForm,
-    onClickSaveDraft,
-    onClickSubmit,
-  } = props
+  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
+    props
 
   const dispatch = useDispatch()
 
@@ -169,7 +171,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {objectType}
+        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {formatDisplayObjectType(objectType)}
       </Button>
     </div>
   )
@@ -199,9 +201,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const methods = useForm({ mode: "onBlur", resolver })
 
-  const [cleanedValues, setCleanedValues] = useState({})
   const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
-
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
   const autoSaveTimer = useRef(null)
@@ -210,7 +210,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   // Set form default values
   useEffect(() => {
     methods.reset(currentObject)
-    setCleanedValues(currentObject)
   }, [currentObject?.accessionId])
 
   // Check if form has been edited
@@ -226,10 +225,9 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const clearForm = () => {
-    methods.reset(formSchema)
-    setCleanedValues({})
-    dispatch(resetDraftStatus())
     resetTimer()
+    methods.reset({})
+    dispatch(resetDraftStatus())
   }
 
   // Check if the form is empty
@@ -238,17 +236,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   }
 
   const checkDirty = () => {
-    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(cleanedValues)) {
+    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(getCleanedValues())) {
       dispatch(setDraftStatus("notSaved"))
     }
   }
+
+  const getCleanedValues = () => JSONSchemaParser.cleanUpFormValues(methods.getValues())
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
-
-    setCleanedValues(values)
 
     if (clone && checkFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
@@ -357,13 +355,15 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
    */
   const saveDraft = async () => {
     resetTimer()
+    const cleanedValues = getCleanedValues()
+
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const handleSave = await saveDraftHook(
         currentObject.accessionId || currentObject.objectId,
         objectType,
         currentObject.status,
         folderId,
-        cleanedValues || currentObject.cleanedValues,
+        cleanedValues,
         dispatch
       )
       if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
@@ -382,6 +382,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const patchObject = async () => {
     resetTimer()
+    const cleanedValues = getCleanedValues()
     const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
     patchHandler(response, cleanedValues)
   }
@@ -425,7 +426,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-  const { folderId } = useSelector(state => state.submissionFolder)
+  const { folderId, metadataObjects } = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
 
   // States that will update in useEffect()
@@ -447,6 +448,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   useEffect(() => {
     const fetchSchema = async () => {
       let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+
       if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {
@@ -464,15 +466,203 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       } else {
         schema = JSON.parse(schema)
       }
+
+      // Dereference Schema and link AccessionIds to equivalent objects
+      let dereferencedSchema: Promise<any> = await JSONSchemaParser.dereferenceSchema(schema)
+      dereferencedSchema = getLinkedDereferencedSchema(schema.title.toLowerCase(), dereferencedSchema)
+
       setStates({
         ...states,
-        formSchema: await JSONSchemaParser.dereferenceSchema(schema),
+        formSchema: dereferencedSchema,
         validationSchema: schema,
         isLoading: false,
       })
     }
     fetchSchema()
   }, [objectType])
+
+  const getAccessionIds = (objectType: string) => {
+    const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
+    const accessionIds = submissions?.map(obj => obj.accessionId)
+    return accessionIds
+  }
+
+  // All Analysis AccessionIds
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis)
+
+  useEffect(() => {
+    if (ObjectTypes.analysis) {
+      if (analysisAccessionIds?.length > 0) {
+        // Link other Analysis AccessionIds to current Analysis form
+        setStates(prevState => {
+          return set(
+            prevState,
+            `formSchema.properties.analysisRef.items.properties.accessionId.enum`,
+            analysisAccessionIds.filter(id => id !== currentObject?.accessionId)
+          )
+        })
+      }
+    }
+  }, [currentObject?.accessionId, analysisAccessionIds?.length])
+
+  const getLinkedDereferencedSchema = (objectType: string, dereferencedSchema: Promise<any>) => {
+    // AccessionIds of submitted objects
+    const studyAccessionIds = getAccessionIds(ObjectTypes.study)
+    const sampleAccessionIds = getAccessionIds(ObjectTypes.sample)
+    const runAccessionIds = getAccessionIds(ObjectTypes.run)
+    const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment)
+    const policyAccessionIds = getAccessionIds(ObjectTypes.policy)
+    const dacAccessionIds = getAccessionIds(ObjectTypes.dac)
+
+    switch (objectType) {
+      case ObjectTypes.experiment:
+        // Study Link
+        if (studyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
+          })
+        }
+        // Sample Link
+        if (sampleAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              design: {
+                properties: {
+                  sampleDescriptor: {
+                    oneOf: { [1]: { properties: { accessionId: { enum: sampleAccessionIds } } } },
+                  },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.analysis:
+        // Study Link
+        if (studyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
+          })
+        }
+        // Sample Link
+        if (sampleAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              sampleRef: {
+                items: {
+                  properties: { accessionId: { enum: sampleAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Run Link
+        if (runAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              runRef: {
+                items: {
+                  properties: { accessionId: { enum: runAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Experiment Link
+        if (experimentAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              experimentRef: {
+                items: {
+                  properties: { accessionId: { enum: experimentAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Other Analysis Link
+        if (analysisAccessionIds.length > 0) {
+          const currentAnalysisAccessionIds = currentObject.accessionId || null
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              analysisRef: {
+                items: {
+                  properties: {
+                    accessionId: { enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds) },
+                  },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.run:
+        // Experiment Link
+        if (experimentAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              experimentRef: {
+                items: {
+                  properties: { accessionId: { enum: experimentAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.policy:
+        // DAC Link
+        if (dacAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              dacRef: {
+                properties: { accessionId: { enum: dacAccessionIds } },
+              },
+            },
+          })
+        }
+        break
+      case ObjectTypes.dataset:
+        // Policy Link
+        if (policyAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              policyRef: {
+                properties: { accessionId: { enum: policyAccessionIds } },
+              },
+            },
+          })
+        }
+        // Run Link
+        if (runAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              runRef: {
+                items: {
+                  properties: { accessionId: { enum: runAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        // Analysis Link
+        if (analysisAccessionIds.length > 0) {
+          dereferencedSchema = merge({}, dereferencedSchema, {
+            properties: {
+              analysisRef: {
+                items: {
+                  properties: { accessionId: { enum: analysisAccessionIds } },
+                },
+              },
+            },
+          })
+        }
+        break
+      default:
+        break
+    }
+    return dereferencedSchema
+  }
 
   /*
    * Submit form with cleaned values and check for response errors
@@ -484,6 +674,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       setSuccessStatus(WizardStatus.info)
     }, 5000)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+
     const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
 
     setResponseInfo(response)

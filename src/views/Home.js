@@ -9,10 +9,12 @@ import Typography from "@material-ui/core/Typography"
 import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
+import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
@@ -51,15 +53,24 @@ const Home = (): React$Element<typeof Grid> => {
   useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
-      const response = await folderAPIService.getFolders()
+      const unpublishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: false })
+      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: true })
+
       if (isMounted) {
-        if (response.ok) {
-          dispatch(setUnpublishedFolders(response.data.folders.filter(folder => folder.published === false)))
-          dispatch(setPublishedFolders(response.data.folders.filter(folder => folder.published === true)))
+        if (unpublishedResponse.ok && publishedResponse.ok) {
+          dispatch(setUnpublishedFolders(unpublishedResponse.data.folders))
+          dispatch(setPublishedFolders(publishedResponse.data.folders))
+          dispatch(
+            setTotalFolders({
+              totalUnpublishedFolders: unpublishedResponse.data.page.totalFolders,
+              totalPublishedFolders: publishedResponse.data.page.totalFolders,
+            })
+          )
           setFetchingFolders(false)
         } else {
+          if (!unpublishedFolders.ok) setResponseError(unpublishedResponse)
+          if (!publishedResponse.ok) setResponseError(publishedResponse)
           setConnError(true)
-          setResponseError(response)
           setErrorPrefix("Fetching folders error.")
         }
       }
@@ -72,7 +83,7 @@ const Home = (): React$Element<typeof Grid> => {
 
   // Contains both unpublished and published folders (max. 5 items/each)
   return (
-    <Grid container direction="column" justify="space-between" alignItems="stretch">
+    <Grid container direction="column" justifyContent="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
         <Typography color="textPrimary">Logged in as: {user.name}</Typography>
       </Grid>
@@ -96,6 +107,10 @@ const Home = (): React$Element<typeof Grid> => {
               location="published"
               displayButton={true}
             />
+          </Grid>
+          <Divider variant="middle" />
+          <Grid item xs={12} className={classes.tableCard}>
+            <UserDraftTemplates />
           </Grid>
         </>
       )}

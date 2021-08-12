@@ -1,19 +1,18 @@
 describe("Draft operations", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
+  beforeEach(() => {
+    cy.login()
 
-  it("should create new folder, save, delete and continue draft", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft")
-
+    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
     // Navigate to folder creation
-    cy.get("button[type=button]").contains("New folder").click()
+    cy.get("button[type=button]", { timeout: 10000 }).contains("New folder").click()
 
     // Add folder name & description, navigate to submissions
     cy.get("input[name='name']").type("Test name")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
+  })
 
+  it("should create new folder, save, delete and continue draft", () => {
     // Fill a Study form
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
@@ -55,7 +54,7 @@ describe("Draft operations", function () {
     cy.get("button[type=button]").contains("Update draft").click()
 
     // Create a new form and save as draft
-    cy.get("button").contains("New form").click()
+    cy.get("button", { timeout: 10000 }).contains("New form").click({ force: true })
     cy.get("input[name='descriptor.studyTitle']").should("contain.text", "")
     cy.get("input[name='descriptor.studyTitle']").type("New title 2")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title 2")

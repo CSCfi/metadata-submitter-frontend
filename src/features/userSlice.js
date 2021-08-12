@@ -24,22 +24,37 @@ const userSlice: any = createSlice({
 export const { setUser, resetUser } = userSlice.actions
 export default userSlice.reducer
 
-export const fetchUserById = (userId: string): ((dispatch: (any) => void) => Promise<any>) => async (
-  dispatch: any => void
-) => {
-  const response = await userAPIService.getUserById(userId)
-  return new Promise((resolve, reject) => {
-    if (response.ok) {
-      const user: User = {
-        id: response.data.userId,
-        name: response.data.name,
-        drafts: response.data.drafts,
-        folders: response.data.folders,
+export const fetchUserById =
+  (userId: string): ((dispatch: (any) => void) => Promise<any>) =>
+  async (dispatch: any => void) => {
+    const response = await userAPIService.getUserById(userId)
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        const user: User = {
+          id: response.data.userId,
+          name: response.data.name,
+          drafts: response.data.drafts,
+          folders: response.data.folders,
+        }
+        dispatch(setUser(user))
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
       }
-      dispatch(setUser(user))
-      resolve(response)
-    } else {
-      reject(JSON.stringify(response))
-    }
-  })
-}
+    })
+  }
+
+export const addDraftsToUser =
+  (userId: string, drafts: any): ((dispatch: (any) => void) => Promise<any>) =>
+  async () => {
+    const changes = [{ op: "add", path: "/drafts/-", value: drafts }]
+    const response = await userAPIService.patchUserById("current", changes)
+
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }

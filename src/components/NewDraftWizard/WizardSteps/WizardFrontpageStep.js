@@ -48,7 +48,7 @@ const WizardFrontpageStep = (): React$Element<typeof Grid> => {
   const submitObjectHelpText =
     "Objects are usually part of some folder, but if you don't yet know whether to put your object into a folder, you can submit it individually"
   return (
-    <Grid container direction="row" justify="space-around" alignItems="center" spacing={2}>
+    <Grid container direction="row" justifyContent="space-around" alignItems="center" spacing={2}>
       <Grid item xs={12}>
         <Typography component="h2" variant="h6" align="center">
           Create New Submission

@@ -1,15 +1,12 @@
 describe("Basic e2e", function () {
-  const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
-
   it("should navigate to home with click of login button", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
+    cy.login()
   })
 
-  it("should create new folder, add Study form, upload Study XML file, add Analysis form, and publish folder", () => {
-    cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.visit(baseUrl + "newdraft")
+  it("should create new folder, add Study form, upload Study XML file, add Analysis form, add DAC form, and publish folder", () => {
+    cy.login()
+
+    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Navigate to folder creation
     cy.get("button[type=button]").contains("New folder").click()
@@ -34,17 +31,6 @@ describe("Basic e2e", function () {
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
-
-    // Edit saved submission
-    cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
-    cy.get("input[name='descriptor.studyTitle']", { timeout: 10000 }).type(" edited")
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
-    cy.get("button[type=button]").contains("Update").click()
-    cy.get("div[role=alert]").contains("Object updated")
-    cy.get("button[type=button]").contains("New form").click()
-    cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title edited")
 
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Upload XML File").click()
@@ -78,74 +64,87 @@ describe("Basic e2e", function () {
     cy.contains(".MuiAlert-message", "Object replaced")
 
     // Fill an Analysis form and submit object
-    cy.get("div[role=button]").contains("Analysis").click()
-    cy.get("div[role=button]")
-      .contains("Fill Form")
-      .should("be.visible")
-      .then($btn => $btn.click())
+    cy.clickFillForm("Analysis")
 
     cy.get("form").within(() => {
       cy.get("input[name='title']").type("Test title")
+
+      // Analysis type
+      cy.get("select[name='analysisType']").select("Reference Alignment")
+      cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
+      cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
+      cy.get("h4").contains("Sequence").parent().children("button").click()
+      cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type(
+        "Sequence Standard Accession Id"
+      )
+
       // Experiment
-      cy.get("input[name='experimentRef.accessionId']").type("Experiment Test Accession Id")
-      cy.get("input[name='experimentRef.identifiers.submitterId.namespace']").type("Experiment Test Namespace")
-      cy.get("input[name='experimentRef.identifiers.submitterId.value']").type("Experiment Test Value")
+      cy.get("h2").contains("Experiment Reference").parent().children("button").click()
+      cy.get("input[name='experimentRef[0].accessionId']").type("Experiment Test Accession Id")
+      cy.get("input[name='experimentRef[0].identifiers.submitterId.namespace']").type("Experiment Test Namespace")
+      cy.get("input[name='experimentRef[0].identifiers.submitterId.value']").type("Experiment Test Value")
 
       // Study
-      cy.get("input[name='studyRef.accessionId']").type("Study Test Accession Id")
       cy.get("input[name='studyRef.identifiers.submitterId.namespace']").type("Study Test Namespace")
       cy.get("input[name='studyRef.identifiers.submitterId.value']").type("Study Test Value")
 
       // Sample
-      cy.get("input[name='sampleRef.accessionId']").type("Sample Test Accession Id")
-      cy.get("input[name='sampleRef.identifiers.submitterId.namespace']").type("Sample Test Namespace")
-      cy.get("input[name='sampleRef.identifiers.submitterId.value']").type("Sample Test Value")
+      cy.get("h2").contains("Sample Reference").parent().children("button").click()
+      cy.get("input[name='sampleRef[0].accessionId']").type("Sample Test Accession Id")
+      cy.get("input[name='sampleRef[0].identifiers.submitterId.namespace']").type("Sample Test Namespace")
+      cy.get("input[name='sampleRef[0].identifiers.submitterId.value']").type("Sample Test Value")
 
       // Run
-      cy.get("input[name='runRef.accessionId']").type("Run Test Accession Id")
-      cy.get("input[name='runRef.identifiers.submitterId.namespace']").type("Run Test Namespace")
-      cy.get("input[name='runRef.identifiers.submitterId.value']").type("Run Test Value")
+      cy.get("h2").contains("Run Reference").parent().children("button").click()
+      cy.get("input[name='runRef[0].accessionId']").type("Run Test Accession Id")
+      cy.get("input[name='runRef[0].identifiers.submitterId.namespace']").type("Run Test Namespace")
+      cy.get("input[name='runRef[0].identifiers.submitterId.value']").type("Run Test Value")
 
       // Analysis
-      cy.get("input[name='analysisRef.accessionId']").type("Analysis Test Accession Id")
-      cy.get("input[name='analysisRef.identifiers.submitterId.namespace']").type("Analysis Test Namespace")
-      cy.get("input[name='analysisRef.identifiers.submitterId.value']").type("Analysis Test Value")
+      cy.get("h2").contains("Analysis Reference").parent().children("button").click()
+      cy.get("input[name='analysisRef[0].accessionId']").type("Analysis Test Accession Id")
+      cy.get("input[name='analysisRef[0].identifiers.submitterId.namespace']").type("Analysis Test Namespace")
+      cy.get("input[name='analysisRef[0].identifiers.submitterId.value']").type("Analysis Test Value")
 
-      cy.get("h3")
-        .contains("Reference Alignment")
-        .parent("div.formSection")
-        .within(() => {
-          cy.get("button").contains("Add new item").click()
-          cy.get("input[name='analysisType.referenceAlignment.sequence[0].accessionId']").type("Reference Accession Id")
-        })
+      // Files
+      cy.get("h2").contains("Files").parent().children("button").click()
+      cy.get("input[name='files[0].filename']").type("filename 1")
+      cy.get("select[name='files[0].filetype']").select("other")
+      cy.get("select[name='files[0].checksumMethod']").select("MD5")
+      cy.get("input[name='files[0].checksum']").type("b1f4f9a523e36fd969f4573e25af4540")
 
-      cy.get("h3")
-        .contains("Sequence Variation")
-        .parent("div.formSection")
-        .within(() => {
-          cy.get("input[name='analysisType.sequenceVariation.assembly.standard.accessionId']").type(
-            "Sequence Standard Accession Id"
-          )
-          cy.get("button").contains("Add new item").click()
-          cy.get("input[name='analysisType.sequenceVariation.sequence[0].accessionId']").type(
-            "Sequence Sequence Accession Id"
-          )
-        })
-
-      cy.get("h3")
-        .contains("Processed Reads")
-        .parent("div.formSection")
-        .within(() => {
-          cy.get("input[name='analysisType.processedReads.assembly.standard.accessionId']").type(
-            "Processed Standard Accession Id"
-          )
-          cy.get("button").contains("Add new item").click()
-
-          cy.get("input[name='analysisType.processedReads.sequence[0].accessionId']").type(
-            "Processed Sequence Accession Id"
-          )
-        })
+      cy.get("h2").contains("Files").parent().children("button").click()
+      cy.get("input[name='files[1].filename']").type("filename 2")
+      cy.get("select[name='files[1].filetype']").select("info")
+      cy.get("select[name='files[1].checksumMethod']").select("SHA-256")
+      cy.get("input[name='files[1].checksum']").type("c34045c1a1db8d1b3fca8a692198466952daae07eaf6104b4c87ed3b55b6af1b")
     })
+    // Submit form
+    cy.get("button[type=submit]").contains("Submit").click()
+    // Saved objects list should have newly added item from Analysis object
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
+    // DAC form
+    cy.get("div[role=button]", { timeout: 10000 }).contains("DAC").click({ force: true })
+    cy.get("div[aria-expanded='true']", { timeout: 10000 })
+      .siblings()
+      .within(() =>
+        cy
+          .get("div[role=button]")
+          .contains("Fill Form", { timeout: 10000 })
+          .should("be.visible")
+          .then($btn => $btn.click())
+      )
+
+    cy.get("h2").contains("Contacts").parent().children("button").click()
+    cy.get("[data-testid='contacts[0].name']").type("Test contact name")
+    cy.get("[data-testid='contacts[0].email']").type("email@test.com")
+    cy.get("[data-testid='contacts[0].telephoneNumber']").type(123456789)
+    cy.get("[data-testid='contacts[0].organisation']").type("Test organization")
+    // Click outside from organisation autocomplete field to hide suggestions
+    cy.get("[data-testid='contacts[0].telephoneNumber']").click()
+    cy.get("input[name='contacts[0].mainContact']").check()
+
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
     // Saved objects list should have newly added item from Analysis object

@@ -14,7 +14,7 @@ const Page500 = (): React$Element<typeof ErrorPageContainer> => {
         Oops, this means our server caused some sort of error we have not thought of.{" "}
       </Typography>
       <Typography variant="body2">
-        We would like to fix the error, so could you maybe drop us a line in <a href={errorLink}>our github repo</a>?
+      We would like to fix the issue, so could you create an issue in <a href={errorLink}>our github repo</a>?
       </Typography>
     </ErrorPageContainer>
   )

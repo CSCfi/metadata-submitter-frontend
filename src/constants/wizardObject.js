@@ -25,3 +25,5 @@ export const ObjectSubmissionsArray = [
   ObjectSubmissionTypes.xml,
   ObjectSubmissionTypes.existing,
 ]
+
+export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate"]

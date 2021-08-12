@@ -79,7 +79,7 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
   // Fallback if no folder in state
   const folder = useSelector(state => state.submissionFolder)
 
-  if (!folder && (wizardStep === 1 || wizardStep ===2)) {
+  if (!folder && (wizardStep === 1 || wizardStep === 2)) {
     wizardStep = -1
     history.push({ pathname: "/newdraft" })
   }

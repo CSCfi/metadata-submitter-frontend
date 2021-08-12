@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   headerLink: {
-    color: theme.palette.font.main,
+    color: theme.palette.common.black,
   },
   tableHeader: {
     padding: theme.spacing(1),

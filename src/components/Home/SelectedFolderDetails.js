@@ -144,7 +144,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       {isFetchingFolder && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
       {!isFetchingFolder && (
         <>
-          <Breadcrumbs aria-label="breadcrumb">
+          <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
             <Link color="inherit" component={RouterLink} to={`/home`}>
               Home
             </Link>

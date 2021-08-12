@@ -173,7 +173,12 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                   </ListItemIcon>
                   <ListItemText primary={folderTitle} />
                   {folderType === FolderSubmissionStatus.unpublished && (
-                    <Button color="secondary" aria-label="Edit current folder" onClick={() => editFolder()}>
+                    <Button
+                      color="secondary"
+                      aria-label="Edit current folder"
+                      data-testid="edit-button"
+                      onClick={() => editFolder()}
+                    >
                       Edit
                     </Button>
                   )}
@@ -208,7 +213,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
           </TableHead>
           <TableBody>
             {bodyRows?.map((row, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} data-testid={row.title}>
                 <TableCell component="th" scope="row">
                   {row.title}
                 </TableCell>

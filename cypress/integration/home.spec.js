@@ -27,7 +27,26 @@ describe("Home e2e", function () {
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("select[name='descriptor.studyType']").select("Resequencing")
 
-    // Submit form
+    // Save draft
+    cy.get("button[type=button]").contains("Save as Draft").click()
+
+    // Save folder and navigate to Home page
+    cy.get("button[type=button]").contains("Save and Exit").click()
+    cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
+    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+
+    // Select unpublished folder and edit folder
+    cy.get("div[role=button]").contains("Test unpublished folder").click()
+    cy.get('button[aria-label="Publish current folder"]').should("be.disabled")
+    cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
+    cy.get("input[name='name']").clear().type("Edited unpublished folder")
+    cy.get("button[type=button]").contains("Next").click()
+
+    // Submit study object in edited folder
+    cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
+    cy.get("div[role=button]").contains("Fill Form").click()
+    cy.get("input[name='descriptor.studyTitle']").type("Study to publish")
+    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -37,10 +56,16 @@ describe("Home e2e", function () {
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 
-    // Save folder and navigate to Home page
-    cy.get("button[type=button]").contains("Save and Exit").click()
-    cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
-    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+    // Navigate to home and publish test folder from draft folders list
+    cy.get('a[aria-label="go to frontpage"]').click()
+    cy.get("div[role=button]").contains("Edited unpublished folder").click()
+    cy.get('button[aria-label="Publish current folder"]').click()
+    cy.get('button[aria-label="Publish folder contents and move to frontpage"]').click()
+
+    // Find published folder in corresponding list
+    cy.get("ul[data-testId='published-submissions']").within(() => {
+      cy.get("div[role=button]").contains("Edited unpublished folder")
+    })
   })
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {

@@ -75,6 +75,7 @@ const FieldTooltip = withStyles(theme => ({
     color: theme.palette.common.black,
     fontSize: theme.typography.pxToRem(14),
     boxShadow: theme.shadows[1],
+    maxWidth: 400,
   },
 }))(Tooltip)
 

@@ -13,7 +13,6 @@ import { ObjectSubmissionTypes } from "constants/wizardObject"
 const useStyles = makeStyles(theme => ({
   card: {
     width: "100%",
-    marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(4),
     padding: 0,
     overflow: "visible",

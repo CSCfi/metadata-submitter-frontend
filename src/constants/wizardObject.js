@@ -17,13 +17,8 @@ export const ObjectStatus = {
 export const ObjectSubmissionTypes = {
   form: "Form",
   xml: "XML",
-  existing: "Existing",
 }
 
-export const ObjectSubmissionsArray = [
-  ObjectSubmissionTypes.form,
-  ObjectSubmissionTypes.xml,
-  ObjectSubmissionTypes.existing,
-]
+export const ObjectSubmissionsArray = [ObjectSubmissionTypes.form, ObjectSubmissionTypes.xml]
 
 export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate"]

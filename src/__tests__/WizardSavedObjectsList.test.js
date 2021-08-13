@@ -17,6 +17,14 @@ describe("WizardStepper", () => {
   const store = mockStore({
     objectType: ObjectTypes.sample,
     wizardStep: 1,
+    submissionFolder: {
+      name: "folder name",
+      description: "folder description",
+      published: false,
+      metadataObjects: [],
+      id: "FOL12341234",
+      drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.sample }],
+    },
   })
 
   const submissions = [
@@ -41,7 +49,7 @@ describe("WizardStepper", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={CSCtheme}>
-          <WizardSavedObjectsList submissions={submissions} />
+          <WizardSavedObjectsList objects={submissions} />
         </ThemeProvider>
       </Provider>
     )

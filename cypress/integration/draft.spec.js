@@ -21,29 +21,34 @@ describe("Draft operations", function () {
     // Save a draft
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid=Existing").find("li").should("have.length", 1)
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 1)
 
     // Save another draft
-    cy.get("div[role=button]").contains("Fill Form").click()
+    cy.get("button[type=button]").contains("New form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Test title 2")
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 2)
 
     // Update draft, save from dialog
     cy.get("input[name='descriptor.studyTitle']").type(" second save")
-    cy.get("div[role=button]").contains("Choose from drafts").click()
+    cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("h2").contains("Would you like to save draft version of this form")
     cy.get("div[role=dialog]").contains("Save").click()
-    cy.get("div[data-testid='Existing']").find("li").should("have.length", 2)
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 2)
 
     // Delete a draft
-    cy.get("button[aria-label='Delete draft']").first().click()
-    cy.get("div[data-testid='Existing']").find("li", { timeout: 60000 }).should("have.length", 1)
+    cy.get("ul[data-testid='Draft-objects']")
+      .find("li")
+      .first()
+      .within(() => {
+        cy.get("button[aria-label='Delete submission']").first().click()
+      })
+    cy.get("ul[data-testid='Draft-objects']").find("li", { timeout: 60000 }).should("have.length", 1)
 
     // Continue draft
     // Clear
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
     cy.get("input[name='descriptor.studyTitle']")
     cy.get("button[type=button]", { timeout: 10000 }).contains("Clear form").click()
 
@@ -52,6 +57,7 @@ describe("Draft operations", function () {
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=button]").contains("Update draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
 
     // Create a new form and save as draft
     cy.get("button", { timeout: 10000 }).contains("New form").click({ force: true })
@@ -63,26 +69,24 @@ describe("Draft operations", function () {
 
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
-    // Check that there are 2 drafts saved in "Choose from drafts"
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='Existing']").find("li").should("have.length", 2)
+    // Check that there are 2 drafts saved in drafts list"
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 2)
 
     // Submit first form draft
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
     cy.get("button[type=submit]").contains("Submit").click()
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Submitted with")
+    cy.get("ul[data-testid='Form-objects']").find("li").should("have.length", 1)
 
     // Submit second form draft
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid='Existing']").find("li").should("have.length", 1)
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 1)
+    cy.continueFirstDraft()
     cy.get("button[type=submit]").contains("Submit").click()
 
     // Check that there are 2 submitted objects
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+    cy.get("ul[data-testid='Form-objects']", { timeout: 10000 }).find("li").should("have.length", 2)
 
-    // Drafts should be empty
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div").contains("No study drafts.")
+    // Drafts list should be unmounted
+    cy.get("ul[data-testid='Draft-objects']").should("not.exist")
   })
 })

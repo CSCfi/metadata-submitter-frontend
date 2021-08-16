@@ -46,8 +46,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select the Experiment draft
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     cy.get("input[data-testid='title']").should("have.value", "Test experiment")
     cy.get("textarea[data-testid='description']").should("have.value", "Test experiment description")
@@ -58,8 +57,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("textarea[data-testid='description']").should("have.value", "")
 
     // Select the Experiment draft again
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     cy.get("input[data-testid='title']").should("have.value", "Test experiment")
     cy.get("textarea[data-testid='description']").should("have.value", "Test experiment description")

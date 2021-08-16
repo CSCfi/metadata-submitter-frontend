@@ -114,8 +114,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("button[type='button']").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     // Test that values exist
     cy.get("input[data-testid='title']").should("have.value", testData.title)
@@ -147,8 +146,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("button[type='button']").contains("Update draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
 
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     // Test that Prev Step Index is nulled
     cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").should("not.exist")
@@ -172,8 +170,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select newly saved draft
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     cy.get("select[name='runType.referenceAlignment.assembly']").should("have.value", testData.referenceAlignment)
     cy.get("input[data-testid='runType.referenceAlignment.assembly.accessionId']").should(
@@ -197,8 +194,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select newly saved draft
-    cy.chooseFromDrafts()
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
 
     cy.get("[type='checkbox']").first().should("be.checked")
 

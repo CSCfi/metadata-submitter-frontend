@@ -13,38 +13,46 @@ import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 
 const mockStore = configureStore([])
 
-describe("WizardStepper", () => {
-  const store = mockStore({
-    objectType: ObjectTypes.sample,
-    wizardStep: 1,
-    submissionFolder: {
-      name: "folder name",
-      description: "folder description",
-      published: false,
-      metadataObjects: [],
-      id: "FOL12341234",
-      drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.sample }],
-    },
-  })
+const submissions = [
+  {
+    accessionId: "EDAG1",
+    schema: ObjectTypes.sample,
+    tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: "Sample 1" },
+  },
+  {
+    accessionId: "EDAG2",
+    schema: ObjectTypes.sample,
+    tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample2.xml" },
+  },
+  {
+    accessionId: "EDAG3",
+    schema: ObjectTypes.sample,
+    tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample3.xml" },
+  },
+]
 
-  const submissions = [
-    {
-      accessionId: "EDAG1",
-      schema: ObjectTypes.sample,
-      tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: "Sample 1" },
-    },
-    {
-      accessionId: "EDAG2",
-      schema: ObjectTypes.sample,
-      tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample2.xml" },
-    },
-    {
-      accessionId: "EDAG3",
-      schema: ObjectTypes.sample,
-      tags: { submissionType: ObjectSubmissionTypes.xml, fileName: "sample3.xml" },
-    },
-  ]
+const drafts = [
+  {
+    accessionId: "EDAG1",
+    schema: `draft-${ObjectTypes.sample}`,
+    tags: { displayTitle: "Sample draft 1" },
+  },
+]
 
+const store = mockStore({
+  objectType: ObjectTypes.sample,
+  wizardStep: 1,
+  submissionFolder: {
+    name: "folder name",
+    description: "folder description",
+    published: false,
+    metadataObjects: [],
+    id: "FOL12341234",
+    drafts: drafts,
+  },
+})
+
+describe("WizardSavedObjectsList with submitted objects", () => {
   beforeEach(() => {
     render(
       <Provider store={store}>
@@ -100,5 +108,23 @@ describe("WizardStepper", () => {
     const { getAllByRole } = within(xmlList)
     const submittedXML = getAllByRole("listitem")
     expect(submittedXML.length).toBe(2)
+  })
+})
+
+describe("WizardSavedObjectsList with drafts", () => {
+  beforeEach(() => {
+    render(
+      <Provider store={store}>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardSavedObjectsList objects={drafts} />
+        </ThemeProvider>
+      </Provider>
+    )
+  })
+
+  it("should have draft objects listed", () => {
+    drafts.forEach(item => {
+      expect(screen.getByText(item.accessionId)).toBeInTheDocument()
+    })
   })
 })

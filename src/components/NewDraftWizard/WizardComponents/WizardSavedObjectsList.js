@@ -102,7 +102,7 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps): React
               titleTypographyProps={{ variant: "inherit" }}
               className={classes.cardHeader}
             />
-            <List aria-label={group.submissionType}>
+            <List aria-label={group.submissionType} data-testid={`${group.submissionType}-objects`}>
               {group.items.map(item => (
                 <ListItem key={item.accessionId} className={classes.objectListItem}>
                   <ListItemText

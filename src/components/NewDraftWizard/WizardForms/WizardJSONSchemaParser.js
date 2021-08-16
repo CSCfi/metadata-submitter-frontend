@@ -44,6 +44,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
   },
+  sectionTip: {
+    fontSize: "inherit",
+    marginLeft: theme.spacing(0.5),
+  },
   divBaseline: {
     display: "flex",
     flexDirection: "row",
@@ -71,6 +75,7 @@ const FieldTooltip = withStyles(theme => ({
     color: theme.palette.common.black,
     fontSize: theme.typography.pxToRem(14),
     boxShadow: theme.shadows[1],
+    maxWidth: 400,
   },
 }))(Tooltip)
 
@@ -223,7 +228,7 @@ const traverseFields = (
     case "object": {
       const properties = object.properties
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 1}>
+        <FormSection key={name} name={name} label={label} level={path.length + 1} description={description}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey]
             let required = object?.else?.required ?? object.required
@@ -330,8 +335,8 @@ type FormSectionProps = {
 /*
  * FormSection is rendered for properties with type object
  */
-const FormSection = (props: FormSectionProps) => {
-  const { name, label, level } = props
+const FormSection = ({ name, label, level, children, description, }: FormSectionProps & { description: string }) => {
+  const classes = useStyles()
 
   return (
     <ConnectForm>
@@ -342,8 +347,13 @@ const FormSection = (props: FormSectionProps) => {
             <div className="formSection" key={`${name}-section`}>
               <Typography key={`${name}-header`} variant={`h${level}`}>
                 {label}
+                {description && level==2 && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.sectionTip} />
+                    </FieldTooltip>
+                  )}
               </Typography>
-              {props.children}
+              {children}
             </div>
             <div>
               {error ? (

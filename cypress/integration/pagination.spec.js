@@ -139,10 +139,12 @@ describe("unpublished folders, published folders, and user's draft templates pag
     )
     cy.login()
     cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+    cy.get("[data-testid='page info']").contains("1 of 20 pages").should("be.visible")
 
     // Click Next page button
-    cy.get("button[aria-label='Next page']").click()
+    cy.get("button[aria-label='next page']").click()
     cy.get("p").contains("11-20 of 200").should("be.visible")
+    cy.get("[data-testid='page info']").contains("2 of 20 pages").should("be.visible")
 
     // Check "Items per page" options
     cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
@@ -154,6 +156,7 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("li[data-value='50']").click()
     cy.get("ul > a", { timeout: 10000 }).should("have.length", "50")
     cy.get("p", { timeout: 10000 }).contains("1-50 of 200").should("be.visible")
+    cy.get("[data-testid='page info']").contains("1 of 4 pages").should("be.visible")
   })
 
   it("should renders pagination for unpublished folders list correctly", () => {
@@ -298,9 +301,12 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.login()
     cy.get("button[data-testid='ViewAll-published']", { timeout: 10000 }).click()
 
+    cy.get("[data-testid='page info']").should("be.visible")
+    cy.get("[data-testid='page info']").contains("1 of 8 pages").should("be.visible")
     // Click Next page button
-    cy.get("button[aria-label='Next page']").click()
+    cy.get("button[aria-label='next page']").click()
     cy.get("p", { timeout: 10000 }).contains("11-20 of 80").should("be.visible")
+    cy.get("[data-testid='page info']").contains("2 of 8 pages").should("be.visible")
 
     // Check "Items per page" options
     cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
@@ -312,6 +318,7 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("li[data-value='50']").click()
     cy.get("ul > a", { timeout: 10000 }).should("have.length", "50")
     cy.get("p", { timeout: 10000 }).contains("1-50 of 80").should("be.visible")
+    cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
   })
 
   it("should render user's draft templates correctly", () => {
@@ -401,8 +408,11 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("h6").contains("Draft-study").click()
     cy.get("div[data-schema='draft-study'] > span").should("have.length", "10")
     cy.get("p").contains("1-10 of 15").should("be.visible")
-    cy.get("button[aria-label='Next page']").click()
+    cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
+
+    cy.get("button[aria-label='next page']").click()
     cy.get("p").contains("11-15 of 15").should("be.visible")
+    cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
     cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
     cy.get("li[data-value='15']").click()
     cy.get("div[data-schema='draft-study'] > span").should("have.length", "15")

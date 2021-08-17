@@ -8,6 +8,7 @@
 # testing
 /coverage
 debug.log
+cypress/videos
 
 # production
 /build

@@ -30,6 +30,11 @@ describe("Home e2e", function () {
     // Save draft
     cy.get("button[type=button]").contains("Save as Draft").click()
 
+    // Save another draft for later use
+    cy.get("button").contains("New form").click()
+    cy.get("input[name='descriptor.studyTitle']").type("Second test title")
+    cy.get("button[type=button]").contains("Save as Draft").click()
+
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
@@ -42,10 +47,17 @@ describe("Home e2e", function () {
     cy.get("input[name='name']").clear().type("Edited unpublished folder")
     cy.get("button[type=button]").contains("Next").click()
 
-    // Submit study object in edited folder
-    cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get("input[name='descriptor.studyTitle']").type("Study to publish")
+    // Navigate to home and delete object
+    cy.get('a[aria-label="go to frontpage"]').click()
+    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+    cy.get("ul[data-testid='draft-submissions']").within(() =>
+      cy.get("div[role=button]").contains("Edited unpublished folder").click()
+    )
+    cy.get("tr[data-testid='Test title']").within(() => cy.get('button[aria-label="Delete this object"]').click())
+    cy.get("tr[data-testid='Test title']").should("not.exist")
+
+    // Edit remaining object
+    cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)

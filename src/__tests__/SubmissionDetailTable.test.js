@@ -149,4 +149,36 @@ describe("Published folders list", () => {
     const publishedObject = await screen.findByTestId("Published object")
     expect(publishedObject).toBeInTheDocument()
   })
+
+  test("renders 'Add object to folder' button if no draft or submitted objects", async () => {
+    server.use(
+      rest.get("/folders/:folderId", (req, res, ctx) => {
+        const { folderId } = req.params
+        return res(
+          ctx.json({
+            name: "Test published folder",
+            description: "Test description",
+            published: false,
+            metadataObjects: [],
+            drafts: [],
+            folderId: folderId,
+          })
+        )
+      })
+    )
+
+    render(
+      <Provider store={store}>
+        <ThemeProvider theme={CSCtheme}>
+          <MemoryRouter initialEntries={[{ pathname: "/home/drafts/123456" }]}>
+            <App />
+          </MemoryRouter>
+        </ThemeProvider>
+      </Provider>
+    )
+
+    await screen.findByTestId("breadcrumb")
+    const addObjectsButton = await screen.findByTestId("add-objects-button")
+    expect(addObjectsButton).toBeInTheDocument()
+  })
 })

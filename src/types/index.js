@@ -9,6 +9,7 @@ export type ObjectDetails = {
   objectType: string,
   status: string,
   title: string,
+  submissionType: string,
 }
 
 export type FolderId = {

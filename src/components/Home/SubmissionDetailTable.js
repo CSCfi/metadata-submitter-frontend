@@ -1,9 +1,10 @@
 //@flow
-import React, { useState } from "react"
+import React from "react"
 
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
+import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
 import Link from "@material-ui/core/Link"
@@ -24,18 +25,11 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
-import { useDispatch } from "react-redux"
-import { useHistory, Link as RouterLink } from "react-router-dom"
-
-import WizardAlert from "../NewDraftWizard/WizardComponents/WizardAlert"
-import WizardStatusMessageHandler from "../NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { WizardStatus } from "constants/wizardStatus"
-import { addDraftsToUser } from "features/userSlice"
-import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishFolderContent, setFolder, resetFolder } from "features/wizardSubmissionFolderSlice"
-import type { ObjectDetails, ObjectInsideFolderWithTags } from "types"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
+import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({
   backIcon: {
@@ -54,6 +48,10 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       cursor: "pointer",
     },
+  },
+  cardActions: {
+    display: "flex",
+    justifyContent: "center",
   },
   headerLink: {
     color: theme.palette.common.black,
@@ -91,18 +89,21 @@ const SubmissionTooltip = withStyles(theme => ({
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
 type SubmissionDetailTableProps = {
-  folderData: any,
   folderTitle: string,
   bodyRows: Array<ObjectDetails>,
   folderType: string,
   location: string,
-  onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
+  onEditFolder: (step: number) => any,
+  onPublishFolder: () => any,
+  onEditObject: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>,
+  onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
 }
 
 const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element<any> => {
   const classes = useStyles()
-  const dispatch = useDispatch()
-  const { folderData, folderTitle, bodyRows, folderType, location, onDelete } = props
+
+  const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
+    props
   const getDateFormat = (date: string) => {
     const d = new Date(date)
     const day = d.getDate()
@@ -111,50 +112,6 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
     return `${day}.${month}.${year}`
   }
   const folderPublishable = bodyRows.find(row => row.status === "Submitted")
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
-
-  let history = useHistory()
-
-  const editFolder = () => {
-    dispatch(setFolder(folderData))
-    history.push("/newdraft?step=0")
-  }
-
-  const publishFolder = () => {
-    dispatch(setFolder(folderData))
-    setDialogOpen(true)
-  }
-
-  const resetDispatch = () => {
-    history.push("/home")
-    dispatch(resetObjectType())
-    dispatch(resetFolder())
-  }
-
-  const handlePublish = (confirm, formData?: Array<ObjectInsideFolderWithTags>) => {
-    if (confirm) {
-      dispatch(publishFolderContent(folderData))
-        .then(() => resetDispatch())
-        .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folderData.folderId}`)
-        })
-
-      formData && formData?.length > 0
-        ? dispatch(addDraftsToUser("current", formData)).catch(error => {
-            setConnError(true)
-            setResponseError(JSON.parse(error))
-            setErrorPrefix("Can't save drafts for user")
-          })
-        : null
-    } else {
-      setDialogOpen(false)
-    }
-  }
 
   const CurrentFolder = () => (
     <CardContent>
@@ -177,7 +134,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                       color="secondary"
                       aria-label="Edit current folder"
                       data-testid="edit-button"
-                      onClick={() => editFolder()}
+                      onClick={() => onEditFolder(0)}
                     >
                       Edit
                     </Button>
@@ -188,7 +145,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                       aria-label="Publish current folder"
                       variant="contained"
                       data-testid="publish-button"
-                      onClick={() => publishFolder()}
+                      onClick={() => onPublishFolder()}
                     >
                       Publish
                     </Button>
@@ -221,25 +178,29 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                 <TableCell>{row.status}</TableCell>
                 <TableCell>{getDateFormat(row.lastModified)}</TableCell>
                 <TableCell>
-                  <Button>View</Button>
+                  <Button disabled>View</Button>
                 </TableCell>
                 <TableCell>
-                  <Button disabled={folderType === FolderSubmissionStatus.published} aria-label="Edit this object">
-                    Edit
+                  <Button
+                    disabled={folderType === FolderSubmissionStatus.published}
+                    aria-label="Edit this object"
+                    onClick={() => onEditObject(row.accessionId, row.objectType, row.status, row.submissionType)}
+                  >
+                    {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
                   </Button>
                 </TableCell>
                 {folderType === FolderSubmissionStatus.unpublished && (
                   <TableCell>
                     <Button
                       aria-label="Delete this object"
-                      onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+                      onClick={() => onDeleteObject(row.accessionId, row.objectType, row.status)}
                     >
                       Delete
                     </Button>
                   </TableCell>
                 )}
                 <TableCell>
-                  <Button>Show details</Button>
+                  <Button disabled>Show details</Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -250,11 +211,24 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
   )
 
   const EmptyFolder = () => (
-    <CardContent>
-      <Typography align="center" variant="body2">
-        Current folder is empty
-      </Typography>
-    </CardContent>
+    <>
+      <CardContent>
+        <Typography align="center" variant="body2">
+          Current folder is empty
+        </Typography>
+      </CardContent>
+      <CardActions className={classes.cardActions}>
+        <Button
+          color="primary"
+          variant="contained"
+          aria-label="Add objects to this folder"
+          data-testid="add-objects-button"
+          onClick={() => onEditFolder(1)}
+        >
+          Add objects to folder
+        </Button>
+      </CardActions>
+    </>
   )
 
   return (
@@ -269,15 +243,6 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
       </Link>
 
       {bodyRows?.length > 0 ? <CurrentFolder /> : <EmptyFolder />}
-
-      {dialogOpen && <WizardAlert onAlert={handlePublish} parentLocation="footer" alertType={"publish"}></WizardAlert>}
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
-      )}
     </Card>
   )
 }

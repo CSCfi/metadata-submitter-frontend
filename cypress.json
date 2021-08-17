@@ -4,6 +4,9 @@
     "mockAuthHost": "localhost",
     "mockAuthPort": "8000"
   },
-  "retries": 2,
+  "retries": {
+    "runMode": 3,
+    "openMode": 0
+  },
   "videoCompression": false
 }

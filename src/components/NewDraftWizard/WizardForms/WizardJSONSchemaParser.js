@@ -70,13 +70,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const FieldTooltip = withStyles(theme => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
-    fontSize: theme.typography.pxToRem(14),
-    boxShadow: theme.shadows[1],
-    maxWidth: 400,
-  },
+  tooltip: theme.tooltip,
 }))(Tooltip)
 
 /*
@@ -335,7 +329,7 @@ type FormSectionProps = {
 /*
  * FormSection is rendered for properties with type object
  */
-const FormSection = ({ name, label, level, children, description, }: FormSectionProps & { description: string }) => {
+const FormSection = ({ name, label, level, children, description }: FormSectionProps & { description: string }) => {
   const classes = useStyles()
 
   return (
@@ -347,11 +341,11 @@ const FormSection = ({ name, label, level, children, description, }: FormSection
             <div className="formSection" key={`${name}-section`}>
               <Typography key={`${name}-header`} variant={`h${level}`}>
                 {label}
-                {description && level==2 && (
-                    <FieldTooltip title={description} placement="top" arrow>
-                      <HelpOutlineIcon className={classes.sectionTip} />
-                    </FieldTooltip>
-                  )}
+                {description && level == 2 && (
+                  <FieldTooltip title={description} placement="top" arrow>
+                    <HelpOutlineIcon className={classes.sectionTip} />
+                  </FieldTooltip>
+                )}
               </Typography>
               {children}
             </div>

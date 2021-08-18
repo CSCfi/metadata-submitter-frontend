@@ -15,6 +15,8 @@ import { Link as RouterLink, useLocation } from "react-router-dom"
 import logo from "../csc_logo.svg"
 
 import { resetUser } from "features/userSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { resetFolder } from "features/wizardSubmissionFolderSlice"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -53,6 +55,11 @@ const Menu = () => {
     return null
   }
 
+  const resetWizard = () => {
+    dispatch(resetObjectType())
+    dispatch(resetFolder())
+  }
+
   return (
     <nav className={classes.nav}>
       <IconButton
@@ -71,7 +78,14 @@ const Menu = () => {
         Submissions
       </Link>
       <Link component={RouterLink} aria-label="Create Submission" to="/newdraft">
-        <Button color="primary" variant="contained" className={classes.linkButton}>
+        <Button
+          color="primary"
+          variant="contained"
+          className={classes.linkButton}
+          onClick={() => {
+            resetWizard()
+          }}
+        >
           Create Submission
         </Button>
       </Link>

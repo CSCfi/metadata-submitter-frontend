@@ -91,7 +91,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
     <>
       <>
         <CardContent className={classes.cardContent}>
-          <List>
+          <List data-testid={`${folderType}-submissions`}>
             {folders.map((folder, index) => {
               return (
                 <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">

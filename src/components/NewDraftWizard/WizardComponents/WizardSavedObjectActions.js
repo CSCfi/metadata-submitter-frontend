@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 type WizardSavedObjectActionsProps = {
-  folderId: string,
   objectId: string,
   objectType: string,
   submissionType: string,

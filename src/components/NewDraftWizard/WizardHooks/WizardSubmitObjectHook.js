@@ -3,6 +3,7 @@ import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSc
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
+import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
@@ -10,6 +11,7 @@ import objectAPIService from "services/objectAPI"
 import { getObjectDisplayTitle } from "utils"
 
 const submitObjectHook = async (formData: any, folderId: string, objectType: string, dispatch: function): any => {
+  dispatch(setLoading())
   const waitForServertimer = setTimeout(() => {
     dispatch(
       updateStatus({
@@ -65,6 +67,7 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
   }
 
   clearTimeout(waitForServertimer)
+  dispatch(resetLoading())
   return response
 }
 

@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     marginBlockEnd: "0",
   },
   cardHeader: theme.wizard.cardHeader,
+  draftCardHeader: { ...theme.wizard.cardHeader, backgroundColor: theme.palette.secondary.dark },
   objectListItem: theme.wizard.objectListItem,
   listItemText: {
     display: "inline-block",
@@ -79,7 +80,8 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps): React
     },
   ]
 
-  const listItems = draftObjects[0].items.length ? draftObjects : groupedSubmissions
+  const draftList = !!draftObjects[0].items.length
+  const listItems = draftList ? draftObjects : groupedSubmissions
 
   const displaySubmissionType = (submission: { submissionType: string, items: Array<ObjectInsideFolderWithTags> }) => {
     switch (submission.submissionType) {
@@ -98,9 +100,11 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps): React
         listItems.map(group => (
           <Box pt={0} key={group.submissionType}>
             <CardHeader
-              title={`Submitted ${formatDisplayObjectType(objectType)} ${displaySubmissionType(group)}`}
+              title={`${draftList ? "" : "Submitted "}${formatDisplayObjectType(objectType)} ${displaySubmissionType(
+                group
+              )}`}
               titleTypographyProps={{ variant: "inherit" }}
-              className={classes.cardHeader}
+              className={draftList ? classes.draftCardHeader : classes.cardHeader}
             />
             <List aria-label={group.submissionType} data-testid={`${group.submissionType}-objects`}>
               {group.items.map(item => (

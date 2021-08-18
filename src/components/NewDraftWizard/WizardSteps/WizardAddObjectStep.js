@@ -1,6 +1,7 @@
 //@flow
 import React from "react"
 
+import CircularProgress from "@material-ui/core/CircularProgress"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
@@ -42,6 +43,7 @@ const WizardAddObjectStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const submissions = folder?.metadataObjects?.filter(obj => obj.schema === objectType)
   const draftObjects = folder?.drafts?.filter(obj => obj.schema === `draft-${objectType}`)
+  const loading = useSelector(state => state.loading)
 
   return (
     <>
@@ -74,6 +76,11 @@ const WizardAddObjectStep = (): React$Element<any> => {
               {draftObjects?.length > 0 && <WizardSavedObjectsList objects={draftObjects} />}
             </Grid>
           </Grid>
+          {loading && (
+            <Grid container justify="center">
+              <CircularProgress />
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </>

@@ -2,6 +2,7 @@
 import { ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
+import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts, modifyDraftObjectTags } from "features/wizardSubmissionFolderSlice"
@@ -17,6 +18,7 @@ const saveDraftHook = async (
   dispatch: function
 ): any => {
   const draftDisplayTitle = getObjectDisplayTitle(objectType, values)
+  dispatch(setLoading())
   if (accessionId && objectStatus === ObjectStatus.draft) {
     const response = await draftAPIService.patchFromJSON(objectType, accessionId, values)
     if (response.ok) {
@@ -37,8 +39,6 @@ const saveDraftHook = async (
         })
       )
       dispatch(resetCurrentObject())
-
-      return response
     } else {
       dispatch(
         updateStatus({
@@ -47,8 +47,9 @@ const saveDraftHook = async (
           errorPrefix: "Cannot save draft",
         })
       )
-      return response
     }
+    dispatch(resetLoading())
+    return response
   } else {
     const response = await draftAPIService.createFromJSON(objectType, values)
     if (response.ok) {
@@ -68,8 +69,6 @@ const saveDraftHook = async (
         })
       )
       dispatch(resetCurrentObject())
-
-      return response
     } else {
       dispatch(
         updateStatus({
@@ -78,8 +77,9 @@ const saveDraftHook = async (
           errorPrefix: "Cannot save draft",
         })
       )
-      return response
     }
+    dispatch(resetLoading())
+    return response
   }
 }
 

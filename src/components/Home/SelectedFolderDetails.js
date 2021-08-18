@@ -26,6 +26,7 @@ import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideFolderWithTags } from "types"
+import { getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   tableGrid: {
@@ -98,7 +99,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
             if (response.ok) {
               const submittedObjectDetails = {
                 accessionId: data.metadataObjects[j].accessionId,
-                title: response.data.descriptor?.studyTitle,
+                title: getItemPrimaryText(data.metadataObjects[j]),
                 objectType,
                 submissionType: data.metadataObjects[j].tags.submissionType,
                 status: ObjectStatus.submitted,

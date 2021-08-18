@@ -28,7 +28,7 @@ import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, DisplayObjectTypes } from "constants/wizardObject"
 import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({
@@ -71,11 +71,6 @@ const useStyles = makeStyles(theme => ({
   },
   headRows: {
     fontWeight: "bold",
-  },
-  objectType: {
-    "&:first-letter": {
-      textTransform: "capitalize",
-    },
   },
   tooltipContainer: {
     display: "flex",
@@ -174,7 +169,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                 <TableCell component="th" scope="row">
                   {row.title}
                 </TableCell>
-                <TableCell className={classes.objectType}>{row.objectType}</TableCell>
+                <TableCell>{DisplayObjectTypes[row.objectType]}</TableCell>
                 <TableCell>{row.status}</TableCell>
                 <TableCell>{getDateFormat(row.lastModified)}</TableCell>
                 <TableCell>

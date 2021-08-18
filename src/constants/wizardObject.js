@@ -9,6 +9,17 @@ export const ObjectTypes = {
   dataset: "dataset",
 }
 
+export const DisplayObjectTypes = {
+  study: "Study",
+  sample: "Sample",
+  experiment: "Experiment",
+  run: "Run",
+  analysis: "Analysis",
+  dac: "DAC",
+  policy: "Policy",
+  dataset: "Dataset",
+}
+
 export const ObjectStatus = {
   draft: "Draft",
   submitted: "Submitted",

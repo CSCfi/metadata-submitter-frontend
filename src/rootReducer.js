@@ -4,6 +4,7 @@ import { combineReducers } from "@reduxjs/toolkit"
 
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
+import loadingReducer from "features/loadingSlice"
 import objectsArrayReducer from "features/objectsArraySlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
@@ -20,6 +21,7 @@ import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 const rootReducer: any = combineReducers({
   alert: wizardAlertReducer,
   focus: focusReducer,
+  loading: loadingReducer,
   statusDetails: wizardStatusMessageReducer,
   objectType: objectTypeReducer,
   submissionFolder: submissionFolderReducer,

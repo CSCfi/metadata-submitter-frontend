@@ -9,6 +9,7 @@ const palette = {
   },
   secondary: {
     main: "#dfe1e3",
+    dark: "#424242",
   },
   third: {
     main: "#006476",

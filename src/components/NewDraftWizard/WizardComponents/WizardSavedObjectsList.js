@@ -18,14 +18,13 @@ import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   objectList: {
-    paddingLeft: theme.spacing(2),
-    width: "25%",
     flex: "auto",
   },
   header: {
     marginBlockEnd: "0",
   },
   cardHeader: theme.wizard.cardHeader,
+  draftCardHeader: { ...theme.wizard.cardHeader, backgroundColor: theme.palette.secondary.dark },
   objectListItem: theme.wizard.objectListItem,
   listItemText: {
     display: "inline-block",
@@ -48,19 +47,20 @@ const useStyles = makeStyles(theme => ({
  * List objects by submission type. Enables deletion of objects
  */
 
-type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+type WizardSavedObjectsListProps = { objects: Array<ObjectInsideFolderWithTags> }
 
-const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): React$Element<any> => {
+const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps): React$Element<any> => {
   const ref = useRef()
   useEffect(() => {
-    ref.current = submissions
+    ref.current = objects
   })
 
   const classes = useStyles()
   const objectType = useSelector(state => state.objectType)
+  const folder = useSelector(state => state.submissionFolder)
 
   // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
-  const submissionTypes = submissions
+  const submissionTypes = objects
     .map(obj => (obj.tags.submissionType ? obj.tags.submissionType : ""))
     .filter((val, ind, arr) => arr.indexOf(val) === ind)
     .sort()
@@ -70,35 +70,44 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
     submissionTypes.length > 0 &&
     submissionTypes.map(submissionType => ({
       submissionType,
-      submittedItems: submissions.filter(obj => obj.tags.submissionType && obj.tags.submissionType === submissionType),
+      items: objects.filter(obj => obj.tags.submissionType && obj.tags.submissionType === submissionType),
     }))
 
-  const displaySubmissionType = (submission: {
-    submissionType: string,
-    submittedItems: Array<ObjectInsideFolderWithTags>,
-  }) => {
+  const draftObjects = [
+    {
+      submissionType: "Draft",
+      items: objects.filter(object => object.schema.includes("draft-")),
+    },
+  ]
+
+  const draftList = !!draftObjects[0].items.length
+  const listItems = draftList ? draftObjects : groupedSubmissions
+
+  const displaySubmissionType = (submission: { submissionType: string, items: Array<ObjectInsideFolderWithTags> }) => {
     switch (submission.submissionType) {
       case ObjectSubmissionTypes.form:
-        return submission.submittedItems.length >= 2 ? "Forms" : "Form"
+        return submission.items.length >= 2 ? "Forms" : "Form"
       case ObjectSubmissionTypes.xml:
-        return submission.submittedItems.length >= 2 ? "XML files" : "XML file"
+        return submission.items.length >= 2 ? "XML files" : "XML file"
       default:
-        return ""
+        return submission.items.length >= 2 ? "drafts" : "draft"
     }
   }
 
   return (
     <div className={classes.objectList}>
-      {groupedSubmissions &&
-        groupedSubmissions.map(group => (
+      {listItems &&
+        listItems.map(group => (
           <Box pt={0} key={group.submissionType}>
             <CardHeader
-              title={`Submitted ${formatDisplayObjectType(objectType)} ${displaySubmissionType(group)}`}
+              title={`${draftList ? "" : "Submitted "}${formatDisplayObjectType(objectType)} ${displaySubmissionType(
+                group
+              )}`}
               titleTypographyProps={{ variant: "inherit" }}
-              className={classes.cardHeader}
+              className={draftList ? classes.draftCardHeader : classes.cardHeader}
             />
-            <List aria-label={group.submissionType}>
-              {group.submittedItems.map(item => (
+            <List aria-label={group.submissionType} data-testid={`${group.submissionType}-objects`}>
+              {group.items.map(item => (
                 <ListItem key={item.accessionId} className={classes.objectListItem}>
                   <ListItemText
                     className={classes.listItemText}
@@ -108,7 +117,8 @@ const WizardSavedObjectsList = ({ submissions }: WizardSavedObjectsListProps): R
                   />
                   <ListItemSecondaryAction>
                     <WizardSavedObjectActions
-                      submissions={submissions}
+                      folderId={folder.folderId}
+                      submissions={objects}
                       objectType={objectType}
                       objectId={item.accessionId}
                       submissionType={group?.submissionType}

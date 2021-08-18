@@ -40,7 +40,6 @@ Cypress.Commands.add("setMockUser", (eppnUser, familyName, givenName) => {
   })
 })
 
-
 // Turn off all uncaught exception handling
 Cypress.on("uncaught:exception", () => {
   return false
@@ -66,14 +65,11 @@ Cypress.Commands.add("clickFillForm", objectType => {
     )
 })
 
-Cypress.Commands.add("chooseFromDrafts", () => {
-  cy.get("div[aria-expanded='true']")
-    .siblings()
-    .within(() =>
-      cy
-        .get("div[role=button]")
-        .contains("Choose from drafts", { timeout: 10000 })
-        .should("be.visible")
-        .then($btn => $btn.click())
-    )
+Cypress.Commands.add("continueFirstDraft", () => {
+  cy.get("ul[data-testid='Draft-objects']")
+    .find("li")
+    .first()
+    .within(() => {
+      cy.get("button[aria-label='Edit submission']").first().click()
+    })
 })

@@ -62,21 +62,21 @@ describe("draft and submitted objects' titles", function () {
     // Save a draft
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-testid=Existing").find("li").should("have.length", 1)
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 1)
 
     // Check the draft object has correct displayTitle
     cy.get("div[data-schema='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title")
 
     // Edit draft object's title
-    cy.get("button[aria-label='Continue draft']").first().click()
+    cy.continueFirstDraft()
     cy.get("input[name='descriptor.studyTitle']").type(" 2")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "Draft title 2")
     cy.get("button[type=button]").contains("Update draft").click()
 
     // Check the draft object has correctly updated displayTitle
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated")
-    cy.get("div[role=button]").contains("Choose from drafts").click()
-    cy.get("div[data-schema='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title 2")
+    cy.get("ul[data-testid='Draft-objects']").within(() => {
+      cy.get("div[data-schema='draft-study']", { timeout: 10000 }).should("contain.text", "Draft title 2")
+    })
   })
 })

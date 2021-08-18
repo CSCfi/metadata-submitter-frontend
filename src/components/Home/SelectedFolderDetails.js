@@ -62,6 +62,30 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   // Fetch folder data and map objects
   useEffect(() => {
     let isMounted = true
+
+    const handleObject = async (data: any, draft: boolean, objectType: string, objectInFolder: any) => {
+      const service = draft ? draftAPIService : objectAPIService
+
+      const response = await service.getObjectByAccessionId(objectType, objectInFolder.accessionId)
+
+      if (response.ok) {
+        const objectDetails = {
+          accessionId: objectInFolder.accessionId,
+          title: getItemPrimaryText(objectInFolder),
+          objectType,
+          submissionType: objectInFolder.tags.submissionType || ObjectSubmissionTypes.form, // Fallback for 'Form'. Used in drafts
+          status: draft ? ObjectStatus.draft : ObjectStatus.submitted,
+          lastModified: response.data.dateModified,
+          objectData: response.data,
+        }
+        objectsArr.push(objectDetails)
+      } else {
+        setConnError(true)
+        setResponseError(response)
+        setErrorPrefix("Object fetching error.")
+      }
+    }
+
     const getFolder = async () => {
       const response = await folderAPIService.getFolderById(folderId)
       if (isMounted) {
@@ -72,46 +96,15 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
               const objectType = data.drafts[i].schema.includes("draft-")
                 ? data.drafts[i].schema.substr(6)
                 : data.drafts[i].schema
-              const response = await draftAPIService.getObjectByAccessionId(objectType, data.drafts[i].accessionId)
-              if (response.ok) {
-                const draftObjectDetails = {
-                  accessionId: data.drafts[i].accessionId,
-                  title: response.data.descriptor?.studyTitle,
-                  objectType,
-                  submissionType: ObjectSubmissionTypes.form, // Only forms can be drafts
-                  status: ObjectStatus.draft,
-                  lastModified: response.data.dateModified,
-                }
-                objectsArr.push(draftObjectDetails)
-              } else {
-                setConnError(true)
-                setResponseError(response)
-                setErrorPrefix("Fetching folder error.")
-              }
+
+              await handleObject(data, true, objectType, data.drafts[i])
             }
           }
-          for (let j = 0; j < data.metadataObjects?.length; j += 1) {
-            const objectType = data.metadataObjects[j].schema
-            const response = await objectAPIService.getObjectByAccessionId(
-              objectType,
-              data.metadataObjects[j].accessionId
-            )
-            if (response.ok) {
-              const submittedObjectDetails = {
-                accessionId: data.metadataObjects[j].accessionId,
-                title: getItemPrimaryText(data.metadataObjects[j]),
-                objectType,
-                submissionType: data.metadataObjects[j].tags.submissionType,
-                status: ObjectStatus.submitted,
-                lastModified: response.data.dateModified,
-              }
-              objectsArr.push(submittedObjectDetails)
-            } else {
-              setConnError(true)
-              setResponseError(response)
-              setErrorPrefix("Fetching folder error.")
-            }
+          for (let i = 0; i < data.metadataObjects?.length; i += 1) {
+            const objectType = data.metadataObjects[i].schema
+            await handleObject(data, false, objectType, data.metadataObjects[i])
           }
+
           setSelectedFolder({
             originalFolderData: data,
             folderTitle: data.name,

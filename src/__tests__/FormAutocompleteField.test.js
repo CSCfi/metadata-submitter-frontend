@@ -20,7 +20,8 @@ const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
 
 const server = setupServer(
   rest.get("http://api.ror.org/organizations", (req, res, ctx) => {
-    return res(ctx.json({ items: mockOrganisations }))
+    const searchTerm = req.url.searchParams.get("query")
+    return res(ctx.json({ items: mockOrganisations.filter(item => item.name.toLowerCase().includes(searchTerm)) }))
   })
 )
 

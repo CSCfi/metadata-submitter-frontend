@@ -40,8 +40,22 @@ describe("Home e2e", function () {
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
 
+    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    cy.get("ul").children().last().contains("All").click()
+
+    cy.wait(500)
     // Select unpublished folder and edit folder
-    cy.get("div[role=button]").contains("Test unpublished folder").click()
+    // cy.get("[data-testid='draft-submissions']")
+    //   .children()
+    //   .contains("Test unpublished folder", { timeout: 10000 })
+    //   .last()
+    //   .click()
+
+    cy.get("ul[data-testid='draft-submissions']").within(() =>
+      cy.get("div[role=button]").last().contains("Test unpublished folder").last().click()
+    )
+
     cy.get('button[aria-label="Publish current folder"]').should("be.disabled")
     cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
     cy.get("input[name='name']").clear().type("Edited unpublished folder")
@@ -50,9 +64,15 @@ describe("Home e2e", function () {
     // Navigate to home and delete object
     cy.get('a[aria-label="go to frontpage"]').click()
     cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    cy.get("ul").children().last().contains("All").click()
+
+    cy.wait(500)
     cy.get("ul[data-testid='draft-submissions']").within(() =>
-      cy.get("div[role=button]").contains("Edited unpublished folder").click()
+      cy.get("div[role=button]").last().contains("Edited unpublished folder").last().click()
     )
+
     cy.get("tr[data-testid='Test title']").within(() => cy.get('button[aria-label="Delete this object"]').click())
     cy.get("tr[data-testid='Test title']").should("not.exist")
 
@@ -63,18 +83,29 @@ describe("Home e2e", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Navigate to summary
-    cy.get("button[type=button]").contains("Next").click()
+    cy.get("button[type=button]").contains("Next", { timeout: 10000 }).click()
 
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 
     // Navigate to home and publish test folder from draft folders list
     cy.get('a[aria-label="go to frontpage"]').click()
-    cy.get("div[role=button]").contains("Edited unpublished folder").click()
+    // cy.get("div[role=button]").contains("Edited unpublished folder").click()
+    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    cy.get("ul").children().last().contains("All").click()
+
+    cy.wait(500)
+    cy.get("ul[data-testid='draft-submissions']").within(() =>
+      cy.get("div[role=button]").last().contains("Edited unpublished folder").last().click()
+    )
     cy.get('button[aria-label="Publish current folder"]').click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').click()
 
     // Find published folder in corresponding list
+    cy.get("button[data-testid='ViewAll-published']", { timeout: 10000 }).click()
+    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    cy.get("ul").children().last().contains("All").click()
     cy.get("ul[data-testId='published-submissions']").within(() => {
       cy.get("div[role=button]").contains("Edited unpublished folder")
     })

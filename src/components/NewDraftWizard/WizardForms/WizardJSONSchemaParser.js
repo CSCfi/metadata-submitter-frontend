@@ -539,13 +539,22 @@ const FormOneOfField = ({
           requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
         }
 
+        const clearForm = useSelector(state => state.clearForm)
+
+        useEffect(() => {
+          if (clearForm) {
+            // Clear the field and "clearForm" is true
+            setField("")
+          }
+        }, [clearForm])
+
         return (
           <div>
             <div className={classes.divBaseline}>
               <ValidationSelectField
                 name={name}
                 label={label}
-                defaultValue={field}
+                value={field || ""}
                 select
                 SelectProps={{ native: true }}
                 onChange={event => {

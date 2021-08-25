@@ -16,7 +16,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("div[role=button]").contains("Fill Form").click()
 
     // Variables
-    cy.get("input[name='descriptor.studyTitle']").as("studyTitle")
+    cy.get("[data-testid='descriptor.studyTitle']").as("studyTitle")
 
     // Fill a Study form and submit object
     cy.get("@studyTitle").type("Test title")

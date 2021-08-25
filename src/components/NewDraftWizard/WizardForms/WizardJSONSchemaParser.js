@@ -545,6 +545,7 @@ const FormOneOfField = ({
           if (clearForm) {
             // Clear the field and "clearForm" is true
             setField("")
+            unregister(name)
           }
         }, [clearForm])
 

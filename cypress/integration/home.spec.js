@@ -45,12 +45,6 @@ describe("Home e2e", function () {
     cy.get("ul").children().last().contains("All").click()
 
     cy.wait(500)
-    // Select unpublished folder and edit folder
-    // cy.get("[data-testid='draft-submissions']")
-    //   .children()
-    //   .contains("Test unpublished folder", { timeout: 10000 })
-    //   .last()
-    //   .click()
 
     cy.get("ul[data-testid='draft-submissions']").within(() =>
       cy.get("div[role=button]").last().contains("Test unpublished folder").last().click()
@@ -80,7 +74,7 @@ describe("Home e2e", function () {
     cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Submit").click()
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.get(".MuiListItem-container", { timeout: 30000 }).should("have.length", 2)
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next", { timeout: 10000 }).click()

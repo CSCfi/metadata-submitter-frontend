@@ -2,6 +2,7 @@
 
 import { combineReducers } from "@reduxjs/toolkit"
 
+import clearFormReducer from "features/clearFormSlice"
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
@@ -34,6 +35,7 @@ const rootReducer: any = combineReducers({
   selectedFolder: selectedFolderReducer,
   objectsArray: objectsArrayReducer,
   totalFolders: totalFoldersReducer,
+  clearForm: clearFormReducer,
 })
 
 export default rootReducer

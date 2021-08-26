@@ -22,6 +22,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 
 import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
+import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -198,6 +199,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const draftStatus = useSelector(state => state.draftStatus)
   const alert = useSelector(state => state.alert)
+  const clearForm = useSelector(state => state.clearForm)
 
   const methods = useForm({ mode: "onBlur", resolver })
 
@@ -212,21 +214,26 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     methods.reset(currentObject)
   }, [currentObject?.accessionId])
 
+  useEffect(() => {
+    dispatch(setClearForm(false))
+  }, [clearForm])
+
   // Check if form has been edited
   useEffect(() => {
     checkDirty()
   }, [methods.formState.isDirty])
 
-  const createNewForm = () => {
+  const handleCreateNewForm = () => {
     resetTimer()
-    clearForm()
+    handleClearForm()
     setCurrentObjectId(null)
     dispatch(resetCurrentObject())
   }
 
-  const clearForm = () => {
+  const handleClearForm = () => {
     resetTimer()
     methods.reset({})
+    dispatch(setClearForm(true))
     dispatch(resetDraftStatus())
   }
 
@@ -245,6 +252,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
+    clearForm ? dispatch(setClearForm(false)) : null
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
 
@@ -299,7 +307,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     if (alert) resetTimer()
 
     if (draftAutoSaveAllowed) {
-      saveDraft()
+      handleSaveDraft()
       resetTimer()
     }
   }, [draftAutoSaveAllowed, alert])
@@ -353,7 +361,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   /*
    * Update or save new draft depending on object status
    */
-  const saveDraft = async () => {
+  const handleSaveDraft = async () => {
     resetTimer()
     const cleanedValues = getCleanedValues()
 
@@ -387,7 +395,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     patchHandler(response, cleanedValues)
   }
 
-  const submitForm = () => {
+  const handleSubmitForm = () => {
     if (currentObject?.status === ObjectStatus.submitted) patchObject()
     if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
       handleDraftDelete(currentObjectId)
@@ -401,10 +409,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickNewForm={() => createNewForm()}
-        onClickClearForm={() => clearForm()}
-        onClickSaveDraft={() => saveDraft()}
-        onClickSubmit={() => submitForm()}
+        onClickNewForm={() => handleCreateNewForm()}
+        onClickClearForm={() => handleClearForm()}
+        onClickSaveDraft={() => handleSaveDraft()}
+        onClickSubmit={() => handleSubmitForm()}
       />
       <form
         id="hook-form"

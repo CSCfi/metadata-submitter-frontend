@@ -539,13 +539,23 @@ const FormOneOfField = ({
           requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
         }
 
+        const clearForm = useSelector(state => state.clearForm)
+
+        useEffect(() => {
+          if (clearForm) {
+            // Clear the field and "clearForm" is true
+            setField("")
+            unregister(name)
+          }
+        }, [clearForm])
+
         return (
           <div>
             <div className={classes.divBaseline}>
               <ValidationSelectField
                 name={name}
                 label={label}
-                defaultValue={field}
+                value={field || ""}
                 select
                 SelectProps={{ native: true }}
                 onChange={event => {
@@ -800,38 +810,39 @@ const FormSelectField = ({
   description,
 }: FormSelectFieldProps & { description: string }) => (
   <ConnectForm>
-    {({ register, errors }) => {
-      const error = _.get(errors, name)
+    {({ control }) => {
       const classes = useStyles()
-      const { ref, ...rest } = register(name)
-
       return (
-        <div className={classes.divBaseline}>
-          <ValidationSelectField
-            name={name}
-            label={label}
-            {...rest}
-            inputRef={ref}
-            defaultValue=""
-            error={!!error}
-            helperText={error?.message}
-            required={required}
-            select
-            SelectProps={{ native: true }}
-          >
-            <option aria-label="None" value="" disabled />
-            {options.map(option => (
-              <option key={`${name}-${option}`} value={option}>
-                {option}
-              </option>
-            ))}
-          </ValidationSelectField>
-          {description && (
-            <FieldTooltip title={description} placement="top" arrow>
-              <HelpOutlineIcon className={classes.fieldTip} />
-            </FieldTooltip>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <div className={classes.divBaseline}>
+              <ValidationSelectField
+                {...field}
+                label={label}
+                value={field.value || ""}
+                error={!!error}
+                helperText={error?.message}
+                required={required}
+                select
+                SelectProps={{ native: true }}
+              >
+                <option aria-label="None" value="" disabled />
+                {options.map(option => (
+                  <option key={`${name}-${option}`} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </ValidationSelectField>
+              {description && (
+                <FieldTooltip title={description} placement="top" arrow>
+                  <HelpOutlineIcon className={classes.fieldTip} />
+                </FieldTooltip>
+              )}
+            </div>
           )}
-        </div>
+        />
       )
     }}
   </ConnectForm>

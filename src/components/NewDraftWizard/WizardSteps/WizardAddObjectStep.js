@@ -77,7 +77,7 @@ const WizardAddObjectStep = (): React$Element<any> => {
             </Grid>
           </Grid>
           {loading && (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <CircularProgress />
             </Grid>
           )}

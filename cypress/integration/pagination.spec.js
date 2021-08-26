@@ -143,8 +143,8 @@ describe("unpublished folders, published folders, and user's draft templates pag
 
     // Click Next page button
     cy.get("button[aria-label='next page']").click()
-    cy.get("p").contains("11-20 of 200").should("be.visible")
-    cy.get("[data-testid='page info']").contains("2 of 20 pages").should("be.visible")
+    cy.get("p").contains("11-20 of 200", { timeout: 10000 }).should("be.visible")
+    cy.get("[data-testid='page info']", { timeout: 10000 }).contains("2 of 20 pages").should("be.visible")
 
     // Check "Items per page" options
     cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
@@ -411,7 +411,7 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
 
     cy.get("button[aria-label='next page']").click()
-    cy.get("p").contains("11-15 of 15").should("be.visible")
+    cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
     cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
     cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
     cy.get("li[data-value='15']").click()

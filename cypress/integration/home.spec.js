@@ -98,7 +98,6 @@ describe("Home e2e", function () {
 
     // Navigate to home and publish test folder from draft folders list
     cy.get('a[aria-label="go to frontpage"]').click()
-    // cy.get("div[role=button]").contains("Edited unpublished folder").click()
     cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
     cy.get("body").then($body => {
       if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {

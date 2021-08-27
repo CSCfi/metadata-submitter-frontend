@@ -3,8 +3,6 @@ describe("Draft operations", function () {
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
-    // Navigate to folder creation
-    cy.get("button[type=button]", { timeout: 10000 }).contains("New folder").click()
 
     // Add folder name & description, navigate to submissions
     cy.get("input[name='name']").type("Test name")

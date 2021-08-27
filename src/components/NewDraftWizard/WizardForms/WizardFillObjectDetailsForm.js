@@ -334,7 +334,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         modifyObjectTags({
           accessionId: currentObject.accessionId,
           tags: {
-            submissionType: currentObject.tags.submissionType,
+            submissionType: currentObject.tags?.submissionType,
             displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
           },
         })

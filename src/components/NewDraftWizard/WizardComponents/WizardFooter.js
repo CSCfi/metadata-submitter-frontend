@@ -63,7 +63,7 @@ const WizardFooter = (): React$Element<any> => {
 
   const queryParams = useQuery()
   const step = Number(queryParams.get("step"))
-  const wizardStep = typeof step === "undefined" ? -1 : Number(step.toString().slice(-1))
+  const wizardStep = Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
     history.push("/home")

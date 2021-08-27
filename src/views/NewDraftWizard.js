@@ -11,7 +11,6 @@ import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFoote
 import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
 import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
-import WizardFrontpageStep from "components/NewDraftWizard/WizardSteps/WizardFrontpageStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import type { CreateFolderFormRef } from "types"
 import { useQuery } from "utils"
@@ -44,8 +43,6 @@ const useStyles = makeStyles(theme => ({
  */
 const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFormRef) => {
   switch (wizardStep) {
-    case -1:
-      return <WizardFrontpageStep />
     case 0:
       return <WizardCreateFolderStep createFolderFormRef={createFolderFormRef} />
     case 1:
@@ -80,8 +77,8 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
   const folder = useSelector(state => state.submissionFolder)
 
   if (!folder && (wizardStep === 1 || wizardStep === 2)) {
-    wizardStep = -1
-    history.push({ pathname: "/newdraft" })
+    wizardStep = 0
+    history.push({ pathname: "/newdraft", search: "step=0" })
   }
 
   return (

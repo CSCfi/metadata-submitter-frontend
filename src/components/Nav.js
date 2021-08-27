@@ -77,7 +77,7 @@ const Menu = () => {
       <Link component={RouterLink} to="/home/published" className={classes.link}>
         Submissions
       </Link>
-      <Link component={RouterLink} aria-label="Create Submission" to="/newdraft">
+      <Link component={RouterLink} aria-label="Create Submission" to="/newdraft?step=0">
         <Button
           color="primary"
           variant="contained"

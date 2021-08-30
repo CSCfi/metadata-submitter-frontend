@@ -29,11 +29,13 @@ describe("Home e2e", function () {
 
     // Save draft
     cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Save another draft for later use
     cy.get("button").contains("New form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Second test title")
     cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
@@ -42,20 +44,8 @@ describe("Home e2e", function () {
 
     cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
 
-    cy.get("body").then($body => {
-      if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
-        cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-        cy.get("ul").children().last().contains("All").click()
-        cy.wait(500)
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").last().contains("Test unpublished folder").click()
-        )
-      } else {
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").contains("Test unpublished folder").click()
-        )
-      }
-    })
+    // Navigate to home & find folder
+    cy.findDraftFolder("Test unpublished folder")
 
     cy.get('button[aria-label="Publish current folder"]').should("be.disabled")
     cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
@@ -63,23 +53,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Next").click()
 
     // Navigate to home and delete object
-    cy.get('a[aria-label="go to frontpage"]').click()
-    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
-    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
-    cy.get("body").then($body => {
-      if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
-        cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-        cy.get("ul").children().last().contains("All").click()
-        cy.wait(500)
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").last().contains("Edited unpublished folder").click()
-        )
-      } else {
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").contains("Edited unpublished folder").click()
-        )
-      }
-    })
+    cy.findDraftFolder("Edited unpublished folder")
 
     cy.get("tr[data-testid='Test title']").within(() => cy.get('button[aria-label="Delete this object"]').click())
     cy.get("tr[data-testid='Test title']").should("not.exist")
@@ -96,24 +70,15 @@ describe("Home e2e", function () {
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 
-    // Navigate to home and publish test folder from draft folders list
-    cy.get('a[aria-label="go to frontpage"]').click()
-    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
-    cy.get("body").then($body => {
-      if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
-        cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-        cy.get("ul").children().last().contains("All").click()
-        cy.wait(500)
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").last().contains("Edited unpublished folder").click()
-        )
-      } else {
-        cy.get("ul[data-testid='draft-submissions']").within(() =>
-          cy.get("div[role=button]").contains("Edited unpublished folder").click()
-        )
-      }
-    })
+    // Navigate to home & edit submitted object
+    cy.findDraftFolder("Edited unpublished folder")
+    cy.get('button[aria-label="Edit this object"]').click()
+    cy.get("input[name='descriptor.studyTitle']").type(" edited")
+    cy.get("button[type=button]").contains("Update").click()
+    cy.get("div[role=alert]").contains("Object updated")
 
+    //  Publish test folder from draft folders list
+    cy.findDraftFolder("Edited unpublished folder")
     cy.get('button[aria-label="Publish current folder"]').click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').click()
 

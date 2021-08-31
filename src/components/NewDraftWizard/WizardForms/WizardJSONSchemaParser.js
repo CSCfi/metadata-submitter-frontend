@@ -44,6 +44,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     marginLeft: theme.spacing(0),
   },
+  sectionTip: {
+    fontSize: "inherit",
+    marginLeft: theme.spacing(0.5),
+  },
   divBaseline: {
     display: "flex",
     flexDirection: "row",
@@ -66,12 +70,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const FieldTooltip = withStyles(theme => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
-    fontSize: theme.typography.pxToRem(14),
-    boxShadow: theme.shadows[1],
-  },
+  tooltip: theme.tooltip,
 }))(Tooltip)
 
 /*
@@ -223,7 +222,7 @@ const traverseFields = (
     case "object": {
       const properties = object.properties
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 1}>
+        <FormSection key={name} name={name} label={label} level={path.length + 1} description={description}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey]
             let required = object?.else?.required ?? object.required
@@ -330,8 +329,8 @@ type FormSectionProps = {
 /*
  * FormSection is rendered for properties with type object
  */
-const FormSection = (props: FormSectionProps) => {
-  const { name, label, level } = props
+const FormSection = ({ name, label, level, children, description }: FormSectionProps & { description: string }) => {
+  const classes = useStyles()
 
   return (
     <ConnectForm>
@@ -342,8 +341,13 @@ const FormSection = (props: FormSectionProps) => {
             <div className="formSection" key={`${name}-section`}>
               <Typography key={`${name}-header`} variant={`h${level}`}>
                 {label}
+                {description && level == 2 && (
+                  <FieldTooltip title={description} placement="top" arrow>
+                    <HelpOutlineIcon className={classes.sectionTip} />
+                  </FieldTooltip>
+                )}
               </Typography>
-              {props.children}
+              {children}
             </div>
             <div>
               {error ? (
@@ -535,13 +539,23 @@ const FormOneOfField = ({
           requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
         }
 
+        const clearForm = useSelector(state => state.clearForm)
+
+        useEffect(() => {
+          if (clearForm) {
+            // Clear the field and "clearForm" is true
+            setField("")
+            unregister(name)
+          }
+        }, [clearForm])
+
         return (
           <div>
             <div className={classes.divBaseline}>
               <ValidationSelectField
                 name={name}
                 label={label}
-                defaultValue={field}
+                value={field || ""}
                 select
                 SelectProps={{ native: true }}
                 onChange={event => {
@@ -796,38 +810,39 @@ const FormSelectField = ({
   description,
 }: FormSelectFieldProps & { description: string }) => (
   <ConnectForm>
-    {({ register, errors }) => {
-      const error = _.get(errors, name)
+    {({ control }) => {
       const classes = useStyles()
-      const { ref, ...rest } = register(name)
-
       return (
-        <div className={classes.divBaseline}>
-          <ValidationSelectField
-            name={name}
-            label={label}
-            {...rest}
-            inputRef={ref}
-            defaultValue=""
-            error={!!error}
-            helperText={error?.message}
-            required={required}
-            select
-            SelectProps={{ native: true }}
-          >
-            <option aria-label="None" value="" disabled />
-            {options.map(option => (
-              <option key={`${name}-${option}`} value={option}>
-                {option}
-              </option>
-            ))}
-          </ValidationSelectField>
-          {description && (
-            <FieldTooltip title={description} placement="top" arrow>
-              <HelpOutlineIcon className={classes.fieldTip} />
-            </FieldTooltip>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <div className={classes.divBaseline}>
+              <ValidationSelectField
+                {...field}
+                label={label}
+                value={field.value || ""}
+                error={!!error}
+                helperText={error?.message}
+                required={required}
+                select
+                SelectProps={{ native: true }}
+              >
+                <option aria-label="None" value="" disabled />
+                {options.map(option => (
+                  <option key={`${name}-${option}`} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </ValidationSelectField>
+              {description && (
+                <FieldTooltip title={description} placement="top" arrow>
+                  <HelpOutlineIcon className={classes.fieldTip} />
+                </FieldTooltip>
+              )}
+            </div>
           )}
-        </div>
+        />
       )
     }}
   </ConnectForm>

@@ -47,7 +47,7 @@ const InfoHandler = ({ handleClose, prefixText }: { handleClose: boolean => void
   minutes, please try saving the file again.`
 
   const messageTemplate = (prefixText?: string) => {
-    return prefixText ? prefixText : defaultMessage
+    return prefixText?.length ? prefixText : defaultMessage
   }
 
   return (

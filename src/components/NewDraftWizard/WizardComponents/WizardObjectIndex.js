@@ -120,13 +120,6 @@ const ObjectCountBadge = withStyles(theme => ({
   },
 }))(MuiBadge)
 
-const Badge = withStyles(theme => ({
-  badge: {
-    fontWeight: theme.typography.fontWeightBold,
-    marginRight: theme.spacing(1),
-  },
-}))(MuiBadge)
-
 /*
  * Render list of submission types to be used in accordions
  */
@@ -134,17 +127,14 @@ const SubmissionTypeList = ({
   handleSubmissionTypeChange,
   isCurrentObjectType,
   currentSubmissionType,
-  draftCount,
 }: {
   handleSubmissionTypeChange: string => void,
   isCurrentObjectType: boolean,
   currentSubmissionType: string,
-  draftCount: number,
 }) => {
   const submissionTypeMap = {
     [ObjectSubmissionTypes.form]: "Fill Form",
     [ObjectSubmissionTypes.xml]: "Upload XML File",
-    [ObjectSubmissionTypes.existing]: "Choose from drafts",
   }
 
   const classes = useStyles()
@@ -153,7 +143,7 @@ const SubmissionTypeList = ({
 
   const handleSkipLink = (event, submissionType) => {
     if (event.key === "Enter") {
-      if (submissionType === ObjectSubmissionTypes.existing && draftCount === 0) {
+      if (submissionType === ObjectSubmissionTypes.existing) {
         setSkipLinkVisible(false)
       } else {
         setSkipLinkVisible(true)
@@ -176,10 +166,6 @@ const SubmissionTypeList = ({
       }
       case ObjectSubmissionTypes.xml: {
         target = "XML upload"
-        break
-      }
-      case ObjectSubmissionTypes.existing: {
-        target = "drafts"
         break
       }
       default: {
@@ -221,11 +207,6 @@ const SubmissionTypeList = ({
               showSkipLink && isCurrentObjectType && currentSubmissionType === submissionType && skipToSubmissionLink()
             }
           />
-          {submissionType === ObjectSubmissionTypes.existing && draftCount > 0 && (
-            <Tooltip title="Saved draft objects">
-              <Badge color="primary" badgeContent={draftCount} />
-            </Tooltip>
-          )}
         </ListItem>
       ))}
     </List>
@@ -249,22 +230,12 @@ const WizardObjectIndex = (): React$Element<any> => {
   const draftStatus = useSelector(state => state.draftStatus)
   const folder = useSelector(state => state.submissionFolder)
 
-  // Get draft objects of current folder
-  // and count the amount of drafts of each existing objectType
-  const draftObjects = folder.drafts
-    ?.map(draft => draft.schema)
-    .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
-
   const savedObjects = folder.metadataObjects
     ?.map(draft => draft.schema)
     .reduce((acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 
   const handlePanelChange = panel => (event, newExpanded) => {
     setExpandedObjectType(newExpanded ? panel : false)
-  }
-
-  const getDraftCount = (objectType: string) => {
-    return draftObjects && draftObjects[objectType] ? draftObjects[objectType] : 0
   }
 
   const getSavedObjectCount = (objectType: string) => {
@@ -334,7 +305,6 @@ const WizardObjectIndex = (): React$Element<any> => {
                 handleSubmissionTypeChange={handleSubmissionTypeChange}
                 isCurrentObjectType={isCurrentObjectType}
                 currentSubmissionType={currentSubmissionType}
-                draftCount={getDraftCount("draft-" + objectType)}
               />
             </AccordionDetails>
           </Accordion>

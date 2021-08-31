@@ -3,5 +3,10 @@
     "port": "3000",
     "mockAuthHost": "localhost",
     "mockAuthPort": "8000"
-  }
+  },
+  "retries": {
+    "runMode": 3,
+    "openMode": 0
+  },
+  "videoCompression": false
 }

@@ -89,6 +89,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
                     />
                     <ListItemSecondaryAction>
                       <WizardSavedObjectActions
+                        folderId={folder.folderId}
                         submissions={metadataObjects}
                         objectType={schema}
                         objectId={item.accessionId}

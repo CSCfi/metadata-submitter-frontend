@@ -14,6 +14,7 @@ import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
+import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideFolderWithTags, ObjectTags } from "types"
 
@@ -71,8 +72,31 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     }
   }
 
+  const handleObjectContinue = async () => {
+    dispatch(resetCurrentObject())
+    const response = await draftAPIService.getObjectByAccessionId(props.objectType, props.objectId)
+    if (response.ok) {
+      dispatch(setCurrentObject({ ...response.data, status: ObjectStatus.draft }))
+      dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+    } else {
+      dispatch(
+        updateStatus({
+          successStatus: WizardStatus.error,
+          response: response,
+          errorPrefix: "Draft fetching error",
+        })
+      )
+    }
+  }
+
   const handleObjectDelete = () => {
-    dispatch(deleteObjectFromFolder(ObjectStatus.submitted, props.objectId, props.objectType)).catch(error => {
+    dispatch(
+      deleteObjectFromFolder(
+        props.submissionType === "Draft" ? ObjectStatus.draft : ObjectStatus.submitted,
+        props.objectId,
+        props.objectType
+      )
+    ).catch(error => {
       dispatch(
         updateStatus({
           successStatus: WizardStatus.error,
@@ -92,10 +116,28 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     if (currentObject.accessionId === props.objectId) dispatch(resetCurrentObject())
   }
 
+  const renderEditLabel = submissionType => {
+    switch (submissionType) {
+      case ObjectSubmissionTypes.form: {
+        return "Edit"
+      }
+      case ObjectStatus.draft: {
+        return "Continue"
+      }
+      default: {
+        return "Replace"
+      }
+    }
+  }
+
   return (
     <ButtonGroup aria-label="Draft actions button group">
-      <Button className={classes.buttonEdit} aria-label="Edit submission" onClick={() => handleObjectEdit()}>
-        {props.submissionType === ObjectSubmissionTypes.form ? "Edit" : "Replace"}
+      <Button
+        className={classes.buttonEdit}
+        aria-label="Edit submission"
+        onClick={() => (props.submissionType === "Draft" ? handleObjectContinue() : handleObjectEdit())}
+      >
+        {renderEditLabel(props.submissionType)}
       </Button>
       <Button className={classes.buttonDelete} aria-label="Delete submission" onClick={() => handleObjectDelete()}>
         Delete

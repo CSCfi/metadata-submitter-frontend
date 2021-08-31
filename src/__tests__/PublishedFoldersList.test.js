@@ -90,10 +90,10 @@ describe("Published folders list", () => {
     expect(itemsPerPageValue).toBeInTheDocument()
     expect(itemsPerPageValue).toHaveDisplayValue(10)
 
-    const previousPageButton = getByLabelText("Previous page")
+    const previousPageButton = getByLabelText("previous page")
     expect(previousPageButton).toBeVisible()
 
-    const nextPageButton = getByLabelText("Next page")
+    const nextPageButton = getByLabelText("next page")
     expect(nextPageButton).toBeVisible()
   })
 })

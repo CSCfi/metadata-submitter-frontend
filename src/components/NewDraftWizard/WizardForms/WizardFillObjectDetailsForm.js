@@ -15,18 +15,19 @@ import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
+import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
-import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 
-import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
+import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
+import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToFolder, deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
+import { deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
@@ -198,6 +199,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   const draftStatus = useSelector(state => state.draftStatus)
   const alert = useSelector(state => state.alert)
+  const clearForm = useSelector(state => state.clearForm)
 
   const methods = useForm({ mode: "onBlur", resolver })
 
@@ -212,21 +214,26 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     methods.reset(currentObject)
   }, [currentObject?.accessionId])
 
+  useEffect(() => {
+    dispatch(setClearForm(false))
+  }, [clearForm])
+
   // Check if form has been edited
   useEffect(() => {
     checkDirty()
   }, [methods.formState.isDirty])
 
-  const createNewForm = () => {
+  const handleCreateNewForm = () => {
     resetTimer()
-    clearForm()
+    handleClearForm()
     setCurrentObjectId(null)
     dispatch(resetCurrentObject())
   }
 
-  const clearForm = () => {
+  const handleClearForm = () => {
     resetTimer()
     methods.reset({})
+    dispatch(setClearForm(true))
     dispatch(resetDraftStatus())
   }
 
@@ -245,6 +252,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
+    clearForm ? dispatch(setClearForm(false)) : null
     const clone = cloneDeep(currentObject)
     const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
 
@@ -299,7 +307,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     if (alert) resetTimer()
 
     if (draftAutoSaveAllowed) {
-      saveDraft()
+      handleSaveDraft()
       resetTimer()
     }
   }, [draftAutoSaveAllowed, alert])
@@ -326,7 +334,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         modifyObjectTags({
           accessionId: currentObject.accessionId,
           tags: {
-            submissionType: currentObject.tags.submissionType,
+            submissionType: ObjectSubmissionTypes.form,
             displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
           },
         })
@@ -353,7 +361,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
   /*
    * Update or save new draft depending on object status
    */
-  const saveDraft = async () => {
+  const handleSaveDraft = async () => {
     resetTimer()
     const cleanedValues = getCleanedValues()
 
@@ -387,7 +395,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
     patchHandler(response, cleanedValues)
   }
 
-  const submitForm = () => {
+  const handleSubmitForm = () => {
     if (currentObject?.status === ObjectStatus.submitted) patchObject()
     if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
       handleDraftDelete(currentObjectId)
@@ -401,10 +409,10 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickNewForm={() => createNewForm()}
-        onClickClearForm={() => clearForm()}
-        onClickSaveDraft={() => saveDraft()}
-        onClickSubmit={() => submitForm()}
+        onClickNewForm={() => handleCreateNewForm()}
+        onClickClearForm={() => handleClearForm()}
+        onClickSaveDraft={() => handleSaveDraft()}
+        onClickSubmit={() => handleSubmitForm()}
       />
       <form
         id="hook-form"
@@ -437,10 +445,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     validationSchema: {},
     isLoading: true,
   })
-
-  const [successStatus, setSuccessStatus] = useState("")
   const [submitting, setSubmitting] = useState(false)
-  const [responseInfo, setResponseInfo] = useState([])
 
   /*
    * Fetch json schema from either session storage or API, set schema and dereferenced version to component state.
@@ -668,43 +673,10 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
    * Submit form with cleaned values and check for response errors
    */
   const onSubmit = async data => {
-    setSuccessStatus(undefined)
     setSubmitting(true)
-    const waitForServertimer = setTimeout(() => {
-      setSuccessStatus(WizardStatus.info)
-    }, 5000)
-    const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+    const response = await submitObjectHook(data, folderId, objectType, dispatch)
 
-    const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
-
-    setResponseInfo(response)
-
-    if (response.ok) {
-      const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues)
-
-      dispatch(
-        addObjectToFolder(folderId, {
-          accessionId: response.data.accessionId,
-          schema: objectType,
-          tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: objectDisplayTitle },
-        })
-      )
-        .then(() => {
-          setSuccessStatus(WizardStatus.success)
-          dispatch(resetDraftStatus())
-          dispatch(resetCurrentObject())
-        })
-        .catch(error => {
-          setSuccessStatus(WizardStatus.error)
-          setResponseInfo(error)
-          setStates({ ...states, errorPrefix: "Cannot connect to folder API" })
-        })
-    } else {
-      setSuccessStatus(WizardStatus.error)
-      setStates({ ...states, errorPrefix: "Validation failed" })
-    }
-    clearTimeout(waitForServertimer)
-    setSubmitting(false)
+    if (response) setSubmitting(false)
   }
 
   if (states.isLoading) return <CircularProgress />
@@ -723,13 +695,6 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         key={currentObject?.accessionId || folderId}
       />
       {submitting && <LinearProgress />}
-      {successStatus && (
-        <WizardStatusMessageHandler
-          successStatus={successStatus}
-          response={responseInfo}
-          prefixText={states.errorPrefix}
-        ></WizardStatusMessageHandler>
-      )}
     </Container>
   )
 }

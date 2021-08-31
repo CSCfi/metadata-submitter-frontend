@@ -2,10 +2,14 @@
 import React from "react"
 import type { Node } from "react"
 
+import IconButton from "@material-ui/core/IconButton"
+import { makeStyles, withStyles, useTheme } from "@material-ui/core/styles"
 import Table from "@material-ui/core/Table"
 import TableFooter from "@material-ui/core/TableFooter"
-import TablePagination from "@material-ui/core/TablePagination"
+import MUITablePagination from "@material-ui/core/TablePagination"
 import TableRow from "@material-ui/core/TableRow"
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft"
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight"
 import { useLocation } from "react-router-dom"
 
 import { ObjectTypes } from "constants/wizardObject"
@@ -76,6 +80,62 @@ export const getRowsPerPageOptions = (totalItems?: number): Array<any> => {
   return []
 }
 
+const TablePagination = withStyles({
+  spacer: {
+    flex: "none",
+  },
+  selectRoot: {
+    borderRight: "1px solid rgba(0, 0, 0, 0.87)",
+    marginRight: "0.5rem",
+    fontWeight: "bold",
+  },
+  select: { padding: 0 },
+  toolbar: {
+    display: "flex",
+    justifyContent: "flex-start",
+  },
+  actions: {
+    marginLeft: "auto",
+  },
+})(MUITablePagination)
+
+const tablePaginationStyles = makeStyles({
+  tablePagination: {
+    border: "none",
+  },
+  paginationActions: {
+    flexShrink: 0,
+    flexDirection: "row",
+    marginLeft: "auto",
+  },
+})
+
+const TablePaginationActions = ({ count, page, rowsPerPage, onPageChange }: any) => {
+  const theme = useTheme()
+  const classes = tablePaginationStyles()
+  const totalPages = Math.ceil(count / rowsPerPage)
+
+  const handleBackButtonClick = e => {
+    onPageChange(e, page - 1)
+  }
+  const handleNextButtonClick = e => {
+    onPageChange(e, page + 1)
+  }
+  return (
+    <div className={classes.paginationActions}>
+      <span aria-label="current page" data-testid="page info">
+        {page + 1} of {totalPages} pages
+      </span>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton onClick={handleNextButtonClick} disabled={page >= totalPages - 1} aria-label="next page">
+        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+      </IconButton>
+    </div>
+  )
+}
+
 // Pagination Component
 export const Pagination = ({
   totalNumberOfItems,
@@ -89,21 +149,26 @@ export const Pagination = ({
   itemsPerPage: number,
   handleChangePage: (e: any, page: number) => void,
   handleItemsPerPageChange: (e: any) => void,
-}): Node => (
-  <Table data-testid="table-pagination">
-    <TableFooter>
-      <TableRow>
-        <TablePagination
-          style={{ border: "none" }}
-          rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
-          count={totalNumberOfItems}
-          labelRowsPerPage="Items per page:"
-          page={page}
-          rowsPerPage={itemsPerPage}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleItemsPerPageChange}
-        />
-      </TableRow>
-    </TableFooter>
-  </Table>
-)
+}): Node => {
+  const classes = tablePaginationStyles()
+  return (
+    <Table data-testid="table-pagination">
+      <TableFooter>
+        <TableRow>
+          <TablePagination
+            className={classes.tablePagination}
+            ActionsComponent={TablePaginationActions}
+            count={totalNumberOfItems}
+            labelRowsPerPage="Items per page:"
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count} items`}
+            page={page}
+            rowsPerPage={itemsPerPage}
+            rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleItemsPerPageChange}
+          />
+        </TableRow>
+      </TableFooter>
+    </Table>
+  )
+}

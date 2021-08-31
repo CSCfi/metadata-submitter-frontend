@@ -17,6 +17,7 @@ import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
+import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
@@ -103,6 +104,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   const onSubmit = async data => {
     setSuccessStatus(undefined)
     setSubmitting(true)
+    dispatch(setLoading())
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
       setSuccessStatus(WizardStatus.info)
@@ -148,6 +150,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
     }
     clearTimeout(waitForServertimer)
     setSubmitting(false)
+    dispatch(resetLoading())
   }
 
   const handleButton = () => {

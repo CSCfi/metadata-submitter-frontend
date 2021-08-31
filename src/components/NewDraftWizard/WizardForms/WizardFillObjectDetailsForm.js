@@ -20,7 +20,7 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
-import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
+import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
@@ -334,7 +334,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         modifyObjectTags({
           accessionId: currentObject.accessionId,
           tags: {
-            submissionType: currentObject.tags.submissionType,
+            submissionType: ObjectSubmissionTypes.form,
             displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
           },
         })

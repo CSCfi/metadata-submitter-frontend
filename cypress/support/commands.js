@@ -73,3 +73,21 @@ Cypress.Commands.add("continueFirstDraft", () => {
       cy.get("button[aria-label='Edit submission']").first().click()
     })
 })
+
+// Navigate to home & find folder from drafts
+Cypress.Commands.add("findDraftFolder", label => {
+  cy.get('a[aria-label="go to frontpage"]').click()
+  cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+  cy.get("body").then($body => {
+    if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
+      cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+      cy.get("ul").children().last().contains("All").click()
+      cy.wait(500)
+      cy.get("ul[data-testid='draft-submissions']").within(() =>
+        cy.get("div[role=button]").contains(label).last().click()
+      )
+    } else {
+      cy.get("ul[data-testid='draft-submissions']").within(() => cy.get("div[role=button]").contains(label).click())
+    }
+  })
+})

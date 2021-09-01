@@ -4,23 +4,25 @@ import React, { useState } from "react"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
+import Checkbox from "@material-ui/core/Checkbox"
 import Collapse from "@material-ui/core/Collapse"
-import IconButton from "@material-ui/core/IconButton"
+import FormControl from "@material-ui/core/FormControl"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import FormLabel from "@material-ui/core/FormLabel"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
-import Table from "@material-ui/core/Table"
-import TableBody from "@material-ui/core/TableBody"
-import TableCell from "@material-ui/core/TableCell"
-import TableRow from "@material-ui/core/TableRow"
 import Typography from "@material-ui/core/Typography"
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
-import { useSelector } from "react-redux"
+import { useForm, FormProvider, useFormContext, Controller } from "react-hook-form"
+import { useSelector, useDispatch } from "react-redux"
 
+import { setReuseDrafts } from "features/reuseDraftsSlice"
 import { formatDisplayObjectType, getDraftObjects, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
+    width: "100%",
     height: "100%",
     display: "flex",
     flexDirection: "column",
@@ -31,33 +33,25 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.5em",
     padding: 0,
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
-  table: { padding: 0, margin: theme.spacing(1, 0) },
-  schemaTitle: {
-    color: theme.palette.grey[900],
-    padding: theme.spacing(1),
-    textTransform: "capitalize",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    border: `0.1rem solid ${theme.palette.secondary.main}`,
-    borderRadius: "0.125rem",
-    margin: theme.spacing(1, 0),
+  form: { display: "flex", flexDirection: "column" },
+  formControl: {
+    margin: theme.spacing(1),
+    borderBottom: `0.1rem solid ${theme.palette.secondary.main}`,
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-    "&:hover": {
-      cursor: "pointer",
-    },
   },
-  listItems: {
-    border: "none",
-  },
+  formLabel: { display: "flex", justifyContent: "space-between", padding: theme.spacing(2) },
   collapse: {
-    border: `0.1rem solid ${theme.palette.secondary.main}`,
+    borderTop: `0.125rem solid ${theme.palette.secondary.main}`,
     padding: theme.spacing(1),
     borderRadius: "0.125rem",
+    display: "flex",
+    flexDirection: "column",
   },
-  listItemText: {
+  formControlLabel: {
+    display: "flex",
+    flex: "1 0 auto",
     padding: 0,
     margin: theme.spacing(1, 0),
     borderBottom: `solid 0.1rem ${theme.palette.secondary.main}`,
@@ -71,69 +65,111 @@ const UserDraftTemplates = (): React$Element<any> => {
   const classes = useStyles()
   const user = useSelector(state => state.user)
   const objectsArray = useSelector(state => state.objectsArray)
+  const reuseDrafts = useSelector(state => state.reuseDrafts)
+
+  const dispatch = useDispatch()
   const draftObjects = user.drafts ? getDraftObjects(user.drafts, objectsArray) : []
 
+  const methods = useForm()
+
+  const ConnectForm = ({ children }) => {
+    const methods = useFormContext()
+    return children({ ...methods })
+  }
+
   // Render when there is user's draft template(s)
-  const DraftList = () => (
-    <Table className={classes.table}>
-      <TableBody>
-        {draftObjects.map(draft => {
-          const schema = Object.keys(draft)[0]
-          const [open, setOpen] = useState(false)
+  const DraftList = () => {
+    const [checkedItems, setCheckedItems] = useState(reuseDrafts)
 
-          // Control Pagination
-          const [page, setPage] = useState(0)
-          const [itemsPerPage, setItemsPerPage] = useState(10)
+    const handleChange = () => {
+      const checkedItems = Object.values(methods.getValues()).filter(item => item)
+      setCheckedItems(checkedItems)
+      dispatch(setReuseDrafts(checkedItems))
+    }
 
-          const handleChangePage = (e: any, page: number) => {
-            setPage(page)
-          }
+    return (
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit} onChange={handleChange} className={classes.form}>
+          <ConnectForm>
+            {({ register }) => {
+              return draftObjects.map(draft => {
+                const schema = Object.keys(draft)[0]
+                const [open, setOpen] = useState(true)
+                // Control Pagination
+                const [page, setPage] = useState(0)
+                const [itemsPerPage, setItemsPerPage] = useState(10)
 
-          const handleItemsPerPageChange = (e: any) => {
-            setItemsPerPage(e.target.value)
-            setPage(0)
-          }
+                const handleChangePage = (e: any, page: number) => {
+                  setPage(page)
+                }
 
-          return (
-            <React.Fragment key={schema}>
-              <TableRow onClick={() => setOpen(!open)}>
-                <TableCell className={classes.schemaTitle}>
-                  <Typography display="inline" variant="subtitle1">
-                    {formatDisplayObjectType(schema)}
-                  </Typography>
-                  <IconButton aria-label="expand row" size="small">
-                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell padding="none" className={classes.listItems}>
-                  <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
-                    {draft[schema].slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage).map(item => (
-                      <ListItemText
-                        className={classes.listItemText}
-                        key={item.accessionId}
-                        primary={getItemPrimaryText(item)}
-                        secondary={item.accessionId}
-                        data-schema={item.schema}
+                const handleItemsPerPageChange = (e: any) => {
+                  setItemsPerPage(e.target.value)
+                  setPage(0)
+                }
+
+                return (
+                  <FormControl key={schema} className={classes.formControl}>
+                    <FormLabel className={classes.formLabel} onClick={() => setOpen(!open)}>
+                      <Typography display="inline" variant="subtitle1" color="textPrimary">
+                        {formatDisplayObjectType(schema)}
+                      </Typography>
+                      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </FormLabel>
+
+                    <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
+                      <Controller
+                        name={"Collapse"}
+                        render={() => {
+                          return draft[schema]
+                            .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
+                            .map(item => {
+                              const { ref, ...rest } = register(item.accessionId)
+                              return (
+                                <FormControlLabel
+                                  key={item.accessionId}
+                                  className={classes.formControlLabel}
+                                  control={
+                                    <Checkbox
+                                      checked={checkedItems.find(element => element === item.accessionId) !== undefined}
+                                      color="primary"
+                                      name={item.accessionId}
+                                      value={item.accessionId}
+                                      inputRef={ref}
+                                      {...rest}
+                                    />
+                                  }
+                                  label={
+                                    <ListItemText
+                                      className={classes.listItemText}
+                                      primary={getItemPrimaryText(item)}
+                                      secondary={item.accessionId}
+                                      data-schema={item.schema}
+                                    />
+                                  }
+                                />
+                              )
+                            })
+                        }}
                       />
-                    ))}
-                    <Pagination
-                      totalNumberOfItems={draft[schema].length}
-                      page={page}
-                      itemsPerPage={itemsPerPage}
-                      handleChangePage={handleChangePage}
-                      handleItemsPerPageChange={handleItemsPerPageChange}
-                    />
-                  </Collapse>
-                </TableCell>
-              </TableRow>
-            </React.Fragment>
-          )
-        })}
-      </TableBody>
-    </Table>
-  )
+
+                      <Pagination
+                        totalNumberOfItems={draft[schema].length}
+                        page={page}
+                        itemsPerPage={itemsPerPage}
+                        handleChangePage={handleChangePage}
+                        handleItemsPerPageChange={handleItemsPerPageChange}
+                      />
+                    </Collapse>
+                  </FormControl>
+                )
+              })
+            }}
+          </ConnectForm>
+        </form>
+      </FormProvider>
+    )
+  }
 
   // Renders when user has no draft templates
   const EmptyList = () => (
@@ -147,9 +183,10 @@ const UserDraftTemplates = (): React$Element<any> => {
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
+        className={classes.cardTitle}
         title={"Your Draft Templates"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        className={classes.cardTitle}
+        subheader="You could choose which draft(s) you would like to reuse when creating a new folder."
       />
       {draftObjects?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>

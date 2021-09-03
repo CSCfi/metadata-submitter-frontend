@@ -159,6 +159,7 @@ describe("Basic e2e", function () {
 
     // Navigate to publish
     cy.get("button[type=button]").contains("Publish").click()
+    cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this folder will be published.")
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
   })
 })

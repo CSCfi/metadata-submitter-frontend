@@ -57,6 +57,10 @@ describe("draft selections and templates", function () {
 
     // Navigate to publish button at the bottom
     cy.get("button[type=button]").contains("Publish").click()
+    cy.get("[data-testid='alert-dialog-content']").should(
+      "have.text",
+      "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
+    )
 
     // Select drafts inside the dialog
     cy.get("form").within(() => {

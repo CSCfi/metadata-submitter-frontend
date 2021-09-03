@@ -221,7 +221,9 @@ const CancelFormDialog = ({
         case "publish": {
           dialogTitle = "Publishing objects"
           dialogContent =
-            "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
+            submissionFolder?.drafts.length > 0
+              ? "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
+              : "Objects in this folder will be published."
           dialogActions = <WizardDraftSelections onHandleDialog={handleDialog} />
           break
         }
@@ -282,7 +284,9 @@ const CancelFormDialog = ({
     >
       <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">{dialogContent}</DialogContentText>
+        <DialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
+          {dialogContent}
+        </DialogContentText>
       </DialogContent>
       {error && <ErrorMessage message={errorMessage} />}
       {dialogActions}

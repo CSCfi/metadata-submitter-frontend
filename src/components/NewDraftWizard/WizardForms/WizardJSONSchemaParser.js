@@ -816,32 +816,40 @@ const FormSelectField = ({
         <Controller
           name={name}
           control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className={classes.divBaseline}>
-              <ValidationSelectField
-                {...field}
-                label={label}
-                value={field.value || ""}
-                error={!!error}
-                helperText={error?.message}
-                required={required}
-                select
-                SelectProps={{ native: true }}
-              >
-                <option aria-label="None" value="" disabled />
-                {options.map(option => (
-                  <option key={`${name}-${option}`} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </ValidationSelectField>
-              {description && (
-                <FieldTooltip title={description} placement="top" arrow>
-                  <HelpOutlineIcon className={classes.fieldTip} />
-                </FieldTooltip>
-              )}
-            </div>
-          )}
+          render={({ field, fieldState: { error } }) => {
+            let accessionId = null
+            if (field.value?.includes("Title")) {
+              const hyphenIndex = field.value.indexOf("-")
+              accessionId = field.value.slice(0, hyphenIndex - 1)
+            }
+
+            return (
+              <div className={classes.divBaseline}>
+                <ValidationSelectField
+                  {...field}
+                  label={label}
+                  value={accessionId || field.value || ""}
+                  error={!!error}
+                  helperText={error?.message}
+                  required={required}
+                  select
+                  SelectProps={{ native: true }}
+                >
+                  <option aria-label="None" value="" disabled />
+                  {options.map(option => (
+                    <option key={`${name}-${option}`} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </ValidationSelectField>
+                {description && (
+                  <FieldTooltip title={description} placement="top" arrow>
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
+                )}
+              </div>
+            )
+          }}
         />
       )
     }}

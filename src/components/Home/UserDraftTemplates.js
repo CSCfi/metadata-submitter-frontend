@@ -109,7 +109,7 @@ const UserDraftTemplates = (): React$Element<any> => {
                 }
 
                 return (
-                  <FormControl key={schema} className={classes.formControl}>
+                  <FormControl key={schema} className={classes.formControl} data-testid={`form-${schema}`}>
                     <FormLabel className={classes.formLabel} onClick={() => setOpen(!open)}>
                       <Typography display="inline" variant="subtitle1" color="textPrimary">
                         {formatDisplayObjectType(schema)}

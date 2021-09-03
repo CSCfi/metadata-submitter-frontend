@@ -405,20 +405,24 @@ describe("unpublished folders, published folders, and user's draft templates pag
 
     cy.login()
     // Check Draft-study pagination
-    cy.get("h6").contains("Draft-study").click()
+
     cy.get("div[data-schema='draft-study'] > span").should("have.length", "10")
     cy.get("p").contains("1-10 of 15").should("be.visible")
     cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
 
-    cy.get("button[aria-label='next page']").click()
-    cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
-    cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
-    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-    cy.get("li[data-value='15']").click()
+    cy.get("div[data-testid='form-draft-study']").within(() => {
+      cy.get("button[aria-label='next page']").click()
+      cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
+      cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
+      cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    })
+    cy.get("li[data-value='15']")
+      .should("be.visible")
+      .then($el => $el.click())
     cy.get("div[data-schema='draft-study'] > span").should("have.length", "15")
 
     // Check Draft-sample pagination
-    cy.get("h6").contains("Draft-sample").click()
+
     cy.get("div[data-schema='draft-sample'] > span").should("have.length", "1")
     cy.get("p").contains("1-1 of 1").should("be.visible")
   })

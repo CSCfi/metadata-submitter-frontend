@@ -19,6 +19,7 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Next").click()
 
     // Fill a Study form
+    cy.wait(500)
     cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Test title")

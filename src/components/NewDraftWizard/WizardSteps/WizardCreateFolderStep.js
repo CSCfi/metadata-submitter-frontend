@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+// import { merge } from "lodash"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
@@ -64,6 +65,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
+  const user = useSelector(state => state.user)
+  const reuseDrafts = useSelector(state => state.reuseDrafts)
+
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const {
@@ -81,7 +85,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(() => setConnError(true))
     } else {
-      dispatch(createNewDraftFolder(data))
+      const reuseDraftsDetails = user.drafts?.filter(draft => reuseDrafts.includes(draft.accessionId))
+      dispatch(createNewDraftFolder(data, reuseDraftsDetails))
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(error => {
           setConnError(true)
@@ -136,6 +141,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           expandIcon={<ExpandMoreIcon />}
           aria-controls="user-drafts-content"
           id="user-drafts-header"
+          data-testid="toggle-user-drafts"
         >
           <Typography align="center" variant="subtitle1">
             Saved Draft Templates

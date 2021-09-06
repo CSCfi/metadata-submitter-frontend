@@ -488,10 +488,8 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
   const getAccessionIds = (objectType: string) => {
     const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
-
-    // const accessionIds = submissions?.map(obj => obj.accessionId)
+    // Add "- Title: " to accessionId
     const accessionIds = submissions?.map(obj => `${obj.accessionId} - Title: ${obj.tags.displayTitle}`)
-    console.log("accessionIds :>> ", accessionIds)
     return accessionIds
   }
 

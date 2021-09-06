@@ -228,6 +228,9 @@ const traverseFields = (
             let required = object?.else?.required ?? object.required
             let requireFirstItem = false
 
+            if (path.length === 0 && propertyKey === "title" && !object.title.includes("DAC - Data Access Committee")) {
+              requireFirstItem = true
+            }
             // Require first field of section if parent section is a required property
             if (
               requireFirst ||

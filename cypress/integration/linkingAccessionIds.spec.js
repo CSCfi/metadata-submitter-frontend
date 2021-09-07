@@ -253,7 +253,7 @@ describe("Linking Accession Ids", function () {
       const dacAccessionId = cy.get("@dacAccessionId")
       $el.select(dacAccessionId)
     })
-    cy.get("select[name='dacRef.accessionId']").should("contain", " - Title:")
+    cy.get("select[name='dacRef.accessionId']").should("contain", " - Main Contact:")
 
     cy.get("select[name='policy']").select("Policy Text")
     cy.get("textarea[name='policy.policyText']").type("Test policy text")

@@ -76,7 +76,7 @@ Cypress.Commands.add("continueFirstDraft", () => {
 
 // Navigate to home & find folder from drafts
 Cypress.Commands.add("findDraftFolder", label => {
-  cy.get('a[aria-label="go to frontpage"]').click()
+  cy.get('a[aria-label="go to frontpage"]', { timeout: 10000 }).click()
   cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
   cy.get("body").then($body => {
     if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {

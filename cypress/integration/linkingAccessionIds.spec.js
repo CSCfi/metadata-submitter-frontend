@@ -44,7 +44,8 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
-    cy.get("input[name='sampleName.taxonId']").type(123)
+    cy.get("[data-testid='title']").type("Test Sample title")
+    cy.get("[data-testid='sampleName.taxonId']").type(123)
     // Submit Sample form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
@@ -66,13 +67,16 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
+    cy.get("[data-testid='title']").type("Test Experiment title")
     cy.get("input[name='studyRef.label']").type("Study Label")
 
     // Select studyAccessionId
     cy.get("select[name='studyRef.accessionId']").then($el => {
       const studyAccessionId = cy.get("@studyAccessionId")
+      $el.click()
       $el.select(studyAccessionId)
     })
+    cy.get("select[name='studyRef.accessionId']").should("contain", " - Title:")
 
     cy.get("textarea[name='design.designDescription']").type("Design description")
     cy.get("select[name='design.sampleDescriptor']").select("Individual Sample")
@@ -82,6 +86,7 @@ describe("Linking Accession Ids", function () {
       const sampleAccessionId = cy.get("@sampleAccessionId")
       $el.select(sampleAccessionId)
     })
+    cy.get("select[name='design.sampleDescriptor.accessionId']").should("contain", " - Title:")
 
     cy.get("select[name='design.libraryDescriptor.libraryStrategy']").select("AMPLICON")
     cy.get("select[name='design.libraryDescriptor.librarySource']").select("GENOMIC")
@@ -107,6 +112,7 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
+    cy.get("[data-testid='title']").type("Test Run title")
     cy.get("h2[data-testid='experimentRef']").parent().children("button").click()
     cy.get("[data-testid='experimentRef[0].label']").type("Test experiment label ref")
     // Select experimentAccessionId
@@ -114,6 +120,7 @@ describe("Linking Accession Ids", function () {
       const experimentAccessionId = cy.get("@experimentAccessionId")
       $el.select(experimentAccessionId)
     })
+    cy.get("select[name='experimentRef[0].accessionId']").should("contain", " - Title:")
 
     // Submit Run form
     cy.get("button[type=submit]").contains("Submit").click()
@@ -136,6 +143,7 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
+    cy.get("[data-testid='title']").type("Test Analysis title")
     cy.get("select[name='analysisType']").select("Reference Alignment")
     cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
     cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard accessionId")
@@ -144,24 +152,32 @@ describe("Linking Accession Ids", function () {
       const studyAccessionId = cy.get("@studyAccessionId")
       $el.select(studyAccessionId)
     })
+    cy.get("select[name='studyRef.accessionId']").should("contain", " - Title:")
+
     // Select experimentAccessionId
     cy.get("div").contains("Experiment Reference").parent().children("button").click()
     cy.get("select[name='experimentRef[0].accessionId']").then($el => {
       const experimentAccessionId = cy.get("@experimentAccessionId")
       $el.select(experimentAccessionId)
     })
+    cy.get("select[name='experimentRef[0].accessionId']").should("contain", " - Title:")
+
     // Select sampleAccessionId
     cy.get("div").contains("Sample Reference").parent().children("button").click()
     cy.get("select[name='sampleRef[0].accessionId']").then($el => {
       const sampleAccessionId = cy.get("@sampleAccessionId")
       $el.select(sampleAccessionId)
     })
+    cy.get("select[name='sampleRef[0].accessionId']").should("contain", " - Title:")
+
     // Select runAccessionId
     cy.get("div").contains("Run Reference").parent().children("button").click()
     cy.get("select[name='runRef[0].accessionId']").then($el => {
       const runAccessionId = cy.get("@runAccessionId")
       $el.select(runAccessionId)
     })
+    cy.get("select[name='runRef[0].accessionId']").should("contain", " - Title:")
+
     // Submit Analysis form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
@@ -173,6 +189,7 @@ describe("Linking Accession Ids", function () {
 
     // Another Analysis form
     cy.get("button[type=button]").contains("New form").click()
+    cy.get("[data-testid='title']").type("Test Analysis title 2")
     cy.get("select[name='analysisType']").select("Reference Alignment")
     cy.get("select[name='analysisType.referenceAlignment.assembly']").select("Standard")
     cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard accessionId 2")
@@ -183,6 +200,7 @@ describe("Linking Accession Ids", function () {
       const analysisAccessionId = cy.get("@analysisAccessionId")
       $el.select(analysisAccessionId)
     })
+    cy.get("select[name='analysisRef[0].accessionId']").should("contain", " - Title:")
 
     // Submit Analysis form
     cy.get("button[type=submit]").contains("Submit").click()
@@ -229,11 +247,14 @@ describe("Linking Accession Ids", function () {
           .should("be.visible")
           .then($btn => $btn.click())
       )
+    cy.get("[data-testid='title']").type("Test Policy title")
     cy.get("input[name='dacRef.label']").type("Test DAC")
     cy.get("select[name='dacRef.accessionId']").then($el => {
       const dacAccessionId = cy.get("@dacAccessionId")
       $el.select(dacAccessionId)
     })
+    cy.get("select[name='dacRef.accessionId']").should("contain", " - Main Contact:")
+
     cy.get("select[name='policy']").select("Policy Text")
     cy.get("textarea[name='policy.policyText']").type("Test policy text")
     // Submit Policy form
@@ -257,7 +278,7 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
 
-    cy.get("input[name='title']").type("Dataset title")
+    cy.get("[data-testid='title']").type("Test Dataset title")
     cy.get("textarea[name='description']").type("Dataset description")
     cy.get("input[name='datasetType']").first().check()
 
@@ -266,6 +287,7 @@ describe("Linking Accession Ids", function () {
       const policyAccessionId = cy.get("@policyAccessionId")
       $el.select(policyAccessionId)
     })
+    cy.get("select[name='policyRef.accessionId']").should("contain", " - Title:")
 
     // Select runAccessionId
     cy.get("div").contains("Run Reference").parent().children("button").click()
@@ -273,6 +295,7 @@ describe("Linking Accession Ids", function () {
       const runAccessionId = cy.get("@runAccessionId")
       $el.select(runAccessionId)
     })
+    cy.get("select[name='runRef[0].accessionId']").should("contain", " - Title:")
 
     // Select analysisAccessionId
     cy.get("div").contains("Analysis Reference").parent().children("button").click()
@@ -280,6 +303,8 @@ describe("Linking Accession Ids", function () {
       const analysisAccessionId = cy.get("@analysisAccessionId")
       $el.select(analysisAccessionId)
     })
+    cy.get("select[name='analysisRef[0].accessionId']").should("contain", " - Title:")
+
     // Submit Dataset form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)

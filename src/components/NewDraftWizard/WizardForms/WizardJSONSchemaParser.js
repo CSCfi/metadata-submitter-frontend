@@ -228,6 +228,9 @@ const traverseFields = (
             let required = object?.else?.required ?? object.required
             let requireFirstItem = false
 
+            if (path.length === 0 && propertyKey === "title" && !object.title.includes("DAC - Data Access Committee")) {
+              requireFirstItem = true
+            }
             // Require first field of section if parent section is a required property
             if (
               requireFirst ||
@@ -816,32 +819,45 @@ const FormSelectField = ({
         <Controller
           name={name}
           control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className={classes.divBaseline}>
-              <ValidationSelectField
-                {...field}
-                label={label}
-                value={field.value || ""}
-                error={!!error}
-                helperText={error?.message}
-                required={required}
-                select
-                SelectProps={{ native: true }}
-              >
-                <option aria-label="None" value="" disabled />
-                {options.map(option => (
-                  <option key={`${name}-${option}`} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </ValidationSelectField>
-              {description && (
-                <FieldTooltip title={description} placement="top" arrow>
-                  <HelpOutlineIcon className={classes.fieldTip} />
-                </FieldTooltip>
-              )}
-            </div>
-          )}
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <div className={classes.divBaseline}>
+                <ValidationSelectField
+                  {...field}
+                  label={label}
+                  value={field.value || ""}
+                  error={!!error}
+                  helperText={error?.message}
+                  required={required}
+                  select
+                  SelectProps={{ native: true }}
+                  onChange={e =>
+                    field.onChange(() => {
+                      const val = e.target.value
+                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                      if (val?.includes("Title")) {
+                        const hyphenIndex = val.indexOf("-")
+                        return val.slice(0, hyphenIndex - 1)
+                      }
+                      return val
+                    })
+                  }
+                >
+                  <option aria-label="None" value="" disabled />
+                  {options.map(option => (
+                    <option key={`${name}-${option}`} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </ValidationSelectField>
+                {description && (
+                  <FieldTooltip title={description} placement="top" arrow>
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
+                )}
+              </div>
+            )
+          }}
         />
       )
     }}

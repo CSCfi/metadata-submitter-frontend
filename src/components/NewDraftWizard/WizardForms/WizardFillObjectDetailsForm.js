@@ -488,7 +488,12 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
   const getAccessionIds = (objectType: string) => {
     const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
-    const accessionIds = submissions?.map(obj => obj.accessionId)
+    // Add "- Title: " to accessionId, special case DAC form: add "- Main Contact:"
+    const accessionIds = submissions?.map(obj =>
+      obj.schema === ObjectTypes.dac
+        ? `${obj.accessionId} - Main Contact: ${obj.tags?.displayTitle}`
+        : `${obj.accessionId} - Title: ${obj.tags?.displayTitle}`
+    )
     return accessionIds
   }
 

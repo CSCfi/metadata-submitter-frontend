@@ -34,31 +34,6 @@ const dereferenceSchema = async (schema: any): Promise<any> => {
 }
 
 /*
- * Clean up object values from empty strings and objects, translate numbers inside strings to numbers.
- */
-const cleanUpObjectValues = (data: any): {} => {
-  const cleanedData = JSON.parse(JSON.stringify(data))
-  return traverseObjectValuesForCleanUp(cleanedData)
-}
-
-const traverseObjectValuesForCleanUp = (data: any) => {
-  Object.keys(data).forEach(key => {
-    if (typeof data[key] === "object") {
-      if (data[key] !== null) {
-        data[key] = traverseObjectValuesForCleanUp(data[key])
-        if (Object.keys(data[key]).length === 0) delete data[key]
-      }
-    }
-    if (data[key] === "") {
-      delete data[key]
-    } else if (typeof data[key] === "string" && !isNaN(data[key]) && key !== "telephoneNumber") {
-      data[key] = Number(data[key])
-    }
-  })
-  return data
-}
-
-/*
  * Parse initial values from given object
  */
 const traverseValues = (object: any) => {
@@ -154,11 +129,11 @@ const traverseFields = (object: any, path: string[], objectValues: any, nestedFi
       case "integer":
       case "number":
       case "boolean": {
-        return <ObjectDetailsListItem key={name} label={object.title} value={getValues()} />
+        return <ObjectDetailsListItem key={name} name={name} label={object.title} value={getValues()} />
       }
       case "array": {
         return object.items.enum ? (
-          <CheckboxArray name={name} label={object.title} values={getValues()}></CheckboxArray>
+          <CheckboxArray key={name} name={name} label={object.title} values={getValues()}></CheckboxArray>
         ) : (
           <DetailsArray key={name} object={object} objectValues={objectValues} values={getValues()} path={path} />
         )
@@ -186,10 +161,10 @@ const DetailsListItem = withStyles(() => ({
   },
 }))(ListItem)
 
-const ObjectDetailsListItem = ({ label, value }: { label: string, value: any }) => {
+const ObjectDetailsListItem = ({ name, label, value }: { name: string, label: string, value: any }) => {
   return (
     label && (
-      <DetailsListItem key={value}>
+      <DetailsListItem data-testid={name}>
         <ListItemText disableTypography primary={`${label}: ${value}`}></ListItemText>
       </DetailsListItem>
     )
@@ -207,7 +182,7 @@ const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) =
   const classes = useStyles()
 
   return (
-    <div className="detailsSection" key={`${name}-section`}>
+    <div className="detailsSection" key={`${name}-section`} data-testid="section">
       <Typography key={`${name}-header`} className={classes.sectionHeader} variant={`h${level}`}>
         {label}
       </Typography>
@@ -224,7 +199,10 @@ type OneOfFieldProps = {
 
 const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
   const name = pathToName(path)
-  const optionValue = get(objectValues, name)
+
+  // Number & boolean field values are handled as string
+  const stringTypes = ["number", "boolean"]
+  const optionValue = stringTypes.includes(typeof get(objectValues, name)) ? "string" : get(objectValues, name)
   const optionType = Array.isArray(optionValue) ? "array" : typeof optionValue
   const options = object.oneOf
 
@@ -232,15 +210,16 @@ const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
 
   // Find option when options share type
   if (options.filter(option => option.type === optionType).length > 1) {
+    const optionValueKeys = Object?.keys(optionValue)
     for (let option of options) {
       // Find option details in array of values by comparing required fields. E.g. Study > Study Links
       if (option.required) {
-        if (option.required.every(val => Object.keys(optionValue).includes(val))) {
+        if (option.required.every(val => optionValueKeys.includes(val))) {
           currentOption = option
         }
       }
       // Find option by comparing properties
-      else if (Object.keys(option.properties)?.some(val => Object.keys(optionValue).includes(val))) {
+      else if (Object.keys(option.properties)?.some(val => optionValueKeys.includes(val))) {
         currentOption = option
       }
     }
@@ -255,19 +234,17 @@ type CheckboxArrayProps = {
   values: any,
 }
 
-const CheckboxArray = ({ name, label, values }: CheckboxArrayProps) => {
+const CheckboxArray = ({ label, values }: CheckboxArrayProps) => {
   return (
-    <div key={name}>
-      <List>
-        <Typography color="primary">{label}</Typography>
-        {values.map(item => (
-          <DetailsListItem key={item}>
-            <Checkbox checked={true} color="primary" disabled></Checkbox>
-            {item}
-          </DetailsListItem>
-        ))}
-      </List>
-    </div>
+    <List>
+      <Typography color="primary">{label}</Typography>
+      {values.map(item => (
+        <DetailsListItem key={item} data-testid="checkbox-item">
+          <Checkbox checked={true} color="primary" disabled></Checkbox>
+          {item}
+        </DetailsListItem>
+      ))}
+    </List>
   )
 }
 
@@ -335,5 +312,4 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
 export default {
   dereferenceSchema,
   buildDetails,
-  cleanUpObjectValues,
 }

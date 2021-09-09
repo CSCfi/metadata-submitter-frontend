@@ -119,8 +119,6 @@ const WizardObjectDetails = (props: ObjectDetailsType): React$Element<any> => {
     }
   }, [])
 
-  // if (states.schema) console.log(states.schema)
-
   return (
     <Box py={1}>
       {states.isLoading && <CircularProgress color="primary"></CircularProgress>}

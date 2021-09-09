@@ -150,18 +150,20 @@ const Row = (props: RowProps) => {
           </Button>
         </TableCell>
         <TableCell>
-          <Button aria-label="Show object details" onClick={() => showObjectDetails()}>
+          <Button aria-label="Show object details" data-testid="toggle-details" onClick={() => showObjectDetails()}>
             {open ? "Hide details" : "Show details"}
           </Button>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <WizardObjectDetails objectType={row.objectType} objectData={row.objectData}></WizardObjectDetails>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+      {open && (
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <WizardObjectDetails objectType={row.objectType} objectData={row.objectData}></WizardObjectDetails>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
     </React.Fragment>
   )
 }

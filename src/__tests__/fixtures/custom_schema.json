@@ -1,0 +1,85 @@
+{
+  "title": "Test schema",
+  "type": "object",
+  "properties": {
+    "listItemFields": {
+      "title": "List items section title",
+      "type": "object",
+      "required": ["stringField"],
+      "properties": {
+        "stringField": {
+          "title": "String Field title",
+          "type": "string"
+        },
+        "integerField": {
+          "title": "Integer Field title",
+          "type": "integer"
+        },
+        "numberField": {
+          "title": "Number Field title",
+          "type": "number"
+        },
+        "booleanField": {
+          "title": "Boolean Field title",
+          "type": "boolean"
+        }
+      }
+    },
+    "arrayFields": {
+      "title": "Array items section title",
+      "type": "object",
+      "properties": {
+        "checkboxArray": {
+          "title": "Checkbox array title",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Checkbox item 1", "Checkbox item 2"]
+          }
+        },
+        "oneOfArray": {
+          "title": "OneOf array title",
+          "type": "array",
+          "items": {
+            "title": "Item key",
+            "oneOf": [
+              {
+                "title": "First oneOf item",
+                "type": "object",
+                "properties": { "key1": { "type": "string", "title": "First item label" } },
+                "required": ["key1"]
+              },
+              {
+                "title": "Second oneOf item",
+                "type": "object",
+                "properties": { "key2": { "type": "string", "title": "Second item label" } },
+                "required": ["key2"]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "oneOf": {
+      "title": "OneOf title",
+      "type": "object",
+      "properties": {
+        "oneOfField": {
+          "title": "Options",
+          "oneOf": [
+            {
+              "title": "First option",
+              "type": "object",
+              "properties": { "firstOption": { "type": "string", "title": "First oneOf option label" } }
+            },
+            {
+              "title": "Second option",
+              "type": "object",
+              "properties": { "secondOption": { "type": "string", "title": "Second oneOf option label" } }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

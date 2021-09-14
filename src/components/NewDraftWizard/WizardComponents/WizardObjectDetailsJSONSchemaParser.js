@@ -1,7 +1,6 @@
 //@flow
 import * as React from "react"
 
-import $RefParser from "@apidevtools/json-schema-ref-parser"
 import Box from "@material-ui/core/Box"
 import Checkbox from "@material-ui/core/Checkbox"
 import List from "@material-ui/core/List"
@@ -11,6 +10,8 @@ import Paper from "@material-ui/core/Paper"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import { get } from "lodash"
+
+import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
   sectionHeader: {
@@ -24,65 +25,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /*
- * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
- */
-const dereferenceSchema = async (schema: any): Promise<any> => {
-  let dereferenced = JSON.parse(JSON.stringify(schema))
-  await $RefParser.dereference(dereferenced)
-  delete dereferenced["definitions"]
-  return dereferenced
-}
-
-/*
- * Parse initial values from given object
- */
-const traverseValues = (object: any) => {
-  if (object["oneOf"]) return object
-  switch (object["type"]) {
-    case "object": {
-      let values = {}
-      const properties = object["properties"]
-      for (const propertyKey in properties) {
-        const property = properties[propertyKey]
-        values[propertyKey] = traverseValues(property)
-      }
-
-      return ((values: any): typeof object)
-    }
-    case "string": {
-      return ""
-    }
-    case "integer": {
-      return ""
-    }
-    case "number": {
-      return 0
-    }
-    case "boolean": {
-      return false
-    }
-    case "array": {
-      return []
-    }
-    case "null": {
-      return null
-    }
-    default: {
-      console.error(`
-      No initial value parsing support for type ${object["type"]} yet.
-
-      Pretty printed version of object with unsupported type:
-      ${JSON.stringify(object, null, 2)}
-      `)
-      break
-    }
-  }
-}
-
-/*
  * Build object details based on given schema
  */
-
 const buildDetails = (schema: any, objectValues: any): ?React.Node => {
   try {
     return traverseFields(schema, [], objectValues)
@@ -90,11 +34,6 @@ const buildDetails = (schema: any, objectValues: any): ?React.Node => {
     console.error(error)
   }
 }
-
-/*
- * Translate array of path object levels (such as ["descriptor", "studyType"]) to unique name ("descriptor.studyType")
- */
-const pathToName = (path: string[]) => path.join(".")
 
 /*
  * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
@@ -310,6 +249,5 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
 }
 
 export default {
-  dereferenceSchema,
   buildDetails,
 }

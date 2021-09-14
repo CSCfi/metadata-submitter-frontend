@@ -31,6 +31,7 @@ import { deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmiss
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
+import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -473,7 +474,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       }
 
       // Dereference Schema and link AccessionIds to equivalent objects
-      let dereferencedSchema: Promise<any> = await JSONSchemaParser.dereferenceSchema(schema)
+      let dereferencedSchema: Promise<any> = await dereferenceSchema(schema)
       dereferencedSchema = getLinkedDereferencedSchema(schema.title.toLowerCase(), dereferencedSchema)
 
       setStates({

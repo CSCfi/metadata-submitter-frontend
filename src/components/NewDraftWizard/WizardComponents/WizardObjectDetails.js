@@ -12,6 +12,7 @@ import JSONSchemaParser from "./WizardObjectDetailsJSONSchemaParser"
 import { WizardStatus } from "constants/wizardStatus"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import schemaAPIService from "services/schemaAPI"
+import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
   detailComponents: {
@@ -102,7 +103,7 @@ const WizardObjectDetails = (props: ObjectDetailsType): React$Element<any> => {
           schema = JSON.parse(schema)
         }
 
-        let dereferencedSchema: Promise<any> = await JSONSchemaParser.dereferenceSchema(schema)
+        let dereferencedSchema: Promise<any> = await dereferenceSchema(schema)
 
         setStates({
           ...states,

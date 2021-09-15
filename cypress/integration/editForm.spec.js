@@ -90,7 +90,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("select[name='design.sampleDescriptor']").select(testData.sampleReference)
     cy.get("input[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
     // Expected Base Call Table
-    cy.get("div").contains("Expected Base Call Table").parent().children("button").click()
+    cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
     cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].baseCall']").type("Test base call")
     cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").type(
       "Test read group tag"
@@ -102,7 +102,7 @@ describe("Populate form and render form elements by object data", function () {
 
     // Switch to select and fill Complex processing
     cy.get("select[name='processing']").select(testData.complexProcessing)
-    cy.get("h2[data-testid='processing']").parent().children("button").click()
+    cy.get("h2[data-testid='processing']").parents().children("button").click()
     cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
     cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").type(testData.stepIndex)
     cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']", { force: true }).select(

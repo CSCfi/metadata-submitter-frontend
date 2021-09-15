@@ -2,7 +2,6 @@
 import * as React from "react"
 import { useState, useEffect, useCallback } from "react"
 
-import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { FormControl } from "@material-ui/core"
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
@@ -28,6 +27,7 @@ import { useFieldArray, useFormContext, useForm, Controller } from "react-hook-f
 import { useSelector } from "react-redux"
 
 import rorAPIService from "services/rorAPI"
+import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 /*
  * Highlight style for required fields
@@ -73,15 +73,6 @@ const FieldTooltip = withStyles(theme => ({
   tooltip: theme.tooltip,
 }))(Tooltip)
 
-/*
- * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
- */
-const dereferenceSchema = async (schema: any): Promise<any> => {
-  let dereferenced = JSON.parse(JSON.stringify(schema))
-  await $RefParser.dereference(dereferenced)
-  delete dereferenced["definitions"]
-  return dereferenced
-}
 
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
@@ -108,56 +99,10 @@ const traverseFormValuesForCleanUp = (data: any) => {
   return data
 }
 
-/*
- * Parse initial values from given object
- */
-const traverseValues = (object: any) => {
-  if (object["oneOf"]) return object
-  switch (object["type"]) {
-    case "object": {
-      let values = {}
-      const properties = object["properties"]
-      for (const propertyKey in properties) {
-        const property = properties[propertyKey]
-        values[propertyKey] = traverseValues(property)
-      }
-
-      return ((values: any): typeof object)
-    }
-    case "string": {
-      return ""
-    }
-    case "integer": {
-      return ""
-    }
-    case "number": {
-      return 0
-    }
-    case "boolean": {
-      return false
-    }
-    case "array": {
-      return []
-    }
-    case "null": {
-      return null
-    }
-    default: {
-      console.error(`
-      No initial value parsing support for type ${object["type"]} yet.
-
-      Pretty printed version of object with unsupported type:
-      ${JSON.stringify(object, null, 2)}
-      `)
-      break
-    }
-  }
-}
 
 /*
  * Build react-hook-form fields based on given schema
  */
-
 const buildFields = (schema: any): ?React.Node => {
   try {
     return traverseFields(schema, [])
@@ -174,10 +119,6 @@ const ConnectForm = ({ children }: { children: any }) => {
   return children({ ...methods })
 }
 
-/*
- * Translate array of path object levels (such as ["descriptor", "studyType"]) to unique name ("descriptor.studyType")
- */
-const pathToName = (path: string[]) => path.join(".")
 
 /*
  * Get defaultValue for options in a form. Used when rendering a saved/submitted form
@@ -1065,7 +1006,6 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 }
 
 export default {
-  dereferenceSchema,
   buildFields,
   cleanUpFormValues,
 }

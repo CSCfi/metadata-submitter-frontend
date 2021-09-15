@@ -18,6 +18,22 @@ const store = mockStore({})
 
 const server = setupServer()
 
+const metadataObjects = [
+  {
+    accessionId: "123testid",
+    schema: "study",
+    tags: { submissionType: "Form", displayTitle: "Published object" },
+  },
+]
+
+const draftObjects = [
+  {
+    accessionId: "456testid",
+    schema: "draft-study",
+    tags: { displayTitle: "Draft object" },
+  },
+]
+
 describe("Published folders list", () => {
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
@@ -32,20 +48,8 @@ describe("Published folders list", () => {
             name: "Test unpublished folder",
             description: "Test description",
             published: false,
-            metadataObjects: [
-              {
-                accessionId: "123testid",
-                schema: "study",
-                tags: { submissionType: "Form", displayTitle: "Published object" },
-              },
-            ],
-            drafts: [
-              {
-                accessionId: "456testid",
-                schema: "draft-study",
-                tags: { displayTitle: "Draft object" },
-              },
-            ],
+            metadataObjects: metadataObjects,
+            drafts: draftObjects,
             folderId: folderId,
           })
         )
@@ -90,10 +94,10 @@ describe("Published folders list", () => {
     const editButton = await screen.findByTestId("edit-button")
     expect(editButton).toBeInTheDocument()
 
-    const publishedObject = await screen.findByTestId("Published object")
+    const publishedObject = await screen.findByTestId(metadataObjects[0].tags.displayTitle)
     expect(publishedObject).toBeInTheDocument()
 
-    const draftObject = await screen.findByTestId("Draft object")
+    const draftObject = await screen.findByTestId(draftObjects[0].tags.displayTitle)
     expect(draftObject).toBeInTheDocument()
   })
 
@@ -106,13 +110,7 @@ describe("Published folders list", () => {
             name: "Test published folder",
             description: "Test description",
             published: true,
-            metadataObjects: [
-              {
-                accessionId: "123testid",
-                schema: "study",
-                tags: { submissionType: "Form", displayTitle: "Published object" },
-              },
-            ],
+            metadataObjects: metadataObjects,
             folderId: folderId,
           })
         )

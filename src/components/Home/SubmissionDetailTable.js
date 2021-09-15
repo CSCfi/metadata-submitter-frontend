@@ -1,5 +1,5 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
@@ -7,6 +7,7 @@ import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import CardHeader from "@material-ui/core/CardHeader"
+import Collapse from "@material-ui/core/Collapse"
 import Link from "@material-ui/core/Link"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -27,6 +28,7 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
 import { Link as RouterLink } from "react-router-dom"
 
+import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes } from "constants/wizardObject"
 import type { ObjectDetails } from "types"
@@ -94,11 +96,15 @@ type SubmissionDetailTableProps = {
   onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
 }
 
-const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element<any> => {
-  const classes = useStyles()
+type RowProps = {
+  row: any,
+  onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>,
+  onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
+}
 
-  const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
-    props
+const Row = (props: RowProps) => {
+  const { row, onEdit, onDelete } = props
+
   const getDateFormat = (date: string) => {
     const d = new Date(date)
     const day = d.getDate()
@@ -106,6 +112,68 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
     const year = d.getFullYear()
     return `${day}.${month}.${year}`
   }
+
+  const [open, setOpen] = useState(false)
+
+  const showObjectDetails = () => {
+    setOpen(!open)
+  }
+
+  return (
+    <React.Fragment>
+      <TableRow data-testid={row.title}>
+        <TableCell component="th" scope="row">
+          {row.title}
+        </TableCell>
+        <TableCell>{DisplayObjectTypes[row.objectType]}</TableCell>
+        <TableCell>{row.status}</TableCell>
+        <TableCell>{getDateFormat(row.lastModified)}</TableCell>
+        <TableCell>
+          <Button disabled>View</Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            disabled={row.folderType === FolderSubmissionStatus.published}
+            aria-label="Edit this object"
+            onClick={() => onEdit(row.accessionId, row.objectType, row.status, row.submissionType)}
+          >
+            {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            disabled={row.folderType === FolderSubmissionStatus.published}
+            aria-label="Delete this object"
+            onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+          >
+            Delete
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button aria-label="Show object details" data-testid="toggle-details" onClick={() => showObjectDetails()}>
+            {open ? "Hide details" : "Show details"}
+          </Button>
+        </TableCell>
+      </TableRow>
+      {open && (
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <WizardObjectDetails objectType={row.objectType} objectData={row.objectData}></WizardObjectDetails>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
+    </React.Fragment>
+  )
+}
+
+const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element<any> => {
+  const classes = useStyles()
+
+  const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
+    props
+
   const folderPublishable = bodyRows.find(row => row.status === "Submitted")
 
   const CurrentFolder = () => (
@@ -165,39 +233,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
           </TableHead>
           <TableBody>
             {bodyRows?.map((row, index) => (
-              <TableRow key={index} data-testid={row.title}>
-                <TableCell component="th" scope="row">
-                  {row.title}
-                </TableCell>
-                <TableCell>{DisplayObjectTypes[row.objectType]}</TableCell>
-                <TableCell>{row.status}</TableCell>
-                <TableCell>{getDateFormat(row.lastModified)}</TableCell>
-                <TableCell>
-                  <Button disabled>View</Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    disabled={folderType === FolderSubmissionStatus.published}
-                    aria-label="Edit this object"
-                    onClick={() => onEditObject(row.accessionId, row.objectType, row.status, row.submissionType)}
-                  >
-                    {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
-                  </Button>
-                </TableCell>
-                {folderType === FolderSubmissionStatus.unpublished && (
-                  <TableCell>
-                    <Button
-                      aria-label="Delete this object"
-                      onClick={() => onDeleteObject(row.accessionId, row.objectType, row.status)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                )}
-                <TableCell>
-                  <Button disabled>Show details</Button>
-                </TableCell>
-              </TableRow>
+              <Row key={index} row={row} onEdit={onEditObject} onDelete={onDeleteObject}></Row>
             ))}
           </TableBody>
         </Table>

@@ -12,6 +12,8 @@ import configureStore from "redux-mock-store"
 
 import CSCtheme from "../theme"
 
+import CustomSchema from "./fixtures/custom_schema.json"
+
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
 
@@ -20,94 +22,7 @@ const store = mockStore({})
 
 const server = setupServer()
 
-const schema = {
-  title: "Test schema",
-  type: "object",
-  properties: {
-    listItemFields: {
-      type: "object",
-      title: "List items section title",
-      required: ["stringField"],
-      properties: {
-        stringField: {
-          title: "String Field Title",
-          type: "string",
-        },
-        integerField: {
-          title: "Integer Field Title",
-          type: "integer",
-        },
-        numberField: {
-          title: "Number Field Title",
-          type: "number",
-        },
-        booleanField: {
-          title: "Boolean Field Title",
-          type: "boolean",
-        },
-      },
-    },
-    arrayFields: {
-      type: "object",
-      title: "Array items section title",
-      properties: {
-        checkboxArray: {
-          // Eg. Dataset > Dataset Type
-          type: "array",
-          title: "Checkbox array title",
-          items: {
-            type: "string",
-            enum: ["Checkbox item 1", "Checkbox item 2"],
-          },
-        },
-        oneOfArray: {
-          // Eg. Study > Study Links
-          type: "array",
-          title: "OneOf array title",
-          items: {
-            title: "Item key",
-            oneOf: [
-              {
-                type: "object",
-                title: "First oneOf item",
-                properties: { key1: { type: "string", title: "First item label" } },
-                required: ["key1"],
-              },
-              {
-                type: "object",
-                title: "Second oneOf item",
-                properties: { key2: { type: "string", title: "Second item label" } },
-                required: ["key2"],
-              },
-            ],
-          },
-        },
-      },
-    },
-    oneOf: {
-      // Eg. Experiment > Design > Properties > Sample descriptor,
-      type: "object",
-      title: "OneOf title",
-      properties: {
-        oneOfField: {
-          title: "Options",
-          oneOf: [
-            {
-              type: "object",
-              title: "First option",
-              properties: { firstOption: { type: "string", title: "First oneOf option label" } },
-            },
-            {
-              type: "object",
-              title: "Second option",
-              properties: { secondOption: { type: "string", title: "Second oneOf option label" } },
-            },
-          ],
-        },
-      },
-    },
-  },
-}
+const schema = CustomSchema
 
 describe("Object details", () => {
   beforeAll(() => server.listen())

@@ -21,6 +21,12 @@ describe("Basic e2e", function () {
     cy.get("div[role=button]").contains("Fill Form").type("{enter}")
     cy.get("div[role=button]").contains("Skip to form")
 
+    // Try to send invalid form
+    cy.get("button[type=submit]").contains("Submit").click()
+    cy.get("input[name='descriptor.studyTitle']").then($input => {
+      expect($input[0].validationMessage).to.eq("Please fill out this field.")
+    })
+
     // Fill a Study form and submit object
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
     cy.get("button[type=button]").contains("Clear form").click()

@@ -22,6 +22,11 @@
         "booleanField": {
           "title": "Boolean Field title",
           "type": "boolean"
+        },
+        "enumField": {
+          "title": "Enum Field title",
+          "type": "string",
+          "enum": ["Item 1", "Item 2", "Item 3"]
         }
       }
     },

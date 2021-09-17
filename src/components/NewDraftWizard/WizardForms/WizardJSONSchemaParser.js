@@ -73,7 +73,6 @@ const FieldTooltip = withStyles(theme => ({
   tooltip: theme.tooltip,
 }))(Tooltip)
 
-
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
  */
@@ -99,7 +98,6 @@ const traverseFormValuesForCleanUp = (data: any) => {
   return data
 }
 
-
 /*
  * Build react-hook-form fields based on given schema
  */
@@ -118,7 +116,6 @@ const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
 }
-
 
 /*
  * Get defaultValue for options in a form. Used when rendering a saved/submitted form
@@ -791,7 +788,7 @@ const FormSelectField = ({
                 >
                   <option aria-label="None" value="" disabled />
                   {options.map(option => (
-                    <option key={`${name}-${option}`} value={option}>
+                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
                       {option}
                     </option>
                   ))}

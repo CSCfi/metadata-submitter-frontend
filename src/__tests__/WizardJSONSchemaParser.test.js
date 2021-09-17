@@ -3,6 +3,7 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { get } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
@@ -10,6 +11,7 @@ import configureStore from "redux-mock-store"
 import CustomSchema from "./fixtures/custom_schema.json"
 
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import { pathToName } from "utils/JSONSchemaUtils"
 
 const mockStore = configureStore([])
 const store = mockStore({})
@@ -54,31 +56,44 @@ describe("Test form render by custom schema", () => {
     let headingCount = 1 // Initial header for schema title
     let buttonCount = 0
 
-    const traverse = object => {
+    const traverse = (object, path) => {
       for (const prop in object.properties) {
+        const name = pathToName([...path, prop])
         const source = object.properties[prop]
 
         if (source.properties || source.items?.oneOf) {
+          // Eg. Study > Study Description
           headingCount = ++headingCount
         }
 
         if (source.type === "array" && source.items?.oneOf) {
+          // Eg. Study > Study Links
           buttonCount = ++buttonCount
         }
 
+        if (source.enum) {
+          // Eg. Study > Study Links > Entrez Link > Database
+          expect(screen.getAllByTestId(`${name}-option`)).toHaveLength(
+            get(schema.properties, [path[0], "properties", prop, "enum"].join(".")).length
+          )
+        }
+
+        // Most fields are rendered with labels. Test that label exists in form
         if (source.properties) testLabels(source)
 
-        if (source.properties) traverse(source)
+        // Loop through properties recursively
+        if (source.properties) traverse(source, [...path, prop])
       }
     }
 
-    traverse(schema)
+    traverse(schema, [])
 
     expect(screen.getAllByRole("heading")).toHaveLength(headingCount)
     expect(screen.getAllByRole("button", { name: "Add new item" })).toHaveLength(buttonCount)
   })
 
   it("should render fields when clicking 'Add new item' button", () => {
+    // Eg. Study > Study Links
     const addNewItemButton = screen.getByRole("button", { name: "Add new item" })
     userEvent.click(addNewItemButton)
 
@@ -91,6 +106,7 @@ describe("Test form render by custom schema", () => {
   })
 
   it("should render option fields when selecting option", () => {
+    // Eg. Study > Study Links > Link Type
     const options = schema.properties.oneOf.properties.oneOfField
 
     const oneOfSelect = screen.getByLabelText(options.title)

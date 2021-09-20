@@ -92,7 +92,56 @@ const CSCtheme = createTheme({
     fontSize: defaultTheme.typography.pxToRem(14),
     boxShadow: defaultTheme.shadows[1],
   },
-  form: {},
+  form: {
+    margin: defaultTheme.spacing(3, 2),
+    "& .MuiTextField-root > .Mui-required": {
+      color: palette.primary.main,
+    },
+    "& .MuiTextField-root": {
+      width: "48%",
+      margin: defaultTheme.spacing(1),
+    },
+    "& .MuiTypography-root": {
+      margin: defaultTheme.spacing(1),
+      ...defaultTheme.typography.subtitle1,
+      fontWeight: "bold",
+    },
+    "& .MuiTypography-h2": {
+      width: "100%",
+      color: palette.primary.light,
+      borderBottom: `2px solid ${palette.secondary.main}`,
+    },
+    "& .MuiTypography-h3": {
+      width: "100%",
+    },
+    "& .array": {
+      margin: defaultTheme.spacing(1),
+
+      "& .arrayRow": {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: defaultTheme.spacing(1),
+        width: "100%",
+        "& .MuiTextField-root": {
+          width: "95%",
+        },
+      },
+      "& h2, h3, h4, h5, h6": {
+        margin: defaultTheme.spacing(1, 0),
+      },
+      "& .MuiPaper-elevation2": {
+        paddingRight: defaultTheme.spacing(1),
+        marginBottom: defaultTheme.spacing(1),
+        width: "60%",
+        "& .array": { margin: 0 },
+        "& h3, h4": { margin: defaultTheme.spacing(1) },
+        "& button": { margin: defaultTheme.spacing(1) },
+      },
+      "& .MuiSelect-outlined": {
+        marginRight: 0,
+      },
+    },
+  },
 })
 
 export default CSCtheme

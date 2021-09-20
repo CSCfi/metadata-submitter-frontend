@@ -16,56 +16,7 @@ import folderAPIService from "services/folderAPI"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
-  form: {
-    margin: theme.spacing(3, 2),
-    "& .MuiTextField-root > .Mui-required": {
-      color: theme.palette.primary.main,
-    },
-    "& .MuiTextField-root": {
-      width: "48%",
-      margin: theme.spacing(1),
-    },
-    "& .MuiTypography-root": {
-      margin: theme.spacing(1),
-      ...theme.typography.subtitle1,
-      fontWeight: "bold",
-    },
-    "& .MuiTypography-h2": {
-      width: "100%",
-      color: theme.palette.primary.light,
-      borderBottom: `2px solid ${theme.palette.secondary.main}`,
-    },
-    "& .MuiTypography-h3": {
-      width: "100%",
-    },
-    "& .array": {
-      margin: theme.spacing(1),
-
-      "& .arrayRow": {
-        display: "flex",
-        alignItems: "center",
-        marginBottom: theme.spacing(1),
-        width: "100%",
-        "& .MuiTextField-root": {
-          width: "95%",
-        },
-      },
-      "& h2, h3, h4, h5, h6": {
-        margin: theme.spacing(1, 0),
-      },
-      "& .MuiPaper-elevation2": {
-        paddingRight: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-        width: "60%",
-        "& .array": { margin: 0 },
-        "& h3, h4": { margin: theme.spacing(1) },
-        "& button": { margin: theme.spacing(1) },
-      },
-      "& .MuiSelect-outlined": {
-        marginRight: 0,
-      },
-    },
-  },
+  form: theme.form,
 }))
 
 const DOIForm = ({ formId }: { formId: string }) => {

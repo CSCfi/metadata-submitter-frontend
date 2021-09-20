@@ -156,6 +156,18 @@ const traverseFields = (
 
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
 
+  if (typeof object["type"] === "object") {
+    return (
+      <FormTextField
+        key={name}
+        name={name}
+        label={label}
+        required={required}
+        description={description}
+        nestedField={nestedField}
+      />
+    )
+  }
   switch (object.type) {
     case "object": {
       const properties = object.properties
@@ -946,12 +958,10 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   // Get currentObject and the values of current field
   const currentObject = useSelector(state => state.currentObject) || {}
   const fieldValues = get(currentObject, name)
-
   const items = (traverseValues(object.items): any)
 
   // Needs to use "control" from useForm()
   const { control, setValue } = useForm()
-
   const { fields, append, remove } = useFieldArray({ control, name })
 
   // Required field array handling

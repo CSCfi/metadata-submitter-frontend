@@ -1,6 +1,12 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 
+import Button from "@material-ui/core/Button"
+import Dialog from "@material-ui/core/Dialog"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogTitle from "@material-ui/core/DialogTitle"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
@@ -12,6 +18,7 @@ import { useSelector } from "react-redux"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
+import WizardDOIForm from "../WizardForms/WizardDOIForm"
 
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
@@ -42,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start",
     padding: theme.spacing(1.5),
   },
+  doiButton: {
+    marginTop: theme.spacing(4),
+  },
 }))
 
 type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
@@ -61,7 +71,44 @@ const WizardShowSummaryStep = (): React$Element<any> => {
     }
   })
 
+  const [openDoiDialog, setOpenDoiDialog] = useState(false)
+
   const classes = useStyles()
+
+  const DOIDialog = () => (
+    <Dialog
+      maxWidth="md"
+      fullWidth
+      open={openDoiDialog}
+      onClose={() => setOpenDoiDialog(false)}
+      aria-labelledby="doi-dialog-title"
+      aria-describedby="doi-dialog-description"
+    >
+      <DialogTitle id="doi-dialog-title">DOI information</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="doi-dialog-description" data-testid="doi-dialog-content">
+          Please fill in and save the information if you would like your submission to have DOI.
+        </DialogContentText>
+        <WizardDOIForm formId="doi-form" />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={() => setOpenDoiDialog(false)} color="secondary">
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setOpenDoiDialog(false)
+          }}
+          color="primary"
+          type="submit"
+          form="doi-form"
+        >
+          Save DOI info
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
 
   return (
     <>
@@ -105,6 +152,15 @@ const WizardShowSummaryStep = (): React$Element<any> => {
           )
         })}
       </div>
+      <Button
+        variant="contained"
+        color="secondary"
+        className={classes.doiButton}
+        onClick={() => setOpenDoiDialog(true)}
+      >
+        Add DOI information (optional)
+      </Button>
+      {openDoiDialog && <DOIDialog />}
     </>
   )
 }

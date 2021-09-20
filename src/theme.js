@@ -92,6 +92,7 @@ const CSCtheme = createTheme({
     fontSize: defaultTheme.typography.pxToRem(14),
     boxShadow: defaultTheme.shadows[1],
   },
+  form: {},
 })
 
 export default CSCtheme

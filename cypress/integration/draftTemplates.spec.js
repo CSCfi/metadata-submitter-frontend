@@ -51,6 +51,7 @@ describe("draft selections and templates", function () {
     cy.get("input[name='sampleName.taxonId']").type(123)
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
+    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 1)
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()

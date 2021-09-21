@@ -73,7 +73,6 @@ const FieldTooltip = withStyles(theme => ({
   tooltip: theme.tooltip,
 }))(Tooltip)
 
-
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
  */
@@ -99,7 +98,6 @@ const traverseFormValuesForCleanUp = (data: any) => {
   return data
 }
 
-
 /*
  * Build react-hook-form fields based on given schema
  */
@@ -118,7 +116,6 @@ const ConnectForm = ({ children }: { children: any }) => {
   const methods = useFormContext()
   return children({ ...methods })
 }
-
 
 /*
  * Get defaultValue for options in a form. Used when rendering a saved/submitted form
@@ -283,7 +280,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
         return (
           <div>
             <div className="formSection" key={`${name}-section`}>
-              <Typography key={`${name}-header`} variant={`h${level}`}>
+              <Typography key={`${name}-header`} variant={`h${level}`} role="heading">
                 {label}
                 {description && level == 2 && (
                   <FieldTooltip title={description} placement="top" arrow>
@@ -499,6 +496,8 @@ const FormOneOfField = ({
               <ValidationSelectField
                 name={name}
                 label={label}
+                id={name}
+                role="listbox"
                 value={field || ""}
                 select
                 SelectProps={{ native: true }}
@@ -574,6 +573,7 @@ const FormTextField = ({
                   {...field}
                   inputProps={{ "data-testid": name }}
                   label={label}
+                  id={name}
                   role="textbox"
                   error={!!error}
                   helperText={error?.message}
@@ -686,6 +686,7 @@ const FormAutocompleteField = ({
                   <TextField
                     {...params}
                     label={label}
+                    id={name}
                     name={name}
                     variant="outlined"
                     error={!!error}
@@ -766,6 +767,7 @@ const FormSelectField = ({
                 <ValidationSelectField
                   {...field}
                   label={label}
+                  id={name}
                   value={field.value || ""}
                   error={!!error}
                   helperText={error?.message}
@@ -786,7 +788,7 @@ const FormSelectField = ({
                 >
                   <option aria-label="None" value="" disabled />
                   {options.map(option => (
-                    <option key={`${name}-${option}`} value={option}>
+                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
                       {option}
                     </option>
                   ))}
@@ -833,6 +835,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                 control={
                   <Checkbox
                     name={name}
+                    id={name}
                     {...rest}
                     required={required}
                     inputRef={ref}
@@ -873,7 +876,7 @@ const FormCheckBoxArray = ({
 }: FormSelectFieldProps & { description: string }) => (
   <Box px={1}>
     <p>
-      <strong>{label}</strong> - check from following options
+      <strong id={name}>{label}</strong> - check from following options
     </p>
     <ConnectForm>
       {({ register, errors, getValues }) => {
@@ -885,7 +888,7 @@ const FormCheckBoxArray = ({
 
         return (
           <FormControl error={!!error} required={required}>
-            <FormGroup>
+            <FormGroup aria-labelledby={name}>
               {options.map(option => (
                 <React.Fragment key={option}>
                   <FormControlLabel
@@ -954,9 +957,9 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   }, [setValue, fields])
 
   return (
-    <div className="array" key={`${name}-array`}>
-      <Typography key={`${name}-header`} variant={`h${level}`} data-testid={name}>
-        {label} {required ? "*" : null}
+    <div className="array" key={`${name}-array`} aria-labelledby={name}>
+      <Typography key={`${name}-header`} variant={`h${level}`} data-testid={name} role="heading">
+        <span id={name}>{label}</span> {required ? "*" : null}
       </Typography>
       {fields.map((field, index) => {
         const [lastPathItem] = path.slice(-1)
@@ -983,7 +986,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
 
         return (
-          <Box px={1} className="arrayRow" key={`${name}[${index}]`}>
+          <Box px={1} className="arrayRow" key={`${name}[${index}]`} aria-labelledby={name}>
             <Paper elevation={2}>
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]

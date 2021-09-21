@@ -20,7 +20,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
 
     // Add new Study Link
-    cy.get("div").contains("Study Links").parent().children("button").click()
+    cy.get("div").contains("Study Links").parents().children("button").click()
 
     // Choose XRef Link
     cy.get("select[name='studyLinks[0]']").select("XRef Link")
@@ -30,14 +30,14 @@ describe("render objects' links and attributes ", function () {
     cy.get("input[name='studyLinks[0].label']").type("Test XRef Label")
 
     // Add new URL Link
-    cy.get("div").contains("Study Links").parent().children("button").click()
+    cy.get("div").contains("Study Links").parents().children("button").click()
     cy.get("select[name='studyLinks[1]']").select("URL Link")
 
     cy.get("input[name='studyLinks[1].label']").type("Test URL Label")
     cy.get("input[name='studyLinks[1].url']").type("https://testlink.com")
 
     // Add new Entrez Link
-    cy.get("div").contains("Study Links").parent().children("button").click()
+    cy.get("div").contains("Study Links").parents().children("button").click()
     cy.get("select[name='studyLinks[2]']").select("Entrez Link")
 
     cy.get("select[name='studyLinks[2].entrezDb']").select("genome")
@@ -45,7 +45,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("input[name='studyLinks[2].label']").type("Test Entrez Label")
 
     // Choose Study Attributes
-    cy.get("div").contains("Study Attributes").parent().children("button").click()
+    cy.get("div").contains("Study Attributes").parents().children("button").click()
 
     cy.get("input[name='studyAttributes[0].tag']").type("Test Attributes Tag")
     cy.get("textarea[name='studyAttributes[0].value']").type("Test Attributes Value")

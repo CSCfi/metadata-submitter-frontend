@@ -113,7 +113,7 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
     cy.get("[data-testid='title']").type("Test Run title")
-    cy.get("h2[data-testid='experimentRef']").parent().children("button").click()
+    cy.get("h2[data-testid='experimentRef']").parents().children("button").click()
     cy.get("[data-testid='experimentRef[0].label']").type("Test experiment label ref")
     // Select experimentAccessionId
     cy.get("select[name='experimentRef[0].accessionId']").then($el => {
@@ -155,7 +155,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='studyRef.accessionId']").should("contain", " - Title:")
 
     // Select experimentAccessionId
-    cy.get("div").contains("Experiment Reference").parent().children("button").click()
+    cy.get("div").contains("Experiment Reference").parents().children("button").click()
     cy.get("select[name='experimentRef[0].accessionId']").then($el => {
       const experimentAccessionId = cy.get("@experimentAccessionId")
       $el.select(experimentAccessionId)
@@ -163,7 +163,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='experimentRef[0].accessionId']").should("contain", " - Title:")
 
     // Select sampleAccessionId
-    cy.get("div").contains("Sample Reference").parent().children("button").click()
+    cy.get("div").contains("Sample Reference").parents().children("button").click()
     cy.get("select[name='sampleRef[0].accessionId']").then($el => {
       const sampleAccessionId = cy.get("@sampleAccessionId")
       $el.select(sampleAccessionId)
@@ -171,7 +171,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='sampleRef[0].accessionId']").should("contain", " - Title:")
 
     // Select runAccessionId
-    cy.get("div").contains("Run Reference").parent().children("button").click()
+    cy.get("div").contains("Run Reference").parents().children("button").click()
     cy.get("select[name='runRef[0].accessionId']").then($el => {
       const runAccessionId = cy.get("@runAccessionId")
       $el.select(runAccessionId)
@@ -195,7 +195,7 @@ describe("Linking Accession Ids", function () {
     cy.get("input[name='analysisType.referenceAlignment.assembly.accessionId']").type("Standard accessionId 2")
 
     // Select the other Analysis AccessionId
-    cy.get("div").contains("Analysis Reference").parent().children("button").click()
+    cy.get("div").contains("Analysis Reference").parents().children("button").click()
     cy.get("select[name='analysisRef[0].accessionId']").then($el => {
       const analysisAccessionId = cy.get("@analysisAccessionId")
       $el.select(analysisAccessionId)
@@ -219,7 +219,7 @@ describe("Linking Accession Ids", function () {
           .then($btn => $btn.click())
       )
 
-    cy.get("h2[data-testid='contacts']").parent().children("button").click()
+    cy.get("h2[data-testid='contacts']").parents().children("button").click()
     cy.get("input[name='contacts[0].name']").type("Test contact name")
     cy.get("input[name='contacts[0].email']").type("contact@hotmail.com")
     cy.get("input[name='contacts[0].telephoneNumber']").type("Test phone number")
@@ -290,7 +290,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='policyRef.accessionId']").should("contain", " - Title:")
 
     // Select runAccessionId
-    cy.get("div").contains("Run Reference").parent().children("button").click()
+    cy.get("div").contains("Run Reference").parents().children("button").click()
     cy.get("select[name='runRef[0].accessionId']").then($el => {
       const runAccessionId = cy.get("@runAccessionId")
       $el.select(runAccessionId)
@@ -298,7 +298,7 @@ describe("Linking Accession Ids", function () {
     cy.get("select[name='runRef[0].accessionId']").should("contain", " - Title:")
 
     // Select analysisAccessionId
-    cy.get("div").contains("Analysis Reference").parent().children("button").click()
+    cy.get("div").contains("Analysis Reference").parents().children("button").click()
     cy.get("select[name='analysisRef[0].accessionId']").then($el => {
       const analysisAccessionId = cy.get("@analysisAccessionId")
       $el.select(analysisAccessionId)

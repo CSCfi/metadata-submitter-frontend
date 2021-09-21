@@ -19,13 +19,16 @@ const useStyles = makeStyles(theme => ({
   form: theme.form,
 }))
 
-const DOIForm = ({ formId }: { formId: string }) => {
+const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvider> => {
   const [doiSchema, setDoiSchema] = useState({})
 
-  useEffect(async () => {
-    const loadData = await dereferenceSchema(folderSchema)
-    const doiData = loadData?.properties?.doiInfo
-    setDoiSchema(doiData)
+  useEffect(() => {
+    const getDoiSchema = async () => {
+      const loadData = await dereferenceSchema(folderSchema)
+      const doiData = loadData?.properties?.doiInfo
+      setDoiSchema(doiData)
+    }
+    getDoiSchema()
   }, [])
 
   const resolver = WizardAjvResolver(doiSchema)

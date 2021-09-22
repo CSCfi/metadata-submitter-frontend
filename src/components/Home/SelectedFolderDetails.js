@@ -65,7 +65,6 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
 
     const handleObject = async (data: any, draft: boolean, objectType: string, objectInFolder: any) => {
       const service = draft ? draftAPIService : objectAPIService
-
       const response = await service.getObjectByAccessionId(objectType, objectInFolder.accessionId)
 
       if (response.ok) {

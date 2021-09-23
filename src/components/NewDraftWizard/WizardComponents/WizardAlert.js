@@ -57,7 +57,7 @@ const CancelFormDialog = ({
       currentObject.accessionId || currentObject.objectId,
       objectType,
       currentObject.status,
-      submissionFolder.folderId,
+      submissionFolder,
       currentObject.cleanedValues || currentObject,
       dispatch
     )

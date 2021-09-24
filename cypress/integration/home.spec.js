@@ -8,7 +8,7 @@ describe("Home e2e", function () {
     cy.contains("Your Draft Submissions", { timeout: 10000 }).should("be.visible")
     cy.contains("Your Published Submissions", { timeout: 10000 }).should("be.visible")
 
-    // cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
+    cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
 
     // Create a new Unpublished folder
     cy.get("button").contains("Create Submission").click()

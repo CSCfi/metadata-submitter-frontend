@@ -132,14 +132,14 @@ export const replaceObjectInFolder =
   ): ((dispatch: (any) => void) => Promise<any>) =>
   async (dispatch: any => void) => {
     const changes =
-      objectStatus?.toLowerCase() === ObjectStatus.submitted.toLowerCase()
+      objectStatus === ObjectStatus.submitted
         ? [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
         : [{ op: "replace", path: `/drafts/${index}/tags`, value: tags }]
 
     const response = await folderAPIService.patchFolderById(folderID, changes)
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        objectStatus?.toLowerCase() === ObjectStatus.submitted.toLowerCase()
+        objectStatus === ObjectStatus.submitted
           ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
           : dispatch(
               modifyDraftObjectTags({

@@ -37,6 +37,12 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Save as Draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
+    // Fill a Sample form draft
+    cy.clickFillForm("Sample")
+    cy.get("input[data-testid='title']").type("Test sample")
+    cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
+
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
@@ -72,7 +78,18 @@ describe("Home e2e", function () {
 
     // Navigate to home & edit submitted object
     cy.findDraftFolder("Edited unpublished folder")
-    cy.get('button[aria-label="Edit this object"]').click()
+
+    // Edit draft Sample form
+    cy.get("tr[data-testid='Test sample']").within(() => cy.get('button[aria-label="Edit this object"]').click())
+    cy.get("input[data-testid='title']").type(" edited")
+    cy.get("button[type=button]").contains("Update draft").click()
+    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
+
+    // Navigate to home & check updated draft's new title
+    cy.findDraftFolder("Edited unpublished folder")
+    cy.get("tr[data-testid='Test sample edited']").should("be.visible")
+
+    cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
     cy.get("input[name='descriptor.studyTitle']").type(" edited")
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")

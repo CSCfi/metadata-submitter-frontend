@@ -1,19 +1,21 @@
 //@flow
+
 import { ObjectStatus } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { addObjectToDrafts, modifyDraftObjectTags } from "features/wizardSubmissionFolderSlice"
+import { addObjectToDrafts, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
+import type { FolderDetailsWithId } from "types"
 import { getObjectDisplayTitle } from "utils"
 
 const saveDraftHook = async (
   accessionId?: string,
   objectType: string,
   objectStatus: string,
-  folderId: string,
+  folder: FolderDetailsWithId,
   values: any,
   dispatch: function
 ): any => {
@@ -21,15 +23,17 @@ const saveDraftHook = async (
   dispatch(setLoading())
   if (accessionId && objectStatus === ObjectStatus.draft) {
     const response = await draftAPIService.patchFromJSON(objectType, accessionId, values)
+    const index = folder.drafts.findIndex(item => item.accessionId === accessionId)
     if (response.ok) {
       dispatch(resetDraftStatus())
       dispatch(
-        modifyDraftObjectTags({
+        replaceObjectInFolder(
+          folder.folderId,
           accessionId,
-          tags: {
-            displayTitle: draftDisplayTitle,
-          },
-        })
+          index,
+          { displayTitle: draftDisplayTitle },
+          ObjectStatus.draft
+        )
       )
       dispatch(
         updateStatus({
@@ -62,7 +66,7 @@ const saveDraftHook = async (
       )
       dispatch(resetDraftStatus())
       dispatch(
-        addObjectToDrafts(folderId, {
+        addObjectToDrafts(folder.folderId, {
           accessionId: response.data.accessionId,
           schema: "draft-" + objectType,
           tags: { displayTitle: draftDisplayTitle },

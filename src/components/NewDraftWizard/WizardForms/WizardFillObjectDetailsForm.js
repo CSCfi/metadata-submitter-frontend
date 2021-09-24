@@ -27,9 +27,10 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
-import { deleteObjectFromFolder, modifyObjectTags } from "features/wizardSubmissionFolderSlice"
+import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
+import type { FolderDetailsWithId } from "types"
 import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -120,7 +121,7 @@ type FormContentProps = {
   formSchema: any,
   onSubmit: () => Promise<any>,
   objectType: string,
-  folderId: string,
+  folder: FolderDetailsWithId,
   currentObject: any,
 }
 
@@ -194,7 +195,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 /*
  * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
-const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, currentObject }: FormContentProps) => {
+const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, currentObject }: FormContentProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
@@ -331,14 +332,18 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
    */
   const patchHandler = (response, cleanedValues) => {
     if (response.ok) {
+      const index = folder.metadataObjects.findIndex(item => item.accessionId === currentObject.accessionId)
       dispatch(
-        modifyObjectTags({
-          accessionId: currentObject.accessionId,
-          tags: {
+        replaceObjectInFolder(
+          folder.folderId,
+          currentObject.accessionId,
+          index,
+          {
             submissionType: ObjectSubmissionTypes.form,
             displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
           },
-        })
+          ObjectStatus.submitted
+        )
       )
       dispatch(resetDraftStatus())
       dispatch(
@@ -371,7 +376,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folderId, cur
         currentObject.accessionId || currentObject.objectId,
         objectType,
         currentObject.status,
-        folderId,
+        folder,
         cleanedValues,
         dispatch
       )
@@ -435,7 +440,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const dispatch = useDispatch()
 
   const objectType = useSelector(state => state.objectType)
-  const { folderId, metadataObjects } = useSelector(state => state.submissionFolder)
+  const folder = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
 
   // States that will update in useEffect()
@@ -488,7 +493,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   }, [objectType])
 
   const getAccessionIds = (objectType: string) => {
-    const submissions = metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
+    const submissions = folder.metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
     // Add "- Title: " to accessionId, special case DAC form: add "- Main Contact:"
     const accessionIds = submissions?.map(obj =>
       obj.schema === ObjectTypes.dac
@@ -680,7 +685,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
    */
   const onSubmit = async data => {
     setSubmitting(true)
-    const response = await submitObjectHook(data, folderId, objectType, dispatch)
+    const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
 
     if (response) setSubmitting(false)
   }
@@ -696,9 +701,9 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         resolver={WizardAjvResolver(states.validationSchema)}
         onSubmit={onSubmit}
         objectType={objectType}
-        folderId={folderId}
+        folder={folder}
         currentObject={currentObject}
-        key={currentObject?.accessionId || folderId}
+        key={currentObject?.accessionId || folder.folderId}
       />
       {submitting && <LinearProgress />}
     </Container>

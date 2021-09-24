@@ -35,6 +35,7 @@ describe("Draft operations", function () {
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("h2").contains("Would you like to save draft version of this form")
     cy.get("div[role=dialog]").contains("Save").click()
+    cy.wait(500)
     cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 2)
 
     // Delete a draft

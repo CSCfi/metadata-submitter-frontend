@@ -202,4 +202,25 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("button[type=button]", { timeout: 10000 }).contains("Clear form").click()
     cy.get("[type='checkbox']").first().should("not.be.checked")
   })
+
+  it("should not remove the draft object when submitting invalid form", () => {
+    cy.clickFillForm("Sample")
+    cy.get("[data-testid='title']").type("Test sample title")
+    // Save draft
+    cy.get("button[type='button']").contains("Save as Draft").click()
+    // Edit the draft and try to submit invalid form
+    cy.continueFirstDraft()
+    cy.get("button[type=submit]").contains("Submit").click()
+    // Taxon field should be empty and the draft cannot be submitted yet
+    cy.get("[data-testid='sampleName.taxonId']").should("have.value", "")
+    cy.get("ul[data-testid='Draft-objects']").should("have.length", 1)
+
+    // Fill in taxonId and submit the form again
+    cy.get("[data-testid='sampleName.taxonId']").type("123")
+    cy.get("button[type=submit]").contains("Submit").click()
+
+    // Check that the draft is removed from the draft objects list and submitted
+    cy.get("ul[data-testid='Draft-objects']").should("have.length", 0)
+    cy.get("ul[data-testid='Form-objects']").should("have.length", 1)
+  })
 })

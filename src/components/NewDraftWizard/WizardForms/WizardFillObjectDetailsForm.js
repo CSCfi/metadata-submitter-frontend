@@ -14,12 +14,12 @@ import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
+import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
-import getLinkedDereferencedSchema from "./WizardLinkedDereferencedSchemaHook"
 
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"

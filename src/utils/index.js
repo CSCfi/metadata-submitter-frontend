@@ -12,7 +12,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft"
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight"
 import { useLocation } from "react-router-dom"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
 
 export const getObjectDisplayTitle = (objectType: string, cleanedValues: any): string => {
@@ -171,4 +171,26 @@ export const Pagination = ({
       </TableFooter>
     </Table>
   )
+}
+
+export const getAccessionIds = (
+  objectType: string,
+  metadataObjects?: Array<ObjectInsideFolderWithTags>
+): Array<string> => {
+  if (metadataObjects) {
+    const submissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === objectType)
+    // SubmissionType Form: Add "- Title: " to accessionId, special case DAC form: add "- Main Contact:"
+    // SubmissionType XML: Add "- File name: " to accessionId
+    const accessionIds = submissions.map(obj => {
+      const accessionId = obj.accessionId
+      const displayTitle = obj.tags?.displayTitle || ""
+      return obj.schema === ObjectTypes.dac
+        ? `${accessionId} - Main Contact: ${displayTitle}`
+        : obj.tags?.submissionType === ObjectSubmissionTypes.xml
+        ? `${accessionId} - File name: ${displayTitle}`
+        : `${accessionId} - Title: ${displayTitle}`
+    })
+    return accessionIds
+  }
+  return []
 }

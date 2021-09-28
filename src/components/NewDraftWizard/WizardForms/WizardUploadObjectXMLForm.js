@@ -100,7 +100,6 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
   }
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
-
   const onSubmit = async data => {
     setSuccessStatus(undefined)
     setSubmitting(true)
@@ -122,6 +121,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
             {
               submissionType: ObjectSubmissionTypes.xml,
               fileName: fileName,
+              displayTitle: fileName,
             },
             ObjectStatus.submitted
           )
@@ -146,7 +146,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
             schema: objectType,
-            tags: { submissionType: ObjectSubmissionTypes.xml, fileName },
+            tags: { submissionType: ObjectSubmissionTypes.xml, fileName, displayTitle: fileName },
           })
         )
         resetForm()

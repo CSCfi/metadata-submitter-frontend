@@ -10,10 +10,11 @@ import { makeStyles } from "@material-ui/core/styles"
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
 import Alert from "@material-ui/lab/Alert"
 import Ajv from "ajv"
-import { cloneDeep, merge, set } from "lodash"
+import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
+import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
@@ -31,7 +32,7 @@ import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSu
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import type { FolderDetailsWithId } from "types"
-import { getObjectDisplayTitle, formatDisplayObjectType } from "utils"
+import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -480,7 +481,13 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
       // Dereference Schema and link AccessionIds to equivalent objects
       let dereferencedSchema: Promise<any> = await dereferenceSchema(schema)
-      dereferencedSchema = getLinkedDereferencedSchema(schema.title.toLowerCase(), dereferencedSchema)
+      dereferencedSchema = getLinkedDereferencedSchema(
+        currentObject,
+        schema.title.toLowerCase(),
+        dereferencedSchema,
+        folder.metadataObjects,
+        analysisAccessionIds
+      )
 
       setStates({
         ...states,
@@ -492,19 +499,8 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     fetchSchema()
   }, [objectType])
 
-  const getAccessionIds = (objectType: string) => {
-    const submissions = folder.metadataObjects?.filter(obj => obj.schema.toLowerCase() === objectType)
-    // Add "- Title: " to accessionId, special case DAC form: add "- Main Contact:"
-    const accessionIds = submissions?.map(obj =>
-      obj.schema === ObjectTypes.dac
-        ? `${obj.accessionId} - Main Contact: ${obj.tags?.displayTitle}`
-        : `${obj.accessionId} - Title: ${obj.tags?.displayTitle}`
-    )
-    return accessionIds
-  }
-
   // All Analysis AccessionIds
-  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis)
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, folder.metadataObjects)
 
   useEffect(() => {
     if (ObjectTypes.analysis) {
@@ -520,165 +516,6 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
       }
     }
   }, [currentObject?.accessionId, analysisAccessionIds?.length])
-
-  const getLinkedDereferencedSchema = (objectType: string, dereferencedSchema: Promise<any>) => {
-    // AccessionIds of submitted objects
-    const studyAccessionIds = getAccessionIds(ObjectTypes.study)
-    const sampleAccessionIds = getAccessionIds(ObjectTypes.sample)
-    const runAccessionIds = getAccessionIds(ObjectTypes.run)
-    const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment)
-    const policyAccessionIds = getAccessionIds(ObjectTypes.policy)
-    const dacAccessionIds = getAccessionIds(ObjectTypes.dac)
-
-    switch (objectType) {
-      case ObjectTypes.experiment:
-        // Study Link
-        if (studyAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
-          })
-        }
-        // Sample Link
-        if (sampleAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              design: {
-                properties: {
-                  sampleDescriptor: {
-                    oneOf: { [1]: { properties: { accessionId: { enum: sampleAccessionIds } } } },
-                  },
-                },
-              },
-            },
-          })
-        }
-        break
-      case ObjectTypes.analysis:
-        // Study Link
-        if (studyAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: { studyRef: { properties: { accessionId: { enum: studyAccessionIds } } } },
-          })
-        }
-        // Sample Link
-        if (sampleAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              sampleRef: {
-                items: {
-                  properties: { accessionId: { enum: sampleAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        // Run Link
-        if (runAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              runRef: {
-                items: {
-                  properties: { accessionId: { enum: runAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        // Experiment Link
-        if (experimentAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              experimentRef: {
-                items: {
-                  properties: { accessionId: { enum: experimentAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        // Other Analysis Link
-        if (analysisAccessionIds.length > 0) {
-          const currentAnalysisAccessionIds = currentObject.accessionId || null
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              analysisRef: {
-                items: {
-                  properties: {
-                    accessionId: { enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds) },
-                  },
-                },
-              },
-            },
-          })
-        }
-        break
-      case ObjectTypes.run:
-        // Experiment Link
-        if (experimentAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              experimentRef: {
-                items: {
-                  properties: { accessionId: { enum: experimentAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        break
-      case ObjectTypes.policy:
-        // DAC Link
-        if (dacAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              dacRef: {
-                properties: { accessionId: { enum: dacAccessionIds } },
-              },
-            },
-          })
-        }
-        break
-      case ObjectTypes.dataset:
-        // Policy Link
-        if (policyAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              policyRef: {
-                properties: { accessionId: { enum: policyAccessionIds } },
-              },
-            },
-          })
-        }
-        // Run Link
-        if (runAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              runRef: {
-                items: {
-                  properties: { accessionId: { enum: runAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        // Analysis Link
-        if (analysisAccessionIds.length > 0) {
-          dereferencedSchema = merge({}, dereferencedSchema, {
-            properties: {
-              analysisRef: {
-                items: {
-                  properties: { accessionId: { enum: analysisAccessionIds } },
-                },
-              },
-            },
-          })
-        }
-        break
-      default:
-        break
-    }
-    return dereferencedSchema
-  }
 
   /*
    * Submit form with cleaned values and check for response errors

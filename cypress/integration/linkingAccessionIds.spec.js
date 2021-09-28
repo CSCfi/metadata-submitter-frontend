@@ -15,16 +15,20 @@ describe("Linking Accession Ids", function () {
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
-    // Fill a Study form
+    // Upload a Study xml file.
     cy.get("div[role=button]").contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get("input[name='descriptor.studyTitle']").type("Test study title")
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test study title")
-    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
-    cy.get("select[name='descriptor.studyType']").should("have.value", "Metagenomics")
+    cy.get("div[role=button]").contains("Upload XML File").click()
+    cy.fixture("study_test.xml").then(fileContent => {
+      cy.get('input[type="file"]').attachFile({
+        fileContent: fileContent.toString(),
+        fileName: "testFile.xml",
+        mimeType: "text/xml",
+        force: true,
+      })
+    })
+    // Cypress doesn't allow form validation status to update and therefore "send" button is disabled
+    cy.get("form").submit()
 
-    // Submit Study form
-    cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Get studyAccessionId
@@ -76,7 +80,7 @@ describe("Linking Accession Ids", function () {
       $el.click()
       $el.select(studyAccessionId)
     })
-    cy.get("select[name='studyRef.accessionId']").should("contain", " - Title:")
+    cy.get("select[name='studyRef.accessionId']").should("contain", " - File name:")
 
     cy.get("textarea[name='design.designDescription']").type("Design description")
     cy.get("select[name='design.sampleDescriptor']").select("Individual Sample")
@@ -152,7 +156,7 @@ describe("Linking Accession Ids", function () {
       const studyAccessionId = cy.get("@studyAccessionId")
       $el.select(studyAccessionId)
     })
-    cy.get("select[name='studyRef.accessionId']").should("contain", " - Title:")
+    cy.get("select[name='studyRef.accessionId']").should("contain", " - File name:")
 
     // Select experimentAccessionId
     cy.get("div").contains("Experiment Reference").parents().children("button").click()

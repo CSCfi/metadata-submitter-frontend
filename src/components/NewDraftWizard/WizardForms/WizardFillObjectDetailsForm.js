@@ -31,6 +31,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
+import type { FolderDetailsWithId } from "types"
 import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -484,7 +485,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         currentObject,
         schema.title.toLowerCase(),
         dereferencedSchema,
-        metadataObjects,
+        folder.metadataObjects,
         analysisAccessionIds
       )
 
@@ -499,7 +500,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   }, [objectType])
 
   // All Analysis AccessionIds
-  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, metadataObjects)
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, folder.metadataObjects)
 
   useEffect(() => {
     if (ObjectTypes.analysis) {

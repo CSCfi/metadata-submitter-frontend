@@ -114,12 +114,17 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
       setResponseStatus(response)
       if (response.ok) {
         dispatch(
-          replaceObjectInFolder(folderId, currentObject.accessionId, currentObject.index, {
-            submissionType: ObjectSubmissionTypes.xml,
-            fileName: fileName,
-            displayTitle: fileName,
-          }),
-          ObjectStatus.submitted
+          replaceObjectInFolder(
+            folderId,
+            currentObject.accessionId,
+            currentObject.index,
+            {
+              submissionType: ObjectSubmissionTypes.xml,
+              fileName: fileName,
+              displayTitle: fileName,
+            },
+            ObjectStatus.submitted
+          )
         )
           .then(() => {
             setSuccessStatus(WizardStatus.success)

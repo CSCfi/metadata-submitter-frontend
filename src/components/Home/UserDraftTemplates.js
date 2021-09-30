@@ -18,7 +18,7 @@ import { useForm, FormProvider, useFormContext, Controller } from "react-hook-fo
 import { useSelector, useDispatch } from "react-redux"
 
 import { setReuseDrafts } from "features/reuseDraftsSlice"
-import { formatDisplayObjectType, getDraftObjects, getItemPrimaryText, Pagination } from "utils"
+import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -64,11 +64,11 @@ const useStyles = makeStyles(theme => ({
 const UserDraftTemplates = (): React$Element<any> => {
   const classes = useStyles()
   const user = useSelector(state => state.user)
-  const objectsArray = useSelector(state => state.objectTypesArray)
+  const objectTypesArray = useSelector(state => state.objectTypesArray)
   const reuseDrafts = useSelector(state => state.reuseDrafts)
 
   const dispatch = useDispatch()
-  const draftObjects = user.drafts ? getDraftObjects(user.drafts, objectsArray) : []
+  const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
 
   const methods = useForm()
 
@@ -92,7 +92,7 @@ const UserDraftTemplates = (): React$Element<any> => {
         <form onSubmit={methods.handleSubmit} onChange={handleChange} className={classes.form}>
           <ConnectForm>
             {({ register }) => {
-              return draftObjects.map(draft => {
+              return templates.map(draft => {
                 const schema = Object.keys(draft)[0]
                 const [open, setOpen] = useState(true)
                 // Control Pagination
@@ -188,7 +188,7 @@ const UserDraftTemplates = (): React$Element<any> => {
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         subheader="You could choose which draft(s) you would like to reuse when creating a new folder."
       />
-      {draftObjects?.length > 0 ? <DraftList /> : <EmptyList />}
+      {templates?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>
   )
 }

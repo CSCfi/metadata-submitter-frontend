@@ -224,7 +224,7 @@ const WizardObjectIndex = (): React$Element<any> => {
   const [clickedSubmissionType, setClickedSubmissionType] = useState("")
   const [cancelFormOpen, setCancelFormOpen] = useState(false)
 
-  const objectsArray = useSelector(state => state.objectsArray)
+  const objectsArray = useSelector(state => state.objectTypesArray)
   const currentObjectType = useSelector(state => state.objectType)
   const currentSubmissionType = useSelector(state => state.submissionType)
   const draftStatus = useSelector(state => state.draftStatus)

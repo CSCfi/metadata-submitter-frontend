@@ -4,19 +4,21 @@ import React, { useState } from "react"
 import Button from "@material-ui/core/Button"
 import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
+import { omit } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory, Link as RouterLink } from "react-router-dom"
 
-import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
-
 import WizardAlert from "./WizardAlert"
 
+import { OmitObjectValues } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
-import { addDraftsToUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
+import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import draftAPIService from "services/draftAPI"
+import templateAPIService from "services/templateAPI"
 import type { ObjectInsideFolderWithTags } from "types"
-import { useQuery } from "utils"
+import { useQuery, getOrigObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -55,9 +57,6 @@ const WizardFooter = (): React$Element<any> => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
 
   let history = useHistory()
 
@@ -71,34 +70,87 @@ const WizardFooter = (): React$Element<any> => {
     dispatch(resetFolder())
   }
 
-  const handleAlert = (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
-    setConnError(false)
+  const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
     if (alertWizard && alertType === "cancel") {
       dispatch(deleteFolderAndContent(folder))
         .then(() => resetDispatch())
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error.response))
-          setErrorPrefix(error.message)
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.error,
+              response: error,
+              errorPrefix: "",
+            })
+          )
         })
     } else if (alertWizard && alertType === "save") {
       resetDispatch()
     } else if (alertWizard && alertType === "publish") {
+      if (formData && formData?.length > 0) {
+        // Filter unique draft-schemas existing in formData
+        const draftSchemas = formData.map(item => item.schema).filter((val, ind, arr) => arr.indexOf(val) === ind)
+
+        // Group the data according to their schemas aka objectTypes
+        const groupedData = draftSchemas.map(draftSchema => {
+          const schema = getOrigObjectType(draftSchema)
+          return {
+            [schema]: formData.filter(el => el.schema === draftSchema),
+          }
+        })
+
+        // Fetch drafts' values and add to draft templates based on their objectTypes
+        for (let i = 0; i < groupedData.length; i += 1) {
+          const objectType = Object.keys(groupedData[i])[0]
+          const draftsByObjectType = groupedData[i][objectType]
+
+          const draftsArr = []
+          for (let j = 0; j < draftsByObjectType.length; j += 1) {
+            // Fetch drafts' values
+            const draftResponse = await draftAPIService.getObjectByAccessionId(
+              objectType,
+              draftsByObjectType[j].accessionId
+            )
+            if (draftResponse.ok) {
+              // Remove unnecessary values such as "date"
+              // Add drafts' values of the same objectType to an array
+              draftsArr.push(omit(draftResponse.data, OmitObjectValues))
+            } else {
+              dispatch(
+                updateStatus({
+                  successStatus: WizardStatus.error,
+                  response: draftResponse,
+                  errorPrefix: "Error when getting the drafts' details",
+                })
+              )
+            }
+          }
+
+          if (draftsArr.length > 0) {
+            // POST selected drafts to save as templates based on the same objectType
+            const templateResponse = await templateAPIService.createTemplatesFromJSON(objectType, draftsArr)
+            if (!templateResponse.ok)
+              dispatch(
+                updateStatus({
+                  successStatus: WizardStatus.error,
+                  response: templateResponse,
+                  errorPrefix: "Cannot save selected draft(s) as template(s)",
+                })
+              )
+          }
+        }
+      }
+      // Publish the folder
       dispatch(publishFolderContent(folder))
         .then(() => resetDispatch())
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.error,
+              response: error,
+              errorPrefix: `Couldn't publish folder with id ${folder.folderId}`,
+            })
+          )
         })
-
-      formData && formData?.length > 0
-        ? dispatch(addDraftsToUser("current", formData)).catch(error => {
-            setConnError(true)
-            setResponseError(JSON.parse(error))
-            setErrorPrefix("Can't save drafts for user")
-          })
-        : null
     } else {
       setDialogOpen(false)
     }
@@ -172,13 +224,6 @@ const WizardFooter = (): React$Element<any> => {
         )}
       </div>
       {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
-      )}
     </div>
   )
 }

@@ -11,7 +11,7 @@ import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
 import { ObjectTypes } from "constants/wizardObject"
-import { setObjectsArray } from "features/objectsArraySlice"
+import { setObjectTypesArray } from "features/objectTypesArraySlice"
 import schemaAPIService from "services/schemaAPI"
 import Page400 from "views/ErrorPages/Page400"
 import Page401 from "views/ErrorPages/Page401"
@@ -81,10 +81,10 @@ const App = (): React$Element<typeof React.Fragment> => {
           const schemas = response.data
             .filter(schema => schema.title !== "Project" && schema.title !== "Submission")
             .map(schema => schema.title.toLowerCase())
-          dispatch(setObjectsArray(schemas))
+          dispatch(setObjectTypesArray(schemas))
         } else {
           dispatch(
-            setObjectsArray([
+            setObjectTypesArray([
               ObjectTypes.study,
               ObjectTypes.sample,
               ObjectTypes.experiment,

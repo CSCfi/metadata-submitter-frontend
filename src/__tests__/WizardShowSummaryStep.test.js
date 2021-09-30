@@ -23,7 +23,7 @@ describe("WizardShowSummaryStep", () => {
 
   beforeEach(() => {
     store = mockStore({
-      objectsArray: [
+      objectTypesArray: [
         ObjectTypes.study,
         ObjectTypes.sample,
         ObjectTypes.experiment,

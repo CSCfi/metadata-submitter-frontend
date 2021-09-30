@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 const UserDraftTemplates = (): React$Element<any> => {
   const classes = useStyles()
   const user = useSelector(state => state.user)
-  const objectsArray = useSelector(state => state.objectsArray)
+  const objectsArray = useSelector(state => state.objectTypesArray)
   const reuseDrafts = useSelector(state => state.reuseDrafts)
 
   const dispatch = useDispatch()

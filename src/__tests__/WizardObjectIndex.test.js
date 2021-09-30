@@ -14,7 +14,7 @@ const mockStore = configureStore([])
 describe("WizardObjectIndex", () => {
   it("should render badge with number correctly", async () => {
     const store = mockStore({
-      objectsArray: [
+      objectTypesArray: [
         ObjectTypes.study,
         ObjectTypes.sample,
         ObjectTypes.experiment,

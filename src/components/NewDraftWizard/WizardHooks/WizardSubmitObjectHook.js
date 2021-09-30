@@ -23,7 +23,6 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
   }, 5000)
 
   const cleanedValues = JSONSchemaParser.cleanUpFormValues(formData)
-
   const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
 
   if (response.ok) {

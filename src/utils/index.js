@@ -194,3 +194,8 @@ export const getAccessionIds = (
   }
   return []
 }
+
+export const getOrigObjectType = (schema: string): string => {
+  const objectType = schema.slice(schema.indexOf("-") + 1)
+  return objectType
+}

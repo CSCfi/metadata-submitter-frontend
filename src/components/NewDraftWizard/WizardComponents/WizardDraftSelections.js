@@ -21,7 +21,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText, getDraftObjects } from "utils"
+import { getItemPrimaryText, getDraftObjects, getOrigObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   formComponent: {
@@ -95,7 +95,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
-  const objectsArray = useSelector(state => state.objectsArray)
+  const objectsArray = useSelector(state => state.objectTypesArray)
   const history = useHistory()
 
   const draftObjects = getDraftObjects(folder.drafts, objectsArray)
@@ -112,7 +112,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
   }
 
   const handleViewButton = async (draftSchema: string, draftId: string) => {
-    const objectType = draftSchema.slice(draftSchema.indexOf("-") + 1)
+    const objectType = getOrigObjectType(draftSchema)
     const response = await draftAPIService.getObjectByAccessionId(objectType, draftId)
 
     if (response.ok) {

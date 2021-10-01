@@ -17,7 +17,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
 import { useForm, FormProvider, useFormContext, Controller } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setReuseDrafts } from "features/reuseDraftsSlice"
+import { setTemplateAccessionIds } from "features/templatesSlice"
 import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -65,7 +65,7 @@ const UserDraftTemplates = (): React$Element<any> => {
   const classes = useStyles()
   const user = useSelector(state => state.user)
   const objectTypesArray = useSelector(state => state.objectTypesArray)
-  const reuseDrafts = useSelector(state => state.reuseDrafts)
+  const templateAccessionIds = useSelector(state => state.templateAccessionIds)
 
   const dispatch = useDispatch()
   const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
@@ -79,12 +79,12 @@ const UserDraftTemplates = (): React$Element<any> => {
 
   // Render when there is user's draft template(s)
   const DraftList = () => {
-    const [checkedItems, setCheckedItems] = useState(reuseDrafts)
+    const [checkedItems, setCheckedItems] = useState(templateAccessionIds)
 
     const handleChange = () => {
       const checkedItems = Object.values(methods.getValues()).filter(item => item)
       setCheckedItems(checkedItems)
-      dispatch(setReuseDrafts(checkedItems))
+      dispatch(setTemplateAccessionIds(checkedItems))
     }
 
     return (

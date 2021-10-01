@@ -11,6 +11,8 @@ import folderAPIService from "services/folderAPI"
 import publishAPIService from "services/publishAPI"
 import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolderWithTags } from "types"
 
+import { getObjectDisplayTitle } from "utils"
+
 const initialState: null | FolderDetailsWithId = null
 
 const wizardSubmissionFolderSlice: any = createSlice({

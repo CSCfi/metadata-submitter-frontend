@@ -6,13 +6,13 @@ export const errorMonitor = res => {
         // window.location = "/error400"
         break
       case 401:
-        window.location = "/error401"
+        // window.location = "/error401"
         break
       case 403:
-        window.location = "/error403"
+        // window.location = "/error403"
         break
       case 500:
-        window.location = "/error500"
+        // window.location = "/error500"
         break
       default:
         break

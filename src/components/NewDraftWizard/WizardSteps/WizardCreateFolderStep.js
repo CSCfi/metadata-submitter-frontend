@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-// import { merge } from "lodash"
+// import { omit } from "lodash"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
@@ -16,11 +16,17 @@ import { useHistory } from "react-router-dom"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
+// import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
+// import { OmitObjectValues } from "constants/wizardObject"
 import { WizardStatus } from "constants/wizardStatus"
+import { updateStatus } from "features/wizardStatusMessageSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
+import draftAPIService from "services/draftAPI"
+import templateAPIService from "services/templateAPI"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
+import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,8 +72,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
   const user = useSelector(state => state.user)
-  const reuseDrafts = useSelector(state => state.reuseDrafts)
-
+  const templateAccessionIds = useSelector(state => state.templateAccessionIds)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const {
@@ -78,15 +83,50 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const history = useHistory()
 
-  const onSubmit = (data: FolderDataFromForm) => {
+  const onSubmit = async (data: FolderDataFromForm) => {
     setConnError(false)
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(() => setConnError(true))
     } else {
-      const reuseDraftsDetails = user.drafts?.filter(draft => reuseDrafts.includes(draft.accessionId))
-      dispatch(createNewDraftFolder(data, reuseDraftsDetails))
+      const userTemplates = user.templates.map(template => ({
+        ...template,
+        schema: getOrigObjectType(template.schema),
+      }))
+
+      const templateDetails = userTemplates?.filter(item => templateAccessionIds.includes(item.accessionId))
+
+      let draftsArray = []
+      for (let i = 0; i < templateDetails.length; i += 1) {
+        try {
+          // Get full details of template
+          const templateResponse = await templateAPIService.getTemplateByAccessionId(
+            templateDetails[i].schema,
+            templateDetails[i].accessionId
+          )
+          // Create a draft based on the selected template
+          const draftResponse = await draftAPIService.createFromJSON(templateDetails[i].schema, templateResponse.data)
+
+          // Draft details to be added when creating a new folder
+          const draftDetails = {
+            accessionId: draftResponse.data.accessionId,
+            schema: "draft-" + templateDetails[i].schema,
+            tags: { displayTitle: getObjectDisplayTitle(templateDetails[i].schema, templateResponse.data) },
+          }
+          draftsArray.push(draftDetails)
+        } catch (err) {
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.err,
+              response: err,
+              errorPrefix: "Error fetching the template(s)",
+            })
+          )
+        }
+      }
+      // Create a new folder with selected templates as drafts
+      dispatch(createNewDraftFolder(data, draftsArray))
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(error => {
           setConnError(true)

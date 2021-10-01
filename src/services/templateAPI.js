@@ -13,6 +13,11 @@ const createTemplatesFromJSON = async (objectType: string, JSONContent: any): Pr
   return await api.post(`/${objectType}`, JSONContent)
 }
 
+const getTemplateByAccessionId = async (objectType: string, accessionId: string): Promise<any> => {
+  return await api.get(`/${objectType}/${accessionId}`)
+}
+
 export default {
   createTemplatesFromJSON,
+  getTemplateByAccessionId,
 }

@@ -8,7 +8,6 @@ import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
 import Typography from "@material-ui/core/Typography"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-// import { omit } from "lodash"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
@@ -16,17 +15,12 @@ import { useHistory } from "react-router-dom"
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
-// import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
-// import { OmitObjectValues } from "constants/wizardObject"
+import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { WizardStatus } from "constants/wizardStatus"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
-import draftAPIService from "services/draftAPI"
-import templateAPIService from "services/templateAPI"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
-import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,7 +53,6 @@ const useStyles = makeStyles(theme => ({
     width: "70%",
     margin: "0 auto",
     borderRadius: "0.375rem",
-    // border: "1px solid #bdbdbd",
     boxShadow: "0 0.1875rem 0.375rem rgba(0, 0, 0, 0.16)",
   },
 }))
@@ -90,41 +83,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
         .catch(() => setConnError(true))
     } else {
-      const userTemplates = user.templates.map(template => ({
-        ...template,
-        schema: getOrigObjectType(template.schema),
-      }))
-
-      const templateDetails = userTemplates?.filter(item => templateAccessionIds.includes(item.accessionId))
-
-      let draftsArray = []
-      for (let i = 0; i < templateDetails.length; i += 1) {
-        try {
-          // Get full details of template
-          const templateResponse = await templateAPIService.getTemplateByAccessionId(
-            templateDetails[i].schema,
-            templateDetails[i].accessionId
-          )
-          // Create a draft based on the selected template
-          const draftResponse = await draftAPIService.createFromJSON(templateDetails[i].schema, templateResponse.data)
-
-          // Draft details to be added when creating a new folder
-          const draftDetails = {
-            accessionId: draftResponse.data.accessionId,
-            schema: "draft-" + templateDetails[i].schema,
-            tags: { displayTitle: getObjectDisplayTitle(templateDetails[i].schema, templateResponse.data) },
-          }
-          draftsArray.push(draftDetails)
-        } catch (err) {
-          dispatch(
-            updateStatus({
-              successStatus: WizardStatus.err,
-              response: err,
-              errorPrefix: "Error fetching the template(s)",
-            })
-          )
-        }
-      }
+      // Get an array of drafts which have proper values to be added to new folder
+      const draftsArray = transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, draftsArray))
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))

@@ -75,7 +75,7 @@ describe("Draft operations", function () {
 
     // Submit first form draft
     cy.continueFirstDraft()
-    cy.get("button[type=submit]").contains("Submit").click()
+    cy.get("button[type=submit]").contains("Submit", { force: true }).click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Submitted with")
     cy.get("ul[data-testid='Form-objects']").find("li").should("have.length", 1)
 

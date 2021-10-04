@@ -226,6 +226,16 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
     checkDirty()
   }, [methods.formState.isDirty])
 
+  const { isSubmitSuccessful } = methods.formState // Check if the form has been successfully submitted without any errors
+
+  useEffect(() => {
+    // Delete draft form ONLY if the form was successfully submitted
+    if (isSubmitSuccessful) {
+      if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
+        handleDraftDelete(currentObjectId)
+    }
+  }, [isSubmitSuccessful])
+
   const handleCreateNewForm = () => {
     resetTimer()
     handleClearForm()
@@ -404,9 +414,6 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
 
   const handleSubmitForm = () => {
     if (currentObject?.status === ObjectStatus.submitted) patchObject()
-    if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
-      handleDraftDelete(currentObjectId)
-
     resetTimer()
   }
 

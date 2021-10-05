@@ -84,7 +84,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         .catch(() => setConnError(true))
     } else {
       // Get an array of drafts which have proper values to be added to new folder
-      const draftsArray = transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+      const draftsArray = await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, draftsArray))
         .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))

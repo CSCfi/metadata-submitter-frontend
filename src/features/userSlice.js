@@ -29,6 +29,7 @@ export const fetchUserById =
   (userId: string): ((dispatch: (any) => void) => Promise<any>) =>
   async (dispatch: any => void) => {
     const response = await userAPIService.getUserById(userId)
+
     return new Promise((resolve, reject) => {
       if (response.ok) {
         const user: User = {

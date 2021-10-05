@@ -7,7 +7,7 @@ import { WizardStatus } from "constants/wizardStatus"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
-import { getOrigObjectType } from "utils"
+import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
 const saveDraftsAsTemplates = async (formData: any, dispatch: any): any => {
   // Filter unique draft-schemas existing in formData
@@ -34,9 +34,12 @@ const saveDraftsAsTemplates = async (formData: any, dispatch: any): any => {
           objectType,
           draftsByObjectType[j].accessionId
         )
+        // "tags" object to be added to JSONContent
+        const draftTags = { tags: { displayTitle: getObjectDisplayTitle(objectType, draftResponse.data) } }
+
         // Remove unnecessary values such as "date"
-        // Add drafts' values of the same objectType to an array
-        draftsArr.push(omit(draftResponse.data, OmitObjectValues))
+        // Add the object in the form of {template: draft's values, tags: {displayTitle}} to the array
+        draftsArr.push({ template: { ...omit(draftResponse.data, OmitObjectValues) }, ...draftTags })
       } catch (err) {
         dispatch(
           updateStatus({

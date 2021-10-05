@@ -84,7 +84,7 @@ const WizardFooter = (): React$Element<any> => {
       resetDispatch()
     } else if (alertWizard && alertType === "publish") {
       if (formData && formData?.length > 0) {
-        saveDraftsAsTemplates(formData, dispatch)
+        await saveDraftsAsTemplates(formData, dispatch)
       }
       // Publish the folder
       dispatch(publishFolderContent(folder))

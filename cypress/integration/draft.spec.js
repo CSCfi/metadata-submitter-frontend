@@ -8,6 +8,7 @@ describe("Draft operations", function () {
     cy.get("input[name='name']").type("Test name")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
+    cy.wait(500)
   })
 
   it("should create new folder, save, delete and continue draft", () => {

@@ -11,7 +11,7 @@ describe("Linking Accession Ids", function () {
     cy.get("input[name='name']").type("Test name")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
-
+    cy.wait(500)
     // Upload a Study xml file.
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Upload XML File").click()

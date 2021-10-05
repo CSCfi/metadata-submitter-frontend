@@ -7,6 +7,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("input[name='name']").type("Test name")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
+    cy.wait(500)
   })
 
   it("should show correct Submitted object's displayTitle", () => {
@@ -42,7 +43,7 @@ describe("draft and submitted objects' titles", function () {
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
-
+    cy.wait(500)
     // Check the submitted object has correct displayTitle
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
     cy.get("div[data-schema='study']", { timeout: 10000 }).should("contain.text", "Test title 2")

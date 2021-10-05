@@ -13,6 +13,7 @@ describe("Basic e2e", function () {
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
+    cy.wait(500)
     // Skip-link
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").type("{enter}")

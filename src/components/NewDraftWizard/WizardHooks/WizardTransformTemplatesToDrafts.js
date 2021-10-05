@@ -4,14 +4,14 @@ import { WizardStatus } from "constants/wizardStatus"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
-import type { ObjectInsideFolder } from "types"
+import type { ObjectInsideFolder, ObjectInsideFolderWithTags } from "types"
 import { getObjectDisplayTitle, getOrigObjectType } from "utils"
 
 const transformTemplatesToDrafts = async (
   templateAccessionIds: Array<string>,
   templates: Array<ObjectInsideFolder>,
   dispatch: any
-): any => {
+): Promise<Array<ObjectInsideFolderWithTags>> => {
   const userTemplates = templates.map(template => ({
     ...template,
     schema: getOrigObjectType(template.schema),

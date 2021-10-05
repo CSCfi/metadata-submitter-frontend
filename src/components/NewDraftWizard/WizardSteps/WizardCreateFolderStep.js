@@ -19,6 +19,7 @@ import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandle
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { WizardStatus } from "constants/wizardStatus"
+import { resetTemplateAccessionIds } from "features/templatesSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 
@@ -78,17 +79,23 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const onSubmit = async (data: FolderDataFromForm) => {
     setConnError(false)
+    // Transform the format of templates to drafts with proper values to be added to current folder or new folder
+    const selectedDraftsArray = await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+
     if (folder && folder?.folderId) {
-      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
-        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
+      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
+        .then(() => {
+          history.push({ pathname: "/newdraft", search: "step=1" })
+          dispatch(resetTemplateAccessionIds())
+        })
         .catch(() => setConnError(true))
     } else {
-      // Get an array of drafts which have proper values to be added to new folder
-      const draftsArray = await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
-
       // Create a new folder with selected templates as drafts
-      dispatch(createNewDraftFolder(data, draftsArray))
-        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
+      dispatch(createNewDraftFolder(data, selectedDraftsArray))
+        .then(() => {
+          history.push({ pathname: "/newdraft", search: "step=1" })
+          dispatch(resetTemplateAccessionIds())
+        })
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))

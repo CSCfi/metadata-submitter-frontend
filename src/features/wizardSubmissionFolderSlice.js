@@ -84,17 +84,27 @@ export const createNewDraftFolder =
 export const updateNewDraftFolder =
   (
     folderId: string,
-    folderDetails: FolderDataFromForm & { folder: Object }
+    folderDetails: FolderDataFromForm & { folder: Object } & { selectedDraftsArray: Array<ObjectInsideFolderWithTags> }
   ): ((dispatch: (any) => void) => Promise<any>) =>
   async (dispatch: any => void) => {
+    const { selectedDraftsArray } = folderDetails
+    // Add templates as selectedDrafts to current drafts in case there is any
+    const updatedDrafts =
+      selectedDraftsArray.length > 0
+        ? folderDetails.folder.drafts.concat(selectedDraftsArray)
+        : folderDetails.folder.drafts
+
     const updatedFolder = _extend(
       { ...folderDetails.folder },
-      { name: folderDetails.name, description: folderDetails.description }
+      { name: folderDetails.name, description: folderDetails.description, drafts: updatedDrafts }
     )
+
     const changes = [
       { op: "add", path: "/name", value: folderDetails.name },
       { op: "add", path: "/description", value: folderDetails.description },
+      { op: "add", path: "/drafts/-", value: updatedDrafts },
     ]
+
     const response = await folderAPIService.patchFolderById(folderId, changes)
 
     return new Promise((resolve, reject) => {

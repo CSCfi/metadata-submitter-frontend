@@ -152,5 +152,22 @@ describe("draft selections and templates", function () {
       // Check that the draft works normlly as its title should be updated
       cy.get("[aria-label='Edit submission']").click()
       cy.get("[data-testid='title']").should("have.value", "Sample draft title edited")
+
+      // Check that editing a draft folder with adding a new template also works
+      // Navigate to home & find folder
+      cy.findDraftFolder("Test name")
+      cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
+
+      // Select a new Study template
+      cy.get("[data-testid='toggle-user-drafts']", { timeout: 10000 }).click()
+      cy.get("[data-testid='form-template-study']").within(() => {
+        cy.get("input").first().check()
+      })
+      cy.get("button[type=button]").contains("Next").click()
+
+      cy.wait(500)
+      // Check that the new template is added as a draft
+      cy.clickFillForm("Study")
+      cy.get("[data-testid='Draft-objects']").children().should("have.length", 2)
     })
 })

@@ -22,6 +22,7 @@ import { WizardStatus } from "constants/wizardStatus"
 import { resetTemplateAccessionIds } from "features/templatesSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
+import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -80,12 +81,14 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const onSubmit = async (data: FolderDataFromForm) => {
     setConnError(false)
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
-    const selectedDraftsArray = await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+    const selectedDraftsArray = user.templates
+      ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+      : []
 
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
         .then(() => {
-          history.push({ pathname: "/newdraft", search: "step=1" })
+          history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(() => setConnError(true))
@@ -93,7 +96,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, selectedDraftsArray))
         .then(() => {
-          history.push({ pathname: "/newdraft", search: "step=1" })
+          history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {

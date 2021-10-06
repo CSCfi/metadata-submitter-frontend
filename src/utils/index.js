@@ -12,6 +12,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft"
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight"
 import { useLocation } from "react-router-dom"
 
+import { Locale } from "constants/locale"
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import type { ObjectInsideFolderWithTags } from "types"
 
@@ -211,4 +212,12 @@ export const getAccessionIds = (
 export const getOrigObjectType = (schema: string): string => {
   const objectType = schema.slice(schema.indexOf("-") + 1)
   return objectType
+}
+
+// Create localized path
+// Using useSelector hook causes rendering errors and local storage is used instead
+export const pathWithLocale = (path: string): any => {
+  const locale = localStorage.getItem("locale") || Locale.defaultLocale
+
+  return `/${locale}/${path}`
 }

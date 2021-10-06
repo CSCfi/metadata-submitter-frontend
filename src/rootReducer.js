@@ -6,6 +6,7 @@ import clearFormReducer from "features/clearFormSlice"
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
+import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
@@ -21,6 +22,7 @@ import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
 const rootReducer: any = combineReducers({
+  locale: localeReducer,
   alert: wizardAlertReducer,
   focus: focusReducer,
   loading: loadingReducer,

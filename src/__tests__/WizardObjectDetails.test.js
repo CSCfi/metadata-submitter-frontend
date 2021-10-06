@@ -67,7 +67,7 @@ describe("Object details", () => {
     )
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/home/published/testaccessionid" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/en/home/published/testaccessionid" }]}>
         <Provider store={store}>
           <ThemeProvider theme={CSCtheme}>
             <SelectedFolderDetails />

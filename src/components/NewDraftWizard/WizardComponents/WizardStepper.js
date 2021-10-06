@@ -20,7 +20,7 @@ import { resetDraftStatus } from "features/draftStatusSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
 import type { CreateFolderFormRef } from "types"
-import { useQuery } from "utils"
+import { useQuery, pathWithLocale } from "utils"
 /*
  * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
  */
@@ -143,7 +143,9 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
     dispatch(resetDraftStatus())
 
     if (step) {
-      direction === "previous" ? history.go(-1) : history.push({ pathname: "/newdraft", search: "step=2" })
+      direction === "previous"
+        ? history.go(-1)
+        : history.push({ pathname: pathWithLocale("newdraft"), search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -162,7 +164,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("previous")
             setAlert(true)
           } else {
-            history.push({ pathname: "/newdraft", search: `step=${wizardStep - 1}` })
+            history.push({ pathname: pathWithLocale("newdraft"), search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -195,7 +197,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            history.push({ pathname: "/newdraft", search: "step=2" })
+            history.push({ pathname: pathWithLocale("newdraft"), search: "step=2" })
           }
         }}
       >

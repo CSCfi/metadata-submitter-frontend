@@ -26,7 +26,7 @@ import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText } from "utils"
+import { getItemPrimaryText, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   tableGrid: {
@@ -126,14 +126,14 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   }, [])
 
   const resetDispatch = () => {
-    history.push("/home")
+    history.push(pathWithLocale("home"))
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }
 
   const handleEditFolder = (step: number) => {
     dispatch(setFolder(selectedFolder.originalFolderData))
-    history.push(`/newdraft?step=${step}`)
+    history.push({ pathname: pathWithLocale("newdraft"), search: `step=${step}` })
   }
 
   const handlePublishFolder = () => {
@@ -178,7 +178,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
       dispatch(setFolder(selectedFolder.originalFolderData))
-      history.push("/newdraft?step=1")
+      history.push({ pathname: pathWithLocale("newdraft"), search: `step=1` })
     } else {
       setConnError(true)
       setResponseError(response)
@@ -213,13 +213,13 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       {!isFetchingFolder && (
         <>
           <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
-            <Link color="inherit" component={RouterLink} to={`/home`}>
+            <Link color="inherit" component={RouterLink} to={pathWithLocale("home")}>
               Home
             </Link>
             <Link
               color="inherit"
               component={RouterLink}
-              to={`/home/${selectedFolder.published ? "published" : "drafts"}`}
+              to={`${pathWithLocale("home")}${selectedFolder.published ? "published" : "drafts"}`}
             >
               {selectedFolder.published ? "Published" : "Drafts"}
             </Link>

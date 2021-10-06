@@ -12,6 +12,8 @@ import CSCtheme from "./theme"
 import App from "App"
 import store from "store"
 
+import "./i18n"
+
 /**
  * Render app with redux store and custom theme.
  */

@@ -15,7 +15,7 @@ import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import type { ObjectInsideFolderWithTags } from "types"
-import { useQuery } from "utils"
+import { useQuery, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   footerRow: {
@@ -62,7 +62,7 @@ const WizardFooter = (): React$Element<any> => {
   const wizardStep = Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
-    history.push("/home")
+    history.push(pathWithLocale("home"))
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }

@@ -32,6 +32,7 @@ import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/Wiza
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import type { ObjectDetails } from "types"
+import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   backIcon: {
@@ -280,7 +281,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
 
   return (
     <Card className={classes.card} variant="outlined">
-      <Link component={RouterLink} to={`/home/${location}`} className={classes.headerLink}>
+      <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`} className={classes.headerLink}>
         <CardHeader
           className={classes.cardHeader}
           avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}

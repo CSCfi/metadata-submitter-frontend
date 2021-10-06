@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { render } from "@testing-library/react"
+import { render, within } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
@@ -59,9 +59,9 @@ describe("Unpublished folders list", () => {
   })
 
   test("renders unpublished folders correctly with pagination", () => {
-    const { getAllByText, getByTestId, getByLabelText, getByRole } = render(
+    const { getAllByText, getByTestId, getByLabelText } = render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/home/drafts"]}>
+        <MemoryRouter initialEntries={["/en/home/drafts"]}>
           <App />
         </MemoryRouter>
       </Provider>
@@ -75,7 +75,7 @@ describe("Unpublished folders list", () => {
     const itemsPerPageText = getAllByText("Items per page:")
     expect(itemsPerPageText).toHaveLength(1)
 
-    const itemsPerPageValue = getByRole("textbox", { hidden: true })
+    const itemsPerPageValue = within(pagination).getByRole("textbox", { hidden: true })
     expect(itemsPerPageValue).toBeInTheDocument()
     expect(itemsPerPageValue).toHaveDisplayValue(10)
 

@@ -13,15 +13,13 @@ describe("Home e2e", function () {
     // Create a new Unpublished folder
     cy.get("button").contains("Create Submission").click()
 
-    // Navigate to folder creation
-    cy.get("button[type=button]").contains("New folder").click()
-
     // Add folder name & description, navigate to editing folder
     cy.get("input[name='name']").type("Test unpublished folder")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
 
     // Fill a Study form
+    cy.wait(500)
     cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[name='descriptor.studyTitle']").type("Test title")
@@ -57,6 +55,7 @@ describe("Home e2e", function () {
     cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
     cy.get("input[name='name']").clear().type("Edited unpublished folder")
     cy.get("button[type=button]").contains("Next").click()
+    cy.wait(500)
 
     // Navigate to home and delete object
     cy.findDraftFolder("Edited unpublished folder")
@@ -118,14 +117,11 @@ describe("Home e2e", function () {
     // Create a new Published folder
     cy.get("button").contains("Create Submission").click()
 
-    // Navigate to folder creation
-    cy.get("button[type=button]").contains("New folder").click()
-
     // Add folder name & description, navigate to editing folder
     cy.get("input[name='name']").type("Test published folder")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
-
+    cy.wait(500)
     // Fill a Study form
     cy.get("div[role=button]").contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
@@ -138,7 +134,7 @@ describe("Home e2e", function () {
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
-
+    cy.wait(500)
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
 

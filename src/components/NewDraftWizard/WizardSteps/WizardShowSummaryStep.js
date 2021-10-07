@@ -54,7 +54,7 @@ type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
 const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
-  const objectsArray = useSelector(state => state.objectsArray)
+  const objectsArray = useSelector(state => state.objectTypesArray)
   const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
     return {
       [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),

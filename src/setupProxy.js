@@ -19,6 +19,7 @@ module.exports = function (app) {
       "/callback",
       "/logout",
       "/users",
+      "/templates",
     ],
     createProxyMiddleware({
       target: `http://${proxy}`,

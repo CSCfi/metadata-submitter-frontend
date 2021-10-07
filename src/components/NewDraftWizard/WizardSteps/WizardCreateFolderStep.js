@@ -1,8 +1,13 @@
 //@flow
 import React, { useState } from "react"
 
+import Accordion from "@material-ui/core/Accordion"
+import AccordionDetails from "@material-ui/core/AccordionDetails"
+import AccordionSummary from "@material-ui/core/AccordionSummary"
 import { makeStyles } from "@material-ui/core/styles"
 import MuiTextField from "@material-ui/core/TextField"
+import Typography from "@material-ui/core/Typography"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
@@ -11,7 +16,10 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
+import UserDraftTemplates from "components/Home/UserDraftTemplates"
+import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { WizardStatus } from "constants/wizardStatus"
+import { resetTemplateAccessionIds } from "features/templatesSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 
@@ -22,6 +30,32 @@ const useStyles = makeStyles(theme => ({
     },
     padding: theme.spacing(2),
   },
+  accordion: {
+    "&.MuiAccordion-root": {
+      "&:before": {
+        display: "none",
+        border: "none",
+      },
+      marginTop: "1rem",
+    },
+    "&.MuiPaper-elevation1": {
+      boxShadow: "none",
+    },
+    width: "100%",
+  },
+  accordionSummary: {
+    width: "20%",
+    margin: "0 auto",
+    borderRadius: "0.375rem",
+    border: "1px solid #bdbdbd",
+    marginBottom: "1rem",
+  },
+  accordionDetails: {
+    width: "70%",
+    margin: "0 auto",
+    borderRadius: "0.375rem",
+    boxShadow: "0 0.1875rem 0.375rem rgba(0, 0, 0, 0.16)",
+  },
 }))
 
 /**
@@ -31,6 +65,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const classes = useStyles()
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
+  const user = useSelector(state => state.user)
+  const templateAccessionIds = useSelector(state => state.templateAccessionIds)
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const {
@@ -41,15 +77,25 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const history = useHistory()
 
-  const onSubmit = (data: FolderDataFromForm) => {
+  const onSubmit = async (data: FolderDataFromForm) => {
     setConnError(false)
+    // Transform the format of templates to drafts with proper values to be added to current folder or new folder
+    const selectedDraftsArray = await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
+
     if (folder && folder?.folderId) {
-      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder })))
-        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
+      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
+        .then(() => {
+          history.push({ pathname: "/newdraft", search: "step=1" })
+          dispatch(resetTemplateAccessionIds())
+        })
         .catch(() => setConnError(true))
     } else {
-      dispatch(createNewDraftFolder(data))
-        .then(() => history.push({ pathname: "/newdraft", search: "step=1" }))
+      // Create a new folder with selected templates as drafts
+      dispatch(createNewDraftFolder(data, selectedDraftsArray))
+        .then(() => {
+          history.push({ pathname: "/newdraft", search: "step=1" })
+          dispatch(resetTemplateAccessionIds())
+        })
         .catch(error => {
           setConnError(true)
           setResponseError(JSON.parse(error))
@@ -97,6 +143,22 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           rules={{ required: true, validate: { description: value => value.length > 0 } }}
         />
       </form>
+      <Accordion className={classes.accordion} TransitionProps={{ unmountOnExit: true }}>
+        <AccordionSummary
+          className={classes.accordionSummary}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="user-drafts-content"
+          id="user-drafts-header"
+          data-testid="toggle-user-drafts"
+        >
+          <Typography align="center" variant="subtitle1">
+            Saved Draft Templates
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails className={classes.accordionDetails}>
+          <UserDraftTemplates />
+        </AccordionDetails>
+      </Accordion>
       {connError && (
         <WizardStatusMessageHandler successStatus={WizardStatus.error} response={responseError} prefixText="" />
       )}

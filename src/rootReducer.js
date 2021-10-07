@@ -6,9 +6,10 @@ import clearFormReducer from "features/clearFormSlice"
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
-import objectsArrayReducer from "features/objectsArraySlice"
+import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
+import templatesReducer from "features/templatesSlice"
 import totalFoldersReducer from "features/totalFoldersSlice"
 import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
 import userReducer from "features/userSlice"
@@ -33,9 +34,10 @@ const rootReducer: any = combineReducers({
   unpublishedFolders: unpublishedFoldersReducer,
   publishedFolders: publishedFoldersReducer,
   selectedFolder: selectedFolderReducer,
-  objectsArray: objectsArrayReducer,
+  objectTypesArray: objectTypesArrayReducer,
   totalFolders: totalFoldersReducer,
   clearForm: clearFormReducer,
+  templateAccessionIds: templatesReducer,
 })
 
 export default rootReducer

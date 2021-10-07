@@ -21,7 +21,7 @@ describe("WizardAddObjectStep", () => {
   it("should not render any cards if no selected object type", () => {
     const store = mockStore({
       objectType: "",
-      objectsArray: [
+      objectTypesArray: [
         ObjectTypes.study,
         ObjectTypes.sample,
         ObjectTypes.experiment,
@@ -58,7 +58,7 @@ describe("WizardAddObjectStep", () => {
       ObjectSubmissionsArray.forEach(typeName => {
         const store = mockStore({
           objectType: ObjectTypes.study,
-          objectsArray: [
+          objectTypesArray: [
             ObjectTypes.study,
             ObjectTypes.sample,
             ObjectTypes.experiment,

@@ -7,14 +7,13 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory, Link as RouterLink } from "react-router-dom"
 
-import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
-
 import WizardAlert from "./WizardAlert"
 
+import saveDraftsAsTemplates from "components/NewDraftWizard/WizardHooks/WizardSaveTemplatesHook"
 import { WizardStatus } from "constants/wizardStatus"
-import { addDraftsToUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { deleteFolderAndContent, publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { updateStatus } from "features/wizardStatusMessageSlice"
+import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { useQuery } from "utils"
 
@@ -55,15 +54,12 @@ const WizardFooter = (): React$Element<any> => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
 
   let history = useHistory()
 
   const queryParams = useQuery()
   const step = Number(queryParams.get("step"))
-  const wizardStep = typeof step === "undefined" ? -1 : Number(step.toString().slice(-1))
+  const wizardStep = Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
     history.push("/home")
@@ -71,34 +67,37 @@ const WizardFooter = (): React$Element<any> => {
     dispatch(resetFolder())
   }
 
-  const handleAlert = (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
-    setConnError(false)
+  const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
     if (alertWizard && alertType === "cancel") {
       dispatch(deleteFolderAndContent(folder))
         .then(() => resetDispatch())
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error.response))
-          setErrorPrefix(error.message)
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.error,
+              response: error,
+              errorPrefix: "",
+            })
+          )
         })
     } else if (alertWizard && alertType === "save") {
       resetDispatch()
     } else if (alertWizard && alertType === "publish") {
+      if (formData && formData?.length > 0) {
+        await saveDraftsAsTemplates(formData, dispatch)
+      }
+      // Publish the folder
       dispatch(publishFolderContent(folder))
         .then(() => resetDispatch())
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${folder.folderId}`)
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.error,
+              response: error,
+              errorPrefix: `Couldn't publish folder with id ${folder.folderId}`,
+            })
+          )
         })
-
-      formData && formData?.length > 0
-        ? dispatch(addDraftsToUser("current", formData)).catch(error => {
-            setConnError(true)
-            setResponseError(JSON.parse(error))
-            setErrorPrefix("Can't save drafts for user")
-          })
-        : null
     } else {
       setDialogOpen(false)
     }
@@ -172,13 +171,6 @@ const WizardFooter = (): React$Element<any> => {
         )}
       </div>
       {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
-      )}
     </div>
   )
 }

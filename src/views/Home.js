@@ -34,7 +34,6 @@ const useStyles = makeStyles(theme => ({
 const Home = (): React$Element<typeof Grid> => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
 

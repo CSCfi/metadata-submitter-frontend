@@ -4,13 +4,11 @@ describe("empty form should not be alerted or saved", function () {
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
-    // Navigate to folder creation
-    cy.get("button[type=button]").contains("New folder").click()
-
     // Add folder name & description, navigate to submissions
     cy.get("input[name='name']").type("Test name")
     cy.get("textarea[name='description']").type("Test description")
     cy.get("button[type=button]").contains("Next").click()
+    cy.wait(500)
   })
 
   it("should have New form button and Clear form button emptied the form", () => {

@@ -302,7 +302,7 @@ const WizardAlert = ({
   parentLocation,
   alertType,
 }: {
-  onAlert: (boolean, formData?: Array<ObjectInsideFolderWithTags>) => void,
+  onAlert: (boolean, formData?: Array<ObjectInsideFolderWithTags>) => any,
   parentLocation: string,
   alertType: string,
 }): React$Element<any> => {

@@ -325,70 +325,70 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.login()
     // Mock response for GET user
     const userResponse = {
-      drafts: [
+      templates: [
         {
           accessionId: "TESTID1",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID2",
-          schema: `draft-sample`,
+          schema: `template-sample`,
         },
         {
           accessionId: "TESTD3",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID4",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID5",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID6",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID7",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID8",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID9",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID10",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID11",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID12",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID13",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID14",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID15",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
         {
           accessionId: "TESTID1",
-          schema: `draft-study`,
+          schema: `template-study`,
         },
       ],
       folders: [],
@@ -405,21 +405,25 @@ describe("unpublished folders, published folders, and user's draft templates pag
 
     cy.login()
     // Check Draft-study pagination
-    cy.get("h6").contains("Draft-study").click()
-    cy.get("div[data-schema='draft-study'] > span").should("have.length", "10")
+
+    cy.get("div[data-schema='template-study'] > span").should("have.length", "10")
     cy.get("p").contains("1-10 of 15").should("be.visible")
     cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
 
-    cy.get("button[aria-label='next page']").click()
-    cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
-    cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
-    cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-    cy.get("li[data-value='15']").click()
-    cy.get("div[data-schema='draft-study'] > span").should("have.length", "15")
+    cy.get("div[data-testid='form-template-study']").within(() => {
+      cy.get("button[aria-label='next page']").click()
+      cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
+      cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")
+      cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+    })
+    cy.get("li[data-value='15']")
+      .should("be.visible")
+      .then($el => $el.click())
+    cy.get("div[data-schema='template-study'] > span").should("have.length", "15")
 
     // Check Draft-sample pagination
-    cy.get("h6").contains("Draft-sample").click()
-    cy.get("div[data-schema='draft-sample'] > span").should("have.length", "1")
+
+    cy.get("div[data-schema='template-sample'] > span").should("have.length", "1")
     cy.get("p").contains("1-1 of 1").should("be.visible")
   })
 })

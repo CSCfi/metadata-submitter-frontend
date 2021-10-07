@@ -58,14 +58,27 @@ export const formatDisplayObjectType = (objectType: string): string => {
 }
 
 // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
-export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectsArray: Array<string>): any => {
-  const draftObjects = objectsArray.flatMap((schema: string) => {
+export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectTypesArray: Array<string>): any => {
+  const draftObjects = objectTypesArray.flatMap((schema: string) => {
     const draftSchema = `draft-${schema}`
     const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
-    return draftArray.length > 0 ? [{ [`draft-${schema}`]: draftArray }] : []
+    return draftArray.length > 0 ? [{ [draftSchema]: draftArray }] : []
   })
 
   return draftObjects
+}
+
+export const getUserTemplates = (
+  templates: Array<ObjectInsideFolderWithTags>,
+  objectTypesArray: Array<string>
+): any => {
+  const userTemplates = objectTypesArray.flatMap((schema: string) => {
+    const templateSchema = `template-${schema}`
+    const templatesArray = templates.filter(template => template.schema.toLowerCase() === templateSchema.toLowerCase())
+    return templatesArray.length > 0 ? [{ [templateSchema]: templatesArray }] : []
+  })
+
+  return userTemplates
 }
 
 // Get "rowsPerPageOptions" of TablePagination
@@ -193,4 +206,9 @@ export const getAccessionIds = (
     return accessionIds
   }
   return []
+}
+
+export const getOrigObjectType = (schema: string): string => {
+  const objectType = schema.slice(schema.indexOf("-") + 1)
+  return objectType
 }

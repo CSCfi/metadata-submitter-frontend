@@ -56,8 +56,9 @@ describe("Test form render by custom schema", () => {
     const integerField = screen.getByLabelText(props.integerField.title + " *")
     expect(integerField).toBeInTheDocument()
 
+    userEvent.type(integerField, "Test value")
+
     await waitFor(() => {
-      userEvent.type(integerField, "Test value")
       integerField.blur()
     })
 

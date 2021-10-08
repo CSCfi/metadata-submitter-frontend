@@ -1,6 +1,8 @@
 // function to catch errors
 export const errorMonitor = res => {
-  if (!res.ok) {
+  // Exceptional case: replacing XML file with same name oftenly causes error. We don't redirect to 400 page but only show error message.
+  const exceptionalCase = res.config.baseURL === "/objects" && res.config.method === "put"
+  if (!res.ok && !exceptionalCase) {
     switch (res.status) {
       case 400:
         window.location = "/error400"

@@ -93,6 +93,7 @@ describe("draft selections and templates", function () {
       cy.get("form").within(() => {
         cy.get("button[aria-label='View draft']").last().click()
       })
+      cy.wait(500)
       cy.get("h1", { timeout: 10000 }).contains("Sample").should("be.visible")
       cy.get("[data-testid='title']").should("have.value", "Sample draft title")
     }),

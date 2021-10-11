@@ -52,7 +52,23 @@ describe("Basic e2e", function () {
     // Saved objects list should have newly added item from Study object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
 
-    // Replace XML
+    // Replace the same XML to see error message
+    cy.get("button[type=button]").contains("Replace").click()
+    cy.get(".MuiCardHeader-action").contains("Replace")
+    cy.fixture("study_test.xml").then(fileContent => {
+      cy.get('input[type="file"]').attachFile({
+        fileContent: fileContent.toString(),
+        fileName: "testFile.xml",
+        mimeType: "text/xml",
+        force: true,
+      })
+    })
+    cy.get("form").submit()
+    cy.contains(".MuiAlert-message", " Some items (e.g: accessionId, publishDate, dateCreated) cannot be changed.", {
+      timeout: 10000,
+    })
+
+    // Replace the modified XML file
     cy.get("button[type=button]").contains("Replace").click()
     cy.get(".MuiCardHeader-action").contains("Replace")
     cy.fixture("study_test_modified.xml").then(fileContent => {

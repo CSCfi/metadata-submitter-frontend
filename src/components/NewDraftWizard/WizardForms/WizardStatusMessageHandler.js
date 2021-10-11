@@ -26,7 +26,7 @@ const ErrorHandler = ({
       message = `Unfortunately we couldn't connect to our server.`
       break
     case 400:
-      message = `${prefixText}, details: ${response.data.detail}`
+      message = `${prefixText} Details: ${response.data.detail}`
       break
     default:
       message = "Unfortunately an unexpected error happened on our servers"

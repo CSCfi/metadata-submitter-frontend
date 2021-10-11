@@ -129,7 +129,9 @@ const LanguageSelector = (props: MenuItemProps) => {
   const changeLang = (locale: string) => {
     const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
 
-    if (location.pathname !== "/") history.push(`/${locale}/${pathWithoutLocale}`)
+    if (location.pathname !== "/") {
+      history.push({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
+    }
 
     dispatch(setLocale(locale))
 

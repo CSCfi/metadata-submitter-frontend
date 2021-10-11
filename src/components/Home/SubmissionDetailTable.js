@@ -30,7 +30,7 @@ import { Link as RouterLink } from "react-router-dom"
 
 import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { ObjectSubmissionTypes, DisplayObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import type { ObjectDetails } from "types"
 
 const useStyles = makeStyles(theme => ({
@@ -98,12 +98,13 @@ type SubmissionDetailTableProps = {
 
 type RowProps = {
   row: any,
+  publishedFolder: boolean,
   onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>,
   onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<any>,
 }
 
 const Row = (props: RowProps) => {
-  const { row, onEdit, onDelete } = props
+  const { row, publishedFolder, onEdit, onDelete } = props
 
   const getDateFormat = (date: string) => {
     const d = new Date(date)
@@ -131,24 +132,31 @@ const Row = (props: RowProps) => {
         <TableCell>
           <Button disabled>View</Button>
         </TableCell>
-        <TableCell>
-          <Button
-            disabled={row.folderType === FolderSubmissionStatus.published}
-            aria-label="Edit this object"
-            onClick={() => onEdit(row.accessionId, row.objectType, row.status, row.submissionType)}
-          >
-            {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
-          </Button>
-        </TableCell>
-        <TableCell>
-          <Button
-            disabled={row.folderType === FolderSubmissionStatus.published}
-            aria-label="Delete this object"
-            onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
-          >
-            Delete
-          </Button>
-        </TableCell>
+        {!publishedFolder && (
+          <>
+            <TableCell>
+              <Button
+                disabled={row.folderType === FolderSubmissionStatus.published}
+                aria-label="Edit this object"
+                data-testid="edit-object"
+                onClick={() => onEdit(row.accessionId, row.objectType, row.status, row.submissionType)}
+              >
+                {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button
+                disabled={row.folderType === FolderSubmissionStatus.published}
+                aria-label="Delete this object"
+                data-testid="delete-object"
+                onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+              >
+                Delete
+              </Button>
+            </TableCell>
+          </>
+        )}
+
         <TableCell>
           <Button aria-label="Show object details" data-testid="toggle-details" onClick={() => showObjectDetails()}>
             {open ? "Hide details" : "Show details"}
@@ -174,7 +182,9 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
   const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
     props
 
-  const folderPublishable = bodyRows.find(row => row.status === "Submitted")
+  const hasSubmittedObject = bodyRows.find(row => row.status === ObjectStatus.submitted)
+
+  const publishedFolder = folderType === FolderSubmissionStatus.published
 
   const CurrentFolder = () => (
     <CardContent>
@@ -182,7 +192,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell colSpan={8} padding="none">
+              <TableCell colSpan={publishedFolder ? 6 : 8} padding="none">
                 <ListItem dense className={classes.tableHeader}>
                   <ListItemIcon className={classes.tableIcon}>
                     {folderType === FolderSubmissionStatus.published ? (
@@ -204,7 +214,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                   )}
                   {folderType === FolderSubmissionStatus.unpublished && (
                     <Button
-                      disabled={!folderPublishable}
+                      disabled={!hasSubmittedObject}
                       aria-label="Publish current folder"
                       variant="contained"
                       data-testid="publish-button"
@@ -213,7 +223,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
                       Publish
                     </Button>
                   )}
-                  {!folderPublishable && (
+                  {!hasSubmittedObject && (
                     <Box pl={1} className={classes.tooltipContainer}>
                       <SubmissionTooltip title={"Publishing requires submitted object(s)."} placement="top" arrow>
                         <HelpOutlineIcon></HelpOutlineIcon>
@@ -224,7 +234,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
               </TableCell>
             </TableRow>
             <TableRow>
-              {headRows.map((row, index) => (
+              {headRows.slice(0, publishedFolder ? 6 : headRows.length).map((row, index) => (
                 <TableCell key={index} className={classes.headRows}>
                   {row}
                 </TableCell>
@@ -233,7 +243,13 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
           </TableHead>
           <TableBody>
             {bodyRows?.map((row, index) => (
-              <Row key={index} row={row} onEdit={onEditObject} onDelete={onDeleteObject}></Row>
+              <Row
+                key={index}
+                row={row}
+                publishedFolder={publishedFolder}
+                onEdit={onEditObject}
+                onDelete={onDeleteObject}
+              ></Row>
             ))}
           </TableBody>
         </Table>

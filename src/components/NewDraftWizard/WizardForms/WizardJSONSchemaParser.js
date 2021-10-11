@@ -156,18 +156,6 @@ const traverseFields = (
 
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
 
-  if (typeof object["type"] === "object") {
-    return (
-      <FormTextField
-        key={name}
-        name={name}
-        label={label}
-        required={required}
-        description={description}
-        nestedField={nestedField}
-      />
-    )
-  }
   switch (object.type) {
     case "object": {
       const properties = object.properties
@@ -1040,11 +1028,15 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         return (
           <Box px={1} className="arrayRow" key={`${name}[${index}]`} aria-labelledby={name}>
             <Paper elevation={2}>
-              {Object.keys(items).map(item => {
-                const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                const requiredField = requiredProperties ? requiredProperties.filter(prop => prop === item) : []
-                return traverseFields(properties[item], pathForThisIndex, requiredField, false, field)
-              })}
+              {
+                items
+                  ? Object.keys(items).map(item => {
+                      const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
+                      const requiredField = requiredProperties ? requiredProperties.filter(prop => prop === item) : []
+                      return traverseFields(properties[item], pathForThisIndex, requiredField, false, field)
+                    })
+                  : traverseFields(object.items, [...pathWithoutLastItem, lastPathItemWithIndex], [], false, field) // special case for doiSchema's "sizes" and "formats"
+              }
             </Paper>
             <IconButton onClick={() => handleRemove(index)}>
               <RemoveIcon />

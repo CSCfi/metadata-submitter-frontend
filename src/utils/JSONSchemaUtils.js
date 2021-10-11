@@ -22,10 +22,6 @@ export const pathToName = (path: string[]): string => path.join(".")
 export const traverseValues = (object: any): any => {
   if (object["oneOf"]) return object
 
-  if (typeof object["type"] === "object") {
-    return ""
-  }
-
   switch (object["type"]) {
     case "object": {
       let values = {}

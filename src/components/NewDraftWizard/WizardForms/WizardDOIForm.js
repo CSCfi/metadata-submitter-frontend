@@ -3,16 +3,17 @@
 import React, { useEffect, useState } from "react"
 
 import { makeStyles } from "@material-ui/core/styles"
+import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
-import folderSchema from "constants/folder.json"
 import { WizardStatus } from "constants/wizardStatus"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import folderAPIService from "services/folderAPI"
+import schemaAPIService from "services/schemaAPI"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -20,18 +21,35 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvider> => {
-  const [doiSchema, setDoiSchema] = useState({})
+  const [dataciteSchema, setDataciteSchema] = useState({})
 
   useEffect(() => {
-    const getDoiSchema = async () => {
-      const loadData = await dereferenceSchema(folderSchema)
-      const doiData = loadData?.properties?.doiInfo
-      setDoiSchema(doiData)
+    const getDataciteSchema = async () => {
+      let dataciteSchema = sessionStorage.getItem(`cached_datacite_schema`)
+      if (!dataciteSchema || !new Ajv().validateSchema(JSON.parse(dataciteSchema))) {
+        try {
+          const response = await schemaAPIService.getSchemaByObjectType("datacite")
+          dataciteSchema = response.data
+          sessionStorage.setItem(`cached_datacite_schema`, JSON.stringify(dataciteSchema))
+        } catch (err) {
+          dispatch(
+            updateStatus({
+              successStatus: WizardStatus.error,
+              response: err,
+              errorPrefix: "Can't submit the DOI information",
+            })
+          )
+        }
+      } else {
+        dataciteSchema = JSON.parse(dataciteSchema)
+      }
+      const dereferencedDataciteSchema = await dereferenceSchema(dataciteSchema)
+      setDataciteSchema(dereferencedDataciteSchema)
     }
-    getDoiSchema()
+    getDataciteSchema()
   }, [])
 
-  const resolver = WizardAjvResolver(doiSchema)
+  const resolver = WizardAjvResolver(dataciteSchema)
   const methods = useForm({ mode: "onBlur", resolver })
 
   const currentFolder = useSelector(state => state.submissionFolder)
@@ -39,14 +57,15 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
   const classes = useStyles()
 
   const onSubmit = async data => {
-    const changes = [{ op: "add", path: "/doiInfo", value: data }]
-    const response = await folderAPIService.patchFolderById(currentFolder.folderId, changes)
-    if (!response.ok) {
+    try {
+      const changes = [{ op: "add", path: "/doiInfo", value: data }]
+      await folderAPIService.patchFolderById(currentFolder.folderId, changes)
+    } catch (err) {
       dispatch(
         updateStatus({
           successStatus: WizardStatus.error,
-          response: response,
-          errorPrefix: "Can't submit the DOI information",
+          response: err,
+          errorPrefix: "Can't submit information for DOI.",
         })
       )
     }
@@ -54,7 +73,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
   return (
     <FormProvider {...methods}>
       <form className={classes.form} id={formId} onSubmit={methods.handleSubmit(onSubmit)}>
-        <div>{Object.keys(doiSchema)?.length > 0 ? JSONSchemaParser.buildFields(doiSchema) : null}</div>
+        <div>{Object.keys(dataciteSchema)?.length > 0 ? JSONSchemaParser.buildFields(dataciteSchema) : null}</div>
       </form>
     </FormProvider>
   )

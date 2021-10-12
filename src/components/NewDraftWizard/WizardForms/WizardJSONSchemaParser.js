@@ -1004,8 +1004,11 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         }
 
         const properties = object.items.properties
-        const requiredProperties =
+        let requiredProperties =
           index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
+
+        // Force first array item as required field if array is required but none of the items are required
+        if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
         return (
           <Box px={1} className="arrayRow" key={`${name}[${index}]`} aria-labelledby={name}>

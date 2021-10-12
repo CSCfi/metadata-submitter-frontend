@@ -2,8 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
-import { render, screen, waitForElementToBeRemoved } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
+import { render, screen } from "@testing-library/react"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
@@ -18,7 +17,9 @@ import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
 
 const mockStore = configureStore([])
-const store = mockStore({})
+const store = mockStore({
+  openedRows: [0],
+})
 
 const server = setupServer()
 
@@ -29,7 +30,7 @@ describe("Object details", () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  it("should render object details component on 'Show details' button click", async () => {
+  it("should render object details when row has been opened", async () => {
     server.use(
       rest.get("/schemas/:schema", (req, res, ctx) => {
         return res(ctx.json(schema))
@@ -76,12 +77,11 @@ describe("Object details", () => {
       </MemoryRouter>
     )
 
-    await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    userEvent.click(screen.getByTestId("toggle-details"))
+    const toggleDetailsButton = await screen.findByTestId("toggle-details")
+    expect(toggleDetailsButton).toBeInTheDocument()
 
-    await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    expect(screen.getByText("Hide details")).toBeInTheDocument()
-    expect(screen.getByTestId("section")).toBeInTheDocument()
+    const section = await screen.findByTestId("section")
+    expect(section).toBeInTheDocument()
   })
 
   it("should render object details by object data and schema", async () => {
@@ -108,10 +108,10 @@ describe("Object details", () => {
       </Provider>
     )
 
-    await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-
     // Sections
     // Note: Nested properties have at least 2 sections
+    await screen.findAllByTestId("section")
+
     expect(screen.getAllByTestId("section")).toHaveLength(6)
 
     // List items

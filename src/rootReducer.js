@@ -8,6 +8,7 @@ import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
 import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
+import openedRowsReducer from "features/openedRowsSlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import templatesReducer from "features/templatesSlice"
@@ -37,6 +38,7 @@ const rootReducer: any = combineReducers({
   publishedFolders: publishedFoldersReducer,
   selectedFolder: selectedFolderReducer,
   objectTypesArray: objectTypesArrayReducer,
+  openedRows: openedRowsReducer,
   totalFolders: totalFoldersReducer,
   clearForm: clearFormReducer,
   templateAccessionIds: templatesReducer,

@@ -219,7 +219,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
             <Link
               color="inherit"
               component={RouterLink}
-              to={`${pathWithLocale("home")}${selectedFolder.published ? "published" : "drafts"}`}
+              to={`${pathWithLocale("home")}/${selectedFolder.published ? "published" : "drafts"}`}
             >
               {selectedFolder.published ? "Published" : "Drafts"}
             </Link>

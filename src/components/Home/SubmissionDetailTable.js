@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React, { useEffect } from "react"
 
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
@@ -26,11 +26,13 @@ import FolderIcon from "@material-ui/icons/Folder"
 import FolderOpenIcon from "@material-ui/icons/FolderOpen"
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace"
+import { useDispatch, useSelector } from "react-redux"
 import { Link as RouterLink } from "react-router-dom"
 
 import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import type { ObjectDetails } from "types"
 import { pathWithLocale } from "utils"
 
@@ -98,6 +100,7 @@ type SubmissionDetailTableProps = {
 }
 
 type RowProps = {
+  index: number,
   row: any,
   publishedFolder: boolean,
   onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>,
@@ -105,7 +108,9 @@ type RowProps = {
 }
 
 const Row = (props: RowProps) => {
-  const { row, publishedFolder, onEdit, onDelete } = props
+  const dispatch = useDispatch()
+  const openedRows = useSelector(state => state.openedRows) || []
+  const { index, row, publishedFolder, onEdit, onDelete } = props
 
   const getDateFormat = (date: string) => {
     const d = new Date(date)
@@ -115,10 +120,10 @@ const Row = (props: RowProps) => {
     return `${day}.${month}.${year}`
   }
 
-  const [open, setOpen] = useState(false)
+  const rowOpen = openedRows.indexOf(index) > -1
 
   const showObjectDetails = () => {
-    setOpen(!open)
+    !rowOpen ? dispatch(addRow(index)) : dispatch(removeRow(index))
   }
 
   return (
@@ -160,14 +165,14 @@ const Row = (props: RowProps) => {
 
         <TableCell>
           <Button aria-label="Show object details" data-testid="toggle-details" onClick={() => showObjectDetails()}>
-            {open ? "Hide details" : "Show details"}
+            {rowOpen ? "Hide details" : "Show details"}
           </Button>
         </TableCell>
       </TableRow>
-      {open && (
+      {rowOpen && (
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            <Collapse in={rowOpen} timeout="auto" unmountOnExit>
               <WizardObjectDetails objectType={row.objectType} objectData={row.objectData}></WizardObjectDetails>
             </Collapse>
           </TableCell>
@@ -179,6 +184,7 @@ const Row = (props: RowProps) => {
 
 const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element<any> => {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
   const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
     props
@@ -186,6 +192,13 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
   const hasSubmittedObject = bodyRows.find(row => row.status === ObjectStatus.submitted)
 
   const publishedFolder = folderType === FolderSubmissionStatus.published
+
+  // Reset opened rows
+  useEffect(() => {
+    return function cleanup() {
+      dispatch(resetRows())
+    }
+  }, [])
 
   const CurrentFolder = () => (
     <CardContent>
@@ -246,6 +259,7 @@ const SubmissionDetailTable = (props: SubmissionDetailTableProps): React$Element
             {bodyRows?.map((row, index) => (
               <Row
                 key={index}
+                index={index}
                 row={row}
                 publishedFolder={publishedFolder}
                 onEdit={onEditObject}

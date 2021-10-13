@@ -21,7 +21,7 @@ import { updateStatus } from "features/wizardStatusMessageSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 import type { ObjectInsideFolderWithTags } from "types"
-import { getItemPrimaryText, getDraftObjects, getOrigObjectType } from "utils"
+import { getItemPrimaryText, getDraftObjects, getOrigObjectType, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   formComponent: {
@@ -120,7 +120,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
       dispatch(setObjectType(objectType))
       props.onHandleDialog(false)
-      history.push({ pathname: "/newdraft", search: "step=1" })
+      history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
     } else {
       dispatch(
         updateStatus({

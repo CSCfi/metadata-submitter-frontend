@@ -6,6 +6,7 @@ import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
+import { useTranslation } from "react-i18next"
 import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
@@ -44,6 +45,8 @@ const Home = (): React$Element<typeof Grid> => {
   const [connError, setConnError] = useState(false)
   const [responseError, setResponseError] = useState({})
   const [errorPrefix, setErrorPrefix] = useState("")
+
+  const { t } = useTranslation()
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -84,7 +87,9 @@ const Home = (): React$Element<typeof Grid> => {
   return (
     <Grid container direction="column" justifyContent="space-between" alignItems="stretch">
       <Grid item xs={12} className={classes.loggedUser}>
-        <Typography color="textPrimary">Logged in as: {user.name}</Typography>
+        <Typography color="textPrimary" data-testid="logged-in-as">
+          {t("Logged in as")}: {user.name}
+        </Typography>
       </Grid>
 
       {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}

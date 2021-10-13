@@ -82,7 +82,7 @@ describe("Published folders list", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/home/drafts/123456" }]}>
+          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
             <App />
           </MemoryRouter>
         </ThemeProvider>
@@ -138,7 +138,7 @@ describe("Published folders list", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/home/drafts/123456" }]}>
+          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
             <App />
           </MemoryRouter>
         </ThemeProvider>
@@ -180,7 +180,7 @@ describe("Published folders list", () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/home/drafts/123456" }]}>
+          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
             <App />
           </MemoryRouter>
         </ThemeProvider>

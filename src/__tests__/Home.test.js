@@ -12,6 +12,10 @@ import App from "App"
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: key => key }),
+}))
+
 describe("HomePage", () => {
   const store = mockStore({
     user: { name: "Test User" },
@@ -27,7 +31,7 @@ describe("HomePage", () => {
   beforeEach(() => {
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/home"]}>
+        <MemoryRouter initialEntries={["/en/home"]}>
           <App />
         </MemoryRouter>
       </Provider>

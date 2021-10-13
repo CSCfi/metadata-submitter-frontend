@@ -4,13 +4,16 @@ import React, { useEffect } from "react"
 import Container from "@material-ui/core/Container"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
-import { useDispatch } from "react-redux"
-import { Switch, Route, useLocation } from "react-router-dom"
+import i18n from "i18next"
+import { useDispatch, useSelector } from "react-redux"
+import { Switch, Route, useLocation, Redirect } from "react-router-dom"
 
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
+import { Locale } from "constants/locale"
 import { ObjectTypes } from "constants/wizardObject"
+import { setLocale } from "features/localeSlice"
 import { setObjectTypesArray } from "features/objectTypesArraySlice"
 import schemaAPIService from "services/schemaAPI"
 import Page400 from "views/ErrorPages/Page400"
@@ -67,9 +70,13 @@ const App = (): React$Element<typeof React.Fragment> => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
+  const locale = useSelector(state => state.locale)
+
   // Fetch array of schemas from backend and store it in frontend
   // Fetch only if the initial array is empty
   // if there is any errors while fetching, it will return a manually created ObjectsArray instead
+  // &&
+  // Handle initial locale setting
   useEffect(() => {
     if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
     let isMounted = true
@@ -98,50 +105,72 @@ const App = (): React$Element<typeof React.Fragment> => {
         }
       }
     }
+
+    // Get locale from url and set application wide locale setting
+    const getLocale = () => {
+      let locale: string
+      const locales = ["en", "fi"]
+      const currentLocale = location.pathname.split("/")[1]
+
+      if (locales.indexOf(currentLocale) > -1) {
+        locale = currentLocale
+      } else locale = Locale.defaultLocale
+
+      i18n.changeLanguage(locale)
+
+      dispatch(setLocale(locale))
+    }
+
     getSchemas()
+    getLocale()
     return () => {
       isMounted = false
     }
   }, [])
+
+  const setPath = (path: string) => {
+    return `/:locale(en|fi)/${path}`
+  }
 
   return (
     <React.Fragment>
       <CssBaseline />
       <NavigationMenu />
       <Switch>
-        <Route path="/newdraft">
-          <Container component="main" maxWidth={false} className={classes.wizardContent}>
-            <NewDraftWizard />
-          </Container>
-        </Route>
+        <Redirect exact from="/home" to={`/${locale}/home`} />
         <Route exact path="/">
           <Container component="main" maxWidth={false} className={classes.loginContent}>
             <Login />
           </Container>
         </Route>
-        <Route exact path="/home">
+        <Route exact path={setPath("home")}>
           <Container component="main" maxWidth="md" className={classes.content}>
             <Home />
           </Container>
         </Route>
-        <Route exact path="/home/drafts">
+        <Route exact path={setPath("home/drafts")}>
           <Container component="main" maxWidth="md" className={classes.content}>
             <SubmissionFolderList />
           </Container>
         </Route>
-        <Route path="/home/drafts/:folderId">
+        <Route path={setPath("home/drafts/:folderId")}>
           <Container component="main" maxWidth="md" className={classes.content}>
             <SelectedFolderDetails />
           </Container>
         </Route>
-        <Route exact path="/home/published">
+        <Route exact path={setPath("home/published")}>
           <Container component="main" maxWidth="md" className={classes.content}>
             <SubmissionFolderList />
           </Container>
         </Route>
-        <Route path="/home/published/:folderId">
+        <Route path={setPath("home/published/:folderId")}>
           <Container component="main" maxWidth="md" className={classes.content}>
             <SelectedFolderDetails />
+          </Container>
+        </Route>
+        <Route path={setPath("newdraft")}>
+          <Container component="main" maxWidth={false} className={classes.wizardContent}>
+            <NewDraftWizard />
           </Container>
         </Route>
         <Route path="/error401">

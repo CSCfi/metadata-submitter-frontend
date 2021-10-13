@@ -20,7 +20,7 @@ import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import type { FolderDetailsWithId } from "types"
-import { Pagination } from "utils"
+import { Pagination, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -94,7 +94,12 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
           <List data-testid={`${folderType}-submissions`}>
             {folders.map((folder, index) => {
               return (
-                <Link key={index} component={RouterLink} to={`/home/${location}/${folder.folderId}`} underline="none">
+                <Link
+                  key={index}
+                  component={RouterLink}
+                  to={`${pathWithLocale("home")}/${location}/${folder.folderId}`}
+                  underline="none"
+                >
                   <ListItem button dense className={classes.submissionsListItems}>
                     <ListItemIcon className={classes.submissionsListIcon}>
                       {folderType === FolderSubmissionStatus.published ? (
@@ -123,7 +128,7 @@ const SubmissionIndexCard = (props: SubmissionIndexCardProps): React$Element<typ
       {displayButton && (
         <CardActions>
           <Grid container alignItems="flex-start" justifyContent="flex-end" direction="row">
-            <Link component={RouterLink} to={`/home/${location}`}>
+            <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`}>
               <Button
                 variant="outlined"
                 color="primary"

@@ -1,22 +1,28 @@
 //@flow
-import React from "react"
+import React, { useState } from "react"
 
 import AppBar from "@material-ui/core/AppBar"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import Link from "@material-ui/core/Link"
+import Menu from "@material-ui/core/Menu"
+import MenuItem from "@material-ui/core/MenuItem"
 import { makeStyles } from "@material-ui/core/styles"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import HomeIcon from "@material-ui/icons/Home"
-import { useDispatch } from "react-redux"
-import { Link as RouterLink, useLocation } from "react-router-dom"
+import i18n from "i18next"
+import { useDispatch, useSelector } from "react-redux"
+import { Link as RouterLink, useLocation, useHistory } from "react-router-dom"
 
 import logo from "../csc_logo.svg"
 
+import { Locale } from "constants/locale"
+import { setLocale } from "features/localeSlice"
 import { resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetFolder } from "features/wizardSubmissionFolderSlice"
+import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -36,6 +42,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 1.5),
     color: "inherit",
   },
+  languageSelector: {
+    marginLeft: theme.spacing(1),
+    textTransform: "capitalize",
+  },
   linkButton: {
     margin: theme.spacing(1, 1.5),
   },
@@ -47,13 +57,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Menu = () => {
+type MenuItemProps = {
+  currentLocale: string,
+}
+
+const NavigationLinks = (props: MenuItemProps) => {
+  const { currentLocale } = props
+
   const classes = useStyles()
   const dispatch = useDispatch()
-  let location = useLocation()
-  if (location.pathname === "/") {
-    return null
-  }
 
   const resetWizard = () => {
     dispatch(resetObjectType())
@@ -61,23 +73,23 @@ const Menu = () => {
   }
 
   return (
-    <nav className={classes.nav}>
+    <React.Fragment>
       <IconButton
         component={RouterLink}
-        to="/home"
+        to={`/${currentLocale}/home`}
         className={classes.HomeIcon}
         aria-label="go to frontpage"
         color="inherit"
       >
         <HomeIcon />
       </IconButton>
-      <Link component={RouterLink} to="/home/drafts" className={classes.link}>
+      <Link component={RouterLink} to={pathWithLocale("home/drafts")} className={classes.link}>
         Open submissions
       </Link>
-      <Link component={RouterLink} to="/home/published" className={classes.link}>
+      <Link component={RouterLink} to={pathWithLocale("home/published")} className={classes.link}>
         Submissions
       </Link>
-      <Link component={RouterLink} aria-label="Create Submission" to="/newdraft?step=0">
+      <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
         <Button
           color="primary"
           variant="contained"
@@ -99,6 +111,83 @@ const Menu = () => {
       >
         Log out
       </Button>
+    </React.Fragment>
+  )
+}
+
+const LanguageSelector = (props: MenuItemProps) => {
+  const { currentLocale } = props
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  const classes = useStyles()
+  const dispatch = useDispatch()
+
+  const history = useHistory()
+
+  const changeLang = (locale: string) => {
+    const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
+
+    if (location.pathname !== "/") {
+      history.push({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
+    }
+
+    dispatch(setLocale(locale))
+
+    i18n.changeLanguage(locale).then(t => {
+      t("key")
+      handleClose()
+    })
+  }
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  return (
+    <>
+      <Button
+        id="lang-selector"
+        aria-controls="lang-menu"
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        className={classes.languageSelector}
+      >
+        {currentLocale}
+      </Button>
+      <Menu
+        id="lang-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "lang-selector",
+        }}
+      >
+        <MenuItem onClick={() => changeLang("en")}>En</MenuItem>
+        <MenuItem onClick={() => changeLang("fi")}>Fi</MenuItem>
+      </Menu>
+    </>
+  )
+}
+
+const NavigationMenu = () => {
+  const classes = useStyles()
+
+  let location = useLocation()
+
+  const currentLocale = useSelector(state => state.locale) || Locale.defaultLocale
+
+  return (
+    <nav className={classes.nav}>
+      {location.pathname !== "/" && <NavigationLinks currentLocale={currentLocale} />}
+      <LanguageSelector currentLocale={currentLocale} />
     </nav>
   )
 }
@@ -108,13 +197,13 @@ const Nav = (): React$Element<typeof AppBar> => {
   return (
     <AppBar className={classes.appBar} elevation={1}>
       <Toolbar className={classes.toolbar}>
-        <Link to="/home" component={RouterLink} className={classes.brandLink}>
+        <Link to={pathWithLocale("home")} component={RouterLink} className={classes.brandLink}>
           <img className={classes.logo} src={logo} alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>
           Metadata Submitter
         </Typography>
-        <Menu />
+        <NavigationMenu />
       </Toolbar>
     </AppBar>
   )

@@ -19,6 +19,7 @@ import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import folderAPIService from "services/folderAPI"
+import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   folderGrid: {
@@ -41,6 +42,7 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
   const unpublishedFolders = useSelector(state => state.unpublishedFolders)
   const publishedFolders = useSelector(state => state.publishedFolders)
   const totalFolders = useSelector(state => state.totalFolders)
+
   const classes = useStyles()
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
@@ -157,7 +159,7 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
       alignItems="stretch"
     >
       <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" component={RouterLink} to={`/home`}>
+        <Link color="inherit" component={RouterLink} to={pathWithLocale("home")}>
           Home
         </Link>
         <Typography color="textPrimary">{location.charAt(0).toUpperCase() + location.slice(1)}</Typography>

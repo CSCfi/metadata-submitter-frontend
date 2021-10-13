@@ -18,7 +18,7 @@ describe("NavBar", () => {
   beforeEach(() => {
     component = render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={["/home"]}>
+        <MemoryRouter initialEntries={["/en/home"]}>
           <Nav />
         </MemoryRouter>
       </Provider>
@@ -27,7 +27,7 @@ describe("NavBar", () => {
 
   test("has correct nav links rendered", () => {
     const nav = component.container.querySelector("nav")
-    const expectedLinksLength = 5
+    const expectedLinksLength = 6
     const expectedLinks = ["Open submissions", "Submissions", "Create Submission", "Log out"]
     expect(nav.children).toHaveLength(expectedLinksLength)
     expectedLinks.forEach(link => {

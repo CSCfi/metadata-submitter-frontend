@@ -13,7 +13,7 @@ import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAdd
 import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
 import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
 import type { CreateFolderFormRef } from "types"
-import { useQuery } from "utils"
+import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
@@ -78,7 +78,7 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
 
   if (!folder && (wizardStep === 1 || wizardStep === 2)) {
     wizardStep = 0
-    history.push({ pathname: "/newdraft", search: "step=0" })
+    history.push({ pathname: pathWithLocale("newdraft"), search: "step=0" })
   }
 
   return (

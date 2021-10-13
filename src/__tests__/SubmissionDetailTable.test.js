@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
@@ -97,6 +97,12 @@ describe("Published folders list", () => {
     const publishedObject = await screen.findByTestId(metadataObjects[0].tags.displayTitle)
     expect(publishedObject).toBeInTheDocument()
 
+    // Test that edit & delete buttons are rendered
+    const editObjectButton = await within(publishedObject).findByTestId("edit-object")
+    const deleteObjectButton = await within(publishedObject).findByTestId("delete-object")
+    expect(editObjectButton).toBeInTheDocument()
+    expect(deleteObjectButton).toBeInTheDocument()
+
     const draftObject = await screen.findByTestId(draftObjects[0].tags.displayTitle)
     expect(draftObject).toBeInTheDocument()
   })
@@ -146,6 +152,12 @@ describe("Published folders list", () => {
 
     const publishedObject = await screen.findByTestId("Published object")
     expect(publishedObject).toBeInTheDocument()
+
+    // Test that edit & delete buttons are hidden
+    const editObjectButton = await screen.queryByTestId("edit-object")
+    const deleteObjectButton = await screen.queryByTestId("delete-object")
+    expect(editObjectButton).toBeNull()
+    expect(deleteObjectButton).toBeNull()
   })
 
   test("renders 'Add object to folder' button if no draft or submitted objects", async () => {

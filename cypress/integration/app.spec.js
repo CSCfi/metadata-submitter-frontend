@@ -156,6 +156,10 @@ describe("Basic e2e", function () {
           .then($btn => $btn.click())
       )
 
+    // Try to submit empty DAC form. This should be invalid
+    cy.get("button[type=submit]").contains("Submit").click()
+    cy.get("span").contains("must have at least 1 item")
+
     cy.get("h2").contains("Contacts").parents().children("button").click()
     cy.get("[data-testid='contacts[0].name']").type("Test contact name")
     cy.get("[data-testid='contacts[0].email']").type("email@test.com")

@@ -948,6 +948,13 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
   const { fields, append, remove } = useFieldArray({ control, name })
 
+  // Required field array handling
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext()
+
   // Set the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
   React.useEffect(() => {
@@ -956,11 +963,26 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
     }
   }, [setValue, fields])
 
+  // Clear required field array error and append
+  const handleAppend = () => {
+    clearErrors([name])
+    append({})
+  }
+
   return (
     <div className="array" key={`${name}-array`} aria-labelledby={name}>
+      {required && <input hidden={true} value="form-array-required" {...register(name)} />}
       <Typography key={`${name}-header`} variant={`h${level}`} data-testid={name} role="heading">
         <span id={name}>{label}</span> {required ? "*" : null}
+        {required && errors[name] && (
+          <span>
+            <FormControl error>
+              <FormHelperText>must have at least 1 item</FormHelperText>
+            </FormControl>
+          </span>
+        )}
       </Typography>
+
       {fields.map((field, index) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
@@ -982,8 +1004,11 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         }
 
         const properties = object.items.properties
-        const requiredProperties =
+        let requiredProperties =
           index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
+
+        // Force first array item as required field if array is required but none of the items are required
+        if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
         return (
           <Box px={1} className="arrayRow" key={`${name}[${index}]`} aria-labelledby={name}>
@@ -1001,7 +1026,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         )
       })}
 
-      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => append({})}>
+      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => handleAppend()}>
         Add new item
       </Button>
     </div>

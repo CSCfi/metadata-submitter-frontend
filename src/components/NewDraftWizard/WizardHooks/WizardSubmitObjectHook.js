@@ -1,11 +1,11 @@
 //@flow
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import { getObjectDisplayTitle } from "utils"
@@ -15,9 +15,9 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
   const waitForServertimer = setTimeout(() => {
     dispatch(
       updateStatus({
-        successStatus: WizardStatus.info,
+        status: ResponseStatus.info,
         response: {},
-        errorPrefix: "",
+        helperText: "",
       })
     )
   }, 5000)
@@ -38,9 +38,9 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
       .then(() => {
         dispatch(
           updateStatus({
-            successStatus: WizardStatus.success,
+            status: ResponseStatus.success,
             response: response,
-            errorPrefix: "",
+            helperText: "",
           })
         )
         dispatch(resetDraftStatus())
@@ -49,18 +49,18 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
       .catch(error => {
         dispatch(
           updateStatus({
-            successStatus: WizardStatus.error,
+            status: ResponseStatus.error,
             response: error,
-            errorPrefix: "Cannot connect to folder API",
+            helperText: "Cannot connect to folder API",
           })
         )
       })
   } else {
     dispatch(
       updateStatus({
-        successStatus: WizardStatus.error,
+        status: ResponseStatus.error,
         response: response,
-        errorPrefix: "Validation failed",
+        helperText: "Validation failed",
       })
     )
   }

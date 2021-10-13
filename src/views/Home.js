@@ -11,10 +11,10 @@ import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
-import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
@@ -42,10 +42,6 @@ const Home = (): React$Element<typeof Grid> => {
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
 
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
-
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -70,10 +66,13 @@ const Home = (): React$Element<typeof Grid> => {
           )
           setFetchingFolders(false)
         } else {
-          if (!unpublishedFolders.ok) setResponseError(unpublishedResponse)
-          if (!publishedResponse.ok) setResponseError(publishedResponse)
-          setConnError(true)
-          setErrorPrefix("Fetching folders error.")
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
+              helperText: "Fetching folders error.",
+            })
+          )
         }
       }
     }
@@ -117,14 +116,6 @@ const Home = (): React$Element<typeof Grid> => {
             <UserDraftTemplates />
           </Grid>
         </>
-      )}
-
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
       )}
     </Grid>
   )

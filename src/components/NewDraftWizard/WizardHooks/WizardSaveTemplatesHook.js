@@ -2,9 +2,9 @@
 
 import { omit } from "lodash"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { OmitObjectValues } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
-import { updateStatus } from "features/wizardStatusMessageSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
 import { getOrigObjectType, getObjectDisplayTitle } from "utils"
@@ -43,9 +43,9 @@ const saveDraftsAsTemplates = async (formData: any, dispatch: any): any => {
       } catch (err) {
         dispatch(
           updateStatus({
-            successStatus: WizardStatus.error,
+            status: ResponseStatus.error,
             response: err,
-            errorPrefix: "Error when getting the drafts' details",
+            helperText: "Error when getting the drafts' details",
           })
         )
       }
@@ -58,9 +58,9 @@ const saveDraftsAsTemplates = async (formData: any, dispatch: any): any => {
       } catch (err) {
         dispatch(
           updateStatus({
-            successStatus: WizardStatus.error,
+            status: ResponseStatus.error,
             response: err,
-            errorPrefix: "Cannot save selected draft(s) as template(s)",
+            helperText: "Cannot save selected draft(s) as template(s)",
           })
         )
       }

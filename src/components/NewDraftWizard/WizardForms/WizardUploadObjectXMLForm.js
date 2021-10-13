@@ -12,12 +12,11 @@ import Alert from "@material-ui/lab/Alert"
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 
-import WizardStatusMessageHandler from "./WizardStatusMessageHandler"
-
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
 import { resetFocus } from "features/focusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
+import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
@@ -60,9 +59,7 @@ const useStyles = makeStyles(theme => ({
  * Return React Hook Form based form for uploading xml files. Handles form submitting, validating and error/success alerts.
  */
 const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
-  const [successStatus, setSuccessStatus] = useState("")
   const [isSubmitting, setSubmitting] = useState(false)
-  const [responseStatus, setResponseStatus] = useState([])
   const objectType = useSelector(state => state.objectType)
   const { folderId } = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
@@ -101,17 +98,17 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
   const onSubmit = async data => {
-    setSuccessStatus(undefined)
+    dispatch(resetStatusDetails())
     setSubmitting(true)
     dispatch(setLoading())
     const file = data.fileUpload[0] || {}
     const waitForServertimer = setTimeout(() => {
-      setSuccessStatus(WizardStatus.info)
+      dispatch(updateStatus({ status: ResponseStatus.info }))
     }, 5000)
 
     if (currentObject.accessionId) {
       const response = await objectAPIService.replaceXML(objectType, currentObject.accessionId, file)
-      setResponseStatus(response)
+
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(
@@ -127,21 +124,21 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
           )
         )
           .then(() => {
-            setSuccessStatus(WizardStatus.success)
-            resetForm()
+            dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
             dispatch(resetCurrentObject())
+            resetForm()
           })
           .catch(() => {
-            setSuccessStatus(WizardStatus.error)
+            dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
           })
       } else {
-        setSuccessStatus(WizardStatus.error)
+        dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
       }
     } else {
       const response = await objectAPIService.createFromXML(objectType, file)
-      setResponseStatus(response)
+
       if (response.ok) {
-        setSuccessStatus(WizardStatus.success)
+        dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
         dispatch(
           addObjectToFolder(folderId, {
             accessionId: response.data.accessionId,
@@ -151,7 +148,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
         )
         resetForm()
       } else {
-        setSuccessStatus(WizardStatus.error)
+        dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
       }
     }
     clearTimeout(waitForServertimer)
@@ -216,7 +213,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
                     const response = await submissionAPIService.validateXMLFile(objectType, value[0])
-                    setResponseStatus(response)
+
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
                       our server reported following error:
@@ -235,14 +232,6 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
           {isSubmitting && <LinearProgress />}
         </FormControl>
       </form>
-
-      {successStatus && (
-        <WizardStatusMessageHandler
-          successStatus={successStatus}
-          response={responseStatus}
-          prefixText=""
-        ></WizardStatusMessageHandler>
-      )}
     </Container>
   )
 }

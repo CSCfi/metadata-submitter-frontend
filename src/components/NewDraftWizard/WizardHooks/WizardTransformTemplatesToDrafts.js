@@ -1,7 +1,7 @@
 //@flow
 
-import { WizardStatus } from "constants/wizardStatus"
-import { updateStatus } from "features/wizardStatusMessageSlice"
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
 import type { ObjectInsideFolder, ObjectInsideFolderWithTags } from "types"
@@ -37,12 +37,12 @@ const transformTemplatesToDrafts = async (
         tags: { displayTitle: getObjectDisplayTitle(templateDetails[i].schema, templateResponse.data) },
       }
       draftsArray.push(draftDetails)
-    } catch (err) {
+    } catch (error) {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.err,
-          response: err,
-          errorPrefix: "Error fetching the template(s)",
+          status: ResponseStatus.error,
+          response: error,
+          helperText: "Error fetching the template(s)",
         })
       )
     }

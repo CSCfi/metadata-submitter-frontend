@@ -9,8 +9,8 @@ import { useDispatch } from "react-redux"
 
 import JSONSchemaParser from "./WizardObjectDetailsJSONSchemaParser"
 
-import { WizardStatus } from "constants/wizardStatus"
-import { updateStatus } from "features/wizardStatusMessageSlice"
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import schemaAPIService from "services/schemaAPI"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -88,9 +88,9 @@ const WizardObjectDetails = (props: ObjectDetailsType): React$Element<any> => {
           } else {
             dispatch(
               updateStatus({
-                successStatus: WizardStatus.error,
+                status: ResponseStatus.error,
                 response: schemaResponse,
-                errorPrefix: "Can't fetch schema",
+                helperText: "Can't fetch schema",
               })
             )
             setStates({

@@ -1,11 +1,11 @@
 //@flow
 
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { addObjectToDrafts, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
 import type { FolderDetailsWithId } from "types"
@@ -37,18 +37,18 @@ const saveDraftHook = async (
       )
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.success,
+          status: ResponseStatus.success,
           response: response,
-          errorPrefix: "",
+          helperText: "",
         })
       )
       dispatch(resetCurrentObject())
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Cannot save draft",
+          helperText: "Cannot save draft",
         })
       )
     }
@@ -59,9 +59,9 @@ const saveDraftHook = async (
     if (response.ok) {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.success,
+          status: ResponseStatus.success,
           response: response,
-          errorPrefix: "",
+          helperText: "",
         })
       )
       dispatch(resetDraftStatus())
@@ -76,9 +76,9 @@ const saveDraftHook = async (
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Cannot save draft",
+          helperText: "Cannot save draft",
         })
       )
     }

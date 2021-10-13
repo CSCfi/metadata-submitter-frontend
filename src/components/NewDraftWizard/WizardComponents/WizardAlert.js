@@ -14,12 +14,12 @@ import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 
 import WizardDraftSelections from "./WizardDraftSelections"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
 import { resetDraftStatus } from "features/draftStatusSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideFolderWithTags } from "types"
 
@@ -81,9 +81,9 @@ const CancelFormDialog = ({
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.success,
+          status: ResponseStatus.success,
           response: response,
-          errorPrefix: "",
+          helperText: "",
         })
       )
       dispatch(resetCurrentObject())

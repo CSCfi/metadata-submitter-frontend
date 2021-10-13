@@ -22,7 +22,7 @@ describe("Basic e2e", function () {
     // Try to send invalid form
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get("input[name='descriptor.studyTitle']").then($input => {
-      expect($input[0].validationMessage).to.eq("Please fill out this field.")
+      expect($input[0].validationMessage).to.eq("Please fill in this field.")
     })
 
     // Fill a Study form and submit object

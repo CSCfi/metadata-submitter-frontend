@@ -90,8 +90,8 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("input[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
     // Expected Base Call Table
     cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].baseCall']").type("Test base call")
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").type(
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
       "Test read group tag"
     )
 
@@ -103,11 +103,11 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("select[name='processing']").select(testData.complexProcessing)
     cy.get("h2[data-testid='processing']").parents().children("button").click()
     cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").type(testData.stepIndex)
-    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']", { force: true }).select(
+    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").type(testData.stepIndex)
+    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']", { force: true }).select(
       testData.stringValue
     )
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").type(testData.prevStepIndexValue)
+    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").type(testData.prevStepIndexValue)
 
     // Save Experiment form
     cy.get("button[type='button']").contains("Save as Draft").click()
@@ -121,25 +121,25 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("textarea[name='design.designDescription']").should("have.value", testData.designDescription)
     cy.get("select[name='design.sampleDescriptor']").should("have.value", testData.sampleReference)
     cy.get("input[data-testid='design.sampleDescriptor.label']").should("have.value", testData.individualSampleLabel)
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].baseCall']").should(
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").should(
       "have.value",
       "Test base call"
     )
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable[0].readGroupTag']").should(
+    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").should(
       "have.value",
       "Test read group tag"
     )
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].stepIndex']").should(
+    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").should(
       "have.value",
       testData.stepIndex
     )
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").should(
+    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").should(
       "have.value",
       testData.prevStepIndexValue
     )
 
     // Change Prev Step Index from string value to null
-    cy.get("select[name='processing[0].pipeline.pipeSection[0].prevStepIndex']").select(testData.nullValue)
+    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue)
 
     // Save Experiment form 2nd time
     cy.get("button[type='button']").contains("Update draft").click()
@@ -148,7 +148,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.continueFirstDraft()
 
     // Test that Prev Step Index is nulled
-    cy.get("input[data-testid='processing[0].pipeline.pipeSection[0].prevStepIndex']").should("not.exist")
+    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").should("not.exist")
   })
 
   it("should render Run form correctly when editing", () => {

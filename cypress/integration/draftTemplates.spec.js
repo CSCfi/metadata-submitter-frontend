@@ -97,7 +97,7 @@ describe("draft selections and templates", function () {
       cy.get("h1", { timeout: 10000 }).contains("Sample").should("be.visible")
       cy.get("[data-testid='title']").should("have.value", "Sample draft title")
     }),
-    it("should be able to select draft templates and reuse them when creating a new folder", () => {
+    it("should be able to select and delete draft templates and reuse them when creating a new folder", () => {
       // Select drafts inside the dialog
       cy.get("form").within(() => {
         cy.get("input[type='checkbox']").first().check()
@@ -110,6 +110,37 @@ describe("draft selections and templates", function () {
       cy.get("div", { timeout: 10000 }).contains("Logged in as:")
       // Check if the drafts have been saved as user's templates in Home page
       cy.contains("Your Draft Templates", { timeout: 10000 }).should("be.visible")
+
+      const listAllSampleTemplates = () => {
+        cy.get("[data-testid='template-sample-item']")
+          .its("length")
+          .then(lengthOfSampleTemplates => {
+            if (lengthOfSampleTemplates >= 10) {
+              cy.get("[data-testid='form-template-sample']").within(() => {
+                cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
+              })
+              cy.get("li[role='option']").contains("All").click()
+            }
+          })
+      }
+
+      listAllSampleTemplates()
+
+      // Count sample templates, delete template and test that template count has decreased
+      cy.get("[data-testid='template-sample-item']")
+        .its("length")
+        .then(lengthOfSampleTemplates => {
+          cy.get("[data-testid='form-template-sample']").within(() => {
+            // Vertical menu button
+            cy.get("button").first().click()
+          })
+
+          cy.get("[data-testid='delete-template']").click()
+
+          listAllSampleTemplates()
+
+          cy.get("[data-testid='template-sample-item']").should("have.length", lengthOfSampleTemplates - 1)
+        })
 
       // Select some drafts to reuse
       cy.get("[data-testid='form-template-study']").within(() => {

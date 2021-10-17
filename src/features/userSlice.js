@@ -1,5 +1,6 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
+import _reject from "lodash/reject"
 
 import userAPIService from "services/usersAPI"
 import type { ObjectInsideFolderWithTags } from "types"
@@ -18,11 +19,16 @@ const userSlice: any = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => action.payload,
+    deleteTemplateByAccessionId: (state, action) => {
+      state.templates = _reject(state.templates, template => {
+        return template.accessionId === action.payload
+      })
+    },
     resetUser: () => initialState,
   },
 })
 
-export const { setUser, resetUser } = userSlice.actions
+export const { setUser, resetUser, deleteTemplateByAccessionId } = userSlice.actions
 export default userSlice.reducer
 
 export const fetchUserById =

@@ -152,7 +152,7 @@ const traverseFields = (
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem) || requireFirst || false
   const description = object.description
-  const autoCompleteIdentifiers = ["organisation"]
+  const autoCompleteIdentifiers = ["organisation", "name of the place of affiliation"]
 
   if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
 
@@ -634,11 +634,13 @@ const FormAutocompleteField = ({
       const defaultValue = getValues(name) || ""
 
       const fetchOrganisations = async searchTerm => {
-        const response = await rorAPIService.getOrganisations(searchTerm)
+        // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
+        const isContainingNonWordChar = searchTerm.match(/\W/g)
+        const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
 
         if (response) setLoading(false)
 
-        if (response.ok) {
+        if (response?.ok) {
           const mappedOrganisations = response.data.items.map(org => ({ name: org.name }))
           setOptions(mappedOrganisations)
         }
@@ -647,7 +649,7 @@ const FormAutocompleteField = ({
       const debouncedSearch = useCallback(
         _.debounce(newInput => {
           if (newInput.length > 0) fetchOrganisations(newInput)
-        }, 0),
+        }, 150),
         []
       )
 
@@ -670,6 +672,21 @@ const FormAutocompleteField = ({
         }
       }, [selection, inputValue, fetch])
 
+      const handleInputChange = (event, newInputValue, reason) => {
+        setInputValue(newInputValue)
+        switch (reason) {
+          case "input":
+          case "clear":
+            setInputValue(newInputValue)
+            break
+          case "reset":
+            selection ? setInputValue(selection?.name) : null
+            break
+          default:
+            break
+        }
+      }
+
       return (
         <Controller
           render={() => (
@@ -685,7 +702,7 @@ const FormAutocompleteField = ({
                   setOpen(false)
                 }}
                 options={options}
-                getOptionLabel={option => option.name || defaultValue}
+                getOptionLabel={option => option.name || ""}
                 data-testid={name}
                 disableClearable={inputValue.length === 0}
                 renderInput={params => (
@@ -712,12 +729,9 @@ const FormAutocompleteField = ({
                   setSelection(option)
                   setValue(name, option?.name)
                 }}
-                onInputChange={(event, newInputValue) => {
-                  setOptions([])
-                  setInputValue(newInputValue)
-                  setValue(name, newInputValue)
-                }}
+                onInputChange={handleInputChange}
                 value={defaultValue}
+                inputValue={inputValue}
               />
               {description && (
                 <FieldTooltip

@@ -2,6 +2,7 @@
 
 import { combineReducers } from "@reduxjs/toolkit"
 
+import autocompleteReducer from "features/autocompleteSlice"
 import clearFormReducer from "features/clearFormSlice"
 import draftStatusReducer from "features/draftStatusSlice"
 import focusReducer from "features/focusSlice"
@@ -42,6 +43,7 @@ const rootReducer: any = combineReducers({
   totalFolders: totalFoldersReducer,
   clearForm: clearFormReducer,
   templateAccessionIds: templatesReducer,
+  autocompleteField: autocompleteReducer,
 })
 
 export default rootReducer

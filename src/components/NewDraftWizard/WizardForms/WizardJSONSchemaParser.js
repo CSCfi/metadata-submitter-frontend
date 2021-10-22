@@ -23,9 +23,10 @@ import RemoveIcon from "@material-ui/icons/Remove"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import * as _ from "lodash"
 import { get } from "lodash"
-import { useFieldArray, useFormContext, useForm, Controller } from "react-hook-form"
-import { useSelector } from "react-redux"
+import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
+import { useSelector, useDispatch } from "react-redux"
 
+import { setAutocompleteField } from "features/autocompleteSlice"
 import rorAPIService from "services/rorAPI"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
@@ -149,6 +150,7 @@ const traverseFields = (
 ) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
+
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem) || requireFirst || false
   const description = object.description
@@ -559,57 +561,74 @@ const FormTextField = ({
   description,
   type = "string",
   nestedField,
-}: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => (
-  <ConnectForm>
-    {({ control }) => {
-      const classes = useStyles()
-      const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+}: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => {
+  const autocompleteField = useSelector(state => state.autocompleteField)
+  const path = name.split(".")
+  const [lastPathItem] = path.slice(-1)
 
-      const {
-        formState: { errors },
-      } = useFormContext()
+  const autofilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
 
-      return (
-        <Controller
-          render={({ field }) => {
-            const error = _.get(errors, name)
-            return (
-              <div className={classes.divBaseline}>
-                <ValidationTextField
-                  {...field}
-                  inputProps={{ "data-testid": name }}
-                  label={label}
-                  id={name}
-                  role="textbox"
-                  error={!!error}
-                  helperText={error?.message}
-                  required={required}
-                  type={type}
-                  multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
-                  rows={5}
-                  value={(typeof field.value !== "object" && field.value) || ""}
-                  onChange={e => {
-                    const val = e.target.value
-                    field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
-                  }}
-                />
-                {description && (
-                  <FieldTooltip title={description} placement="top" arrow>
-                    <HelpOutlineIcon className={classes.fieldTip} />
-                  </FieldTooltip>
-                )}
-              </div>
-            )
-          }}
-          name={name}
-          control={control}
-          defaultValue={getDefaultValue(nestedField, name)}
-          rules={{ required: required }}
-        />
-      )
-    }}
-  </ConnectForm>
-)
+  const watchFieldName = autofilledFields.includes(lastPathItem) ? path.slice(0, -1).join(".").concat(".", "name") : ""
+  const watchFieldValue = watchFieldName ? useWatch(watchFieldName) : null
+  const check = watchFieldValue ? get(watchFieldValue, watchFieldName) : null
+
+  return (
+    <ConnectForm>
+      {({ control, setValue, getValues }) => {
+        const classes = useStyles()
+        const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+
+        const val = getValues(name)
+        useEffect(() => {
+          if (check && !val) {
+            lastPathItem === autofilledFields[0] ? setValue(name, autocompleteField) : null
+            lastPathItem === autofilledFields[1] ? setValue(name, "https://ror.org") : null
+            lastPathItem === autofilledFields[2] ? setValue(name, "ROR") : null
+          }
+        }, [autocompleteField])
+
+        return (
+          <Controller
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <div className={classes.divBaseline}>
+                  <ValidationTextField
+                    {...field}
+                    inputProps={{ "data-testid": name }}
+                    label={label}
+                    id={name}
+                    role="textbox"
+                    error={!!error}
+                    helperText={error?.message}
+                    required={required}
+                    type={type}
+                    multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+                    rows={5}
+                    value={val || (typeof field.value !== "object" && field.value) || ""}
+                    onChange={e => {
+                      const val = e.target.value
+                      field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
+                    }}
+                    disabled={val?.length > 0}
+                  />
+                  {description && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.fieldTip} />
+                    </FieldTooltip>
+                  )}
+                </div>
+              )
+            }}
+            name={name}
+            control={control}
+            defaultValue={getDefaultValue(nestedField, name)}
+            rules={{ required: required }}
+          />
+        )
+      }}
+    </ConnectForm>
+  )
+}
 
 /*
  * FormAutocompleteField uses ROR API to fetch organisations
@@ -619,150 +638,159 @@ const FormAutocompleteField = ({
   label,
   required,
   description,
-}: FormFieldBaseProps & { type?: string, nestedField?: any, description: string }) => (
-  <ConnectForm>
-    {({ errors, getValues, control, setValue }) => {
-      const error = _.get(errors, name)
-      const classes = useStyles()
+}: FormFieldBaseProps & { type?: string, nestedField?: any, description: string }) => {
+  const dispatch = useDispatch()
 
-      const [selection, setSelection] = useState(null)
-      const [open, setOpen] = useState(false)
-      const [options, setOptions] = useState([])
-      const [inputValue, setInputValue] = useState("")
-      const [loading, setLoading] = useState(false)
+  return (
+    <ConnectForm>
+      {({ errors, getValues, control, setValue }) => {
+        const error = _.get(errors, name)
+        const classes = useStyles()
 
-      const defaultValue = getValues(name) || ""
+        const [selection, setSelection] = useState(null)
+        const [open, setOpen] = useState(false)
+        const [options, setOptions] = useState([])
+        const [inputValue, setInputValue] = useState("")
+        const [loading, setLoading] = useState(false)
 
-      const fetchOrganisations = async searchTerm => {
-        // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
-        const isContainingNonWordChar = searchTerm.match(/\W/g)
-        const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
+        const defaultValue = getValues(name) || ""
 
-        if (response) setLoading(false)
+        const fetchOrganisations = async searchTerm => {
+          // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
+          const isContainingNonWordChar = searchTerm.match(/\W/g)
+          const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
 
-        if (response?.ok) {
-          const mappedOrganisations = response.data.items.map(org => ({ name: org.name }))
-          setOptions(mappedOrganisations)
-        }
-      }
+          if (response) setLoading(false)
 
-      const debouncedSearch = useCallback(
-        _.debounce(newInput => {
-          if (newInput.length > 0) fetchOrganisations(newInput)
-        }, 150),
-        []
-      )
-
-      useEffect(() => {
-        let active = true
-
-        if (inputValue === "") {
-          setOptions([])
-          return undefined
+          if (response?.ok) {
+            const mappedOrganisations = response.data.items.map(org => ({ name: org.name, id: org.id }))
+            setOptions(mappedOrganisations)
+          }
         }
 
-        if (active && open) {
-          setLoading(true)
-          debouncedSearch(inputValue)
+        const debouncedSearch = useCallback(
+          _.debounce(newInput => {
+            if (newInput.length > 0) fetchOrganisations(newInput)
+          }, 150),
+          []
+        )
+
+        useEffect(() => {
+          let active = true
+
+          if (inputValue === "") {
+            setOptions([])
+            return undefined
+          }
+
+          if (active && open) {
+            setLoading(true)
+            debouncedSearch(inputValue)
+          }
+
+          return () => {
+            active = false
+            setLoading(false)
+          }
+        }, [selection, inputValue, fetch])
+
+        // const fieldsToBePrefilled = ["schemeUri", "affiliationIdentifier", "affiliationIdentifierScheme"]
+
+        const handleAutocompleteValueChange = (event, option) => {
+          setSelection(option)
+          setValue(name, option?.name)
+          dispatch(setAutocompleteField(option?.id))
         }
 
-        return () => {
-          active = false
-          setLoading(false)
+        const handleInputChange = (event, newInputValue, reason) => {
+          setInputValue(newInputValue)
+          switch (reason) {
+            case "input":
+            case "clear":
+              setInputValue(newInputValue)
+              break
+            case "reset":
+              selection ? setInputValue(selection?.name) : null
+              break
+            default:
+              break
+          }
         }
-      }, [selection, inputValue, fetch])
 
-      const handleInputChange = (event, newInputValue, reason) => {
-        setInputValue(newInputValue)
-        switch (reason) {
-          case "input":
-          case "clear":
-            setInputValue(newInputValue)
-            break
-          case "reset":
-            selection ? setInputValue(selection?.name) : null
-            break
-          default:
-            break
-        }
-      }
-
-      return (
-        <Controller
-          render={() => (
-            <div className={classes.divBaseline}>
-              <Autocomplete
-                freeSolo
-                className={classes.autocomplete}
-                open={open}
-                onOpen={() => {
-                  setOpen(true)
-                }}
-                onClose={() => {
-                  setOpen(false)
-                }}
-                options={options}
-                getOptionLabel={option => option.name || ""}
-                data-testid={name}
-                disableClearable={inputValue.length === 0}
-                renderInput={params => (
-                  <TextField
-                    {...params}
-                    label={label}
-                    id={name}
-                    name={name}
-                    variant="outlined"
-                    error={!!error}
-                    required={required}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <React.Fragment>
-                          {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                          {params.InputProps.endAdornment}
-                        </React.Fragment>
-                      ),
-                    }}
-                  />
+        return (
+          <Controller
+            render={() => (
+              <div className={classes.divBaseline}>
+                <Autocomplete
+                  freeSolo
+                  className={classes.autocomplete}
+                  open={open}
+                  onOpen={() => {
+                    setOpen(true)
+                  }}
+                  onClose={() => {
+                    setOpen(false)
+                  }}
+                  options={options}
+                  getOptionLabel={option => option.name || ""}
+                  data-testid={name}
+                  disableClearable={inputValue.length === 0}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label={label}
+                      id={name}
+                      name={name}
+                      variant="outlined"
+                      error={!!error}
+                      required={required}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                            {params.InputProps.endAdornment}
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  )}
+                  onChange={handleAutocompleteValueChange}
+                  onInputChange={handleInputChange}
+                  value={defaultValue}
+                  inputValue={inputValue}
+                />
+                {description && (
+                  <FieldTooltip
+                    title={
+                      <React.Fragment>
+                        {description}
+                        <br />
+                        {"Organisations provided by "}
+                        <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                          {"ror.org"}
+                          <LaunchIcon className={classes.externalLink} />
+                        </a>
+                        {"."}
+                      </React.Fragment>
+                    }
+                    placement="top"
+                    arrow
+                    interactive
+                  >
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
                 )}
-                onChange={(event, option) => {
-                  setSelection(option)
-                  setValue(name, option?.name)
-                }}
-                onInputChange={handleInputChange}
-                value={defaultValue}
-                inputValue={inputValue}
-              />
-              {description && (
-                <FieldTooltip
-                  title={
-                    <React.Fragment>
-                      {description}
-                      <br />
-                      {"Organisations provided by "}
-                      <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                        {"ror.org"}
-                        <LaunchIcon className={classes.externalLink} />
-                      </a>
-                      {"."}
-                    </React.Fragment>
-                  }
-                  placement="top"
-                  arrow
-                  interactive
-                >
-                  <HelpOutlineIcon className={classes.fieldTip} />
-                </FieldTooltip>
-              )}
-            </div>
-          )}
-          name={name}
-          control={control}
-        />
-      )
-    }}
-  </ConnectForm>
-)
+              </div>
+            )}
+            name={name}
+            control={control}
+          />
+        )
+      }}
+    </ConnectForm>
+  )
+}
 
 /*
  * FormSelectField is rendered for choosing one from many options
@@ -1013,7 +1041,6 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
       </Typography>
 
       {fields.map((field, index) => {
-        const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}.${index}`
 

@@ -11,6 +11,7 @@ import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
 import { WizardStatus } from "constants/wizardStatus"
+import { resetAutocompleteField } from "features/autocompleteSlice"
 import { updateStatus } from "features/wizardStatusMessageSlice"
 import folderAPIService from "services/folderAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -69,6 +70,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
         })
       )
     }
+    dispatch(resetAutocompleteField())
   }
   return (
     <FormProvider {...methods}>

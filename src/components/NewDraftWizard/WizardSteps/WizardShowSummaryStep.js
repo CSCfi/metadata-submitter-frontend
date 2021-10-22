@@ -13,13 +13,14 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
 
+import { resetAutocompleteField } from "features/autocompleteSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
@@ -74,6 +75,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
   const [openDoiDialog, setOpenDoiDialog] = useState(false)
 
   const classes = useStyles()
+  const dispatch = useDispatch()
 
   const DOIDialog = () => (
     <Dialog
@@ -92,7 +94,14 @@ const WizardShowSummaryStep = (): React$Element<any> => {
         <WizardDOIForm formId="doi-form" />
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={() => setOpenDoiDialog(false)} color="secondary">
+        <Button
+          variant="contained"
+          onClick={() => {
+            setOpenDoiDialog(false)
+            dispatch(resetAutocompleteField())
+          }}
+          color="secondary"
+        >
           Cancel
         </Button>
         <Button

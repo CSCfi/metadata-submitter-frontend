@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState: Object = ""
 
-const autocompleteSlice: any = createSlice({
-  name: "autocomplete",
+const autocompleteFieldSlice: any = createSlice({
+  name: "autocompleteField",
   initialState,
   reducers: {
     setAutocompleteField: (state, action) => action.payload,
@@ -12,5 +12,5 @@ const autocompleteSlice: any = createSlice({
   },
 })
 
-export const { setAutocompleteField, resetAutocompleteField } = autocompleteSlice.actions
-export default autocompleteSlice.reducer
+export const { setAutocompleteField, resetAutocompleteField } = autocompleteFieldSlice.actions
+export default autocompleteFieldSlice.reducer

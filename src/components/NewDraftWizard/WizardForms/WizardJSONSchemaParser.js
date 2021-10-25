@@ -566,11 +566,14 @@ const FormTextField = ({
   const path = name.split(".")
   const [lastPathItem] = path.slice(-1)
 
-  const autofilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
-
-  const watchFieldName = autofilledFields.includes(lastPathItem) ? path.slice(0, -1).join(".").concat(".", "name") : ""
-  const watchFieldValue = watchFieldName ? useWatch(watchFieldName) : null
-  const check = watchFieldValue ? get(watchFieldValue, watchFieldName) : null
+  // Case: DOI form - Affilation fields to be prefilled
+  const prefilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
+  // useWatch to watch changes in autocomplete field
+  const watchFieldName =
+    name.includes("affiliation") && prefilledFields.includes(lastPathItem)
+      ? path.slice(0, -1).join(".").concat(".", "name")
+      : ""
+  const watchFieldValue = watchFieldName ? useWatch({ name: watchFieldName }) : null
 
   return (
     <ConnectForm>
@@ -580,10 +583,10 @@ const FormTextField = ({
 
         const val = getValues(name)
         useEffect(() => {
-          if (check && !val) {
-            lastPathItem === autofilledFields[0] ? setValue(name, autocompleteField) : null
-            lastPathItem === autofilledFields[1] ? setValue(name, "https://ror.org") : null
-            lastPathItem === autofilledFields[2] ? setValue(name, "ROR") : null
+          if (watchFieldValue && !val) {
+            lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
+            lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
+            lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
           }
         }, [autocompleteField])
 
@@ -609,7 +612,7 @@ const FormTextField = ({
                       const val = e.target.value
                       field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
                     }}
-                    disabled={val?.length > 0}
+                    disabled={prefilledFields.includes(lastPathItem) && watchFieldValue !== null} // disable editing option if the field is prefilled
                   />
                   {description && (
                     <FieldTooltip title={description} placement="top" arrow>
@@ -646,14 +649,12 @@ const FormAutocompleteField = ({
       {({ errors, getValues, control, setValue }) => {
         const error = _.get(errors, name)
         const classes = useStyles()
-
+        const defaultValue = getValues(name) || ""
         const [selection, setSelection] = useState(null)
         const [open, setOpen] = useState(false)
         const [options, setOptions] = useState([])
         const [inputValue, setInputValue] = useState("")
         const [loading, setLoading] = useState(false)
-
-        const defaultValue = getValues(name) || ""
 
         const fetchOrganisations = async searchTerm => {
           // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
@@ -692,14 +693,14 @@ const FormAutocompleteField = ({
             active = false
             setLoading(false)
           }
-        }, [selection, inputValue, fetch])
+        }, [selection, inputValue])
 
         // const fieldsToBePrefilled = ["schemeUri", "affiliationIdentifier", "affiliationIdentifierScheme"]
 
         const handleAutocompleteValueChange = (event, option) => {
           setSelection(option)
           setValue(name, option?.name)
-          dispatch(setAutocompleteField(option?.id))
+          option?.id ? dispatch(setAutocompleteField(option.id)) : null
         }
 
         const handleInputChange = (event, newInputValue, reason) => {
@@ -758,7 +759,7 @@ const FormAutocompleteField = ({
                   onChange={handleAutocompleteValueChange}
                   onInputChange={handleInputChange}
                   value={defaultValue}
-                  inputValue={inputValue}
+                  inputValue={inputValue || defaultValue}
                 />
                 {description && (
                   <FieldTooltip
@@ -991,16 +992,19 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   const items = (traverseValues(object.items): any)
 
   // Needs to use "control" from useForm()
-  const { control, setValue } = useForm()
-  const { fields, append, remove } = useFieldArray({ control, name })
-
-  // Required field array handling
   const {
+    setValue,
     register,
     unregister,
     clearErrors,
     formState: { errors },
-  } = useFormContext()
+  } = useForm()
+  const { fields, append, remove } = useFieldArray({ name })
+
+  // Required field array handling
+  // const {
+
+  // } = useFormContext()
 
   const [isValid, setValid] = React.useState(false)
 
@@ -1048,7 +1052,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
           return (
-            <div className="arrayRow" key={`${name}[${index}]`}>
+            <div className="arrayRow" key={field.id}>
               <Paper elevation={2}>
                 <FormOneOfField key={`${name}[${index}]`} nestedField={field} path={pathForThisIndex} object={items} />
               </Paper>
@@ -1067,7 +1071,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
         return (
-          <Box px={1} className="arrayRow" key={`${name}[${index}]`} aria-labelledby={name}>
+          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
             <Paper elevation={2}>
               {
                 items

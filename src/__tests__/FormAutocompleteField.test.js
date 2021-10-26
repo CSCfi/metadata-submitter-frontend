@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
-import { render, screen, waitFor, within } from "@testing-library/react"
+import { render, screen, waitFor, within, act } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -81,11 +81,12 @@ describe("Test autocomplete on organisation field", () => {
 
     const autocomplete = await waitFor(() => screen.getByTestId("organisation"))
     const input = await waitFor(() => within(autocomplete).getByRole("textbox"))
-
     autocomplete.focus()
 
-    // Assign value to input field
-    userEvent.type(input, "test")
+    act(() => {
+      // Assign value to input field
+      userEvent.type(input, "test")
+    })
 
     // Find loading indicator
     await waitFor(() => screen.getByRole("progressbar"))

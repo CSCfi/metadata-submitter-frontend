@@ -607,10 +607,10 @@ const FormTextField = ({
                     type={type}
                     multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
                     rows={5}
-                    value={val || (typeof field.value !== "object" && field.value) || ""}
+                    value={(typeof val !== "object" && val) || (typeof field.value !== "object" && field.value) || ""}
                     onChange={e => {
-                      const val = e.target.value
-                      field.onChange(type === "string" && !isNaN(val) ? val.toString() : val)
+                      const { value } = e.target
+                      field.onChange(type === "string" && !isNaN(value) ? value.toString() : value)
                     }}
                     disabled={prefilledFields.includes(lastPathItem) && watchFieldValue !== null} // disable editing option if the field is prefilled
                   />
@@ -991,7 +991,6 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   const fieldValues = get(currentObject, name)
   const items = (traverseValues(object.items): any)
 
-  // Needs to use "control" from useForm()
   const {
     setValue,
     register,
@@ -999,12 +998,8 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
     clearErrors,
     formState: { errors },
   } = useForm()
+
   const { fields, append, remove } = useFieldArray({ name })
-
-  // Required field array handling
-  // const {
-
-  // } = useFormContext()
 
   const [isValid, setValid] = React.useState(false)
 
@@ -1052,7 +1047,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
           return (
-            <div className="arrayRow" key={field.id}>
+            <div className="arrayRow" key={`${name}[${index}]`}>
               <Paper elevation={2}>
                 <FormOneOfField key={`${name}[${index}]`} nestedField={field} path={pathForThisIndex} object={items} />
               </Paper>

@@ -348,7 +348,6 @@ const FormOneOfField = ({
   // Get object from state and set default values if child of oneOf field has values
   // Fetching current object values from state rather than via getValues() method gets values on first call. The getValues method results in empty object on first call
   const currentObject = useSelector(state => state.currentObject) || {}
-
   const values = currentObject[path]
     ? currentObject
     : currentObject[Object.keys(currentObject).filter(item => path.includes(item))] || {}
@@ -398,7 +397,9 @@ const FormOneOfField = ({
   // Eg. Study > Study Links
   if (nestedField) {
     for (let option of options) {
-      option.required.every(val => Object.keys(nestedField).includes(val)) ? (fieldValue = option.title) : ""
+      option.required.every(val => nestedField.fieldValues && Object.keys(nestedField.fieldValues).includes(val))
+        ? (fieldValue = option.title)
+        : ""
     }
   }
 
@@ -593,6 +594,16 @@ const FormTextField = ({
         return (
           <Controller
             render={({ field, fieldState: { error } }) => {
+              const inputValue =
+                (watchFieldValue && typeof val !== "object" && val) ||
+                (typeof field.value !== "object" && field.value) ||
+                ""
+
+              const handleChange = e => {
+                const { value } = e.target
+                field.onChange(type === "string" && !isNaN(value) ? value.toString() : value)
+              }
+
               return (
                 <div className={classes.divBaseline}>
                   <ValidationTextField
@@ -607,11 +618,8 @@ const FormTextField = ({
                     type={type}
                     multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
                     rows={5}
-                    value={(typeof val !== "object" && val) || (typeof field.value !== "object" && field.value) || ""}
-                    onChange={e => {
-                      const { value } = e.target
-                      field.onChange(type === "string" && !isNaN(value) ? value.toString() : value)
-                    }}
+                    value={inputValue}
+                    onChange={handleChange}
                     disabled={prefilledFields.includes(lastPathItem) && watchFieldValue !== null} // disable editing option if the field is prefilled
                   />
                   {description && (
@@ -991,25 +999,33 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   const fieldValues = get(currentObject, name)
   const items = (traverseValues(object.items): any)
 
-  const {
-    setValue,
-    register,
-    unregister,
-    clearErrors,
-    formState: { errors },
-  } = useForm()
+  const { control } = useForm()
 
-  const { fields, append, remove } = useFieldArray({ name })
+  const {
+    register,
+    getValues,
+    setValue,
+    unregister,
+    formState: { errors },
+    clearErrors,
+  } = useFormContext()
+
+  const { fields, append, remove } = useFieldArray({ control, name })
 
   const [isValid, setValid] = React.useState(false)
 
-  // Set the correct values to the equivalent fields when editing form
+  // Append the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
-  React.useEffect(() => {
+  // E.g. Study > StudyLinks or Experiment > Expected Base Call Table
+  useEffect(() => {
     if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object") {
-      setValue(name, fieldValues)
+      const fieldsArray = []
+      for (let i = 0; i < fieldValues.length; i += 1) {
+        fieldsArray.push({ fieldValues: fieldValues[i] })
+      }
+      append(fieldsArray)
     }
-  }, [setValue, fields])
+  }, [fields])
 
   // Clear required field array error and append
   const handleAppend = () => {
@@ -1020,7 +1036,10 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   }
 
   const handleRemove = index => {
-    // Re-register hidden input if all field arrays are removed
+    // Set the correct values according to the name path when removing a field
+    const values = getValues(name)
+    const filteredValues = values.filter((val, ind) => ind !== index)
+    setValue(name, filteredValues)
     if (index === 0) setValid(false)
     remove(index)
   }

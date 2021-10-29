@@ -9,6 +9,7 @@ import Collapse from "@material-ui/core/Collapse"
 import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormLabel from "@material-ui/core/FormLabel"
+import Grid from "@material-ui/core/Grid"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
@@ -16,6 +17,8 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
 import { useForm, FormProvider, useFormContext, Controller } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
+
+import UserDraftTemplateActions from "./UserDraftTemplateActions"
 
 import { setTemplateAccessionIds } from "features/templatesSlice"
 import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
@@ -126,28 +129,40 @@ const UserDraftTemplates = (): React$Element<any> => {
                             .map(item => {
                               const { ref, ...rest } = register(item.accessionId)
                               return (
-                                <FormControlLabel
+                                <Grid
+                                  container
                                   key={item.accessionId}
                                   className={classes.formControlLabel}
-                                  control={
-                                    <Checkbox
-                                      checked={checkedItems.find(element => element === item.accessionId) !== undefined}
-                                      color="primary"
-                                      name={item.accessionId}
-                                      value={item.accessionId}
-                                      inputRef={ref}
-                                      {...rest}
+                                  data-testid={`${item.schema}-item`}
+                                >
+                                  <Grid item xs>
+                                    <FormControlLabel
+                                      control={
+                                        <Checkbox
+                                          checked={
+                                            checkedItems.find(element => element === item.accessionId) !== undefined
+                                          }
+                                          color="primary"
+                                          name={item.accessionId}
+                                          value={item.accessionId}
+                                          inputRef={ref}
+                                          {...rest}
+                                        />
+                                      }
+                                      label={
+                                        <ListItemText
+                                          className={classes.listItemText}
+                                          primary={getItemPrimaryText(item)}
+                                          secondary={item.accessionId}
+                                          data-schema={item.schema}
+                                        />
+                                      }
                                     />
-                                  }
-                                  label={
-                                    <ListItemText
-                                      className={classes.listItemText}
-                                      primary={getItemPrimaryText(item)}
-                                      secondary={item.accessionId}
-                                      data-schema={item.schema}
-                                    />
-                                  }
-                                />
+                                  </Grid>
+                                  <Grid item xs="auto">
+                                    <UserDraftTemplateActions item={item} />
+                                  </Grid>
+                                </Grid>
                               )
                             })
                         }}

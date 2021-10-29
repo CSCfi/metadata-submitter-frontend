@@ -17,7 +17,12 @@ const getTemplateByAccessionId = async (objectType: string, accessionId: string)
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
+const deleteTemplateByAccessionId = async (objectType: string, accessionId: string): Promise<any> => {
+  return await api.delete(`/${objectType}/${accessionId}`)
+}
+
 export default {
   createTemplatesFromJSON,
   getTemplateByAccessionId,
+  deleteTemplateByAccessionId,
 }

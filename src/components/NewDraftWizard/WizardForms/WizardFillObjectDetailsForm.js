@@ -21,13 +21,13 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { resetFocus } from "features/focusSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -359,17 +359,17 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
       dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.success,
+          status: ResponseStatus.success,
           response: response,
-          errorPrefix: "",
+          helperText: "",
         })
       )
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Unexpected error",
+          helperText: "Unexpected error",
         })
       )
     }
@@ -397,9 +397,9 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.info,
+          status: ResponseStatus.info,
           response: "",
-          errorPrefix: "An empty form cannot be saved. Please fill in the form before saving it.",
+          helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
         })
       )
     }
@@ -454,7 +454,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   // States that will update in useEffect()
   const [states, setStates] = useState({
     error: false,
-    errorPrefix: "",
+    helperText: "",
     formSchema: {},
     validationSchema: {},
     isLoading: true,
@@ -477,7 +477,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
           setStates({
             ...states,
             error: true,
-            errorPrefix: "Unfortunately an error happened while catching form fields",
+            helperText: "Unfortunately an error happened while catching form fields",
             isLoading: false,
           })
           return
@@ -536,7 +536,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
 
   if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
-  if (states.error) return <Alert severity="error">{states.errorPrefix}</Alert>
+  if (states.error) return <Alert severity="error">{states.helperText}</Alert>
 
   return (
     <Container maxWidth={false} className={classes.container}>

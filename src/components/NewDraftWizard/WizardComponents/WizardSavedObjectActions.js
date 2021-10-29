@@ -7,11 +7,11 @@ import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
@@ -64,9 +64,9 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Object fetching error",
+          helperText: "Object fetching error",
         })
       )
     }
@@ -81,9 +81,9 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Draft fetching error",
+          helperText: "Draft fetching error",
         })
       )
     }
@@ -99,9 +99,9 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     ).catch(error => {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: error,
-          errorPrefix: "Can't delete object",
+          helperText: "Can't delete object",
         })
       )
     })

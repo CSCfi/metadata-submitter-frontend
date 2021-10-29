@@ -1,4 +1,4 @@
-export const WizardStatus = {
+export const ResponseStatus = {
   success: "success",
   info: "info",
   error: "error",

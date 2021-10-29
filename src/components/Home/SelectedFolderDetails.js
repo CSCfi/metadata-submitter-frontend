@@ -13,10 +13,10 @@ import { useHistory, useLocation, Link as RouterLink } from "react-router-dom"
 import WizardAlert from "../NewDraftWizard/WizardComponents/WizardAlert"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
-import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { addDraftsToUser } from "features/userSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
@@ -43,9 +43,6 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
 
   const [isFetchingFolder, setFetchingFolder] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
   const [selectedFolder, setSelectedFolder] = useState({
     folderId: "",
     folderTitle: "",
@@ -79,9 +76,13 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
         }
         objectsArr.push(objectDetails)
       } else {
-        setConnError(true)
-        setResponseError(response)
-        setErrorPrefix("Object fetching error.")
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: response,
+            helperText: "Object fetching error.",
+          })
+        )
       }
     }
 
@@ -113,9 +114,13 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
 
           setFetchingFolder(false)
         } else {
-          setConnError(true)
-          setResponseError(response)
-          setErrorPrefix("Fetching folders error.")
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: response,
+              helperText: "Fetching folders error.",
+            })
+          )
         }
       }
     }
@@ -146,16 +151,24 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       dispatch(publishFolderContent(currentFolder))
         .then(() => resetDispatch())
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error))
-          setErrorPrefix(`Couldn't publish folder with id ${selectedFolder.originalFolderData.folderId}`)
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: JSON.parse(error),
+              helperText: `Couldn't publish folder with id ${selectedFolder.originalFolderData.folderId}`,
+            })
+          )
         })
 
       formData && formData?.length > 0
         ? dispatch(addDraftsToUser("current", formData)).catch(error => {
-            setConnError(true)
-            setResponseError(JSON.parse(error))
-            setErrorPrefix("Can't save drafts for user")
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: JSON.parse(error),
+                helperText: "Can't save drafts for user",
+              })
+            )
           })
         : null
     } else {
@@ -180,9 +193,13 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       dispatch(setFolder(selectedFolder.originalFolderData))
       history.push({ pathname: pathWithLocale("newdraft"), search: `step=1` })
     } else {
-      setConnError(true)
-      setResponseError(response)
-      setErrorPrefix("Draft fetching error")
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+          helperText: "Draft fetching error",
+        })
+      )
     }
   }
 
@@ -194,10 +211,20 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       const updatedFolder = { ...selectedFolder }
       updatedFolder.allObjects = selectedFolder.allObjects.filter(item => item.accessionId !== objectId)
       setSelectedFolder(updatedFolder)
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.success,
+          helperText: "Object deleted",
+        })
+      )
     } else {
-      setConnError(true)
-      setResponseError(JSON.parse(response))
-      setErrorPrefix("Can't delete object")
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+          helperText: "Can't delete object",
+        })
+      )
     }
   }
 
@@ -240,13 +267,6 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
         </>
       )}
       {dialogOpen && <WizardAlert onAlert={handlePublish} parentLocation="footer" alertType={"publish"}></WizardAlert>}
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
-      )}
     </Grid>
   )
 }

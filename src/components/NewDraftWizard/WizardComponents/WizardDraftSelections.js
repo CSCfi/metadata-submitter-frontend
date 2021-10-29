@@ -13,11 +13,11 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
-import { WizardStatus } from "constants/wizardStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 import type { ObjectInsideFolderWithTags } from "types"
@@ -124,9 +124,9 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Error fetching current draft",
+          helperText: "Error fetching current draft",
         })
       )
     }

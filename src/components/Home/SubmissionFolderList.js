@@ -11,10 +11,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { useLocation, Link as RouterLink } from "react-router-dom"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
-import WizardStatusMessageHandler from "components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { WizardStatus } from "constants/wizardStatus"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
@@ -47,10 +47,6 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
 
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
-  const [errorPrefix, setErrorPrefix] = useState("")
-
   const location = useLocation().pathname.split("/").pop()
 
   const [page, setPage] = useState(0)
@@ -80,9 +76,13 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
               ? dispatch(setTotalFolders({ ...totalFolders, totalUnpublishedFolders: response.data.page.totalFolders }))
               : setTotalFolders({ ...totalFolders, totalPublishedFolders: response.data.page.totalFolders })
           } else {
-            if (!response.ok) setResponseError(response)
-            setConnError(true)
-            setErrorPrefix("Fetching folders error.")
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: response,
+                helperText: "Fetching folders error.",
+              })
+            )
           }
         }
       }
@@ -109,9 +109,13 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
         : dispatch(setPublishedFolders(response.data.folders))
       setItemsPerPage(numberOfItems)
     } else {
-      setResponseError(response)
-      setConnError(true)
-      setErrorPrefix("Fetching folders error.")
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+          helperText: "Fetching folders error.",
+        })
+      )
     }
   }
 
@@ -128,9 +132,13 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
         : dispatch(setPublishedFolders(response.data.folders))
       setPage(page)
     } else {
-      setResponseError(response)
-      setConnError(true)
-      setErrorPrefix("Fetching folders error.")
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+          helperText: "Fetching folders error.",
+        })
+      )
     }
   }
 
@@ -169,14 +177,6 @@ const SubmissionFolderList = (): React$Element<typeof Grid> => {
         <>
           <Submissions />
         </>
-      )}
-
-      {connError && (
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseError}
-          prefixText={errorPrefix}
-        />
       )}
     </Grid>
   )

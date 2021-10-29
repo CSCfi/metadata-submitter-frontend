@@ -11,6 +11,7 @@ import { Switch, Route, useLocation, Redirect } from "react-router-dom"
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
+import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
 import { ObjectTypes } from "constants/wizardObject"
 import { setLocale } from "features/localeSlice"
@@ -71,6 +72,9 @@ const App = (): React$Element<typeof React.Fragment> => {
   const dispatch = useDispatch()
 
   const locale = useSelector(state => state.locale)
+  const statusDetails = useSelector(state =>
+    state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
+  )
 
   // Fetch array of schemas from backend and store it in frontend
   // Fetch only if the initial array is empty
@@ -189,6 +193,14 @@ const App = (): React$Element<typeof React.Fragment> => {
           <Page404 />
         </Route>
       </Switch>
+      {/* Centralized status message handler */}
+      {statusDetails?.status && !Array.isArray(statusDetails.response) && (
+        <StatusMessageHandler
+          status={statusDetails.status}
+          response={statusDetails.response}
+          helperText={statusDetails.helperText}
+        />
+      )}
     </React.Fragment>
   )
 }

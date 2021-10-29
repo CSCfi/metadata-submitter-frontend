@@ -4,27 +4,23 @@ import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import WizardStatusMessageHandler from "../components/NewDraftWizard/WizardForms/WizardStatusMessageHandler"
+import StatusMessageHandler from "../components/StatusMessageHandler"
 
-import { WizardStatus } from "constants/wizardStatus"
+import { ResponseStatus } from "constants/responseStatus"
 
 const mockStore = configureStore([])
 
-describe("WizardStatusMessageHandler", () => {
+describe("StatusMessageHandler", () => {
   const store = mockStore({
     errorMessage: "",
   })
 
   it("should render error message", () => {
     const responseMock = { data: { accessionId: "TESTID1234", status: 504 } }
-    const prefixTextMock = "Test prefix"
+    const helperTextMock = "Test prefix"
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler
-          successStatus={WizardStatus.error}
-          response={responseMock}
-          prefixText={prefixTextMock}
-        />
+        <StatusMessageHandler status={ResponseStatus.error} response={responseMock} helperText={helperTextMock} />
       </Provider>
     )
     expect(screen.getByRole("alert")).toBeDefined()
@@ -34,7 +30,7 @@ describe("WizardStatusMessageHandler", () => {
   it("should render info message", () => {
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler successStatus={WizardStatus.info} />
+        <StatusMessageHandler status={ResponseStatus.info} />
       </Provider>
     )
     expect(
@@ -46,7 +42,7 @@ describe("WizardStatusMessageHandler", () => {
     const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/drafts" } }
     render(
       <Provider store={store}>
-        <WizardStatusMessageHandler response={responseMock} successStatus={WizardStatus.success} />
+        <StatusMessageHandler response={responseMock} status={ResponseStatus.success} />
       </Provider>
     )
     expect(screen.getByText(/Draft saved with accessionid TESTID1234/i)).toBeDefined()

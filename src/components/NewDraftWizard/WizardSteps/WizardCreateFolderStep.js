@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React from "react"
 
 import Accordion from "@material-ui/core/Accordion"
 import AccordionDetails from "@material-ui/core/AccordionDetails"
@@ -14,11 +14,11 @@ import { useHistory } from "react-router-dom"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
-import WizardStatusMessageHandler from "../WizardForms/WizardStatusMessageHandler"
 
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
-import { WizardStatus } from "constants/wizardStatus"
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { resetTemplateAccessionIds } from "features/templatesSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
@@ -68,8 +68,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const folder = useSelector(state => state.submissionFolder)
   const user = useSelector(state => state.user)
   const templateAccessionIds = useSelector(state => state.templateAccessionIds)
-  const [connError, setConnError] = useState(false)
-  const [responseError, setResponseError] = useState({})
+
   const {
     handleSubmit,
     control,
@@ -79,7 +78,6 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const history = useHistory()
 
   const onSubmit = async (data: FolderDataFromForm) => {
-    setConnError(false)
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
     const selectedDraftsArray = user.templates
       ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
@@ -91,7 +89,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
-        .catch(() => setConnError(true))
+        .catch(error => {
+          dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
+        })
     } else {
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, selectedDraftsArray))
@@ -100,8 +100,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {
-          setConnError(true)
-          setResponseError(JSON.parse(error))
+          dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
         })
     }
   }
@@ -162,9 +161,6 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           <UserDraftTemplates />
         </AccordionDetails>
       </Accordion>
-      {connError && (
-        <WizardStatusMessageHandler successStatus={WizardStatus.error} response={responseError} prefixText="" />
-      )}
     </>
   )
 }

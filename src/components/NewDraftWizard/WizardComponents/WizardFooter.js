@@ -10,9 +10,9 @@ import { useHistory, Link as RouterLink } from "react-router-dom"
 import WizardAlert from "./WizardAlert"
 
 import saveDraftsAsTemplates from "components/NewDraftWizard/WizardHooks/WizardSaveTemplatesHook"
-import { WizardStatus } from "constants/wizardStatus"
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { useQuery, pathWithLocale } from "utils"
@@ -74,9 +74,9 @@ const WizardFooter = (): React$Element<any> => {
         .catch(error => {
           dispatch(
             updateStatus({
-              successStatus: WizardStatus.error,
+              status: ResponseStatus.error,
               response: error,
-              errorPrefix: "",
+              helperText: "",
             })
           )
         })
@@ -92,9 +92,9 @@ const WizardFooter = (): React$Element<any> => {
         .catch(error => {
           dispatch(
             updateStatus({
-              successStatus: WizardStatus.error,
+              status: ResponseStatus.error,
               response: error,
-              errorPrefix: `Couldn't publish folder with id ${folder.folderId}`,
+              helperText: `Couldn't publish folder with id ${folder.folderId}`,
             })
           )
         })

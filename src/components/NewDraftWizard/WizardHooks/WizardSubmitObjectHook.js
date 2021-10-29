@@ -1,14 +1,16 @@
 //@flow
+
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
+import { setFileTypes } from "features/fileTypesSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
-import { getObjectDisplayTitle } from "utils"
+import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
 
 const submitObjectHook = async (formData: any, folderId: string, objectType: string, dispatch: function): any => {
   dispatch(setLoading())
@@ -27,6 +29,11 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
 
   if (response.ok) {
     const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues)
+    // Dispatch fileTypes if object is Run or Analysis
+    if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+      const objectWithFileTypes = getNewUniqueFileTypes(response.data.accessionId, formData)
+      objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
+    }
 
     dispatch(
       addObjectToFolder(folderId, {

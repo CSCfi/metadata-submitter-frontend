@@ -25,6 +25,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
+import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -32,7 +33,7 @@ import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSu
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import type { FolderDetailsWithId } from "types"
-import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds } from "utils"
+import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -362,8 +363,24 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
   const patchObject = async () => {
     resetTimer()
     const cleanedValues = getCleanedValues()
-    const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-    patchHandler(response, cleanedValues)
+    try {
+      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
+      patchHandler(response, cleanedValues)
+
+      // Dispatch fileTypes if object is Run or Analysis
+      if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues)
+        objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
+      }
+    } catch (err) {
+      dispatch(
+        updateStatus({
+          successStatus: WizardStatus.error,
+          response: err,
+          errorPrefix: "Unexpected error when modifying object",
+        })
+      )
+    }
   }
 
   const handleSubmitForm = () => {

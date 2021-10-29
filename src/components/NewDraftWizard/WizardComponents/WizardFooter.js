@@ -98,6 +98,7 @@ const WizardFooter = (): React$Element<any> => {
             })
           )
         })
+      dispatch(resetFileTypes())
     } else {
       setDialogOpen(false)
     }

@@ -5,10 +5,12 @@ import { combineReducers } from "@reduxjs/toolkit"
 import autocompleteReducer from "features/autocompleteSlice"
 import clearFormReducer from "features/clearFormSlice"
 import draftStatusReducer from "features/draftStatusSlice"
+import fileTypesReducer from "features/fileTypesSlice"
 import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
 import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
+import openedDoiFormReducer from "features/openedDoiFormSlice"
 import openedRowsReducer from "features/openedRowsSlice"
 import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
@@ -44,6 +46,8 @@ const rootReducer: any = combineReducers({
   clearForm: clearFormReducer,
   templateAccessionIds: templatesReducer,
   autocompleteField: autocompleteReducer,
+  fileTypes: fileTypesReducer,
+  openedDoiForm: openedDoiFormReducer,
 })
 
 export default rootReducer

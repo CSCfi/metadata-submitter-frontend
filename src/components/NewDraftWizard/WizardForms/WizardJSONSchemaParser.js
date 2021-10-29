@@ -21,8 +21,7 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline"
 import LaunchIcon from "@material-ui/icons/Launch"
 import RemoveIcon from "@material-ui/icons/Remove"
 import Autocomplete from "@material-ui/lab/Autocomplete"
-import * as _ from "lodash"
-import { get } from "lodash"
+import { get, flatten, uniqBy, debounce } from "lodash"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 
@@ -124,8 +123,19 @@ const ConnectForm = ({ children }: { children: any }) => {
 const getDefaultValue = (nestedField?: any, name: string) => {
   if (nestedField) {
     const path = name.split(".")
-    for (var i = 1, n = path.length; i < n; ++i) {
-      var k = path[i]
+    if (path.length > 1) {
+      for (var i = 1, n = path.length; i < n; ++i) {
+        var k = path[i]
+        if (k in nestedField) {
+          nestedField = nestedField[k]
+        } else {
+          return
+        }
+      }
+    }
+    // E.g. Case of DOI form - Formats's fields
+    if (path.length === 1) {
+      const k = path[0].split("[")[0]
       if (k in nestedField) {
         nestedField = nestedField[k]
       } else {
@@ -278,7 +288,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
   return (
     <ConnectForm>
       {({ errors }) => {
-        const error = _.get(errors, name)
+        const error = get(errors, name)
         return (
           <div>
             <div className="formSection" key={`${name}-section`}>
@@ -444,7 +454,7 @@ const FormOneOfField = ({
   return (
     <ConnectForm>
       {({ errors, unregister, setValue, getValues, reset }) => {
-        const error = _.get(errors, name)
+        const error = get(errors, name)
         // Option change handling
         const [field, setField] = useState(fieldValue)
 
@@ -563,18 +573,31 @@ const FormTextField = ({
   type = "string",
   nestedField,
 }: FormFieldBaseProps & { description: string, type?: string, nestedField?: any }) => {
+  const openedDoiForm = useSelector(state => state.openedDoiForm)
   const autocompleteField = useSelector(state => state.autocompleteField)
   const path = name.split(".")
   const [lastPathItem] = path.slice(-1)
 
+  // Default Value of input
+  const defaultValue = getDefaultValue(nestedField, name)
+
   // Case: DOI form - Affilation fields to be prefilled
   const prefilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
-  // useWatch to watch changes in autocomplete field
-  const watchFieldName =
-    name.includes("affiliation") && prefilledFields.includes(lastPathItem)
-      ? path.slice(0, -1).join(".").concat(".", "name")
-      : ""
-  const watchFieldValue = watchFieldName ? useWatch({ name: watchFieldName }) : null
+  let watchFieldName = ""
+  let watchFieldValue = null
+  if (openedDoiForm) {
+    // useWatch to watch changes in autocomplete field
+    watchFieldName =
+      name.includes("affiliation") && prefilledFields.includes(lastPathItem)
+        ? path.slice(0, -1).join(".").concat(".", "name")
+        : ""
+    watchFieldValue = watchFieldName ? useWatch({ name: watchFieldName }) : null
+  }
+
+  // Conditions to disable input field: disable editing option if the field is prefilled
+  const disabled =
+    (prefilledFields.includes(lastPathItem) && watchFieldValue !== null) ||
+    (defaultValue !== "" && name.includes("formats"))
 
   return (
     <ConnectForm>
@@ -582,9 +605,10 @@ const FormTextField = ({
         const classes = useStyles()
         const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
 
+        // Check value of current name path
         const val = getValues(name)
         useEffect(() => {
-          if (watchFieldValue && !val) {
+          if (openedDoiForm && watchFieldValue && !val) {
             lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
             lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
             lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
@@ -595,7 +619,7 @@ const FormTextField = ({
           <Controller
             render={({ field, fieldState: { error } }) => {
               const inputValue =
-                (watchFieldValue && typeof val !== "object" && val) ||
+                (watchFieldName && typeof val !== "object" && val) ||
                 (typeof field.value !== "object" && field.value) ||
                 ""
 
@@ -620,7 +644,7 @@ const FormTextField = ({
                     rows={5}
                     value={inputValue}
                     onChange={handleChange}
-                    disabled={prefilledFields.includes(lastPathItem) && watchFieldValue !== null} // disable editing option if the field is prefilled
+                    disabled={disabled}
                   />
                   {description && (
                     <FieldTooltip title={description} placement="top" arrow>
@@ -632,7 +656,7 @@ const FormTextField = ({
             }}
             name={name}
             control={control}
-            defaultValue={getDefaultValue(nestedField, name)}
+            defaultValue={defaultValue}
             rules={{ required: required }}
           />
         )
@@ -655,7 +679,7 @@ const FormAutocompleteField = ({
   return (
     <ConnectForm>
       {({ errors, getValues, control, setValue }) => {
-        const error = _.get(errors, name)
+        const error = get(errors, name)
         const classes = useStyles()
         const defaultValue = getValues(name) || ""
         const [selection, setSelection] = useState(null)
@@ -678,7 +702,7 @@ const FormAutocompleteField = ({
         }
 
         const debouncedSearch = useCallback(
-          _.debounce(newInput => {
+          debounce(newInput => {
             if (newInput.length > 0) fetchOrganisations(newInput)
           }, 150),
           []
@@ -879,7 +903,7 @@ const ValidationFormControlLabel = withStyles(theme => ({
 const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => (
   <ConnectForm>
     {({ register, errors, getValues }) => {
-      const error = _.get(errors, name)
+      const error = get(errors, name)
       const classes = useStyles()
       const { ref, ...rest } = register(name)
       // DAC form: "values" of MainContact checkbox
@@ -939,7 +963,7 @@ const FormCheckBoxArray = ({
       {({ register, errors, getValues }) => {
         const values = getValues()[name]
 
-        const error = _.get(errors, name)
+        const error = get(errors, name)
         const classes = useStyles()
         const { ref, ...rest } = register(name)
 
@@ -996,6 +1020,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
   // Get currentObject and the values of current field
   const currentObject = useSelector(state => state.currentObject) || {}
+  const fileTypes = useSelector(state => state.fileTypes)
   const fieldValues = get(currentObject, name)
   const items = (traverseValues(object.items): any)
 
@@ -1026,6 +1051,18 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
       append(fieldsArray)
     }
   }, [fields])
+
+  // Get unique fileTypes from submitted fileTypes
+  const uniqueFileTypes = uniqBy(flatten(fileTypes.map(obj => obj.fileTypes)))
+
+  useEffect(() => {
+    // Append fileType to formats' field
+    if (name === "formats") {
+      for (let i = 0; i < uniqueFileTypes.length; i += 1) {
+        append({ formats: uniqueFileTypes[i] })
+      }
+    }
+  }, [uniqueFileTypes.length])
 
   // Clear required field array error and append
   const handleAppend = () => {

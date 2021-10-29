@@ -1,5 +1,5 @@
 //@flow
-import React, { useState } from "react"
+import React from "react"
 
 import Button from "@material-ui/core/Button"
 import Dialog from "@material-ui/core/Dialog"
@@ -21,6 +21,7 @@ import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
 
 import { resetAutocompleteField } from "features/autocompleteSlice"
+import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
@@ -66,13 +67,12 @@ const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
   const objectsArray = useSelector(state => state.objectTypesArray)
+  const openedDoiForm = useSelector(state => state.openedDoiForm)
   const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
     return {
       [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
     }
   })
-
-  const [openDoiDialog, setOpenDoiDialog] = useState(false)
 
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -81,8 +81,8 @@ const WizardShowSummaryStep = (): React$Element<any> => {
     <Dialog
       maxWidth="md"
       fullWidth
-      open={openDoiDialog}
-      onClose={() => setOpenDoiDialog(false)}
+      open={openedDoiForm}
+      onClose={() => dispatch(setOpenedDoiForm(false))}
       aria-labelledby="doi-dialog-title"
       aria-describedby="doi-dialog-description"
     >
@@ -97,7 +97,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
         <Button
           variant="contained"
           onClick={() => {
-            setOpenDoiDialog(false)
+            dispatch(setOpenedDoiForm(false))
             dispatch(resetAutocompleteField())
           }}
           color="secondary"
@@ -107,7 +107,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
         <Button
           variant="contained"
           onClick={() => {
-            setOpenDoiDialog(false)
+            dispatch(setOpenedDoiForm(false))
           }}
           color="primary"
           type="submit"
@@ -165,11 +165,11 @@ const WizardShowSummaryStep = (): React$Element<any> => {
         variant="contained"
         color="secondary"
         className={classes.doiButton}
-        onClick={() => setOpenDoiDialog(true)}
+        onClick={() => dispatch(setOpenedDoiForm(true))}
       >
         Add DOI information (optional)
       </Button>
-      {openDoiDialog && <DOIDialog />}
+      {openedDoiForm && <DOIDialog />}
     </>
   )
 }

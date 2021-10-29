@@ -7,9 +7,9 @@ import MenuItem from "@material-ui/core/MenuItem"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
 import { useDispatch } from "react-redux"
 
-import { WizardStatus } from "constants/wizardStatus"
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
 import { deleteTemplateByAccessionId } from "features/userSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
 import templateAPI from "services/templateAPI"
 
 const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: string } }): React$Element<any> => {
@@ -36,7 +36,7 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
     } else {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: response,
           errorPrefix: "Unable to delete template",
         })

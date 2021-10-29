@@ -10,9 +10,9 @@ import { useSelector, useDispatch } from "react-redux"
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
-import { WizardStatus } from "constants/wizardStatus"
+import { ResponseStatus } from "constants/responseStatus"
 import { resetAutocompleteField } from "features/autocompleteSlice"
-import { updateStatus } from "features/wizardStatusMessageSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import folderAPIService from "services/folderAPI"
 import schemaAPIService from "services/schemaAPI"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
@@ -35,7 +35,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
         } catch (err) {
           dispatch(
             updateStatus({
-              successStatus: WizardStatus.error,
+              status: ResponseStatus.error,
               response: err,
               errorPrefix: "Can't submit the DOI information",
             })
@@ -64,7 +64,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
     } catch (err) {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: err,
           errorPrefix: "Can't submit information for DOI.",
         })

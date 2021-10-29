@@ -375,7 +375,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
     } catch (err) {
       dispatch(
         updateStatus({
-          successStatus: WizardStatus.error,
+          status: ResponseStatus.error,
           response: err,
           errorPrefix: "Unexpected error when modifying object",
         })

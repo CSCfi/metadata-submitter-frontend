@@ -123,23 +123,23 @@ const ConnectForm = ({ children }: { children: any }) => {
 const getDefaultValue = (nestedField?: any, name: string) => {
   if (nestedField) {
     const path = name.split(".")
-    if (path.length > 1) {
+    // E.g. Case of DOI form - Formats's fields
+    if (path[0] === "formats") {
+      const k = path[0]
+      if (k in nestedField) {
+        nestedField = nestedField[k]
+      } else {
+        return
+      }
+    } else {
       for (var i = 1, n = path.length; i < n; ++i) {
         var k = path[i]
+
         if (k in nestedField) {
           nestedField = nestedField[k]
         } else {
           return
         }
-      }
-    }
-    // E.g. Case of DOI form - Formats's fields
-    if (path.length === 1) {
-      const k = path[0].split("[")[0]
-      if (k in nestedField) {
-        nestedField = nestedField[k]
-      } else {
-        return
       }
     }
     return nestedField
@@ -1053,7 +1053,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   }, [fields])
 
   // Get unique fileTypes from submitted fileTypes
-  const uniqueFileTypes = uniqBy(flatten(fileTypes.map(obj => obj.fileTypes)))
+  const uniqueFileTypes = uniqBy(flatten(fileTypes?.map(obj => obj.fileTypes)))
 
   useEffect(() => {
     // Append fileType to formats' field

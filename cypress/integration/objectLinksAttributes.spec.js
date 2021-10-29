@@ -22,32 +22,37 @@ describe("render objects' links and attributes ", function () {
     cy.get("div").contains("Study Links").parents().children("button").click()
 
     // Choose XRef Link
-    cy.get("select[name='studyLinks[0]']").select("XRef Link")
+    cy.get("select[name='studyLinks.0']").select("XRef Link")
 
-    cy.get("input[name='studyLinks[0].xrefDb']").type("Test XRef Database")
-    cy.get("input[name='studyLinks[0].xrefId']").type("Test XRef Database ID")
-    cy.get("input[name='studyLinks[0].label']").type("Test XRef Label")
+    cy.get("input[name='studyLinks.0.xrefDb']").type("Test XRef Database")
+    cy.get("input[name='studyLinks.0.xrefId']").type("Test XRef Database ID")
+    cy.get("input[name='studyLinks.0.label']").type("Test XRef Label")
 
-    // Add new URL Link
+    // URL Links
     cy.get("div").contains("Study Links").parents().children("button").click()
-    cy.get("select[name='studyLinks[1]']").select("URL Link")
+    cy.get("select[name='studyLinks.1']").select("URL Link")
+    cy.get("input[name='studyLinks.1.label']").type("Test URL Label")
 
-    cy.get("input[name='studyLinks[1].label']").type("Test URL Label")
-    cy.get("input[name='studyLinks[1].url']").type("https://testlink.com")
+    // Add new invalid URL Link (form array, one of)
+    cy.get("input[name='studyLinks.1.url']").type("testlink.com").blur()
+    cy.get("p[id='studyLinks.1.url-helper-text']").contains("must match pattern")
+
+    // Add new valid URL Link
+    cy.get("input[name='studyLinks.1.url']").clear().type("https://testlink.com").blur()
 
     // Add new Entrez Link
     cy.get("div").contains("Study Links").parents().children("button").click()
-    cy.get("select[name='studyLinks[2]']").select("Entrez Link")
+    cy.get("select[name='studyLinks.2']").select("Entrez Link")
 
-    cy.get("select[name='studyLinks[2].entrezDb']").select("genome")
-    cy.get("input[name='studyLinks[2].entrezId']").type("Test Entrez Database ID")
-    cy.get("input[name='studyLinks[2].label']").type("Test Entrez Label")
+    cy.get("select[name='studyLinks.2.entrezDb']").select("genome")
+    cy.get("input[name='studyLinks.2.entrezId']").type("Test Entrez Database ID")
+    cy.get("input[name='studyLinks.2.label']").type("Test Entrez Label")
 
     // Choose Study Attributes
     cy.get("div").contains("Study Attributes").parents().children("button").click()
 
-    cy.get("input[name='studyAttributes[0].tag']").type("Test Attributes Tag")
-    cy.get("textarea[name='studyAttributes[0].value']").type("Test Attributes Value")
+    cy.get("input[name='studyAttributes.0.tag']").type("Test Attributes Tag")
+    cy.get("textarea[name='studyAttributes.0.value']").type("Test Attributes Value")
 
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
@@ -58,23 +63,23 @@ describe("render objects' links and attributes ", function () {
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "Test title")
 
     // Check XRef Link
-    cy.get("select[name='studyLinks[0]']").should("have.value", "XRef Link")
-    cy.get("input[name='studyLinks[0].xrefDb']").should("have.value", "Test XRef Database")
-    cy.get("input[name='studyLinks[0].xrefId']").should("have.value", "Test XRef Database ID")
-    cy.get("input[name='studyLinks[0].label']").should("have.value", "Test XRef Label")
+    cy.get("select[name='studyLinks.0']").should("have.value", "XRef Link")
+    cy.get("input[name='studyLinks.0.xrefDb']").should("have.value", "Test XRef Database")
+    cy.get("input[name='studyLinks.0.xrefId']").should("have.value", "Test XRef Database ID")
+    cy.get("input[name='studyLinks.0.label']").should("have.value", "Test XRef Label")
 
     // Check URL Link
-    cy.get("select[name='studyLinks[1]']").should("have.value", "URL Link")
-    cy.get("input[name='studyLinks[1].label']").should("have.value", "Test URL Label")
-    cy.get("input[name='studyLinks[1].url']").should("have.value", "https://testlink.com")
+    cy.get("select[name='studyLinks.1']").should("have.value", "URL Link")
+    cy.get("input[name='studyLinks.1.label']").should("have.value", "Test URL Label")
+    cy.get("input[name='studyLinks.1.url']").should("have.value", "https://testlink.com")
 
     // Check Entrez Link
-    cy.get("select[name='studyLinks[2]']").should("have.value", "Entrez Link")
-    cy.get("select[name='studyLinks[2].entrezDb']").should("have.value", "genome")
-    cy.get("input[name='studyLinks[2].entrezId']").should("have.value", "Test Entrez Database ID")
-    cy.get("input[name='studyLinks[2].label']").should("have.value", "Test Entrez Label")
+    cy.get("select[name='studyLinks.2']").should("have.value", "Entrez Link")
+    cy.get("select[name='studyLinks.2.entrezDb']").should("have.value", "genome")
+    cy.get("input[name='studyLinks.2.entrezId']").should("have.value", "Test Entrez Database ID")
+    cy.get("input[name='studyLinks.2.label']").should("have.value", "Test Entrez Label")
 
-    cy.get("input[name='studyAttributes[0].tag']").should("have.value", "Test Attributes Tag")
-    cy.get("textarea[name='studyAttributes[0].value']").should("have.value", "Test Attributes Value")
+    cy.get("input[name='studyAttributes.0.tag']").should("have.value", "Test Attributes Tag")
+    cy.get("textarea[name='studyAttributes.0.value']").should("have.value", "Test Attributes Value")
   })
 })

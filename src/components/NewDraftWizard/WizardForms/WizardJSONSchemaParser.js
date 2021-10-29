@@ -564,9 +564,15 @@ const FormTextField = ({
     {({ control }) => {
       const classes = useStyles()
       const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+
+      const {
+        formState: { errors },
+      } = useFormContext()
+
       return (
         <Controller
-          render={({ field, fieldState: { error } }) => {
+          render={({ field }) => {
+            const error = _.get(errors, name)
             return (
               <div className={classes.divBaseline}>
                 <ValidationTextField
@@ -951,9 +957,12 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   // Required field array handling
   const {
     register,
+    unregister,
     clearErrors,
     formState: { errors },
   } = useFormContext()
+
+  const [isValid, setValid] = React.useState(false)
 
   // Set the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
@@ -965,16 +974,24 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
   // Clear required field array error and append
   const handleAppend = () => {
+    unregister(name)
+    setValid(true)
     clearErrors([name])
     append({})
   }
 
+  const handleRemove = index => {
+    // Re-register hidden input if all field arrays are removed
+    if (index === 0) setValid(false)
+    remove(index)
+  }
+
   return (
     <div className="array" key={`${name}-array`} aria-labelledby={name}>
-      {required && <input hidden={true} value="form-array-required" {...register(name)} />}
+      {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
       <Typography key={`${name}-header`} variant={`h${level}`} data-testid={name} role="heading">
         <span id={name}>{label}</span> {required ? "*" : null}
-        {required && errors[name] && (
+        {required && !isValid && errors[name] && (
           <span>
             <FormControl error>
               <FormHelperText>must have at least 1 item</FormHelperText>
@@ -986,7 +1003,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
       {fields.map((field, index) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
-        const lastPathItemWithIndex = `${lastPathItem}[${index}]`
+        const lastPathItemWithIndex = `${lastPathItem}.${index}`
 
         if (items.oneOf) {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
@@ -996,7 +1013,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
               <Paper elevation={2}>
                 <FormOneOfField key={`${name}[${index}]`} nestedField={field} path={pathForThisIndex} object={items} />
               </Paper>
-              <IconButton onClick={() => remove(index)}>
+              <IconButton onClick={() => handleRemove(index)}>
                 <RemoveIcon />
               </IconButton>
             </div>
@@ -1019,7 +1036,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
                 return traverseFields(properties[item], pathForThisIndex, requiredField, false, field)
               })}
             </Paper>
-            <IconButton onClick={() => remove(index)}>
+            <IconButton onClick={() => handleRemove(index)}>
               <RemoveIcon />
             </IconButton>
           </Box>

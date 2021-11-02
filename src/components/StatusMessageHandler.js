@@ -1,6 +1,7 @@
 //@flow
 import React, { useState } from "react"
 
+import Portal from "@material-ui/core/Portal"
 import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
 import { useDispatch } from "react-redux"
@@ -101,6 +102,14 @@ const SuccessHandler = ({
             message = `Submitted with accessionid ${response.data.accessionId}`
           }
         }
+        break
+      }
+      case "/templates": {
+        switch (response.config.method) {
+          default: {
+            message = `Template updated with accessionid ${response.data.accessionId}`
+          }
+        }
       }
     }
   } else {
@@ -146,9 +155,11 @@ const StatusMessageHandler = ({
   }
 
   return (
-    <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
-      {messageTemplate(status)}
-    </Snackbar>
+    <Portal>
+      <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
+        {messageTemplate(status)}
+      </Snackbar>
+    </Portal>
   )
 }
 

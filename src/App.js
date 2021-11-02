@@ -197,7 +197,7 @@ const App = (): React$Element<typeof React.Fragment> => {
         </Route>
       </Switch>
       {/* Centralized status message handler */}
-      {statusDetails?.status && !Array.isArray(statusDetails.response) && (
+      {statusDetails?.status === "asd" && !Array.isArray(statusDetails.response) && (
         <StatusMessageHandler
           status={statusDetails.status}
           response={statusDetails.response}

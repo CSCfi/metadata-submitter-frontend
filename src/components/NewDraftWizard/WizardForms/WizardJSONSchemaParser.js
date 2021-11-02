@@ -1073,11 +1073,12 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   }
 
   const handleRemove = index => {
+    // Re-register hidden input if all field arrays are removed
+    if (index === 0) setValid(false)
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
     const filteredValues = values.filter((val, ind) => ind !== index)
     setValue(name, filteredValues)
-    if (index === 0) setValid(false)
     remove(index)
   }
 
@@ -1103,9 +1104,9 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
           const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
           return (
-            <div className="arrayRow" key={`${name}[${index}]`}>
+            <div className="arrayRow" key={field.id} data-testid={`${name}[${index}]`}>
               <Paper elevation={2}>
-                <FormOneOfField key={`${name}[${index}]`} nestedField={field} path={pathForThisIndex} object={items} />
+                <FormOneOfField key={field.id} nestedField={field} path={pathForThisIndex} object={items} />
               </Paper>
               <IconButton onClick={() => handleRemove(index)}>
                 <RemoveIcon />

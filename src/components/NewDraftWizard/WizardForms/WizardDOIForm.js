@@ -12,8 +12,10 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { resetAutocompleteField } from "features/autocompleteSlice"
+import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import folderAPIService from "services/folderAPI"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { addDoiInfoToFolder } from "features/wizardSubmissionFolderSlice"
 import schemaAPIService from "services/schemaAPI"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -50,27 +52,34 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
     getDataciteSchema()
   }, [])
 
+  const currentFolder = useSelector(state => state.submissionFolder)
   const resolver = WizardAjvResolver(dataciteSchema)
   const methods = useForm({ mode: "onBlur", resolver })
 
-  const currentFolder = useSelector(state => state.submissionFolder)
   const dispatch = useDispatch()
   const classes = useStyles()
 
+  // Set form default values
+  useEffect(() => {
+    methods.reset(currentFolder.doiInfo)
+  }, [])
+
   const onSubmit = async data => {
-    try {
-      const changes = [{ op: "add", path: "/doiInfo", value: data }]
-      await folderAPIService.patchFolderById(currentFolder.folderId, changes)
-    } catch (err) {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: err,
-          errorPrefix: "Can't submit information for DOI.",
-        })
+    dispatch(addDoiInfoToFolder(currentFolder.folderId, data))
+      .then(() => {
+        dispatch(resetAutocompleteField())
+        dispatch(setOpenedDoiForm(false))
+        dispatch(resetCurrentObject())
+      })
+      .catch(err =>
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: err,
+            errorPrefix: "Can't submit information for DOI.",
+          })
+        )
       )
-    }
-    dispatch(resetAutocompleteField())
   }
   return (
     <FormProvider {...methods}>

@@ -22,6 +22,7 @@ import WizardDOIForm from "../WizardForms/WizardDOIForm"
 
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setOpenedDoiForm } from "features/openedDoiFormSlice"
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
@@ -94,30 +95,26 @@ const WizardShowSummaryStep = (): React$Element<any> => {
         <WizardDOIForm formId="doi-form" />
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="contained"
-          onClick={() => {
-            dispatch(setOpenedDoiForm(false))
-            dispatch(resetAutocompleteField())
-          }}
-          color="secondary"
-        >
+        <Button variant="contained" onClick={handleCancelDoiDialog} color="secondary">
           Cancel
         </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            dispatch(setOpenedDoiForm(false))
-          }}
-          color="primary"
-          type="submit"
-          form="doi-form"
-        >
+        <Button variant="contained" color="primary" type="submit" form="doi-form">
           Save DOI info
         </Button>
       </DialogActions>
     </Dialog>
   )
+
+  const handleCancelDoiDialog = () => {
+    dispatch(setOpenedDoiForm(false))
+    dispatch(resetAutocompleteField())
+    dispatch(resetCurrentObject())
+  }
+
+  const handleOpenDoiDialog = () => {
+    dispatch(setOpenedDoiForm(true))
+    dispatch(setCurrentObject(folder.doiInfo))
+  }
 
   return (
     <>
@@ -161,12 +158,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
           )
         })}
       </div>
-      <Button
-        variant="contained"
-        color="secondary"
-        className={classes.doiButton}
-        onClick={() => dispatch(setOpenedDoiForm(true))}
-      >
+      <Button variant="contained" color="secondary" className={classes.doiButton} onClick={handleOpenDoiDialog}>
         Add DOI information (optional)
       </Button>
       {openedDoiForm && <DOIDialog />}

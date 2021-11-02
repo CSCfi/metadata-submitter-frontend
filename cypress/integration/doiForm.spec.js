@@ -100,6 +100,7 @@ describe("DOI form", function () {
     cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
     cy.get("div[role='dialog']").should("be.visible")
 
+    cy.wait(500)
     // Check file types from submitted Run form and Analysis form are Uniquely pre-filled in DOI form
     cy.get("input[data-testid='formats.0']", { timeout: 10000 }).should("have.value", "bam")
     cy.get("input[data-testid='formats.1']", { timeout: 10000 }).should("have.value", "cram")

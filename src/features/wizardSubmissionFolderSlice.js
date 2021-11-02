@@ -24,6 +24,9 @@ const wizardSubmissionFolderSlice: any = createSlice({
     addDraftObject: (state, action) => {
       state.drafts.push(action.payload)
     },
+    addDoiInfo: (state, action) => {
+      state.doiInfo = action.payload
+    },
     deleteObject: (state, action) => {
       state.metadataObjects = _reject(state.metadataObjects, function (o) {
         return o.accessionId === action.payload
@@ -48,6 +51,7 @@ export const {
   setFolder,
   addObject,
   addDraftObject,
+  addDoiInfo,
   deleteObject,
   deleteDraftObject,
   modifyObjectTags,
@@ -233,4 +237,19 @@ export const deleteFolderAndContent =
         }
       })
     }
+  }
+
+export const addDoiInfoToFolder =
+  (folderId: string, doiFormDetails: any): ((dispatch: (any) => void) => Promise<any>) =>
+  async (dispatch: any => void) => {
+    const changes = [{ op: "add", path: "/doiInfo", value: doiFormDetails }]
+    const response = await folderAPIService.patchFolderById(folderId, changes)
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        dispatch(addDoiInfo(doiFormDetails))
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
   }

@@ -1,7 +1,6 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
-import _extend from "lodash/extend"
-import _reject from "lodash/reject"
+import { extend, reject, merge } from "lodash"
 
 import draftAPIService from "../services/draftAPI"
 import objectAPIService from "../services/objectAPI"
@@ -28,12 +27,12 @@ const wizardSubmissionFolderSlice: any = createSlice({
       state.doiInfo = action.payload
     },
     deleteObject: (state, action) => {
-      state.metadataObjects = _reject(state.metadataObjects, function (o) {
+      state.metadataObjects = reject(state.metadataObjects, function (o) {
         return o.accessionId === action.payload
       })
     },
     deleteDraftObject: (state, action) => {
-      state.drafts = _reject(state.drafts, function (o) {
+      state.drafts = reject(state.drafts, function (o) {
         return o.accessionId === action.payload
       })
     },
@@ -98,7 +97,7 @@ export const updateNewDraftFolder =
         ? folderDetails.folder.drafts.concat(selectedDraftsArray)
         : folderDetails.folder.drafts
 
-    const updatedFolder = _extend(
+    const updatedFolder = extend(
       { ...folderDetails.folder },
       { name: folderDetails.name, description: folderDetails.description, drafts: updatedDrafts }
     )
@@ -242,8 +241,26 @@ export const deleteFolderAndContent =
 export const addDoiInfoToFolder =
   (folderId: string, doiFormDetails: any): ((dispatch: (any) => void) => Promise<any>) =>
   async (dispatch: any => void) => {
-    const changes = [{ op: "add", path: "/doiInfo", value: doiFormDetails }]
+    const nameType = { nameType: "Personal" }
+    // Add "nameType": "Personal" to "creators" and "contributors"
+    const modifiedCreators = doiFormDetails.creators?.map(creator => ({
+      ...creator,
+      ...nameType,
+    }))
+
+    const modifiedContributors = doiFormDetails.contributors?.map(contributor => ({
+      ...contributor,
+      ...nameType,
+    }))
+
+    const modifiedDoiFormDetails = merge({}, doiFormDetails, {
+      creators: modifiedCreators,
+      contributors: modifiedContributors,
+    })
+
+    const changes = [{ op: "add", path: "/doiInfo", value: modifiedDoiFormDetails }]
     const response = await folderAPIService.patchFolderById(folderId, changes)
+
     return new Promise((resolve, reject) => {
       if (response.ok) {
         dispatch(addDoiInfo(doiFormDetails))

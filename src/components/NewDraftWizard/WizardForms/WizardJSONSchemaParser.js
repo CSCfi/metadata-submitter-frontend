@@ -1117,7 +1117,9 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
 
         const properties = object.items.properties
         let requiredProperties =
-          index === 0 ? object.contains?.allOf?.flatMap(item => item.required) : object.items?.required
+          index === 0 && object.contains?.allOf
+            ? object.contains?.allOf?.flatMap(item => item.required) // Case: DAC - Main Contact needs at least 1
+            : object.items?.required
 
         // Force first array item as required field if array is required but none of the items are required
         if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]

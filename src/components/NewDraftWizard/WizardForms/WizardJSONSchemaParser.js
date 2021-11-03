@@ -63,6 +63,11 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(1),
     },
   },
+  autocompleteInput: {
+    "& .MuiAutocomplete-endAdornment": {
+      top: 0,
+    },
+  },
   externalLink: {
     fontSize: "1rem",
     marginBottom: theme.spacing(-0.5),
@@ -782,6 +787,7 @@ const FormAutocompleteField = ({
                   renderInput={params => (
                     <TextField
                       {...params}
+                      className={classes.autocompleteInput}
                       label={label}
                       id={name}
                       name={name}

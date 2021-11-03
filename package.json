@@ -12,7 +12,7 @@
     "@testing-library/react": "^12.1.1",
     "ajv": "^8.6.3",
     "ajv-formats": "^2.1.1",
-    "apisauce": "^2.1.1",
+    "apisauce": "^2.1.2",
     "i18next": "^21.2.4",
     "jest": "26.6.0",
     "lodash": "^4.17.21",
@@ -20,7 +20,7 @@
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.16.2",
     "react-i18next": "^11.13.0",
-    "react-redux": "^7.2.5",
+    "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^4.0.3"
   },

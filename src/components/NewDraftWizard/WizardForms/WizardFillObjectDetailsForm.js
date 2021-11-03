@@ -180,8 +180,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         root: classes.cardHeader,
         action: classes.cardHeaderAction,
       }}
-      className={currentObject.status === ObjectStatus.template ? classes.resetTopMargin : null}
-      action={currentObject.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
+      className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : null}
+      action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
     />
   )
 }
@@ -330,7 +330,7 @@ const FormContent = ({
     resetTimer()
 
     // Prevent auto save from template dialog
-    if (currentObject.status !== ObjectStatus.template) startTimer()
+    if (currentObject?.status !== ObjectStatus.template) startTimer()
   }
 
   useEffect(() => {
@@ -382,7 +382,6 @@ const FormContent = ({
     dispatch(
       updateStatus({
         status: ResponseStatus.info,
-        response: "",
         helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
       })
     )
@@ -393,9 +392,6 @@ const FormContent = ({
 
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
-
-      // closeDialog()
-      // console.log(response)
 
       if (response.ok) {
         dispatch(
@@ -499,7 +495,7 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { closeDialog: () => void }): React$Element<typeof Container> => {
+const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): React$Element<typeof Container> => {
   const { closeDialog } = props
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -606,7 +602,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog: () => void }): React$
         folder={folder}
         currentObject={currentObject}
         key={currentObject?.accessionId || folder.folderId}
-        closeDialog={closeDialog}
+        closeDialog={closeDialog || (() => {})}
       />
       {submitting && <LinearProgress />}
     </Container>

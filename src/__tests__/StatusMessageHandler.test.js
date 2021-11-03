@@ -11,13 +11,15 @@ import { ResponseStatus } from "constants/responseStatus"
 const mockStore = configureStore([])
 
 describe("StatusMessageHandler", () => {
-  const store = mockStore({
-    errorMessage: "",
-  })
-
   it("should render error message", () => {
     const responseMock = { data: { accessionId: "TESTID1234", status: 504 } }
     const helperTextMock = "Test prefix"
+
+    const store = mockStore({
+      // errorMessage: "",
+      statusDetails: { status: ResponseStatus.error, response: responseMock, helperText: helperTextMock },
+    })
+
     render(
       <Provider store={store}>
         <StatusMessageHandler status={ResponseStatus.error} response={responseMock} helperText={helperTextMock} />
@@ -28,6 +30,10 @@ describe("StatusMessageHandler", () => {
   })
 
   it("should render info message", () => {
+    const store = mockStore({
+      statusDetails: { status: ResponseStatus.info },
+    })
+
     render(
       <Provider store={store}>
         <StatusMessageHandler status={ResponseStatus.info} />
@@ -40,6 +46,11 @@ describe("StatusMessageHandler", () => {
 
   it("should render success message", () => {
     const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/drafts" } }
+
+    const store = mockStore({
+      statusDetails: { status: ResponseStatus.success, response: responseMock },
+    })
+
     render(
       <Provider store={store}>
         <StatusMessageHandler response={responseMock} status={ResponseStatus.success} />

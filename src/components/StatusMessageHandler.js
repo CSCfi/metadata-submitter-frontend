@@ -1,10 +1,10 @@
 //@flow
 import React, { useState } from "react"
 
-import Portal from "@material-ui/core/Portal"
+// import Portal from "@material-ui/core/Portal"
 import Snackbar from "@material-ui/core/Snackbar"
 import Alert from "@material-ui/lab/Alert"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
@@ -123,7 +123,7 @@ const SuccessHandler = ({
   )
 }
 
-const StatusMessageHandler = ({
+const Message = ({
   status,
   response,
   helperText,
@@ -155,11 +155,25 @@ const StatusMessageHandler = ({
   }
 
   return (
-    <Portal>
-      <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
-        {messageTemplate(status)}
-      </Snackbar>
-    </Portal>
+    <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
+      {messageTemplate(status)}
+    </Snackbar>
+  )
+}
+
+const StatusMessageHandler = (): React$Element<any> => {
+  const statusDetails = useSelector(state => state.statusDetails)
+
+  return (
+    <React.Fragment>
+      {statusDetails?.status && !Array.isArray(statusDetails.response) && (
+        <Message
+          status={statusDetails.status}
+          response={statusDetails.response}
+          helperText={statusDetails.helperText}
+        />
+      )}
+    </React.Fragment>
   )
 }
 

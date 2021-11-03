@@ -1,7 +1,9 @@
 //@flow
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = null
+import type { StatusDetails, Response } from "types"
+
+const initialState: null | StatusDetails = null
 
 const statusMessageSlice: any = createSlice({
   name: "wizardStatusMessage",
@@ -14,14 +16,23 @@ const statusMessageSlice: any = createSlice({
 export const { setStatusDetails, resetStatusDetails } = statusMessageSlice.actions
 export default statusMessageSlice.reducer
 
-type StatusDetails = {
-  status: string,
-  response?: Object,
-  helperText?: string,
-}
-
 export const updateStatus =
   (statusDetails: StatusDetails): ((dispatch: (any) => void) => Promise<void>) =>
   async (dispatch: any => void) => {
-    dispatch(setStatusDetails(JSON.stringify(statusDetails)))
+    const response = statusDetails.response || {}
+
+    const statusResponse: Response = {
+      config: { baseURL: response.config.baseURL, method: response.config.method },
+      data: response.data,
+      ok: response.ok,
+      status: response.status,
+    }
+
+    const details: StatusDetails = {
+      status: statusDetails.status,
+      response: statusResponse,
+      helperText: statusDetails.helperText,
+    }
+
+    dispatch(setStatusDetails(details))
   }

@@ -70,6 +70,12 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
         dispatch(resetAutocompleteField())
         dispatch(setOpenedDoiForm(false))
         dispatch(resetCurrentObject())
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "DOI form has been saved successfully",
+          })
+        )
       })
       .catch(err =>
         dispatch(

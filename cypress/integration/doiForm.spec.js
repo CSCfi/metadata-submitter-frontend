@@ -1,5 +1,5 @@
 describe("DOI form", function () {
-  it("should render DOI form correctly with formats' prefilled values and affiliation's autocomplete field", () => {
+  beforeEach(() => {
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
@@ -10,7 +10,8 @@ describe("DOI form", function () {
     cy.get("button[type=button]").contains("Next").click()
 
     cy.wait(500)
-
+  })
+  it("should render DOI form correctly with formats' prefilled values and affiliation's autocomplete field", () => {
     // Fill in Run form
     cy.clickFillForm("Run")
 
@@ -100,7 +101,6 @@ describe("DOI form", function () {
     cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
     cy.get("div[role='dialog']").should("be.visible")
 
-    cy.wait(500)
     // Check file types from submitted Run form and Analysis form are Uniquely pre-filled in DOI form
     cy.get("input[data-testid='formats.0']", { timeout: 10000 }).should("have.value", "bam")
     cy.get("input[data-testid='formats.1']", { timeout: 10000 }).should("have.value", "cram")
@@ -191,5 +191,27 @@ describe("DOI form", function () {
       "https://ror.org/03fknzz27"
     )
     cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifier").should("be.disabled")
-  })
+  }),
+    it("should fill the required fields and save DOI form successfully", () => {
+      // Go to DOI form
+      cy.get("button[type=button]").contains("Next").click()
+      cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
+      cy.get("div[role='dialog']").should("be.visible")
+
+      // Fill in required Creators field
+      cy.get("h2[data-testid='creators']").parent().children("button").click()
+      cy.get("input[data-testid='creators.0.givenName']").type("John Smith")
+
+      // Fill in required Subjects field
+      cy.get("h2[data-testid='subjects']").parent().children("button").click()
+      cy.get("select[name='subjects.0.subject']").select("FOS: Mathematics")
+
+      cy.get("button[type='submit']").click()
+      cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
+
+      // Open the DOI form again and check the fields render correctly
+      cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
+      cy.get("input[data-testid='creators.0.givenName']").should("have.value", "John Smith")
+      cy.get("select[name='subjects.0.subject']").should("have.value", "FOS: Mathematics")
+    })
 })

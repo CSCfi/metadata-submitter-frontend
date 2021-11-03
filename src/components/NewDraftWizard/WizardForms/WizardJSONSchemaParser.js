@@ -1029,7 +1029,8 @@ type FormArrayProps = {
 /*
  * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
  */
-const FormArray = ({ object, path, required }: FormArrayProps) => {
+const FormArray = ({ object, path, required, description }: FormArrayProps & { description: string }) => {
+  const classes = useStyles()
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -1111,6 +1112,11 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
               <FormHelperText>must have at least 1 item</FormHelperText>
             </FormControl>
           </span>
+        )}
+        {description && (
+          <FieldTooltip title={description} placement="top" arrow>
+            <HelpOutlineIcon className={classes.sectionTip} />
+          </FieldTooltip>
         )}
       </Typography>
 

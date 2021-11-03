@@ -583,15 +583,17 @@ const FormTextField = ({
 
   // Case: DOI form - Affilation fields to be prefilled
   const prefilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
-  let watchFieldName = ""
+  let watchAutocompleteFieldName = ""
   let watchFieldValue = null
   if (openedDoiForm) {
-    // useWatch to watch changes in autocomplete field
-    watchFieldName =
+    watchAutocompleteFieldName =
       name.includes("affiliation") && prefilledFields.includes(lastPathItem)
         ? path.slice(0, -1).join(".").concat(".", "name")
         : ""
-    watchFieldValue = watchFieldName ? useWatch({ name: watchFieldName }) : null
+    // useWatch to watch any changes in form's fields
+    const watchValues = useWatch()
+    // check changes of value of autocompleteField from watchValues
+    watchFieldValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
   }
 
   // Conditions to disable input field: disable editing option if the field is prefilled
@@ -607,19 +609,28 @@ const FormTextField = ({
 
         // Check value of current name path
         const val = getValues(name)
-        useEffect(() => {
-          if (openedDoiForm && watchFieldValue && !val) {
-            lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
-            lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
-            lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
-          }
-        }, [autocompleteField])
+
+        if (openedDoiForm) {
+          // Set values for Affiliations' fields if autocompleteField exists
+          useEffect(() => {
+            if (watchFieldValue && !val) {
+              lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
+              lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
+              lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
+            }
+          }, [autocompleteField])
+
+          // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
+          useEffect(() => {
+            if (watchFieldValue === undefined && val && lastPathItem === prefilledFields[0]) setValue(name, "")
+          }, [watchFieldValue])
+        }
 
         return (
           <Controller
             render={({ field, fieldState: { error } }) => {
               const inputValue =
-                (watchFieldName && typeof val !== "object" && val) ||
+                (watchAutocompleteFieldName && typeof val !== "object" && val) ||
                 (typeof field.value !== "object" && field.value) ||
                 ""
 

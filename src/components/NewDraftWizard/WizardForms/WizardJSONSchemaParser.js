@@ -618,7 +618,7 @@ const FormTextField = ({
               lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
               lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
             }
-          }, [autocompleteField])
+          }, [autocompleteField, watchFieldValue])
 
           // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
           useEffect(() => {
@@ -1032,6 +1032,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
   // Get currentObject and the values of current field
   const currentObject = useSelector(state => state.currentObject) || {}
   const fileTypes = useSelector(state => state.fileTypes)
+
   const fieldValues = get(currentObject, name)
   const items = (traverseValues(object.items): any)
 

@@ -1137,7 +1137,7 @@ const FormArray = ({ object, path, required }: FormArrayProps) => {
         if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
         return (
-          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
+          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name} data-testid={name}>
             <Paper elevation={2}>
               {
                 items

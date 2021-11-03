@@ -1,5 +1,5 @@
 describe("DOI form", function () {
-  it("should render DOI form correctly with affiliation's autocomplete field and formats' prefilled values ", () => {
+  it("should render DOI form correctly with formats' prefilled values and affiliation's autocomplete field", () => {
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
@@ -127,6 +127,30 @@ describe("DOI form", function () {
     cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("have.value", "ROR")
     cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
 
+    // Remove Creators > Affiliations field and add a new field again
+    cy.get("div[data-testid='creators.0.affiliation']").children("button").click()
+    cy.get("h3[data-testid='creators.0.affiliation']").parent().children("button").click()
+
+    // Repeat search words in autocomplete field
+    cy.get("input[name='creators.0.affiliation.0.name']").type("csc")
+    // Select the first result
+    cy.get(".MuiAutocomplete-option")
+      .should("be.visible")
+      .then($el => $el.first().click())
+
+    // Check the rest 3 fields are auto-filled and disabled as they should be
+    cy.get("input[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
+    cy.get("input[data-testid='creators.0.affiliation.0.schemeUri']").should("be.disabled")
+
+    cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifier").should(
+      "have.value",
+      "https://ror.org/04m8m1253"
+    )
+    cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifier").should("be.disabled")
+
+    cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("have.value", "ROR")
+    cy.get("input[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
+
     // Go to Contributors and Add new item
     cy.get("h2[data-testid='contributors']").parents().children("button").click()
     cy.get("h3[data-testid='contributors.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
@@ -148,5 +172,24 @@ describe("DOI form", function () {
 
     cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifierScheme']").should("have.value", "ROR")
     cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
+
+    // Delete the autocompleteField value and check the field <affiliationIdentifier> also removed
+    cy.get("input[name='contributors.0.affiliation.0.name']")
+      .parent()
+      .children("div[class='MuiAutocomplete-endAdornment']")
+      .click()
+    cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifier']").should("have.value", "")
+
+    // Type new search words
+    cy.get("input[name='contributors.0.affiliation.0.name']").type("test")
+    // Select the first result and check the <affiliationIdentifier> field is filled and disabled
+    cy.get(".MuiAutocomplete-option")
+      .should("be.visible")
+      .then($el => $el.first().click())
+    cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifier").should(
+      "have.value",
+      "https://ror.org/03fknzz27"
+    )
+    cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifier").should("be.disabled")
   })
 })

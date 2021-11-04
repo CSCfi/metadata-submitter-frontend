@@ -28,6 +28,7 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
+import { replaceTemplate } from "features/userSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
@@ -119,9 +120,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const templateButtonGroup = (
     <div className={classes.buttonGroup}>
-      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
-        Clear form
-      </Button>
       <Button
         type="submit"
         variant="contained"
@@ -204,6 +202,7 @@ const FormContent = ({
   const draftStatus = useSelector(state => state.draftStatus)
   const alert = useSelector(state => state.alert)
   const clearForm = useSelector(state => state.clearForm)
+  const user = useSelector(state => state.user)
 
   const methods = useForm({ mode: "onBlur", resolver })
 
@@ -393,14 +392,31 @@ const FormContent = ({
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
 
+      const templates = user.templates
+      const index = templates.findIndex(item => item.accessionId === currentObject.accessionId)
+      const displayTitle = getObjectDisplayTitle(objectType, cleanedValues)
+
       if (response.ok) {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            response: response,
-            helperText: "",
+        closeDialog()
+        dispatch(replaceTemplate(index, displayTitle, currentObject.accessionId))
+          .then(
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.success,
+                response: response,
+                helperText: "",
+              })
+            )
+          )
+          .catch(error => {
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: error,
+                helperText: "Cannot replace template",
+              })
+            )
           })
-        )
       } else {
         dispatch(
           updateStatus({
@@ -558,6 +574,12 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): React
     }
 
     if (objectType.length) fetchSchema()
+
+    // Reset current object in state on unmount
+    return () => {
+      dispatch(resetCurrentObject())
+      dispatch(resetDraftStatus())
+    }
   }, [objectType])
 
   // All Analysis AccessionIds

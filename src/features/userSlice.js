@@ -19,6 +19,10 @@ const userSlice: any = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => action.payload,
+    updateTemplateDisplayTitle: (state, action) => {
+      state.templates.find(item => item.accessionId === action.payload.accessionId).tags.displayTitle =
+        action.payload.displayTitle
+    },
     deleteTemplateByAccessionId: (state, action) => {
       state.templates = _reject(state.templates, template => {
         return template.accessionId === action.payload
@@ -28,7 +32,7 @@ const userSlice: any = createSlice({
   },
 })
 
-export const { setUser, resetUser, deleteTemplateByAccessionId } = userSlice.actions
+export const { setUser, resetUser, updateTemplateDisplayTitle, deleteTemplateByAccessionId } = userSlice.actions
 export default userSlice.reducer
 
 export const fetchUserById =
@@ -60,6 +64,24 @@ export const addDraftsToUser =
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }
+
+export const replaceTemplate =
+  (index: number, displayTitle: string, accessionId: string): ((dispatch: (any) => void) => Promise<any>) =>
+  async (dispatch: any => void) => {
+    const tags: { displayTitle: string } = { displayTitle: displayTitle }
+
+    const changes = [{ op: "replace", path: `/templates/${index}/tags`, value: tags }]
+    const response = await userAPIService.patchUserById("current", changes)
+
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        dispatch(updateTemplateDisplayTitle({ accessionId: accessionId, displayTitle: displayTitle }))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

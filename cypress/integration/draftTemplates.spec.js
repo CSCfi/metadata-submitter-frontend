@@ -97,7 +97,7 @@ describe("draft selections and templates", function () {
       cy.get("h1", { timeout: 10000 }).contains("Sample").should("be.visible")
       cy.get("[data-testid='title']").should("have.value", "Sample draft title")
     }),
-    it("should be able to select and delete draft templates and reuse them when creating a new folder", () => {
+    it("should be able to select, edit and delete draft templates and reuse them when creating a new folder", () => {
       // Select drafts inside the dialog
       cy.get("form").within(() => {
         cy.get("input[type='checkbox']").first().check()
@@ -111,6 +111,28 @@ describe("draft selections and templates", function () {
       // Check if the drafts have been saved as user's templates in Home page
       cy.contains("Your Draft Templates", { timeout: 10000 }).should("be.visible")
 
+      // Edit template
+      cy.get("[data-testid='form-template-sample']").within(() => {
+        cy.get("button").first().click()
+      })
+
+      cy.get("[data-testid='edit-template']").click()
+
+      cy.get("[role='presentation']").within(() => {
+        cy.get("input[name='title']").should("be.visible")
+        cy.get("input[name='title']").type(" edit", { force: true })
+        cy.get("input[name='title']").should("have.value", "Sample draft title edit")
+
+        cy.get("button[type='submit']").click()
+      })
+
+      cy.get("div[role=alert]", { timeout: 10000 }).contains("Template updated with")
+
+      // Re-query template item
+      cy.get("[data-testid='template-sample-item']").first().as("firstSampleTemplate")
+      cy.get("@firstSampleTemplate").should("contain", "Sample draft title edit")
+
+      // Count sample templates, delete template and test that template count has decreased
       const listAllSampleTemplates = () => {
         cy.get("[data-testid='template-sample-item']")
           .its("length")
@@ -126,7 +148,6 @@ describe("draft selections and templates", function () {
 
       listAllSampleTemplates()
 
-      // Count sample templates, delete template and test that template count has decreased
       cy.get("[data-testid='template-sample-item']")
         .its("length")
         .then(lengthOfSampleTemplates => {
@@ -198,6 +219,7 @@ describe("draft selections and templates", function () {
       cy.get("button[type=button]").contains("Next").click()
 
       cy.wait(500)
+
       // Check that the new template is added as a draft
       cy.clickFillForm("Study")
       cy.get("[data-testid='Draft-objects']").children().should("have.length", 2)

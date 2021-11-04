@@ -169,7 +169,9 @@ const StatusMessageHandler = (): React$Element<any> => {
       {statusDetails?.status && !Array.isArray(statusDetails.response) && (
         <Message
           status={statusDetails.status}
-          response={statusDetails.response}
+          response={
+            typeof statusDetails.response === "string" ? JSON.parse(statusDetails.response) : statusDetails.response
+          }
           helperText={statusDetails.helperText}
         />
       )}

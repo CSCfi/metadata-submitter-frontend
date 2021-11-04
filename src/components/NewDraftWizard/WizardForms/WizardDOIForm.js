@@ -39,7 +39,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
             updateStatus({
               status: ResponseStatus.error,
               response: err,
-              errorPrefix: "Can't submit the DOI information",
+              helperText: "Can't submit the DOI information",
             })
           )
         }
@@ -82,7 +82,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
           updateStatus({
             status: ResponseStatus.error,
             response: err,
-            errorPrefix: "Can't submit information for DOI.",
+            helperText: "Can't submit information for DOI.",
           })
         )
       )

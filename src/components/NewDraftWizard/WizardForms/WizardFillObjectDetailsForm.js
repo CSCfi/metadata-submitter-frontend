@@ -377,7 +377,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
         updateStatus({
           status: ResponseStatus.error,
           response: err,
-          errorPrefix: "Unexpected error when modifying object",
+          helperText: "Unexpected error when modifying object",
         })
       )
     }

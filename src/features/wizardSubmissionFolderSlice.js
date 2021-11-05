@@ -253,9 +253,18 @@ export const addDoiInfoToFolder =
       ...nameType,
     }))
 
+    const subjectSchema = { subjectScheme: "Fields of Science and Technology (FOS)"}
+    // Add fixed subject schema as we are using FOS by default
+
+    const modifiedSubjects = doiFormDetails.subjects?.map(subject => ({
+      ...subject,
+      ...subjectSchema,
+    }))
+
     const modifiedDoiFormDetails = merge({}, doiFormDetails, {
       creators: modifiedCreators,
       contributors: modifiedContributors,
+      subjects: modifiedSubjects,
     })
 
     const changes = [{ op: "add", path: "/doiInfo", value: modifiedDoiFormDetails }]

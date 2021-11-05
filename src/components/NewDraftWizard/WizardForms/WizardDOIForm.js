@@ -27,6 +27,7 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
   const [dataciteSchema, setDataciteSchema] = useState({})
 
   useEffect(() => {
+    let isMounted = true
     const getDataciteSchema = async () => {
       let dataciteSchema = sessionStorage.getItem(`cached_datacite_schema`)
       if (!dataciteSchema || !new Ajv().validateSchema(JSON.parse(dataciteSchema))) {
@@ -47,9 +48,14 @@ const DOIForm = ({ formId }: { formId: string }): React$Element<typeof FormProvi
         dataciteSchema = JSON.parse(dataciteSchema)
       }
       const dereferencedDataciteSchema = await dereferenceSchema(dataciteSchema)
-      setDataciteSchema(dereferencedDataciteSchema)
+      if (isMounted) {
+        setDataciteSchema(dereferencedDataciteSchema)
+      }
     }
     getDataciteSchema()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const currentFolder = useSelector(state => state.submissionFolder)

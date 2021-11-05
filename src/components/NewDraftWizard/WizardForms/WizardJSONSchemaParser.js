@@ -27,7 +27,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import { setAutocompleteField } from "features/autocompleteSlice"
 import rorAPIService from "services/rorAPI"
-import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
+import { pathToName, traverseValues, getPathName } from "utils/JSONSchemaUtils"
 
 /*
  * Highlight style for required fields
@@ -589,22 +589,40 @@ const FormTextField = ({
   // Case: DOI form - Affilation fields to be prefilled
   const prefilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
   let watchAutocompleteFieldName = ""
-  let watchFieldValue = null
+  let prefilledValue = null
+
+  let fullNameValue = "" // Case: DOI form - Creators and Contributors' FullName
+
+  let disabled = false // boolean if inputValue is disabled
+
   if (openedDoiForm) {
     watchAutocompleteFieldName =
-      name.includes("affiliation") && prefilledFields.includes(lastPathItem)
-        ? path.slice(0, -1).join(".").concat(".", "name")
-        : ""
+      name.includes("affiliation") && prefilledFields.includes(lastPathItem) ? getPathName(path, "name") : ""
+
     // useWatch to watch any changes in form's fields
     const watchValues = useWatch()
-    // check changes of value of autocompleteField from watchValues
-    watchFieldValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
-  }
 
-  // Conditions to disable input field: disable editing option if the field is prefilled
-  const disabled =
-    (prefilledFields.includes(lastPathItem) && watchFieldValue !== null) ||
-    (defaultValue !== "" && name.includes("formats"))
+    // check changes of value of autocompleteField from watchValues
+    prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
+
+    // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and LastName
+    const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
+
+    if (isFullNameField) {
+      const givenName = getPathName(path, "givenName")
+      const givenNameValue = get(watchValues, givenName) || ""
+      const lastName = getPathName(path, "familyName")
+      const lastNameValue = get(watchValues, lastName)?.length > 0 ? get(watchValues, lastName).concat(",") : ""
+      // Return value for FullName field
+      fullNameValue = `${lastNameValue}${givenNameValue}`
+    }
+
+    // Conditions to disable input field: disable editing option if the field is rendered as prefilled
+    disabled =
+      (prefilledFields.includes(lastPathItem) && prefilledValue !== null) ||
+      isFullNameField ||
+      (defaultValue !== "" && name.includes("formats"))
+  }
 
   return (
     <ConnectForm>
@@ -618,17 +636,17 @@ const FormTextField = ({
         if (openedDoiForm) {
           // Set values for Affiliations' fields if autocompleteField exists
           useEffect(() => {
-            if (watchFieldValue && !val) {
+            if (prefilledValue && !val) {
               lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
               lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
               lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
             }
-          }, [autocompleteField, watchFieldValue])
+          }, [autocompleteField, prefilledValue])
 
           // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
           useEffect(() => {
-            if (watchFieldValue === undefined && val && lastPathItem === prefilledFields[0]) setValue(name, "")
-          }, [watchFieldValue])
+            if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0]) setValue(name, "")
+          }, [prefilledValue])
         }
 
         return (
@@ -636,6 +654,7 @@ const FormTextField = ({
             render={({ field, fieldState: { error } }) => {
               const inputValue =
                 (watchAutocompleteFieldName && typeof val !== "object" && val) ||
+                fullNameValue ||
                 (typeof field.value !== "object" && field.value) ||
                 ""
 

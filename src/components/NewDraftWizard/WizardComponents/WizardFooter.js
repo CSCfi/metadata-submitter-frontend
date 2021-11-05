@@ -11,6 +11,7 @@ import WizardAlert from "./WizardAlert"
 
 import saveDraftsAsTemplates from "components/NewDraftWizard/WizardHooks/WizardSaveTemplatesHook"
 import { ResponseStatus } from "constants/responseStatus"
+import { resetFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
@@ -98,6 +99,7 @@ const WizardFooter = (): React$Element<any> => {
             })
           )
         })
+      dispatch(resetFileTypes())
     } else {
       setDialogOpen(false)
     }

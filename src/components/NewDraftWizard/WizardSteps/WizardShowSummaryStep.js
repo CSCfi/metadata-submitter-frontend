@@ -1,18 +1,28 @@
 //@flow
 import React from "react"
 
+import Button from "@material-ui/core/Button"
+import Dialog from "@material-ui/core/Dialog"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogTitle from "@material-ui/core/DialogTitle"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardStepper from "../WizardComponents/WizardStepper"
+import WizardDOIForm from "../WizardForms/WizardDOIForm"
 
+import { resetAutocompleteField } from "features/autocompleteSlice"
+import { setOpenedDoiForm } from "features/openedDoiFormSlice"
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import type { ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
@@ -42,6 +52,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start",
     padding: theme.spacing(1.5),
   },
+  doiButton: {
+    marginTop: theme.spacing(4),
+  },
 }))
 
 type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
@@ -55,6 +68,7 @@ const WizardShowSummaryStep = (): React$Element<any> => {
   const folder = useSelector(state => state.submissionFolder)
   const { metadataObjects } = folder
   const objectsArray = useSelector(state => state.objectTypesArray)
+  const openedDoiForm = useSelector(state => state.openedDoiForm)
   const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
     return {
       [(schema: string)]: metadataObjects.filter(object => object.schema.toLowerCase() === schema.toLowerCase()),
@@ -62,6 +76,45 @@ const WizardShowSummaryStep = (): React$Element<any> => {
   })
 
   const classes = useStyles()
+  const dispatch = useDispatch()
+
+  const DOIDialog = () => (
+    <Dialog
+      maxWidth="md"
+      fullWidth
+      open={openedDoiForm}
+      onClose={() => dispatch(setOpenedDoiForm(false))}
+      aria-labelledby="doi-dialog-title"
+      aria-describedby="doi-dialog-description"
+    >
+      <DialogTitle id="doi-dialog-title">DOI information</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="doi-dialog-description" data-testid="doi-dialog-content">
+          Please fill in and save the information if you would like your submission to have DOI.
+        </DialogContentText>
+        <WizardDOIForm formId="doi-form" />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={handleCancelDoiDialog} color="secondary">
+          Cancel
+        </Button>
+        <Button variant="contained" color="primary" type="submit" form="doi-form">
+          Save DOI info
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
+  const handleCancelDoiDialog = () => {
+    dispatch(setOpenedDoiForm(false))
+    dispatch(resetAutocompleteField())
+    dispatch(resetCurrentObject())
+  }
+
+  const handleOpenDoiDialog = () => {
+    dispatch(setOpenedDoiForm(true))
+    dispatch(setCurrentObject(folder.doiInfo))
+  }
 
   return (
     <>
@@ -105,6 +158,10 @@ const WizardShowSummaryStep = (): React$Element<any> => {
           )
         })}
       </div>
+      <Button variant="contained" color="secondary" className={classes.doiButton} onClick={handleOpenDoiDialog}>
+        Add DOI information (optional)
+      </Button>
+      {openedDoiForm && <DOIDialog />}
     </>
   )
 }

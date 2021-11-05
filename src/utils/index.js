@@ -10,6 +10,7 @@ import MUITablePagination from "@material-ui/core/TablePagination"
 import TableRow from "@material-ui/core/TableRow"
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft"
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight"
+import { uniqBy } from "lodash"
 import { useLocation } from "react-router-dom"
 
 import { Locale } from "constants/locale"
@@ -220,4 +221,18 @@ export const pathWithLocale = (path: string): any => {
   const locale = localStorage.getItem("locale") || Locale.defaultLocale
 
   return `/${locale}/${path}`
+}
+
+// Get unique "fileTypes" from Run form or Analysis form
+export const getNewUniqueFileTypes = (
+  objectAccessionId: ?string,
+  formData: any
+): { accessionId: string, fileTypes: Array<string> } | null => {
+  if (formData.files?.length > 0 && objectAccessionId) {
+    // Get unique fileTypes from current objectType and Add the new unique types fileTypes state in Redux
+    const fileTypes = uniqBy(formData.files.map(file => file.filetype))
+    const objectWithFileTypes = { accessionId: objectAccessionId, fileTypes }
+    return objectWithFileTypes
+  }
+  return null
 }

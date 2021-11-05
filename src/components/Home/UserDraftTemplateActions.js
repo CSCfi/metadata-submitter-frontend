@@ -38,7 +38,7 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          errorPrefix: "Unable to delete template",
+          helperText: "Unable to delete template",
         })
       )
     }

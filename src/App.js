@@ -90,7 +90,10 @@ const App = (): React$Element<typeof React.Fragment> => {
       if (isMounted) {
         if (response.ok) {
           const schemas = response.data
-            .filter(schema => schema.title !== "Project" && schema.title !== "Submission")
+            .filter(
+              schema =>
+                schema.title !== "Project" && schema.title !== "Submission" && schema.title !== "Datacite DOI schema"
+            )
             .map(schema => schema.title.toLowerCase())
           dispatch(setObjectTypesArray(schemas))
         } else {

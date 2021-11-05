@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
+import { deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
@@ -40,6 +41,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
   const classes = useStyles()
   const dispatch = useDispatch()
   const currentObject = useSelector(state => state.currentObject)
+
   const history = useHistory()
 
   const handleObjectEdit = async () => {
@@ -114,6 +116,11 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
     }
 
     if (currentObject.accessionId === props.objectId) dispatch(resetCurrentObject())
+
+    // Delete fileType that is equivalent to deleted object
+    if (props.objectType === ObjectTypes.analysis || props.objectType === ObjectTypes.run) {
+      dispatch(deleteFileType(props.objectId))
+    }
   }
 
   const renderEditLabel = submissionType => {

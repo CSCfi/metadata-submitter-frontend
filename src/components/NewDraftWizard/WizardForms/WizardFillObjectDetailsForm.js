@@ -25,6 +25,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
+import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -32,7 +33,7 @@ import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSu
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import type { FolderDetailsWithId } from "types"
-import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds } from "utils"
+import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -58,53 +59,7 @@ const useStyles = makeStyles(theme => ({
   addIcon: {
     marginRight: theme.spacing(1),
   },
-  formComponents: {
-    margin: theme.spacing(3, 2),
-    "& .MuiTextField-root > .Mui-required": {
-      color: theme.palette.primary.main,
-    },
-    "& .MuiTextField-root": {
-      width: "48%",
-      margin: theme.spacing(1),
-    },
-    "& .MuiTypography-root": {
-      margin: theme.spacing(1),
-      ...theme.typography.subtitle1,
-      fontWeight: "bold",
-    },
-    "& .MuiTypography-h2": {
-      width: "100%",
-      color: theme.palette.primary.light,
-      borderBottom: `2px solid ${theme.palette.secondary.main}`,
-    },
-    "& .MuiTypography-h3": {
-      width: "100%",
-    },
-    "& .array": {
-      margin: theme.spacing(1),
-      "& .arrayRow": {
-        display: "flex",
-        alignItems: "center",
-        marginBottom: theme.spacing(1),
-        width: "100%",
-        "& .MuiTextField-root": {
-          width: "95%",
-        },
-      },
-      "& h2, h3, h4, h5, h6": {
-        margin: theme.spacing(1, 0),
-      },
-      "& .MuiPaper-elevation2": {
-        paddingRight: theme.spacing(1),
-        "& .array": { margin: 0 },
-        "& h3, h4": { margin: theme.spacing(1) },
-        "& button": { margin: theme.spacing(0, 1) },
-      },
-      "& .MuiSelect-outlined": {
-        marginRight: 0,
-      },
-    },
-  },
+  formComponents: theme.form,
 }))
 
 type CustomCardHeaderProps = {
@@ -408,8 +363,24 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
   const patchObject = async () => {
     resetTimer()
     const cleanedValues = getCleanedValues()
-    const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-    patchHandler(response, cleanedValues)
+    try {
+      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
+      patchHandler(response, cleanedValues)
+
+      // Dispatch fileTypes if object is Run or Analysis
+      if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues)
+        objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
+      }
+    } catch (err) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: err,
+          helperText: "Unexpected error when modifying object",
+        })
+      )
+    }
   }
 
   const handleSubmitForm = () => {

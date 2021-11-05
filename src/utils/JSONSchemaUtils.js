@@ -21,6 +21,7 @@ export const pathToName = (path: string[]): string => path.join(".")
  */
 export const traverseValues = (object: any): any => {
   if (object["oneOf"]) return object
+
   switch (object["type"]) {
     case "object": {
       let values = {}
@@ -50,6 +51,7 @@ export const traverseValues = (object: any): any => {
     case "null": {
       return null
     }
+
     default: {
       console.error(`
       No initial value parsing support for type ${object["type"]} yet.

@@ -97,9 +97,10 @@ describe("DOI form", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
 
     // Go to DOI form
-    cy.get("button[type=button]").contains("Next").click()
-    cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
-    cy.get("div[role='dialog']").should("be.visible")
+    cy.openDOIForm()
+    // cy.get("button[type=button]").contains("Next").click()
+    // cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
+    // cy.get("div[role='dialog']").should("be.visible")
 
     // Check file types from submitted Run form and Analysis form are Uniquely pre-filled in DOI form
     cy.get("input[data-testid='formats.0']", { timeout: 10000 }).should("have.value", "bam")
@@ -194,9 +195,7 @@ describe("DOI form", function () {
   }),
     it("should fill the required fields and save DOI form successfully", () => {
       // Go to DOI form
-      cy.get("button[type=button]").contains("Next").click()
-      cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
-      cy.get("div[role='dialog']").should("be.visible")
+      cy.openDOIForm()
 
       // Fill in required Creators field
       cy.get("h2[data-testid='creators']").parent().children("button").click()
@@ -213,5 +212,25 @@ describe("DOI form", function () {
       cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
       cy.get("input[data-testid='creators.0.givenName']").should("have.value", "John Smith")
       cy.get("select[name='subjects.0.subject']").should("have.value", "FOS: Mathematics")
+    }),
+    it("should autofill full name based on family and given name", () => {
+      // Go to DOI form
+      cy.openDOIForm()
+      // Go to Creators section and fill in given name, family name
+      cy.get("h2[data-testid='creators']").parents().children("button").click()
+      cy.get("input[data-testid='creators.0.givenName']").type("Creator's given name")
+      cy.get("input[data-testid='creators.0.familyName']").type("Creator's family name")
+      // Check full name is autofilled from family name and given name
+      cy.get("input[data-testid='creators.0.name']").should("have.value", "Creator's family name,Creator's given name")
+
+      // Go to Contributors and fill in given name, family name
+      cy.get("h2[data-testid='contributors']").parents().children("button").click()
+      cy.get("input[data-testid='contributors.0.givenName']").type("Contributor's given name")
+      cy.get("input[data-testid='contributors.0.familyName']").type("Contributor's family name")
+      // Check full name is autofilled from family name and given name
+      cy.get("input[data-testid='contributors.0.name']").should(
+        "have.value",
+        "Contributor's family name,Contributor's given name"
+      )
     })
 })

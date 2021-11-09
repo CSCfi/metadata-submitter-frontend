@@ -421,6 +421,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
   const objectType = useSelector(state => state.objectType)
   const folder = useSelector(state => state.submissionFolder)
   const currentObject = useSelector(state => state.currentObject)
+  const locale = useSelector(state => state.locale)
 
   // States that will update in useEffect()
   const [states, setStates] = useState({
@@ -513,7 +514,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
     <Container maxWidth={false} className={classes.container}>
       <FormContent
         formSchema={states.formSchema}
-        resolver={WizardAjvResolver(states.validationSchema)}
+        resolver={WizardAjvResolver(states.validationSchema, locale)}
         onSubmit={onSubmit}
         objectType={objectType}
         folder={folder}

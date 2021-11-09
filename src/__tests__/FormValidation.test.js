@@ -28,7 +28,7 @@ const schema = {
 describe("Test form render by custom schema", () => {
   const onSubmit = jest.fn()
 
-  const resolver = WizardAjvResolver(schema)
+  const resolver = WizardAjvResolver(schema, "en")
 
   beforeEach(() => {
     const FormComponent = () => {

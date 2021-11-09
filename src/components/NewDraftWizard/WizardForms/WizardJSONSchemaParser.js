@@ -605,16 +605,16 @@ const FormTextField = ({
     // check changes of value of autocompleteField from watchValues
     prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
 
-    // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and LastName
+    // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and FamilyName
     const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
 
     if (isFullNameField) {
       const givenName = getPathName(path, "givenName")
       const givenNameValue = get(watchValues, givenName) || ""
-      const lastName = getPathName(path, "familyName")
-      const lastNameValue = get(watchValues, lastName)?.length > 0 ? get(watchValues, lastName).concat(",") : ""
+      const familyName = getPathName(path, "familyName")
+      const familyNameValue = get(watchValues, familyName)?.length > 0 ? get(watchValues, familyName).concat(",") : ""
       // Return value for FullName field
-      fullNameValue = `${lastNameValue}${givenNameValue}`
+      fullNameValue = `${familyNameValue}${givenNameValue}`
     }
 
     // Conditions to disable input field: disable editing option if the field is rendered as prefilled

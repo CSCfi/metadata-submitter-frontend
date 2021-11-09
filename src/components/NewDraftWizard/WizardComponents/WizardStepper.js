@@ -12,7 +12,7 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
@@ -131,6 +131,10 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const [direction, setDirection] = useState("")
   const draftStatus = useSelector(state => state.draftStatus)
   const navigate = useNavigate()
+  const params = useParams()
+
+  const folderId = params.folderId
+  const newDraftPath = pathWithLocale(`newdraft/${folderId}`)
 
   const queryParams = useQuery()
   const wizardStep = Number(queryParams.get("step"))
@@ -143,7 +147,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
     dispatch(resetDraftStatus())
 
     if (step) {
-      direction === "previous" ? navigate(-1) : navigate({ pathName: pathWithLocale("newdraft"), search: "step=2" })
+      direction === "previous" ? navigate(-1) : navigate({ pathname: newDraftPath, search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -162,7 +166,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("previous")
             setAlert(true)
           } else {
-            navigate({ pathName: pathWithLocale("newdraft"), search: `step=${wizardStep - 1}` })
+            navigate({ pathname: newDraftPath, search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -195,7 +199,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            navigate({ pathName: pathWithLocale("newdraft"), search: "step=2" })
+            navigate({ pathname: newDraftPath, search: "step=2" })
           }
         }}
       >

@@ -136,6 +136,12 @@ const App = (): React$Element<typeof React.Fragment> => {
     return `/:locale/${path}`
   }
 
+  const newDraftElement = (
+    <Container component="main" maxWidth={false} className={classes.wizardContent}>
+      <NewDraftWizard />
+    </Container>
+  )
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -190,14 +196,10 @@ const App = (): React$Element<typeof React.Fragment> => {
             </Container>
           }
         />
-        <Route
-          path={setPath("newdraft")}
-          element={
-            <Container component="main" maxWidth={false} className={classes.wizardContent}>
-              <NewDraftWizard />
-            </Container>
-          }
-        />
+        <Route path={setPath("newdraft")}>
+          <Route path=":folderId" element={newDraftElement} />
+          <Route path="" element={newDraftElement} />
+        </Route>
         <Route path="/error401" element={<Page401 />} />
         <Route path="/error403" element={<Page403 />} />
         <Route path="/error500" element={<Page500 />} />

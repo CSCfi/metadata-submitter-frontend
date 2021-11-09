@@ -86,7 +86,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
         .then(() => {
-          navigate({ pathName: pathWithLocale("newdraft"), search: "step=1" })
+          navigate({ pathname: pathWithLocale(`newdraft/${folder.folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {
@@ -95,8 +95,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     } else {
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, selectedDraftsArray))
-        .then(() => {
-          navigate({ pathName: pathWithLocale("newdraft"), search: "step=1" })
+        .then(response => {
+          const folderId = response.data.folderId
+          navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {
@@ -121,6 +122,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
               error={!!error}
               helperText={error ? "Please give a name for folder." : null}
               disabled={isSubmitting}
+              inputProps={{ "data-testid": "folderName" }}
             />
           )}
           rules={{ required: true, validate: { name: value => value.length > 0 } }}

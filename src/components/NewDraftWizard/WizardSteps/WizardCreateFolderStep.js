@@ -10,7 +10,7 @@ import Typography from "@material-ui/core/Typography"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
@@ -75,7 +75,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     formState: { isSubmitting },
   } = useForm()
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const onSubmit = async (data: FolderDataFromForm) => {
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
@@ -86,7 +86,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
         .then(() => {
-          history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
+          navigate({ pathName: pathWithLocale("newdraft"), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {
@@ -96,7 +96,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, selectedDraftsArray))
         .then(() => {
-          history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
+          navigate({ pathName: pathWithLocale("newdraft"), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch(error => {

@@ -8,7 +8,7 @@ import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory, useLocation, Link as RouterLink } from "react-router-dom"
+import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "../NewDraftWizard/WizardComponents/WizardAlert"
 
@@ -53,7 +53,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   const currentFolder = useSelector(state => state.submissionFolder)
 
   const folderId = useLocation().pathname.split("/").pop()
-  let history = useHistory()
+  const navigate = useNavigate()
   const objectsArr = []
 
   // Fetch folder data and map objects
@@ -131,14 +131,14 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
   }, [])
 
   const resetDispatch = () => {
-    history.push(pathWithLocale("home"))
+    navigate(pathWithLocale("home"))
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }
 
   const handleEditFolder = (step: number) => {
     dispatch(setFolder(selectedFolder.originalFolderData))
-    history.push({ pathname: pathWithLocale("newdraft"), search: `step=${step}` })
+    navigate({ pathname: pathWithLocale("newdraft"), search: `step=${step}` })
   }
 
   const handlePublishFolder = () => {
@@ -191,7 +191,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
       dispatch(setFolder(selectedFolder.originalFolderData))
-      history.push({ pathname: pathWithLocale("newdraft"), search: `step=1` })
+      navigate({ pathname: pathWithLocale("newdraft"), search: `step=1` })
     } else {
       dispatch(
         updateStatus({

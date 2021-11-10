@@ -6,7 +6,7 @@ import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
 import i18n from "i18next"
 import { useDispatch, useSelector } from "react-redux"
-import { Switch, Route, useLocation, Redirect } from "react-router-dom"
+import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
 import SubmissionFolderList from "components/Home/SubmissionFolderList"
@@ -133,66 +133,77 @@ const App = (): React$Element<typeof React.Fragment> => {
   }, [])
 
   const setPath = (path: string) => {
-    return `/:locale(en|fi)/${path}`
+    return `/:locale/${path}`
   }
 
   return (
     <React.Fragment>
       <CssBaseline />
       <NavigationMenu />
-      <Switch>
-        <Redirect exact from="/home" to={`/${locale}/home`} />
-        <Route exact path="/">
-          <Container component="main" maxWidth={false} className={classes.loginContent}>
-            <Login />
-          </Container>
-        </Route>
-        <Route exact path={setPath("home")}>
-          <Container component="main" maxWidth="md" className={classes.content}>
-            <Home />
-          </Container>
-        </Route>
-        <Route exact path={setPath("home/drafts")}>
-          <Container component="main" maxWidth="md" className={classes.content}>
-            <SubmissionFolderList />
-          </Container>
-        </Route>
-        <Route path={setPath("home/drafts/:folderId")}>
-          <Container component="main" maxWidth="md" className={classes.content}>
-            <SelectedFolderDetails />
-          </Container>
-        </Route>
-        <Route exact path={setPath("home/published")}>
-          <Container component="main" maxWidth="md" className={classes.content}>
-            <SubmissionFolderList />
-          </Container>
-        </Route>
-        <Route path={setPath("home/published/:folderId")}>
-          <Container component="main" maxWidth="md" className={classes.content}>
-            <SelectedFolderDetails />
-          </Container>
-        </Route>
-        <Route path={setPath("newdraft")}>
-          <Container component="main" maxWidth={false} className={classes.wizardContent}>
-            <NewDraftWizard />
-          </Container>
-        </Route>
-        <Route path="/error401">
-          <Page401 />
-        </Route>
-        <Route path="/error403">
-          <Page403 />
-        </Route>
-        <Route path="/error500">
-          <Page500 />
-        </Route>
-        <Route path="/error400">
-          <Page400 />
-        </Route>
-        <Route path="*">
-          <Page404 />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="/home" element={<Navigate replace to={`/${locale}/home`} />} />
+        <Route
+          path="/"
+          element={
+            <Container component="main" maxWidth={false} className={classes.loginContent}>
+              <Login />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("home")}
+          element={
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <Home />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("home/drafts")}
+          element={
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <SubmissionFolderList />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("home/drafts/:folderId")}
+          element={
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <SelectedFolderDetails />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("home/published")}
+          element={
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <SubmissionFolderList />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("home/published/:folderId")}
+          element={
+            <Container component="main" maxWidth="md" className={classes.content}>
+              <SelectedFolderDetails />
+            </Container>
+          }
+        />
+        <Route
+          path={setPath("newdraft")}
+          element={
+            <Container component="main" maxWidth={false} className={classes.wizardContent}>
+              <NewDraftWizard />
+            </Container>
+          }
+        />
+        <Route path="/error401" element={<Page401 />} />
+        <Route path="/error403" element={<Page403 />} />
+        <Route path="/error500" element={<Page500 />} />
+        <Route path="/error400" element={<Page400 />} />
+        <Route path="*" element={<Page404 />} />
+      </Routes>
       {/* Centralized status message handler */}
       <StatusMessageHandler />
     </React.Fragment>

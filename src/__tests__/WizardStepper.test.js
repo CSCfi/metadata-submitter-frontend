@@ -3,7 +3,7 @@ import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
-import { MemoryRouter, Route } from "react-router-dom"
+import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
@@ -20,9 +20,9 @@ describe("WizardStepper", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=0" }]}>
         <Provider store={store}>
-          <Route path="/newdraft">
-            <WizardStepper />
-          </Route>
+          <Routes>
+            <Route path="/newdraft" element={<WizardStepper />} />
+          </Routes>
         </Provider>
       </MemoryRouter>
     )
@@ -37,9 +37,9 @@ describe("WizardStepper", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=1" }]}>
         <Provider store={store}>
-          <Route path="/newdraft">
-            <WizardStepper />
-          </Route>
+          <Routes>
+            <Route path="/newdraft" element={<WizardStepper />} />
+          </Routes>
         </Provider>
       </MemoryRouter>
     )

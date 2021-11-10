@@ -5,7 +5,7 @@ import Container from "@material-ui/core/Container"
 import Paper from "@material-ui/core/Paper"
 import { makeStyles } from "@material-ui/core/styles"
 import { useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
 import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
@@ -60,7 +60,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  */
 const NewDraftWizard = (): React$Element<typeof Container> => {
   const classes = useStyles()
-  const history = useHistory()
+  const navigate = useNavigate()
   const queryParams = useQuery()
 
   const step = queryParams.get("step")
@@ -74,7 +74,7 @@ const NewDraftWizard = (): React$Element<typeof Container> => {
 
   if (!folder && (wizardStep === 1 || wizardStep === 2)) {
     wizardStep = 0
-    history.push({ pathname: pathWithLocale("newdraft"), search: "step=0" })
+    navigate({ pathName: pathWithLocale("newdraft"), search: "step=0" })
   }
 
   return (

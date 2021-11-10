@@ -13,7 +13,7 @@ import Typography from "@material-ui/core/Typography"
 import HomeIcon from "@material-ui/icons/Home"
 import i18n from "i18next"
 import { useDispatch, useSelector } from "react-redux"
-import { Link as RouterLink, useLocation, useHistory } from "react-router-dom"
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
 import logo from "../csc_logo.svg"
 
@@ -124,13 +124,13 @@ const LanguageSelector = (props: MenuItemProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const changeLang = (locale: string) => {
     const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
 
     if (location.pathname !== "/") {
-      history.push({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
+      navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
 
     dispatch(setLocale(locale))

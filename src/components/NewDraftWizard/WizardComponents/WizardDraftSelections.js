@@ -11,7 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText"
 import { makeStyles, withStyles } from "@material-ui/core/styles"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
@@ -96,7 +96,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
   const dispatch = useDispatch()
   const folder = useSelector(state => state.submissionFolder)
   const objectsArray = useSelector(state => state.objectTypesArray)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const draftObjects = getDraftObjects(folder.drafts, objectsArray)
 
@@ -120,7 +120,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): React$Element
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
       dispatch(setObjectType(objectType))
       props.onHandleDialog(false)
-      history.push({ pathname: pathWithLocale("newdraft"), search: "step=1" })
+      navigate({ pathName: pathWithLocale("newdraft"), search: "step=1" })
     } else {
       dispatch(
         updateStatus({

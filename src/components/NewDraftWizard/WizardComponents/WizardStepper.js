@@ -12,7 +12,7 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
 import Check from "@material-ui/icons/Check"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
@@ -130,7 +130,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
   const [alert, setAlert] = useState(false)
   const [direction, setDirection] = useState("")
   const draftStatus = useSelector(state => state.draftStatus)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const queryParams = useQuery()
   const wizardStep = Number(queryParams.get("step"))
@@ -143,9 +143,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
     dispatch(resetDraftStatus())
 
     if (step) {
-      direction === "previous"
-        ? history.go(-1)
-        : history.push({ pathname: pathWithLocale("newdraft"), search: "step=2" })
+      direction === "previous" ? navigate(-1) : navigate({ pathName: pathWithLocale("newdraft"), search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -164,7 +162,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("previous")
             setAlert(true)
           } else {
-            history.push({ pathname: pathWithLocale("newdraft"), search: `step=${wizardStep - 1}` })
+            navigate({ pathName: pathWithLocale("newdraft"), search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -197,7 +195,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: CreateFo
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            history.push({ pathname: pathWithLocale("newdraft"), search: "step=2" })
+            navigate({ pathName: pathWithLocale("newdraft"), search: "step=2" })
           }
         }}
       >

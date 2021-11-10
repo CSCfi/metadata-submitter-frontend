@@ -4,6 +4,8 @@ import { appendErrors } from "react-hook-form"
 
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
+const localize = require("ajv-i18n")
+
 /*
  * Parse through ajv validation errors and transform them to errors readable by react-hook-form
  */
@@ -39,7 +41,7 @@ const parseErrorSchema = (validationError, validateAllFieldCriteria) =>
 /*
  * Resolver for checking if form data is valid against schema.
  */
-export const WizardAjvResolver = validationSchema => {
+export const WizardAjvResolver = (validationSchema, locale) => {
   if (!validationSchema) {
     throw new Error("Undefined schema, not able to validate")
   }
@@ -50,6 +52,15 @@ export const WizardAjvResolver = validationSchema => {
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)
     const valid = validate(cleanedValues)
     if (!valid) {
+      switch (locale) {
+        case "fi": {
+          localize.fi(validate.errors)
+          break
+        }
+        default: {
+          localize.en(validate.errors)
+        }
+      }
       return {
         errors: parseErrorSchema(validate, false),
         values: {},

@@ -91,3 +91,10 @@ Cypress.Commands.add("findDraftFolder", label => {
     }
   })
 })
+
+// Go to DOI form
+Cypress.Commands.add("openDOIForm", () => {
+  cy.get("button[type=button]").contains("Next").click()
+  cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
+  cy.get("div[role='dialog']").should("be.visible")
+})

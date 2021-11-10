@@ -17,6 +17,14 @@ export const dereferenceSchema = async (schema: any): Promise<any> => {
 export const pathToName = (path: string[]): string => path.join(".")
 
 /*
+ * Get pathName for a specific field based on the pathName of another field (only different in the last element)
+ */
+export const getPathName = (path: Array<string>, field: string): string => {
+  const pathName = path.slice(0, -1).join(".").concat(".", field)
+  return pathName
+}
+
+/*
  * Parse initial values from given object
  */
 export const traverseValues = (object: any): any => {

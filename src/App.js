@@ -72,9 +72,6 @@ const App = (): React$Element<typeof React.Fragment> => {
   const dispatch = useDispatch()
 
   const locale = useSelector(state => state.locale)
-  const statusDetails = useSelector(state =>
-    state.statusDetails ? JSON.parse(state.statusDetails) : state.statusDetails
-  )
 
   // Fetch array of schemas from backend and store it in frontend
   // Fetch only if the initial array is empty
@@ -197,13 +194,7 @@ const App = (): React$Element<typeof React.Fragment> => {
         </Route>
       </Switch>
       {/* Centralized status message handler */}
-      {statusDetails?.status && !Array.isArray(statusDetails.response) && (
-        <StatusMessageHandler
-          status={statusDetails.status}
-          response={statusDetails.response}
-          helperText={statusDetails.helperText}
-        />
-      )}
+      <StatusMessageHandler />
     </React.Fragment>
   )
 }

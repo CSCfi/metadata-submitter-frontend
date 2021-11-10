@@ -18,7 +18,6 @@ const submitObjectHook = async (formData: any, folderId: string, objectType: str
     dispatch(
       updateStatus({
         status: ResponseStatus.info,
-        response: {},
         helperText: "",
       })
     )

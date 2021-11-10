@@ -1,21 +1,38 @@
 //@flow
 import React, { useState } from "react"
 
+import Dialog from "@material-ui/core/Dialog"
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
 import { useDispatch } from "react-redux"
 
+import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
 import { ResponseStatus } from "constants/responseStatus"
+import { ObjectStatus } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { deleteTemplateByAccessionId } from "features/userSlice"
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
+import { setFolder } from "features/wizardSubmissionFolderSlice"
 import templateAPI from "services/templateAPI"
+
+const FormDialog = (props: { open: boolean, onClose: any }) => {
+  const { open, onClose } = props
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth={true}>
+      <WizardFillObjectDetailsForm closeDialog={onClose} />
+    </Dialog>
+  )
+}
 
 const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: string } }): React$Element<any> => {
   const { item } = props
   const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = useState(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const menuOpen = Boolean(anchorEl)
 
   const handleMenuClick = event => {
@@ -26,10 +43,47 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
     setAnchorEl(null)
   }
 
-  const deleteTemplate = async (schema, accessionId) => {
-    const objectType = schema.split("template-")[1]
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+    dispatch(resetObjectType())
+    dispatch(resetCurrentObject())
+  }
 
-    const response = await templateAPI.deleteTemplateByAccessionId(objectType, accessionId)
+  const getObjectType = schema => schema.split("template-")[1]
+
+  const editTemplate = async (schema, accessionId) => {
+    const objectType = getObjectType(schema)
+
+    dispatch(setFolder({}))
+    dispatch(setObjectType(objectType))
+
+    setDialogOpen(true)
+
+    handleCloseMenu()
+
+    const response = await templateAPI.getTemplateByAccessionId(objectType, accessionId)
+
+    if (response.ok) {
+      dispatch(resetCurrentObject())
+      dispatch(
+        setCurrentObject({
+          ...response.data,
+          status: ObjectStatus.template,
+        })
+      )
+    } else {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+          helperText: "Template fetching error",
+        })
+      )
+    }
+  }
+
+  const deleteTemplate = async (schema, accessionId) => {
+    const response = await templateAPI.deleteTemplateByAccessionId(getObjectType(schema), accessionId)
 
     if (response.ok) {
       dispatch(deleteTemplateByAccessionId(accessionId))
@@ -66,10 +120,14 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
         open={menuOpen}
         onClose={handleCloseMenu}
       >
+        <MenuItem onClick={() => editTemplate(item.schema, item.accessionId)} data-testid="edit-template">
+          Edit
+        </MenuItem>
         <MenuItem onClick={() => deleteTemplate(item.schema, item.accessionId)} data-testid="delete-template">
           Delete
         </MenuItem>
       </Menu>
+      <FormDialog open={dialogOpen} onClose={handleDialogClose}></FormDialog>
     </React.Fragment>
   )
 }

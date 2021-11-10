@@ -28,10 +28,12 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
+import { replaceTemplate } from "features/userSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
+import templateAPI from "services/templateAPI"
 import type { FolderDetailsWithId } from "types"
 import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
@@ -42,6 +44,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(8), zIndex: 2 },
+  resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
     marginTop: "-4px",
     marginBottom: "-4px",
@@ -68,7 +71,9 @@ type CustomCardHeaderProps = {
   onClickNewForm: () => void,
   onClickClearForm: () => void,
   onClickSaveDraft: () => Promise<void>,
+  onClickUpdateTemplate: () => Promise<void>,
   onClickSubmit: () => void,
+  onClickCloseDialog: () => void,
   refForm: any,
 }
 
@@ -79,6 +84,7 @@ type FormContentProps = {
   objectType: string,
   folder: FolderDetailsWithId,
   currentObject: any,
+  closeDialog: () => void,
 }
 
 /*
@@ -86,8 +92,17 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
-  const { objectType, currentObject, refForm, onClickNewForm, onClickClearForm, onClickSaveDraft, onClickSubmit } =
-    props
+  const {
+    objectType,
+    currentObject,
+    refForm,
+    onClickNewForm,
+    onClickClearForm,
+    onClickSaveDraft,
+    onClickUpdateTemplate,
+    onClickSubmit,
+    onClickCloseDialog,
+  } = props
 
   const dispatch = useDispatch()
 
@@ -102,6 +117,23 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     onClickNewForm()
     dispatch(resetFocus())
   }
+
+  const templateButtonGroup = (
+    <div className={classes.buttonGroup}>
+      <Button
+        type="submit"
+        variant="contained"
+        aria-label="save form as draft"
+        size="small"
+        onClick={onClickUpdateTemplate}
+      >
+        Update template
+      </Button>
+      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickCloseDialog}>
+        Close
+      </Button>
+    </div>
+  )
 
   const buttonGroup = (
     <div className={classes.buttonGroup}>
@@ -119,6 +151,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
         Clear form
       </Button>
+
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
         {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
@@ -135,6 +168,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     </div>
   )
 
+  //
+
   return (
     <CardHeader
       title="Fill form"
@@ -143,7 +178,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         root: classes.cardHeader,
         action: classes.cardHeaderAction,
       }}
-      action={buttonGroup}
+      className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : null}
+      action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
     />
   )
 }
@@ -151,13 +187,22 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 /*
  * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
-const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, currentObject }: FormContentProps) => {
+const FormContent = ({
+  resolver,
+  formSchema,
+  onSubmit,
+  objectType,
+  folder,
+  currentObject,
+  closeDialog,
+}: FormContentProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
   const draftStatus = useSelector(state => state.draftStatus)
   const alert = useSelector(state => state.alert)
   const clearForm = useSelector(state => state.clearForm)
+  const user = useSelector(state => state.user)
 
   const methods = useForm({ mode: "onBlur", resolver })
 
@@ -282,7 +327,9 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
 
   const keyHandler = () => {
     resetTimer()
-    startTimer()
+
+    // Prevent auto save from template dialog
+    if (currentObject?.status !== ObjectStatus.template) startTimer()
   }
 
   useEffect(() => {
@@ -330,6 +377,60 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
     }
   }
 
+  const emptyFormError = () => {
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.info,
+        helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
+      })
+    )
+  }
+
+  const handleSaveTemplate = async () => {
+    const cleanedValues = getCleanedValues()
+
+    if (checkFormCleanedValuesEmpty(cleanedValues)) {
+      const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
+
+      const templates = user.templates
+      const index = templates.findIndex(item => item.accessionId === currentObject.accessionId)
+      const displayTitle = getObjectDisplayTitle(objectType, cleanedValues)
+
+      if (response.ok) {
+        closeDialog()
+        dispatch(replaceTemplate(index, displayTitle, currentObject.accessionId))
+          .then(
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.success,
+                response: response,
+                helperText: "",
+              })
+            )
+          )
+          .catch(error => {
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: error,
+                helperText: "Cannot replace template",
+              })
+            )
+          })
+      } else {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: response,
+            helperText: "Cannot save template",
+          })
+        )
+      }
+    } else {
+      emptyFormError()
+    }
+  }
+
   /*
    * Update or save new draft depending on object status
    */
@@ -350,13 +451,7 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
         setCurrentObjectId(handleSave.data.accessionId)
       }
     } else {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.info,
-          response: "",
-          helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
-        })
-      )
+      emptyFormError()
     }
   }
 
@@ -397,7 +492,9 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
         onClickNewForm={() => handleCreateNewForm()}
         onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
+        onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => handleSubmitForm()}
+        onClickCloseDialog={() => closeDialog()}
       />
       <form
         id="hook-form"
@@ -414,7 +511,8 @@ const FormContent = ({ resolver, formSchema, onSubmit, objectType, folder, curre
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
+const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): React$Element<typeof Container> => {
+  const { closeDialog } = props
   const classes = useStyles()
   const dispatch = useDispatch()
 
@@ -475,7 +573,14 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         isLoading: false,
       })
     }
-    fetchSchema()
+
+    if (objectType.length) fetchSchema()
+
+    // Reset current object in state on unmount
+    return () => {
+      dispatch(resetCurrentObject())
+      dispatch(resetDraftStatus())
+    }
   }, [objectType])
 
   // All Analysis AccessionIds
@@ -520,6 +625,7 @@ const WizardFillObjectDetailsForm = (): React$Element<typeof Container> => {
         folder={folder}
         currentObject={currentObject}
         key={currentObject?.accessionId || folder.folderId}
+        closeDialog={closeDialog || (() => {})}
       />
       {submitting && <LinearProgress />}
     </Container>

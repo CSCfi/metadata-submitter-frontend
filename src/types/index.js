@@ -46,3 +46,9 @@ export type FolderDataFromForm = {
 }
 
 export type CreateFolderFormRef = ElementRef<typeof useForm>
+
+export type StatusDetails = {
+  status: string,
+  response?: any,
+  helperText?: string,
+}

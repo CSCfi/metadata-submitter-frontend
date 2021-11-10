@@ -107,7 +107,7 @@ type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTa
 ```
 import type { ObjectInsideFolderWithTags } from "types"
 
-type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
+type GroupedBySchema = { [K in Schema]: Array<ObjectInsideFolderWithTags> }
 ```
 
 ## Redux store

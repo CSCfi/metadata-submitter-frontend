@@ -2,7 +2,6 @@
 
 ![Unit tests and coverage](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Unit%20tests%20and%20coverage/badge.svg)
 ![Code style check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Code%20style%20check/badge.svg)
-![Static type check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Static%20type%20check/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)
@@ -29,7 +28,7 @@ After installing and running, frontend can be found from `http://localhost:3000`
 
 ## Tests
 
-Run Jest-based tests with `npm test`. Check code formatting and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`. Possible type errors can be checked with `npm run flow`.
+Run Jest-based tests with `npm test`. Check code formatting, TypeScript types and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`.
 
 End-to-end tests can be run with `npx cypress open`.
 

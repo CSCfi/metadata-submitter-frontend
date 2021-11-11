@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { render, screen, act } from "@testing-library/react"
 import { Provider } from "react-redux"
-import { MemoryRouter, Route } from "react-router-dom"
+import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
@@ -44,9 +44,9 @@ describe("WizardAddObjectStep", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
         <Provider store={store}>
-          <Route path="/newdraft">
-            <WizardAddObjectStep />
-          </Route>
+          <Routes>
+            <Route path="/newdraft" element={<WizardAddObjectStep />} />
+          </Routes>
         </Provider>
       </MemoryRouter>
     )
@@ -80,11 +80,16 @@ describe("WizardAddObjectStep", () => {
         render(
           <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
             <Provider store={store}>
-              <Route path="/newdraft">
-                <ThemeProvider theme={CSCtheme}>
-                  <WizardAddObjectStep />
-                </ThemeProvider>
-              </Route>
+              <Routes>
+                <Route
+                  path="/newdraft"
+                  element={
+                    <ThemeProvider theme={CSCtheme}>
+                      <WizardAddObjectStep />
+                    </ThemeProvider>
+                  }
+                />
+              </Routes>
             </Provider>
           </MemoryRouter>
         )

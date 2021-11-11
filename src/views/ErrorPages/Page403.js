@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 
 import { Button } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
-import { Redirect } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 import ErrorPageContainer from "../../components/ErrorPageContainer"
 
@@ -27,7 +27,7 @@ const Page403 = (): React$Element<any> => {
   )
 
   return redirect ? (
-    <Redirect to="/home" />
+    <Navigate to="/home" />
   ) : (
     <ErrorPageContainer title="403 Forbidden Error" errorType="error">
       <Typography variant="body2">Sorry, this page is currently not valid. </Typography>

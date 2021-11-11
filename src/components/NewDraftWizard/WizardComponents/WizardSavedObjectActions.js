@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus, ObjectTypes } from "constants/wizardObject"
@@ -42,7 +42,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
   const dispatch = useDispatch()
   const currentObject = useSelector(state => state.currentObject)
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const handleObjectEdit = async () => {
     const response = await objectAPIService.getObjectByAccessionId(props.objectType, props.objectId)
@@ -61,7 +61,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps): React$E
 
       if (props.summary) {
         dispatch(setObjectType(props.objectType))
-        history.go(-1)
+        navigate(-1)
       }
     } else {
       dispatch(

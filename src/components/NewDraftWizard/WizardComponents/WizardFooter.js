@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import Link from "@material-ui/core/Link"
 import { makeStyles } from "@material-ui/core/styles"
 import { useDispatch, useSelector } from "react-redux"
-import { useHistory, Link as RouterLink } from "react-router-dom"
+import { useNavigate, Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
@@ -56,14 +56,14 @@ const WizardFooter = (): React$Element<any> => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
 
-  let history = useHistory()
+  let navigate = useNavigate()
 
   const queryParams = useQuery()
   const step = Number(queryParams.get("step"))
   const wizardStep = Number(step.toString().slice(-1))
 
   const resetDispatch = () => {
-    history.push(pathWithLocale("home"))
+    navigate(pathWithLocale("home"))
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }

@@ -67,7 +67,7 @@ describe("Home e2e", function () {
     cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")
     cy.get("button[type=submit]").contains("Submit").click()
-    cy.get(".MuiListItem-container", { timeout: 30000 }).should("have.length", 2)
+    cy.get(".MuiListItem-container", { timeout: 30000 }).should("have.length", 1)
     cy.wait(500)
     // Navigate to summary
     cy.get("button[type=button]").contains("Next", { timeout: 10000 }).click()

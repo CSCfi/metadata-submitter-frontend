@@ -138,7 +138,10 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
 
   const handleEditFolder = (step: number) => {
     dispatch(setFolder(selectedFolder.originalFolderData))
-    navigate({ pathname: pathWithLocale("newdraft"), search: `step=${step}` })
+    navigate({
+      pathname: pathWithLocale(`newdraft/${selectedFolder.originalFolderData.folderId}`),
+      search: `step=${step}`,
+    })
   }
 
   const handlePublishFolder = () => {
@@ -191,7 +194,7 @@ const SelectedFolderDetails = (): React$Element<typeof Grid> => {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
       dispatch(setFolder(selectedFolder.originalFolderData))
-      navigate({ pathname: pathWithLocale("newdraft"), search: `step=1` })
+      navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: `step=1` })
     } else {
       dispatch(
         updateStatus({

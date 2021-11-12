@@ -1068,7 +1068,6 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     register,
     getValues,
     setValue,
-    unregister,
     formState: { errors },
     clearErrors,
   } = useFormContext()
@@ -1104,7 +1103,6 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
 
   // Clear required field array error and append
   const handleAppend = () => {
-    unregister(name)
     setValid(true)
     clearErrors([name])
     append({})

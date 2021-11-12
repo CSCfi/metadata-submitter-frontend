@@ -245,7 +245,7 @@ const FormContent = ({
 
   const handleClearForm = () => {
     resetTimer()
-    methods.reset({})
+    methods.reset({ undefined })
     dispatch(setClearForm(true))
     dispatch(resetDraftStatus())
   }

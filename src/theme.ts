@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles"
-// import { createSpacing } from "@mui/system"
 
 const defaultTheme = createTheme()
 

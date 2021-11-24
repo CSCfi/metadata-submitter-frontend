@@ -1,11 +1,11 @@
 //@flow
 import React, { useState } from "react"
 
+import MoreVertIcon from "@mui/icons-material/MoreVert"
 import Dialog from "@mui/material/Dialog"
 import IconButton from "@mui/material/IconButton"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { useDispatch } from "react-redux"
 
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
@@ -107,7 +107,8 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
         aria-expanded={menuOpen ? "true" : undefined}
         aria-haspopup="true"
         onClick={handleMenuClick}
-        size="large">
+        size="large"
+      >
         <MoreVertIcon />
       </IconButton>
 
@@ -129,7 +130,7 @@ const UserDraftTemplateActions = (props: { item: { schema: string, accessionId: 
       </Menu>
       <FormDialog open={dialogOpen} onClose={handleDialogClose}></FormDialog>
     </React.Fragment>
-  );
+  )
 }
 
 export default UserDraftTemplateActions

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 
 import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress"
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { useDispatch } from "react-redux"
 

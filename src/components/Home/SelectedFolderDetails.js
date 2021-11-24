@@ -5,8 +5,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs"
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from "@mui/material/Typography"
+import { makeStyles } from "@mui/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom"
 

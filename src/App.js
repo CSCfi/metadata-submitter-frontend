@@ -1,9 +1,9 @@
 //@flow
 import React, { useEffect } from "react"
 
-import Container from "@material-ui/core/Container"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import { makeStyles } from "@material-ui/core/styles"
+import Container from "@mui/material/Container"
+import CssBaseline from "@mui/material/CssBaseline"
+import { makeStyles } from "@mui/styles"
 import i18n from "i18next"
 import { useDispatch, useSelector } from "react-redux"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"

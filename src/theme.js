@@ -1,4 +1,4 @@
-import { createTheme } from "@material-ui/core/styles"
+import { createTheme } from "@mui/material/styles"
 
 const defaultTheme = createTheme()
 
@@ -43,18 +43,22 @@ const palette = {
  * Set up custom theme that follows CSC's design guidelines.
  */
 const CSCtheme = createTheme({
-  overrides: {
+  components: {
     MuiButton: {
-      root: {
-        textTransform: "none",
-        fontWeight: "bold",
-        paddingLeft: "32px",
-        paddingRight: "32px",
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: "bold",
+          paddingLeft: "32px",
+          paddingRight: "32px",
+        },
       },
     },
     MuiTypography: {
-      subtitle1: {
-        fontWeight: 600,
+      styleOverrides: {
+        subtitle1: {
+          fontWeight: 600,
+        },
       },
     },
   },

@@ -8,8 +8,7 @@ import MuiFormControlLabel from "@mui/material/FormControlLabel"
 import FormGroup from "@mui/material/FormGroup"
 import FormLabel from "@mui/material/FormLabel"
 import ListItemText from "@mui/material/ListItemText"
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
+import { makeStyles, withStyles } from "@mui/styles"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"

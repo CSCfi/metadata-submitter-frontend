@@ -1,6 +1,8 @@
 //@flow
 import React, { useState } from "react"
 
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import CardHeader from "@mui/material/CardHeader"
@@ -11,10 +13,8 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import FormLabel from "@mui/material/FormLabel"
 import Grid from "@mui/material/Grid"
 import ListItemText from "@mui/material/ListItemText"
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from "@mui/material/Typography"
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
+import { makeStyles } from "@mui/styles"
 import { useSelector, useDispatch } from "react-redux"
 
 import UserDraftTemplateActions from "./UserDraftTemplateActions"

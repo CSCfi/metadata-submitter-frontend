@@ -7,7 +7,7 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
 import ListItemText from "@mui/material/ListItemText"
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "@mui/styles"
 import { useSelector } from "react-redux"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"

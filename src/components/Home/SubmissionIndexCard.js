@@ -1,6 +1,8 @@
 //@flow
 import React from "react"
 
+import FolderIcon from "@mui/icons-material/Folder"
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
@@ -12,10 +14,8 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from "@mui/material/Typography"
-import FolderIcon from "@mui/icons-material/Folder"
-import FolderOpenIcon from "@mui/icons-material/FolderOpen"
+import { makeStyles } from "@mui/styles"
 import { Link as RouterLink } from "react-router-dom"
 
 import { FolderSubmissionStatus } from "constants/wizardFolder"

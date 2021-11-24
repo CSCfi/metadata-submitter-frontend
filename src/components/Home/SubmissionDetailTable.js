@@ -1,6 +1,10 @@
 //@flow
 import React, { useEffect } from "react"
 
+import FolderIcon from "@mui/icons-material/Folder"
+import FolderOpenIcon from "@mui/icons-material/FolderOpen"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
@@ -13,8 +17,6 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import Paper from "@mui/material/Paper"
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
 import Table from "@mui/material/Table"
 import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
@@ -23,10 +25,7 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import FolderIcon from "@mui/icons-material/Folder"
-import FolderOpenIcon from "@mui/icons-material/FolderOpen"
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace"
+import { makeStyles, withStyles } from "@mui/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { Link as RouterLink } from "react-router-dom"
 

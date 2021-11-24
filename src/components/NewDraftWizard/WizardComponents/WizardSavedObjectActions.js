@@ -3,7 +3,7 @@ import React from "react"
 
 import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "@mui/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 

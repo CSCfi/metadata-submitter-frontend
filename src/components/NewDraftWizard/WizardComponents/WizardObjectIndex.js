@@ -1,6 +1,7 @@
 //@flow
 import React, { useState } from "react"
 
+import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
 import MuiAccordion from "@mui/material/Accordion"
 import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary from "@mui/material/AccordionSummary"
@@ -8,10 +9,9 @@ import MuiBadge from "@mui/material/Badge"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
-import { makeStyles, withStyles } from "@mui/material/styles"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
+import { makeStyles, withStyles } from "@mui/styles"
 import { useDispatch, useSelector } from "react-redux"
 
 import WizardAlert from "./WizardAlert"

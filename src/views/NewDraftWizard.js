@@ -1,10 +1,10 @@
 //@flow
 import React, { useRef, useEffect, useState } from "react"
 
-import Container from "@material-ui/core/Container"
-import LinearProgress from "@material-ui/core/LinearProgress"
-import Paper from "@material-ui/core/Paper"
-import { makeStyles } from "@material-ui/core/styles"
+import Container from "@mui/material/Container"
+import LinearProgress from "@mui/material/LinearProgress"
+import Paper from "@mui/material/Paper"
+import { makeStyles } from "@mui/styles"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 

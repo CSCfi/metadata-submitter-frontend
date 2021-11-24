@@ -3,7 +3,7 @@ import React, { useState } from "react"
 
 import Button from "@mui/material/Button"
 import Link from "@mui/material/Link"
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "@mui/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, Link as RouterLink } from "react-router-dom"
 

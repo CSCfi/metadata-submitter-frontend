@@ -2,7 +2,7 @@
 import React from "react"
 
 import Card from "@mui/material/Card"
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "@mui/styles"
 import { useSelector } from "react-redux"
 
 import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"

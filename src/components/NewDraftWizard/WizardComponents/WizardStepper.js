@@ -1,16 +1,15 @@
 //@flow
 import React, { useState } from "react"
 
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
+import Check from "@mui/icons-material/Check"
 import Button from "@mui/material/Button"
 import Step from "@mui/material/Step"
 import StepConnector from "@mui/material/StepConnector"
 import StepLabel from "@mui/material/StepLabel"
 import Stepper from "@mui/material/Stepper"
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
-import Check from "@mui/icons-material/Check"
+import { makeStyles, withStyles } from "@mui/styles"
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"

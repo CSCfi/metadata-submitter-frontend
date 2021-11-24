@@ -1,14 +1,14 @@
 //@flow
 import React from "react"
 
-import Avatar from "@material-ui/core/Avatar"
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
-import Container from "@material-ui/core/Container"
-import Grid from "@material-ui/core/Grid"
-import { makeStyles } from "@material-ui/core/styles"
-import ErrorOutlineOutlinedIcon from "@material-ui/icons/ErrorOutlineOutlined"
-import Alert from "@material-ui/lab/Alert"
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined"
+import Alert from "@mui/material/Alert"
+import Avatar from "@mui/material/Avatar"
+import Card from "@mui/material/Card"
+import CardContent from "@mui/material/CardContent"
+import Container from "@mui/material/Container"
+import Grid from "@mui/material/Grid"
+import { makeStyles } from "@mui/styles"
 
 import logo from "../csc_logo.svg"
 

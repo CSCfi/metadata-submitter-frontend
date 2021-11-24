@@ -1,16 +1,16 @@
 //@flow
 import React, { useState } from "react"
 
-import AppBar from "@material-ui/core/AppBar"
-import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
-import Link from "@material-ui/core/Link"
-import Menu from "@material-ui/core/Menu"
-import MenuItem from "@material-ui/core/MenuItem"
-import { makeStyles } from "@material-ui/core/styles"
-import Toolbar from "@material-ui/core/Toolbar"
-import Typography from "@material-ui/core/Typography"
-import HomeIcon from "@material-ui/icons/Home"
+import HomeIcon from "@mui/icons-material/Home"
+import AppBar from "@mui/material/AppBar"
+import Button from "@mui/material/Button"
+import IconButton from "@mui/material/IconButton"
+import Link from "@mui/material/Link"
+import Menu from "@mui/material/Menu"
+import MenuItem from "@mui/material/MenuItem"
+import Toolbar from "@mui/material/Toolbar"
+import Typography from "@mui/material/Typography"
+import { makeStyles } from "@mui/styles"
 import i18n from "i18next"
 import { useDispatch, useSelector } from "react-redux"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
@@ -80,6 +80,7 @@ const NavigationLinks = (props: MenuItemProps) => {
         className={classes.HomeIcon}
         aria-label="go to frontpage"
         color="inherit"
+        size="large"
       >
         <HomeIcon />
       </IconButton>

@@ -1,9 +1,8 @@
 //@flow
 import React, { useState } from "react"
 
-// import Portal from "@material-ui/core/Portal"
-import Snackbar from "@material-ui/core/Snackbar"
-import Alert from "@material-ui/lab/Alert"
+import Alert from "@mui/lab/Alert"
+import Snackbar from "@mui/material/Snackbar"
 import { useDispatch, useSelector } from "react-redux"
 
 import { ResponseStatus } from "constants/responseStatus"

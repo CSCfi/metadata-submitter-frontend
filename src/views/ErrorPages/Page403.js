@@ -1,8 +1,8 @@
 //@flow
 import React, { useState, useEffect } from "react"
 
-import { Button } from "@material-ui/core"
-import Typography from "@material-ui/core/Typography"
+import { Button } from "@mui/material"
+import Typography from "@mui/material/Typography"
 import { Navigate } from "react-router-dom"
 
 import ErrorPageContainer from "../../components/ErrorPageContainer"

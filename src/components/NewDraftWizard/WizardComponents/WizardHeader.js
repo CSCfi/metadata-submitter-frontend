@@ -1,8 +1,8 @@
 //@flow
 import React from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
-import Typography from "@material-ui/core/Typography"
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from "@mui/material/Typography"
 
 const useStyles = makeStyles(theme => ({
   paperTitle: {

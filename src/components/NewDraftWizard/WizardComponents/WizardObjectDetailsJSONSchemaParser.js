@@ -1,14 +1,14 @@
 //@flow
 import * as React from "react"
 
-import Box from "@material-ui/core/Box"
-import Checkbox from "@material-ui/core/Checkbox"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import Paper from "@material-ui/core/Paper"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import Typography from "@material-ui/core/Typography"
+import Box from "@mui/material/Box"
+import Checkbox from "@mui/material/Checkbox"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import Paper from "@mui/material/Paper"
+import { makeStyles, withStyles } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 import { get } from "lodash"
 
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"

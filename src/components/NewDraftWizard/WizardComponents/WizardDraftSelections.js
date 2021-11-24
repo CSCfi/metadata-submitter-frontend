@@ -1,14 +1,15 @@
 //@flow
 import React from "react"
 
-import Button from "@material-ui/core/Button"
-import Checkbox from "@material-ui/core/Checkbox"
-import FormControl from "@material-ui/core/FormControl"
-import MuiFormControlLabel from "@material-ui/core/FormControlLabel"
-import FormGroup from "@material-ui/core/FormGroup"
-import FormLabel from "@material-ui/core/FormLabel"
-import ListItemText from "@material-ui/core/ListItemText"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
+import Button from "@mui/material/Button"
+import Checkbox from "@mui/material/Checkbox"
+import FormControl from "@mui/material/FormControl"
+import MuiFormControlLabel from "@mui/material/FormControlLabel"
+import FormGroup from "@mui/material/FormGroup"
+import FormLabel from "@mui/material/FormLabel"
+import ListItemText from "@mui/material/ListItemText"
+import makeStyles from '@mui/styles/makeStyles';
+import withStyles from '@mui/styles/withStyles';
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"

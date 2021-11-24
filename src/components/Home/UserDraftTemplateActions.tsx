@@ -129,7 +129,7 @@ const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: 
       </Menu>
       <FormDialog open={dialogOpen} onClose={handleDialogClose}></FormDialog>
     </React.Fragment>
-  );
+  )
 }
 
 export default UserDraftTemplateActions

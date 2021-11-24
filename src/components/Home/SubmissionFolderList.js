@@ -1,12 +1,12 @@
 //@flow
 import React, { useEffect, useState } from "react"
 
-import Breadcrumbs from "@material-ui/core/Breadcrumbs"
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Grid from "@material-ui/core/Grid"
-import Link from "@material-ui/core/Link"
-import { makeStyles } from "@material-ui/core/styles"
-import Typography from "@material-ui/core/Typography"
+import Breadcrumbs from "@mui/material/Breadcrumbs"
+import CircularProgress from "@mui/material/CircularProgress"
+import Grid from "@mui/material/Grid"
+import Link from "@mui/material/Link"
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from "@mui/material/Typography"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, Link as RouterLink } from "react-router-dom"
 

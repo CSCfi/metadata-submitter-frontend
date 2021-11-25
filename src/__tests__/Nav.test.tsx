@@ -7,6 +7,8 @@ import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
+import CSCtheme from "../theme"
+
 import Nav from "../components/Nav"
 import CSCtheme from "../theme"
 

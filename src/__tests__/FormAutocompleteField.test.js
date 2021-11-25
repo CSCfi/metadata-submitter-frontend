@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen, waitFor, within, act } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { rest } from "msw"
@@ -59,9 +59,11 @@ describe("Test autocomplete on organisation field", () => {
 
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     await waitFor(() => {
@@ -73,9 +75,11 @@ describe("Test autocomplete on organisation field", () => {
   it("should search for organisations", async () => {
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen, within } from "@testing-library/react"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -81,11 +81,13 @@ describe("Published folders list", () => {
 
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
+              <App />
+            </MemoryRouter>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 
@@ -137,11 +139,13 @@ describe("Published folders list", () => {
 
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
+              <App />
+            </MemoryRouter>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 
@@ -179,11 +183,13 @@ describe("Published folders list", () => {
 
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <MemoryRouter initialEntries={[{ pathname: "/en/home/drafts/123456" }]}>
+              <App />
+            </MemoryRouter>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

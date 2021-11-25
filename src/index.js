@@ -1,7 +1,7 @@
 //@flow
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import ReactDOM from "react-dom"
 import { Provider } from "react-redux"
 import "style.css"
@@ -20,13 +20,13 @@ import "./i18n"
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <Router>
+      <Router>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
             <App />
-          </Router>
-        </ThemeProvider>
-      </StyledEngineProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </Router>
     </Provider>,
     document.getElementById("root")
   )

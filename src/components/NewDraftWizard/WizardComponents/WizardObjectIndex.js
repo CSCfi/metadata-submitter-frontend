@@ -1,7 +1,7 @@
 //@flow
 import React, { useState } from "react"
 
-import DescriptionRoundedIcon from "@material-ui/icons/DescriptionRounded"
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded"
 import MuiAccordion from "@mui/material/Accordion"
 import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary from "@mui/material/AccordionSummary"

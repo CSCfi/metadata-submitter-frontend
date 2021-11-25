@@ -1,7 +1,7 @@
 //@flow
 import React, { useState } from "react"
 
-import Alert from "@mui/lab/Alert"
+import Alert from "@mui/material/Alert"
 import Snackbar from "@mui/material/Snackbar"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -11,15 +11,18 @@ import { resetStatusDetails } from "features/statusMessageSlice"
 /*
  * Error messages
  */
-const ErrorHandler = ({
-  response,
-  helperText,
-  handleClose,
-}: {
-  response: Object,
-  helperText: string,
-  handleClose: boolean => void,
-}) => {
+const ErrorHandler = React.forwardRef(function ErrorHandler(
+  {
+    response,
+    helperText,
+    handleClose,
+  }: {
+    response: Object,
+    helperText: string,
+    handleClose: boolean => void,
+  },
+  ref
+) {
   let message: string
 
   switch (response.status) {
@@ -36,16 +39,17 @@ const ErrorHandler = ({
       message = "Unfortunately an unexpected error happened on our servers"
   }
   return (
-    <div>
-      <Alert severity="error" onClose={() => handleClose(false)}>
-        {message}
-      </Alert>
-    </div>
+    <Alert severity="error" onClose={() => handleClose(false)} ref={ref}>
+      {message}
+    </Alert>
   )
-}
+})
 
 // Info messages
-const InfoHandler = ({ handleClose, helperText }: { handleClose: boolean => void, helperText?: string }) => {
+const InfoHandler = React.forwardRef(function InfoHandler(
+  { handleClose, helperText }: { handleClose: boolean => void, helperText?: string },
+  ref
+) {
   const defaultMessage = `For some reason, your file is still being saved
   to our database, please wait. If saving doesn't go through in two
   minutes, please try saving the file again.`
@@ -55,22 +59,25 @@ const InfoHandler = ({ handleClose, helperText }: { handleClose: boolean => void
   }
 
   return (
-    <Alert onClose={() => handleClose(false)} severity="info">
+    <Alert onClose={() => handleClose(false)} severity="info" ref={ref}>
       {messageTemplate(helperText)}
     </Alert>
   )
-}
+})
 
 // Success messages
-const SuccessHandler = ({
-  response,
-  helperText,
-  handleClose,
-}: {
-  response: Object,
-  helperText: string,
-  handleClose: boolean => void,
-}) => {
+const SuccessHandler = React.forwardRef(function SuccessHandler(
+  {
+    response,
+    helperText,
+    handleClose,
+  }: {
+    response: Object,
+    helperText: string,
+    handleClose: boolean => void,
+  },
+  ref
+) {
   let message: string
 
   if (response) {
@@ -116,11 +123,11 @@ const SuccessHandler = ({
   }
 
   return (
-    <Alert onClose={() => handleClose(false)} severity="success">
+    <Alert onClose={() => handleClose(false)} severity="success" ref={ref}>
       {message}
     </Alert>
   )
-}
+})
 
 const Message = ({
   status,

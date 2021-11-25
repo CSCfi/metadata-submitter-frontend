@@ -1,11 +1,14 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, within } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import thunk from "redux-thunk"
+
+import CSCtheme from "../theme"
 
 import App from "App"
 import { ObjectTypes } from "constants/wizardObject"
@@ -73,7 +76,11 @@ describe("Published folders list", () => {
     const { getAllByText, getByTestId, getByLabelText } = render(
       <Provider store={store}>
         <MemoryRouter initialEntries={["/en/home/published"]}>
-          <App />
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </MemoryRouter>
       </Provider>
     )

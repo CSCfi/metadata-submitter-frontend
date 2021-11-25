@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen, act } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
@@ -17,9 +17,11 @@ const mockStore = configureStore()
 describe("Page401", () => {
   test("renders Page401 component", () => {
     render(
-      <ThemeProvider theme={CSCtheme}>
-        <Page401 />
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <Page401 />
+        </ThemeProvider>
+      </StyledEngineProvider>
     )
     screen.getByText("401 Authorization Error")
     expect(screen.getByText("401 Authorization Error")).toBeInTheDocument()
@@ -36,11 +38,13 @@ describe("Page401", () => {
     })
     let component = render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
+              <App />
+            </MemoryRouter>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

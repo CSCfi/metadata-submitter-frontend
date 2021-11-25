@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen } from "@testing-library/react"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -70,9 +70,11 @@ describe("Object details", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/en/home/published/testaccessionid" }]}>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <SelectedFolderDetails />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <SelectedFolderDetails />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </MemoryRouter>
     )
@@ -104,7 +106,11 @@ describe("Object details", () => {
 
     render(
       <Provider store={store}>
-        <WizardObjectDetails objectType="study" objectData={objectData} />
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardObjectDetails objectType="study" objectData={objectData} />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

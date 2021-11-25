@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { BrowserRouter as Router } from "react-router-dom"
@@ -18,11 +18,13 @@ describe("App", () => {
     })
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <Router>
-            <App />
-          </Router>
-        </ThemeProvider>
+        <Router>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
+        </Router>
       </Provider>
     )
   })

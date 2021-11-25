@@ -1,11 +1,14 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useForm, FormProvider } from "react-hook-form"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
+
+import CSCtheme from "../theme"
 
 import { WizardAjvResolver } from "components/NewDraftWizard/WizardForms/WizardAjvResolver"
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
@@ -36,14 +39,18 @@ describe("Test form render by custom schema", () => {
 
       return (
         <Provider store={store}>
-          <FormProvider {...methods}>
-            <form id="hook-form" onSubmit={onSubmit} role="form">
-              <div>{JSONSchemaParser.buildFields(schema)}</div>
-              <button type="submit" role="button">
-                submit
-              </button>
-            </form>
-          </FormProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <FormProvider {...methods}>
+                <form id="hook-form" onSubmit={onSubmit} role="form">
+                  <div>{JSONSchemaParser.buildFields(schema)}</div>
+                  <button type="submit" role="button">
+                    submit
+                  </button>
+                </form>
+              </FormProvider>
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       )
     }

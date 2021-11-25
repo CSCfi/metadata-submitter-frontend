@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen, waitForElementToBeRemoved } from "@testing-library/react"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -29,9 +29,11 @@ describe("NewDraftWizard", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=undefined" }]}>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <App />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </MemoryRouter>
     )
@@ -64,9 +66,11 @@ describe("NewDraftWizard", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: "/en/newdraft/123456", search: "?step=1" }]}>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <App />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </MemoryRouter>
     )
@@ -109,9 +113,11 @@ describe("NewDraftWizard", () => {
     render(
       <MemoryRouter initialEntries={[{ pathname: `/en/newdraft/${folderId}`, search: "?step=0" }]}>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <App />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <App />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </MemoryRouter>
     )

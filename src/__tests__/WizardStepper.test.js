@@ -1,10 +1,13 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
+
+import CSCtheme from "../theme"
 
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
 
@@ -21,7 +24,16 @@ describe("WizardStepper", () => {
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=0" }]}>
         <Provider store={store}>
           <Routes>
-            <Route path="/newdraft" element={<WizardStepper />} />
+            <Route
+              path="/newdraft"
+              element={
+                <StyledEngineProvider injectFirst>
+                  <ThemeProvider theme={CSCtheme}>
+                    <WizardStepper />{" "}
+                  </ThemeProvider>
+                </StyledEngineProvider>
+              }
+            />
           </Routes>
         </Provider>
       </MemoryRouter>
@@ -38,7 +50,16 @@ describe("WizardStepper", () => {
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=1" }]}>
         <Provider store={store}>
           <Routes>
-            <Route path="/newdraft" element={<WizardStepper />} />
+            <Route
+              path="/newdraft"
+              element={
+                <StyledEngineProvider injectFirst>
+                  <ThemeProvider theme={CSCtheme}>
+                    <WizardStepper />
+                  </ThemeProvider>
+                </StyledEngineProvider>
+              }
+            />
           </Routes>
         </Provider>
       </MemoryRouter>

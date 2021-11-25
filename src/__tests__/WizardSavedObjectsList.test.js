@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen, within } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter as Router } from "react-router-dom"
@@ -58,9 +58,11 @@ describe("WizardSavedObjectsList with submitted objects", () => {
     render(
       <Router>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardSavedObjectsList objects={submissions} />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <WizardSavedObjectsList objects={submissions} />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </Router>
     )
@@ -119,9 +121,11 @@ describe("WizardSavedObjectsList with drafts", () => {
     render(
       <Router>
         <Provider store={store}>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardSavedObjectsList objects={drafts} />
-          </ThemeProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <WizardSavedObjectsList objects={drafts} />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       </Router>
     )

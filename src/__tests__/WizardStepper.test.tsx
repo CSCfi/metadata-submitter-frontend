@@ -7,8 +7,6 @@ import { Provider } from "react-redux"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import CSCtheme from "../theme"
-
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
 import CSCtheme from "../theme"
 

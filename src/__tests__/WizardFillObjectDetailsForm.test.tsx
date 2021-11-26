@@ -10,7 +10,6 @@ import WizardFillObjectDetailsForm from "../components/NewDraftWizard/WizardForm
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-import { debuglog } from "util"
 
 const mockStore = configureStore([])
 

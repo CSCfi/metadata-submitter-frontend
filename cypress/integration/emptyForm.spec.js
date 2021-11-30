@@ -50,7 +50,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("textarea[data-testid='description']").should("have.value", "Test experiment description")
 
     // Click Clear form button and expect the form is empty
-    cy.get("button[type='button']").contains("Clear form").click()
+    cy.get("button[type='button']").contains("Clear form").click({ force: true })
     cy.get("input[data-testid='title']").should("have.value", "")
     cy.get("textarea[data-testid='description']").should("have.value", "")
 

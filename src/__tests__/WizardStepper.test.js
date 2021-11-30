@@ -7,9 +7,8 @@ import { Provider } from "react-redux"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import CSCtheme from "../theme"
-
 import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
+import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 
@@ -29,7 +28,7 @@ describe("WizardStepper", () => {
               element={
                 <StyledEngineProvider injectFirst>
                   <ThemeProvider theme={CSCtheme}>
-                    <WizardStepper />{" "}
+                    <WizardStepper />
                   </ThemeProvider>
                 </StyledEngineProvider>
               }

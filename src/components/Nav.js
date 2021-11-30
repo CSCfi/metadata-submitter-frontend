@@ -49,9 +49,6 @@ const useStyles = makeStyles(theme => ({
   linkButton: {
     margin: theme.spacing(1, 1.5),
   },
-  toolbar: {
-    flexWrap: "wrap",
-  },
   title: {
     flexGrow: 1,
   },
@@ -196,8 +193,8 @@ const NavigationMenu = () => {
 const Nav = (): React$Element<typeof AppBar> => {
   const classes = useStyles()
   return (
-    <AppBar className={classes.appBar} elevation={1}>
-      <Toolbar className={classes.toolbar}>
+    <AppBar className={classes.appBar}>
+      <Toolbar>
         <Link to={pathWithLocale("home")} component={RouterLink} className={classes.brandLink}>
           <img className={classes.logo} src={logo} alt="CSC" />
         </Link>

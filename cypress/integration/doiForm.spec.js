@@ -172,10 +172,7 @@ describe("DOI form", function () {
     cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
 
     // Delete the autocompleteField value and check the field <affiliationIdentifier> also removed
-    cy.get("input[name='contributors.0.affiliation.0.name']")
-      .parent()
-      .children("div[class='MuiAutocomplete-endAdornment']")
-      .click()
+    cy.get("input[name='contributors.0.affiliation.0.name']").parent().children("div").click()
     cy.get("input[data-testid='contributors.0.affiliation.0.affiliationIdentifier']").should("have.value", "")
 
     // Type new search words

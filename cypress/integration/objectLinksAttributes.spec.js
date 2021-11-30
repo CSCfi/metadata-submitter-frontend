@@ -82,8 +82,9 @@ describe("render objects' links and attributes ", function () {
     cy.get("input[name='studyAttributes.0.tag']").should("have.value", "Test Attributes Tag")
     cy.get("textarea[name='studyAttributes.0.value']").should("have.value", "Test Attributes Value")
 
+    cy.get("div[class='arrayRow']", { timeout: 10000 }).should("have.length", 3)
     // Remove URL Link and check that the rest of the Study Links render correctly
-    cy.get("div[data-testid='studyLinks[1]']").children("button").click()
+    cy.get("div[data-testid='studyLinks[1]']").children("button").click({ force: true })
     cy.get("div[class='arrayRow']", { timeout: 10000 }).should("have.length", 2)
 
     cy.get("select[name='studyLinks.0']").should("have.value", "XRef Link")

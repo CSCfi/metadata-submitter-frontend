@@ -169,6 +169,7 @@ const WizardUploadObjectXMLForm = (): React$Element<typeof Container> => {
       variant="contained"
       className={classes.submitButton}
       size="small"
+      color="secondary"
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >

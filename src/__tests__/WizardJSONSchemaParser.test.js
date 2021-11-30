@@ -9,9 +9,9 @@ import { useForm, FormProvider } from "react-hook-form"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import CustomSchema from "./fixtures/custom_schema.json"
-
 import CSCtheme from "../theme"
+
+import CustomSchema from "./fixtures/custom_schema.json"
 
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
 import { pathToName } from "utils/JSONSchemaUtils"

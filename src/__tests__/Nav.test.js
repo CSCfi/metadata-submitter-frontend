@@ -1,12 +1,14 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
 import Nav from "../components/Nav"
+import CSCtheme from "../theme"
 
 const mockStore = configureStore()
 
@@ -19,7 +21,11 @@ describe("NavBar", () => {
     component = render(
       <Provider store={store}>
         <MemoryRouter initialEntries={["/en/home"]}>
-          <Nav />
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <Nav />
+            </ThemeProvider>
+          </StyledEngineProvider>
         </MemoryRouter>
       </Provider>
     )

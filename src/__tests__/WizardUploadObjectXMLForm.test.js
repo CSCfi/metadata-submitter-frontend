@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { Provider } from "react-redux"
@@ -32,9 +32,11 @@ describe("WizardStepper", () => {
   it("should have send button disabled when there's no validated xml file", async () => {
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardUploadObjectXMLForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardUploadObjectXMLForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     const button = await screen.findByRole("button", { name: /submit/i })
@@ -45,9 +47,11 @@ describe("WizardStepper", () => {
     const file = new File(["test"], "test.xml", { type: "text/xml" })
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardUploadObjectXMLForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardUploadObjectXMLForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     const input = await screen.findByTestId("xml-upload")

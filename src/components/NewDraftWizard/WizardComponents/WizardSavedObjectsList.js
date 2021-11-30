@@ -1,13 +1,13 @@
 //@flow
 import React, { useEffect, useRef } from "react"
 
-import Box from "@material-ui/core/Box"
-import CardHeader from "@material-ui/core/CardHeader"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
-import ListItemText from "@material-ui/core/ListItemText"
-import { makeStyles } from "@material-ui/core/styles"
+import Box from "@mui/material/Box"
+import CardHeader from "@mui/material/CardHeader"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
+import ListItemText from "@mui/material/ListItemText"
+import { makeStyles } from "@mui/styles"
 import { useSelector } from "react-redux"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"

@@ -102,7 +102,7 @@ describe("Populate form and render form elements by object data", function () {
     // Switch to select and fill Complex processing
     cy.get("select[name='processing']").select(testData.complexProcessing)
     cy.get("h2[data-testid='processing']").parents().children("button").click()
-    cy.get(".MuiPaper-root > :nth-child(1) > .formSection > .array > .MuiButtonBase-root > .MuiButton-label").click()
+    cy.get("h4[data-testid='processing.0.pipeline.pipeSection']").parent().children("button").click()
     cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").type(testData.stepIndex)
     cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']", { force: true }).select(
       testData.stringValue
@@ -139,7 +139,9 @@ describe("Populate form and render form elements by object data", function () {
     )
 
     // Change Prev Step Index from string value to null
-    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue)
+    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue, {
+      force: true,
+    })
 
     // Save Experiment form 2nd time
     cy.get("button[type='button']").contains("Update draft").click()
@@ -198,7 +200,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[type='checkbox']").first().should("be.checked")
 
     // Test that checkbox clears with form clear -button
-    cy.get("button[type=button]", { timeout: 10000 }).contains("Clear form").click()
+    cy.get("button[type=button]", { force: true }).contains("Clear form").click()
     cy.get("[type='checkbox']").first().should("not.be.checked")
   })
 

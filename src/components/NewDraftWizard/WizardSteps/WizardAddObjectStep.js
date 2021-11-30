@@ -1,9 +1,9 @@
 //@flow
 import React from "react"
 
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Grid from "@material-ui/core/Grid"
-import { makeStyles } from "@material-ui/core/styles"
+import CircularProgress from "@mui/material/CircularProgress"
+import Grid from "@mui/material/Grid"
+import { makeStyles } from "@mui/styles"
 import { useSelector } from "react-redux"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"

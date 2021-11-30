@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
@@ -41,13 +41,14 @@ describe("WizardFillObjectDetailsForm", () => {
         description: "More for backwards compatibility, we might not need it.",
         type: "object",
         properties: {
-            centerProjectName: {
-                title: "Center Project Name",
-                description: " Submitter defined project name. This field is intended for backward tracking of the study record to the submitter's LIMS.",
-                type: "string"
-            }
-        }
-    }
+          centerProjectName: {
+            title: "Center Project Name",
+            description:
+              " Submitter defined project name. This field is intended for backward tracking of the study record to the submitter's LIMS.",
+            type: "string",
+          },
+        },
+      },
     },
   }
 
@@ -71,9 +72,11 @@ describe("WizardFillObjectDetailsForm", () => {
   it("should create study form from schema in sessionStorage", async () => {
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     await waitFor(() => screen.getByText("Study Description"))
@@ -83,9 +86,11 @@ describe("WizardFillObjectDetailsForm", () => {
   it("should validate without errors on blur", async () => {
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     await waitFor(() => {
@@ -99,36 +104,41 @@ describe("WizardFillObjectDetailsForm", () => {
   it("should show tooltip on mouse over", async () => {
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
-    await waitFor(() => {
-      const tooltip = screen.getByTitle("Title of the study as would be used in a publication.")
-      fireEvent.mouseOver(tooltip)
-      expect(tooltip).toBeVisible()
-    })
-    await waitFor(() => {
-      const tooltip = screen.getByTitle("More for backwards compatibility, we might not need it.")
-      fireEvent.mouseOver(tooltip)
-      expect(tooltip).toBeVisible()
-    })
-  }
 
-  )
+    await waitFor(() => {
+      const tooltip = screen.getByLabelText("Title of the study as would be used in a publication.")
+      fireEvent.mouseOver(tooltip)
+      expect(tooltip).toBeVisible()
+    })
+
+    await waitFor(() => {
+      const tooltip = screen.getByLabelText("More for backwards compatibility, we might not need it.")
+      fireEvent.mouseOver(tooltip)
+      expect(tooltip).toBeVisible()
+    })
+  })
 
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
   it("should call sessionStorage", async () => {
     const spy = jest.spyOn(Storage.prototype, "getItem")
     render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
     expect(spy).toBeCalledWith("cached_study_schema")
+
     await waitFor(() => {
       expect(spy.mock.calls.length).toBe(1)
     })

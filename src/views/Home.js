@@ -1,11 +1,11 @@
 //@flow
 import React, { useEffect, useState } from "react"
 
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Divider from "@material-ui/core/Divider"
-import Grid from "@material-ui/core/Grid"
-import { makeStyles } from "@material-ui/core/styles"
-import Typography from "@material-ui/core/Typography"
+import CircularProgress from "@mui/material/CircularProgress"
+import Divider from "@mui/material/Divider"
+import Grid from "@mui/material/Grid"
+import Typography from "@mui/material/Typography"
+import { makeStyles } from "@mui/styles"
 import { useTranslation } from "react-i18next"
 import { useDispatch, useSelector } from "react-redux"
 

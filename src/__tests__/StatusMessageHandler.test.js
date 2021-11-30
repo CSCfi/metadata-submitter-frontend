@@ -16,7 +16,6 @@ describe("StatusMessageHandler", () => {
     const helperTextMock = "Test prefix"
 
     const store = mockStore({
-      // errorMessage: "",
       statusDetails: { status: ResponseStatus.error, response: responseMock, helperText: helperTextMock },
     })
 

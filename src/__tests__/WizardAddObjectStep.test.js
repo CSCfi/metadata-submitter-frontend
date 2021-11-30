@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen, act } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
@@ -45,7 +45,16 @@ describe("WizardAddObjectStep", () => {
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
         <Provider store={store}>
           <Routes>
-            <Route path="/newdraft" element={<WizardAddObjectStep />} />
+            <Route
+              path="/newdraft"
+              element={
+                <StyledEngineProvider injectFirst>
+                  <ThemeProvider theme={CSCtheme}>
+                    <WizardAddObjectStep />{" "}
+                  </ThemeProvider>
+                </StyledEngineProvider>
+              }
+            />
           </Routes>
         </Provider>
       </MemoryRouter>
@@ -84,9 +93,11 @@ describe("WizardAddObjectStep", () => {
                 <Route
                   path="/newdraft"
                   element={
-                    <ThemeProvider theme={CSCtheme}>
-                      <WizardAddObjectStep />
-                    </ThemeProvider>
+                    <StyledEngineProvider injectFirst>
+                      <ThemeProvider theme={CSCtheme}>
+                        <WizardAddObjectStep />
+                      </ThemeProvider>
+                    </StyledEngineProvider>
                   }
                 />
               </Routes>

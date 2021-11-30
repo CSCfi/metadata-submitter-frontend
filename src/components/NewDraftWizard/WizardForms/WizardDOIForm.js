@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"

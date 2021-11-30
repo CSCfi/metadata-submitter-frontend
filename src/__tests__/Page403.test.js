@@ -1,7 +1,7 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
-import { ThemeProvider } from "@material-ui/core/styles"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { render, screen, act } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
@@ -19,9 +19,11 @@ const mockStore = configureStore(middlewares)
 describe("Page403", () => {
   test("renders Page403 component", () => {
     render(
-      <ThemeProvider theme={CSCtheme}>
-        <Page403 />
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <Page403 />
+        </ThemeProvider>
+      </StyledEngineProvider>
     )
     screen.getByText("403 Forbidden Error")
     expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
@@ -46,11 +48,13 @@ describe("Page403", () => {
     })
     let component = render(
       <Provider store={store}>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
+              <App />
+            </MemoryRouter>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

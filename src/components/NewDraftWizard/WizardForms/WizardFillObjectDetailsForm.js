@@ -1,14 +1,14 @@
 //@flow
 import React, { useEffect, useState, useRef } from "react"
 
-import Button from "@material-ui/core/Button"
-import CardHeader from "@material-ui/core/CardHeader"
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Container from "@material-ui/core/Container"
-import LinearProgress from "@material-ui/core/LinearProgress"
-import { makeStyles } from "@material-ui/core/styles"
-import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined"
-import Alert from "@material-ui/lab/Alert"
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined"
+import Alert from "@mui/material/Alert"
+import Button from "@mui/material/Button"
+import CardHeader from "@mui/material/CardHeader"
+import CircularProgress from "@mui/material/CircularProgress"
+import Container from "@mui/material/Container"
+import LinearProgress from "@mui/material/LinearProgress"
+import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
@@ -140,6 +140,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <Button
         ref={focusTarget}
         variant="contained"
+        color="secondary"
         aria-label="create new form"
         size="small"
         onClick={() => handleClick()}
@@ -148,15 +149,22 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
         New form
       </Button>
-      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
+      <Button variant="contained" color="secondary" aria-label="clear form" size="small" onClick={onClickClearForm}>
         Clear form
       </Button>
 
-      <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
+      <Button
+        variant="contained"
+        color="secondary"
+        aria-label="save form as draft"
+        size="small"
+        onClick={onClickSaveDraft}
+      >
         {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
       <Button
         variant="contained"
+        color="secondary"
         aria-label="submit form"
         size="small"
         type={currentObject?.status === ObjectStatus.submitted ? "button" : "submit"}

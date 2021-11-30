@@ -1,12 +1,15 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { get } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
+
+import CSCtheme from "../theme"
 
 import CustomSchema from "./fixtures/custom_schema.json"
 
@@ -25,11 +28,15 @@ describe("Test form render by custom schema", () => {
 
       return (
         <Provider store={store}>
-          <FormProvider {...methods}>
-            <form id="hook-form">
-              <div>{JSONSchemaParser.buildFields(schema)}</div>
-            </form>
-          </FormProvider>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <FormProvider {...methods}>
+                <form id="hook-form">
+                  <div>{JSONSchemaParser.buildFields(schema)}</div>
+                </form>
+              </FormProvider>
+            </ThemeProvider>
+          </StyledEngineProvider>
         </Provider>
       )
     }

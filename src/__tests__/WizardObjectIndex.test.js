@@ -1,11 +1,13 @@
 import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
 import WizardObjectIndex from "../components/NewDraftWizard/WizardComponents/WizardObjectIndex"
+import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"
 
@@ -42,7 +44,11 @@ describe("WizardObjectIndex", () => {
 
     render(
       <Provider store={store}>
-        <WizardObjectIndex />
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardObjectIndex />
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Provider>
     )
 

@@ -157,6 +157,7 @@ describe("Basic e2e", function () {
       )
 
     // Try to submit empty DAC form. This should be invalid
+    cy.get('[data-testid=title]').type("test description")
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get("span").contains("must have at least 1 item")
 

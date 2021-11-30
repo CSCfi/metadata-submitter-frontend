@@ -229,6 +229,7 @@ describe("Linking Accession Ids", function () {
     cy.get("input[name='contacts.0.telephoneNumber']").click()
     cy.get("input[name='contacts.0.mainContact']").check()
     // Submit DAC form
+    cy.get('[data-testid=title]').type("test description")
     cy.get("button[type=submit]").contains("Submit").click()
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
     // Get DACAccessionId

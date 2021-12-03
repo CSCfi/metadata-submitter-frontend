@@ -252,9 +252,9 @@ describe("DOI form", function () {
       .should("be.visible")
 
     cy.wait(500)
-    cy.get("div[data-testid='Start'] > div").then(() =>
-      cy.get("div[data-testid='Start'] > div > button").click({ force: true })
-    )
+    cy.get("div[data-testid='Start'] > div")
+      .should("be.visible")
+      .then(() => cy.get("div[data-testid='Start'] > div > button").click({ force: true }))
     cy.get("div").contains("4", { timeout: 10000 }).click()
     cy.get("input[data-testid='dates.0.date']").should("have.value", "2021-10-04/")
 

@@ -42,7 +42,8 @@
     "format": "prettier --write \"**/*.+(json|yml|yaml|css|md)\"",
     "format:check": "prettier --check \"**/*.+(json|yml|yaml|css|md)\"",
     "concurrently": "concurrently",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "tsc": "tsc --pretty"
   },
   "eslintConfig": {
     "env": {
@@ -104,7 +105,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run concurrently -- \"npm:lint:check\" \"npm:format:check\" \"npm:test:noninteractive\" "
+      "pre-commit": "npm run concurrently -- \"npm:lint:check\" \"npm:format:check\" \"npm:tsc\" \"npm:test:noninteractive\" "
     }
   }
 }

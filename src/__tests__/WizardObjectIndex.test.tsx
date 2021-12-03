@@ -55,10 +55,10 @@ describe("WizardObjectIndex", () => {
     const badge = await screen.queryAllByTestId("badge")
     expect(badge).toHaveLength(3)
     const studyBadge = screen.queryAllByTestId("badge")[0]
-    expect(studyBadge).toHaveTextContent(2)
+    expect(studyBadge).toHaveTextContent("2")
     const analysisBadge = screen.queryAllByTestId("badge")[1]
-    expect(analysisBadge).toHaveTextContent(1)
+    expect(analysisBadge).toHaveTextContent("1")
     const experimentBadge = screen.queryAllByTestId("badge")[2]
-    expect(experimentBadge).toHaveTextContent(1)
+    expect(experimentBadge).toHaveTextContent("1")
   })
 })

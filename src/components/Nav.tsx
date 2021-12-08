@@ -13,7 +13,7 @@ import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
-import logo from "../csc_logo.svg"
+import logo from "../images/csc_logo.svg"
 
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
@@ -25,9 +25,9 @@ import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   appBar: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    color: theme.palette.text.primary,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.common.white,
+
+    boxShadow: "0 0.1875rem 0.375rem rgba(0, 0, 0, 0.16)",
   },
   logo: {
     height: "auto",
@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    color: theme.palette.darkGrey,
   },
 }))
 
@@ -191,7 +192,7 @@ const Nav: React.FC = () => {
           <img className={classes.logo} src={logo} alt="CSC" />
         </Link>
         <Typography variant="h6" noWrap className={classes.title}>
-          Metadata Submitter
+          Sensitive Data Services - SD Submit
         </Typography>
         <NavigationMenu />
       </Toolbar>

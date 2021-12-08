@@ -1,5 +1,9 @@
 import { createTheme } from "@mui/material/styles"
-// import { createSpacing } from "@mui/system"
+
+import MuseoSans_100 from "./fonts/MuseoSans_100.otf"
+import MuseoSans_300 from "./fonts/MuseoSans_300.otf"
+import MuseoSans_500 from "./fonts/MuseoSans_500.otf"
+import MuseoSans_700 from "./fonts/MuseoSans_700.otf"
 
 const defaultTheme = createTheme()
 
@@ -16,7 +20,7 @@ const palette = {
     main: "#006476",
   },
   background: {
-    default: "#FFF",
+    default: "rgba(216, 232, 234, 0.85)",
   },
   success: {
     main: "#62c480",
@@ -38,13 +42,45 @@ const palette = {
     white: "#FFF",
     black: "#000",
   },
+  darkGrey: "#595959",
 }
 
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
 const CSCtheme = createTheme({
+  typography: {
+    fontFamily: "Museo Sans, Arial, sans-serif",
+  },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 100;
+          src: url(${MuseoSans_100}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 300;
+          src: url(${MuseoSans_300}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 500;
+          src: url(${MuseoSans_500}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 700;
+          src: url(${MuseoSans_700}) format("opentype");          
+        }
+      `,
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -134,6 +170,7 @@ const CSCtheme = createTheme({
       "& h2, h3, h4, h5, h6": {
         margin: defaultTheme.spacing(1, 0),
       },
+
       "& .MuiPaper-elevation2": {
         paddingRight: defaultTheme.spacing(1),
         marginBottom: defaultTheme.spacing(1),

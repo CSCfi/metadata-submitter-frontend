@@ -9,7 +9,7 @@ import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import { makeStyles } from "@mui/styles"
 
-import logo from "../csc_logo.svg"
+import logo from "../images/csc_logo.svg"
 
 type ErrorPageProps = {
   children: any

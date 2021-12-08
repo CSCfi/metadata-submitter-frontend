@@ -1,5 +1,6 @@
 import React from "react"
 
+import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
@@ -7,26 +8,62 @@ import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 
+import CSCBannerLogin from "../images/csc_banner_login.png"
+
 const useStyles = makeStyles(theme => ({
   banner: {
-    width: "100%",
-    backgroundColor: theme.palette.third.main,
+    backgroundColor: theme.palette.common.white,
+    backgroundImage: `url(${CSCBannerLogin})`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    width: "56.7rem",
+    height: "35.4rem",
+    margin: "4rem auto",
+    paddingTop: "7rem",
+    boxShadow: "2px 2px 12px 2px #00000029",
+    borderRadius: "0.375rem",
   },
   bannerContainer: {
-    width: "50%",
     margin: "0 auto",
-    backgroundColor: theme.palette.third.main,
-    minHeight: "450px",
+    paddingLeft: "5rem",
+    // width: "50%",
+    // margin: "0 auto",
+    // // backgroundColor: theme.palette.third.main,
+    // minHeight: "450px",
+    // border: "2px solid red",
   },
   container: {
     flex: "1 0 auto",
     padding: 0,
     width: "100%",
   },
+  heading: {
+    padding: 0,
+    color: "#006778",
+    fontWeight: 700,
+    fontSize: "2rem",
+  },
+  introText: {
+    marginTop: "1rem",
+    width: "50%",
+    color: theme.palette.darkGrey,
+    fontWeight: 500,
+  },
+  loginLink: {
+    marginTop: "2rem",
+  },
+  loginButton: {
+    fontSize: "1rem",
+    backgroundColor: "#006778",
+    color: theme.palette.common.white,
+    textDecoration: "none",
+    fontWeight: 700,
+  },
   whiteBanner: {
-    backgroundColor: theme.palette.background.default,
-    color: "#000",
-    padding: "15px",
+    // backgroundColor: theme.palette.background.default,
+    // color: "#000",
+    // padding: "15px",
+    // border: "2px solid red",
   },
   whiteBanner2: {
     backgroundColor: theme.palette.background.default,
@@ -59,6 +96,7 @@ const Login: React.FC = () => {
   if (process.env.NODE_ENV === "development") {
     loginRoute = "http://localhost:5430/aai"
   }
+  console.log("loginRoute :>> ", loginRoute)
 
   return (
     <Container maxWidth={false} className={classes.container}>
@@ -67,34 +105,28 @@ const Login: React.FC = () => {
           container
           direction="column"
           justifyContent="center"
-          alignItems="flex-end"
+          // alignItems="flex-end"
           className={classes.bannerContainer}
         >
-          <Grid item xs={12} className={classes.whiteBanner}>
-            <Typography variant="h3" component="h2" align="right">
-              CSC Metadata Submission Tool
-            </Typography>
-          </Grid>
-          <Grid item xs={12} className={classes.purpleBanner}>
-            <Typography variant="h4" component="h3" align="right">
-              Add, Store and Publish
-            </Typography>
-          </Grid>
-          <Grid item xs={12} className={classes.whiteBanner2}>
-            <Typography variant="h4" component="h4" align="right">
-              Your Research Metadata
-            </Typography>
-          </Grid>
+          <Typography variant="h1" className={classes.heading}>
+            SD SUBMIT
+          </Typography>
+          <Typography className={classes.introText}>Tool for submitting metadata.</Typography>
+          <Link href={loginRoute} className={classes.loginLink}>
+            <Button variant="contained" className={classes.loginButton}>
+              Login
+            </Button>
+          </Link>
         </Grid>
       </Paper>
-      <Paper className={classes.login}>
+      {/* <Paper className={classes.login}>
         <Typography variant="h5" component="h5" align="center">
           Login
         </Typography>
         <Link href={loginRoute}>
           <img alt="CSC Login" src="https://user-auth.csc.fi/idp/images/Password.png"></img>
         </Link>
-      </Paper>
+      </Paper> */}
     </Container>
   )
 }

@@ -51,6 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
   submitButton: {
     backgroundColor: "#FFF",
+    color: theme.palette.primary.main,
   },
 }))
 
@@ -168,7 +169,6 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       variant="contained"
       className={classes.submitButton}
       size="small"
-      color="secondary"
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
       onClick={handleSubmit(onSubmit)}
     >

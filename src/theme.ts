@@ -9,40 +9,32 @@ const defaultTheme = createTheme()
 
 const palette = {
   primary: {
-    light: "#9b416b",
-    main: "#8b1a4f",
+    // green
+    main: "#006778",
+    light: "#c2dbdf",
+    lightest: "#e5eff1",
   },
   secondary: {
-    main: "#dfe1e3",
-    dark: "#424242",
-  },
-  third: {
-    main: "#006476",
+    // grey
+    main: "#595959",
+    light: "#dfe1e3",
   },
   background: {
-    default: "rgba(216, 232, 234, 0.85)",
+    default: "#e5eff1",
   },
   success: {
-    main: "#62c480",
+    main: "#51a808",
   },
-  button: {
-    edit: "#025B96",
-    delete: "#E71D32",
+  error: {
+    main: "#b90729",
   },
-  errors: {
-    yellowErrorBackground: "#FFD534",
-    yellowErrorText: "#6A4C15",
-    redErrorBackground: "#E71D32",
-    redErrorText: "#FFFFFF",
-  },
-  font: {
-    main: "rgba(0, 0, 0, 0.87);",
+  info: {
+    main: "#006778",
   },
   common: {
     white: "#FFF",
     black: "#000",
   },
-  darkGrey: "#595959",
 }
 
 /**
@@ -85,9 +77,11 @@ const CSCtheme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-          fontWeight: "bold",
-          paddingLeft: "32px",
-          paddingRight: "32px",
+          fontWeight: 700,
+          fontSize: "1em",
+          paddingLeft: "2em",
+          paddingRight: "2em",
+          lineHeight: "1.2em",
         },
       },
     },
@@ -100,7 +94,7 @@ const CSCtheme = createTheme({
     },
   },
   palette: palette,
-  errors: palette.errors,
+  errors: palette.error,
   props: {
     MuiTextField: {
       variant: "outlined",
@@ -149,8 +143,8 @@ const CSCtheme = createTheme({
     },
     "& .MuiTypography-h2": {
       width: "100%",
-      color: palette.primary.light,
-      borderBottom: `2px solid ${palette.secondary.main}`,
+      color: palette.secondary.main,
+      borderBottom: `2px solid ${palette.secondary.light}`,
     },
     "& .MuiTypography-h3": {
       width: "100%",

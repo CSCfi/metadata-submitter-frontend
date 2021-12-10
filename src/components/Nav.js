@@ -120,7 +120,6 @@ const LanguageSelector = (props: MenuItemProps) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
-  const classes = useStyles()
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -156,7 +155,7 @@ const LanguageSelector = (props: MenuItemProps) => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        className={classes.languageSelector}
+        sx={{ ml: "spacing(1)", textTransform: "capitalize" }}
       >
         {currentLocale}
       </Button>

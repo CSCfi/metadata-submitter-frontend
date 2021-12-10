@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
+import { styled } from "@mui/material/styles"
 import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
@@ -37,18 +38,19 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     height: "100%",
   },
-  loginContent: {
-    padding: theme.spacing(0),
-    margin: theme.spacing(8, 0, 0),
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    height: "100%",
-  },
   errorContent: {
     width: "100%",
     marginTop: theme.spacing(10),
   },
+}))
+
+const LoginContent = styled(Container)(() => ({
+  padding: 0,
+  margin: 0,
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
 }))
 
 // paths that don't show navigation menu on top
@@ -150,9 +152,9 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <Container component="main" maxWidth={false} className={classes.loginContent}>
+            <LoginContent component="main" maxWidth={false} disableGutters>
               <Login />
-            </Container>
+            </LoginContent>
           }
         />
         <Route

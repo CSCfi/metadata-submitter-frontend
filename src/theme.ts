@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles"
+import { createTheme, responsiveFontSizes } from "@mui/material/styles"
 
 import MuseoSans_100 from "./fonts/MuseoSans_100.otf"
 import MuseoSans_300 from "./fonts/MuseoSans_300.otf"
@@ -40,9 +40,10 @@ const palette = {
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
-const CSCtheme = createTheme({
+let CSCtheme = createTheme({
   typography: {
     fontFamily: "Museo Sans, Arial, sans-serif",
+    fontSize: 14,
   },
   components: {
     MuiCssBaseline: {
@@ -179,5 +180,7 @@ const CSCtheme = createTheme({
     },
   },
 })
+
+CSCtheme = responsiveFontSizes(CSCtheme)
 
 export default CSCtheme

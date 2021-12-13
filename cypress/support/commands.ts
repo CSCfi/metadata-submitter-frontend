@@ -63,7 +63,7 @@ Cypress.on("uncaught:exception", () => {
 
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
-  cy.get('[alt="CSC Login"]').click()
+  cy.get('a[data-testid="login-button"]').click()
   cy.wait(1000)
 })
 

@@ -57,7 +57,10 @@ describe("Populate form and render form elements by object data", function () {
 
     // Clear object in state
     cy.get("button[type=button]", { timeout: 10000 }).contains("New form").should("exist")
-    cy.get("button[type=button]").contains("New form").click()
+    cy.get("button[type=button]")
+      .contains("New form")
+      .should("be.visible")
+      .then($el => $el.click())
 
     // Test updated title
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)

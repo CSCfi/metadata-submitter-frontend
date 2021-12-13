@@ -56,6 +56,7 @@ describe("Draft operations", function () {
       .then($el => $el.click())
 
     // Fill
+    cy.get("input[name='descriptor.studyTitle']").should("be.visible")
     cy.get("input[name='descriptor.studyTitle']").type("New title")
     cy.get("input[name='descriptor.studyTitle']").should("have.value", "New title")
     cy.get("select[name='descriptor.studyType']").select("Metagenomics")

@@ -21,6 +21,7 @@ const palette = {
   },
   background: {
     default: "#e5eff1",
+    paper: "#fff",
   },
   success: {
     main: "#51a808",

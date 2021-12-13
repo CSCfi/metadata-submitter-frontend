@@ -66,7 +66,7 @@ const Login = (): React$Element<typeof Container> => {
           SD Submit
         </Typography>
         <Typography sx={{ mt: "2.25em", color: "secondary.main" }}>Tool for submitting metadata.</Typography>
-        <LoginButton variant="contained" color="primary" href={loginRoute}>
+        <LoginButton variant="contained" color="primary" href={loginRoute} data-testid="login-button">
           Login
         </LoginButton>
       </LoginBanner>

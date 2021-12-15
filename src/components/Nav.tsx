@@ -10,7 +10,7 @@ import MenuItem from "@mui/material/MenuItem"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
-import { default as i18n } from 'i18next'
+import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
 import logo from "../csc_logo.svg"

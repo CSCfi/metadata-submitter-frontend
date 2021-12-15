@@ -3,7 +3,7 @@ import React, { useEffect } from "react"
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
 import { makeStyles } from "@mui/styles"
-import { default as i18n } from 'i18next'
+import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"

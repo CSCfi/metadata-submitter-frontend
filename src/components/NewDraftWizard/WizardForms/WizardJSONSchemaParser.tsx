@@ -913,17 +913,15 @@ const FormSelectField = ({
                   required={required}
                   select
                   SelectProps={{ native: true }}
-                  onChange={e =>
-                    field.onChange(() => {
-                      const val = e.target.value
-                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
-                      if (val?.includes("Title")) {
-                        const hyphenIndex = val.indexOf("-")
-                        return val.slice(0, hyphenIndex - 1)
-                      }
-                      return val
-                    })
-                  }
+                  onChange={e => {
+                    let val = e.target.value
+                    // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                    if (val?.includes("Title")) {
+                      const hyphenIndex = val.indexOf("-")
+                      val = val.slice(0, hyphenIndex - 1)
+                    }
+                    return field.onChange(val)
+                  }}
                 >
                   <option aria-label="None" value="" disabled />
                   {options.map(option => (

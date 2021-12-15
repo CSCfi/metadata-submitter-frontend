@@ -50,7 +50,10 @@ describe("Draft operations", function () {
     // Clear
     cy.continueFirstDraft()
     cy.get("input[name='descriptor.studyTitle']")
-    cy.get("button[type=button]", { timeout: 10000 }).contains("Clear form").click()
+    cy.get("button[type=button]", { timeout: 10000 })
+      .contains("Clear form")
+      .should("be.visible")
+      .then($el => $el.click())
 
     // Fill
     cy.get("input[name='descriptor.studyTitle']").type("New title")

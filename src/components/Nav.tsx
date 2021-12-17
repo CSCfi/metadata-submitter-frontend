@@ -1,4 +1,3 @@
-//@flow
 import React, { useState } from "react"
 
 import HomeIcon from "@mui/icons-material/Home"
@@ -12,8 +11,7 @@ import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
-import i18n from "i18next"
-import { useDispatch, useSelector } from "react-redux"
+import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
 import logo from "../images/csc_logo.svg"
@@ -23,6 +21,7 @@ import { setLocale } from "features/localeSlice"
 import { resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetFolder } from "features/wizardSubmissionFolderSlice"
+import { useAppSelector, useAppDispatch } from "hooks"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -56,14 +55,13 @@ const ServiceTitle = styled(Typography)(({ theme }) => ({
 }))
 
 type MenuItemProps = {
-  currentLocale: string,
+  currentLocale: string
 }
 
 const NavigationLinks = (props: MenuItemProps) => {
   const { currentLocale } = props
-
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const resetWizard = () => {
     dispatch(resetObjectType())
@@ -75,7 +73,6 @@ const NavigationLinks = (props: MenuItemProps) => {
       <IconButton
         component={RouterLink}
         to={`/${currentLocale}/home`}
-        className={classes.HomeIcon}
         aria-label="go to frontpage"
         color="inherit"
         size="large"
@@ -119,8 +116,7 @@ const LanguageSelector = (props: MenuItemProps) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
 
@@ -176,21 +172,18 @@ const LanguageSelector = (props: MenuItemProps) => {
 }
 
 const NavigationMenu = () => {
-  const classes = useStyles()
-
-  let location = useLocation()
-
-  const currentLocale = useSelector(state => state.locale) || Locale.defaultLocale
+  const location = useLocation()
+  const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
 
   return (
-    <nav className={classes.nav}>
+    <nav>
       {location.pathname !== "/" && <NavigationLinks currentLocale={currentLocale} />}
       <LanguageSelector currentLocale={currentLocale} />
     </nav>
   )
 }
 
-const Nav = (): React$Element<typeof AppBar> => {
+const Nav: React.FC = () => {
   return (
     <NavBar>
       <Toolbar>

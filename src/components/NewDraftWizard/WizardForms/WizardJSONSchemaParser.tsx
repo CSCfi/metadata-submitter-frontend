@@ -297,7 +297,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
         const error = get(errors, name)
         return (
           <div>
-            <div className="formSection" key={`${name}-section`}>
+            <div key={`${name}-section`}>
               <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading">
                 {label}
                 {description && level == 2 && (

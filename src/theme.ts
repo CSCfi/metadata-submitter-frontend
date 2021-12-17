@@ -32,6 +32,7 @@ const palette = {
   info: {
     main: "#006778",
   },
+  warning: { main: "#ff5800" },
   common: {
     white: "#FFF",
     black: "#000",
@@ -96,7 +97,10 @@ let CSCtheme = createTheme({
     },
   },
   palette: palette,
-  errors: palette.error,
+  error: palette.error,
+  info: palette.info,
+  success: palette.success,
+  warning: palette.warning,
   props: {
     MuiTextField: {
       variant: "outlined",

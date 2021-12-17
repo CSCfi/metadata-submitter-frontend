@@ -1,4 +1,3 @@
-//@flow
 import React from "react"
 
 import MailOutlineIcon from "@mui/icons-material/MailOutline"
@@ -53,7 +52,7 @@ const FooterItem = styled(Grid)(({ theme }) => ({
   alignItems: "center",
 }))
 
-const Login = (): React$Element<typeof Container> => {
+const Login: React.FC = () => {
   let loginRoute = "/aai"
   if (process.env.NODE_ENV === "development") {
     loginRoute = "http://localhost:5430/aai"

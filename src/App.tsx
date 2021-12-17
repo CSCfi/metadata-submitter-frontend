@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 
-import Container from "@mui/material/Container"
+import Container, { ContainerProps } from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
 import { styled } from "@mui/material/styles"
 import { makeStyles } from "@mui/styles"
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const LoginContent = styled(Container)(() => ({
+const LoginContent: React.FC<ContainerProps & { component: "main" }> = styled(Container)(() => ({
   padding: 0,
   margin: 0,
   width: "100%",

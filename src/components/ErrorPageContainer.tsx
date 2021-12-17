@@ -36,14 +36,16 @@ const useStyles = makeStyles((theme: any) => ({
     margin: "1vh auto",
   },
   errorTitle: {
-    backgroundColor: (props: ErrorTypeProps) =>
-      props.errorType === "warning" ? theme.errors.yellowErrorBackground : theme.errors.redErrorBackground,
-    color: (props: ErrorTypeProps) =>
-      props.errorType === "warning" ? theme.errors.yellowErrorText : theme.errors.redErrorText,
+    color: theme.palette.common.black,
+    backgroundColor: theme.palette.common.white,
+    border: (props: ErrorTypeProps) =>
+      props.errorType === "warning"
+        ? `1px solid ${theme.palette.warning.main}`
+        : `1px solid ${theme.palette.error.main}`,
   },
   errorIcon: {
     color: (props: ErrorTypeProps) =>
-      props.errorType === "warning" ? theme.errors.yellowErrorText : theme.errors.redErrorText,
+      props.errorType === "warning" ? theme.palette.warning.main : theme.palette.error.main,
   },
 }))
 

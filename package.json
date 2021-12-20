@@ -12,7 +12,7 @@
     "@mui/material": "^5.2.4",
     "@mui/styles": "^5.1.1",
     "@mui/system": "^5.1.1",
-    "@reduxjs/toolkit": "^1.6.2",
+    "@reduxjs/toolkit": "^1.7.1",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^12.1.2",
     "@types/webpack-env": "^1.16.3",

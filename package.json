@@ -84,7 +84,7 @@
     "@types/redux-mock-store": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "chokidar": "^3.5.2",
-    "concurrently": "^6.3.0",
+    "concurrently": "^6.5.1",
     "cypress": "^9.1.1",
     "cypress-file-upload": "^5.0.8",
     "eslint": "7.32.0",

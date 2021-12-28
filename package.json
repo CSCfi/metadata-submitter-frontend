@@ -27,7 +27,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.19.4",
-    "react-i18next": "^11.15.1",
+    "react-i18next": "^11.15.2",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.0.2",
     "react-scripts": "^4.0.3"
@@ -101,7 +101,7 @@
     "prettier": "^2.5.1",
     "redux-mock-store": "^1.5.4",
     "snapshot-diff": "^0.9.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.4"
   },
   "husky": {
     "hooks": {

@@ -11,7 +11,7 @@
     "@mui/lab": "^5.0.0-alpha.55",
     "@mui/material": "^5.2.4",
     "@mui/styles": "^5.1.1",
-    "@mui/system": "^5.2.5",
+    "@mui/system": "^5.2.6",
     "@reduxjs/toolkit": "^1.7.1",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^12.1.2",

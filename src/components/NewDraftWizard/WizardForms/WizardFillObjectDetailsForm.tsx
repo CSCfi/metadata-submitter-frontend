@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme: any) => ({
     },
     "& button": {
       backgroundColor: "#FFF",
+      color: theme.palette.primary.main,
     },
   },
   addIcon: {
@@ -139,7 +140,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <Button
         ref={focusTarget}
         variant="contained"
-        color="secondary"
         aria-label="create new form"
         size="small"
         onClick={() => handleClick()}
@@ -148,22 +148,15 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
         New form
       </Button>
-      <Button variant="contained" color="secondary" aria-label="clear form" size="small" onClick={onClickClearForm}>
+      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
         Clear form
       </Button>
 
-      <Button
-        variant="contained"
-        color="secondary"
-        aria-label="save form as draft"
-        size="small"
-        onClick={onClickSaveDraft}
-      >
+      <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
         {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
       </Button>
       <Button
         variant="contained"
-        color="secondary"
         aria-label="submit form"
         size="small"
         type={currentObject?.status === ObjectStatus.submitted ? "button" : "submit"}

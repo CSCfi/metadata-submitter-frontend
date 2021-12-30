@@ -1,11 +1,17 @@
 declare module "@mui/material/styles" {
   interface Theme {
-    errors: {
-      yellowErrorBackground: string
-      yellowErrorText: string
-      redErrorBackground: string
-      redErrorText: string
+    typography: {
+      fontFamily: string
+      fontSize: number
     }
+    error: {
+      main: string
+    }
+    info: {
+      main: string
+    }
+    success: { main: string }
+    warning: { main: string }
     wizard: {
       cardHeader: any
       objectListItem: any
@@ -20,12 +26,18 @@ declare module "@mui/material/styles" {
   }
 
   interface ThemeOptions {
-    errors?: {
-      yellowErrorBackground?: string
-      yellowErrorText?: string
-      redErrorBackground?: string
-      redErrorText?: string
+    typography: {
+      fontFamily: string
+      fontSize: number
     }
+    error: {
+      main: string
+    }
+    info: {
+      main: string
+    }
+    success: { main: string }
+    warning: { main: string }
     wizard?: {
       cardHeader?: any
       objectListItem?: any

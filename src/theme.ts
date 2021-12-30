@@ -1,39 +1,38 @@
-import { createTheme } from "@mui/material/styles"
-// import { createSpacing } from "@mui/system"
+import { createTheme, responsiveFontSizes } from "@mui/material/styles"
+
+import MuseoSans_100 from "./fonts/MuseoSans_100.otf"
+import MuseoSans_300 from "./fonts/MuseoSans_300.otf"
+import MuseoSans_500 from "./fonts/MuseoSans_500.otf"
+import MuseoSans_700 from "./fonts/MuseoSans_700.otf"
 
 const defaultTheme = createTheme()
 
 const palette = {
   primary: {
-    light: "#9b416b",
-    main: "#8b1a4f",
+    // green
+    main: "#006778",
+    light: "#c2dbdf",
+    lightest: "#e5eff1",
   },
   secondary: {
-    main: "#dfe1e3",
-    dark: "#424242",
-  },
-  third: {
-    main: "#006476",
+    // grey
+    main: "#595959",
+    light: "#dfe1e3",
   },
   background: {
-    default: "#FFF",
+    default: "#e5eff1",
+    paper: "#fff",
   },
   success: {
-    main: "#62c480",
+    main: "#51a808",
   },
-  button: {
-    edit: "#025B96",
-    delete: "#E71D32",
+  error: {
+    main: "#b90729",
   },
-  errors: {
-    yellowErrorBackground: "#FFD534",
-    yellowErrorText: "#6A4C15",
-    redErrorBackground: "#E71D32",
-    redErrorText: "#FFFFFF",
+  info: {
+    main: "#006778",
   },
-  font: {
-    main: "rgba(0, 0, 0, 0.87);",
-  },
+  warning: { main: "#ff5800" },
   common: {
     white: "#FFF",
     black: "#000",
@@ -43,15 +42,49 @@ const palette = {
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
-const CSCtheme = createTheme({
+let CSCtheme = createTheme({
+  typography: {
+    fontFamily: "Museo Sans, Arial, sans-serif",
+    fontSize: 14,
+  },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 100;
+          src: url(${MuseoSans_100}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 300;
+          src: url(${MuseoSans_300}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 500;
+          src: url(${MuseoSans_500}) format("opentype");          
+        }
+        @font-face {
+          font-family: 'Museo Sans';
+          font-style: normal;
+          font-weight: 700;
+          src: url(${MuseoSans_700}) format("opentype");          
+        }
+      `,
+    },
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: "none",
-          fontWeight: "bold",
-          paddingLeft: "32px",
-          paddingRight: "32px",
+          fontWeight: 700,
+          fontSize: "1em",
+          paddingLeft: "2em",
+          paddingRight: "2em",
+          lineHeight: "1.2em",
         },
       },
     },
@@ -64,7 +97,10 @@ const CSCtheme = createTheme({
     },
   },
   palette: palette,
-  errors: palette.errors,
+  error: palette.error,
+  info: palette.info,
+  success: palette.success,
+  warning: palette.warning,
   props: {
     MuiTextField: {
       variant: "outlined",
@@ -113,8 +149,8 @@ const CSCtheme = createTheme({
     },
     "& .MuiTypography-h2": {
       width: "100%",
-      color: palette.primary.light,
-      borderBottom: `2px solid ${palette.secondary.main}`,
+      color: palette.secondary.main,
+      borderBottom: `2px solid ${palette.secondary.light}`,
     },
     "& .MuiTypography-h3": {
       width: "100%",
@@ -134,6 +170,7 @@ const CSCtheme = createTheme({
       "& h2, h3, h4, h5, h6": {
         margin: defaultTheme.spacing(1, 0),
       },
+
       "& .MuiPaper-elevation2": {
         paddingRight: defaultTheme.spacing(1),
         marginBottom: defaultTheme.spacing(1),
@@ -148,5 +185,7 @@ const CSCtheme = createTheme({
     },
   },
 })
+
+CSCtheme = responsiveFontSizes(CSCtheme)
 
 export default CSCtheme

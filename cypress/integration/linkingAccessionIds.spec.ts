@@ -3,8 +3,7 @@ describe("Linking Accession Ids", function () {
 
   it("should link correct accessionIds to the related objects", () => {
     cy.visit(baseUrl)
-    cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
+    cy.login()
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Add folder name & description, navigate to submissions

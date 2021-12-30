@@ -7,13 +7,14 @@ import IconButton from "@mui/material/IconButton"
 import Link from "@mui/material/Link"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
+import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
-import logo from "../csc_logo.svg"
+import logo from "../images/csc_logo.svg"
 
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
@@ -24,22 +25,9 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
-  appBar: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    color: theme.palette.text.primary,
-    backgroundColor: theme.palette.background.default,
-  },
-  logo: {
-    height: "auto",
-    maxHeight: "2.5rem",
-    maxWidth: "100%",
-  },
-  brandLink: {
-    padding: theme.spacing(0.5, 0.75),
-  },
   link: {
     margin: theme.spacing(1, 1.5),
-    color: "inherit",
+    color: theme.palette.secondary.main,
   },
   languageSelector: {
     marginLeft: theme.spacing(1),
@@ -48,9 +36,22 @@ const useStyles = makeStyles(theme => ({
   linkButton: {
     margin: theme.spacing(1, 1.5),
   },
-  title: {
-    flexGrow: 1,
-  },
+}))
+
+const NavBar = styled(AppBar)(({ theme }) => ({
+  backgroundColor: theme.palette.common.white,
+  boxShadow: "0 0.25em 0.25em 0 rgba(0, 0, 0,0.25)",
+}))
+
+const Logo = styled("img")(() => ({
+  width: "4em",
+  height: "2.5em",
+}))
+
+const ServiceTitle = styled(Typography)(({ theme }) => ({
+  flexGrow: 1,
+  color: theme.palette.secondary.main,
+  fontWeight: 700,
 }))
 
 type MenuItemProps = {
@@ -72,7 +73,6 @@ const NavigationLinks = (props: MenuItemProps) => {
       <IconButton
         component={RouterLink}
         to={`/${currentLocale}/home`}
-        // className={classes.HomeIcon}
         aria-label="go to frontpage"
         color="inherit"
         size="large"
@@ -113,9 +113,9 @@ const NavigationLinks = (props: MenuItemProps) => {
 
 const LanguageSelector = (props: MenuItemProps) => {
   const { currentLocale } = props
+
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
@@ -128,13 +128,14 @@ const LanguageSelector = (props: MenuItemProps) => {
     }
 
     dispatch(setLocale(locale))
+
     i18n.changeLanguage(locale).then(t => {
       t("key")
       handleClose()
     })
   }
 
-  const handleClick = (event: any) => {
+  const handleClick = event => {
     setAnchorEl(event.currentTarget)
   }
 
@@ -143,14 +144,14 @@ const LanguageSelector = (props: MenuItemProps) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Button
         id="lang-selector"
         aria-controls="lang-menu"
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        className={classes.languageSelector}
+        sx={{ ml: "spacing(1)", textTransform: "capitalize" }}
       >
         {currentLocale}
       </Button>
@@ -166,7 +167,7 @@ const LanguageSelector = (props: MenuItemProps) => {
         <MenuItem onClick={() => changeLang("en")}>En</MenuItem>
         <MenuItem onClick={() => changeLang("fi")}>Fi</MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -183,19 +184,18 @@ const NavigationMenu = () => {
 }
 
 const Nav: React.FC = () => {
-  const classes = useStyles()
   return (
-    <AppBar className={classes.appBar}>
+    <NavBar>
       <Toolbar>
-        <Link to={pathWithLocale("home")} component={RouterLink} className={classes.brandLink}>
-          <img className={classes.logo} src={logo} alt="CSC" />
+        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5vh 1vw 1.5vh 2.5vw" }}>
+          <Logo src={logo} alt="CSC_logo" />
         </Link>
-        <Typography variant="h6" noWrap className={classes.title}>
-          Metadata Submitter
-        </Typography>
+        <ServiceTitle variant="h6" noWrap>
+          Sensitive Data Services - SD Submit
+        </ServiceTitle>
         <NavigationMenu />
       </Toolbar>
-    </AppBar>
+    </NavBar>
   )
 }
 

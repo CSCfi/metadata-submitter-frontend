@@ -7,8 +7,7 @@ describe("Internationalization", function () {
     cy.get("#lang-selector").click()
     cy.get("li[role=menuitem]").contains("Fi").click()
 
-    cy.get('[alt="CSC Login"]').click()
-    cy.wait(1000)
+    cy.login()
 
     cy.get("[data-testid='logged-in-as'").contains("Kirjautuneena")
   })

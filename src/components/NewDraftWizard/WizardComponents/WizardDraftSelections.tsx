@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   viewButton: {
-    color: theme.palette.button.edit,
+    color: theme.palette.primary.main,
     margin: theme.spacing(1.5, 0),
     float: "right",
   },
@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     position: "sticky",
     zIndex: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.paper,
     bottom: 0,
   },
 }))

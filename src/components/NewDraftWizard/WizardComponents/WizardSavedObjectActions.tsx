@@ -20,10 +20,10 @@ import type { ObjectInsideFolderWithTags, ObjectTags } from "types"
 
 const useStyles = makeStyles(theme => ({
   buttonEdit: {
-    color: theme.palette.button.edit,
+    color: theme.palette.primary.main,
   },
   buttonDelete: {
-    color: theme.palette.button.delete,
+    color: theme.palette.primary.main,
   },
 }))
 

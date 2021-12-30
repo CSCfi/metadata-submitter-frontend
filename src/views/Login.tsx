@@ -24,6 +24,16 @@ const LoginBanner = styled(Paper)(({ theme }) => ({
   backgroundImage: `url(${CSCBannerLogin})`,
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
+  backgroundPosition: "center center",
+  [theme.breakpoints.down("sm")]: {
+    backgroundPosition: "90% 10vh",
+  },
+  [theme.breakpoints.between("sm", "md")]: {
+    backgroundPosition: "85% 0",
+  },
+  [theme.breakpoints.between("md", "lg")]: {
+    backgroundPosition: "90% 0",
+  },
   width: "53vw",
   height: "55vh",
   margin: "16vh auto auto auto",

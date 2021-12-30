@@ -227,6 +227,60 @@ describe("DOI form", function () {
         "Contributor's family name,Contributor's given name"
       )
     })
+  it("should fill in the required fields, Dates fields and save DOI form successfully", () => {
+    // Go to DOI form
+    cy.openDOIForm()
+
+    // Fill in required Creators field
+    cy.get("h2[data-testid='creators']").parent().children("button").click()
+    cy.get("input[data-testid='creators.0.givenName']").type("Test given name")
+
+    // Fill in required Subjects field
+    cy.get("h2[data-testid='subjects']").parent().children("button").click()
+    cy.get("select[name='subjects.0.subject']").select("FOS: Mathematics")
+
+    // Select Dates
+    cy.get("h2[data-testid='dates']").parent().children("button").click()
+
+    cy.get("input[data-testid='dates.0.date']").scrollIntoView()
+    cy.get("input[data-testid='dates.0.date']").should("be.visible")
+    // Set a constant Date in advance so the calendar will open to certain date
+    cy.clock(new Date(2021, 9, 1), ["Date"])
+
+    cy.get("div[data-testid='Start']")
+      .scrollIntoView({ offset: { left: 0, top: -100 } })
+      .should("be.visible")
+
+    cy.wait(500)
+    cy.get("div[data-testid='Start'] > div")
+      .should("be.visible")
+      .then(() => cy.get("div[data-testid='Start'] > div > button").click({ force: true }))
+    cy.get("div").contains("4", { timeout: 10000 }).click()
+    cy.get("input[data-testid='dates.0.date']").should("have.value", "2021-10-04/")
+
+    cy.get("div[data-testid='End'] > div > button").click()
+    cy.get("div").contains("23", { timeout: 10000 }).click()
+    cy.get("input[data-testid='dates.0.date']").should("have.value", "2021-10-04/2021-10-23")
+
+    cy.get("input[name='checkedStartDate']").check()
+    cy.get("input[data-testid='dates.0.date']").should("have.value", "/2021-10-23")
+    cy.get("div[data-testid='Start'] > div > button").should("be.disabled")
+
+    cy.get("input[name='checkedStartDate']").uncheck()
+    cy.get("div[data-testid='Start'] > div > button").click()
+    cy.get("div").contains("10", { timeout: 10000 }).click()
+    cy.get("input[data-testid='dates.0.date']").should("have.value", "2021-10-10/2021-10-23")
+
+    cy.get("input[name='checkedEndDate']").check()
+    cy.get("input[data-testid='dates.0.date']").should("have.value", "2021-10-10/")
+    cy.get("div[data-testid='End'] > div > button").should("be.disabled")
+
+    // Select Date Type
+    cy.get("select[name='dates.0.dateType']").select("Valid")
+
+    cy.get("button[type='submit']").click()
+    cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
+  })
 })
 
 export {}

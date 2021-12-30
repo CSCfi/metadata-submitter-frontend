@@ -2,10 +2,15 @@ import * as React from "react"
 import { useState, useEffect, useCallback } from "react"
 
 import AddIcon from "@mui/icons-material/Add"
+import ClearIcon from "@mui/icons-material/Clear"
+import EventIcon from "@mui/icons-material/Event"
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
 import LaunchIcon from "@mui/icons-material/Launch"
 import RemoveIcon from "@mui/icons-material/Remove"
-import { FormControl } from "@mui/material"
+import DateAdapter from "@mui/lab/AdapterMoment"
+import DatePicker from "@mui/lab/DatePicker"
+import LocalizationProvider from "@mui/lab/LocalizationProvider"
+import { FormControl, InputAdornment } from "@mui/material"
 import Autocomplete from "@mui/material/Autocomplete"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -14,14 +19,17 @@ import CircularProgress from "@mui/material/CircularProgress"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormGroup from "@mui/material/FormGroup"
 import FormHelperText from "@mui/material/FormHelperText"
+import Grid from "@mui/material/Grid"
 import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
+import { styled } from "@mui/material/styles"
 import { Variant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
 import { makeStyles, withStyles } from "@mui/styles"
 import { get, flatten, uniq, debounce } from "lodash"
+import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 
 import { setAutocompleteField } from "features/autocompleteSlice"
@@ -53,6 +61,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "baseline",
+    width: "100%",
     "& label": {
       marginRight: theme.spacing(0),
     },
@@ -78,6 +87,36 @@ const useStyles = makeStyles(theme => ({
 const FieldTooltip = withStyles(theme => ({
   tooltip: theme.tooltip,
 }))(Tooltip)
+
+const DatePickerWrapper = styled(Grid)(({ theme }) => ({
+  paddingLeft: theme.spacing(1),
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  "& > span:first-of-type": {
+    fontSize: "0.875rem",
+    color: theme.palette.primary.main,
+    fontWeight: "bold",
+    width: "3rem",
+  },
+  "& div": {
+    padding: 0,
+    margin: 0,
+    height: "auto",
+    "& input": {
+      padding: 0,
+      margin: 0,
+    },
+    "& > button": {
+      color: theme.palette.primary.light,
+    },
+  },
+}))
+
+const DateCheckboxLabel = styled("span")(({ theme }) => ({
+  fontSize: "0.8125rem",
+  color: theme.palette.secondary.dark,
+}))
 
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
@@ -211,6 +250,8 @@ const traverseFields = (
           required={required}
           description={description}
         />
+      ) : object.title === "Date" ? (
+        <FormDatePicker key={name} name={name} label={label} required={required} description={description} />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
         <FormAutocompleteField
           key={name}
@@ -364,7 +405,6 @@ const FormOneOfField = ({
   // Get object from state and set default values if child of oneOf field has values
   // Fetching current object values from state rather than via getValues() method gets values on first call. The getValues method results in empty object on first call
   const currentObject = useAppSelector(state => state.currentObject) || {}
-
   const values = currentObject[path.toString()]
     ? currentObject
     : currentObject[
@@ -581,7 +621,8 @@ const FormOneOfField = ({
  */
 const ValidationTextField = withStyles(theme => ({
   root: {
-    "& input:invalid:not(:valid) + fieldset, textarea:invalid:not(:valid) + fieldset": highlightStyle(theme),
+    "& input:invalid:not(:valid) + fieldset, input:invalid:not(:valid) + button + fieldset, textarea:invalid:not(:valid) + fieldset":
+      highlightStyle(theme),
   },
 }))(TextField)
 
@@ -619,6 +660,7 @@ const FormTextField = ({
 
     // useWatch to watch any changes in form's fields
     const watchValues = useWatch()
+
     // check changes of value of autocompleteField from watchValues
     prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
 
@@ -712,6 +754,222 @@ const FormTextField = ({
             rules={{ required: required }}
           />
         )
+      }}
+    </ConnectForm>
+  )
+}
+
+/*
+ * FormDatePicker used for selecting date or date rage in DOI form
+ */
+
+const FormDatePicker = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
+  const classes = useStyles()
+  const dateCheckboxStyles = {
+    padding: 0,
+    margin: 0,
+    "& span.MuiTypography-root.MuiFormControlLabel-label": {
+      margin: 0,
+    },
+    "& span.MuiCheckbox-root": {
+      padding: 0,
+    },
+  }
+  return (
+    <ConnectForm>
+      {({ errors, getValues, setValue }: { errors: any; getValues: any; setValue: any }) => {
+        const [startDate, setStartDate] = useState("")
+        const [endDate, setEndDate] = useState("")
+
+        const [unknownDates, setUnknownDates] = useState({ checkedStartDate: false, checkedEndDate: false })
+        // Control calendar dialog opened
+        const [openStartCalendar, setOpenStartCalendar] = useState(false)
+        const [openEndCalendar, setOpenEndCalendar] = useState(false)
+
+        const dateInputValues = getValues(name)
+
+        const formatDate = date => {
+          const format = "YYYY-MM-DD"
+          return moment(date).format(format)
+        }
+
+        const getDateValues = (start, end) => {
+          if (start === end) return start
+          if (start || end) return `${start}/${end}`
+          else return ""
+        }
+
+        const handleChangeStartDate = e => {
+          const start = formatDate(e)
+          setStartDate(start)
+          const dateValues = getDateValues(start, endDate)
+          setValue(name, dateValues)
+        }
+
+        const handleChangeEndDate = e => {
+          const end = formatDate(e)
+          setEndDate(end)
+          const dateValues = getDateValues(startDate, end)
+          setValue(name, dateValues)
+        }
+
+        const handleChangeUnknownDates = e => {
+          setUnknownDates({ ...unknownDates, [e.target.name]: e.target.checked })
+          if (e.target.name === "checkedStartDate") {
+            setStartDate("")
+            const dateValues = getDateValues("", endDate)
+            setValue(name, dateValues)
+          } else {
+            setEndDate("")
+            const dateValues = getDateValues(startDate, "")
+            setValue(name, dateValues)
+          }
+        }
+
+        const handleClearDates = () => {
+          setStartDate("")
+          setEndDate("")
+          setValue(name, "")
+        }
+
+        const DateSelection = (props: any) => (
+          <Box sx={{ display: "flex", alignItems: "center" }} data-testid={props.label}>
+            <input ref={props.inputRef} {...props.inputProps} style={{ border: "none", width: 0 }} />
+            {props.InputProps?.endAdornment}
+          </Box>
+        )
+
+        const DatePickerComponent = () => (
+          <LocalizationProvider dateAdapter={DateAdapter}>
+            <Box
+              sx={{
+                width: "95%",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <div className={classes.divBaseline}>
+                <ValidationTextField
+                  inputProps={{ "data-testid": name }}
+                  label={label}
+                  id={name}
+                  role="textbox"
+                  error={!!errors}
+                  helperText={errors?.message}
+                  placeholder="YYYY-MM-DD"
+                  required={required}
+                  type="text"
+                  defaultValue={dateInputValues}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={handleClearDates}
+                        sx={theme => ({ position: "absolute", right: `-${theme.spacing(1)}`, padding: 0 })}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    ),
+                  }}
+                />
+                {description && (
+                  <FieldTooltip title={description} placement="bottom" arrow>
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
+                )}
+              </div>
+              <Grid container direction="column">
+                <DatePickerWrapper item xs="auto">
+                  <span>Start</span>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={unknownDates.checkedStartDate}
+                        onChange={handleChangeUnknownDates}
+                        name="checkedStartDate"
+                        value="UnknownStartDate"
+                        color="primary"
+                      />
+                    }
+                    label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
+                    sx={{ ...dateCheckboxStyles }}
+                    disabled={unknownDates.checkedEndDate}
+                  />
+                  <DatePicker
+                    label="Start"
+                    renderInput={params => (
+                      <DateSelection
+                        {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <InputAdornment position="end" onClick={() => setOpenStartCalendar(true)}>
+                              <IconButton disabled={unknownDates.checkedStartDate}>
+                                <EventIcon color="primary" />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                    value={startDate}
+                    onChange={handleChangeStartDate}
+                    minDate={moment("0001-01-01")}
+                    shouldDisableDate={day => moment(day).isAfter(endDate)}
+                    open={openStartCalendar}
+                    disableCloseOnSelect={false}
+                    onOpen={() => setOpenStartCalendar(true)}
+                    onClose={() => setOpenStartCalendar(false)}
+                  />
+                </DatePickerWrapper>
+                <DatePickerWrapper item xs="auto">
+                  <span>End</span>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={unknownDates.checkedEndDate}
+                        onChange={handleChangeUnknownDates}
+                        name="checkedEndDate"
+                        value="UnknownEndDate"
+                        color="primary"
+                      />
+                    }
+                    label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
+                    sx={{ ...dateCheckboxStyles }}
+                    disabled={unknownDates.checkedStartDate}
+                  />
+                  <DatePicker
+                    label="End"
+                    renderInput={params => (
+                      <DateSelection
+                        {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <InputAdornment position="end" onClick={() => setOpenEndCalendar(true)}>
+                              <IconButton disabled={unknownDates.checkedEndDate}>
+                                <EventIcon color="primary" />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                    value={endDate}
+                    onChange={handleChangeEndDate}
+                    shouldDisableDate={day => moment(day).isBefore(startDate)}
+                    disableCloseOnSelect={false}
+                    open={openEndCalendar}
+                    onOpen={() => setOpenEndCalendar(true)}
+                    onClose={() => setOpenEndCalendar(false)}
+                  />
+                </DatePickerWrapper>
+              </Grid>
+            </Box>
+          </LocalizationProvider>
+        )
+
+        return <DatePickerComponent />
       }}
     </ConnectForm>
   )

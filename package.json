@@ -9,7 +9,7 @@
     "@mui/codemod": "^5.2.0",
     "@mui/icons-material": "^5.2.5",
     "@mui/lab": "^5.0.0-alpha.62",
-    "@mui/material": "^5.2.4",
+    "@mui/material": "^5.2.6",
     "@mui/styles": "^5.1.1",
     "@mui/system": "^5.2.6",
     "@reduxjs/toolkit": "^1.7.1",

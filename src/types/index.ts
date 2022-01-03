@@ -49,3 +49,9 @@ export type StatusDetails = {
   response?: any
   helperText?: string
 }
+
+export type TemplateDetails = {
+  accessionId: string
+  schema: string
+  tags: { displayTitle: string }
+}

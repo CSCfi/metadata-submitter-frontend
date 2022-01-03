@@ -637,6 +637,7 @@ const FormTextField = ({
   type = "string",
   nestedField,
 }: FormFieldBaseProps & { description: string; type?: string; nestedField?: any }) => {
+  const classes = useStyles()
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const autocompleteField = useAppSelector(state => state.autocompleteField)
   const path = name.split(".")
@@ -654,12 +655,12 @@ const FormTextField = ({
 
   let disabled = false // boolean if inputValue is disabled
 
+  // useWatch to watch any changes in form's fields
+  const watchValues = useWatch()
+
   if (openedDoiForm) {
     watchAutocompleteFieldName =
       name.includes("affiliation") && prefilledFields.includes(lastPathItem) ? getPathName(path, "name") : ""
-
-    // useWatch to watch any changes in form's fields
-    const watchValues = useWatch()
 
     // check changes of value of autocompleteField from watchValues
     prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
@@ -683,30 +684,33 @@ const FormTextField = ({
       (defaultValue !== "" && name.includes("formats"))
   }
 
+  /*
+   * Handle DOI form values
+   */
+
+  const { setValue, getValues } = useFormContext()
+
+  // Check value of current name path
+  const val = getValues(name)
+
+  // Set values for Affiliations' fields if autocompleteField exists
+  useEffect(() => {
+    if (prefilledValue && !val && openedDoiForm) {
+      lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
+      lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
+      lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
+    }
+  }, [autocompleteField, prefilledValue])
+
+  // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
+  useEffect(() => {
+    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm) setValue(name, "")
+  }, [prefilledValue])
+
   return (
     <ConnectForm>
-      {({ control, setValue, getValues }: { control: any; setValue: any; getValues: any }) => {
-        const classes = useStyles()
+      {({ control }: { control: any }) => {
         const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
-
-        // Check value of current name path
-        const val = getValues(name)
-
-        if (openedDoiForm) {
-          // Set values for Affiliations' fields if autocompleteField exists
-          useEffect(() => {
-            if (prefilledValue && !val) {
-              lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
-              lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
-              lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
-            }
-          }, [autocompleteField, prefilledValue])
-
-          // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
-          useEffect(() => {
-            if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0]) setValue(name, "")
-          }, [prefilledValue])
-        }
 
         return (
           <Controller
@@ -775,17 +779,18 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
       padding: 0,
     },
   }
+
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+
+  const [unknownDates, setUnknownDates] = useState({ checkedStartDate: false, checkedEndDate: false })
+  // Control calendar dialog opened
+  const [openStartCalendar, setOpenStartCalendar] = useState(false)
+  const [openEndCalendar, setOpenEndCalendar] = useState(false)
+
   return (
     <ConnectForm>
       {({ errors, getValues, setValue }: { errors: any; getValues: any; setValue: any }) => {
-        const [startDate, setStartDate] = useState("")
-        const [endDate, setEndDate] = useState("")
-
-        const [unknownDates, setUnknownDates] = useState({ checkedStartDate: false, checkedEndDate: false })
-        // Control calendar dialog opened
-        const [openStartCalendar, setOpenStartCalendar] = useState(false)
-        const [openEndCalendar, setOpenEndCalendar] = useState(false)
-
         const dateInputValues = getValues(name)
 
         const formatDate = date => {
@@ -986,62 +991,65 @@ const FormAutocompleteField = ({
 }: FormFieldBaseProps & { type?: string; nestedField?: any; description: string }) => {
   const dispatch = useAppDispatch()
 
+  const { setValue, getValues } = useFormContext()
+
+  const classes = useStyles()
+  const defaultValue = getValues(name) || ""
+  const [selection, setSelection] = useState<any>(null)
+  const [open, setOpen] = useState(false)
+  const [options, setOptions] = useState([])
+  const [inputValue, setInputValue] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const fetchOrganisations = async (searchTerm: string) => {
+    // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
+    const isContainingNonWordChar = searchTerm.match(/\W/g)
+    const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
+
+    if (response) setLoading(false)
+
+    if (response?.ok) {
+      const mappedOrganisations = response.data.items.map((org: { name: any; id: any }) => ({
+        name: org.name,
+        id: org.id,
+      }))
+      setOptions(mappedOrganisations)
+    }
+  }
+
+  // Disable warning when using external function as callback
+  // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(
+    debounce(newInput => {
+      if (newInput.length > 0) fetchOrganisations(newInput)
+    }, 150),
+    []
+  )
+
+  useEffect(() => {
+    let active = true
+
+    if (inputValue === "") {
+      setOptions([])
+      return undefined
+    }
+
+    if (active && open) {
+      setLoading(true)
+      debouncedSearch(inputValue)
+    }
+
+    return () => {
+      active = false
+      setLoading(false)
+    }
+  }, [selection, inputValue])
+
   return (
     <ConnectForm>
-      {({ errors, getValues, control, setValue }: { errors: any; getValues: any; control: any; setValue: any }) => {
+      {({ errors, control }: { errors: any; control: any }) => {
         const error = get(errors, name)
-        const classes = useStyles()
-        const defaultValue = getValues(name) || ""
-        const [selection, setSelection] = useState<any>(null)
-        const [open, setOpen] = useState(false)
-        const [options, setOptions] = useState([])
-        const [inputValue, setInputValue] = useState("")
-        const [loading, setLoading] = useState(false)
-
-        const fetchOrganisations = async (searchTerm: string) => {
-          // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
-          const isContainingNonWordChar = searchTerm.match(/\W/g)
-          const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
-
-          if (response) setLoading(false)
-
-          if (response?.ok) {
-            const mappedOrganisations = response.data.items.map((org: { name: any; id: any }) => ({
-              name: org.name,
-              id: org.id,
-            }))
-            setOptions(mappedOrganisations)
-          }
-        }
-
-        // Disable warning when using external function as callback
-        // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        const debouncedSearch = useCallback(
-          debounce(newInput => {
-            if (newInput.length > 0) fetchOrganisations(newInput)
-          }, 150),
-          []
-        )
-
-        useEffect(() => {
-          let active = true
-
-          if (inputValue === "") {
-            setOptions([])
-            return undefined
-          }
-
-          if (active && open) {
-            setLoading(true)
-            debouncedSearch(inputValue)
-          }
-
-          return () => {
-            active = false
-            setLoading(false)
-          }
-        }, [selection, inputValue])
 
         // const fieldsToBePrefilled = ["schemeUri", "affiliationIdentifier", "affiliationIdentifierScheme"]
 
@@ -1150,57 +1158,60 @@ const FormSelectField = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => (
-  <ConnectForm>
-    {({ control }: { control: any }) => {
-      const classes = useStyles()
-      return (
-        <Controller
-          name={name}
-          control={control}
-          render={({ field, fieldState: { error } }) => {
-            return (
-              <div className={classes.divBaseline}>
-                <ValidationSelectField
-                  {...field}
-                  label={label}
-                  id={name}
-                  value={field.value || ""}
-                  error={!!error}
-                  helperText={error?.message}
-                  required={required}
-                  select
-                  SelectProps={{ native: true }}
-                  onChange={e => {
-                    let val = e.target.value
-                    // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
-                    if (val?.includes("Title")) {
-                      const hyphenIndex = val.indexOf("-")
-                      val = val.slice(0, hyphenIndex - 1)
-                    }
-                    return field.onChange(val)
-                  }}
-                >
-                  <option aria-label="None" value="" disabled />
-                  {options.map(option => (
-                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
-                      {option}
-                    </option>
-                  ))}
-                </ValidationSelectField>
-                {description && (
-                  <FieldTooltip title={description} placement="top" arrow>
-                    <HelpOutlineIcon className={classes.fieldTip} />
-                  </FieldTooltip>
-                )}
-              </div>
-            )
-          }}
-        />
-      )
-    }}
-  </ConnectForm>
-)
+}: FormSelectFieldProps & { description: string }) => {
+  const classes = useStyles()
+
+  return (
+    <ConnectForm>
+      {({ control }: { control: any }) => {
+        return (
+          <Controller
+            name={name}
+            control={control}
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <div className={classes.divBaseline}>
+                  <ValidationSelectField
+                    {...field}
+                    label={label}
+                    id={name}
+                    value={field.value || ""}
+                    error={!!error}
+                    helperText={error?.message}
+                    required={required}
+                    select
+                    SelectProps={{ native: true }}
+                    onChange={e => {
+                      let val = e.target.value
+                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                      if (val?.includes("Title")) {
+                        const hyphenIndex = val.indexOf("-")
+                        val = val.slice(0, hyphenIndex - 1)
+                      }
+                      return field.onChange(val)
+                    }}
+                  >
+                    <option aria-label="None" value="" disabled />
+                    {options.map(option => (
+                      <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
+                        {option}
+                      </option>
+                    ))}
+                  </ValidationSelectField>
+                  {description && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.fieldTip} />
+                    </FieldTooltip>
+                  )}
+                </div>
+              )
+            }}
+          />
+        )
+      }}
+    </ConnectForm>
+  )
+}
 
 /*
  * Highlight required Checkbox
@@ -1214,50 +1225,54 @@ const ValidationFormControlLabel = withStyles(theme => ({
 /*
  * FormSelectField is rendered for checkboxes
  */
-const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => (
-  <ConnectForm>
-    {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
-      const error = get(errors, name)
-      const classes = useStyles()
-      const { ref, ...rest } = register(name)
-      // DAC form: "values" of MainContact checkbox
-      const values = getValues(name)
-      return (
-        <Box display="inline" px={1}>
-          <FormControl error={!!error} required={required}>
-            <FormGroup className={classes.divBaseline}>
-              <ValidationFormControlLabel
-                control={
-                  <Checkbox
-                    name={name}
-                    id={name}
-                    {...rest}
-                    required={required}
-                    inputRef={ref}
-                    color="primary"
-                    checked={values || false}
-                  />
-                }
-                label={
-                  <label>
-                    {label}
-                    <span>{required ? ` * ` : ""}</span>
-                  </label>
-                }
-              />
-              {description && (
-                <FieldTooltip title={description} placement="bottom" arrow>
-                  <HelpOutlineIcon className={classes.fieldTip} />
-                </FieldTooltip>
-              )}
-              <FormHelperText>{error?.message}</FormHelperText>
-            </FormGroup>
-          </FormControl>
-        </Box>
-      )
-    }}
-  </ConnectForm>
-)
+const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
+  const classes = useStyles()
+
+  return (
+    <ConnectForm>
+      {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
+        const error = get(errors, name)
+
+        const { ref, ...rest } = register(name)
+        // DAC form: "values" of MainContact checkbox
+        const values = getValues(name)
+        return (
+          <Box display="inline" px={1}>
+            <FormControl error={!!error} required={required}>
+              <FormGroup className={classes.divBaseline}>
+                <ValidationFormControlLabel
+                  control={
+                    <Checkbox
+                      name={name}
+                      id={name}
+                      {...rest}
+                      required={required}
+                      inputRef={ref}
+                      color="primary"
+                      checked={values || false}
+                    />
+                  }
+                  label={
+                    <label>
+                      {label}
+                      <span>{required ? ` * ` : ""}</span>
+                    </label>
+                  }
+                />
+                {description && (
+                  <FieldTooltip title={description} placement="bottom" arrow>
+                    <HelpOutlineIcon className={classes.fieldTip} />
+                  </FieldTooltip>
+                )}
+                <FormHelperText>{error?.message}</FormHelperText>
+              </FormGroup>
+            </FormControl>
+          </Box>
+        )
+      }}
+    </ConnectForm>
+  )
+}
 
 /*
  * FormSelectField is rendered for selection from options where it's possible to choose many options
@@ -1268,54 +1283,58 @@ const FormCheckBoxArray = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => (
-  <Box px={1}>
-    <p>
-      <strong id={name}>{label}</strong> - check from following options
-    </p>
-    <ConnectForm>
-      {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
-        const values = getValues()[name]
+}: FormSelectFieldProps & { description: string }) => {
+  const classes = useStyles()
 
-        const error = get(errors, name)
-        const classes = useStyles()
-        const { ref, ...rest } = register(name)
+  return (
+    <Box px={1}>
+      <p>
+        <strong id={name}>{label}</strong> - check from following options
+      </p>
+      <ConnectForm>
+        {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
+          const values = getValues()[name]
 
-        return (
-          <FormControl error={!!error} required={required}>
-            <FormGroup aria-labelledby={name}>
-              {options.map(option => (
-                <React.Fragment key={option}>
-                  <FormControlLabel
-                    key={option}
-                    control={
-                      <Checkbox
-                        name={name}
-                        {...rest}
-                        inputRef={ref}
-                        value={option}
-                        checked={values && values?.includes(option) ? true : false}
-                        color="primary"
-                        defaultValue=""
-                      />
-                    }
-                    label={option}
-                  />
-                  {description && (
-                    <FieldTooltip title={description} placement="bottom" arrow>
-                      <HelpOutlineIcon className={classes.fieldTip} />
-                    </FieldTooltip>
-                  )}
-                </React.Fragment>
-              ))}
-              <FormHelperText>{error?.message}</FormHelperText>
-            </FormGroup>
-          </FormControl>
-        )
-      }}
-    </ConnectForm>
-  </Box>
-)
+          const error = get(errors, name)
+
+          const { ref, ...rest } = register(name)
+
+          return (
+            <FormControl error={!!error} required={required}>
+              <FormGroup aria-labelledby={name}>
+                {options.map(option => (
+                  <React.Fragment key={option}>
+                    <FormControlLabel
+                      key={option}
+                      control={
+                        <Checkbox
+                          name={name}
+                          {...rest}
+                          inputRef={ref}
+                          value={option}
+                          checked={values && values?.includes(option) ? true : false}
+                          color="primary"
+                          defaultValue=""
+                        />
+                      }
+                      label={option}
+                    />
+                    {description && (
+                      <FieldTooltip title={description} placement="bottom" arrow>
+                        <HelpOutlineIcon className={classes.fieldTip} />
+                      </FieldTooltip>
+                    )}
+                  </React.Fragment>
+                ))}
+                <FormHelperText>{error?.message}</FormHelperText>
+              </FormGroup>
+            </FormControl>
+          )
+        }}
+      </ConnectForm>
+    </Box>
+  )
+}
 
 type FormArrayProps = {
   object: any

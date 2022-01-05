@@ -54,10 +54,10 @@ describe("WizardStepper", () => {
         </StyledEngineProvider>
       </Provider>
     )
-    const input = (await screen.findByTestId("xml-upload")) as any
+    const input = (await screen.findByTestId("xml-upload")) as HTMLInputElement
     userEvent.upload(input, file)
 
-    expect(input.files[0]).toStrictEqual(file)
+    if (input.files) expect(input.files[0]).toStrictEqual(file)
     expect(input.files).toHaveLength(1)
   })
 })

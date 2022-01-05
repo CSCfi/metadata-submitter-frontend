@@ -5,13 +5,14 @@ import { OmitObjectValues } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
+import { ObjectInsideFolderWithTags } from "types"
 import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
-const saveDraftsAsTemplates = async (formData: any, dispatch: any) => {
+const saveDraftsAsTemplates = async (formData: ObjectInsideFolderWithTags[], dispatch: (reducer: unknown) => void) => {
   // Filter unique draft-schemas existing in formData
   const draftSchemas = formData
     .map((item: { schema: string }) => item.schema)
-    .filter((val: any, ind: any, arr: string | any[]) => arr.indexOf(val) === ind)
+    .filter((val: string, ind: number, arr: string[]) => arr.indexOf(val) === ind)
 
   // Group the data according to their schemas aka objectTypes
   const groupedData = draftSchemas.map((draftSchema: string) => {
@@ -26,7 +27,7 @@ const saveDraftsAsTemplates = async (formData: any, dispatch: any) => {
     const objectType = Object.keys(groupedData[i])[0]
     const draftsByObjectType = groupedData[i][objectType]
 
-    const draftsArr = [] as any
+    const draftsArr: Record<string, unknown>[] = []
     for (let j = 0; j < draftsByObjectType.length; j += 1) {
       try {
         // Fetch drafts' values

@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import { useTranslation } from "react-i18next"
-import { useDispatch, useSelector } from "react-redux"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
@@ -17,7 +16,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
-import { RootState } from "rootReducer"
+import { useAppSelector, useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
 
 const useStyles = makeStyles(theme => ({
@@ -33,10 +32,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch()
-  const user = useSelector((state: RootState) => state.user)
-  const unpublishedFolders = useSelector((state: RootState) => state.unpublishedFolders)
-  const publishedFolders = useSelector((state: RootState) => state.publishedFolders)
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(state => state.user)
+  const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
+  const publishedFolders = useAppSelector(state => state.publishedFolders)
 
   const classes = useStyles()
 

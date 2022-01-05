@@ -14,6 +14,7 @@ import CSCtheme from "../theme"
 import CustomSchema from "./fixtures/custom_schema.json"
 
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import { FormObject } from "types"
 import { pathToName } from "utils/JSONSchemaUtils"
 
 const mockStore = configureStore([])
@@ -32,7 +33,7 @@ describe("Test form render by custom schema", () => {
             <ThemeProvider theme={CSCtheme}>
               <FormProvider {...methods}>
                 <form id="hook-form">
-                  <div>{JSONSchemaParser.buildFields(schema)}</div>
+                  <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
                 </form>
               </FormProvider>
             </ThemeProvider>
@@ -44,8 +45,8 @@ describe("Test form render by custom schema", () => {
     render(<FormComponent />)
   })
 
-  const testLabels = (source: any) => {
-    const properties = source.properties as Record<string, { title: any }>
+  const testLabels = (source: FormObject) => {
+    const properties = source.properties as Record<string, { title: string }>
 
     for (const key in properties) {
       if (properties[key].title) {
@@ -63,10 +64,13 @@ describe("Test form render by custom schema", () => {
     let headingCount = 1 // Initial header for schema title
     let buttonCount = 0
 
-    const traverse = (object: { title?: string; type?: string; properties: any }, path: any[]) => {
+    const traverse = (
+      object: { title?: string; type?: string; properties: Record<string, unknown> },
+      path: string[]
+    ) => {
       for (const prop in object.properties) {
         const name = pathToName([...path, prop])
-        const source = object.properties[prop]
+        const source = object.properties[prop] as FormObject
 
         if (source.properties || source.items?.oneOf) {
           // Eg. Study > Study Description
@@ -109,7 +113,7 @@ describe("Test form render by custom schema", () => {
     const selectedItem = items.oneOf[1]
     userEvent.selectOptions(select, selectedItem.title)
 
-    testLabels(selectedItem)
+    testLabels(selectedItem as unknown as FormObject)
   })
 
   it("should render option fields when selecting option", () => {
@@ -123,7 +127,7 @@ describe("Test form render by custom schema", () => {
     userEvent.selectOptions(oneOfSelect, source.title)
 
     // OneOf option fields are rendered as required
-    const properties = options.oneOf[0].properties as Record<any, any>
+    const properties = options.oneOf[0].properties as unknown as { [key: string]: { type: string; title: string } }
 
     for (const key in properties) {
       if (properties[key].title) {

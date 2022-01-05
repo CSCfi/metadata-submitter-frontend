@@ -1,12 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = {}
+import { ObjectDetails, ObjectTags } from "types"
 
-const wizardCurrentObjectSlice: any = createSlice({
+const initialObject = {
+  accessionId: "",
+  objectId: "",
+  lastModified: "",
+  objectType: "",
+  status: "",
+  title: "",
+  submissionType: "",
+  tags: {},
+}
+
+const initialState: ObjectDetails & {
+  objectId: string
+  tags: ObjectTags
+  cleanedValues: ObjectDetails
+  index: number
+} = {
+  ...initialObject,
+  cleanedValues: initialObject,
+  index: 0,
+}
+
+const wizardCurrentObjectSlice = createSlice({
   name: "currentObject",
   initialState,
   reducers: {
-    setCurrentObject: (state, action) => action.payload,
+    setCurrentObject: (_state, action) => action.payload,
     resetCurrentObject: () => initialState,
   },
 })

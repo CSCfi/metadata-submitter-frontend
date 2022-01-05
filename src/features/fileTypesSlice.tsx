@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { reject } from "lodash"
 
-const initialState: any[] = []
+const initialState: { accessionId: StringConstructor; fileTypes: string[] }[] = []
 
-const fileTypesSlice: any = createSlice({
+const fileTypesSlice = createSlice({
   name: "fileTypes",
   initialState,
   reducers: {
@@ -14,7 +14,7 @@ const fileTypesSlice: any = createSlice({
       state.push(action.payload)
     },
     deleteFileType: (state, action) => {
-      return (state = reject(state, function (o) {
+      return (state = reject(state, function (o: { accessionId: string }) {
         return o.accessionId === action.payload
       }))
     },

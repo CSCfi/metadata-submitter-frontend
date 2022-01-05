@@ -1,9 +1,11 @@
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 
+import { FormObject } from "types"
+
 /*
  * Solve $ref -references in schema, return new schema instead of modifying passed in-place.
  */
-export const dereferenceSchema = async (schema: any) => {
+export const dereferenceSchema = async (schema: FormObject) => {
   const dereferenced = JSON.parse(JSON.stringify(schema))
   await $RefParser.dereference(dereferenced)
   delete dereferenced["definitions"]
@@ -26,15 +28,18 @@ export const getPathName = (path: Array<string>, field: string): string => {
 /*
  * Parse initial values from given object
  */
-export const traverseValues = (object: any): any => {
+
+type ValueType = { [key: string]: unknown }
+
+export const traverseValues = (object: FormObject) => {
   if (object["oneOf"]) return object
 
   switch (object["type"]) {
     case "object": {
-      const values = {} as any
+      const values: ValueType = {}
       const properties = object["properties"]
       for (const propertyKey in properties) {
-        const property = properties[propertyKey]
+        const property = properties[propertyKey] as FormObject
         values[propertyKey] = traverseValues(property)
       }
 

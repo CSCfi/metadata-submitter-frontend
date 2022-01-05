@@ -12,6 +12,7 @@ import CSCtheme from "../theme"
 
 import { WizardAjvResolver } from "components/NewDraftWizard/WizardForms/WizardAjvResolver"
 import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import { FormObject } from "types"
 
 const mockStore = configureStore([])
 const store = mockStore({})
@@ -43,7 +44,7 @@ describe("Test form render by custom schema", () => {
             <ThemeProvider theme={CSCtheme}>
               <FormProvider {...methods}>
                 <form id="hook-form" onSubmit={onSubmit} role="form">
-                  <div>{JSONSchemaParser.buildFields(schema)}</div>
+                  <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
                   <button type="submit" role="button">
                     submit
                   </button>

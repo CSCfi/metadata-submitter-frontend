@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState: [] | Array<string> = []
+import { Schema } from "types"
 
-const objectTypesArraySlice: any = createSlice({
+const initialState: Array<Schema> = []
+
+const objectTypesArraySlice = createSlice({
   name: "objectsArraySlice",
   initialState,
   reducers: {
-    setObjectTypesArray: (state, action) => action.payload,
+    setObjectTypesArray: (_state, action) => action.payload,
     resetObjectTypesArray: () => initialState,
   },
 })

@@ -1,3 +1,5 @@
+import { FormInput } from "../support/types"
+
 describe("Basic e2e", function () {
   beforeEach(() => {
     cy.task("resetDb")
@@ -25,7 +27,7 @@ describe("Basic e2e", function () {
     // Try to send invalid form
     cy.formActions("Submit")
 
-    cy.get("[data-testid='descriptor.studyTitle']").then(($input: any) => {
+cy.get<FormInput[]>("input[data-testid='descriptor.studyTitle']").then($input => {
       expect($input[0].validationMessage).to.contain("Please fill")
     })
 

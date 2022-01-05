@@ -1,4 +1,4 @@
-import React from "react"
+import React, { ReactElement } from "react"
 
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft"
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight"
@@ -13,17 +13,14 @@ import { useLocation } from "react-router-dom"
 
 import { Locale } from "constants/locale"
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { FormDataFiles, ObjectDisplayValues, ObjectInsideFolderWithTags } from "types"
 
-export const getObjectDisplayTitle = (
-  objectType: string,
-  cleanedValues: { descriptor: { studyTitle: any }; contacts: any[]; title: any }
-): string => {
+export const getObjectDisplayTitle = (objectType: string, cleanedValues: ObjectDisplayValues): string => {
   switch (objectType) {
     case ObjectTypes.study:
       return cleanedValues.descriptor?.studyTitle || ""
     case ObjectTypes.dac:
-      return cleanedValues.contacts?.find((contact: { mainContact: any }) => contact.mainContact)?.name || ""
+      return cleanedValues.contacts?.find(contact => contact.mainContact)?.name || ""
     default:
       return cleanedValues.title || ""
   }
@@ -61,7 +58,10 @@ export const formatDisplayObjectType = (objectType: string): string => {
 }
 
 // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
-export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objectTypesArray: Array<string>): any => {
+export const getDraftObjects = (
+  drafts: Array<ObjectInsideFolderWithTags>,
+  objectTypesArray: Array<string>
+): { [draftObjectType: string]: ObjectInsideFolderWithTags[] }[] => {
   const draftObjects = objectTypesArray.flatMap((schema: string) => {
     const draftSchema = `draft-${schema}`
     const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
@@ -74,7 +74,7 @@ export const getDraftObjects = (drafts: Array<ObjectInsideFolderWithTags>, objec
 export const getUserTemplates = (
   templates: Array<ObjectInsideFolderWithTags>,
   objectTypesArray: Array<string>
-): any => {
+): { [templateObjectType: string]: ObjectInsideFolderWithTags[] }[] => {
   const userTemplates = objectTypesArray.flatMap((schema: string) => {
     const templateSchema = `template-${schema}`
     const templatesArray = templates.filter(template => template.schema.toLowerCase() === templateSchema.toLowerCase())
@@ -85,7 +85,7 @@ export const getUserTemplates = (
 }
 
 // Get "rowsPerPageOptions" of TablePagination
-export const getRowsPerPageOptions = (totalItems?: number): Array<any> => {
+export const getRowsPerPageOptions = (totalItems?: number): Array<number | { value: number; label: string }> => {
   if (totalItems) {
     const optionAll = { value: totalItems, label: "All" }
     if (totalItems <= 10) return []
@@ -126,15 +126,29 @@ const tablePaginationStyles = makeStyles({
   },
 })
 
-const TablePaginationActions = ({ count, page, rowsPerPage, onPageChange }: any) => {
+type TablePaginationActionsType = {
+  count: number
+  page: number
+  rowsPerPage: number
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void
+}
+
+const TablePaginationActions = ({
+  count,
+  page,
+  rowsPerPage,
+  onPageChange,
+}: TablePaginationActionsType): ReactElement => {
   const theme = useTheme()
   const classes = tablePaginationStyles()
   const totalPages = Math.ceil(count / rowsPerPage)
 
-  const handleBackButtonClick = (e: any) => {
+  type PaginationButtonEvent = React.MouseEvent<HTMLButtonElement>
+
+  const handleBackButtonClick = (e: PaginationButtonEvent) => {
     onPageChange(e, page - 1)
   }
-  const handleNextButtonClick = (e: any) => {
+  const handleNextButtonClick = (e: PaginationButtonEvent) => {
     onPageChange(e, page + 1)
   }
   return (
@@ -156,8 +170,8 @@ type PaginationType = {
   totalNumberOfItems: number
   page: number
   itemsPerPage: number
-  handleChangePage: (e: any, page: number) => void
-  handleItemsPerPageChange: (e: any) => void
+  handleChangePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void
+  handleItemsPerPageChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 // Pagination Component
@@ -216,17 +230,20 @@ export const getOrigObjectType = (schema: string): string => {
 
 // Create localized path
 // Using useSelector hook causes rendering errors and local storage is used instead
-export const pathWithLocale = (path: string): any => {
+export const pathWithLocale = (path: string): string => {
   const locale = localStorage.getItem("locale") || Locale.defaultLocale
 
   return `/${locale}/${path}`
 }
 
 // Get unique "fileTypes" from Run form or Analysis form
-export const getNewUniqueFileTypes = (objectAccessionId: string | null, formData: any): any => {
+export const getNewUniqueFileTypes = (
+  objectAccessionId: string | null,
+  formData: FormDataFiles
+): { accessionId: string; fileTypes: string[] } | null => {
   if (formData.files?.length > 0 && objectAccessionId) {
     // Get unique fileTypes from current objectType and Add the new unique types fileTypes state in Redux
-    const fileTypes = uniq(formData.files.map((file: { filetype: any }) => file.filetype))
+    const fileTypes = uniq(formData.files.map((file: { filetype: string }) => file.filetype))
     const objectWithFileTypes = { accessionId: objectAccessionId, fileTypes }
     return objectWithFileTypes
   }

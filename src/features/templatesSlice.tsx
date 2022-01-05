@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState: [] = []
+const initialState: string[] = []
 
-const templates: any = createSlice({
+const templates = createSlice({
   name: "templates",
   initialState,
   reducers: {
-    setTemplateAccessionIds: (state, action) => action.payload,
+    setTemplateAccessionIds: (_state, action) => action.payload,
     resetTemplateAccessionIds: () => initialState,
   },
 })

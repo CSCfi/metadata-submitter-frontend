@@ -11,10 +11,11 @@ import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponent
 import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectInsideFolderWithTags } from "types"
 
 const mockStore = configureStore([])
 
-const submissions = [
+const submissions: ObjectInsideFolderWithTags[] = [
   {
     accessionId: "EDAG1",
     schema: ObjectTypes.sample,
@@ -75,8 +76,8 @@ describe("WizardSavedObjectsList with submitted objects", () => {
   })
 
   it("should display correct submitted form' displayTitle", () => {
-    submissions.forEach((item: any) => {
-      if (item.tags.submissionType === ObjectSubmissionTypes.form) {
+    submissions.forEach(item => {
+      if (item.tags.submissionType === ObjectSubmissionTypes.form && item.tags.displayTitle) {
         expect(screen.getByText(item.tags.displayTitle)).toBeInTheDocument()
         expect(screen.getByText(item.tags.displayTitle)).toHaveTextContent("Sample 1")
       }
@@ -84,8 +85,8 @@ describe("WizardSavedObjectsList with submitted objects", () => {
   })
 
   it("should display correct submitted xml' displayTitle", () => {
-    submissions.forEach((item: any) => {
-      if (item.tags.submissionType === ObjectSubmissionTypes.xml) {
+    submissions.forEach(item => {
+      if (item.tags.submissionType === ObjectSubmissionTypes.xml && item.tags.fileName) {
         expect(screen.getByText(item.tags.fileName)).toBeInTheDocument()
       }
     })

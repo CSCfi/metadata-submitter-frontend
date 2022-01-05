@@ -21,6 +21,7 @@
     "jsx": "react-jsx",
     "types": ["webpack-env"]
   },
+
   "include": ["src", "src/types/**/*"],
-  "exclude": ["**/*.js"]
+  "exclude": ["**/*.js", "node_modules", "**/node_modules"]
 }

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { RefObject } from "react"
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import Accordion from "@mui/material/Accordion"
@@ -94,7 +94,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     } else {
       // Create a new folder with selected templates as drafts
       dispatch(createNewDraftFolder(data, selectedDraftsArray))
-        .then((response: { data: { folderId: any } }) => {
+        .then(response => {
           const folderId = response.data.folderId
           navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
@@ -106,8 +106,12 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   }
 
   return (
-    <>
-      <form className={classes.root} onSubmit={handleSubmit(onSubmit)} ref={createFolderFormRef as any}>
+    <React.Fragment>
+      <form
+        className={classes.root}
+        onSubmit={handleSubmit(onSubmit)}
+        ref={createFolderFormRef as RefObject<HTMLFormElement>}
+      >
         <Controller
           control={control}
           name="name"
@@ -163,7 +167,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           <UserDraftTemplates />
         </AccordionDetails>
       </Accordion>
-    </>
+    </React.Fragment>
   )
 }
 

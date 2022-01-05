@@ -115,7 +115,7 @@ const NavigationLinks = (props: MenuItemProps) => {
 const LanguageSelector = (props: MenuItemProps) => {
   const { currentLocale } = props
 
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
   const dispatch = useAppDispatch()
 
@@ -136,12 +136,12 @@ const LanguageSelector = (props: MenuItemProps) => {
     })
   }
 
-  const handleClick = event => {
+  const handleClick = (event: { currentTarget: HTMLElement }) => {
     setAnchorEl(event.currentTarget)
   }
 
   const handleClose = () => {
-    setAnchorEl(null)
+    setAnchorEl(undefined)
   }
 
   return (

@@ -13,8 +13,8 @@ declare module "@mui/material/styles" {
     success: { main: string }
     warning: { main: string }
     wizard: {
-      cardHeader: any
-      objectListItem: any
+      cardHeader: Record<string, unknown>
+      objectListItem: Record<string, unknown>
     }
     tooltip: {
       backgroundColor: string
@@ -39,8 +39,8 @@ declare module "@mui/material/styles" {
     success: { main: string }
     warning: { main: string }
     wizard?: {
-      cardHeader?: any
-      objectListItem?: any
+      cardHeader?: Record<string, unknown>
+      objectListItem?: Record<string, unknown>
     }
     tooltip?: {
       backgroundColor?: string
@@ -49,7 +49,7 @@ declare module "@mui/material/styles" {
       boxShadow?: string
     }
     form?: Object
-    props: any
+    props: Record<string, unknown>
   }
 }
 

@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const autocompleteFieldSlice: any = createSlice({
+const autocompleteFieldSlice = createSlice({
   name: "autocompleteField",
   initialState,
   reducers: {
-    setAutocompleteField: (state, action) => action.payload,
+    setAutocompleteField: (_state, action) => action.payload,
     resetAutocompleteField: () => initialState,
   },
 })

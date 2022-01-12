@@ -5,28 +5,25 @@ describe("draft selections and templates", function () {
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Add folder name & description, navigate to submissions
-    cy.get("input[name='name']").type("Test name")
-    cy.get("textarea[name='description']").type("Test description")
-    cy.get("button[type=button]").contains("Next").click()
+    cy.newSubmission()
 
     // Fill a Study form
-    cy.wait(500)
     cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
     cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get("input[name='descriptor.studyTitle']").type("Study test title")
-    cy.get("input[name='descriptor.studyTitle']").should("have.value", "Study test title")
-    cy.get("select[name='descriptor.studyType']").select("Metagenomics")
+    cy.get("[data-testid='descriptor.studyTitle']").type("Study test title")
+    cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Study test title")
+    cy.get("[data-testid='descriptor.studyType']").select("Metagenomics")
 
     // Submit Study form
-    cy.get("button[type=submit]").contains("Submit").click()
+    cy.formActions("Submit")
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Create another Study draft form
-    cy.get("button").contains("New form").click()
-    cy.get("input[name='descriptor.studyTitle']").type("Study draft title")
+    cy.formActions("New form")
+    cy.get("[data-testid='descriptor.studyTitle']").type("Study draft title")
 
     // Save a draft
-    cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     cy.get("div[role=button]").contains("Study").click()
@@ -44,11 +41,11 @@ describe("draft selections and templates", function () {
           .then($btn => $btn.click())
       )
 
-    cy.get("input[name='title']").type("Sample draft title")
-    cy.get("input[name='sampleName.taxonId']").type("123")
-    cy.get("button[type=button]").contains("Save as Draft").click()
+    cy.get("[data-testid='title']").type("Sample draft title")
+    cy.get("[data-testid='sampleName.taxonId']").type("123")
+    cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
-    cy.get("ul[data-testid='Draft-objects']").find("li").should("have.length", 1)
+    cy.get("[data-testid='Draft-objects']").find("li").should("have.length", 1)
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
@@ -80,7 +77,7 @@ describe("draft selections and templates", function () {
     cy.get("@studyObject")
       .should("be.visible")
       .then($el => $el.click())
-    cy.get("div[data-schema='template-study']").contains("Study draft title").should("be.visible")
+    cy.get("[data-schema='template-study']").contains("Study draft title").should("be.visible")
     // Check saved Sample draft
     cy.get("h6").contains("Template-sample").as("sampleObject")
     cy.get("@sampleObject")
@@ -119,9 +116,9 @@ describe("draft selections and templates", function () {
       cy.get("[data-testid='edit-template']").click()
 
       cy.get("[role='presentation']").within(() => {
-        cy.get("input[name='title']").should("be.visible")
-        cy.get("input[name='title']").type(" edit", { force: true })
-        cy.get("input[name='title']").should("have.value", "Sample draft title edit")
+        cy.get("[data-testid='title']").should("be.visible")
+        cy.get("[data-testid='title']").type(" edit", { force: true })
+        cy.get("[data-testid='title']").should("have.value", "Sample draft title edit")
 
         cy.get("button[type='submit']").click()
       })
@@ -132,41 +129,47 @@ describe("draft selections and templates", function () {
       cy.get("[data-testid='template-sample-item']").first().as("firstSampleTemplate")
       cy.get("@firstSampleTemplate").should("contain", "Sample draft title edit")
 
-      // Count sample templates, delete template and test that template count has decreased
-      const listAllSampleTemplates = () => {
-        cy.get("[data-testid='template-sample-item']")
-          .its("length")
-          .then(lengthOfSampleTemplates => {
-            if (lengthOfSampleTemplates >= 10) {
-              cy.get("[data-testid='form-template-sample']").within(() => {
-                cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-              })
-              cy.get("li[role='option']").contains("All").click()
-            }
-          })
-      }
+      /*
+       Count sample templates, delete template and test that template count has decreased
+      */
+      // View "All" items if number of items >= 10
+      cy.get("[data-testid='form-template-sample']").within($sampleTemplates => {
+        if ($sampleTemplates.find("div[aria-haspopup='listbox']").length) {
+          cy.get("div[aria-haspopup='listbox']")
+            .contains(10)
+            .click()
+            .then(() => cy.get("li[role='option']", { timeout: 10000 }).contains("All").click())
+        }
+      })
 
-      listAllSampleTemplates()
-
+      // Delet the first item in the list
       cy.get("[data-testid='template-sample-item']")
         .its("length")
-        .then(lengthOfSampleTemplates => {
+        .then($el => {
           cy.get("[data-testid='form-template-sample']").within(() => {
             // Vertical menu button
             cy.get("button").first().click()
           })
+          cy.get("[data-testid='delete-template']", { timeout: 10000 })
+            .should("be.visible")
+            .then($button => $button.click())
 
-          cy.get("[data-testid='delete-template']").click()
-
-          listAllSampleTemplates()
-
-          cy.get("[data-testid='template-sample-item']").should("have.length", lengthOfSampleTemplates - 1)
+          // Check the length of the items left
+          const itemLength = $el - 1
+          if ($el >= 10) {
+            cy.contains(`1-10 of ${itemLength} items`)
+          }
+          if ($el < 10) {
+            cy.contains(`1-${itemLength} of ${itemLength} items`)
+          }
         })
 
       // Select some drafts to reuse
-      cy.get("[data-testid='form-template-study']").within(() => {
-        cy.get("input").first().check()
-      })
+      cy.get("[data-testid='form-template-study']")
+        .should("be.visible")
+        .within(() => {
+          cy.get("input[type='checkbox']").first().check()
+        })
 
       cy.get("[data-testid='form-template-sample']").within(() => {
         cy.get("input").first().click()
@@ -183,11 +186,9 @@ describe("draft selections and templates", function () {
       })
 
       // Create a new submission with selected drafts
-      cy.get("input[name='name']").type("Test name")
-      cy.get("textarea[name='description']").type("Test description")
-      cy.get("button[type=button]").contains("Next").click()
+      cy.newSubmission()
 
-      cy.wait(1000)
+      cy.wait(500)
 
       // Check that selected templates exist in the folder
       cy.clickFillForm("Study")

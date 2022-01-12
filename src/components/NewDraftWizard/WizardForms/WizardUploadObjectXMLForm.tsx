@@ -191,7 +191,11 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
-            <TextField placeholder={placeHolder} inputProps={{ readOnly: true, tabIndex: -1 }} />
+            <TextField
+              placeholder={placeHolder}
+              inputProps={{ readOnly: true, tabIndex: -1 }}
+              data-testid="xml-file-name"
+            />
             <Button
               ref={focusTarget}
               variant="contained"

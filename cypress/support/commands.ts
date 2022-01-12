@@ -32,10 +32,12 @@ declare global {
     interface Chainable {
       setMockUser(eppnUser: any, familyName: any, givenName: any): Chainable<Element>
       login(): Chainable<Element>
+      newSubmission(): Chainable<Element>
       clickFillForm(objectType: string): Chainable<Element>
       continueFirstDraft(): Chainable<Element>
       findDraftFolder(label: string): Chainable<Element>
       openDOIForm(): Chainable<Element>
+      formActions(): Chainable<Element>
     }
   }
 }
@@ -67,8 +69,20 @@ Cypress.Commands.add("login", () => {
   cy.wait(1000)
 })
 
+Cypress.Commands.add("newSubmission", folderName => {
+  cy.intercept("/folders").as("newSubmission")
+  cy.get("[data-testid='folderName']").type(folderName ? folderName : "Test name")
+  cy.get("[data-testid='folderDescription']").type("Test description")
+  cy.get("button[type=button]")
+    .contains("Next")
+    .should("be.visible")
+    .then($el => $el.click())
+
+  cy.wait("@newSubmission")
+})
+
 Cypress.Commands.add("clickFillForm", objectType => {
-  cy.get("div[role=button]").contains(objectType).click()
+  cy.get("div[role=button]", { timeout: 10000 }).contains(objectType).click()
   cy.wait(500)
   cy.get("div[aria-expanded='true']")
     .siblings()
@@ -88,6 +102,7 @@ Cypress.Commands.add("continueFirstDraft", () => {
     .within(() => {
       cy.get("button[aria-label='Edit submission']").first().click()
     })
+  cy.wait(1000)
 })
 
 // Navigate to home & find folder from drafts
@@ -110,7 +125,23 @@ Cypress.Commands.add("findDraftFolder", label => {
 
 // Go to DOI form
 Cypress.Commands.add("openDOIForm", () => {
-  cy.get("button[type=button]").contains("Next").click()
+  cy.get("div[role=button]").contains("Study").should("be.visible")
+  cy.get("button[type=button]")
+    .contains("Next")
+    .should("be.visible")
+    .then($el => $el.click())
   cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
   cy.get("div[role='dialog']").should("be.visible")
+})
+
+// Click Form's buttons to edit, clear or submit the form
+Cypress.Commands.add("formActions", buttonName => {
+  if (buttonName === "Submit") {
+    cy.get("button[type=submit]").contains(buttonName).should("be.visible")
+    cy.get("button[type=submit]").contains(buttonName).click()
+  } else {
+    cy.get("button[type=button]").contains(buttonName).should("be.visible")
+    cy.get("button[type=button]").contains(buttonName).click()
+  }
+  cy.wait(1000)
 })

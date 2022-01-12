@@ -141,6 +141,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
               error={!!error}
               helperText={error ? "Please give a description for folder." : null}
               disabled={isSubmitting}
+              inputProps={{ "data-testid": "folderDescription" }}
             />
           )}
           rules={{ required: true, validate: { description: value => value.length > 0 } }}

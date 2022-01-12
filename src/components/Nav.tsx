@@ -146,7 +146,7 @@ const LanguageSelector = (props: MenuItemProps) => {
   return (
     <>
       <Button
-        id="lang-selector"
+        data-testid="lang-selector"
         aria-controls="lang-menu"
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
@@ -164,8 +164,12 @@ const LanguageSelector = (props: MenuItemProps) => {
           "aria-labelledby": "lang-selector",
         }}
       >
-        <MenuItem onClick={() => changeLang("en")}>En</MenuItem>
-        <MenuItem onClick={() => changeLang("fi")}>Fi</MenuItem>
+        <MenuItem onClick={() => changeLang("en")} data-testid="en-lang">
+          En
+        </MenuItem>
+        <MenuItem onClick={() => changeLang("fi")} data-testid="fi-lang">
+          Fi
+        </MenuItem>
       </Menu>
     </>
   )

@@ -410,7 +410,7 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("p").contains("1-10 of 15").should("be.visible")
     cy.get("[data-testid='page info']").contains("1 of 2 pages").should("be.visible")
 
-    cy.get("div[data-testid='form-template-study']").within(() => {
+    cy.get("[data-testid='form-template-study']").within(() => {
       cy.get("button[aria-label='next page']").click()
       cy.get("p").contains("11-15 of 15", { timeout: 10000 }).should("be.visible")
       cy.get("[data-testid='page info']").contains("2 of 2 pages").should("be.visible")

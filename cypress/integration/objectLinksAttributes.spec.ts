@@ -85,6 +85,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("div[data-testid='studyLinks'] > div", { timeout: 10000 }).should("have.length", 3)
     // Remove URL Link and check that the rest of the Study Links render correctly
     cy.get("[data-testid='studyLinks[1]']").should("be.visible")
+    cy.wait(1000)
     cy.get("[data-testid='studyLinks[1]'] > button").should("be.visible")
     cy.get("[data-testid='studyLinks[1]'] > button").click()
     cy.wait(1000)

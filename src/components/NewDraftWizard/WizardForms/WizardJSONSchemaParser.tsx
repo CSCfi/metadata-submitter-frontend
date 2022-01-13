@@ -1193,6 +1193,7 @@ const FormSelectField = ({
                       }
                       return field.onChange(val)
                     }}
+                    inputProps={{ "data-testid": name }}
                   >
                     <option aria-label="None" value="" disabled />
                     {options.map(option => (
@@ -1253,6 +1254,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                       inputRef={ref}
                       color="primary"
                       checked={values || false}
+                      inputProps={{ "data-testid": name }}
                     />
                   }
                   label={
@@ -1318,6 +1320,7 @@ const FormCheckBoxArray = ({
                           checked={values && values?.includes(option) ? true : false}
                           color="primary"
                           defaultValue=""
+                          inputProps={{ "data-testid": name }}
                         />
                       }
                       label={option}

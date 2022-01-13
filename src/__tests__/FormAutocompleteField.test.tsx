@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, waitFor, within, act } from "@testing-library/react"
+import { render, screen, waitFor, act } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -67,7 +67,7 @@ describe("Test autocomplete on organisation field", () => {
       </Provider>
     )
     await waitFor(() => {
-      const autocomplete = screen.getByTestId("organisation")
+      const autocomplete = screen.getByTestId("organisation-inputField")
       expect(autocomplete).toBeDefined()
     })
   })
@@ -83,13 +83,12 @@ describe("Test autocomplete on organisation field", () => {
       </Provider>
     )
 
-    const autocomplete = await waitFor(() => screen.getByTestId("organisation"))
-    const input = (await waitFor(() => within(autocomplete).getByRole("textbox"))) as HTMLInputElement
+    const autocomplete = (await waitFor(() => screen.getByTestId("organisation-inputField"))) as HTMLInputElement
     autocomplete.focus()
 
     act(() => {
-      // Assign value to input field
-      userEvent.type(input, "test")
+      // Assign value to autocomplete field
+      userEvent.type(autocomplete, "test")
     })
 
     // Find loading indicator
@@ -102,6 +101,6 @@ describe("Test autocomplete on organisation field", () => {
     await waitFor(() => userEvent.keyboard("[ArrowDown]"))
     await waitFor(() => userEvent.keyboard("[Enter]"))
 
-    expect(input.value).toEqual(mockOrganisations[0].name)
+    expect(autocomplete.value).toEqual(mockOrganisations[0].name)
   })
 })

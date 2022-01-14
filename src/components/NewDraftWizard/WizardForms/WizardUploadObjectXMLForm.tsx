@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl"
 import LinearProgress from "@mui/material/LinearProgress"
 import TextField from "@mui/material/TextField"
 import { makeStyles } from "@mui/styles"
+import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -54,6 +55,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: "#FFF",
     color: theme.palette.primary.main,
   },
+  dropzone: {
+    width: null,
+    height: null,
+    flex: 1,
+    backgroundColor: theme.palette.success.main,
+    border: "2px dashed #51A808",
+  },
 }))
 
 /*
@@ -69,13 +77,18 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   const {
     register,
     watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm({ mode: "onChange" })
   const [placeHolder, setPlaceHolder] = useState("Name")
+  const [validDropFile, setvalidDropFile] = useState(false)
 
   const watchFile = watch("fileUpload")
+  const watchDrop = watch("fileDrop")
 
   const focusTarget = useRef<HTMLLabelElement | null>(null)
   const shouldFocus = useAppSelector(state => state.focus)
@@ -91,6 +104,35 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       setPlaceHolder(currentObject?.tags?.fileName || "Name")
     }
   }, [currentObject, watchFile])
+
+  useEffect(() => {
+    if (watchDrop) {
+      setPlaceHolder(watchDrop[0])
+    } else setPlaceHolder(currentObject?.tags?.fileName || "Name")
+  }, [currentObject, watchDrop])
+
+  const onDrop = async (acceptedFiles, fileRejections) => {
+    const filelist = new DataTransfer()
+    clearErrors()
+    if (acceptedFiles.length > 0) {
+      //clearErrors()
+      setvalidDropFile(true)
+      filelist.items.add(acceptedFiles[0])
+      setValue("fileUpload", filelist.files)
+    } else {
+      filelist.items.add(fileRejections[0].file)
+      setError("fileUpload", { type: "dropXML", message: "Please attached filebshould be type XML." })
+    }
+    currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    maxFiles: 1,
+    noClick: true,
+    noKeyboard: true,
+    accept: "text/xml",
+    onDrop: onDrop,
+  })
 
   const resetForm = () => {
     reset()
@@ -155,6 +197,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     clearTimeout(waitForServertimer)
     setSubmitting(false)
     dispatch(resetLoading())
+    validDropFile && setvalidDropFile(false)
   }
 
   const handleButton = () => {
@@ -170,7 +213,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       variant="contained"
       className={classes.submitButton}
       size="small"
-      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || !validDropFile}
       onClick={handleSubmit(onSubmit)}
     >
       {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
@@ -178,7 +221,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   )
 
   return (
-    <Container maxWidth={false} className={classes.container}>
+    <Container maxWidth={false} className={isDragActive ? classes.dropzone : classes.container} {...getRootProps()}>
       <CardHeader
         title="Upload XML File"
         titleTypographyProps={{ variant: "inherit" }}
@@ -192,6 +235,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
+            <input {...register("fileDrop")} {...getInputProps()} hidden />
             <TextField
               placeholder={placeHolder}
               inputProps={{ readOnly: true, tabIndex: -1 }}
@@ -229,6 +273,14 @@ const WizardUploadObjectXMLForm: React.FC = () => {
               })}
             />
           </div>
+          {/* Helper text for drag and drop */}
+          {isDragActive ? (
+            <p>Drag and drop some files here</p>
+          ) : validDropFile ? (
+            <p>Use Submit button to upload the file</p>
+          ) : (
+            <p>Drag and drop some files here, or click Choose file button.</p>
+          )}
           {/* Errors */}
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
           {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}

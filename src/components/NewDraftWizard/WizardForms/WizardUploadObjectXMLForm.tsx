@@ -56,10 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.primary.main,
   },
   dropzone: {
-    width: null,
-    height: null,
     flex: 1,
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.primary.light,
     border: "2px dashed #51A808",
   },
 }))

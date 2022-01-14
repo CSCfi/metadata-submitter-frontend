@@ -19,7 +19,7 @@ import UserDraftTemplateActions from "./UserDraftTemplateActions"
 
 import { setTemplateAccessionIds } from "features/templatesSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { ObjectInsideFolderWithTags } from "types"
+import { ObjectInsideFolderWithTags, TemplateDetails } from "types"
 import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -69,11 +69,17 @@ const UserDraftTemplates: React.FC = () => {
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
-  const dispatch = useAppDispatch()
   const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
 
   // Render when there is user's draft template(s)
   const DraftList = () => {
+    return templates.map((draft: TemplateDetails[], index: number) => <TemplateGroup key={index} draft={draft} />)
+  }
+
+  const TemplateGroup = (props: { draft: TemplateDetails[] }) => {
+    const { draft } = props
+
+    const dispatch = useAppDispatch()
     const [checkedItems, setCheckedItems] = useState(templateAccessionIds)
 
     const handleChange = (accessionId: string) => {
@@ -87,80 +93,78 @@ const UserDraftTemplates: React.FC = () => {
       dispatch(setTemplateAccessionIds(items))
     }
 
-    return templates.map((draft: any) => {
-      const schema = Object.keys(draft)[0]
-      const [open, setOpen] = useState(true)
-      // Control Pagination
-      const [page, setPage] = useState(0)
-      const [itemsPerPage, setItemsPerPage] = useState(10)
+    const schema = Object.keys(draft)[0]
+    const [open, setOpen] = useState(true)
+    // Control Pagination
+    const [page, setPage] = useState(0)
+    const [itemsPerPage, setItemsPerPage] = useState(10)
 
-      const handleChangePage = (e: any, page: number) => {
-        setPage(page)
-      }
+    const handleChangePage = (e: any, page: number) => {
+      setPage(page)
+    }
 
-      const handleItemsPerPageChange = (e: any) => {
-        setItemsPerPage(e.target.value)
-        setPage(0)
-      }
+    const handleItemsPerPageChange = (e: any) => {
+      setItemsPerPage(e.target.value)
+      setPage(0)
+    }
 
-      return (
-        <FormControl key={schema} className={classes.formControl} data-testid={`form-${schema}`}>
-          <FormLabel className={classes.formLabel} onClick={() => setOpen(!open)}>
-            <Typography display="inline" variant="subtitle1" color="textPrimary">
-              {formatDisplayObjectType(schema)}
-            </Typography>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </FormLabel>
+    return (
+      <FormControl key={schema} className={classes.formControl} data-testid={`form-${schema}`}>
+        <FormLabel className={classes.formLabel} onClick={() => setOpen(!open)}>
+          <Typography display="inline" variant="subtitle1" color="textPrimary">
+            {formatDisplayObjectType(schema)}
+          </Typography>
+          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </FormLabel>
 
-          <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
-            {draft[schema]
-              .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
-              .map((item: ObjectInsideFolderWithTags) => {
-                return (
-                  <Grid
-                    container
-                    key={item.accessionId}
-                    className={classes.formControlLabel}
-                    data-testid={`${item.schema}-item`}
-                  >
-                    <Grid item xs>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={checkedItems.find((element: string) => element === item.accessionId) !== undefined}
-                            onClick={() => handleChange(item.accessionId)}
-                            color="primary"
-                            name={item.accessionId}
-                            value={item.accessionId}
-                          />
-                        }
-                        label={
-                          <ListItemText
-                            primary={getItemPrimaryText(item)}
-                            secondary={item.accessionId}
-                            data-schema={item.schema}
-                          />
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs="auto">
-                      <UserDraftTemplateActions item={item} />
-                    </Grid>
+        <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
+          {draft[schema]
+            .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
+            .map((item: ObjectInsideFolderWithTags) => {
+              return (
+                <Grid
+                  container
+                  key={item.accessionId}
+                  className={classes.formControlLabel}
+                  data-testid={`${item.schema}-item`}
+                >
+                  <Grid item xs>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={checkedItems.find((element: string) => element === item.accessionId) !== undefined}
+                          onClick={() => handleChange(item.accessionId)}
+                          color="primary"
+                          name={item.accessionId}
+                          value={item.accessionId}
+                        />
+                      }
+                      label={
+                        <ListItemText
+                          primary={getItemPrimaryText(item)}
+                          secondary={item.accessionId}
+                          data-schema={item.schema}
+                        />
+                      }
+                    />
                   </Grid>
-                )
-              })}
+                  <Grid item xs="auto">
+                    <UserDraftTemplateActions item={item} />
+                  </Grid>
+                </Grid>
+              )
+            })}
 
-            <Pagination
-              totalNumberOfItems={draft[schema].length}
-              page={page}
-              itemsPerPage={itemsPerPage}
-              handleChangePage={handleChangePage}
-              handleItemsPerPageChange={handleItemsPerPageChange}
-            />
-          </Collapse>
-        </FormControl>
-      )
-    })
+          <Pagination
+            totalNumberOfItems={draft[schema].length}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            handleChangePage={handleChangePage}
+            handleItemsPerPageChange={handleItemsPerPageChange}
+          />
+        </Collapse>
+      </FormControl>
+    )
   }
 
   // Renders when user has no draft templates

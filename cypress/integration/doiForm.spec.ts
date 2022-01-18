@@ -250,8 +250,7 @@ describe("DOI form", function () {
       .scrollIntoView({ offset: { left: 0, top: -100 } })
       .should("be.visible")
 
-    cy.wait(500)
-    cy.get("[data-testid='Start'] > div")
+    cy.get("[data-testid='Start'] > div", { timeout: 10000 })
       .should("be.visible")
       .then(() => cy.get("[data-testid='Start'] > div > button").click({ force: true }))
     cy.get("div").contains("4", { timeout: 10000 }).click()

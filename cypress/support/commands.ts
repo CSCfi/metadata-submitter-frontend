@@ -66,7 +66,7 @@ Cypress.on("uncaught:exception", () => {
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
   cy.get('a[data-testid="login-button"]').click()
-  cy.wait(1000)
+  cy.get("[data-testid='link-create-submission'", { timeout: 10000 }).should("be.visible")
 })
 
 Cypress.Commands.add("newSubmission", folderName => {
@@ -78,12 +78,11 @@ Cypress.Commands.add("newSubmission", folderName => {
     .should("be.visible")
     .then($el => $el.click())
 
-  cy.wait("@newSubmission")
+  cy.wait("@newSubmission", { timeout: 10000 })
 })
 
 Cypress.Commands.add("clickFillForm", objectType => {
   cy.get("div[role=button]", { timeout: 10000 }).contains(objectType).click()
-  cy.wait(500)
   cy.get("div[aria-expanded='true']")
     .siblings()
     .within(() =>
@@ -93,6 +92,7 @@ Cypress.Commands.add("clickFillForm", objectType => {
         .should("be.visible")
         .then($btn => $btn.click())
     )
+  cy.get("form", { timeout: 30000 }).should("be.visible")
 })
 
 Cypress.Commands.add("continueFirstDraft", () => {
@@ -102,7 +102,7 @@ Cypress.Commands.add("continueFirstDraft", () => {
     .within(() => {
       cy.get("button[aria-label='Edit submission']").first().click()
     })
-  cy.wait(1000)
+  cy.contains("Update draft", { timeout: 10000 }).should("be.visible")
 })
 
 // Navigate to home & find folder from drafts
@@ -113,10 +113,16 @@ Cypress.Commands.add("findDraftFolder", label => {
     if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
       cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
       cy.get("ul").children().last().contains("All").click()
-      cy.wait(500)
-      cy.get("ul[data-testid='draft-submissions']").within(() =>
-        cy.get("div[role=button]").contains(label).last().click()
-      )
+
+      cy.get("ul[data-testid='draft-submissions']", { timeout: 30000 }).within(() => {
+        cy.get("a").should("exist")
+        cy.get("div[role=button]").should("be.visible")
+        cy.get("div[role=button]")
+          .last()
+          .contains(label)
+          .should("be.visible")
+          .then($el => $el.click())
+      })
     } else {
       cy.get("ul[data-testid='draft-submissions']").within(() => cy.get("div[role=button]").contains(label).click())
     }
@@ -138,10 +144,9 @@ Cypress.Commands.add("openDOIForm", () => {
 Cypress.Commands.add("formActions", buttonName => {
   if (buttonName === "Submit") {
     cy.get("button[type=submit]").contains(buttonName).should("be.visible")
-    cy.get("button[type=submit]").contains(buttonName).click()
+    cy.get("button[type=submit]").contains(buttonName).click({ timeout: 10000 })
   } else {
     cy.get("button[type=button]").contains(buttonName).should("be.visible")
-    cy.get("button[type=button]").contains(buttonName).click()
+    cy.get("button[type=button]").contains(buttonName).click({ timeout: 10000 })
   }
-  cy.wait(1000)
 })

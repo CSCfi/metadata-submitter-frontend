@@ -42,10 +42,10 @@ describe("Draft operations", function () {
     cy.get("[data-testid='Draft-objects']").find("li", { timeout: 60000 }).should("have.length", 1)
 
     // Continue draft
-    // Clear
     cy.continueFirstDraft()
-    cy.wait(500)
+
     cy.get("[data-testid='descriptor.studyTitle']")
+    // Clear
     cy.formActions("Clear form")
     // Fill
     // cy.get("[data-testid='descriptor.studyTitle']").should("be.visible").focus()

@@ -29,17 +29,7 @@ describe("draft selections and templates", function () {
     cy.get("div[role=button]").contains("Study").click()
 
     // Create and Save another draft - Sample draft
-    cy.get("div[role=button]").contains("Sample", { timeout: 10000 }).click()
-    cy.wait(500)
-    cy.get("div[aria-expanded='true']")
-      .siblings()
-      .within(() =>
-        cy
-          .get("div[role=button]")
-          .contains("Fill Form", { timeout: 10000 })
-          .should("be.visible")
-          .then($btn => $btn.click())
-      )
+    cy.clickFillForm("Sample")
 
     cy.get("[data-testid='title']").type("Sample draft title")
     cy.get("[data-testid='sampleName.taxonId']").type("123")
@@ -90,8 +80,8 @@ describe("draft selections and templates", function () {
       cy.get("form").within(() => {
         cy.get("button[aria-label='View draft']").last().click()
       })
-      cy.wait(500)
-      cy.get("h1", { timeout: 10000 }).contains("Sample").should("be.visible")
+
+      cy.contains("Sample", { timeout: 10000 }).should("be.visible")
       cy.get("[data-testid='title']").should("have.value", "Sample draft title")
     }),
     it("should be able to select, edit and delete draft templates and reuse them when creating a new folder", () => {
@@ -116,29 +106,35 @@ describe("draft selections and templates", function () {
       cy.get("[data-testid='edit-template']").click()
 
       cy.get("[role='presentation']").within(() => {
-        cy.get("[data-testid='title']").should("be.visible")
-        cy.get("[data-testid='title']").type(" edit", { force: true })
+        cy.get("form").should("be.visible")
+        cy.contains("Update template").should("be.visible")
+        cy.get("[data-testid='title']", { timeout: 10000 }).should("be.visible")
+        cy.get("[data-testid='title']").type(" edit")
         cy.get("[data-testid='title']").should("have.value", "Sample draft title edit")
 
         cy.get("button[type='submit']").click()
       })
 
       cy.get("div[role=alert]", { timeout: 10000 }).contains("Template updated with")
+      cy.contains("Template updated with").should("be.visible")
 
       // Re-query template item
-      cy.get("[data-testid='template-sample-item']").first().as("firstSampleTemplate")
+      cy.get("[data-testid='template-sample-item']", { timeout: 10000 }).first().as("firstSampleTemplate")
       cy.get("@firstSampleTemplate").should("contain", "Sample draft title edit")
 
       /*
        Count sample templates, delete template and test that template count has decreased
       */
       // View "All" items if number of items >= 10
-      cy.get("[data-testid='form-template-sample']").within($sampleTemplates => {
-        if ($sampleTemplates.find("div[aria-haspopup='listbox']").length) {
-          cy.get("div[aria-haspopup='listbox']")
-            .contains(10)
-            .click()
-            .then(() => cy.get("li[role='option']", { timeout: 10000 }).contains("All").click())
+      cy.get("[data-testid='form-template-sample']").within($el => {
+        if ($el.find("div[aria-haspopup='listbox']").length > 0) {
+          cy.get("div[aria-haspopup='listbox']").contains(10).click()
+        }
+      })
+
+      cy.get("body").then($body => {
+        if ($body.find("li[role='option']").length > 0) {
+          cy.get("li[role='option']").contains("All").click()
         }
       })
 
@@ -154,12 +150,13 @@ describe("draft selections and templates", function () {
             .should("be.visible")
             .then($button => $button.click())
 
+          console.log("$el :>> ", $el)
           // Check the length of the items left
           const itemLength = $el - 1
-          if ($el >= 10) {
+          if ($el > 10) {
             cy.contains(`1-10 of ${itemLength} items`)
           }
-          if ($el < 10) {
+          if ($el <= 10) {
             cy.contains(`1-${itemLength} of ${itemLength} items`)
           }
         })
@@ -187,8 +184,6 @@ describe("draft selections and templates", function () {
 
       // Create a new submission with selected drafts
       cy.newSubmission()
-
-      cy.wait(500)
 
       // Check that selected templates exist in the folder
       cy.clickFillForm("Study")
@@ -219,7 +214,7 @@ describe("draft selections and templates", function () {
       })
       cy.get("button[type=button]").contains("Next").click()
 
-      cy.wait(500)
+      cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
 
       // Check that the new template is added as a draft
       cy.clickFillForm("Study")

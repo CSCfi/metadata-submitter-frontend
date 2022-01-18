@@ -93,6 +93,7 @@ const NavigationLinks = (props: MenuItemProps) => {
           onClick={() => {
             resetWizard()
           }}
+          data-testid="link-create-submission"
         >
           Create Submission
         </Button>

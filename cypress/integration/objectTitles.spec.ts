@@ -32,9 +32,12 @@ describe("draft and submitted objects' titles", function () {
 
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
+
+    cy.contains("Update Study", { timeout: 10000 }).should("be.visible")
     cy.get("@studyTitle", { timeout: 10000 }).should("have.value", "Test title")
-    cy.get("@studyTitle").focus().type(" 2")
-    cy.get("@studyTitle").should("have.value", "Test title 2")
+    cy.get("@studyTitle", { timeout: 10000 }).type(" 2")
+
+    cy.get("@studyTitle", { timeout: 30000 }).should("have.value", "Test title 2")
     cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")
 
@@ -43,7 +46,8 @@ describe("draft and submitted objects' titles", function () {
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
-    cy.wait(500)
+
+    cy.get("h1", { timeout: 10000 }).contains("Summary").should("be.visible")
     // Check the submitted object has correct displayTitle
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
     cy.get("div[data-schema='study']", { timeout: 10000 }).should("contain.text", "Test title 2")

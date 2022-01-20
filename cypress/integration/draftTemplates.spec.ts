@@ -1,5 +1,6 @@
 describe("draft selections and templates", function () {
   beforeEach(() => {
+    cy.task("resetDb")
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
@@ -154,31 +155,26 @@ describe("draft selections and templates", function () {
           // Check the length of the items left
           const itemLength = $el - 1
           if ($el > 10) {
-            cy.contains(`1-10 of ${itemLength} items`)
+            cy.contains(`1-10 of ${itemLength} items`, { timeout: 10000 })
           }
-          if ($el <= 10) {
-            cy.contains(`1-${itemLength} of ${itemLength} items`)
+          if ($el > 1 && $el <= 10) {
+            cy.contains(`1-${itemLength} of ${itemLength} items`, { timeout: 10000 })
           }
         })
 
+      cy.get("[data-testid='delete-template']").should("not.exist")
       // Select some drafts to reuse
-      cy.get("[data-testid='form-template-study']")
+      cy.get("[data-testid='form-template-study']", { timeout: 30000 })
         .should("be.visible")
         .within(() => {
-          cy.get("input[type='checkbox']").first().check()
+          cy.get("label > span").should("be.visible")
+          cy.get("label > span").first().click()
         })
-
-      cy.get("[data-testid='form-template-sample']").within(() => {
-        cy.get("input").first().click()
-      })
 
       // Check that selected drafts exist
       cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
       cy.get("[data-testid='toggle-user-drafts']", { timeout: 10000 }).click()
       cy.get("[data-testid='form-template-study']").within(() => {
-        cy.get("input").first().should("be.checked")
-      })
-      cy.get("[data-testid='form-template-sample']").within(() => {
         cy.get("input").first().should("be.checked")
       })
 
@@ -189,18 +185,15 @@ describe("draft selections and templates", function () {
       cy.clickFillForm("Study")
       cy.get("[data-testid='Draft-objects']").children().should("have.length", 1)
 
-      cy.clickFillForm("Sample")
-      cy.get("[data-testid='Draft-objects']").children().should("have.length", 1)
-
       // Check if the draft can be used
       cy.get("[aria-label='Edit submission']").click()
-      cy.get("[data-testid='title']").should("have.value", "Sample draft title")
-      cy.get("[data-testid='title']").type(" edited")
+      cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Study draft title")
+      cy.get("[data-testid='descriptor.studyTitle']").type(" edited")
       cy.get("button[type=button]").contains("Update draft").click()
 
       // Check that the draft works normlly as its title should be updated
       cy.get("[aria-label='Edit submission']").click()
-      cy.get("[data-testid='title']").should("have.value", "Sample draft title edited")
+      cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Study draft title edited")
 
       // Check that editing a draft folder with adding a new template also works
       // Navigate to home & find folder

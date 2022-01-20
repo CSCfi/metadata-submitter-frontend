@@ -1,4 +1,8 @@
 describe("Internationalization", function () {
+  beforeEach(() => {
+    cy.task("resetDb")
+  })
+
   it("should login with finnish translation when finnish locale is chosen", () => {
     const baseUrl = "http://localhost:" + Cypress.env("port") + "/"
 

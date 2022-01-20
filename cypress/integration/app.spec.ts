@@ -1,4 +1,8 @@
 describe("Basic e2e", function () {
+  beforeEach(() => {
+    cy.task("resetDb")
+  })
+
   it("should navigate to home with click of login button", () => {
     cy.login()
   })

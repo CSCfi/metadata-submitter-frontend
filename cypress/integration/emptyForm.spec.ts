@@ -1,5 +1,6 @@
 describe("empty form should not be alerted or saved", function () {
   beforeEach(() => {
+    cy.task("resetDb")
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()

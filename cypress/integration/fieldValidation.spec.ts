@@ -1,5 +1,6 @@
 describe("Field validation", function () {
   beforeEach(() => {
+    cy.task("resetDb")
     cy.login()
   })
 

@@ -1,4 +1,7 @@
 describe("render objects' links and attributes ", function () {
+  beforeEach(() => {
+    cy.task("resetDb")
+  })
   it("should render correct Study Links and Attributes", () => {
     cy.login()
 

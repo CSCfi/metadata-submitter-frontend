@@ -1,5 +1,6 @@
 describe("Home e2e", function () {
   beforeEach(() => {
+    cy.task("resetDb")
     cy.login()
   })
 
@@ -8,13 +9,11 @@ describe("Home e2e", function () {
     cy.contains("Your Draft Submissions", { timeout: 10000 }).should("be.visible")
     cy.contains("Your Published Submissions", { timeout: 10000 }).should("be.visible")
 
-    cy.get("ul.MuiList-root")
-      .its("length")
-      .then($el => {
-        if ($el > 0) {
-          cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
-        }
-      })
+    cy.get("body").then($body => {
+      if ($body.find("ul.MuiList-root").length > 0) {
+        cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
+      }
+    })
 
     // Create a new Unpublished folder
     cy.get("button").contains("Create Submission").click()
@@ -67,9 +66,13 @@ describe("Home e2e", function () {
 
     // Edit remaining object
     cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
+    cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
+
     cy.get("select[data-testid='descriptor.studyType']").select("Metagenomics")
+    cy.get("select[data-testid='descriptor.studyType']").should("have.value", "Metagenomics")
     cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 30000 }).should("have.length", 1)
+
+    cy.get("[data-testid='Form-objects']", { timeout: 30000 }).find("li").should("have.length", 1)
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next", { timeout: 30000 }).click()

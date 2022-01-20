@@ -17,7 +17,18 @@
  */
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-module.exports = (on, config) => {
+import { MongoClient } from "mongodb"
+
+module.exports = async on => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+
+  const database = await MongoClient.connect("mongodb://admin:admin@localhost:27017")
+  on("task", {
+    resetDb() {
+      const db = database.db("default")
+      db.dropDatabase()
+      return null
+    },
+  })
 }

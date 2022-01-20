@@ -1,14 +1,12 @@
 describe("Populate form and render form elements by object data", function () {
   beforeEach(() => {
+    cy.task("resetDb")
     cy.login()
 
     cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
 
     // Add folder name & description, navigate to submissions
-    cy.get("input[name='name']").type("Test name")
-    cy.get("textarea[name='description']").type("Test description")
-    cy.get("button[type=button]").contains("Next").click()
-    cy.wait(500)
+    cy.newSubmission()
   })
 
   it("should submit Sample form and display all form values when editing the form", () => {
@@ -23,10 +21,10 @@ describe("Populate form and render form elements by object data", function () {
 
     cy.clickFillForm("Sample")
 
-    cy.get("input[name='title']").type(testData.title)
-    cy.get("input[name='sampleName.taxonId']").type(testData.taxonId)
-    cy.get("select[name='sampleData']").select(testData.sampleData1)
-    cy.get("select[name='sampleData.gender']").select(testData.gender)
+    cy.get("[data-testid='title']").type(testData.title)
+    cy.get("[data-testid='sampleName.taxonId']").type(testData.taxonId)
+    cy.get("select[data-testid='sampleData']").select(testData.sampleData1)
+    cy.get("select[data-testid='sampleData.gender']").select(testData.gender)
 
     // Submit form
     cy.get("button[type=submit]").contains("Submit").click()
@@ -37,22 +35,22 @@ describe("Populate form and render form elements by object data", function () {
 
     // Edit saved submission
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='title']").should("have.value", testData.title)
-    cy.get("input[name='title']", { timeout: 10000 }).focus().type(" edited").blur()
-    cy.get("input[name='title']").should("have.value", `${testData.title} edited`)
-    cy.get("input[name='sampleName.taxonId']").should("have.value", testData.taxonId)
-    cy.get("select[name='sampleData']").should("have.value", testData.sampleData1)
-    cy.get("select[name='sampleData.gender']").should("have.value", testData.gender)
+    cy.get("[data-testid='title']").should("have.value", testData.title)
+    cy.get("[data-testid='title']", { timeout: 10000 }).focus().type(" edited").blur()
+    cy.get("[data-testid='title']").should("have.value", `${testData.title} edited`)
+    cy.get("[data-testid='sampleName.taxonId']").should("have.value", testData.taxonId)
+    cy.get("select[data-testid='sampleData']").should("have.value", testData.sampleData1)
+    cy.get("select[data-testid='sampleData.gender']").should("have.value", testData.gender)
 
     // Change Sample Data Type to Non Human Sample
-    cy.get("select[name='sampleData']").select(testData.sampleData2)
+    cy.get("select[data-testid='sampleData']").select(testData.sampleData2)
     cy.get("[data-testid='sampleData.dataDescription']").type(testData.sampleTypeDescription)
     cy.get("button[type=button]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check Sample form renders Non Human Sample now
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("select[name='sampleData']").should("have.value", testData.sampleData2)
+    cy.get("select[data-testid='sampleData']").should("have.value", testData.sampleData2)
     cy.get("[data-testid='sampleData.dataDescription']").should("have.value", testData.sampleTypeDescription)
 
     // Clear object in state
@@ -65,7 +63,7 @@ describe("Populate form and render form elements by object data", function () {
     // Test updated title
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
     cy.get("button[type=button]").contains("Edit").click()
-    cy.get("input[name='title']").should("have.value", `${testData.title} edited`)
+    cy.get("[data-testid='title']").should("have.value", `${testData.title} edited`)
   })
 
   it("should render Experiment form correctly when editing", () => {
@@ -86,28 +84,28 @@ describe("Populate form and render form elements by object data", function () {
 
     cy.clickFillForm("Experiment")
 
-    cy.get("input[data-testid='title']").type(testData.title)
-    cy.get("textarea[data-testid='description']").type(testData.description)
-    cy.get("textarea[name='design.designDescription']").type(testData.designDescription)
-    cy.get("select[name='design.sampleDescriptor']").select(testData.sampleReference)
-    cy.get("input[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
+    cy.get("[data-testid='title']").type(testData.title)
+    cy.get("[data-testid='description']").type(testData.description)
+    cy.get("[data-testid='design.designDescription']").type(testData.designDescription)
+    cy.get("select[data-testid='design.sampleDescriptor']").select(testData.sampleReference)
+    cy.get("[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
     // Expected Base Call Table
     cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
+    cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
+    cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
       "Test read group tag"
     )
 
     // Select and fill Single processing
-    cy.get("select[name='processing']").select(testData.singleProcessing)
-    cy.get("[data-testid='processing']").type(testData.singleProcessingLabel)
+    cy.get("select[data-testid='processing']").select(testData.singleProcessing)
+    cy.get("input[data-testid='processing']").type(testData.singleProcessingLabel)
 
     // Switch to select and fill Complex processing
-    cy.get("select[name='processing']").select(testData.complexProcessing)
-    cy.get("h2[data-testid='processing']").parents().children("button").click()
-    cy.get("h4[data-testid='processing.0.pipeline.pipeSection']").parent().children("button").click()
-    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").type(testData.stepIndex)
-    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.stringValue, {
+    cy.get("select[data-testid='processing']").select(testData.complexProcessing)
+    cy.get("[data-testid='processing']").parents().children("button").click()
+    cy.get("[data-testid='processing.0.pipeline.pipeSection']").parent().children("button").click()
+    cy.get("[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").type(testData.stepIndex)
+    cy.get("select[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.stringValue, {
       force: true,
     })
     cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").type(testData.prevStepIndexValue)
@@ -119,30 +117,27 @@ describe("Populate form and render form elements by object data", function () {
     cy.continueFirstDraft()
 
     // Test that values exist
-    cy.get("input[data-testid='title']").should("have.value", testData.title)
-    cy.get("textarea[data-testid='description']").should("have.value", testData.description)
-    cy.get("textarea[name='design.designDescription']").should("have.value", testData.designDescription)
-    cy.get("select[name='design.sampleDescriptor']").should("have.value", testData.sampleReference)
-    cy.get("input[data-testid='design.sampleDescriptor.label']").should("have.value", testData.individualSampleLabel)
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").should(
+    cy.get("[data-testid='title']").should("have.value", testData.title)
+    cy.get("[data-testid='description']").should("have.value", testData.description)
+    cy.get("[data-testid='design.designDescription']").should("have.value", testData.designDescription)
+    cy.get("[data-testid='design.sampleDescriptor']").should("have.value", testData.sampleReference)
+    cy.get("[data-testid='design.sampleDescriptor.label']").should("have.value", testData.individualSampleLabel)
+    cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").should(
       "have.value",
       "Test base call"
     )
-    cy.get("input[name='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").should(
+    cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").should(
       "have.value",
       "Test read group tag"
     )
-    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").should(
-      "have.value",
-      testData.stepIndex
-    )
+    cy.get("[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").should("have.value", testData.stepIndex)
     cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").should(
       "have.value",
       testData.prevStepIndexValue
     )
 
     // Change Prev Step Index from string value to null
-    cy.get("select[name='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue, {
+    cy.get("select[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue, {
       force: true,
     })
 
@@ -165,9 +160,9 @@ describe("Populate form and render form elements by object data", function () {
 
     cy.clickFillForm("Run")
 
-    cy.get("input[data-testid='title']").type(testData.title)
-    cy.get("select[name='runType.referenceAlignment.assembly']").select(testData.referenceAlignment)
-    cy.get("input[data-testid='runType.referenceAlignment.assembly.accessionId']").type(testData.accessionId)
+    cy.get("[data-testid='title']").type(testData.title)
+    cy.get("select[data-testid='runType.referenceAlignment.assembly']").select(testData.referenceAlignment)
+    cy.get("[data-testid='runType.referenceAlignment.assembly.accessionId']").type(testData.accessionId)
 
     // Save draft
     cy.get("button[type='button']").contains("Save as Draft").click()
@@ -176,11 +171,8 @@ describe("Populate form and render form elements by object data", function () {
     // Select newly saved draft
     cy.continueFirstDraft()
 
-    cy.get("select[name='runType.referenceAlignment.assembly']").should("have.value", testData.referenceAlignment)
-    cy.get("input[data-testid='runType.referenceAlignment.assembly.accessionId']").should(
-      "have.value",
-      testData.accessionId
-    )
+    cy.get("[data-testid='runType.referenceAlignment.assembly']").should("have.value", testData.referenceAlignment)
+    cy.get("[data-testid='runType.referenceAlignment.assembly.accessionId']").should("have.value", testData.accessionId)
   })
 
   it("should render form with checkboxes correctly", () => {
@@ -190,7 +182,7 @@ describe("Populate form and render form elements by object data", function () {
 
     cy.clickFillForm("Dataset")
 
-    cy.get("input[data-testid='title']").type(testData.title)
+    cy.get("[data-testid='title']").type(testData.title)
     cy.get("[type='checkbox']").first().check()
 
     // Save draft
@@ -203,7 +195,10 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[type='checkbox']").first().should("be.checked")
 
     // Test that checkbox clears with form clear -button
-    cy.get("button[type=button]").contains("Clear form").click({ force: true })
+    cy.get("button[type=button]")
+      .contains("Clear form")
+      .should("be.visible")
+      .then($el => $el.click())
     cy.get("[type='checkbox']").first().should("not.be.checked")
   })
 
@@ -217,15 +212,15 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("button[type=submit]").contains("Submit").click()
     // Taxon field should be empty and the draft cannot be submitted yet
     cy.get("[data-testid='sampleName.taxonId']").should("have.value", "")
-    cy.get("ul[data-testid='Draft-objects']").should("have.length", 1)
+    cy.get("[data-testid='Draft-objects']").should("have.length", 1)
 
     // Fill in taxonId and submit the form again
     cy.get("[data-testid='sampleName.taxonId']").type("123")
     cy.get("button[type=submit]").contains("Submit").click()
 
     // Check that the draft is removed from the draft objects list and submitted
-    cy.get("ul[data-testid='Draft-objects']").should("have.length", 0)
-    cy.get("ul[data-testid='Form-objects']").should("have.length", 1)
+    cy.get("[data-testid='Draft-objects']").should("have.length", 0)
+    cy.get("[data-testid='Form-objects']").should("have.length", 1)
   })
 })
 

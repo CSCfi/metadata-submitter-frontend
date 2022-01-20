@@ -201,6 +201,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): any => {
             aria-label="Publish folder contents and move to frontpage"
             color="primary"
             type="submit"
+            data-testid="confirm-publish-folder"
           >
             Publish
           </Button>

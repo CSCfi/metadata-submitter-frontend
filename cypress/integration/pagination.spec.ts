@@ -1,5 +1,4 @@
 describe("unpublished folders, published folders, and user's draft templates pagination", function () {
-  beforeEach(() => cy.task("resetDb"))
   it("should renders pagination for unpublished folders list correctly", () => {
     // Mock responses for Unpublished Folders
     const unpublishedFoldersResponse10 = {

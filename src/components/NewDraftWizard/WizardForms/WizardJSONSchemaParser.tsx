@@ -711,7 +711,7 @@ const FormTextField = ({
   return (
     <ConnectForm>
       {({ control }: { control: any }) => {
-        const multiLineRowIdentifiers = ["abstract", "description", "policy text"]
+        const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
 
         return (
           <Controller
@@ -1416,7 +1416,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     if (index === 0) setValid(false)
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
-    const filteredValues = values?.filter((val: any, ind: any) => ind !== index)
+    const filteredValues = values.filter((val: any, ind: any) => ind !== index)
     setValue(name, filteredValues)
     remove(index)
   }

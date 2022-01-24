@@ -111,21 +111,21 @@ describe("Basic e2e", function () {
       // Analysis type
       cy.get("select[data-testid='analysisType']").select("Reference Alignment")
       cy.get("select[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
-      cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession version")
+      cy.get("[data-testid='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
       cy.get("h4").contains("Sequence").parents().children("button").click()
-      cy.get("[data-testid='analysisType.referenceAlignment.sequence.0.accession']").type(
+      cy.get("[data-testid='analysisType.referenceAlignment.sequence.0.accessionId']").type(
         "Sequence Standard Accession Id"
       )
 
-      // Study
-      cy.get("[data-testid='studyRef.accessionId']").type("Study Test Accession Id")
-      cy.get("[data-testid='studyRef.refname']").type("Study Test Record Name")
-      cy.get("[data-testid='studyRef.refcenter']").type("Study Test Namespace")
-
       // Experiment
-      cy.get("[data-testid='experimentRef.accessionId']").type("Experiment Test Accession Id")
-      cy.get("[data-testid='experimentRef.refcenter']").type("Experiment Test Record Name")
-      cy.get("[data-testid='experimentRef.refname']").type("Experiment Test Namespace")
+      cy.get("h2").contains("Experiment Reference").parents().children("button").click()
+      cy.get("[data-testid='experimentRef.0.accessionId']").type("Experiment Test Accession Id")
+      cy.get("[data-testid='experimentRef.0.identifiers.submitterId.namespace']").type("Experiment Test Namespace")
+      cy.get("[data-testid='experimentRef.0.identifiers.submitterId.value']").type("Experiment Test Value")
+
+      // Study
+      cy.get("[data-testid='studyRef.identifiers.submitterId.namespace']").type("Study Test Namespace")
+      cy.get("[data-testid='studyRef.identifiers.submitterId.value']").type("Study Test Value")
 
       // Sample
       cy.get("h2").contains("Sample Reference").parents().children("button").click()

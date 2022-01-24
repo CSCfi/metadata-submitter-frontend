@@ -72,7 +72,7 @@ describe("Populate form and render form elements by object data", function () {
       description: "Test experiment description",
       designDescription: "Test design description",
       sampleReference: "Individual Sample",
-      individualSampleLabel: "Individual Sample test label",
+      individualSampleAccessionId: "Individual Sample AccessionId",
       singleProcessing: "Single Processing",
       singleProcessingLabel: "Single Processing label",
       complexProcessing: "Complex Processing",
@@ -87,28 +87,15 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[data-testid='title']").type(testData.title)
     cy.get("[data-testid='description']").type(testData.description)
     cy.get("[data-testid='design.designDescription']").type(testData.designDescription)
-    cy.get("select[data-testid='design.sampleDescriptor']").select(testData.sampleReference)
-    cy.get("[data-testid='design.sampleDescriptor.label']").type(testData.individualSampleLabel)
+    cy.get("select[data-testid='design.sampleDescriptor']", { timeout: 10000 }).select(testData.sampleReference)
+    cy.get("[data-testid='design.sampleDescriptor.accessionId']").type(testData.individualSampleAccessionId)
+
     // Expected Base Call Table
     cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
       "Test read group tag"
     )
-
-    // Select and fill Single processing
-    cy.get("select[data-testid='processing']").select(testData.singleProcessing)
-    cy.get("input[data-testid='processing']").type(testData.singleProcessingLabel)
-
-    // Switch to select and fill Complex processing
-    cy.get("select[data-testid='processing']").select(testData.complexProcessing)
-    cy.get("[data-testid='processing']").parents().children("button").click()
-    cy.get("[data-testid='processing.0.pipeline.pipeSection']").parent().children("button").click()
-    cy.get("[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").type(testData.stepIndex)
-    cy.get("select[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.stringValue, {
-      force: true,
-    })
-    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").type(testData.prevStepIndexValue)
 
     // Save Experiment form
     cy.get("button[type='button']").contains("Save as Draft").click()
@@ -120,8 +107,11 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[data-testid='title']").should("have.value", testData.title)
     cy.get("[data-testid='description']").should("have.value", testData.description)
     cy.get("[data-testid='design.designDescription']").should("have.value", testData.designDescription)
-    cy.get("[data-testid='design.sampleDescriptor']").should("have.value", testData.sampleReference)
-    cy.get("[data-testid='design.sampleDescriptor.label']").should("have.value", testData.individualSampleLabel)
+    cy.get("select[data-testid='design.sampleDescriptor']").should("have.value", testData.sampleReference)
+    cy.get("[data-testid='design.sampleDescriptor.accessionId']").should(
+      "have.value",
+      testData.individualSampleAccessionId
+    )
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").should(
       "have.value",
       "Test base call"
@@ -130,25 +120,12 @@ describe("Populate form and render form elements by object data", function () {
       "have.value",
       "Test read group tag"
     )
-    cy.get("[data-testid='processing.0.pipeline.pipeSection.0.stepIndex']").should("have.value", testData.stepIndex)
-    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").should(
-      "have.value",
-      testData.prevStepIndexValue
-    )
-
-    // Change Prev Step Index from string value to null
-    cy.get("select[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").select(testData.nullValue, {
-      force: true,
-    })
 
     // Save Experiment form 2nd time
     cy.get("button[type='button']").contains("Update draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
 
     cy.continueFirstDraft()
-
-    // Test that Prev Step Index is nulled
-    cy.get("input[data-testid='processing.0.pipeline.pipeSection.0.prevStepIndex']").should("not.exist")
   })
 
   it("should render Run form correctly when editing", () => {
@@ -162,7 +139,7 @@ describe("Populate form and render form elements by object data", function () {
 
     cy.get("[data-testid='title']").type(testData.title)
     cy.get("select[data-testid='runType.referenceAlignment.assembly']").select(testData.referenceAlignment)
-    cy.get("[data-testid='runType.referenceAlignment.assembly.accessionId']").type(testData.accessionId)
+    cy.get("[data-testid='runType.referenceAlignment.assembly.accession']").type(testData.accessionId)
 
     // Save draft
     cy.get("button[type='button']").contains("Save as Draft").click()
@@ -172,7 +149,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.continueFirstDraft()
 
     cy.get("[data-testid='runType.referenceAlignment.assembly']").should("have.value", testData.referenceAlignment)
-    cy.get("[data-testid='runType.referenceAlignment.assembly.accessionId']").should("have.value", testData.accessionId)
+    cy.get("[data-testid='runType.referenceAlignment.assembly.accession']").should("have.value", testData.accessionId)
   })
 
   it("should render form with checkboxes correctly", () => {

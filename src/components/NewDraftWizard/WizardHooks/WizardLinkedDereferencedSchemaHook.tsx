@@ -78,9 +78,7 @@ const getLinkedDereferencedSchema = (
         dereferencedSchema = merge({}, dereferencedSchema, {
           properties: {
             experimentRef: {
-              items: {
-                properties: { accessionId: { enum: experimentAccessionIds } },
-              },
+              properties: { accessionId: { enum: experimentAccessionIds } },
             },
           },
         })

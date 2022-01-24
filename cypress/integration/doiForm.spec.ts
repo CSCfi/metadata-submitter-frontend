@@ -15,12 +15,12 @@ describe("DOI form", function () {
 
     const testRunData = {
       title: "Test Run",
-      experimentRefLabel: "Test Experiment reference label",
+      experimentAccessionId: "Test Experiment AccessionId",
     }
 
     cy.get("[data-testid='title']").type(testRunData.title)
     cy.get("[data-testid='experimentRef']").parents().children("button").click()
-    cy.get("[data-testid='experimentRef.0.label']").type(testRunData.experimentRefLabel)
+    cy.get("[data-testid='experimentRef.0.accessionId']").type(testRunData.experimentAccessionId)
 
     const testRunFile = {
       fileName: "Run file name",
@@ -54,7 +54,7 @@ describe("DOI form", function () {
     cy.get("[data-testid='title']").type(testAnalysisData.title1)
     cy.get("[data-testid='analysisType']").select("Reference Alignment")
     cy.get("[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
-    cy.get("[data-testid='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
+    cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession Version")
 
     const testAnalysisFile = {
       fileName: "Analysis file name",
@@ -81,7 +81,7 @@ describe("DOI form", function () {
     cy.get("[data-testid='title']").type(testAnalysisData.title2)
     cy.get("[data-testid='analysisType']").select("Reference Alignment")
     cy.get("[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
-    cy.get("[data-testid='analysisType.referenceAlignment.assembly.accessionId']").type("Standard Accession Id")
+    cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession Id")
     // Select fileType
     cy.get("[data-testid='files.0.filename']").type(testAnalysisFile.fileName)
     cy.get("[data-testid='files.0.filetype']").select(testAnalysisFile.fileType2)

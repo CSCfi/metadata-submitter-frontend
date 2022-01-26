@@ -2,12 +2,9 @@ import React from "react"
 
 import FolderIcon from "@mui/icons-material/Folder"
 import FolderOpenIcon from "@mui/icons-material/FolderOpen"
-import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
 import CardContent from "@mui/material/CardContent"
 import CardHeader from "@mui/material/CardHeader"
-import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -55,12 +52,11 @@ type SubmissionIndexCardProps = {
   folderType: string
   folders: Array<FolderDetailsWithId>
   location?: string
-  displayButton?: boolean
   page?: number
   itemsPerPage?: number
   totalItems?: number
-  fetchItemsPerPage?: (items: number) => Promise<void>
-  fetchPageOnChange?: (page: number) => Promise<void>
+  fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
+  fetchPageOnChange?: (page: number, submissionType: string) => Promise<void>
 }
 
 const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
@@ -69,7 +65,6 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
     folderType,
     folders,
     location = "",
-    displayButton,
     page,
     itemsPerPage,
     totalItems,
@@ -114,7 +109,7 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
             })}
           </List>
         </CardContent>
-        {!displayButton && totalItems && page !== undefined && itemsPerPage && (
+        {totalItems && page !== undefined && itemsPerPage && (
           <Pagination
             totalNumberOfItems={totalItems}
             page={page}
@@ -124,22 +119,6 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
           />
         )}
       </>
-      {displayButton && (
-        <CardActions>
-          <Grid container alignItems="flex-start" justifyContent="flex-end" direction="row">
-            <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`}>
-              <Button
-                variant="outlined"
-                color="primary"
-                aria-label="Open or Close folders list"
-                data-testid={`ViewAll-${folderType}`}
-              >
-                View all
-              </Button>
-            </Link>
-          </Grid>
-        </CardActions>
-      )}
     </>
   )
 
@@ -155,9 +134,7 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
   return (
     <Card className={classes.card} variant="outlined">
       <CardHeader
-        title={
-          folderType === FolderSubmissionStatus.published ? "Your Published Submissions" : "Your Draft Submissions"
-        }
+        title={folderType === FolderSubmissionStatus.published ? "Published Submissions" : "Draft Submissions"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         className={classes.cardTitle}
       />

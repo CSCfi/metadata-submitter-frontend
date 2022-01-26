@@ -79,12 +79,12 @@ const NavigationLinks = (props: MenuItemProps) => {
       >
         <HomeIcon />
       </IconButton>
-      <Link component={RouterLink} to={pathWithLocale("home/drafts")} className={classes.link}>
+      {/* <Link component={RouterLink} to={pathWithLocale("home/drafts")} className={classes.link}>
         Open submissions
       </Link>
       <Link component={RouterLink} to={pathWithLocale("home/published")} className={classes.link}>
         Submissions
-      </Link>
+      </Link> */}
       <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
         <Button
           color="primary"

@@ -160,7 +160,7 @@ const App: React.FC = () => {
         <Route
           path={setPath("home")}
           element={
-            <Container component="main" maxWidth="md" className={classes.content}>
+            <Container component="main" maxWidth="lg" className={classes.content}>
               <Home />
             </Container>
           }

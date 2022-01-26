@@ -88,6 +88,13 @@ let CSCtheme = createTheme({
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "capitalize",
+        },
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         subtitle1: {

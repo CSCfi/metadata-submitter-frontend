@@ -82,8 +82,6 @@ let CSCtheme = createTheme({
           textTransform: "none",
           fontWeight: 700,
           fontSize: "1em",
-          paddingLeft: "2em",
-          paddingRight: "2em",
           lineHeight: "1.2em",
         },
       },

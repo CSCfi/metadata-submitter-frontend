@@ -46,6 +46,8 @@ const LoginButton = styled(Button)(() => ({
   marginTop: "2.5vh",
   height: "6.5vh",
   width: "10.5vw",
+  paddingLeft: "2em",
+  paddingRight: "2em",
 }))
 
 const Footer = styled(Grid)(({ theme }) => ({

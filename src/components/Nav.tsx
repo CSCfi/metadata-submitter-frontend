@@ -2,18 +2,15 @@ import React, { useState } from "react"
 
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
-// import HomeIcon from "@mui/icons-material/Home"
 import PersonIcon from "@mui/icons-material/Person"
 import AppBar from "@mui/material/AppBar"
 import Button from "@mui/material/Button"
-// import IconButton from "@mui/material/IconButton"
 import Link from "@mui/material/Link"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
-// import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
@@ -22,25 +19,9 @@ import logo from "../images/csc_logo.svg"
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
 import { resetUser } from "features/userSlice"
-// import { resetObjectType } from "features/wizardObjectTypeSlice"
-// import { resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
-
-// const useStyles = makeStyles(theme => ({
-//   link: {
-//     margin: theme.spacing(1, 1.5),
-//     color: theme.palette.secondary.main,
-//   },
-//   languageSelector: {
-//     marginLeft: theme.spacing(1),
-//     textTransform: "capitalize",
-//   },
-//   linkButton: {
-//     margin: theme.spacing(1, 1.5),
-//   },
-// }))
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
@@ -58,27 +39,13 @@ const ServiceTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
 }))
 
-// const UserName = styled(Typography)(({theme}) => ({
-//   marginLeft: "0.65em",
-//   marginRight: "1.9em",
-//   color: theme.palette.common.black
-// }))
-
 type MenuItemProps = {
   currentLocale: string
 }
 
-const NavigationLinks = (props: MenuItemProps) => {
-  console.log("props :>> ", props)
-  // const { currentLocale } = props
-  // const classes = useStyles()
+const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
-
-  // const resetWizard = () => {
-  //   dispatch(resetObjectType())
-  //   dispatch(resetFolder())
-  // }
 
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -91,28 +58,6 @@ const NavigationLinks = (props: MenuItemProps) => {
 
   return (
     <React.Fragment>
-      {/* <IconButton
-        component={RouterLink}
-        to={`/${currentLocale}/home`}
-        aria-label="go to frontpage"
-        color="inherit"
-        size="large"
-      >
-        <HomeIcon />
-      </IconButton> */}
-      {/* <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.linkButton}
-          onClick={() => {
-            resetWizard()
-          }}
-          data-testid="link-create-submission"
-        >
-          Create Submission
-        </Button>
-      </Link> */}
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -223,7 +168,7 @@ const NavigationMenu = () => {
 
   return (
     <nav>
-      {location.pathname !== "/" && <NavigationLinks currentLocale={currentLocale} />}
+      {location.pathname !== "/" && <NavigationLinks />}
       <LanguageSelector currentLocale={currentLocale} />
     </nav>
   )

@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react"
 
 import Box from "@mui/material/Box"
-// import Button from "@mui/material/Button"
+import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
-// import Link from "@mui/material/Link"
+import Link from "@mui/material/Link"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
-// import { useTranslation } from "react-i18next"
+import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
-// import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
@@ -23,21 +21,11 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
-// import { pathWithLocale } from "utils"
-
-const useStyles = makeStyles(theme => ({
-  tableCard: {
-    margin: theme.spacing(1, 0),
-  },
-  loggedUser: {
-    margin: theme.spacing(2, 0, 0),
-  },
-  circularProgress: {
-    margin: theme.spacing(10, "auto"),
-  },
-}))
+import { pathWithLocale } from "utils"
 
 const FrontPageContainer = styled(Container)(() => ({
   display: "flex",
@@ -59,6 +47,14 @@ const FrontPageTab = styled(Tab)(({ theme }) => ({
   },
 }))
 
+const CreateSubmissionButton = styled(Button)(() => ({
+  height: "6.5vh",
+  width: "10.5vw",
+  position: "absolute",
+  right: 0,
+  bottom: "2vh",
+}))
+
 const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
@@ -66,11 +62,8 @@ const Home: React.FC = () => {
 
   const totalFolders = useAppSelector(state => state.totalFolders)
 
-  const classes = useStyles()
-
   const [isFetchingFolders, setFetchingFolders] = useState(true)
 
-  // const { t } = useTranslation()
   const [draftPage, setDraftPage] = useState(0)
   const [draftItemsPerPage, setDraftItemsPerPage] = useState(10)
 
@@ -90,8 +83,7 @@ const Home: React.FC = () => {
         published: false,
       })
       const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: true })
-      console.log("unpublishedResponse :>> ", unpublishedResponse)
-      console.log("publishedResponse :>> ", publishedResponse)
+
       if (isMounted) {
         if (unpublishedResponse.ok && publishedResponse.ok) {
           dispatch(setUnpublishedFolders(unpublishedResponse.data?.folders))
@@ -119,6 +111,11 @@ const Home: React.FC = () => {
       isMounted = false
     }
   }, [dispatch])
+
+  const resetWizard = () => {
+    dispatch(resetObjectType())
+    dispatch(resetFolder())
+  }
 
   // Fire when user selects an option from "Items per page"
   const handleFetchItemsPerPage = async (numberOfItems: number, folderType: string) => {
@@ -176,16 +173,13 @@ const Home: React.FC = () => {
     setValue(newValue)
   }
 
-  console.log("value :>> ", value)
   // Contains both unpublished and published folders (max. 5 items/each)
   return (
     <FrontPageContainer>
-      <Grid item sx={{ mt: "6vh" }}>
-        <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700 }}>
-          My submissions
-        </Typography>
-      </Grid>
-      <Box sx={{ mt: "6vh" }}>
+      <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
+        My submissions
+      </Typography>
+      <Box sx={{ mt: "6vh", position: "relative" }}>
         <FrontPageTabs
           value={value}
           onChange={handleChange}
@@ -196,11 +190,24 @@ const Home: React.FC = () => {
           <FrontPageTab label="Drafts" value={0} sx={{ fontWeight: 500, fontSize: "1em" }} />
           <FrontPageTab label="Published" value={1} sx={{ fontWeight: 500, fontSize: "1em" }} />
         </FrontPageTabs>
+        <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
+          <CreateSubmissionButton
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              resetWizard()
+            }}
+            data-testid="link-create-submission"
+          >
+            Create Submission
+          </CreateSubmissionButton>
+        </Link>
       </Box>
+
       <Paper square sx={{ padding: "2em" }}>
         <Grid container>
           {value === 0 && (
-            <Grid item xs={12} className={classes.tableCard}>
+            <Grid item xs={12}>
               <SubmissionIndexCard
                 folderType={FolderSubmissionStatus.unpublished}
                 folders={unpublishedFolders}
@@ -214,7 +221,7 @@ const Home: React.FC = () => {
             </Grid>
           )}
           {value === 1 && (
-            <Grid item xs={12} className={classes.tableCard}>
+            <Grid item xs={12}>
               <SubmissionIndexCard
                 folderType={FolderSubmissionStatus.published}
                 folders={publishedFolders}
@@ -228,7 +235,7 @@ const Home: React.FC = () => {
             </Grid>
           )}
 
-          {isFetchingFolders && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
+          {isFetchingFolders && <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />}
         </Grid>
       </Paper>
     </FrontPageContainer>

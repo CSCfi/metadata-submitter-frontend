@@ -274,7 +274,7 @@ const WizardObjectIndex: React.FC<any> = () => {
   }
 
   return (
-    <div className={classes.index}>
+    <div className={classes.index} data-testid="wizard-objects">
       {objectsArray.map((objectType: string) => {
         const typeCapitalized = formatDisplayObjectType(objectType)
         const isCurrentObjectType = objectType === currentObjectType

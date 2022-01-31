@@ -583,6 +583,7 @@ const FormOneOfField = ({
                 error={!!error}
                 helperText={error?.message}
                 required={required}
+                inputProps={{ "data-testid": name }}
               >
                 <option aria-label="None" value="" disabled />
                 {options?.map((optionObject: { title: any }) => {
@@ -710,7 +711,7 @@ const FormTextField = ({
   return (
     <ConnectForm>
       {({ control }: { control: any }) => {
-        const multiLineRowIdentifiers = ["description", "abstract", "policy text"]
+        const multiLineRowIdentifiers = ["abstract", "description", "policy text"]
 
         return (
           <Controller
@@ -899,6 +900,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                     label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
                     sx={{ ...dateCheckboxStyles }}
                     disabled={unknownDates.checkedEndDate}
+                    data-testid="startDateCheck"
                   />
                   <DatePicker
                     label="Start"
@@ -942,6 +944,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                     label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
                     sx={{ ...dateCheckboxStyles }}
                     disabled={unknownDates.checkedStartDate}
+                    data-testid="endDateCheck"
                   />
                   <DatePicker
                     label="End"
@@ -1090,7 +1093,6 @@ const FormAutocompleteField = ({
                   }}
                   options={options}
                   getOptionLabel={option => option.name || ""}
-                  data-testid={name}
                   disableClearable={inputValue.length === 0}
                   renderInput={params => (
                     <TextField
@@ -1111,6 +1113,7 @@ const FormAutocompleteField = ({
                           </React.Fragment>
                         ),
                       }}
+                      inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
                     />
                   )}
                   onChange={handleAutocompleteValueChange}
@@ -1190,6 +1193,7 @@ const FormSelectField = ({
                       }
                       return field.onChange(val)
                     }}
+                    inputProps={{ "data-testid": name }}
                   >
                     <option aria-label="None" value="" disabled />
                     {options.map(option => (
@@ -1250,6 +1254,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                       inputRef={ref}
                       color="primary"
                       checked={values || false}
+                      inputProps={{ "data-testid": name }}
                     />
                   }
                   label={
@@ -1315,6 +1320,7 @@ const FormCheckBoxArray = ({
                           checked={values && values?.includes(option) ? true : false}
                           color="primary"
                           defaultValue=""
+                          inputProps={{ "data-testid": name }}
                         />
                       }
                       label={option}
@@ -1410,13 +1416,13 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     if (index === 0) setValid(false)
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
-    const filteredValues = values.filter((val: any, ind: any) => ind !== index)
+    const filteredValues = values?.filter((val: any, ind: any) => ind !== index)
     setValue(name, filteredValues)
     remove(index)
   }
 
   return (
-    <div className="array" key={`${name}-array`} aria-labelledby={name}>
+    <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
       {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
       <Typography key={`${name}-header`} variant={`h${level}` as Variant} data-testid={name} role="heading">
         <span id={name}>{label}</span> {required ? "*" : null}
@@ -1463,7 +1469,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
         if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
         return (
-          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name} data-testid={name}>
+          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
             <Paper elevation={2}>
               {
                 items

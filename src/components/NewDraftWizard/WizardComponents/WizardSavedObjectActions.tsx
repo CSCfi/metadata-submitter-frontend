@@ -142,10 +142,16 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
         className={classes.buttonEdit}
         aria-label="Edit submission"
         onClick={() => (props.submissionType === "Draft" ? handleObjectContinue() : handleObjectEdit())}
+        data-testid="Edit submission"
       >
         {renderEditLabel(props.submissionType)}
       </Button>
-      <Button className={classes.buttonDelete} aria-label="Delete submission" onClick={() => handleObjectDelete()}>
+      <Button
+        className={classes.buttonDelete}
+        aria-label="Delete submission"
+        onClick={() => handleObjectDelete()}
+        data-testid="Delete submission"
+      >
         Delete
       </Button>
     </ButtonGroup>

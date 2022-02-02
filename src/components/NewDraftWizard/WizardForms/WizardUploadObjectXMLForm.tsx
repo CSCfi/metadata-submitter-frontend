@@ -76,17 +76,13 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     register,
     watch,
     setValue,
-    setError,
-    clearErrors,
     formState: { errors },
     handleSubmit,
     reset,
   } = useForm({ mode: "onChange" })
   const [placeHolder, setPlaceHolder] = useState("Name")
-  const [validDropFile, setvalidDropFile] = useState(false)
 
   const watchFile = watch("fileUpload")
-  const watchDrop = watch("fileDrop")
 
   const focusTarget = useRef<HTMLLabelElement | null>(null)
   const shouldFocus = useAppSelector(state => state.focus)
@@ -103,32 +99,17 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     }
   }, [currentObject, watchFile])
 
-  useEffect(() => {
-    if (watchDrop) {
-      setPlaceHolder(watchDrop[0])
-    } else setPlaceHolder(currentObject?.tags?.fileName || "Name")
-  }, [currentObject, watchDrop])
-
-  const onDrop = async (acceptedFiles, fileRejections) => {
+  const onDrop = async (acceptedFiles: File[]) => {
     const filelist = new DataTransfer()
-    clearErrors()
-    if (acceptedFiles.length > 0) {
-      //clearErrors()
-      setvalidDropFile(true)
-      filelist.items.add(acceptedFiles[0])
-      setValue("fileUpload", filelist.files)
-    } else {
-      filelist.items.add(fileRejections[0].file)
-      setError("fileUpload", { type: "dropXML", message: "Please attached filebshould be type XML." })
-    }
-    currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"
+    // Accept all file types. Validation is done in file upload form by React Hook Form.
+    filelist.items.add(acceptedFiles[0])
+    setValue("fileUpload", filelist.files, { shouldValidate: true })
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     maxFiles: 1,
     noClick: true,
     noKeyboard: true,
-    accept: "text/xml",
     onDrop: onDrop,
   })
 
@@ -136,6 +117,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     reset()
     setPlaceHolder("Name")
   }
+
+  type FileUpload = { fileUpload: FileList }
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
   const onSubmit = async (data: { fileUpload: FileList }) => {
@@ -195,7 +178,6 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     clearTimeout(waitForServertimer)
     setSubmitting(false)
     dispatch(resetLoading())
-    validDropFile && setvalidDropFile(false)
   }
 
   const handleButton = () => {
@@ -211,8 +193,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       variant="contained"
       className={classes.submitButton}
       size="small"
-      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || !validDropFile}
-      onClick={handleSubmit(onSubmit)}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
+      onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
     >
       {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
@@ -233,7 +215,6 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
-            <input {...register("fileDrop")} {...getInputProps()} hidden />
             <TextField
               placeholder={placeHolder}
               inputProps={{ readOnly: true, tabIndex: -1 }}
@@ -271,13 +252,11 @@ const WizardUploadObjectXMLForm: React.FC = () => {
               })}
             />
           </div>
-          {/* Helper text for drag and drop */}
-          {isDragActive ? (
-            <p>Drag and drop some files here</p>
-          ) : validDropFile ? (
-            <p>Use Submit button to upload the file</p>
+          {/* Helper text for selecting / submitting file */}
+          {!watchFile || watchFile.length === 0 || errors.fileUpload != null ? (
+            <p>Choose a file or drag it here.</p>
           ) : (
-            <p>Drag and drop some files here, or click Choose file button.</p>
+            <p>Use Submit button to upload the file.</p>
           )}
           {/* Errors */}
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}

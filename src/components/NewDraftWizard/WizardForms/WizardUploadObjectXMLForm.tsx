@@ -76,7 +76,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     register,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValidating },
     handleSubmit,
     reset,
   } = useForm({ mode: "onChange" })
@@ -193,7 +193,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       variant="contained"
       className={classes.submitButton}
       size="small"
-      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || isValidating}
       onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
     >
       {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}

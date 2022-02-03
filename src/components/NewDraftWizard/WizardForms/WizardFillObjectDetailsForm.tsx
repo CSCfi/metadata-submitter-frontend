@@ -9,6 +9,7 @@ import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
+import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
 
@@ -159,7 +160,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         variant="contained"
         aria-label="submit form"
         size="small"
-        type={currentObject?.status === ObjectStatus.submitted ? "button" : "submit"}
+        type="submit"
         onClick={onClickSubmit}
         form={refForm}
       >
@@ -182,6 +183,50 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
     />
   )
+}
+
+/*
+ * Draft save and object patch use both same response handler
+ */
+const patchHandler = (
+  response: ApiResponse<unknown>,
+  folder: FolderDetailsWithId,
+  accessionId: string,
+  objectType: string,
+  cleanedValues: any,
+  dispatch: (dispatch: (reducer: never) => void) => void
+) => {
+  if (response.ok) {
+    const index = folder.metadataObjects.findIndex(item => item.accessionId === accessionId)
+    dispatch(
+      replaceObjectInFolder(
+        folder.folderId,
+        accessionId,
+        index,
+        {
+          submissionType: ObjectSubmissionTypes.form,
+          displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
+        },
+        ObjectStatus.submitted
+      )
+    )
+    dispatch(resetDraftStatus())
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.success,
+        response: response,
+        helperText: "",
+      })
+    )
+  } else {
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.error,
+        response: response,
+        helperText: "Unexpected error",
+      })
+    )
+  }
 }
 
 /*
@@ -340,43 +385,6 @@ const FormContent = ({
     }
   }, [])
 
-  /*
-   * Draft save and object patch use both same response handler
-   */
-  const patchHandler = (response: any, cleanedValues: any) => {
-    if (response.ok) {
-      const index = folder.metadataObjects.findIndex(item => item.accessionId === currentObject.accessionId)
-      dispatch(
-        replaceObjectInFolder(
-          folder.folderId,
-          currentObject.accessionId,
-          index,
-          {
-            submissionType: ObjectSubmissionTypes.form,
-            displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
-          },
-          ObjectStatus.submitted
-        )
-      )
-      dispatch(resetDraftStatus())
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.success,
-          response: response,
-          helperText: "",
-        })
-      )
-    } else {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: response,
-          helperText: "Unexpected error",
-        })
-      )
-    }
-  }
-
   const emptyFormError = () => {
     dispatch(
       updateStatus({
@@ -388,8 +396,6 @@ const FormContent = ({
 
   const handleSaveTemplate = async () => {
     const cleanedValues = getCleanedValues()
-
-    console.log(cleanedValues)
 
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
@@ -459,34 +465,6 @@ const FormContent = ({
     }
   }
 
-  const patchObject = async () => {
-    resetTimer()
-    const cleanedValues = getCleanedValues()
-    try {
-      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
-      patchHandler(response, cleanedValues)
-
-      // Dispatch fileTypes if object is Run or Analysis
-      if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues as any)
-        objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
-      }
-    } catch (err: any) {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: err,
-          helperText: "Unexpected error when modifying object",
-        })
-      )
-    }
-  }
-
-  const handleSubmitForm = () => {
-    if (currentObject?.status === ObjectStatus.submitted) patchObject()
-    resetTimer()
-  }
-
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
@@ -497,7 +475,7 @@ const FormContent = ({
         onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
-        onClickSubmit={() => handleSubmitForm()}
+        onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
       />
       <form
@@ -611,9 +589,40 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
    */
   const onSubmit = async (data: any) => {
     setSubmitting(true)
-    const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
 
-    if (response) setSubmitting(false)
+    // Handle submitted object update
+    const patchObject = async () => {
+      const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+      try {
+        const response = await objectAPIService.patchFromJSON(objectType, data.accessionId, cleanedValues)
+        patchHandler(response, folder, currentObject.accessionId, objectType, cleanedValues, dispatch)
+
+        // Dispatch fileTypes if object is Run or Analysis
+        if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+          const objectWithFileTypes = getNewUniqueFileTypes(data.accessionId, cleanedValues as any)
+          objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
+        }
+      } catch (err: any) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: err,
+            helperText: "Unexpected error when modifying object",
+          })
+        )
+      }
+
+      setSubmitting(false)
+    }
+
+    // Either patch object or submit a new object
+    if (data.status === ObjectStatus.submitted) {
+      patchObject()
+    } else {
+      const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
+
+      if (response) setSubmitting(false)
+    }
   }
 
   if (states.isLoading) return <CircularProgress />

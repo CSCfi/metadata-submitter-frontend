@@ -1,5 +1,5 @@
 declare module "@mui/material/styles" {
-  interface Theme {
+  interface CustomTheme extends Theme {
     typography: {
       fontFamily: string
       fontSize: number
@@ -67,8 +67,13 @@ declare module "@mui/material/styles/createPalette" {
 }
 
 declare module "@mui/private-theming" {
-  import type { Theme } from "@mui/material/styles"
+  import type { CustomTheme } from "@mui/material/styles"
 
+  interface DefaultTheme extends CustomTheme {}
+}
+import type { Theme } from "@mui/material/styles"
+
+declare module "@mui/styles/defaultTheme" {
   interface DefaultTheme extends Theme {}
 }
 

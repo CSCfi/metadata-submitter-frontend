@@ -29,10 +29,10 @@ import { getItemPrimaryText, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   tableGrid: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2),
   },
   circularProgress: {
-    margin: theme.spacing(10, "auto"),
+    margin: theme.spacing(10),
   },
 }))
 

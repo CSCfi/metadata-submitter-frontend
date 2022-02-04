@@ -33,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     height: "60px",
     width: "100%",
   },
-  footerButton: {
-    margin: theme.spacing(0, 2),
-  },
   phantom: {
     display: "block",
     padding: "20px",
@@ -124,7 +121,7 @@ const WizardFooter: React.FC = () => {
         <div>
           {wizardStep < 0 && (
             <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
-              <Button variant="contained" color="secondary" className={classes.footerButton}>
+              <Button variant="contained" color="secondary">
                 Cancel
               </Button>
             </Link>
@@ -137,7 +134,6 @@ const WizardFooter: React.FC = () => {
                 setDialogOpen(true)
                 setAlertType("cancel")
               }}
-              className={classes.footerButton}
             >
               Cancel
             </Button>
@@ -149,7 +145,6 @@ const WizardFooter: React.FC = () => {
               variant="contained"
               color="primary"
               disabled={wizardStep < 1}
-              className={classes.footerButton}
               onClick={() => {
                 setDialogOpen(true)
                 setAlertType("save")

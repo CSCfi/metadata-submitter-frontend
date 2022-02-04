@@ -13,9 +13,10 @@ import { updateStatus } from "features/statusMessageSlice"
 import { useAppDispatch } from "hooks"
 import schemaAPIService from "services/schemaAPI"
 import { FormObject, ObjectDetails } from "types"
+import CSCtheme from "theme"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: typeof CSCtheme) => ({
   detailComponents: {
     "& .MuiTextField-root > .Mui-required": {
       color: theme.palette.primary.main,

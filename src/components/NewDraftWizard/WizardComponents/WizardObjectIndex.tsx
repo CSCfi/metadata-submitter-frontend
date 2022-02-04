@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
   },
   badge: {
-    margin: theme.spacing(2, 2, 2, "auto"),
+    margin: theme.spacing(2),
     zIndex: 0,
   },
   skipLink: {

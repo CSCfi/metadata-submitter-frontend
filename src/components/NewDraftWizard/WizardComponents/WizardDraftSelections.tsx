@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   formControlLabel: {
     padding: 0,
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1),
     borderBottom: `solid 1px ${theme.palette.secondary.main}`,
   },
   label: {
@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
   },
   viewButton: {
     color: theme.palette.primary.main,
-    margin: theme.spacing(1.5, 0),
+    margin: theme.spacing(1.5),
     float: "right",
   },
   buttonGroup: {

@@ -29,13 +29,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   cardHeader: theme.wizard.cardHeader,
   cardHeaderAction: {
-    margin: theme.spacing(-0.5, 0),
+    margin: theme.spacing(-0.5),
   },
   root: {
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(5, "auto"),
+      margin: theme.spacing(5),
     },
   },
   hiddenInput: {

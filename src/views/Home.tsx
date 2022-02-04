@@ -60,15 +60,31 @@ const Home: React.FC = () => {
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
   const publishedFolders = useAppSelector(state => state.publishedFolders)
 
+  const unpublishedFoldersRows = unpublishedFolders?.map(item => ({
+    id: item.folderId,
+    name: item.name,
+    dateCreated: item.dateCreated,
+    edit: "",
+    publish: "",
+  }))
+
+  const publishedFoldersRows = publishedFolders?.map(item => ({
+    id: item.folderId,
+    name: item.name,
+    dateCreated: item.dateCreated,
+    edit: "",
+    publish: "",
+  }))
+
   const totalFolders = useAppSelector(state => state.totalFolders)
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
 
   const [draftPage, setDraftPage] = useState(0)
-  const [draftItemsPerPage, setDraftItemsPerPage] = useState(10)
+  const [draftItemsPerPage, setDraftItemsPerPage] = useState(5)
 
   const [publishedPage, setPublishedPage] = useState(0)
-  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState(10)
+  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState(5)
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -79,10 +95,10 @@ const Home: React.FC = () => {
     const getFolders = async () => {
       const unpublishedResponse = await folderAPIService.getFolders({
         page: 1,
-        per_page: 10,
+        per_page: 5,
         published: false,
       })
-      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 10, published: true })
+      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: true })
 
       if (isMounted) {
         if (unpublishedResponse.ok && publishedResponse.ok) {
@@ -175,7 +191,7 @@ const Home: React.FC = () => {
 
   // Contains both unpublished and published folders (max. 5 items/each)
   return (
-    <FrontPageContainer>
+    <FrontPageContainer disableGutters maxWidth={false}>
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
         My submissions
       </Typography>
@@ -217,6 +233,7 @@ const Home: React.FC = () => {
                 totalItems={totalFolders.totalUnpublishedFolders}
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}
+                rows={unpublishedFoldersRows}
               />
             </Grid>
           )}
@@ -231,6 +248,7 @@ const Home: React.FC = () => {
                 totalItems={totalFolders.totalPublishedFolders}
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}
+                rows={publishedFoldersRows}
               />
             </Grid>
           )}

@@ -28,11 +28,12 @@ import NewDraftWizard from "views/NewDraftWizard"
 
 const useStyles = makeStyles(theme => ({
   content: {
-    padding: theme.spacing(8, 0, 6),
+    padding: 0,
+    paddingTop: theme.spacing(8),
   },
   wizardContent: {
     padding: theme.spacing(0),
-    margin: theme.spacing(8, 0, 0),
+    margin: theme.spacing(8),
     width: "100%",
     display: "flex",
     flexDirection: "column",
@@ -160,7 +161,7 @@ const App: React.FC = () => {
         <Route
           path={setPath("home")}
           element={
-            <Container component="main" maxWidth="lg" className={classes.content}>
+            <Container component="main" maxWidth="xl" className={classes.content}>
               <Home />
             </Container>
           }

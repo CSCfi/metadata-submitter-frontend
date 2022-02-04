@@ -76,6 +76,22 @@ let CSCtheme = createTheme({
         }
       `,
     },
+    MuiTablePagination: {
+      styleOverrides: {
+        menuItem: {
+          backgroundColor: "white",
+          color: palette.secondary.main,
+          "&:hover": {
+            backgroundColor: palette.primary.light,
+            color: palette.primary.main,
+          },
+          "&.MuiMenuItem-gutters.Mui-selected": {
+            backgroundColor: palette.common.white,
+            color: palette.primary.main,
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -83,6 +99,13 @@ let CSCtheme = createTheme({
           fontWeight: 700,
           fontSize: "1em",
           lineHeight: "1.2em",
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: 0,
         },
       },
     },
@@ -139,7 +162,7 @@ let CSCtheme = createTheme({
     boxShadow: defaultTheme.shadows[1],
   },
   form: {
-    margin: defaultTheme.spacing(3, 2),
+    margin: defaultTheme.spacing(3),
     "& .MuiTextField-root > .Mui-required": {
       color: palette.primary.main,
     },

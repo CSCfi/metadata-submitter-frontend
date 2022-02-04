@@ -64,6 +64,7 @@ const NavigationLinks = () => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        sx={{ position: "relative" }}
       >
         <PersonIcon />
         <Typography variant="body2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
@@ -79,6 +80,7 @@ const NavigationLinks = () => {
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        sx={{ position: "absolute" }}
       >
         <MenuItem
           component="a"
@@ -87,7 +89,6 @@ const NavigationLinks = () => {
             handleClose
           }}
           href="/logout"
-          sx={{ width: "100%" }}
         >
           <Typography variant="body2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
             Log out

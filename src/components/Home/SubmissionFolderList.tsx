@@ -22,16 +22,16 @@ import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   folderGrid: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2),
   },
   tableCard: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1),
   },
   loggedUser: {
-    margin: theme.spacing(2, 0, 0),
+    margin: theme.spacing(2),
   },
   circularProgress: {
-    margin: theme.spacing(10, "auto"),
+    margin: theme.spacing(10),
   },
 }))
 

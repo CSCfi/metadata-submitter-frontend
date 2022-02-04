@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flex: "1 0 auto",
     padding: 0,
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1),
     borderBottom: `solid 0.1rem ${theme.palette.secondary.main}`,
     "&:last-child": {
       border: "none",

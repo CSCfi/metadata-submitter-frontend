@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Disallow use of "any" type #624
 - Date picker #559
 - New login page #573
 - Autocomplete name field in DOI form #529
@@ -65,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Cast integer fields as numbers #661
 - Handle required form array fields #484
 - Prevent user deleting object in published folder #486
 - Display error when replacing XML file with file with same name #483

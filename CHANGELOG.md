@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Disallow object update with invalid form #656
 - Handle required form array fields #484
 - Prevent user deleting object in published folder #486
 - Display error when replacing XML file with file with same name #483

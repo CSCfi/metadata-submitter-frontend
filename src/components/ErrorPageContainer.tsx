@@ -1,6 +1,7 @@
-import React from "react"
+import React, { ReactElement } from "react"
 
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined"
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Avatar from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
@@ -12,7 +13,7 @@ import { makeStyles } from "@mui/styles"
 import logo from "../images/csc_logo.svg"
 
 type ErrorPageProps = {
-  children: any
+  children: (string | ReactElement)[]
   errorType: string
   title: string
 }
@@ -21,7 +22,7 @@ type ErrorTypeProps = {
   errorType: string
 }
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   errorContainer: {
     width: "100%",
     marginTop: theme.spacing(10),

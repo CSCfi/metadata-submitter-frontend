@@ -30,14 +30,14 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      setMockUser(eppnUser: any, familyName: any, givenName: any): Chainable<Element>
+      setMockUser(eppnUser: string, familyName: string, givenName: string): Chainable<Element>
       login(): Chainable<Element>
-      newSubmission(): Chainable<Element>
+      newSubmission(folderName?: string): Chainable<Element>
       clickFillForm(objectType: string): Chainable<Element>
       continueFirstDraft(): Chainable<Element>
       findDraftFolder(label: string): Chainable<Element>
       openDOIForm(): Chainable<Element>
-      formActions(): Chainable<Element>
+      formActions(buttonName: string): Chainable<Element>
     }
   }
 }
@@ -109,8 +109,8 @@ Cypress.Commands.add("continueFirstDraft", () => {
 Cypress.Commands.add("findDraftFolder", label => {
   cy.get('a[aria-label="go to frontpage"]', { timeout: 10000 }).click()
   cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
-  cy.get("body").then(($body: any) => {
-    if ($body.find("div[aria-haspopup='listbox']", { timeout: 10000 }).length > 0) {
+  cy.get("body").then(($body: JQuery<HTMLBodyElement>) => {
+    if ($body.find("div[aria-haspopup='listbox']").length > 0) {
       cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
       cy.get("ul").children().last().contains("All").click()
 

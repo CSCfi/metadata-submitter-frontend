@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 /*
  * Render correct form to add objects based on submission type in store
  */
-const WizardAddObjectCard: React.FC<any> = () => {
+const WizardAddObjectCard: React.FC = () => {
   const classes = useStyles()
   const submissionType = useAppSelector(state => state.submissionType)
   const objectType = useAppSelector(state => state.objectType)

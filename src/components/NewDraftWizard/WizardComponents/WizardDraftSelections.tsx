@@ -19,7 +19,12 @@ import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
-import type { ObjectInsideFolderWithTags } from "types"
+import type {
+  ConnectFormChildren,
+  ConnectFormMethods,
+  ObjectInsideFolderWithTags,
+  ObjectInsideFolderWithTagsBySchema,
+} from "types"
 import { getItemPrimaryText, getDraftObjects, getOrigObjectType, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -80,17 +85,17 @@ const FormControlLabel = withStyles({
   },
 })(MuiFormControlLabel)
 
-const ConnectForm = ({ children }: { children: any }) => {
+const ConnectForm = ({ children }: ConnectFormChildren) => {
   const methods = useFormContext()
 
-  return children({ ...methods })
+  return children({ ...(methods as ConnectFormMethods) })
 }
 
 type WizardDraftSelectionsProps = {
   onHandleDialog: (status: boolean, data?: Array<ObjectInsideFolderWithTags>) => void
 }
 
-const WizardDraftSelections = (props: WizardDraftSelectionsProps): any => {
+const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const folder = useAppSelector(state => state.submissionFolder)
@@ -101,11 +106,12 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): any => {
 
   const methods = useForm()
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: Record<string, unknown>) => {
     const checkedBoxValues = Object.values(data).filter(data => data)
 
-    const selectedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(item =>
-      folder.drafts.find((draft: { accessionId: string }) => draft.accessionId === item)
+    const selectedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(
+      item =>
+        folder.drafts.find((draft: { accessionId: string }) => draft.accessionId === item) as ObjectInsideFolderWithTags
     )
     props.onHandleDialog(true, selectedDrafts)
   }
@@ -134,11 +140,11 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): any => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponent}>
-        {draftObjects.map((draft: { [x: string]: any[] }) => {
+        {draftObjects.map((draft: ObjectInsideFolderWithTagsBySchema) => {
           const schema = Object.keys(draft)[0]
           return (
             <ConnectForm key={schema}>
-              {({ register }: { register: any }) => {
+              {({ register }: ConnectFormMethods) => {
                 return (
                   <FormControl className={classes.formControl} fullWidth>
                     <FormLabel className={classes.formLabel}>{schema}</FormLabel>
@@ -152,10 +158,10 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps): any => {
                             control={
                               <Checkbox
                                 color="primary"
-                                name={item.accessionId}
                                 value={item.accessionId}
                                 {...rest}
                                 inputRef={ref}
+                                name={item.accessionId}
                               />
                             }
                             label={

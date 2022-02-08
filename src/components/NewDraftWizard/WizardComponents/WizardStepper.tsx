@@ -120,7 +120,12 @@ const useStyles = makeStyles({
  * Show info about wizard steps to user.
  * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
  */
-const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: any }) => {
+
+const WizardStepper = ({
+  createFolderFormRef,
+}: {
+  createFolderFormRef?: { current: HTMLElement | null } | undefined
+}) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const steps = ["Folder Name & Description", "Add Objects", "Summary"]
@@ -184,7 +189,7 @@ const WizardStepper = ({ createFolderFormRef }: { createFolderFormRef?: any }) =
         ))}
       </Stepper>
       <Button
-        disabled={createFolderFormRef?.current?.isSubmitting || wizardStep >= 2}
+        disabled={wizardStep >= 2}
         className={classes.centeredStepButton}
         disableElevation
         color="primary"

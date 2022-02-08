@@ -19,7 +19,7 @@ import UserDraftTemplateActions from "./UserDraftTemplateActions"
 
 import { setTemplateAccessionIds } from "features/templatesSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { ObjectInsideFolderWithTags, TemplateDetails } from "types"
+import { ObjectInsideFolderWithTags } from "types"
 import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -71,16 +71,25 @@ const UserDraftTemplates: React.FC = () => {
 
   const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
 
+  type TemplateGroupProps = { draft: { [schema: string]: ObjectInsideFolderWithTags[] } }
+
   // Render when there is user's draft template(s)
   const DraftList = () => {
-    return templates.map((draft: TemplateDetails[], index: number) => <TemplateGroup key={index} draft={draft} />)
+    console.log(templates)
+    return (
+      <React.Fragment>
+        {templates.map((draft: { [key: string]: ObjectInsideFolderWithTags[] }, index: number) => (
+          <TemplateGroup key={index} draft={draft} />
+        ))}
+      </React.Fragment>
+    )
   }
 
-  const TemplateGroup = (props: { draft: TemplateDetails[] }) => {
+  const TemplateGroup = (props: TemplateGroupProps) => {
     const { draft } = props
 
     const dispatch = useAppDispatch()
-    const [checkedItems, setCheckedItems] = useState(templateAccessionIds)
+    const [checkedItems, setCheckedItems] = useState<string[]>(templateAccessionIds)
 
     const handleChange = (accessionId: string) => {
       let items = [...checkedItems]
@@ -99,12 +108,12 @@ const UserDraftTemplates: React.FC = () => {
     const [page, setPage] = useState(0)
     const [itemsPerPage, setItemsPerPage] = useState(10)
 
-    const handleChangePage = (e: any, page: number) => {
+    const handleChangePage = (_e: unknown, page: number) => {
       setPage(page)
     }
 
-    const handleItemsPerPageChange = (e: any) => {
-      setItemsPerPage(e.target.value)
+    const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setItemsPerPage(parseInt(e.target.value, 10))
       setPage(0)
     }
 

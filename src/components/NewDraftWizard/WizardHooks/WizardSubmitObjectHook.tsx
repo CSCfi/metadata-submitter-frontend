@@ -8,14 +8,15 @@ import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
+import { APIResponse, FormDataFiles, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
 
 const submitObjectHook = async (
-  formData: any,
+  formData: Record<string, unknown>,
   folderId: string,
   objectType: string,
-  dispatch: (reducer: any) => Promise<any>
-): Promise<any> => {
+  dispatch: (reducer: unknown) => Promise<APIResponse>
+): Promise<APIResponse> => {
   dispatch(setLoading())
   const waitForServertimer = setTimeout(() => {
     dispatch(
@@ -30,10 +31,10 @@ const submitObjectHook = async (
   const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
 
   if (response.ok) {
-    const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues as any)
+    const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues)
     // Dispatch fileTypes if object is Run or Analysis
     if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-      const objectWithFileTypes = getNewUniqueFileTypes(response.data.accessionId, formData)
+      const objectWithFileTypes = getNewUniqueFileTypes(response.data.accessionId, formData as FormDataFiles)
       objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
     }
 

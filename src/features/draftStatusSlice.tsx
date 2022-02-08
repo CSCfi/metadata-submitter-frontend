@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const draftStatusSlice: any = createSlice({
+const draftStatusSlice = createSlice({
   name: "draftStatus",
   initialState,
   reducers: {
-    setDraftStatus: (state, action) => action.payload,
+    setDraftStatus: (_state, action) => action.payload,
     resetDraftStatus: () => initialState,
   },
 })

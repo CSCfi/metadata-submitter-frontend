@@ -1,48 +1,73 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { extend, reject, merge } from "lodash"
 
-import draftAPIService from "../services/draftAPI"
-import objectAPIService from "../services/objectAPI"
-
 import { ObjectStatus } from "constants/wizardObject"
+import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
+import objectAPIService from "services/objectAPI"
 import publishAPIService from "services/publishAPI"
-import type { FolderDetails, FolderDetailsWithId, FolderDataFromForm, ObjectInsideFolderWithTags } from "types"
+import type {
+  FolderDetails,
+  FolderDetailsWithId,
+  FolderDataFromForm,
+  ObjectInsideFolderWithTags,
+  DoiFormDetails,
+  ObjectTags,
+  APIResponse,
+  DoiCreator,
+  DoiContributor,
+  DoiSubject,
+  DispatchReducer,
+} from "types"
 
-const initialState: null | FolderDetailsWithId = null
+type InitialState = FolderDetailsWithId & { doiInfo: Record<string, unknown> & DoiFormDetails }
 
-const wizardSubmissionFolderSlice: any = createSlice({
+const initialState: InitialState = {
+  folderId: "",
+  name: "",
+  description: "",
+  published: false,
+  drafts: [],
+  metadataObjects: [],
+  doiInfo: { creators: [], contributors: [], subjects: [] },
+}
+
+const setTags = (objects: ObjectInsideFolderWithTags[], accessionId: string, tags: ObjectTags) => {
+  const item = objects.find((item: { accessionId: string }) => item.accessionId === accessionId)
+  if (item) item.tags = tags
+}
+
+const wizardSubmissionFolderSlice = createSlice({
   name: "folder",
   initialState,
   reducers: {
-    setFolder: (state, action) => action.payload,
-    addObject: (state: any, action) => {
+    setFolder: (_state, action) => action.payload,
+    addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
-    addDraftObject: (state: any, action) => {
+    addDraftObject: (state: InitialState, action) => {
       state.drafts.push(action.payload)
     },
-    addDoiInfo: (state: any, action) => {
+    addDoiInfo: (state, action) => {
       state.doiInfo = action.payload
     },
-    deleteObject: (state: any, action) => {
-      state.metadataObjects = reject(state.metadataObjects, function (o) {
-        return o.accessionId === action.payload
-      })
+    deleteObject: (state: InitialState, action) => {
+      if (state)
+        state.metadataObjects = reject(state.metadataObjects, function (o: { accessionId: string }) {
+          return o.accessionId === action.payload
+        })
     },
-    deleteDraftObject: (state: any, action) => {
-      state.drafts = reject(state.drafts, function (o) {
-        return o.accessionId === action.payload
-      })
+    deleteDraftObject: (state, action) => {
+      if (state)
+        state.drafts = reject(state.drafts, function (o: { accessionId: string }) {
+          return o.accessionId === action.payload
+        })
     },
-    modifyObjectTags: (state: any, action) => {
-      state.metadataObjects.find(
-        (item: { accessionId: string }) => item.accessionId === action.payload.accessionId
-      ).tags = action.payload.tags
+    modifyObjectTags: (state, action) => {
+      setTags(state.metadataObjects, action.payload.accessionId, action.payload.tags)
     },
-    modifyDraftObjectTags: (state: any, action) => {
-      state.drafts.find((item: { accessionId: string }) => item.accessionId === action.payload.accessionId).tags =
-        action.payload.tags
+    modifyDraftObjectTags: (state, action) => {
+      setTags(state.drafts, action.payload.accessionId, action.payload.tags)
     },
     resetFolder: () => initialState,
   },
@@ -62,8 +87,8 @@ export const {
 export default wizardSubmissionFolderSlice.reducer
 
 export const createNewDraftFolder =
-  (folderDetails: FolderDataFromForm, drafts?: any[]) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  (folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[]) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const folderForBackend: FolderDetails = {
       ...folderDetails,
       published: false,
@@ -89,11 +114,11 @@ export const createNewDraftFolder =
 export const updateNewDraftFolder =
   (
     folderId: string,
-    folderDetails: FolderDataFromForm & { folder: { drafts: any[] } } & {
+    folderDetails: FolderDataFromForm & { folder: { drafts: ObjectInsideFolderWithTags[] } } & {
       selectedDraftsArray: Array<ObjectInsideFolderWithTags>
     }
   ) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const { selectedDraftsArray } = folderDetails
     // Add templates as selectedDrafts to current drafts in case there is any
     const updatedDrafts =
@@ -126,7 +151,7 @@ export const updateNewDraftFolder =
 
 export const addObjectToFolder =
   (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
     const response = await folderAPIService.patchFolderById(folderID, changes)
     return new Promise((resolve, reject) => {
@@ -147,7 +172,7 @@ export const replaceObjectInFolder =
     tags: { submissionType?: string; displayTitle?: string; fileName?: string },
     objectStatus?: string
   ) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const changes =
       objectStatus === ObjectStatus.submitted
         ? [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
@@ -173,7 +198,7 @@ export const replaceObjectInFolder =
 
 export const addObjectToDrafts =
   (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
     const folderResponse = await folderAPIService.patchFolderById(folderID, changes)
 
@@ -190,7 +215,7 @@ export const addObjectToDrafts =
 // Delete object from either metaDataObjects or drafts depending on savedType
 export const deleteObjectFromFolder =
   (savedType: string, objectId: string, objectType: string) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const service = savedType === ObjectStatus.submitted ? objectAPIService : draftAPIService
     const response = await service.deleteObjectByAccessionId(objectType, objectId)
     return new Promise((resolve, reject) => {
@@ -204,7 +229,7 @@ export const deleteObjectFromFolder =
   }
 
 export const publishFolderContent =
-  (folder: FolderDetailsWithId): (() => Promise<any>) =>
+  (folder: FolderDetailsWithId): (() => Promise<APIResponse>) =>
   async () => {
     const response = await publishAPIService.publishFolderById(folder.folderId)
     return new Promise((resolve, reject) => {
@@ -217,7 +242,7 @@ export const publishFolderContent =
   }
 
 export const deleteFolderAndContent =
-  (folder: FolderDetailsWithId): (() => Promise<any>) =>
+  (folder: FolderDetailsWithId): (() => Promise<APIResponse | undefined>) =>
   async () => {
     let message = ""
     if (folder) {
@@ -243,16 +268,16 @@ export const deleteFolderAndContent =
   }
 
 export const addDoiInfoToFolder =
-  (folderId: string, doiFormDetails: { creators: any[]; contributors: any[]; subjects: any[] }) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  (folderId: string, doiFormDetails: DoiFormDetails) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const nameType = { nameType: "Personal" }
     // Add "nameType": "Personal" to "creators" and "contributors"
-    const modifiedCreators = doiFormDetails.creators?.map((creator: any) => ({
+    const modifiedCreators = doiFormDetails.creators?.map((creator: DoiCreator) => ({
       ...creator,
       ...nameType,
     }))
 
-    const modifiedContributors = doiFormDetails.contributors?.map((contributor: any) => ({
+    const modifiedContributors = doiFormDetails.contributors?.map((contributor: DoiContributor) => ({
       ...contributor,
       ...nameType,
     }))
@@ -260,7 +285,7 @@ export const addDoiInfoToFolder =
     const subjectSchema = { subjectScheme: "Fields of Science and Technology (FOS)" }
     // Add fixed subject schema as we are using FOS by default
 
-    const modifiedSubjects = doiFormDetails.subjects?.map((subject: any) => ({
+    const modifiedSubjects = doiFormDetails.subjects?.map((subject: DoiSubject) => ({
       ...subject,
       ...subjectSchema,
     }))

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
+import { isEmpty } from "lodash"
 
 import JSONSchemaParser from "./WizardObjectDetailsJSONSchemaParser"
 
@@ -11,6 +12,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppDispatch } from "hooks"
 import schemaAPIService from "services/schemaAPI"
+import { FormObject, ObjectDetails } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -55,19 +57,19 @@ const useStyles = makeStyles(theme => ({
 
 type ObjectDetailsType = {
   objectType: string
-  objectData: any
+  objectData: Record<string, unknown>
 }
 
 /*
  * Fetch and render object details
  */
-const WizardObjectDetails: React.FC<any> = (props: ObjectDetailsType) => {
+const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
   const { objectType, objectData } = props
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const [states, setStates] = useState({
-    objectData: null,
+    objectData: {} as Record<string, unknown>,
     schema: {},
     isLoading: true,
   })
@@ -77,13 +79,14 @@ const WizardObjectDetails: React.FC<any> = (props: ObjectDetailsType) => {
 
     const fetchSchema = async () => {
       if (isMounted) {
-        let schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+        const schema = sessionStorage.getItem(`cached_${objectType}_schema`)
+        let parsedSchema: FormObject
 
         if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
           const schemaResponse = await schemaAPIService.getSchemaByObjectType(objectType)
           if (schemaResponse.ok) {
-            schema = schemaResponse.data
-            sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+            parsedSchema = schemaResponse.data
+            sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(parsedSchema))
           } else {
             dispatch(
               updateStatus({
@@ -99,10 +102,10 @@ const WizardObjectDetails: React.FC<any> = (props: ObjectDetailsType) => {
             return
           }
         } else {
-          schema = JSON.parse(schema)
+          parsedSchema = JSON.parse(schema)
         }
 
-        const dereferencedSchema: Promise<any> = await dereferenceSchema(schema)
+        const dereferencedSchema: Promise<FormObject> = await dereferenceSchema(parsedSchema as FormObject)
 
         setStates({
           ...states,
@@ -122,9 +125,9 @@ const WizardObjectDetails: React.FC<any> = (props: ObjectDetailsType) => {
   return (
     <Box py={1}>
       {states.isLoading && <CircularProgress color="primary"></CircularProgress>}
-      {states.schema && states.objectData && (
+      {!isEmpty(states.schema) && states.schema && states.objectData && (
         <div className={classes.detailComponents}>
-          {JSONSchemaParser.buildDetails(states.schema, states.objectData)}
+          {JSONSchemaParser.buildDetails(states.schema as FormObject, states.objectData as ObjectDetails)}
         </div>
       )}
     </Box>

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = false
 
-const loadingSlice: any = createSlice({
+const loadingSlice = createSlice({
   name: "focusSlice",
   initialState,
   reducers: {

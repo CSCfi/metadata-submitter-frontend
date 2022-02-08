@@ -123,7 +123,7 @@ const App: React.FC = () => {
 
       i18n.changeLanguage(locale)
 
-      dispatch(setLocale(locale) as any)
+      dispatch(setLocale(locale))
     }
 
     getSchemas()

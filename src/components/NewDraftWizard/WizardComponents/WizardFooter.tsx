@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Define wizard footer with changing button actions.
  */
-const WizardFooter: React.FC<any> = () => {
+const WizardFooter: React.FC = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const folder = useAppSelector(state => state.submissionFolder)
@@ -71,7 +71,7 @@ const WizardFooter: React.FC<any> = () => {
     if (alertWizard && alertType === "cancel") {
       dispatch(deleteFolderAndContent(folder))
         .then(() => resetDispatch())
-        .catch((error: any) => {
+        .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
@@ -89,7 +89,7 @@ const WizardFooter: React.FC<any> = () => {
       // Publish the folder
       dispatch(publishFolderContent(folder))
         .then(() => resetDispatch())
-        .catch((error: any) => {
+        .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,

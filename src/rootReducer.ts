@@ -23,7 +23,7 @@ import objectTypeReducer from "features/wizardObjectTypeSlice"
 import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
-const rootReducer: any = combineReducers({
+const rootReducer = combineReducers({
   locale: localeReducer,
   alert: wizardAlertReducer,
   focus: focusReducer,

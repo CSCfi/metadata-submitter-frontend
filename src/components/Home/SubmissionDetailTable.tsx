@@ -32,7 +32,7 @@ import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { ObjectDetails } from "types"
+import type { FolderRow } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -89,21 +89,21 @@ const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "",
 
 type SubmissionDetailTableProps = {
   folderTitle: string
-  bodyRows: Array<ObjectDetails>
+  bodyRows: Array<FolderRow>
   folderType: string
   location: string
-  onEditFolder: (step: number) => any
-  onPublishFolder: () => any
-  onEditObject: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>
-  onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<any>
+  onEditFolder: (step: number) => void
+  onPublishFolder: () => void
+  onEditObject: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
+  onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
 
 type RowProps = {
   index: number
-  row: any
+  row: FolderRow
   publishedFolder: boolean
-  onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<any>
-  onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<any>
+  onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
+  onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
 
 const Row = (props: RowProps) => {
@@ -183,7 +183,7 @@ const Row = (props: RowProps) => {
   )
 }
 
-const SubmissionDetailTable: React.FC<any> = (props: SubmissionDetailTableProps) => {
+const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
 

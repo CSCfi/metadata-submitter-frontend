@@ -36,6 +36,7 @@ import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
 import CSCtheme from "theme"
+import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
 import { pathToName, traverseValues, getPathName } from "utils/JSONSchemaUtils"
 
 /*
@@ -84,6 +85,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  "data-testid": string
+}
+
 const FieldTooltip = withStyles(theme => ({
   tooltip: theme.tooltip,
 }))(Tooltip)
@@ -121,22 +126,24 @@ const DateCheckboxLabel = styled("span")(({ theme }) => ({
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
  */
-const cleanUpFormValues = (data: unknown): void => {
+const cleanUpFormValues = (data: unknown) => {
   const cleanedData = JSON.parse(JSON.stringify(data))
   return traverseFormValuesForCleanUp(cleanedData)
 }
 
-const traverseFormValuesForCleanUp = (data: any) => {
+const traverseFormValuesForCleanUp = (data: Record<string, unknown>) => {
   Object.keys(data).forEach(key => {
-    if (typeof data[key] === "object") {
-      if (data[key] !== null) {
-        data[key] = traverseFormValuesForCleanUp(data[key])
-        if (Object.keys(data[key]).length === 0) delete data[key]
+    const property = data[key] as Record<string, unknown> | string | null
+
+    if (typeof property === "object") {
+      if (property !== null) {
+        data[key] = traverseFormValuesForCleanUp(property)
+        if (Object.keys(property).length === 0) delete data[key]
       }
     }
-    if (data[key] === "") {
+    if (property === "") {
       delete data[key]
-    } else if (typeof data[key] === "string" && !isNaN(data[key]) && key !== "telephoneNumber") {
+    } else if (typeof property === "string" && !isNaN(Number(data[key])) && key !== "telephoneNumber") {
       data[key] = Number(data[key])
     }
   })
@@ -146,7 +153,7 @@ const traverseFormValuesForCleanUp = (data: any) => {
 /*
  * Build react-hook-form fields based on given schema
  */
-const buildFields = (schema: unknown): any => {
+const buildFields = (schema: FormObject) => {
   try {
     return traverseFields(schema, [])
   } catch (error) {
@@ -157,22 +164,23 @@ const buildFields = (schema: unknown): any => {
 /*
  * Allow children components inside ConnectForm to pull react-hook-form objects and methods from context
  */
-const ConnectForm = ({ children }: { children: any }) => {
+const ConnectForm = ({ children }: ConnectFormChildren) => {
   const methods = useFormContext()
-  return children({ ...methods })
+  return children({ ...(methods as ConnectFormMethods) })
 }
 
 /*
  * Get defaultValue for options in a form. Used when rendering a saved/submitted form
  */
-const getDefaultValue = (name: string, nestedField?: any) => {
+const getDefaultValue = (name: string, nestedField?: Record<string, unknown>) => {
   if (nestedField) {
+    let result
     const path = name.split(".")
     // E.g. Case of DOI form - Formats's fields
     if (path[0] === "formats") {
       const k = path[0]
       if (k in nestedField) {
-        nestedField = nestedField[k]
+        result = nestedField[k]
       } else {
         return
       }
@@ -180,14 +188,14 @@ const getDefaultValue = (name: string, nestedField?: any) => {
       for (let i = 1, n = path.length; i < n; ++i) {
         const k = path[i]
 
-        if (k in nestedField) {
-          nestedField = nestedField[k]
+        if (nestedField && k in nestedField) {
+          result = nestedField[k]
         } else {
           return
         }
       }
     }
-    return nestedField
+    return result
   } else {
     return ""
   }
@@ -197,11 +205,11 @@ const getDefaultValue = (name: string, nestedField?: any) => {
  * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
  */
 const traverseFields = (
-  object: any,
+  object: FormObject,
   path: string[],
   requiredProperties?: string[],
   requireFirst?: boolean,
-  nestedField?: any
+  nestedField?: NestedField
 ) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
@@ -219,7 +227,7 @@ const traverseFields = (
       return (
         <FormSection key={name} name={name} label={label} level={path.length + 1} description={description}>
           {Object.keys(properties).map(propertyKey => {
-            const property = (properties as any)[propertyKey]
+            const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
             let requireFirstItem = false
 
@@ -232,7 +240,8 @@ const traverseFields = (
               requiredProperties?.includes(name) ||
               requiredProperties?.includes(Object.keys(properties)[0])
             ) {
-              requireFirstItem = Object.values<any>(properties)[0].title === property.title ? true : false
+              const parentProperty = Object.values(properties)[0] as { title: string }
+              requireFirstItem = parentProperty.title === property.title ? true : false
             }
 
             return traverseFields(property, [...path, propertyKey], required, requireFirstItem, nestedField)
@@ -253,14 +262,7 @@ const traverseFields = (
       ) : object.title === "Date" ? (
         <FormDatePicker key={name} name={name} label={label} required={required} description={description} />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
-        <FormAutocompleteField
-          key={name}
-          name={name}
-          label={label}
-          required={required}
-          nestedField={nestedField}
-          description={description}
-        />
+        <FormAutocompleteField key={name} name={name} label={label} required={required} description={description} />
       ) : (
         <FormTextField
           key={name}
@@ -334,7 +336,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
 
   return (
     <ConnectForm>
-      {({ errors }: { errors: any }) => {
+      {({ errors }: ConnectFormMethods) => {
         const error = get(errors, name)
         return (
           <div>
@@ -393,9 +395,9 @@ const FormOneOfField = ({
   required,
 }: {
   path: string[]
-  object: any
-  nestedField?: any
-  required?: any
+  object: FormObject
+  nestedField?: NestedField
+  required?: boolean
 }) => {
   const options = object.oneOf
   const [lastPathItem] = path.slice(-1)
@@ -413,9 +415,9 @@ const FormOneOfField = ({
           .toString()
       ] || {}
 
-  let fieldValue = ""
+  let fieldValue: string | number | undefined
 
-  const flattenObject = (obj: { [x: string]: any }, prefix = "") =>
+  const flattenObject = (obj: { [x: string]: never }, prefix = "") =>
     Object.keys(obj).reduce((acc, k) => {
       const pre = prefix.length ? prefix + "." : ""
       if (typeof obj[k] === "object") Object.assign(acc, flattenObject(obj[k], pre + k))
@@ -432,23 +434,23 @@ const FormOneOfField = ({
         // Field key can be deeply nested and therefore we need to have multiple cases for finding correct value.
         if (isNaN(Number(parentPath[0]))) {
           fieldValue = (
-            options.find((option: any) => option.properties[parentPath])
+            options.find(option => option.properties[parentPath])
               ? // Eg. Sample > Sample Names > Sample Data Type
-                options.find((option: any) => option.properties[parentPath])
+                options.find(option => option.properties[parentPath])
               : // Eg. Run > Run Type > Reference Alignment
                 options.find(
-                  (option: any) => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
                 )
-          )?.title
+          )?.title as string
         } else {
           // Eg. Experiment > Expected Base Call Table > Processing > Single Processing
           if (typeof itemValues === "string") {
-            fieldValue = options.find((option: any) => option.type === "string").title
+            fieldValue = options.find(option => option.type === "string")?.title
           }
           // Eg. Experiment > Expected Base Call Table > Processing > Complex Processing
           else {
             const fieldKey = Object.keys(values[item][0])[0]
-            fieldValue = options.find((option: any) => option.items?.properties[fieldKey]).title
+            fieldValue = options?.find(option => option.items?.properties[fieldKey])?.title
           }
         }
       }
@@ -484,7 +486,9 @@ const FormOneOfField = ({
 
   const label = object.title ?? lastPathItem
 
-  const getChildObjects = (obj?: any) => {
+  type ChildObject = { properties: Record<string, unknown>; required: boolean }
+
+  const getChildObjects = (obj?: ChildObject) => {
     if (obj) {
       let childProps
       for (const key in obj) {
@@ -493,7 +497,7 @@ const FormOneOfField = ({
           childProps = obj.properties
           const childPropsValues = Object.values(childProps)[0]
           if (Object.hasOwnProperty.call(childPropsValues, "properties")) {
-            getChildObjects(childPropsValues)
+            getChildObjects(childPropsValues as ChildObject)
           }
         }
       }
@@ -510,19 +514,7 @@ const FormOneOfField = ({
 
   return (
     <ConnectForm>
-      {({
-        errors,
-        unregister,
-        setValue,
-        getValues,
-        reset,
-      }: {
-        errors: any
-        unregister: any
-        setValue: any
-        getValues: any
-        reset: any
-      }) => {
+      {({ errors, unregister, setValue, getValues, reset }: ConnectFormMethods) => {
         if (clearForm) {
           // Clear the field and "clearForm" is true
           setField("")
@@ -531,7 +523,7 @@ const FormOneOfField = ({
 
         const error = get(errors, name)
         // Option change handling
-        const handleChange = (event: any) => {
+        const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
           const val = event.target.value
           setField(val)
 
@@ -551,12 +543,12 @@ const FormOneOfField = ({
           options?.filter((option: { title: string }) => option.title === field)[0]?.properties || {}
         const selectedOptionValues = Object.values(selectedOption)
 
-        let childObject: any
+        let childObject
         let requiredProp: string
 
         // If selectedOption has many nested "properties"
         if (selectedOptionValues.length > 0 && Object.hasOwnProperty.call(selectedOptionValues[0], "properties")) {
-          const { obj, firstProp } = getChildObjects(Object.values(selectedOption)[0])
+          const { obj, firstProp } = getChildObjects(Object.values(selectedOption)[0] as ChildObject)
           childObject = obj
           requiredProp = firstProp || ""
         }
@@ -586,7 +578,7 @@ const FormOneOfField = ({
                 inputProps={{ "data-testid": name }}
               >
                 <option aria-label="None" value="" disabled />
-                {options?.map((optionObject: { title: any }) => {
+                {options?.map((optionObject: { title: string }) => {
                   const option = optionObject.title
                   return (
                     <option key={`${name}-${option}`} value={option}>
@@ -637,7 +629,7 @@ const FormTextField = ({
   description,
   type = "string",
   nestedField,
-}: FormFieldBaseProps & { description: string; type?: string; nestedField?: any }) => {
+}: FormFieldBaseProps & { description: string; type?: string; nestedField?: NestedField }) => {
   const classes = useStyles()
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const autocompleteField = useAppSelector(state => state.autocompleteField)
@@ -710,7 +702,7 @@ const FormTextField = ({
 
   return (
     <ConnectForm>
-      {({ control }: { control: any }) => {
+      {({ control }: ConnectFormMethods) => {
         const multiLineRowIdentifiers = ["abstract", "description", "policy text"]
 
         return (
@@ -722,9 +714,9 @@ const FormTextField = ({
                 (typeof field.value !== "object" && field.value) ||
                 ""
 
-              const handleChange = (e: { target: { value: any } }) => {
+              const handleChange = (e: { target: { value: string | number } }) => {
                 const { value } = e.target
-                field.onChange(type === "string" && !isNaN(value) ? value.toString() : value)
+                field.onChange(type === "string" && typeof value === "number" ? value.toString() : value)
               }
 
               return (
@@ -791,35 +783,35 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
 
   return (
     <ConnectForm>
-      {({ errors, getValues, setValue }: { errors: any; getValues: any; setValue: any }) => {
+      {({ errors, getValues, setValue }: ConnectFormMethods) => {
         const dateInputValues = getValues(name)
 
-        const formatDate = date => {
+        const formatDate = (date: moment.MomentInput) => {
           const format = "YYYY-MM-DD"
           return moment(date).format(format)
         }
 
-        const getDateValues = (start, end) => {
+        const getDateValues = (start: string, end: string) => {
           if (start === end) return start
           if (start || end) return `${start}/${end}`
           else return ""
         }
 
-        const handleChangeStartDate = e => {
+        const handleChangeStartDate = (e: moment.MomentInput) => {
           const start = formatDate(e)
           setStartDate(start)
           const dateValues = getDateValues(start, endDate)
           setValue(name, dateValues)
         }
 
-        const handleChangeEndDate = e => {
+        const handleChangeEndDate = (e: moment.MomentInput) => {
           const end = formatDate(e)
           setEndDate(end)
           const dateValues = getDateValues(startDate, end)
           setValue(name, dateValues)
         }
 
-        const handleChangeUnknownDates = e => {
+        const handleChangeUnknownDates = (e: { target: { name: string; checked: boolean } }) => {
           setUnknownDates({ ...unknownDates, [e.target.name]: e.target.checked })
           if (e.target.name === "checkedStartDate") {
             setStartDate("")
@@ -838,12 +830,30 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
           setValue(name, "")
         }
 
-        const DateSelection = (props: any) => (
-          <Box sx={{ display: "flex", alignItems: "center" }} data-testid={props.label}>
-            <input ref={props.inputRef} {...props.inputProps} style={{ border: "none", width: 0 }} />
-            {props.InputProps?.endAdornment}
-          </Box>
-        )
+        type DateSelectionProps = {
+          label: string
+          inputRef: React.LegacyRef<HTMLInputElement> | undefined
+          inputProps: JSX.IntrinsicAttributes &
+            React.ClassAttributes<HTMLInputElement> &
+            React.InputHTMLAttributes<HTMLInputElement>
+        }
+
+        type InputPropsType = {
+          InputProps: {
+            endAdornment: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined
+          }
+        }
+
+        type DateSelectionPropsWithInput = DateSelectionProps & InputPropsType
+
+        const DateSelection = (props: DateSelectionPropsWithInput) => {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }} data-testid={props.label}>
+              <input ref={props.inputRef} {...props.inputProps} style={{ border: "none", width: 0 }} />
+              {props.InputProps?.endAdornment}
+            </Box>
+          )
+        }
 
         const DatePickerComponent = () => (
           <LocalizationProvider dateAdapter={DateAdapter}>
@@ -906,7 +916,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                     label="Start"
                     renderInput={params => (
                       <DateSelection
-                        {...params}
+                        {...(params as DateSelectionProps)}
                         InputProps={{
                           ...params.InputProps,
                           endAdornment: (
@@ -950,7 +960,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                     label="End"
                     renderInput={params => (
                       <DateSelection
-                        {...params}
+                        {...(params as DateSelectionProps)}
                         InputProps={{
                           ...params.InputProps,
                           endAdornment: (
@@ -986,19 +996,24 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
 /*
  * FormAutocompleteField uses ROR API to fetch organisations
  */
+type RORItem = {
+  name: string
+  id: string
+}
+
 const FormAutocompleteField = ({
   name,
   label,
   required,
   description,
-}: FormFieldBaseProps & { type?: string; nestedField?: any; description: string }) => {
+}: FormFieldBaseProps & { description: string }) => {
   const dispatch = useAppDispatch()
 
   const { setValue, getValues } = useFormContext()
 
   const classes = useStyles()
   const defaultValue = getValues(name) || ""
-  const [selection, setSelection] = useState<any>(null)
+  const [selection, setSelection] = useState<RORItem | null>(null)
   const [open, setOpen] = useState(false)
   const [options, setOptions] = useState([])
   const [inputValue, setInputValue] = useState("")
@@ -1012,7 +1027,7 @@ const FormAutocompleteField = ({
     if (response) setLoading(false)
 
     if (response?.ok) {
-      const mappedOrganisations = response.data.items.map((org: { name: any; id: any }) => ({
+      const mappedOrganisations = response.data.items.map((org: RORItem) => ({
         name: org.name,
         id: org.id,
       }))
@@ -1024,7 +1039,7 @@ const FormAutocompleteField = ({
   // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
-    debounce(newInput => {
+    debounce((newInput: string) => {
       if (newInput.length > 0) fetchOrganisations(newInput)
     }, 150),
     []
@@ -1051,18 +1066,18 @@ const FormAutocompleteField = ({
 
   return (
     <ConnectForm>
-      {({ errors, control }: { errors: any; control: any }) => {
+      {({ errors, control }: ConnectFormMethods) => {
         const error = get(errors, name)
 
         // const fieldsToBePrefilled = ["schemeUri", "affiliationIdentifier", "affiliationIdentifierScheme"]
 
-        const handleAutocompleteValueChange = (event: any, option: any) => {
+        const handleAutocompleteValueChange = (_event: unknown, option: RORItem) => {
           setSelection(option)
           setValue(name, option?.name)
           option?.id ? dispatch(setAutocompleteField(option.id)) : null
         }
 
-        const handleInputChange = (event: any, newInputValue: any, reason: any) => {
+        const handleInputChange = (_event: unknown, newInputValue: string, reason: string) => {
           setInputValue(newInputValue)
           switch (reason) {
             case "input":
@@ -1166,7 +1181,7 @@ const FormSelectField = ({
 
   return (
     <ConnectForm>
-      {({ control }: { control: any }) => {
+      {({ control }: ConnectFormMethods) => {
         return (
           <Controller
             name={name}
@@ -1234,7 +1249,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
 
   return (
     <ConnectForm>
-      {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
+      {({ register, errors, getValues }: ConnectFormMethods) => {
         const error = get(errors, name)
 
         const { ref, ...rest } = register(name)
@@ -1247,14 +1262,14 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                 <ValidationFormControlLabel
                   control={
                     <Checkbox
-                      name={name}
                       id={name}
                       {...rest}
+                      name={name}
                       required={required}
                       inputRef={ref}
                       color="primary"
                       checked={values || false}
-                      inputProps={{ "data-testid": name }}
+                      inputProps={{ "data-testid": name } as InputProps}
                     />
                   }
                   label={
@@ -1297,7 +1312,7 @@ const FormCheckBoxArray = ({
         <strong id={name}>{label}</strong> - check from following options
       </p>
       <ConnectForm>
-        {({ register, errors, getValues }: { register: any; errors: any; getValues: any }) => {
+        {({ register, errors, getValues }: ConnectFormMethods) => {
           const values = getValues()[name]
 
           const error = get(errors, name)
@@ -1313,14 +1328,14 @@ const FormCheckBoxArray = ({
                       key={option}
                       control={
                         <Checkbox
-                          name={name}
                           {...rest}
                           inputRef={ref}
+                          name={name}
                           value={option}
                           checked={values && values?.includes(option) ? true : false}
                           color="primary"
                           defaultValue=""
-                          inputProps={{ "data-testid": name }}
+                          inputProps={{ "data-testid": name } as InputProps}
                         />
                       }
                       label={option}
@@ -1343,7 +1358,7 @@ const FormCheckBoxArray = ({
 }
 
 type FormArrayProps = {
-  object: any
+  object: FormObject
   path: Array<string>
   required: boolean
 }
@@ -1363,7 +1378,8 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const fileTypes = useAppSelector(state => state.fileTypes)
 
   const fieldValues = get(currentObject, name)
-  const items = traverseValues(object.items)
+
+  const items = traverseValues(object.items) as FormObject
 
   const { control } = useForm()
 
@@ -1384,7 +1400,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   // E.g. Study > StudyLinks or Experiment > Expected Base Call Table
   useEffect(() => {
     if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object") {
-      const fieldsArray = [] as any
+      const fieldsArray: Record<string, unknown>[] = []
       for (let i = 0; i < fieldValues.length; i += 1) {
         fieldsArray.push({ fieldValues: fieldValues[i] })
       }
@@ -1393,7 +1409,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   }, [fields])
 
   // Get unique fileTypes from submitted fileTypes
-  const uniqueFileTypes = uniq(flatten(fileTypes?.map((obj: { fileTypes: any }) => obj.fileTypes)))
+  const uniqueFileTypes = uniq(flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes)))
 
   useEffect(() => {
     // Append fileType to formats' field
@@ -1416,7 +1432,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     if (index === 0) setValid(false)
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
-    const filteredValues = values?.filter((val: any, ind: any) => ind !== index)
+    const filteredValues = values.filter((_val: unknown, ind: number) => ind !== index)
     setValue(name, filteredValues)
     remove(index)
   }
@@ -1450,7 +1466,12 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
           return (
             <div className="arrayRow" key={field.id} data-testid={`${name}[${index}]`}>
               <Paper elevation={2}>
-                <FormOneOfField key={field.id} nestedField={field} path={pathForThisIndex} object={items} />
+                <FormOneOfField
+                  key={field.id}
+                  nestedField={field as NestedField}
+                  path={pathForThisIndex}
+                  object={items}
+                />
               </Paper>
               <IconButton onClick={() => handleRemove(index)}>
                 <RemoveIcon />
@@ -1462,7 +1483,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
         const properties = object.items.properties
         let requiredProperties =
           index === 0 && object.contains?.allOf
-            ? object.contains?.allOf?.flatMap((item: { required: boolean }) => item.required) // Case: DAC - Main Contact needs at least 1
+            ? object.contains?.allOf?.flatMap((item: FormObject) => item.required) // Case: DAC - Main Contact needs at least 1
             : object.items?.required
 
         // Force first array item as required field if array is required but none of the items are required
@@ -1478,9 +1499,21 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
                       const requiredField = requiredProperties
                         ? requiredProperties.filter((prop: string) => prop === item)
                         : []
-                      return traverseFields(properties[item], pathForThisIndex, requiredField, false, field)
+                      return traverseFields(
+                        properties[item] as FormObject,
+                        pathForThisIndex,
+                        requiredField,
+                        false,
+                        field as NestedField
+                      )
                     })
-                  : traverseFields(object.items, [...pathWithoutLastItem, lastPathItemWithIndex], [], false, field) // special case for doiSchema's "sizes" and "formats"
+                  : traverseFields(
+                      object.items,
+                      [...pathWithoutLastItem, lastPathItemWithIndex],
+                      [],
+                      false,
+                      field as NestedField
+                    ) // special case for doiSchema's "sizes" and "formats"
               }
             </Paper>
             <IconButton onClick={() => handleRemove(index)}>

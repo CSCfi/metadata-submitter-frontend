@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-import type { StatusDetails } from "types"
+import type { DispatchReducer, StatusDetails } from "types"
 
-const initialState: null | StatusDetails = null
+const initialState: StatusDetails = { status: null, response: {}, helperText: "" }
 
-const statusMessageSlice: any = createSlice({
+const statusMessageSlice = createSlice({
   name: "wizardStatusMessage",
   initialState,
   reducers: {
-    setStatusDetails: (state, action) => action.payload,
+    setStatusDetails: (_state, action) => action.payload,
     resetStatusDetails: () => initialState,
   },
 })
@@ -17,7 +17,7 @@ export default statusMessageSlice.reducer
 
 export const updateStatus =
   (statusDetails: StatusDetails) =>
-  (dispatch: (reducer: any) => void): any => {
+  (dispatch: (reducer: DispatchReducer) => void): void => {
     const details: StatusDetails = {
       status: statusDetails.status,
       response: JSON.stringify(statusDetails.response),

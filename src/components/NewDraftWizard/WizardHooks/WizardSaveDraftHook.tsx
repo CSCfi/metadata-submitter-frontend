@@ -6,7 +6,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addObjectToDrafts, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
-import type { FolderDetailsWithId } from "types"
+import type { FolderDetailsWithId, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle } from "utils"
 
 type SaveDraftHookProps = {
@@ -14,15 +14,16 @@ type SaveDraftHookProps = {
   objectType: string
   objectStatus: string
   folder: FolderDetailsWithId
-  values: any
-  dispatch: (reducer: any) => void
+  values: Record<string, unknown>
+  dispatch: (reducer: unknown) => void
 }
 
 const saveDraftHook = async (props: SaveDraftHookProps) => {
   const { accessionId, objectType, objectStatus, folder, values, dispatch } = props
+  const draftDisplayTitle = getObjectDisplayTitle(objectType, values as ObjectDisplayValues)
 
-  const draftDisplayTitle = getObjectDisplayTitle(objectType, values)
   dispatch(setLoading())
+
   if (accessionId && objectStatus === ObjectStatus.draft) {
     const response = await draftAPIService.patchFromJSON(objectType, accessionId, values)
     const index = folder.drafts.findIndex(item => item.accessionId === accessionId)

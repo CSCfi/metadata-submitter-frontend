@@ -97,7 +97,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
         props.objectId,
         props.objectType
       )
-    ).catch((error: any) => {
+    ).catch(error => {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,

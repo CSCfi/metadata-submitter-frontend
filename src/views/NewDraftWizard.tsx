@@ -62,7 +62,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  *
  * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
-const NewDraftWizard = (): any => {
+const NewDraftWizard: React.FC = () => {
   const dispatch = useAppDispatch()
   const classes = useStyles()
   const navigate = useNavigate()
@@ -105,7 +105,7 @@ const NewDraftWizard = (): any => {
 
   const wizardStep = step ? Number(step) : -1
 
-  const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => any })>(null)
+  const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
   return (
     <Container maxWidth={false} className={classes.container}>

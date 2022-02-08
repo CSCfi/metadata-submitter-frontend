@@ -15,13 +15,14 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addDoiInfoToFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import schemaAPIService from "services/schemaAPI"
+import { DoiFormDetails, FormObject } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
   form: { ...theme.form },
 }))
 
-const DOIForm = ({ formId }: { formId: string }): any => {
+const DOIForm = ({ formId }: { formId: string }) => {
   const [dataciteSchema, setDataciteSchema] = useState({})
   const locale = useAppSelector(state => state.locale)
 
@@ -29,24 +30,30 @@ const DOIForm = ({ formId }: { formId: string }): any => {
     let isMounted = true
     const getDataciteSchema = async () => {
       let dataciteSchema = sessionStorage.getItem(`cached_datacite_schema`)
+      let parsedDataciteSchema: FormObject | undefined = undefined
+
       if (!dataciteSchema || !new Ajv().validateSchema(JSON.parse(dataciteSchema))) {
         try {
           const response = await schemaAPIService.getSchemaByObjectType("datacite")
-          dataciteSchema = response.data
-          sessionStorage.setItem(`cached_datacite_schema`, JSON.stringify(dataciteSchema))
-        } catch (err: any) {
+          dataciteSchema = JSON.stringify(response.data)
+          sessionStorage.setItem(`cached_datacite_schema`, dataciteSchema)
+        } catch (error) {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
-              response: err,
+              response: error,
               helperText: "Can't submit the DOI information",
             })
           )
         }
-      } else {
-        dataciteSchema = JSON.parse(dataciteSchema)
       }
-      const dereferencedDataciteSchema = await dereferenceSchema(dataciteSchema)
+
+      parsedDataciteSchema = JSON.parse(dataciteSchema as string)
+
+      const dereferencedDataciteSchema: Promise<FormObject> = await dereferenceSchema(
+        parsedDataciteSchema as FormObject
+      )
+
       if (isMounted) {
         setDataciteSchema(dereferencedDataciteSchema)
       }
@@ -69,7 +76,7 @@ const DOIForm = ({ formId }: { formId: string }): any => {
     methods.reset(currentFolder.doiInfo)
   }, [])
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: DoiFormDetails) => {
     dispatch(addDoiInfoToFolder(currentFolder.folderId, data))
       .then(() => {
         dispatch(resetAutocompleteField())
@@ -82,11 +89,11 @@ const DOIForm = ({ formId }: { formId: string }): any => {
           })
         )
       })
-      .catch((err: any) =>
+      .catch(error =>
         dispatch(
           updateStatus({
             status: ResponseStatus.error,
-            response: err,
+            response: error,
             helperText: "Can't submit information for DOI.",
           })
         )
@@ -95,7 +102,9 @@ const DOIForm = ({ formId }: { formId: string }): any => {
   return (
     <FormProvider {...methods}>
       <form className={classes.form} id={formId} onSubmit={methods.handleSubmit(onSubmit)}>
-        <div>{Object.keys(dataciteSchema)?.length > 0 ? JSONSchemaParser.buildFields(dataciteSchema) : null}</div>
+        <div>
+          {Object.keys(dataciteSchema)?.length > 0 ? JSONSchemaParser.buildFields(dataciteSchema as FormObject) : null}
+        </div>
       </form>
     </FormProvider>
   )

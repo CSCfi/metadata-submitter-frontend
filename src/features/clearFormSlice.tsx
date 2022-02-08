@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = false
 
-const clearFormSlice: any = createSlice({
+const clearFormSlice = createSlice({
   name: "clearForm",
   initialState,
   reducers: {
-    setClearForm: (state, action) => action.payload,
+    setClearForm: (_state, action) => action.payload,
     resetClearForm: () => initialState,
   },
 })

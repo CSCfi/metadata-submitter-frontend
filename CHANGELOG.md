@@ -1,0 +1,436 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- Date picker #559
+- New login page #573
+- Autocomplete name field in DOI form #529
+- Enable draft template update #528
+- Auto-add subject scheme to all subjects #522
+- Enable deletion of draft templates #499
+- Support for `ajv-i18n` #496
+- Display helper text on invalid form array fields #495
+- Centralized status message handling in app root #493
+
+  #### Added
+
+  - Moved component to components root folder
+  - Render messages only in one place with use of reducer
+  - Updated tests
+
+- Handle uploaded XML filename as display title #457
+- DOI form #455
+
+  #### Added
+
+  - Autocomplete field optimization
+
+  #### Fixed
+
+  - Autocomplete field invalid characters
+  - FormArray component when removing certain field
+
+- Test form render with custom schema (Jest) #453
+- Preview object details #452
+- Require title on all forms #449
+
+### Changed
+
+- Disallow use of any-type #624
+
+  #### Added
+
+  - Changelog
+
+- Update Cypress tests to match JSON schema changes #627
+- Refactor Cypress tests by following best practices #623
+
+  #### Changed
+
+  - Documentation for MUI
+
+- Use React Hooks by ESLint hooks rule #621
+- Flow to TypeScript conversion #560
+- Test DAC form title and sychronize with new backend build #544
+- Migrate to MUI v5 #543
+- Navigate wizard with folder id as URL parameter #533
+- Dependency updates
+
+### Fixed
+
+- Handle required form array fields #484
+- Prevent user deleting object in published folder #486
+- Display error when replacing XML file with file with same name #483
+- Disallow draft delete if form is not valid #458
+- Update object display titles when object gets updated #456
+- Display correct confirmation text when publishing folder #447
+
+## [0.11.0] - 2021-08-31
+
+### Added
+
+- Use official coveralls github actions for reporting #430
+- Retry Cypress tests to give more consistent results #426
+- Render draft objects on right sidebar in object add step #425
+- Edit & publish draft folders #421
+
+  #### Added
+
+  - Edit button for draft folders view
+  - Disable publish for draft folder
+  - Display tooltip with icon if no submitted objects
+  - Enable publish if submitted objects
+  - Handle folder action buttons according to draft folder logic
+  - Redux state reset for object type and submission folder on submit
+
+- Form section tooltips with icons #419
+
+### Changed
+
+- Dependency updates
+- Improved pagination component #424
+
+### Fixed
+
+- Submitting updated form with undefined object tags #435
+
+## [0.10.0] - 2021-08-12
+
+### Added
+
+- Get options from ROR API and use data for organizations in autocomplete field #416
+- Reusable pagination component for draft & published submissions #400
+- Display field descriptions as tooltips. Tooltips are triggered with icons #356
+- Enable linking of accessionIds between object types #330
+- List user draft templates in home route #257
+
+  #### Added
+
+  - Fetch all schema types in home
+  - Draft template E2E tests
+
+  #### Fixed
+
+  - Navigation for folder creation
+
+- Enable user to save drafts when publishing folder #234
+  #### Added
+  - Option to view draft
+  - Cancel button to publish dialog
+  - E2E tests for draft saving
+  #### Fixed
+  - E2E test for 401 error
+
+### Changed
+
+- Dependency updates #401, #402, #403,
+- E2E tests GitHub workflow structure update #375
+- Update packages and package-lock.json #311
+- React Hook Form V7 migration #281
+- Dependabot to update monthly #268
+- Updated Analysis test #246
+
+  #### Changed
+
+  - Form field default value handling
+  - AJV format for date
+
+### Fixed
+
+- Fix for Sample object when overwriting form #417
+- Error page for 400-error #386
+- Parse DAC form `telephonenumber` as string before submitting form #352
+- Hightlight DAC form `Main contact` since it's required field #333
+- Populate all fields on editing saved / submitted form #323
+- Get correct object name in `FormArray` method #322
+
+  #### Added
+
+  - E2E test for Experiment form
+
+- Correct formatting of sha-256 in E2E test #320
+- Redux state current object reset when submitting object #319
+- Highlight all required form fields #296
+- API call orded when deleting folders #285
+- Fetch object types in application start #283
+- New form & clear form problems with emptying form fields #258
+- Handle "DAC" object type as acronym #233
+
+## [0.9.2] - 2021-04-08
+
+### Added
+
+- Test error pages #223
+- Tests for validation on field blur #222
+- Wizard routing with URL query parameters instead of Redux state #204
+
+### Fixed
+
+- AJV V8 migration issue #219
+- Enable edit of attributes and and links for saved object #205
+
+## [0.9.1] - 2021-03-24
+
+### Changed
+
+- Dependency updates
+
+### Fixed
+
+- Dependabot base branch #202
+
+## [0.9.0] - 2021-03-22
+
+### Added
+
+- Custom hook for draft saving #185
+- Design improvements #184
+
+  #### Changed
+
+  - Create New Folder > Create Submission
+  - Main grid spacing
+  - Consistent card and grid object headers
+  - Subtitle colors
+  - Checkbox positions
+  - Nested form section width control
+  - Highlight required form fields
+  - Global theme enhancements
+  - Saved and draft object badges
+  - List draft and published folders via router
+  - Navigation link targets for "Open submissions" and "Submissions"
+  - Removed icons before object type labels in object index
+  - Display submitted object count with icon and tooltip
+  - Display draft count next to submission label in object index
+  - Wrapped Reach Testing Library tests with theme provider
+  - Submission action button background color
+
+- Support for Links rendering on objects with `oneOf` key #182
+- Constant variables for hard coded values #168
+
+  #### Added
+
+  - Folder and files for constants
+  - Enums for predefined values
+
+  #### Fixed
+
+  - Display "Dataset" object in summary
+
+### Changed
+
+- Updated documentation for contanst #180
+- Updated flow-bin #171
+
+  #### Changed
+
+  - Strict return types
+
+- Dependency updates #166
+
+### Fixed
+
+- E2E test for filling required Analysis title #183
+- General bugfixes #179
+
+  #### Changed
+
+  - Don't require `husky` in production build
+  - Fix CodeQL workflow
+  - Cypress update
+  - Prettier should ignore build directory
+  - Cypress & prettier eslint configuration
+  - NPM version to 7.6.0
+  - Moved ESLint to dev dependency
+  - Updated `react-scripts` to 4.0.3
+  - Test production build with Cypress in GitHub actions
+
+- Form re-renders #178
+
+## [0.8.0] - 2021-02-11
+
+### Added
+
+- Test XML upload snackbar notification #163
+- Enable submitted form edit & XML replace #161
+
+  #### Added
+
+  - Display submitted object title in saved objects list
+  - Render buttons in group for objects in saved objects list
+  - Conditional submit button type on forms based on draft status
+  - Success messages by user action
+  - Dialog content and functionality for edited form with submitted status
+
+- Handle objects with tags #153
+
+  #### Added
+
+  - Grouping objects by object type
+
+- Added "New form" button to form actions #149
+- Accessible skip links for object adding #148
+- Improved draft & published submissions listing on home route #136
+
+  #### Added
+
+  - Enable listing of all submissions
+  - List all objects inside folder
+  - Enable deletion of objects
+
+### Changed
+
+- Skip link focus on XML upload form #154
+
+### Fixed
+
+- Saving multiple drafts when navigating stepper #156
+- Reduced API calls when fetching folders #152
+- Clear form button problem when editing draft #146
+- Prevent empty folder publish #140
+- Consistent network name in docker-compose #137
+
+## [0.7.0] - 2021-01-19
+
+### Added
+
+- List for saved drafts in "Add objects" step #136
+
+  #### Added
+
+  - Edit & delete functionality
+  - Draft overwriting
+  - Folder name & description patch
+
+  #### Changed
+
+  - Schema storage from local to session storage
+
+- Analysis form & summary E2E tests #125
+
+#### Fixed
+
+- Folder details error handling #132
+- General bugfixes & improvements #123, #124
+
+## [0.6.0] - 2021-01-06
+
+### Added
+
+- Notify draft save status #121
+- Response error handling with corresponding pages and redirects (401, 403, 404, 500) #114, #119
+- Render user information #118
+- Feature for draft auto-save #112
+- E2E testing with Cypress #108, #109, #111
+
+  #### Added
+
+  - CodeQL workflow to GitHub Actions
+
+### Changed
+
+- Render all notifications in snackbar #106
+
+## [0.5.0] - 2020-11-23
+
+### Added
+
+- XML upload accessibility for keyboard users #99
+- Added error checks for folder related operations #97
+- List submitted objects in "Add objects" step #92
+- Folder details (name & description) update functionality #89
+
+### Changed
+
+- XML upload form from Formik to React Hook Form #87
+
+  #### Added
+
+  - React Testing Library tests
+
+- Improved folder actions in wizard footer #86
+
+### Removed
+
+- `jest-localstorage-mock` #90
+
+### Fixed
+
+- Incorrect draft -alert rendering #95
+
+## [0.4.0] - 2020-10-20
+
+### Added
+
+- Centralized status message handler #83
+- Alert dialog component #81
+
+### Changed
+
+- Improved current naming conventions #82
+- Login flow with new routes for Home & Login #76, #79, #80
+
+## [0.3.0] - 2020-08-14
+
+### Added
+
+- Redesigned wizard and layout #32, #51, #64
+
+  #### Added
+
+  - Wizard stepper
+  - Handle store state with Redux
+  - Form for folder creation
+  - Persistent footer
+  - Backend folder support
+  - Support for adding objects to folders
+  - Summary for metadata objects
+  - Object adding layout
+  - Clear form functionality
+  - Unsaved draft alert
+
+- Login page #63
+- Support for caching JSON schema #62
+- Support for OneOf form fields #57
+- List submissions in home route #49
+- Navigation bar #48
+- GitHub Actions for code style, format, type checks and tests #23, #24, #25, #27
+- Improvements to XML upload (file handling, error messages, notifications) #19
+
+### Changed
+
+- Migrate from Formik to React Hook Form (JSON schema based forms) #52
+- Prettier column width #50
+
+### Fixed
+
+- Various form problems #60
+- Development and Docker related proxies #15
+
+## [0.1.0] - 2020-06-26
+
+### Added
+
+- React SPA initialization with URL routing
+- XML upload form for metadata object types with validation and notifications about upload status
+
+[unreleased]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.2...v0.10.0
+[0.9.2]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.1...v0.9.2
+[0.9.1]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.1.0...v0.3.0
+[0.1.0]: https://github.com/CSCfi/metadata-submitter-frontend/releases/tag/v0.1.0

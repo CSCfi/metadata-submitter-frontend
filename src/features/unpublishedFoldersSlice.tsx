@@ -1,20 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 import { ObjectStatus } from "constants/wizardObject"
-import type { FolderDetailsWithId } from "types"
+import type { DispatchReducer, FolderDetailsWithId } from "types"
 
-const initialState: null | [] | Array<FolderDetailsWithId> = null
+const initialState: FolderDetailsWithId[] = []
 
-const unpublishedFoldersSlice: any = createSlice({
+const unpublishedFoldersSlice = createSlice({
   name: "unpublishedFolders",
   initialState,
   reducers: {
-    setUnpublishedFolders: (state, action) => action.payload,
-    resetUnpublishedFolderss: () => initialState,
-    updateUnpublishedFolders: (state: any, action) => {
-      return state.map((folder: { folderId: string }) =>
-        folder.folderId === action.payload.folderId ? action.payload : folder
-      )
+    setUnpublishedFolders: (_state, action) => action.payload,
+    resetUnpublishedFolders: () => initialState,
+    updateUnpublishedFolders: (state, action) => {
+      if (state)
+        (state as FolderDetailsWithId[]).map((folder: { folderId: string }) =>
+          folder.folderId === action.payload.folderId ? action.payload : folder
+        )
     },
   },
 })
@@ -26,7 +27,7 @@ export default unpublishedFoldersSlice.reducer
 // Remove folder from Unpublished folders when it is deleted
 export const deleteFolderFromUnpublishedFolders =
   (selectedFolder: FolderDetailsWithId, objectId: string, objectStatus: string) =>
-  (dispatch: (reducer: any) => void): any => {
+  (dispatch: (reducer: DispatchReducer) => void) => {
     const updatedFolder =
       objectStatus === ObjectStatus.draft
         ? {

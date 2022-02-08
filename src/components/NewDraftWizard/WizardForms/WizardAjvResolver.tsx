@@ -1,7 +1,7 @@
-import Ajv, { ValidateFunction } from "ajv"
+import Ajv, { ErrorObject, ValidateFunction } from "ajv"
 import addFormats from "ajv-formats"
 import localize from "ajv-i18n"
-import { appendErrors } from "react-hook-form"
+import { appendErrors, FieldError } from "react-hook-form"
 
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 
@@ -11,14 +11,28 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 const parseErrorSchema = (validationError: ValidateFunction<unknown>, validateAllFieldCriteria: boolean) =>
   Array.isArray(validationError.errors)
     ? validationError.errors.reduce(
-        (previous: Partial<Record<string, any>>, { instancePath, message = "", params, propertyName = "" }: any) => {
+        (
+          previous: Partial<Record<string, unknown | FieldError | undefined>>,
+          {
+            instancePath,
+            message = "",
+            params,
+            propertyName = "",
+          }: ErrorObject<string, Record<string, unknown>, unknown>
+        ) => {
           const path = instancePath.replace(/\//g, ".").replace(/^\./, "") || propertyName
           return {
             ...previous,
             ...(path
               ? previous[path] && validateAllFieldCriteria
                 ? {
-                    [path]: appendErrors(path, validateAllFieldCriteria, previous, "", message),
+                    [path]: appendErrors(
+                      path,
+                      validateAllFieldCriteria,
+                      previous as Partial<Record<string, FieldError>>,
+                      "",
+                      message
+                    ),
                   }
                 : {
                     [path]: previous[path] || {
@@ -43,13 +57,13 @@ const parseErrorSchema = (validationError: ValidateFunction<unknown>, validateAl
 /*
  * Resolver for checking if form data is valid against schema.
  */
-export const WizardAjvResolver = (validationSchema: any, locale: string): any => {
+export const WizardAjvResolver = (validationSchema: Record<string, unknown>, locale: string) => {
   if (!validationSchema) {
     throw new Error("Undefined schema, not able to validate")
   }
   const ajv = new Ajv({ allErrors: true, coerceTypes: true, strict: false })
   addFormats(ajv, { mode: "fast", formats: ["email", "uri", "date-time"], keywords: true })
-  return async (values: any) => {
+  return async (values: Record<string, unknown>) => {
     const validate = ajv.compile(validationSchema)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)
     const valid = validate(cleanedValues)
@@ -64,8 +78,8 @@ export const WizardAjvResolver = (validationSchema: any, locale: string): any =>
         }
       }
       return {
-        errors: parseErrorSchema(validate, false),
         values: {},
+        errors: parseErrorSchema(validate, false),
       }
     }
     return {

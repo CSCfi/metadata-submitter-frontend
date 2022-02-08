@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = false
 
-const wizardAlertSlice: any = createSlice({
+const wizardAlertSlice = createSlice({
   name: "wizardAlert",
   initialState,
   reducers: {

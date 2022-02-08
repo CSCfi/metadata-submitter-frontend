@@ -32,7 +32,9 @@ describe("Unpublished folders list", () => {
       { descriptioni: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub", published: false },
       { descriptioni: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub", published: false },
     ],
-    publishedFolders: [],
+    publishedFolders: [
+      { descriptioni: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub", published: false },
+    ],
     selectedFolder: {
       folderId: "Test folderId",
       name: "Test name",

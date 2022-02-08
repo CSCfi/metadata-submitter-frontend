@@ -301,10 +301,10 @@ const WizardAlert = ({
   parentLocation,
   alertType,
 }: {
-  onAlert: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => any
+  onAlert: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => void
   parentLocation: string
   alertType: string
-}): any => {
+}) => {
   const currentSubmissionType = useAppSelector(state => state.submissionType)
 
   const dispatch = useAppDispatch()

@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = { totalUnpublishedFolders: 0, totalPublishedFolders: 0 }
 
-const totalFoldersSlice: any = createSlice({
+const totalFoldersSlice = createSlice({
   name: "totalFolders",
   initialState,
   reducers: {
-    setTotalFolders: (state, action) => action.payload,
+    setTotalFolders: (_state, action) => action.payload,
     resetTotalFolderss: () => initialState,
   },
 })

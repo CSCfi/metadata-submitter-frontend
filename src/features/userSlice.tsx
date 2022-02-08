@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import _reject from "lodash/reject"
 
 import userAPIService from "services/usersAPI"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { APIResponse, DispatchReducer, ObjectInsideFolderWithTags, ObjectTags } from "types"
 
 type User = {
   id: string
@@ -11,20 +11,28 @@ type User = {
   folders: Array<string>
 }
 
-const initialState: any | User = {}
+const initialState: User = {
+  id: "",
+  name: "",
+  templates: [],
+  folders: [],
+}
 
-const userSlice: any = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action) => action.payload,
-    updateTemplateDisplayTitle: (state, action) => {
-      state.templates.find(
+    setUser: (_state, action) => action.payload,
+    updateTemplateDisplayTitle: (state: { templates: ObjectInsideFolderWithTags[] }, action) => {
+      const selectedTemplate = state.templates.find(
         (item: { accessionId: string }) => item.accessionId === action.payload.accessionId
-      ).tags.displayTitle = action.payload.displayTitle
+      )
+      if (selectedTemplate) {
+        selectedTemplate.tags.displayTitle = action.payload.displayTitle
+      }
     },
     deleteTemplateByAccessionId: (state, action) => {
-      state.templates = _reject(state.templates, template => {
+      state.templates = _reject(state.templates, (template: { accessionId: string }) => {
         return template.accessionId === action.payload
       })
     },
@@ -37,7 +45,7 @@ export default userSlice.reducer
 
 export const fetchUserById =
   (userId: string) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await userAPIService.getUserById(userId)
 
     return new Promise((resolve, reject) => {
@@ -56,23 +64,24 @@ export const fetchUserById =
     })
   }
 
-export const addDraftsToUser = (userId: string, drafts: unknown) => async (): Promise<any> => {
-  const changes = [{ op: "add", path: "/templates/-", value: drafts }]
-  const response = await userAPIService.patchUserById("current", changes)
+export const addDraftsToUser =
+  (userId: string, drafts: Array<ObjectInsideFolderWithTags>) => async (): Promise<APIResponse> => {
+    const changes = [{ op: "add", path: "/templates/-", value: drafts }]
+    const response = await userAPIService.patchUserById("current", changes)
 
-  return new Promise((resolve, reject) => {
-    if (response.ok) {
-      resolve(response)
-    } else {
-      reject(JSON.stringify(response))
-    }
-  })
-}
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }
 
 export const replaceTemplate =
   (index: number, displayTitle: string, accessionId: string) =>
-  async (dispatch: (reducer: any) => void): Promise<any> => {
-    const tags: { displayTitle: string } = { displayTitle: displayTitle }
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+    const tags: ObjectTags = { displayTitle: displayTitle }
 
     const changes = [{ op: "replace", path: `/templates/${index}/tags`, value: tags }]
     const response = await userAPIService.patchUserById("current", changes)

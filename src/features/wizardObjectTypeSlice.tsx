@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const wizardObjectTypeSlice: any = createSlice({
+const wizardObjectTypeSlice = createSlice({
   name: "objectType",
   initialState,
   reducers: {
-    setObjectType: (state, action) => action.payload,
+    setObjectType: (_state, action) => action.payload,
     resetObjectType: () => initialState,
   },
 })

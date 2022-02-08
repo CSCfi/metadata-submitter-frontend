@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit"
 
 import type { FolderDetailsWithId } from "types"
 
-const initialState: null | [] | Array<FolderDetailsWithId> = null
+const initialState: FolderDetailsWithId[] = []
 
-const publishedFoldersSlice: any = createSlice({
+const publishedFoldersSlice = createSlice({
   name: "publishedFolders",
   initialState,
   reducers: {
-    setPublishedFolders: (state, action) => action.payload,
+    setPublishedFolders: (_state, action) => action.payload,
     resetPublishedFolders: () => initialState,
   },
 })

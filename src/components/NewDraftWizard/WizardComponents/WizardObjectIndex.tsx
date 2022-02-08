@@ -144,8 +144,8 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
   const [showSkipLink, setSkipLinkVisible] = useState(false)
   const dispatch = useAppDispatch()
 
-  const handleSkipLink = (event: any, submissionType: string) => {
-    if (event.key === "Enter") {
+  const handleSkipLink = (event: React.SyntheticEvent, submissionType: string) => {
+    if ((event as React.KeyboardEvent).key === "Enter") {
       if (submissionType === ObjectSubmissionTypes.existing) {
         setSkipLinkVisible(false)
       } else {
@@ -154,8 +154,8 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
     }
   }
 
-  const toggleFocusWithEnter = (event: any) => {
-    if (event.key === "Enter") {
+  const toggleFocusWithEnter = (event: React.SyntheticEvent) => {
+    if ((event as React.KeyboardEvent).key === "Enter") {
       dispatch(setFocus())
     }
   }
@@ -219,11 +219,11 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
 /**
  * Render accordion for choosing object type and submission type
  */
-const WizardObjectIndex: React.FC<any> = () => {
+const WizardObjectIndex: React.FC = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
-  const [expandedObjectType, setExpandedObjectType] = useState("")
+  const [expandedObjectType, setExpandedObjectType] = useState<string | boolean>("")
   const [clickedSubmissionType, setClickedSubmissionType] = useState("")
   const [cancelFormOpen, setCancelFormOpen] = useState(false)
 
@@ -234,10 +234,10 @@ const WizardObjectIndex: React.FC<any> = () => {
   const folder = useAppSelector(state => state.submissionFolder)
 
   const savedObjects = folder.metadataObjects
-    ?.map((draft: { schema: any }) => draft.schema)
-    .reduce((acc: { [x: string]: any }, val: string | number) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
+    ?.map((draft: { schema: string }) => draft.schema)
+    .reduce((acc: { [x: string]: number }, val: string | number) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 
-  const handlePanelChange = (panel: any) => (event: any, newExpanded: any) => {
+  const handlePanelChange = (panel: string) => (_event: unknown, newExpanded: boolean) => {
     setExpandedObjectType(newExpanded ? panel : false)
   }
 

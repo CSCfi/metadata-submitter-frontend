@@ -16,7 +16,7 @@ const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
 
 jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: any) => key }),
+  useTranslation: () => ({ t: (key: string) => key }),
 }))
 
 describe("HomePage", () => {

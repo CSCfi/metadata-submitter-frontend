@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined"
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
@@ -9,8 +10,9 @@ import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
+import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
-import { useForm, FormProvider } from "react-hook-form"
+import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
 
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
@@ -33,11 +35,11 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
-import type { FolderDetailsWithId } from "types"
+import type { FolderDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     margin: 0,
     padding: 0,
@@ -67,23 +69,23 @@ const useStyles = makeStyles((theme: any) => ({
 
 type CustomCardHeaderProps = {
   objectType: string
-  currentObject: any
+  currentObject: ObjectDetails
   onClickNewForm: () => void
   onClickClearForm: () => void
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
   onClickCloseDialog: () => void
-  refForm: any
+  refForm: string
 }
 
 type FormContentProps = {
-  resolver: any
-  formSchema: any
-  onSubmit: () => Promise<any>
+  resolver: Resolver<FieldValues, Record<string, unknown>>
+  formSchema: FormObject
+  onSubmit: SubmitHandler<FieldValues>
   objectType: string
   folder: FolderDetailsWithId
-  currentObject: any
+  currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
   closeDialog: () => void
 }
 
@@ -106,7 +108,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const dispatch = useAppDispatch()
 
-  const focusTarget = useRef<any>(null)
+  const focusTarget = useRef<HTMLButtonElement>(null)
   const shouldFocus = useAppSelector(state => state.focus)
 
   useEffect(() => {
@@ -206,10 +208,10 @@ const FormContent = ({
 
   const methods = useForm({ mode: "onBlur", resolver })
 
-  const [currentObjectId, setCurrentObjectId] = useState(currentObject?.accessionId)
+  const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
-  const autoSaveTimer = useRef<any>(null)
+  const autoSaveTimer: { current: NodeJS.Timeout | null } = useRef(null)
   let timer = 0
 
   // Set form default values
@@ -251,7 +253,16 @@ const FormContent = ({
   }
 
   // Check if the form is empty
-  const checkFormCleanedValuesEmpty = (cleanedValues: any) => {
+  const checkFormCleanedValuesEmpty = (cleanedValues: {
+    [x: string]: unknown
+    [x: number]: unknown
+    accessionId?: string
+    lastModified?: string
+    objectType?: string
+    status?: string
+    title?: string
+    submissionType?: string
+  }) => {
     return Object.keys(cleanedValues).length > 0
   }
 
@@ -261,16 +272,16 @@ const FormContent = ({
     }
   }
 
-  const getCleanedValues = () => JSONSchemaParser.cleanUpFormValues(methods.getValues())
+  const getCleanedValues = () => JSONSchemaParser.cleanUpFormValues(methods.getValues()) as ObjectDetails
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
     clearForm ? dispatch(setClearForm(false)) : null
     const clone = cloneDeep(currentObject)
-    const values = JSONSchemaParser.cleanUpFormValues(methods.getValues()) as any
+    const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
 
     if (clone && checkFormCleanedValuesEmpty(values)) {
-      Object.keys(values).forEach(item => (clone[item] = (values as any)[item]))
+      Object.keys(values).forEach(item => (clone[item] = values[item]))
 
       !currentObject.accessionId && currentObjectId
         ? dispatch(
@@ -312,7 +323,7 @@ const FormContent = ({
 
   const resetTimer = () => {
     setDraftAutoSaveAllowed(false)
-    clearInterval(autoSaveTimer.current)
+    clearInterval(autoSaveTimer.current as NodeJS.Timeout)
     timer = 0
   }
 
@@ -343,7 +354,19 @@ const FormContent = ({
   /*
    * Draft save and object patch use both same response handler
    */
-  const patchHandler = (response: any, cleanedValues: any) => {
+  const patchHandler = (
+    response: ApiResponse<unknown>,
+    cleanedValues: {
+      accessionId?: string
+      lastModified?: string
+      objectType?: string
+      status?: string
+      title: string
+      submissionType?: string
+      descriptor?: { studyTitle: string }
+      contacts?: { name: string; mainContact: boolean }[]
+    }
+  ) => {
     if (response.ok) {
       const index = folder.metadataObjects.findIndex(item => item.accessionId === currentObject.accessionId)
       dispatch(
@@ -353,7 +376,7 @@ const FormContent = ({
           index,
           {
             submissionType: ObjectSubmissionTypes.form,
-            displayTitle: getObjectDisplayTitle(objectType, cleanedValues),
+            displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
           },
           ObjectStatus.submitted
         )
@@ -389,8 +412,6 @@ const FormContent = ({
   const handleSaveTemplate = async () => {
     const cleanedValues = getCleanedValues()
 
-    console.log(cleanedValues)
-
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
 
@@ -398,12 +419,12 @@ const FormContent = ({
       const index = templates.findIndex(
         (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
       )
-      const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as any)
+      const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as unknown as ObjectDisplayValues)
 
       if (response.ok) {
         closeDialog()
         dispatch(replaceTemplate(index, displayTitle, currentObject.accessionId))
-          .then(
+          .then(() =>
             dispatch(
               updateStatus({
                 status: ResponseStatus.success,
@@ -412,7 +433,7 @@ const FormContent = ({
               })
             )
           )
-          .catch((error: any) => {
+          .catch(error => {
             dispatch(
               updateStatus({
                 status: ResponseStatus.error,
@@ -463,15 +484,15 @@ const FormContent = ({
     resetTimer()
     const cleanedValues = getCleanedValues()
     try {
-      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId, cleanedValues)
+      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId as string, cleanedValues)
       patchHandler(response, cleanedValues)
 
       // Dispatch fileTypes if object is Run or Analysis
       if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues as any)
+        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues as unknown as FormDataFiles)
         objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
@@ -515,7 +536,7 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any => {
+const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   const { closeDialog } = props
   const classes = useStyles()
   const dispatch = useAppDispatch()
@@ -530,7 +551,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
     error: false,
     helperText: "",
     formSchema: {},
-    validationSchema: {},
+    validationSchema: {} as FormObject,
     isLoading: true,
   })
   const [submitting, setSubmitting] = useState(false)
@@ -540,13 +561,14 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
    */
   useEffect(() => {
     const fetchSchema = async () => {
-      let schema: any = sessionStorage.getItem(`cached_${objectType}_schema`)
+      const schema: string | null = sessionStorage.getItem(`cached_${objectType}_schema`)
+      let parsedSchema: FormObject
 
       if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {
-          schema = response.data
-          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(schema))
+          parsedSchema = response.data
+          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(parsedSchema))
         } else {
           setStates({
             ...states,
@@ -557,15 +579,15 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
           return
         }
       } else {
-        schema = JSON.parse(schema)
+        parsedSchema = JSON.parse(schema)
       }
 
       // Dereference Schema and link AccessionIds to equivalent objects
-      let dereferencedSchema: Promise<any> = await dereferenceSchema(schema)
+      let dereferencedSchema: Promise<FormObject> = await dereferenceSchema(parsedSchema as FormObject)
 
       dereferencedSchema = getLinkedDereferencedSchema(
         currentObject,
-        schema.title.toLowerCase(),
+        parsedSchema.title.toLowerCase(),
         dereferencedSchema,
         folder.metadataObjects,
         analysisAccessionIds
@@ -574,7 +596,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
       setStates({
         ...states,
         formSchema: dereferencedSchema,
-        validationSchema: schema,
+        validationSchema: parsedSchema,
         isLoading: false,
       })
     }
@@ -609,7 +631,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
   /*
    * Submit form with cleaned values and check for response errors
    */
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Record<string, unknown>) => {
     setSubmitting(true)
     const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
 
@@ -623,9 +645,9 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }): any =
   return (
     <Container maxWidth={false} className={classes.container}>
       <FormContent
-        formSchema={states.formSchema}
+        formSchema={states.formSchema as FormObject}
         resolver={WizardAjvResolver(states.validationSchema, locale)}
-        onSubmit={onSubmit as any}
+        onSubmit={onSubmit as SubmitHandler<FieldValues>}
         objectType={objectType}
         folder={folder}
         currentObject={currentObject}

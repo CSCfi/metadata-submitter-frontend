@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography"
 import { makeStyles, withStyles } from "@mui/styles"
 import { get } from "lodash"
 
+import { FormObject, NestedField, ObjectDetails } from "types"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 /*
  * Build object details based on given schema
  */
-const buildDetails = (schema: any, objectValues: any) => {
+const buildDetails = (schema: FormObject, objectValues: ObjectDetails) => {
   try {
     return traverseFields(schema, [], objectValues)
   } catch (error) {
@@ -38,7 +39,7 @@ const buildDetails = (schema: any, objectValues: any) => {
 /*
  * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
  */
-const traverseFields = (object: any, path: string[], objectValues: any, nestedField?: any) => {
+const traverseFields = (object: FormObject, path: string[], objectValues: ObjectDetails, nestedField?: NestedField) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -57,7 +58,7 @@ const traverseFields = (object: any, path: string[], objectValues: any, nestedFi
         return (
           <DetailsSection key={name} name={name} label={label} level={path.length + 1}>
             {Object.keys(properties).map(propertyKey => {
-              const property = properties[propertyKey]
+              const property = properties[propertyKey] as FormObject
 
               return traverseFields(property, [...path, propertyKey], objectValues, nestedField)
             })}
@@ -100,7 +101,7 @@ const DetailsListItem = withStyles(() => ({
   },
 }))(ListItem) as typeof ListItem
 
-const ObjectDetailsListItem = ({ name, label, value }: { name: string; label: string; value: any }) => {
+const ObjectDetailsListItem = ({ name, label, value }: { name: string; label: string; value: string | number }) => {
   return (
     <DetailsListItem data-testid={name}>
       <ListItemText disableTypography primary={`${label}: ${value}`}></ListItemText>
@@ -130,8 +131,8 @@ const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) =
 
 type OneOfFieldProps = {
   path: string[]
-  object: any
-  objectValues: any
+  object: FormObject
+  objectValues: ObjectDetails
 }
 
 const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
@@ -168,14 +169,14 @@ const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
 type CheckboxArrayProps = {
   name: string
   label: string
-  values: any
+  values: string[]
 }
 
 const CheckboxArray = ({ label, values }: CheckboxArrayProps) => {
   return (
     <List>
       <Typography color="primary">{label}</Typography>
-      {values.map((item: any = null) => (
+      {values.map((item: string) => (
         <DetailsListItem key={item} data-testid="checkbox-item">
           <Checkbox checked={true} color="primary" disabled></Checkbox>
           {item}
@@ -186,10 +187,10 @@ const CheckboxArray = ({ label, values }: CheckboxArrayProps) => {
 }
 
 type DetailsArrayProps = {
-  object: any
+  object: FormObject
   path: Array<string>
-  objectValues: any
-  values: any
+  objectValues: ObjectDetails
+  values: Record<string, unknown>[]
 }
 
 const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps) => {
@@ -199,8 +200,7 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
   const label = object.title ?? lastPathItem
   const level = path.length + 1
 
-  const items = traverseValues(object.items)
-
+  const items = traverseValues(object.items) as Record<string, unknown>
   return (
     <div className="array" key={`${name}-array`}>
       <Typography
@@ -211,7 +211,8 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
       >
         {label}
       </Typography>
-      {values.map((field: any, index: number) => {
+
+      {values.map((_field: unknown, index: number) => {
         const [lastPathItem] = path.slice(-1)
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}[${index}]`
@@ -225,7 +226,7 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
                 <OneOfField
                   key={`${name}[${index}]`}
                   path={pathForThisIndex}
-                  object={items}
+                  object={items as FormObject}
                   objectValues={objectValues}
                 />
               </Paper>
@@ -241,7 +242,7 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
 
-                return traverseFields(properties[item], pathForThisIndex, objectValues)
+                return traverseFields(properties[item] as FormObject, pathForThisIndex, objectValues)
               })}
             </Paper>
           </Box>

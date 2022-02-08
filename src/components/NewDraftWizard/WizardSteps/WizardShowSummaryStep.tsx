@@ -22,7 +22,7 @@ import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { ObjectInsideFolderWithTags, ObjectInsideFolderWithTagsBySchema, Schema } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -56,12 +56,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-type Schema = "study" | "schema" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
-
-type GroupedBySchema = {
-  [K in Schema]: Array<ObjectInsideFolderWithTags>
-}
-
 /**
  * Show summary of objects added to folder
  */
@@ -70,7 +64,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const { metadataObjects } = folder
   const objectsArray = useAppSelector(state => state.objectTypesArray)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
-  const groupedObjects: Array<GroupedBySchema> = objectsArray.map((schema: string) => {
+  const groupedObjects: ObjectInsideFolderWithTagsBySchema[] = objectsArray.map((schema: Schema) => {
     return {
       [schema]: metadataObjects.filter(
         (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
@@ -125,7 +119,7 @@ const WizardShowSummaryStep: React.FC = () => {
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>
-        {groupedObjects.map((group: any) => {
+        {groupedObjects.map((group: ObjectInsideFolderWithTagsBySchema) => {
           const schema = Object.keys(group)[0]
           return (
             <List key={schema} aria-label={schema} className={classes.listGroup}>

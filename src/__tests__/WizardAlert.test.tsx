@@ -22,7 +22,7 @@ describe("WizardAlert", () => {
       { location: "footer", types: ["cancel", "save"] },
       { location: "stepper", types: ObjectSubmissionsArray },
     ]
-    alerts.forEach((alert: any) => {
+    alerts.forEach((alert: { location: string; types: string[] }) => {
       alert.types.forEach((type: string) => {
         render(
           <BrowserRouter>

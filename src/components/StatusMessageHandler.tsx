@@ -6,21 +6,24 @@ import Snackbar from "@mui/material/Snackbar"
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
+import { APIResponse } from "types"
 
 type MessageHandlerProps = {
-  response?: any
-  helperText: string
+  response?: APIResponse
+  helperText?: string
   handleClose: (status: boolean) => void
 }
+
+type HandlerRef = ((instance: HTMLDivElement | null) => void) | React.RefObject<HTMLDivElement> | null | undefined
 
 /*
  * Error messages
  */
-const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: any) {
+const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { response, helperText, handleClose } = props
   let message: string
 
-  switch (response.status) {
+  switch (response?.status) {
     case 504:
       message = `Unfortunately we couldn't connect to our server.`
       break
@@ -41,7 +44,7 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandle
 })
 
 // Info messages
-const InfoHandler = React.forwardRef(function InfoHandler(props: MessageHandlerProps, ref: any) {
+const InfoHandler = React.forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { helperText, handleClose } = props
   const defaultMessage = `For some reason, your file is still being saved
   to our database, please wait. If saving doesn't go through in two
@@ -59,13 +62,13 @@ const InfoHandler = React.forwardRef(function InfoHandler(props: MessageHandlerP
 })
 
 // Success messages
-const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHandlerProps, ref: any) {
+const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { response, helperText, handleClose } = props
   let message = ""
   if (response) {
-    switch (response.config.baseURL) {
+    switch (response?.config?.baseURL) {
       case "/drafts": {
-        switch (response.config.method) {
+        switch (response?.config.method) {
           case "patch": {
             message = `Draft updated with accessionid ${response.data.accessionId}`
             break
@@ -101,7 +104,7 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
       }
     }
   } else {
-    message = helperText
+    message = helperText as string
   }
 
   return (
@@ -113,11 +116,11 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
 
 type StatusMessageProps = {
   status: string
-  response?: any
-  helperText: string
+  response?: APIResponse
+  helperText?: string
 }
 
-const Message: React.FC<any> = (props: StatusMessageProps) => {
+const Message = (props: StatusMessageProps) => {
   const { status, response, helperText } = props
   const [open, setOpen] = useState(true)
   const autoHideDuration = 6000

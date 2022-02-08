@@ -2,13 +2,14 @@ import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
+import { AppDispatch } from "store"
 import type { ObjectInsideFolder, ObjectInsideFolderWithTags } from "types"
 import { getObjectDisplayTitle, getOrigObjectType } from "utils"
 
 const transformTemplatesToDrafts = async (
   templateAccessionIds: Array<string>,
   templates: Array<ObjectInsideFolder>,
-  dispatch: (dispatch: (reducer: any) => void) => void
+  dispatch: (dispatch: (reducer: AppDispatch) => void) => void
 ): Promise<Array<ObjectInsideFolderWithTags>> => {
   const userTemplates = templates.map(template => ({
     ...template,
@@ -17,7 +18,7 @@ const transformTemplatesToDrafts = async (
 
   const templateDetails = userTemplates?.filter(item => templateAccessionIds.includes(item.accessionId))
 
-  const draftsArray = [] as any
+  const draftsArray: ObjectInsideFolderWithTags[] = []
   for (let i = 0; i < templateDetails.length; i += 1) {
     try {
       // Get full details of template

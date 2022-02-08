@@ -17,7 +17,7 @@ import { setFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppDispatch } from "hooks"
 import templateAPI from "services/templateAPI"
 
-const FormDialog = (props: { open: boolean; onClose: any }) => {
+const FormDialog = (props: { open: boolean; onClose: () => void }) => {
   const { open, onClose } = props
 
   return (
@@ -27,14 +27,14 @@ const FormDialog = (props: { open: boolean; onClose: any }) => {
   )
 }
 
-const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: string } }): any => {
+const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: string } }) => {
   const { item } = props
   const dispatch = useAppDispatch()
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const menuOpen = Boolean(anchorEl)
 
-  const handleMenuClick = (event: any) => {
+  const handleMenuClick = (event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget)
   }
 

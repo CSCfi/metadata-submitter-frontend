@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
@@ -21,7 +22,7 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     padding: 0,
   },
@@ -42,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     height: "1px",
     overflow: "hidden",
     padding: "0",
-    position: "absolute !important" as any,
+    position: "absolute !important" as "absolute",
     whiteSpace: "nowrap",
     width: "1px",
   },
@@ -97,7 +98,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   }
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
-  const onSubmit = async (data: { fileUpload: any }) => {
+  const onSubmit = async (data: { fileUpload: FileList }) => {
     dispatch(resetStatusDetails())
     setSubmitting(true)
     dispatch(setLoading())

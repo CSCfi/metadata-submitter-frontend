@@ -4,27 +4,32 @@ import { omit } from "lodash"
 import { errorMonitor } from "./errorMonitor"
 
 import { OmitObjectValues } from "constants/wizardObject"
+import { APIResponse } from "types"
 
 const api = create({ baseURL: "/drafts" })
 api.addMonitor(errorMonitor)
 
-const createFromJSON = async (objectType: string, JSONContent: any): Promise<any> => {
+const createFromJSON = async (objectType: string, JSONContent: Record<string, unknown>): Promise<APIResponse> => {
   return await api.post(`/${objectType}`, JSONContent)
 }
 
-const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<any> => {
+const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
-const patchFromJSON = async (objectType: string, accessionId: string, JSONContent: any): Promise<any> => {
+const patchFromJSON = async (
+  objectType: string,
+  accessionId: string,
+  JSONContent: Record<string, unknown>
+): Promise<APIResponse> => {
   return await api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
 }
 
-const getAllObjectsByObjectType = async (objectType: string): Promise<any> => {
+const getAllObjectsByObjectType = async (objectType: string): Promise<APIResponse> => {
   return await api.get(`/${objectType}`)
 }
 
-const deleteObjectByAccessionId = async (objectType: string, accessionId: string): Promise<any> => {
+const deleteObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
   return await api.delete(`/${objectType}/${accessionId}`)
 }
 

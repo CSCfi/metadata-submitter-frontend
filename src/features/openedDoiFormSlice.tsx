@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = false
 
-const openedDoiFormSlice: any = createSlice({
+const openedDoiFormSlice = createSlice({
   name: "openedDoiForm",
   initialState,
   reducers: {
-    setOpenedDoiForm: (state, action) => action.payload,
+    setOpenedDoiForm: (_state, action) => action.payload,
     resetOpenedDoiForm: () => initialState,
   },
 })

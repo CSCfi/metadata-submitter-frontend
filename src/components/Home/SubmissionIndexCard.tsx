@@ -63,7 +63,7 @@ type SubmissionIndexCardProps = {
   fetchPageOnChange?: (page: number) => Promise<void>
 }
 
-const SubmissionIndexCard: React.FC<any> = (props: SubmissionIndexCardProps) => {
+const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
   const classes = useStyles()
   const {
     folderType,
@@ -77,12 +77,12 @@ const SubmissionIndexCard: React.FC<any> = (props: SubmissionIndexCardProps) => 
     fetchPageOnChange,
   } = props
 
-  const handleChangePage = (e: any, page: number) => {
+  const handleChangePage = (_e: unknown, page: number) => {
     fetchPageOnChange ? fetchPageOnChange(page) : null
   }
 
-  const handleItemsPerPageChange = (e: any) => {
-    fetchItemsPerPage ? fetchItemsPerPage(e.target.value) : null
+  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10)) : null
   }
 
   // Renders when there is folder list

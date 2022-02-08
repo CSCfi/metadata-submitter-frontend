@@ -20,7 +20,7 @@ type DraftHeaderProps = {
 /**
  * Render header component for wizards.
  */
-const WizardHeader: React.FC<any> = ({ headerText }: DraftHeaderProps) => {
+const WizardHeader: React.FC<DraftHeaderProps> = ({ headerText }: DraftHeaderProps) => {
   const classes = useStyles()
   return (
     <Typography component="h1" variant="h6" align="center" className={classes.paperTitle}>

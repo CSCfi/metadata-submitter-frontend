@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const SubmissionFolderList: React.FC<any> = () => {
+const SubmissionFolderList: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
@@ -59,7 +59,7 @@ const SubmissionFolderList: React.FC<any> = () => {
     let isMounted = true
     const getFolders = async () => {
       // Fetch either unpublishedFolders OR publishedFolders again if they are not fetched in Home
-      if (unpublishedFolders === null || publishedFolders === null) {
+      if (unpublishedFolders.length === 0 || publishedFolders.length === 0) {
         const response = await folderAPIService.getFolders({
           page: 1,
           per_page: 10,
@@ -73,7 +73,7 @@ const SubmissionFolderList: React.FC<any> = () => {
               : dispatch(setPublishedFolders(response.data.folders))
             location === "drafts"
               ? dispatch(setTotalFolders({ ...totalFolders, totalUnpublishedFolders: response.data.page.totalFolders }))
-              : setTotalFolders({ ...totalFolders, totalPublishedFolders: response.data.page.totalFolders })
+              : dispatch(setTotalFolders({ ...totalFolders, totalPublishedFolders: response.data.page.totalFolders }))
           } else {
             dispatch(
               updateStatus({
@@ -91,7 +91,7 @@ const SubmissionFolderList: React.FC<any> = () => {
     return () => {
       isMounted = false
     }
-  }, [dispatch, location, publishedFolders, totalFolders, unpublishedFolders])
+  }, [location])
 
   // Fire when user selects an option from "Items per page"
   const handleFetchItemsPerPage = async (numberOfItems: number) => {

@@ -24,7 +24,7 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { FolderRow, ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -39,8 +39,8 @@ const useStyles = makeStyles(theme => ({
 interface SelectedFolder {
   folderId: string
   folderTitle: string
-  allObjects: any[]
-  originalFolderData: any
+  allObjects: FolderRow[]
+  originalFolderData: Record<string, unknown>
   published: boolean
 }
 
@@ -66,22 +66,14 @@ const SelectedFolderDetails: React.FC = () => {
   useEffect(() => {
     let isMounted = true
 
-    const objectsArr: {
-      accessionId: any
-      title: string
-      objectType: string
-      submissionType: any // Fallback for 'Form'. Used in drafts
-      status: string
-      lastModified: any
-      objectData: any
-    }[] = []
+    const objectsArr: FolderRow[] = []
 
-    const handleObject = async (draft: boolean, objectType: string, objectInFolder: any) => {
+    const handleObject = async (draft: boolean, objectType: string, objectInFolder: ObjectInsideFolderWithTags) => {
       const service = draft ? draftAPIService : objectAPIService
       const response = await service.getObjectByAccessionId(objectType, objectInFolder.accessionId)
 
       if (response.ok) {
-        const objectDetails = {
+        const objectDetails: FolderRow = {
           accessionId: objectInFolder.accessionId,
           title: getItemPrimaryText(objectInFolder),
           objectType,
@@ -172,7 +164,7 @@ const SelectedFolderDetails: React.FC = () => {
     if (confirm) {
       dispatch(publishFolderContent(currentFolder))
         .then(() => resetDispatch())
-        .catch((error: any) => {
+        .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,

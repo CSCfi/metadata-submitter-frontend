@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState: [] | Array<number> = []
+const initialState: Array<number> = []
 
-const openedRowsSlice: any = createSlice({
+const openedRowsSlice = createSlice({
   name: "objectsArraySlice",
   initialState,
   reducers: {

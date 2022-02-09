@@ -131,6 +131,9 @@ const cleanUpFormValues = (data: unknown) => {
   return traverseFormValuesForCleanUp(cleanedData)
 }
 
+// Array is populated in traverseFields method.
+const integerFields: Array<string> = []
+
 const traverseFormValuesForCleanUp = (data: Record<string, unknown>) => {
   Object.keys(data).forEach(key => {
     const property = data[key] as Record<string, unknown> | string | null
@@ -143,7 +146,11 @@ const traverseFormValuesForCleanUp = (data: Record<string, unknown>) => {
     }
     if (property === "") {
       delete data[key]
-    } else if (typeof property === "string" && !isNaN(Number(data[key])) && key !== "telephoneNumber") {
+    }
+    // Integer typed fields are considered as string like ID's which are numbers.
+    // Therefore these fields need to be handled as string in the form and cast as number
+    // for backend operations. Eg. "1234" is converted to 1234 so it passes backend validation
+    else if (integerFields.indexOf(key) > -1) {
       data[key] = Number(data[key])
     }
   })
@@ -275,6 +282,10 @@ const traverseFields = (
       )
     }
     case "integer": {
+      // List fields with integer type in schema. List is used as helper when cleaning up fields for backend.
+      const fieldName = name.split(".").pop()
+      if (fieldName && integerFields.indexOf(fieldName) < 0) integerFields.push(fieldName)
+
       return <FormTextField key={name} name={name} label={label} required={required} description={description} />
     }
     case "number": {

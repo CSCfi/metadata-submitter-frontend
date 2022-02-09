@@ -1,62 +1,31 @@
 import React from "react"
 
-// import FolderIcon from "@mui/icons-material/Folder"
-// import FolderOpenIcon from "@mui/icons-material/FolderOpen"
-// import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
-import CardContent from "@mui/material/CardContent"
-import CardHeader from "@mui/material/CardHeader"
-// import Link from "@mui/material/Link"
-// import List from "@mui/material/List"
-// import ListItem from "@mui/material/ListItem"
-// import ListItemIcon from "@mui/material/ListItemIcon"
-// import ListItemText from "@mui/material/ListItemText"
-// import Paper from "@mui/material/Paper"
-// import Table from "@mui/material/Table"
-// import TableBody from "@mui/material/TableBody"
-// import TableCell from "@mui/material/TableCell"
-// import TableContainer from "@mui/material/TableContainer"
-// import TableHead from "@mui/material/TableHead"
-// import TableRow from "@mui/material/TableRow"
-// import TextField from "@mui/material/TextField"
+import DeleteIcon from "@mui/icons-material/Delete"
+import EditIcon from "@mui/icons-material/Edit"
+import MuiCard from "@mui/material/Card"
+import MuiCardContent from "@mui/material/CardContent"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
-import { DataGrid } from "@mui/x-data-grid"
-// import { Link as RouterLink } from "react-router-dom"
+import { DataGrid, GridRowParams, GridActionsCellItem } from "@mui/x-data-grid"
+import { useNavigate } from "react-router-dom"
 
-// import { FolderSubmissionStatus } from "constants/wizardFolder"
-import type { FolderDetailsWithId } from "types"
-import { Pagination } from "utils"
+import { setFolder } from "features/wizardSubmissionFolderSlice"
+import { useAppDispatch } from "hooks"
+import folderAPIService from "services/folderAPI"
+import type { FolderRow } from "types"
+import { Pagination, pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    border: "none",
-    padding: theme.spacing(0),
-  },
-  cardTitle: {
-    fontSize: "0.5em",
-    padding: 0,
-    marginTop: theme.spacing(1),
-  },
-  cardContent: {
-    flexGrow: 1,
-    padding: 0,
-  },
-  submissionsListItems: {
-    border: `1px solid ${theme.palette.secondary.main}`,
-    borderRadius: 3,
-    margin: theme.spacing(1),
-    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-    alignItems: "flex-start",
-    color: theme.palette.common.black,
-  },
-  submissionsListIcon: {
-    minWidth: 35,
-  },
+const Card = styled(MuiCard)(() => ({
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  border: "none",
+  padding: 0,
+}))
+
+const CardContent = styled(MuiCardContent)(() => ({
+  flexGrow: 1,
+  padding: 0,
 }))
 
 const DataTable = styled(DataGrid)(({ theme }) => ({
@@ -74,63 +43,104 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-row": {
     border: `1px solid ${theme.palette.secondary.light}`,
   },
+  "& .MuiDataGrid-cell--withRenderer": {
+    width: "100%",
+    maxWidth: "none !important",
+  },
+  "& .MuiDataGrid-actionsCell": {
+    color: theme.palette.primary.main,
+    marginRight: "0.625rem",
+  },
 }))
 
 type SubmissionIndexCardProps = {
   folderType: string
-  folders: Array<FolderDetailsWithId>
-  rows: Array<any>
+  rows: Array<FolderRow>
   location?: string
   page?: number
   itemsPerPage?: number
   totalItems?: number
   fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
   fetchPageOnChange?: (page: number, submissionType: string) => Promise<void>
+  onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    sortable: false,
-    width: 310,
-  },
-  {
-    field: "dateCreated",
-    headerName: "Date created",
-    width: 250,
-  },
-  {
-    field: "lastModified",
-    headerName: "Last modified by",
-    width: 250,
-  },
-  {
-    field: "cscProject",
-    headerName: "CSC Project",
-    width: 250,
-  },
-]
 
 const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
-  const classes = useStyles()
-  const {
-    folderType,
-    folders,
-    // location = "",
-    page,
-    itemsPerPage,
-    totalItems,
-    fetchItemsPerPage,
-    fetchPageOnChange,
-    rows,
-  } = props
+  const dispatch = useAppDispatch()
+  const columns = [
+    {
+      field: "name",
+      headerName: "Name",
+      sortable: false,
+      width: 310,
+    },
+    {
+      field: "dateCreated",
+      headerName: "Date created",
+      width: 250,
+    },
+    {
+      field: "lastModifiedBy",
+      headerName: "Last modified by",
+      width: 250,
+    },
+    {
+      field: "cscProject",
+      headerName: "CSC Project",
+      width: 250,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params: GridRowParams) => [
+        <div key={params.id}>
+          <GridActionsCellItem
+            icon={<EditIcon color="primary" />}
+            onClick={e => handleEditSubmission(e, params.id)}
+            label="Edit"
+            showInMenu
+          />
+        </div>,
+        <div key={params.id}>
+          <GridActionsCellItem
+            icon={<DeleteIcon color="primary" />}
+            onClick={e => {
+              handleDeleteSubmission(e, params.id)
+            }}
+            label="Delete"
+            showInMenu
+          />
+        </div>,
+      ],
+    },
+  ]
+
+  const { folderType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
+    props
+
+  const navigate = useNavigate()
+
+  const handleEditSubmission = async (e, id) => {
+    e.stopPropagation()
+    const response = await folderAPIService.getFolderById(id)
+    dispatch(setFolder(response.data))
+    navigate({
+      pathname: pathWithLocale(`newdraft/${id}`),
+      search: `step=0`,
+    })
+  }
+
+  const handleDeleteSubmission = async (e, id) => {
+    e.stopPropagation()
+    onDeleteSubmission ? onDeleteSubmission(id, folderType) : null
+  }
 
   const handleChangePage = (_e: unknown, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page) : null
+    fetchPageOnChange ? fetchPageOnChange(page, folderType) : null
   }
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10)) : null
+    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), folderType) : null
   }
 
   const DataGridPagination = () =>
@@ -164,24 +174,14 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
 
   // Renders when there is no folders in the list
   const EmptyList = () => (
-    <CardContent className={classes.cardContent}>
+    <CardContent>
       <Typography align="center" variant="body2">
         Currently there are no {folderType} submissions
       </Typography>
     </CardContent>
   )
 
-  return (
-    <Card className={classes.card} variant="outlined">
-      <CardHeader
-        // title={folderType === FolderSubmissionStatus.published ? "Published Submissions" : "Draft Submissions"}
-        titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        className={classes.cardTitle}
-      />
-      {/* <TextField sx={{ width: "12vw", alignItem: "right" }} /> */}
-      {folders?.length > 0 ? <FolderList /> : <EmptyList />}
-    </Card>
-  )
+  return <Card variant="outlined">{rows.length > 0 ? <FolderList /> : <EmptyList />}</Card>
 }
 
 export default SubmissionIndexCard

@@ -145,8 +145,8 @@ const SubmissionFolderList: React.FC = () => {
   const Submissions = () => (
     <Grid item xs={12} className={classes.tableCard}>
       <SubmissionIndexCard
+        rows={[]}
         folderType={location === "drafts" ? FolderSubmissionStatus.unpublished : FolderSubmissionStatus.published}
-        folders={location === "drafts" ? unpublishedFolders : publishedFolders}
         location={location}
         page={page}
         itemsPerPage={itemsPerPage}

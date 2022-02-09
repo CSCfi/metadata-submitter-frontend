@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined"
-import { Theme } from "@mui/material"
+import { CustomTheme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Avatar from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
@@ -22,7 +22,7 @@ type ErrorTypeProps = {
   errorType: string
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme: CustomTheme) => ({
   errorContainer: {
     width: "100%",
     marginTop: theme.spacing(10),

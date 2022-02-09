@@ -24,7 +24,7 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
 import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
-import type { FolderRow, ObjectInsideFolderWithTags } from "types"
+import type { OldFolderRow, ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 interface SelectedFolder {
   folderId: string
   folderTitle: string
-  allObjects: FolderRow[]
+  allObjects: OldFolderRow[]
   originalFolderData: Record<string, unknown>
   published: boolean
 }
@@ -66,14 +66,14 @@ const SelectedFolderDetails: React.FC = () => {
   useEffect(() => {
     let isMounted = true
 
-    const objectsArr: FolderRow[] = []
+    const objectsArr: OldFolderRow[] = []
 
     const handleObject = async (draft: boolean, objectType: string, objectInFolder: ObjectInsideFolderWithTags) => {
       const service = draft ? draftAPIService : objectAPIService
       const response = await service.getObjectByAccessionId(objectType, objectInFolder.accessionId)
 
       if (response.ok) {
-        const objectDetails: FolderRow = {
+        const objectDetails: OldFolderRow = {
           accessionId: objectInFolder.accessionId,
           title: getItemPrimaryText(objectInFolder),
           objectType,

@@ -19,6 +19,7 @@ const getFolderById = async (folderId: string): Promise<APIResponse> => {
 const patchFolderById = async (folderId: string, changes: Record<string, unknown>[]): Promise<APIResponse> => {
   return await api.patch(`/${folderId}`, changes)
 }
+
 const deleteFolderById = async (folderId: string): Promise<APIResponse> => {
   return await api.delete(`/${folderId}`)
 }

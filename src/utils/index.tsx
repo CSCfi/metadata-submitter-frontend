@@ -8,6 +8,7 @@ import TableFooter from "@mui/material/TableFooter"
 import MuiTablePagination from "@mui/material/TablePagination"
 import TableRow from "@mui/material/TableRow"
 import { uniq } from "lodash"
+import moment from "moment"
 import { useLocation } from "react-router-dom"
 
 import { Locale } from "constants/locale"
@@ -139,13 +140,17 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   "& > span:first-of-type": {
-    flexShrink: 0,
+    textAlign: "center",
   },
   "& nav": {
     marginLeft: "3.25rem",
     border: `1px solid ${theme.palette.secondary.light}`,
+    "& li": {
+      margin: "0 0.5rem",
+    },
     "& li:first-of-type, li:last-of-type": {
       border: `1px solid ${theme.palette.secondary.light}`,
+      margin: 0,
     },
   },
   "& .MuiPaginationItem-root": {
@@ -177,16 +182,15 @@ type TablePaginationActionsType = {
   count: number
   page: number
   rowsPerPage: number
-  onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void
+  onPageChange: (event: null, newPage: number) => void
 }
-const PaginationActions = ({ count, page, rowsPerPage, onPageChange }: any) => {
+
+const PaginationActions = ({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsType): ReactElement => {
   const totalPages = Math.ceil(count / rowsPerPage)
 
-  const handleChange = (e, val) => {
-    onPageChange(e, val - 1)
-  type PaginationButtonEvent = React.MouseEvent<HTMLButtonElement>
+  const handleChange = (e: React.ChangeEvent<unknown>, val: number) => {
+    onPageChange(null, val - 1)
   }
-
   return (
     <TablePaginationActions>
       <span aria-label="current page" data-testid="page info">
@@ -278,4 +282,10 @@ export const getNewUniqueFileTypes = (
     return objectWithFileTypes
   }
   return null
+}
+
+// Convert Unix timestamp to Date
+export const getConvertedDate = (timestamp: number): string => {
+  const convertedDate = !isNaN(timestamp) ? moment.unix(timestamp).format("DD MMM, YYYY") : "Null"
+  return convertedDate
 }

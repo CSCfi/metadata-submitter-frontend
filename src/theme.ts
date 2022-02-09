@@ -172,7 +172,6 @@ let CSCtheme = createTheme({
     },
     "& .MuiTypography-root": {
       margin: defaultTheme.spacing(1),
-      ...defaultTheme.typography.subtitle1,
       fontWeight: "bold",
     },
     "& .MuiTypography-h2": {

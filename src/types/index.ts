@@ -29,7 +29,7 @@ export type ObjectDetails = {
   submissionType: string
 }
 
-export type FolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
+export type OldFolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
 
 export type FolderId = {
   folderId: string
@@ -53,6 +53,7 @@ export type ObjectInsideFolderWithTagsBySchema = { [schema: string]: ObjectInsid
 export type FolderDetails = {
   name: string
   description: string
+  dateCreated?: number
   published: boolean
   drafts: Array<ObjectInsideFolderWithTags>
   metadataObjects: Array<ObjectInsideFolderWithTags>
@@ -60,6 +61,14 @@ export type FolderDetails = {
 }
 
 export type FolderDetailsWithId = FolderId & FolderDetails
+
+export type FolderRow = {
+  id: string
+  name: string
+  dateCreated: string
+  lastModifiedBy: string
+  cscProject: string
+}
 
 export type FolderDataFromForm = {
   name: string

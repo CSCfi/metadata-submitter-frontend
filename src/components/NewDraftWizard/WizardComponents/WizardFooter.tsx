@@ -66,7 +66,7 @@ const WizardFooter: React.FC = () => {
 
   const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
     if (alertWizard && alertType === "cancel") {
-      dispatch(deleteFolderAndContent(folder))
+      dispatch(deleteFolderAndContent(folder.folderId))
         .then(() => resetDispatch())
         .catch(error => {
           dispatch(

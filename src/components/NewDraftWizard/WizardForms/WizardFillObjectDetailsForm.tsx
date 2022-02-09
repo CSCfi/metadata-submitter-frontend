@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined"
-import { Theme } from "@mui/material"
+import { CustomTheme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
@@ -39,7 +39,7 @@ import type { FolderDetailsWithId, FormDataFiles, FormObject, ObjectDetails, Obj
 import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme: CustomTheme) => ({
   container: {
     margin: 0,
     padding: 0,

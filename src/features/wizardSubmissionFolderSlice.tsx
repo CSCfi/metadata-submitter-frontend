@@ -242,29 +242,16 @@ export const publishFolderContent =
   }
 
 export const deleteFolderAndContent =
-  (folder: FolderDetailsWithId): (() => Promise<APIResponse | undefined>) =>
+  (folderId: string): (() => Promise<APIResponse | undefined>) =>
   async () => {
-    let message = ""
-    if (folder) {
-      if (folder.metadataObjects) {
-        await Promise.all(
-          folder.metadataObjects.map(async object => {
-            const response = await objectAPIService.deleteObjectByAccessionId(object.schema, object.accessionId)
-            if (!response.ok) message = `Couldn't delete object with accessionId ${object.accessionId}`
-          })
-        )
+    const response = await folderAPIService.deleteFolderById(folderId)
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        resolve(response)
+      } else {
+        reject({ response: JSON.stringify(response) })
       }
-
-      const response = await folderAPIService.deleteFolderById(folder.folderId)
-      if (!response.ok) message = `Couldn't delete folder with id ${folder.folderId}`
-      return new Promise((resolve, reject) => {
-        if (response.ok) {
-          resolve(response)
-        } else {
-          reject({ response: JSON.stringify(response), message: message })
-        }
-      })
-    }
+    })
   }
 
 export const addDoiInfoToFolder =

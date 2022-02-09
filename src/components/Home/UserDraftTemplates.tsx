@@ -20,7 +20,7 @@ import UserDraftTemplateActions from "./UserDraftTemplateActions"
 import { setTemplateAccessionIds } from "features/templatesSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { ObjectInsideFolderWithTags } from "types"
-import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText, Pagination } from "utils"
+import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -103,18 +103,6 @@ const UserDraftTemplates: React.FC = () => {
 
     const schema = Object.keys(draft)[0]
     const [open, setOpen] = useState(true)
-    // Control Pagination
-    const [page, setPage] = useState(0)
-    const [itemsPerPage, setItemsPerPage] = useState(10)
-
-    const handleChangePage = (_e: unknown, page: number) => {
-      setPage(page)
-    }
-
-    const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setItemsPerPage(parseInt(e.target.value, 10))
-      setPage(0)
-    }
 
     return (
       <FormControl key={schema} className={classes.formControl} data-testid={`form-${schema}`}>
@@ -127,7 +115,7 @@ const UserDraftTemplates: React.FC = () => {
 
         <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
           {draft[schema]
-            .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
+            // .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
             .map((item: ObjectInsideFolderWithTags) => {
               return (
                 <Grid
@@ -163,13 +151,13 @@ const UserDraftTemplates: React.FC = () => {
               )
             })}
 
-          <Pagination
+          {/* <Pagination
             totalNumberOfItems={draft[schema].length}
             page={page}
             itemsPerPage={itemsPerPage}
-            handleChangePage={handleChangePage}
+            // handleChangePage={handleChangePage}
             handleItemsPerPageChange={handleItemsPerPageChange}
-          />
+          /> */}
         </Collapse>
       </FormControl>
     )

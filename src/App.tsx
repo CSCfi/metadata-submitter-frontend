@@ -8,7 +8,6 @@ import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
-import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
@@ -166,14 +165,7 @@ const App: React.FC = () => {
             </Container>
           }
         />
-        <Route
-          path={setPath("home/drafts")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SubmissionFolderList />
-            </Container>
-          }
-        />
+
         <Route
           path={setPath("home/drafts/:folderId")}
           element={
@@ -182,14 +174,7 @@ const App: React.FC = () => {
             </Container>
           }
         />
-        <Route
-          path={setPath("home/published")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SubmissionFolderList />
-            </Container>
-          }
-        />
+
         <Route
           path={setPath("home/published/:folderId")}
           element={

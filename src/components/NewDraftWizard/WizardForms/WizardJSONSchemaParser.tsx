@@ -35,14 +35,13 @@ import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "re
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
-import CSCtheme from "theme"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
 import { pathToName, traverseValues, getPathName } from "utils/JSONSchemaUtils"
 
 /*
  * Highlight style for required fields
  */
-const highlightStyle = (theme: typeof CSCtheme) => {
+const highlightStyle = theme => {
   return {
     borderColor: theme.palette.primary.main,
     borderWidth: 2,

@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 
-import BadgeUnstyled from "@mui/base/BadgeUnstyled"
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded"
 import MuiAccordion from "@mui/material/Accordion"
 import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary from "@mui/material/AccordionSummary"
+import Badge from "@mui/material/Badge"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
@@ -121,7 +121,7 @@ const ObjectCountBadge = withStyles(theme => ({
     padding: theme.spacing(0, 1),
     borderRadius: "50%",
   },
-}))(BadgeUnstyled)
+}))(Badge)
 
 type SubmissionTypeListProps = {
   handleSubmissionTypeChange: (submissionType: string) => void

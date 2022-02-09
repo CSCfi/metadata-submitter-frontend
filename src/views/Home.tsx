@@ -22,10 +22,10 @@ import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
 import { fetchUserById } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetFolder } from "features/wizardSubmissionFolderSlice"
+import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
-import { pathWithLocale } from "utils"
+import { getConvertedDate, pathWithLocale } from "utils"
 
 const FrontPageContainer = styled(Container)(() => ({
   display: "flex",
@@ -63,17 +63,17 @@ const Home: React.FC = () => {
   const unpublishedFoldersRows = unpublishedFolders?.map(item => ({
     id: item.folderId,
     name: item.name,
-    dateCreated: item.dateCreated,
-    edit: "",
-    publish: "",
+    dateCreated: item.dateCreated ? getConvertedDate(item.dateCreated) : "",
+    lastModifiedBy: "TBA",
+    cscProject: "TBA",
   }))
 
   const publishedFoldersRows = publishedFolders?.map(item => ({
     id: item.folderId,
     name: item.name,
-    dateCreated: item.dateCreated,
-    edit: "",
-    publish: "",
+    dateCreated: item.dateCreated ? getConvertedDate(item.dateCreated) : "",
+    lastModifiedBy: "TBA",
+    cscProject: "TBA",
   }))
 
   const totalFolders = useAppSelector(state => state.totalFolders)
@@ -98,6 +98,7 @@ const Home: React.FC = () => {
         per_page: 5,
         published: false,
       })
+
       const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: true })
 
       if (isMounted) {
@@ -183,6 +184,31 @@ const Home: React.FC = () => {
     }
   }
 
+  const handleDeleteSubmission = (submissionId: string, submissionType: string) => {
+    dispatch(deleteFolderAndContent(submissionId))
+      .then(() => {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "The submission has been deleted successfully",
+          })
+        )
+        handleFetchPageOnChange(
+          submissionType === FolderSubmissionStatus.unpublished ? draftPage : publishedPage,
+          submissionType
+        )
+      })
+      .catch(error => {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "",
+          })
+        )
+      })
+  }
+
   const [value, setValue] = React.useState(0)
 
   const handleChange = (event, newValue) => {
@@ -226,7 +252,6 @@ const Home: React.FC = () => {
             <Grid item xs={12}>
               <SubmissionIndexCard
                 folderType={FolderSubmissionStatus.unpublished}
-                folders={unpublishedFolders}
                 location="drafts"
                 page={draftPage}
                 itemsPerPage={draftItemsPerPage}
@@ -234,6 +259,7 @@ const Home: React.FC = () => {
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}
                 rows={unpublishedFoldersRows}
+                onDeleteSubmission={handleDeleteSubmission}
               />
             </Grid>
           )}
@@ -241,7 +267,6 @@ const Home: React.FC = () => {
             <Grid item xs={12}>
               <SubmissionIndexCard
                 folderType={FolderSubmissionStatus.published}
-                folders={publishedFolders}
                 location="published"
                 page={publishedPage}
                 itemsPerPage={publishedItemsPerPage}
@@ -249,6 +274,7 @@ const Home: React.FC = () => {
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}
                 rows={publishedFoldersRows}
+                onDeleteSubmission={handleDeleteSubmission}
               />
             </Grid>
           )}

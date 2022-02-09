@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Drag & drop file upload #653
 - Date picker #559
 - New login page #573
 - Autocomplete name field in DOI form #529

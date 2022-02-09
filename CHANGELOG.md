@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated Node.js version in GitHub workflows and Dockerfile #655
 - Disallow use of any-type #624
 
   #### Added

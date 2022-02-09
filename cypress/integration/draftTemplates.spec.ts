@@ -151,7 +151,6 @@ describe("draft selections and templates", function () {
             .should("be.visible")
             .then($button => $button.click())
 
-          console.log("$el :>> ", $el)
           // Check the length of the items left
           const itemLength = $el - 1
           if ($el > 10) {

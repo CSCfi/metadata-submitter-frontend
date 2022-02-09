@@ -12,7 +12,7 @@ Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for mo
 
 Requirements:
 
-- Node 14+
+- Node 16+
 - Optionally Docker + docker-compose
 - Backend
 

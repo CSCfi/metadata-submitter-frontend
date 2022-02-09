@@ -95,7 +95,7 @@ describe("Home e2e", function () {
 
     cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
     cy.get("input[data-testid='descriptor.studyTitle']").type(" edited")
-    cy.get("button[type=button]").contains("Update").click()
+    cy.get("button[type=submit]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
 
     //  Publish test folder from draft folders list

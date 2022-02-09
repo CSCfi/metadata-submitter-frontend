@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl"
 import LinearProgress from "@mui/material/LinearProgress"
 import TextField from "@mui/material/TextField"
 import { makeStyles } from "@mui/styles"
+import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -54,6 +55,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: "#FFF",
     color: theme.palette.primary.main,
   },
+  dropzone: {
+    flex: 1,
+    backgroundColor: theme.palette.primary.light,
+    border: "2px dashed #51A808",
+  },
 }))
 
 /*
@@ -69,7 +75,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   const {
     register,
     watch,
-    formState: { errors },
+    setValue,
+    formState: { errors, isValidating },
     handleSubmit,
     reset,
   } = useForm({ mode: "onChange" })
@@ -92,10 +99,26 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     }
   }, [currentObject, watchFile])
 
+  const onDrop = async (acceptedFiles: File[]) => {
+    const filelist = new DataTransfer()
+    // Accept all file types. Validation is done in file upload form by React Hook Form.
+    filelist.items.add(acceptedFiles[0])
+    setValue("fileUpload", filelist.files, { shouldValidate: true })
+  }
+
+  const { getRootProps, isDragActive } = useDropzone({
+    maxFiles: 1,
+    noClick: true,
+    noKeyboard: true,
+    onDrop: onDrop,
+  })
+
   const resetForm = () => {
     reset()
     setPlaceHolder("Name")
   }
+
+  type FileUpload = { fileUpload: FileList }
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
   const onSubmit = async (data: { fileUpload: FileList }) => {
@@ -170,15 +193,15 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       variant="contained"
       className={classes.submitButton}
       size="small"
-      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null}
-      onClick={handleSubmit(onSubmit)}
+      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || isValidating}
+      onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
     >
       {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
     </Button>
   )
 
   return (
-    <Container maxWidth={false} className={classes.container}>
+    <Container maxWidth={false} className={isDragActive ? classes.dropzone : classes.container} {...getRootProps()}>
       <CardHeader
         title="Upload XML File"
         titleTypographyProps={{ variant: "inherit" }}
@@ -229,6 +252,12 @@ const WizardUploadObjectXMLForm: React.FC = () => {
               })}
             />
           </div>
+          {/* Helper text for selecting / submitting file */}
+          {!watchFile || watchFile.length === 0 || errors.fileUpload != null ? (
+            <p>Choose a file or drag it here.</p>
+          ) : (
+            <p>Use Submit button to upload the file.</p>
+          )}
           {/* Errors */}
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
           {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}

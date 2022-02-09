@@ -39,7 +39,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("@studyTitle", { timeout: 10000 }).type(" 2")
 
     cy.get("@studyTitle", { timeout: 30000 }).should("have.value", "Test title 2")
-    cy.get("button[type=button]").contains("Update", { timeout: 10000 }).click()
+    cy.get("button[type=submit]").contains("Update", { timeout: 10000 }).click()
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check the submitted object has correctly updated displayTitle

@@ -1,3 +1,5 @@
+import { FormInput } from "../support/types"
+
 describe("Populate form and render form elements by object data", function () {
   beforeEach(() => {
     cy.task("resetDb")
@@ -36,7 +38,16 @@ describe("Populate form and render form elements by object data", function () {
     // Edit saved submission
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("[data-testid='title']").should("have.value", testData.title)
-    cy.get("[data-testid='title']", { timeout: 10000 }).focus().type(" edited").blur()
+
+    // Try to submit invalid form
+    cy.get("[data-testid='title']").clear()
+    cy.get("button[type=submit]").contains("Update").click()
+    cy.get<FormInput[]>("[data-testid='title']").then($input => {
+      expect($input[0].validationMessage).to.contain("Please fill")
+    })
+
+    // Edit form
+    cy.get("[data-testid='title']", { timeout: 10000 }).focus().type(`${testData.title} edited`).blur()
     cy.get("[data-testid='title']").should("have.value", `${testData.title} edited`)
     cy.get("[data-testid='sampleName.taxonId']").should("have.value", testData.taxonId)
     cy.get("select[data-testid='sampleData']").should("have.value", testData.sampleData1)
@@ -45,7 +56,7 @@ describe("Populate form and render form elements by object data", function () {
     // Change Sample Data Type to Non Human Sample
     cy.get("select[data-testid='sampleData']").select(testData.sampleData2)
     cy.get("[data-testid='sampleData.dataDescription']").type(testData.sampleTypeDescription)
-    cy.get("button[type=button]").contains("Update").click()
+    cy.get("button[type=submit]").contains("Update").click()
     cy.get("div[role=alert]").contains("Object updated")
 
     // Check Sample form renders Non Human Sample now

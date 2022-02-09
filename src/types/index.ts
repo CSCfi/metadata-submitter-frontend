@@ -91,7 +91,6 @@ export type FormObject = {
 }
 
 export type ConnectFormMethods = {
-  errors: FieldErrors
   watch: UseFormWatch<FieldValues>
   getValues: UseFormGetValues<FieldValues>
   setError: UseFormSetError<FieldValues>
@@ -106,6 +105,7 @@ export type ConnectFormMethods = {
   control: Control<FieldValues, object>
   register: UseFormRegister<FieldValues>
   setFocus: UseFormSetFocus<FieldValues>
+  errors?: FieldErrors
 }
 
 export type ConnectFormChildren = { children: (...args: ConnectFormMethods[]) => React.ReactElement }

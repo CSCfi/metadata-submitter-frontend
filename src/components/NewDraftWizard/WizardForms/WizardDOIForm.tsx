@@ -101,7 +101,11 @@ const DOIForm = ({ formId }: { formId: string }) => {
   }
   return (
     <FormProvider {...methods}>
-      <form className={classes.form} id={formId} onSubmit={methods.handleSubmit(onSubmit)}>
+      <form
+        className={classes.form}
+        id={formId}
+        onSubmit={methods.handleSubmit(async data => onSubmit(data as DoiFormDetails))}
+      >
         <div>
           {Object.keys(dataciteSchema)?.length > 0 ? JSONSchemaParser.buildFields(dataciteSchema as FormObject) : null}
         </div>

@@ -109,7 +109,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     <React.Fragment>
       <form
         className={classes.root}
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(async data => onSubmit(data as FolderDataFromForm))}
         ref={createFolderFormRef as RefObject<HTMLFormElement>}
       >
         <Controller

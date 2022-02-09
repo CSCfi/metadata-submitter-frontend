@@ -121,7 +121,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   type FileUpload = { fileUpload: FileList }
 
   const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
-  const onSubmit = async (data: { fileUpload: FileList }) => {
+  const onSubmit = async (data: FileUpload) => {
     dispatch(resetStatusDetails())
     setSubmitting(true)
     dispatch(setLoading())
@@ -212,7 +212,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
         action={submitButton}
       />
       {/* React Hook Form */}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(async data => onSubmit(data as FileUpload))}>
         <FormControl className={classes.root}>
           <div className={classes.fileField}>
             <TextField

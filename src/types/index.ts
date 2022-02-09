@@ -65,7 +65,7 @@ export type FolderDetailsWithId = FolderId & FolderDetails
 export type FolderRow = {
   id: string
   name: string
-  dateCreated: string
+  dateCreated?: number
   lastModifiedBy: string
   cscProject: string
 }

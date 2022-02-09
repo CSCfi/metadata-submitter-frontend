@@ -6,14 +6,21 @@ import MuiCard from "@mui/material/Card"
 import MuiCardContent from "@mui/material/CardContent"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
-import { DataGrid, GridRowParams, GridActionsCellItem } from "@mui/x-data-grid"
+import {
+  DataGrid,
+  GridRowParams,
+  GridValueGetterParams,
+  GridValueFormatterParams,
+  GridActionsCellItem,
+  GridCellValue,
+} from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
 
 import { setFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
 import type { FolderRow } from "types"
-import { Pagination, pathWithLocale } from "utils"
+import { getConvertedDate, Pagination, pathWithLocale } from "utils"
 
 const Card = styled(MuiCard)(() => ({
   height: "100%",
@@ -78,6 +85,16 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
       field: "dateCreated",
       headerName: "Date created",
       width: 250,
+      type: "date",
+      valueFormatter: (params: GridValueFormatterParams): GridCellValue => {
+        const { convertedDate } = params.value as Record<string, string>
+        return convertedDate
+      },
+      valueGetter: (params: GridValueGetterParams): GridCellValue => ({
+        convertedDate: getConvertedDate(params.value),
+        timestamp: params.value,
+      }),
+      sortComparator: (v1, v2) => v1.timestamp - v2.timestamp,
     },
     {
       field: "lastModifiedBy",

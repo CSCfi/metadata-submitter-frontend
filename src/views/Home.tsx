@@ -25,7 +25,7 @@ import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
-import { getConvertedDate, pathWithLocale } from "utils"
+import { pathWithLocale } from "utils"
 
 const FrontPageContainer = styled(Container)(() => ({
   display: "flex",
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
   const unpublishedFoldersRows = unpublishedFolders?.map(item => ({
     id: item.folderId,
     name: item.name,
-    dateCreated: item.dateCreated ? getConvertedDate(item.dateCreated) : "",
+    dateCreated: item.dateCreated,
     lastModifiedBy: "TBA",
     cscProject: "TBA",
   }))
@@ -71,7 +71,7 @@ const Home: React.FC = () => {
   const publishedFoldersRows = publishedFolders?.map(item => ({
     id: item.folderId,
     name: item.name,
-    dateCreated: item.dateCreated ? getConvertedDate(item.dateCreated) : "",
+    dateCreated: item.dateCreated,
     lastModifiedBy: "TBA",
     cscProject: "TBA",
   }))

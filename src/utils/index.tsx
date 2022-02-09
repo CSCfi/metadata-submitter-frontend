@@ -286,6 +286,6 @@ export const getNewUniqueFileTypes = (
 
 // Convert Unix timestamp to Date
 export const getConvertedDate = (timestamp: number): string => {
-  const convertedDate = !isNaN(timestamp) ? moment.unix(timestamp).format("DD MMM, YYYY") : "Null"
+  const convertedDate = !isNaN(timestamp) ? moment.unix(timestamp).format("DD MMM, YYYY") : ""
   return convertedDate
 }

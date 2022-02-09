@@ -161,7 +161,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         variant="contained"
         aria-label="submit form"
         size="small"
-        type={currentObject?.status === ObjectStatus.submitted ? "button" : "submit"}
+        type="submit"
         onClick={onClickSubmit}
         form={refForm}
       >
@@ -184,6 +184,50 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
     />
   )
+}
+
+/*
+ * Draft save and object patch use both same response handler
+ */
+const patchHandler = (
+  response: ApiResponse<unknown>,
+  folder: FolderDetailsWithId,
+  accessionId: string,
+  objectType: string,
+  cleanedValues: Record<string, unknown>,
+  dispatch: (reducer: unknown) => void
+) => {
+  if (response.ok) {
+    const index = folder.metadataObjects.findIndex(item => item.accessionId === accessionId)
+    dispatch(
+      replaceObjectInFolder(
+        folder.folderId,
+        accessionId,
+        index,
+        {
+          submissionType: ObjectSubmissionTypes.form,
+          displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
+        },
+        ObjectStatus.submitted
+      )
+    )
+    dispatch(resetDraftStatus())
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.success,
+        response: response,
+        helperText: "",
+      })
+    )
+  } else {
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.error,
+        response: response,
+        helperText: "Unexpected error",
+      })
+    )
+  }
 }
 
 /*
@@ -351,55 +395,6 @@ const FormContent = ({
     }
   }, [])
 
-  /*
-   * Draft save and object patch use both same response handler
-   */
-  const patchHandler = (
-    response: ApiResponse<unknown>,
-    cleanedValues: {
-      accessionId?: string
-      lastModified?: string
-      objectType?: string
-      status?: string
-      title: string
-      submissionType?: string
-      descriptor?: { studyTitle: string }
-      contacts?: { name: string; mainContact: boolean }[]
-    }
-  ) => {
-    if (response.ok) {
-      const index = folder.metadataObjects.findIndex(item => item.accessionId === currentObject.accessionId)
-      dispatch(
-        replaceObjectInFolder(
-          folder.folderId,
-          currentObject.accessionId,
-          index,
-          {
-            submissionType: ObjectSubmissionTypes.form,
-            displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
-          },
-          ObjectStatus.submitted
-        )
-      )
-      dispatch(resetDraftStatus())
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.success,
-          response: response,
-          helperText: "",
-        })
-      )
-    } else {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: response,
-          helperText: "Unexpected error",
-        })
-      )
-    }
-  }
-
   const emptyFormError = () => {
     dispatch(
       updateStatus({
@@ -480,34 +475,6 @@ const FormContent = ({
     }
   }
 
-  const patchObject = async () => {
-    resetTimer()
-    const cleanedValues = getCleanedValues()
-    try {
-      const response = await objectAPIService.patchFromJSON(objectType, currentObjectId as string, cleanedValues)
-      patchHandler(response, cleanedValues)
-
-      // Dispatch fileTypes if object is Run or Analysis
-      if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-        const objectWithFileTypes = getNewUniqueFileTypes(currentObjectId, cleanedValues as unknown as FormDataFiles)
-        objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
-      }
-    } catch (err: unknown) {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: err,
-          helperText: "Unexpected error when modifying object",
-        })
-      )
-    }
-  }
-
-  const handleSubmitForm = () => {
-    if (currentObject?.status === ObjectStatus.submitted) patchObject()
-    resetTimer()
-  }
-
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
@@ -518,7 +485,7 @@ const FormContent = ({
         onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
-        onClickSubmit={() => handleSubmitForm()}
+        onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
       />
       <form
@@ -633,9 +600,41 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
    */
   const onSubmit = async (data: Record<string, unknown>) => {
     setSubmitting(true)
-    const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
 
-    if (response) setSubmitting(false)
+    // Handle submitted object update
+    const patchObject = async () => {
+      const accessionId = data.accessionId as string
+      const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
+      try {
+        const response = await objectAPIService.patchFromJSON(objectType, accessionId, cleanedValues)
+        patchHandler(response, folder, currentObject.accessionId, objectType, cleanedValues, dispatch)
+
+        // Dispatch fileTypes if object is Run or Analysis
+        if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+          const objectWithFileTypes = getNewUniqueFileTypes(accessionId, cleanedValues as FormDataFiles)
+          objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
+        }
+      } catch (error) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "Unexpected error when modifying object",
+          })
+        )
+      }
+
+      setSubmitting(false)
+    }
+
+    // Either patch object or submit a new object
+    if (data.status === ObjectStatus.submitted) {
+      patchObject()
+    } else {
+      const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
+
+      if (response) setSubmitting(false)
+    }
   }
 
   if (states.isLoading) return <CircularProgress />

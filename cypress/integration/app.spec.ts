@@ -27,7 +27,7 @@ describe("Basic e2e", function () {
     // Try to send invalid form
     cy.formActions("Submit")
 
-cy.get<FormInput[]>("input[data-testid='descriptor.studyTitle']").then($input => {
+    cy.get<FormInput[]>("input[data-testid='descriptor.studyTitle']").then($input => {
       expect($input[0].validationMessage).to.contain("Please fill")
     })
 

@@ -13,7 +13,7 @@ import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
 import { Link as RouterLink } from "react-router-dom"
 
-import SubmissionIndexCard from "components/Home/SubmissionIndexCard"
+import SubmissionDataTable from "components/Home/SubmissionDataTable"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
@@ -35,8 +35,8 @@ const FrontPageContainer = styled(Container)(() => ({
 
 const FrontPageTabs = styled(Tabs)(() => ({
   ["& .MuiTabs-indicator"]: {
-    height: "0.375em",
-    borderRadius: "0.375em 0.375em 0 0",
+    height: "0.375rem",
+    borderRadius: "0.375rem 0.375rem 0 0",
   },
 }))
 
@@ -60,22 +60,6 @@ const Home: React.FC = () => {
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
   const publishedFolders = useAppSelector(state => state.publishedFolders)
 
-  const unpublishedFoldersRows = unpublishedFolders?.map(item => ({
-    id: item.folderId,
-    name: item.name,
-    dateCreated: item.dateCreated,
-    lastModifiedBy: "TBA",
-    cscProject: "TBA",
-  }))
-
-  const publishedFoldersRows = publishedFolders?.map(item => ({
-    id: item.folderId,
-    name: item.name,
-    dateCreated: item.dateCreated,
-    lastModifiedBy: "TBA",
-    cscProject: "TBA",
-  }))
-
   const totalFolders = useAppSelector(state => state.totalFolders)
 
   const [isFetchingFolders, setFetchingFolders] = useState(true)
@@ -85,6 +69,19 @@ const Home: React.FC = () => {
 
   const [publishedPage, setPublishedPage] = useState(0)
   const [publishedItemsPerPage, setPublishedItemsPerPage] = useState(5)
+
+  const [tabValue, setTabValue] = React.useState(FolderSubmissionStatus.unpublished)
+
+  // Show folders based on tabValue and convert folders to folderRows for rendering data grid
+  const displayFolders = tabValue === FolderSubmissionStatus.unpublished ? unpublishedFolders : publishedFolders
+
+  const folderRows = displayFolders.map(item => ({
+    id: item.folderId,
+    name: item.name,
+    dateCreated: item.dateCreated,
+    lastModifiedBy: "TBA",
+    cscProject: "TBA",
+  }))
 
   useEffect(() => {
     dispatch(fetchUserById("current"))
@@ -134,6 +131,10 @@ const Home: React.FC = () => {
     dispatch(resetFolder())
   }
 
+  const handleChangeTab = (event, newValue) => {
+    setTabValue(newValue)
+  }
+
   // Fire when user selects an option from "Items per page"
   const handleFetchItemsPerPage = async (numberOfItems: number, folderType: string) => {
     const response = await folderAPIService.getFolders({
@@ -161,7 +162,7 @@ const Home: React.FC = () => {
     }
   }
 
-  // Fire when user selects previous/next arrows
+  // Fire when user selects a page or previous/next arrows
   const handleFetchPageOnChange = async (page: number, folderType: string) => {
     const response = await folderAPIService.getFolders({
       page: page + 1,
@@ -190,7 +191,7 @@ const Home: React.FC = () => {
         dispatch(
           updateStatus({
             status: ResponseStatus.success,
-            helperText: "The submission has been deleted successfully",
+            helperText: "The submission has been deleted successfully!",
           })
         )
         handleFetchPageOnChange(
@@ -209,13 +210,7 @@ const Home: React.FC = () => {
       })
   }
 
-  const [value, setValue] = React.useState(0)
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
-
-  // Contains both unpublished and published folders (max. 5 items/each)
+  // Render either unpublished or published folders based on selected tab
   return (
     <FrontPageContainer disableGutters maxWidth={false}>
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
@@ -223,14 +218,22 @@ const Home: React.FC = () => {
       </Typography>
       <Box sx={{ mt: "6vh", position: "relative" }}>
         <FrontPageTabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
+          value={tabValue}
+          onChange={handleChangeTab}
+          aria-label="draft-and-published-submissions-tabs"
           textColor="primary"
           indicatorColor="primary"
         >
-          <FrontPageTab label="Drafts" value={0} sx={{ fontWeight: 500, fontSize: "1em" }} />
-          <FrontPageTab label="Published" value={1} sx={{ fontWeight: 500, fontSize: "1em" }} />
+          <FrontPageTab
+            label="Drafts"
+            value={FolderSubmissionStatus.unpublished}
+            sx={{ fontWeight: 500, fontSize: "1em" }}
+          />
+          <FrontPageTab
+            label="Published"
+            value={FolderSubmissionStatus.published}
+            sx={{ fontWeight: 500, fontSize: "1em" }}
+          />
         </FrontPageTabs>
         <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
           <CreateSubmissionButton
@@ -245,39 +248,28 @@ const Home: React.FC = () => {
           </CreateSubmissionButton>
         </Link>
       </Box>
-
-      <Paper square sx={{ padding: "2em" }}>
+      <Paper square sx={{ padding: "2rem" }}>
         <Grid container>
-          {value === 0 && (
-            <Grid item xs={12}>
-              <SubmissionIndexCard
-                folderType={FolderSubmissionStatus.unpublished}
-                location="drafts"
-                page={draftPage}
-                itemsPerPage={draftItemsPerPage}
-                totalItems={totalFolders.totalUnpublishedFolders}
-                fetchItemsPerPage={handleFetchItemsPerPage}
-                fetchPageOnChange={handleFetchPageOnChange}
-                rows={unpublishedFoldersRows}
-                onDeleteSubmission={handleDeleteSubmission}
-              />
-            </Grid>
-          )}
-          {value === 1 && (
-            <Grid item xs={12}>
-              <SubmissionIndexCard
-                folderType={FolderSubmissionStatus.published}
-                location="published"
-                page={publishedPage}
-                itemsPerPage={publishedItemsPerPage}
-                totalItems={totalFolders.totalPublishedFolders}
-                fetchItemsPerPage={handleFetchItemsPerPage}
-                fetchPageOnChange={handleFetchPageOnChange}
-                rows={publishedFoldersRows}
-                onDeleteSubmission={handleDeleteSubmission}
-              />
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <SubmissionDataTable
+              folderType={
+                tabValue === FolderSubmissionStatus.unpublished
+                  ? FolderSubmissionStatus.unpublished
+                  : FolderSubmissionStatus.published
+              }
+              page={tabValue === FolderSubmissionStatus.unpublished ? draftPage : publishedPage}
+              itemsPerPage={tabValue === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
+              totalItems={
+                tabValue === FolderSubmissionStatus.unpublished
+                  ? totalFolders.totalUnpublishedFolders
+                  : totalFolders.totalPublishedFolders
+              }
+              fetchItemsPerPage={handleFetchItemsPerPage}
+              fetchPageOnChange={handleFetchPageOnChange}
+              rows={folderRows}
+              onDeleteSubmission={handleDeleteSubmission}
+            />
+          </Grid>
 
           {isFetchingFolders && <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />}
         </Grid>

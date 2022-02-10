@@ -17,6 +17,7 @@ import {
 } from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
 
+import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
@@ -44,6 +45,9 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     padding: 0,
     "& > *": { fontWeight: 700 },
+    "& .MuiDataGrid-sortIcon": {
+      color: theme.palette.secondary.main,
+    },
   },
   "& .MuiDataGrid-columnHeader:first-of-type, .MuiDataGrid-cell:first-of-type": {
     paddingLeft: "2em",
@@ -61,10 +65,9 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
-type SubmissionIndexCardProps = {
+type SubmissionDataTableProps = {
   folderType: string
   rows: Array<FolderRow>
-  location?: string
   page?: number
   itemsPerPage?: number
   totalItems?: number
@@ -73,7 +76,7 @@ type SubmissionIndexCardProps = {
   onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
 
-const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
+const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const { folderType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
     props
   const dispatch = useAppDispatch()
@@ -99,21 +102,24 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
         convertedDate: getConvertedDate(params.value),
         timestamp: params.value,
       }),
-      sortComparator: (v1, v2) => v1.timestamp - v2.timestamp,
+      sortComparator: (v1, v2) => v2.timestamp - v1.timestamp,
     },
     {
       field: "lastModifiedBy",
       headerName: "Last modified by",
       width: 250,
+      sortable: false,
     },
     {
       field: "cscProject",
       headerName: "CSC Project",
       width: 250,
+      sortable: false,
     },
     {
       field: "actions",
       type: "actions",
+      hide: folderType === FolderSubmissionStatus.published,
       getActions: (params: GridRowParams) => [
         <div key={params.id}>
           <GridActionsCellItem
@@ -137,6 +143,13 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
     },
   ]
 
+  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+    {
+      field: "dateCreated",
+      sort: null,
+    },
+  ])
+
   const handleEditSubmission = async (e, id) => {
     e.stopPropagation()
     const response = await folderAPIService.getFolderById(id)
@@ -159,13 +172,6 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), folderType) : null
   }
-
-  const [sortModel, setSortModel] = React.useState<GridSortModel>([
-    {
-      field: "dateCreated",
-      sort: "asc",
-    },
-  ])
 
   const DataGridPagination = () =>
     totalItems && page !== undefined && itemsPerPage ? (
@@ -214,4 +220,4 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
   return <Card variant="outlined">{rows.length > 0 ? <FolderList /> : <EmptyList />}</Card>
 }
 
-export default SubmissionIndexCard
+export default SubmissionDataTable

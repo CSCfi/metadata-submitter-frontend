@@ -13,6 +13,7 @@ import {
   GridValueFormatterParams,
   GridActionsCellItem,
   GridCellValue,
+  GridSortModel,
 } from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
 
@@ -73,7 +74,11 @@ type SubmissionIndexCardProps = {
 }
 
 const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
+  const { folderType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
+    props
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
   const columns = [
     {
       field: "name",
@@ -132,11 +137,6 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
     },
   ]
 
-  const { folderType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
-    props
-
-  const navigate = useNavigate()
-
   const handleEditSubmission = async (e, id) => {
     e.stopPropagation()
     const response = await folderAPIService.getFolderById(id)
@@ -160,6 +160,13 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
     fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), folderType) : null
   }
 
+  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+    {
+      field: "dateCreated",
+      sort: "asc",
+    },
+  ])
+
   const DataGridPagination = () =>
     totalItems && page !== undefined && itemsPerPage ? (
       <Pagination
@@ -174,18 +181,24 @@ const SubmissionIndexCard: React.FC<SubmissionIndexCardProps> = props => {
   // Renders when there is folder list
   const FolderList = () => (
     <div style={{ height: "23.25rem", width: "100%" }}>
-      <DataTable
-        rows={rows}
-        columns={columns}
-        disableSelectionOnClick
-        disableColumnMenu
-        disableColumnFilter
-        disableColumnSelector
-        hideFooterSelectedRowCount
-        components={{
-          Pagination: DataGridPagination,
-        }}
-      />
+      <div style={{ display: "flex", height: "100%" }}>
+        <div style={{ flexGrow: 1 }}>
+          <DataTable
+            rows={rows}
+            columns={columns}
+            disableSelectionOnClick
+            disableColumnMenu
+            disableColumnFilter
+            disableColumnSelector
+            hideFooterSelectedRowCount
+            components={{
+              Pagination: DataGridPagination,
+            }}
+            sortModel={sortModel}
+            onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
+          />
+        </div>
+      </div>
     </div>
   )
 

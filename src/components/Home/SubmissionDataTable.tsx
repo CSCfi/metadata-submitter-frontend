@@ -17,12 +17,13 @@ import {
 } from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
 
+import WizardPagination from "components/NewDraftWizard/WizardComponents/WizardPagination"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
 import type { FolderRow } from "types"
-import { getConvertedDate, Pagination, pathWithLocale } from "utils"
+import { getConvertedDate, pathWithLocale } from "utils"
 
 const Card = styled(MuiCard)(() => ({
   height: "100%",
@@ -175,7 +176,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   const DataGridPagination = () =>
     totalItems && page !== undefined && itemsPerPage ? (
-      <Pagination
+      <WizardPagination
         totalNumberOfItems={totalItems}
         page={page}
         itemsPerPage={itemsPerPage}

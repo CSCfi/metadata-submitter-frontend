@@ -29,8 +29,8 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 }))
 
 const Logo = styled("img")(() => ({
-  width: "4em",
-  height: "2.5em",
+  width: "4rem",
+  height: "2.5rem",
 }))
 
 const ServiceTitle = styled(Typography)(({ theme }) => ({
@@ -59,12 +59,11 @@ const NavigationLinks = () => {
   return (
     <React.Fragment>
       <Button
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
+        id="user-setting-button"
+        aria-controls={open ? "user-setting-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ position: "relative" }}
       >
         <PersonIcon />
         <Typography variant="body2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
@@ -73,14 +72,13 @@ const NavigationLinks = () => {
         {open ? <ExpandLess color="secondary" /> : <ExpandMore color="secondary" />}
       </Button>
       <Menu
-        id="basic-menu"
+        id="user-setting-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          "aria-labelledby": "basic-button",
+          "aria-labelledby": "user-setting-button",
         }}
-        sx={{ position: "absolute" }}
       >
         <MenuItem
           component="a"

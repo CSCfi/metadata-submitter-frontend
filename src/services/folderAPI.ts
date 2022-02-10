@@ -24,7 +24,12 @@ const deleteFolderById = async (folderId: string): Promise<APIResponse> => {
   return await api.delete(`/${folderId}`)
 }
 
-const getFolders = async (params?: { page: number; per_page: number; published: boolean }): Promise<APIResponse> => {
+const getFolders = async (params?: {
+  page?: number
+  per_page?: number
+  published?: boolean
+  name?: string
+}): Promise<APIResponse> => {
   return await api.get("", params)
 }
 

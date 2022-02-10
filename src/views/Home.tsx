@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography"
 import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
+import WizardSearchBox from "components/NewDraftWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
@@ -204,10 +205,13 @@ const Home: React.FC = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "",
           })
         )
       })
+  }
+
+  const handleSearchTextChange = (searchText: string) => {
+    console.log("searchText :>> ", searchText)
   }
 
   // Render either unpublished or published folders based on selected tab
@@ -250,6 +254,9 @@ const Home: React.FC = () => {
       </Box>
       <Paper square sx={{ padding: "2rem" }}>
         <Grid container>
+          <Grid container item xs={12} justifyContent="flex-end">
+            <WizardSearchBox handleSearchTextChange={handleSearchTextChange} />
+          </Grid>
           <Grid item xs={12}>
             <SubmissionDataTable
               folderType={

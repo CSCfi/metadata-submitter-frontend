@@ -727,7 +727,9 @@ const FormTextField = ({
 
               const handleChange = (e: { target: { value: string | number } }) => {
                 const { value } = e.target
-                field.onChange(type === "string" && typeof value === "number" ? value.toString() : value)
+                const parsedValue = type === "string" && typeof value === "number" ? value.toString() : value
+                field.onChange(parsedValue) // Helps with Cypress change detection
+                setValue(name, parsedValue) // Enables update of nested fields, eg. DAC contact
               }
 
               return (

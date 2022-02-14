@@ -43,7 +43,7 @@ const LoginBanner = styled(Paper)(({ theme }) => ({
 }))
 
 const LoginButton = styled(Button)(() => ({
-  marginTop: "2.5vh",
+  marginTop: "3.6rem",
   height: "6.5vh",
   width: "10.5vw",
   paddingLeft: "2em",
@@ -73,31 +73,33 @@ const Login: React.FC = () => {
   return (
     <LoginContainer disableGutters maxWidth={false}>
       <LoginBanner elevation={0}>
-        <Typography variant="h4" sx={{ color: "primary.main", fontWeight: 700 }}>
+        <Typography variant="h2" sx={{ color: "primary.main", fontWeight: 700 }}>
           SD Submit
         </Typography>
-        <Typography sx={{ mt: "2.25em", color: "secondary.main" }}>Tool for submitting metadata.</Typography>
+        <Typography variant="h5" sx={{ mt: "3.6rem", color: "secondary.main" }}>
+          Tool for submitting metadata.
+        </Typography>
         <LoginButton variant="contained" color="primary" href={loginRoute} data-testid="login-button">
           Login
         </LoginButton>
       </LoginBanner>
       <Footer container justifyContent="center">
         <FooterItem item xs={12} md={4}>
-          <Typography variant="subtitle1">CSC - IT Center for Science Ltd.</Typography>
-          <Typography variant="body2">P.O. Box 405 FI-02101 Espoo, Finland</Typography>
-          <Box sx={{ display: "flex" }}>
-            <PhoneIcon color="secondary" fontSize="small" />
-            <Typography variant="body2" component="span">
+          <Typography variant="h5">CSC - IT Center for Science Ltd.</Typography>
+          <Typography variant="h6">P.O. Box 405 FI-02101 Espoo, Finland</Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <PhoneIcon color="secondary" fontSize="medium" />
+            <Typography variant="h6" component="span">
               +358 9 457 2001
             </Typography>
           </Box>
         </FooterItem>
         <FooterItem item xs={12} md={4}>
-          <Typography variant="subtitle1">Service Desk</Typography>
-          <Typography variant="body2">Open Monday to Friday from 8.30 a.m. to 4 p.m.</Typography>
-          <Box sx={{ display: "flex" }}>
+          <Typography variant="h5">Service Desk</Typography>
+          <Typography variant="h6">Open Monday to Friday from 8.30 a.m. to 4 p.m.</Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <PhoneIcon color="secondary" fontSize="small" />
-            <Typography variant="body2" component="span">
+            <Typography variant="h6" component="span">
               +358 9 457 2821
             </Typography>
           </Box>

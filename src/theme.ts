@@ -45,7 +45,7 @@ const palette = {
 let CSCtheme = createTheme({
   typography: {
     fontFamily: "Museo Sans, Arial, sans-serif",
-    fontSize: 14,
+    // fontSize: 16,
   },
   components: {
     MuiCssBaseline: {
@@ -113,13 +113,6 @@ let CSCtheme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "capitalize",
-        },
-      },
-    },
-    MuiTypography: {
-      styleOverrides: {
-        subtitle1: {
-          fontWeight: 600,
         },
       },
     },

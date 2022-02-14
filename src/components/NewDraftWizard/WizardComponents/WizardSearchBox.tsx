@@ -12,6 +12,9 @@ type WizardSearchBoxProps = {
 
 const TextField = styled(MuiTextField)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.light,
+  "& .MuiOutlinedInput-root.MuiInputBase-root": {
+    fontSize: "1em",
+  },
   "& fieldset": {
     border: 0,
   },
@@ -43,16 +46,16 @@ const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
       onChange={handleOnChange}
       placeholder="Search items"
       InputProps={{
-        startAdornment: <SearchIcon fontSize="small" color="secondary" sx={{ mr: "0.75rem" }} />,
+        startAdornment: <SearchIcon fontSize="large" color="secondary" sx={{ mr: "0.75rem" }} />,
         endAdornment: (
           <IconButton
             title="Clear"
             aria-label="Clear"
-            size="small"
+            size="medium"
             sx={{ visibility: searchText ? "visible" : "hidden" }}
             onClick={clearSearchText}
           >
-            <ClearIcon fontSize="small" color="secondary" />
+            <ClearIcon fontSize="large" color="secondary" />
           </IconButton>
         ),
       }}

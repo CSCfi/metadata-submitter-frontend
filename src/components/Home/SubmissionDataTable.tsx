@@ -26,11 +26,11 @@ import type { FolderRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
 const Card = styled(MuiCard)(() => ({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  border: "none",
-  padding: 0,
+  // height: "100%",
+  // display: "flex",
+  // flexDirection: "column",
+  // border: "none",
+  // padding: 0,
 }))
 
 const CardContent = styled(MuiCardContent)(() => ({
@@ -40,6 +40,9 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 const DataTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  "& .MuiDataGrid-columnHeaders": {
+    fontSize: "1.4rem",
+  },
   "& .MuiDataGrid-columnSeparator": {
     display: "none",
   },
@@ -56,13 +59,19 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-row": {
     border: `1px solid ${theme.palette.secondary.light}`,
   },
+  "& .MuiDataGrid-virtualScrollerContent": {
+    fontSize: "1.6rem",
+  },
   "& .MuiDataGrid-cell--withRenderer": {
     width: "100%",
     maxWidth: "none !important",
   },
   "& .MuiDataGrid-actionsCell": {
     color: theme.palette.primary.main,
-    marginRight: "0.625rem",
+    marginRight: "1rem",
+    "& .MuiMenuItem-root": {
+      fontSize: "1.6rem",
+    },
   },
 }))
 
@@ -124,7 +133,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       getActions: (params: GridRowParams) => [
         <div key={params.id}>
           <GridActionsCellItem
-            icon={<EditIcon color="primary" />}
+            icon={<EditIcon color="primary" fontSize="large" />}
             onClick={e => handleEditSubmission(e, params.id)}
             label="Edit"
             showInMenu
@@ -132,7 +141,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
         </div>,
         <div key={params.id}>
           <GridActionsCellItem
-            icon={<DeleteIcon color="primary" />}
+            icon={<DeleteIcon color="primary" fontSize="large" />}
             onClick={e => {
               handleDeleteSubmission(e, params.id)
             }}
@@ -187,7 +196,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   // Renders when there is folder list
   const FolderList = () => (
-    <div style={{ height: "23.25rem", width: "100%" }}>
+    <div style={{ height: "37.2rem", width: "100%" }}>
       <div style={{ display: "flex", height: "100%" }}>
         <div style={{ flexGrow: 1 }}>
           <DataTable

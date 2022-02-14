@@ -11,6 +11,7 @@ import TableRow from "@mui/material/TableRow"
 const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   color: theme.palette.secondary.main,
   border: "none",
+  fontSize: "1.4rem",
   borderTop: `1px solid ${theme.palette.secondary.light}`,
   "& .MuiTablePagination-spacer": {
     flex: "none",
@@ -24,6 +25,7 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
     marginRight: "3.25rem",
   },
   "& .MuiTablePagination-selectLabel": {
+    fontSize: "1.4rem",
     marginLeft: "1.375em",
     marginRight: "3.25rem",
   },
@@ -31,14 +33,16 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
     padding: 0,
     color: theme.palette.primary.main,
     fontWeight: 700,
-    fontSize: "1rem",
+    fontSize: "1.4rem",
     display: "grid",
     alignItems: "center",
   },
   "& .MuiTablePagination-selectIcon": {
     color: theme.palette.primary.main,
+    fontSize: "2rem",
   },
   "& .MuiTablePagination-displayedRows": {
+    fontSize: "1.4rem",
     paddingLeft: "3.25rem",
     borderLeft: `1px solid #707070`,
   },
@@ -68,9 +72,10 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
   },
   "& .MuiPaginationItem-root": {
     fontWeight: 700,
+    fontSize: "1.4rem",
     color: theme.palette.secondary.main,
-    height: "3.25rem",
-    width: "3.25rem",
+    height: "5.2rem",
+    width: "4rem",
     border: "none",
     display: "grid",
     alignItems: "center",

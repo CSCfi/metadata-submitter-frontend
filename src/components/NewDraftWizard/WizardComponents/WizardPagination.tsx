@@ -1,12 +1,14 @@
 import React, { ReactElement } from "react"
 
 import ExpandMore from "@mui/icons-material/ExpandMore"
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft"
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight"
+import IconButton from "@mui/material/IconButton"
 import MuiPagination from "@mui/material/Pagination"
-import { styled } from "@mui/material/styles"
+import { styled, useTheme } from "@mui/material/styles"
 import Table from "@mui/material/Table"
-import TableFooter from "@mui/material/TableFooter"
 import MuiTablePagination from "@mui/material/TablePagination"
-import TableRow from "@mui/material/TableRow"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   color: theme.palette.secondary.main,
@@ -96,30 +98,56 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
   },
 }))
 
-type TablePaginationActionsType = {
+type WizardPaginationActionsType = {
   count: number
   page: number
   rowsPerPage: number
   onPageChange: (event: null, newPage: number) => void
 }
 
-const PaginationActions = ({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsType): ReactElement => {
+const WizardPaginationActions = ({
+  count,
+  page,
+  rowsPerPage,
+  onPageChange,
+}: WizardPaginationActionsType): ReactElement => {
+  const theme = useTheme()
   const totalPages = Math.ceil(count / rowsPerPage)
+
+  const matches = useMediaQuery(theme.breakpoints.down("md"))
 
   const handleChange = (e: React.ChangeEvent<unknown>, val: number) => {
     onPageChange(null, val - 1)
+  }
+
+  const handleBackButtonClick = () => {
+    onPageChange(null, page - 1)
+  }
+  const handleNextButtonClick = () => {
+    onPageChange(null, page + 1)
   }
   return (
     <TablePaginationActions>
       <span aria-label="current page" data-testid="page info">
         {page + 1} of {totalPages} pages
       </span>
-      <MuiPagination count={totalPages} page={page + 1} onChange={handleChange} shape="rounded" variant="outlined" />
+      {matches ? (
+        <>
+          <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+          </IconButton>
+          <IconButton onClick={handleNextButtonClick} disabled={page >= totalPages - 1} aria-label="next page">
+            {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+          </IconButton>
+        </>
+      ) : (
+        <MuiPagination count={totalPages} page={page + 1} onChange={handleChange} shape="rounded" variant="outlined" />
+      )}
     </TablePaginationActions>
   )
 }
 
-type PaginationType = {
+type WizardPagination = {
   totalNumberOfItems: number
   page: number
   itemsPerPage: number
@@ -128,7 +156,7 @@ type PaginationType = {
 }
 
 // Pagination Component
-const Pagination: React.FC<PaginationType> = (props: PaginationType) => {
+const WizardPagination: React.FC<WizardPagination> = props => {
   const { totalNumberOfItems, page, itemsPerPage, handleChangePage, handleItemsPerPageChange } = props
 
   // Get "rowsPerPageOptions" of TablePagination
@@ -143,25 +171,21 @@ const Pagination: React.FC<PaginationType> = (props: PaginationType) => {
   }
 
   return (
-    <Table data-testid="table-pagination">
-      <TableFooter>
-        <TableRow>
-          <TablePagination
-            ActionsComponent={PaginationActions}
-            count={totalNumberOfItems}
-            labelRowsPerPage="Items per page:"
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count} items`}
-            page={page}
-            rowsPerPage={itemsPerPage}
-            rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
-            SelectProps={{ IconComponent: ExpandMore }}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleItemsPerPageChange}
-          />
-        </TableRow>
-      </TableFooter>
+    <Table>
+      <TablePagination
+        ActionsComponent={WizardPaginationActions}
+        count={totalNumberOfItems}
+        labelRowsPerPage="Items per page:"
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count} items`}
+        page={page}
+        rowsPerPage={itemsPerPage}
+        rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}
+        SelectProps={{ IconComponent: ExpandMore }}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleItemsPerPageChange}
+      />
     </Table>
   )
 }
 
-export default Pagination
+export default WizardPagination

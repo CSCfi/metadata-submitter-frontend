@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     border: "none",
-    padding: theme.spacing(0),
+    padding: 0,
   },
   cardHeader: {
     fontSize: "0.5em",
     padding: 0,
-    marginTop: theme.spacing(1),
+    marginTop: 8,
     "&:hover": {
       cursor: "pointer",
     },
@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.black,
   },
   tableHeader: {
-    padding: theme.spacing(1),
+    padding: 8,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: theme.palette.common.white,
-    marginRight: theme.spacing(1),
+    marginRight: 8,
   },
   headRows: {
     fontWeight: "bold",

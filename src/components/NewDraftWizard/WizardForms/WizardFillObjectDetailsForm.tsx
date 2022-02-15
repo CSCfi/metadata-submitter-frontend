@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
     margin: 0,
     padding: 0,
   },
-  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(8), zIndex: 2 },
+  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: 8, zIndex: 2 },
   resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
     marginTop: "-4px",
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
     display: "flex",
     flexDirection: "row",
     "& > :not(:last-child)": {
-      marginRight: theme.spacing(1),
+      marginRight: 1,
     },
     "& button": {
       backgroundColor: "#FFF",
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
     },
   },
   addIcon: {
-    marginRight: theme.spacing(1),
+    marginRight: 1,
   },
   formComponents: { ...theme.form },
 }))

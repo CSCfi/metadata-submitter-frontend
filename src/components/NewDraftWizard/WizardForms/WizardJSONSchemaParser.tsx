@@ -51,11 +51,11 @@ const highlightStyle = theme => {
 const useStyles = makeStyles(theme => ({
   fieldTip: {
     color: theme.palette.secondary.main,
-    marginLeft: theme.spacing(0),
+    marginLeft: 0,
   },
   sectionTip: {
     fontSize: "inherit",
-    marginLeft: theme.spacing(0.5),
+    marginLeft: 1,
   },
   divBaseline: {
     display: "flex",
@@ -63,14 +63,14 @@ const useStyles = makeStyles(theme => ({
     alignItems: "baseline",
     width: "100%",
     "& label": {
-      marginRight: theme.spacing(0),
+      marginRight: 0,
     },
   },
   autocomplete: {
     flex: "auto",
     alignSelf: "flex-start",
     "& + svg": {
-      marginTop: theme.spacing(1),
+      marginTop: 1,
     },
   },
   autocompleteInput: {
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   },
   externalLink: {
     fontSize: "1rem",
-    marginBottom: theme.spacing(-0.5),
+    marginBottom: -1,
   },
 }))
 
@@ -93,7 +93,7 @@ const FieldTooltip = withStyles(theme => ({
 }))(Tooltip)
 
 const DatePickerWrapper = styled(Grid)(({ theme }) => ({
-  paddingLeft: theme.spacing(1),
+  paddingLeft: 1,
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -891,10 +891,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                   defaultValue={dateInputValues}
                   InputProps={{
                     endAdornment: (
-                      <IconButton
-                        onClick={handleClearDates}
-                        sx={theme => ({ position: "absolute", right: `-${theme.spacing(1)}`, padding: 0 })}
-                      >
+                      <IconButton onClick={handleClearDates} sx={{ position: "absolute", right: "-1", padding: 0 }}>
                         <ClearIcon fontSize="small" />
                       </IconButton>
                     ),

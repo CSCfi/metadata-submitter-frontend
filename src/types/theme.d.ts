@@ -1,3 +1,5 @@
+import type {} from "@mui/x-data-grid/themeAugmentation"
+
 declare module "@mui/material/styles" {
   interface CustomTheme extends Theme {
     typography: {
@@ -14,6 +16,7 @@ declare module "@mui/material/styles" {
       body1: { fontSize: string }
       body2: { fontSize: string }
     }
+    spacing: (factor) => string
     error: {
       main: string
     }
@@ -40,6 +43,7 @@ declare module "@mui/material/styles" {
       fontFamily: string
       fontSize: number
     }
+    spacing: (factor) => string
     error: {
       main: string
     }

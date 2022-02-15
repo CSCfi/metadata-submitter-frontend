@@ -27,12 +27,12 @@ import objectAPIService from "services/objectAPI"
 import type { OldFolderRow, ObjectInsideFolderWithTags } from "types"
 import { getItemPrimaryText, pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   tableGrid: {
-    margin: theme.spacing(2),
+    margin: 2,
   },
   circularProgress: {
-    margin: theme.spacing(10),
+    margin: 10,
   },
 }))
 

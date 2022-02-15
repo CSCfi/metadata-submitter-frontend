@@ -49,11 +49,11 @@ const FrontPageTab = styled(Tab)(({ theme }) => ({
 }))
 
 const CreateSubmissionButton = styled(Button)(() => ({
-  height: "6.5vh",
-  width: "10.5vw",
+  height: "5rem",
+  width: "18rem",
   position: "absolute",
   right: 0,
-  bottom: "2vh",
+  bottom: "2rem",
 }))
 
 const Home: React.FC = () => {
@@ -213,10 +213,10 @@ const Home: React.FC = () => {
   // Render either unpublished or published folders based on selected tab
   return (
     <FrontPageContainer disableGutters maxWidth={false}>
-      <Typography variant="h5" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
+      <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
         My submissions
       </Typography>
-      <Box sx={{ mt: "6vh", position: "relative" }}>
+      <Box sx={{ mt: 4, position: "relative" }}>
         <FrontPageTabs
           value={tabValue}
           onChange={handleChangeTab}

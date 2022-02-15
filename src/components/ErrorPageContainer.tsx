@@ -25,7 +25,7 @@ type ErrorTypeProps = {
 const useStyles = makeStyles((theme: CustomTheme) => ({
   errorContainer: {
     width: "100%",
-    marginTop: theme.spacing(10),
+    marginTop: 10,
   },
   card: {
     padding: "2vw",

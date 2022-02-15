@@ -39,6 +39,18 @@ const palette = {
   },
 }
 
+export const fontSizeBreakpoints = {
+  [defaultTheme.breakpoints.down("sm")]: {
+    fontSize: "1.25rem",
+  },
+  [defaultTheme.breakpoints.between("sm", "lg")]: {
+    fontSize: "1.4rem",
+  },
+  [defaultTheme.breakpoints.up("lg")]: {
+    fontSize: "1.6rem",
+  },
+}
+
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
@@ -85,8 +97,41 @@ let CSCtheme = createTheme({
         }
       `,
     },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: 700,
+        },
+        contained: fontSizeBreakpoints,
+        outlined: fontSizeBreakpoints,
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          fontSizeBreakpoints,
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        columnHeader: fontSizeBreakpoints,
+        row: fontSizeBreakpoints,
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "capitalize",
+        },
+      },
+    },
     MuiTablePagination: {
       styleOverrides: {
+        root: fontSizeBreakpoints,
         menuItem: {
           backgroundColor: "white",
           color: palette.secondary.main,
@@ -101,31 +146,9 @@ let CSCtheme = createTheme({
         },
       },
     },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          fontWeight: 700,
-          fontSize: "1em",
-          lineHeight: "1.2em",
-        },
-      },
-    },
-    MuiContainer: {
-      styleOverrides: {
-        root: {
-          padding: 0,
-        },
-      },
-    },
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          textTransform: "capitalize",
-        },
-      },
-    },
   },
+
+  spacing: factor => `${factor}rem`,
   palette: palette,
   error: palette.error,
   info: palette.info,

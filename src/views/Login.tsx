@@ -27,27 +27,31 @@ const LoginBanner = styled(Paper)(({ theme }) => ({
   backgroundPosition: "center center",
   [theme.breakpoints.down("sm")]: {
     backgroundPosition: "90% 10vh",
+    width: "30rem",
   },
   [theme.breakpoints.between("sm", "md")]: {
     backgroundPosition: "85% 0",
+    width: "70rem",
   },
   [theme.breakpoints.between("md", "lg")]: {
     backgroundPosition: "90% 0",
+    width: "80rem",
   },
-  width: "53vw",
+  [theme.breakpoints.up("lg")]: {
+    backgroundPosition: "90% 0",
+    width: "90rem",
+  },
   height: "55vh",
-  margin: "16vh auto auto auto",
-  padding: "14vh 5vw 5vh 5vw",
-  borderRadius: "0.375em",
-  boxShadow: "2px 2px 12px 2px #00000029",
+  margin: "15rem auto auto auto",
+  padding: "12rem 0 12rem 8rem",
+  borderRadius: "0.375rem",
+  boxShadow: "0.2rem 0.2rem 1.2rem 0.2rem #00000029",
 }))
 
 const LoginButton = styled(Button)(() => ({
   marginTop: "3.6rem",
-  height: "6.5vh",
-  width: "10.5vw",
-  paddingLeft: "2em",
-  paddingRight: "2em",
+  height: "5rem",
+  width: "17rem",
 }))
 
 const Footer = styled(Grid)(({ theme }) => ({

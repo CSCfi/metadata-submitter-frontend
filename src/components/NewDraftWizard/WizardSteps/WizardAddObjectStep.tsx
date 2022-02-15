@@ -12,7 +12,7 @@ import WizardStepper from "../WizardComponents/WizardStepper"
 
 import { useAppSelector } from "hooks"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   gridContainer: {
     width: "100%",
     "& > :first-child": {
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     width: "40%",
   },
   objectInfo: {
-    margin: theme.spacing(2),
+    margin: 2,
   },
 }))
 

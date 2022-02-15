@@ -35,20 +35,20 @@ const useStyles = makeStyles(theme => ({
       "& .arrayRow": {
         display: "flex",
         alignItems: "center",
-        marginBottom: theme.spacing(1),
+        marginBottom: 1,
         width: "100%",
         "& .MuiTextField-root": {
           width: "95%",
         },
       },
       "& h2, h3, h4, h5, h6": {
-        margin: theme.spacing(1, 0),
+        margin: "1 0",
       },
       "& .MuiPaper-elevation2": {
         "& .array": { margin: 0 },
-        "& h2": { padding: theme.spacing(0, 1) },
-        "& h3, h4": { margin: theme.spacing(1) },
-        "& button": { margin: theme.spacing(0, 1) },
+        "& h2": { padding: "0 1" },
+        "& h3, h4": { margin: 1 },
+        "& button": { margin: "0 1" },
       },
     },
   },

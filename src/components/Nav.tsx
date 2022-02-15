@@ -50,6 +50,7 @@ const NavigationLinks = () => {
 
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
   }
@@ -138,9 +139,11 @@ const LanguageSelector = (props: MenuItemProps) => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ ml: "spacing(1)", textTransform: "capitalize" }}
+        sx={{ ml: 3, textTransform: "capitalize" }}
       >
-        {currentLocale}
+        <Typography variant="subtitle2" color="primary" fontWeight="700">
+          {currentLocale}
+        </Typography>
       </Button>
       <Menu
         id="lang-menu"
@@ -178,7 +181,7 @@ const Nav: React.FC = () => {
   return (
     <NavBar>
       <Toolbar>
-        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5vh 1vw 1.5vh 2.5vw" }}>
+        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
           <Logo src={logo} alt="CSC_logo" />
         </Link>
         <ServiceTitle variant="h5" noWrap>

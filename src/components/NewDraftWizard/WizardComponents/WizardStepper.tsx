@@ -25,8 +25,8 @@ import { useQuery, pathWithLocale } from "utils"
 const QontoConnector = withStyles(theme => ({
   alternativeLabel: {
     top: 10,
-    left: `calc(-50% + ${theme.spacing(2)})`,
-    right: `calc(50% + ${theme.spacing(2)})`,
+    left: `calc(-50% + ${8})`,
+    right: `calc(50% + ${8})`,
   },
   active: {
     "& $line": {
@@ -94,6 +94,7 @@ const useStyles = makeStyles({
     flexDirection: "row",
     width: "100%",
     borderBottom: "solid 1px #ccc",
+    marginTop: 50,
   },
   stepperContainer: {
     width: "80%",

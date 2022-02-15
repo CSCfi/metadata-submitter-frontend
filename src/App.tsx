@@ -24,22 +24,14 @@ import Home from "views/Home"
 import Login from "views/Login"
 import NewDraftWizard from "views/NewDraftWizard"
 
-const useStyles = makeStyles(theme => ({
-  content: {
-    padding: 0,
-    paddingTop: theme.spacing(8),
-  },
+const useStyles = makeStyles(() => ({
   wizardContent: {
-    padding: theme.spacing(0),
-    margin: theme.spacing(8),
+    padding: 0,
+    margin: 1,
     width: "100%",
     display: "flex",
     flexDirection: "column",
     height: "100%",
-  },
-  errorContent: {
-    width: "100%",
-    marginTop: theme.spacing(10),
   },
 }))
 
@@ -159,7 +151,7 @@ const App: React.FC = () => {
         <Route
           path={setPath("home")}
           element={
-            <Container component="main" maxWidth="xl" className={classes.content}>
+            <Container component="main" maxWidth="xl" disableGutters>
               <Home />
             </Container>
           }

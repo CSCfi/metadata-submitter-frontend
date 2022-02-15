@@ -16,8 +16,7 @@ import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles(theme => ({
   sectionHeader: {
-    margin: theme.spacing(1),
-    // fontSize: theme.typography.pxToRem(16),
+    margin: 1,
     fontWeight: 600,
     lineHeight: "1.75",
     letterSpacing: "0.00938em",

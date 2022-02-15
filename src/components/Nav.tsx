@@ -67,7 +67,7 @@ const NavigationLinks = () => {
         onClick={handleClick}
       >
         <PersonIcon fontSize="large" />
-        <Typography variant="h5" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+        <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
           {user.name}
         </Typography>
         {open ? <ExpandLess color="secondary" /> : <ExpandMore color="secondary" fontSize="large" />}
@@ -89,7 +89,7 @@ const NavigationLinks = () => {
           }}
           href="/logout"
         >
-          <Typography variant="h5" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+          <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
             Log out
           </Typography>
         </MenuItem>
@@ -181,7 +181,7 @@ const Nav: React.FC = () => {
         <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5vh 1vw 1.5vh 2.5vw" }}>
           <Logo src={logo} alt="CSC_logo" />
         </Link>
-        <ServiceTitle variant="h4" noWrap>
+        <ServiceTitle variant="h5" noWrap>
           Sensitive Data Services - SD Submit
         </ServiceTitle>
         <NavigationMenu />

@@ -45,7 +45,16 @@ const palette = {
 let CSCtheme = createTheme({
   typography: {
     fontFamily: "Museo Sans, Arial, sans-serif",
-    // fontSize: 16,
+    h1: { fontSize: "9.6rem" },
+    h2: { fontSize: "6rem" },
+    h3: { fontSize: "4.8rem" },
+    h4: { fontSize: "3.5rem" },
+    h5: { fontSize: "2rem" },
+    h6: { fontSize: "1.25rem" },
+    subtitle1: { fontSize: "1.6rem" },
+    subtitle2: { fontSize: "1.4rem" },
+    body1: { fontSize: "1.6rem" },
+    body2: { fontSize: "1.4rem" },
   },
   components: {
     MuiCssBaseline: {

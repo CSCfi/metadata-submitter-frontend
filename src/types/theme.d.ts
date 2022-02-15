@@ -3,7 +3,16 @@ declare module "@mui/material/styles" {
     typography: {
       fontFamily: string
       pxToRem: (px: number) => string
-      subtitle1: { fontFamily: string; fontSize: string }
+      h1: { fontSize: string }
+      h2: { fontSize: string }
+      h3: { fontSize: string }
+      h4: { fontSize: string }
+      h5: { fontSize: string }
+      h6: { fontSize: string }
+      subtitle1: { fontSize: string }
+      subtitle2: { fontSize: string }
+      body1: { fontSize: string }
+      body2: { fontSize: string }
     }
     error: {
       main: string

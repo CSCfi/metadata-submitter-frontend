@@ -210,14 +210,10 @@ const Home: React.FC = () => {
       })
   }
 
-  const handleSearchTextChange = (searchText: string) => {
-    console.log("searchText :>> ", searchText)
-  }
-
   // Render either unpublished or published folders based on selected tab
   return (
     <FrontPageContainer disableGutters maxWidth={false}>
-      <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
+      <Typography variant="h5" sx={{ color: "secondary.main", fontWeight: 700, mt: "6vh" }}>
         My submissions
       </Typography>
       <Box sx={{ mt: "6vh", position: "relative" }}>
@@ -255,7 +251,11 @@ const Home: React.FC = () => {
       <Paper square sx={{ padding: "2rem" }}>
         <Grid container>
           <Grid container item xs={12} justifyContent="flex-end">
-            <WizardSearchBox handleSearchTextChange={handleSearchTextChange} />
+            <WizardSearchBox
+              handleSearchTextChange={() => {
+                return
+              }}
+            />
           </Grid>
           <Grid item xs={12}>
             <SubmissionDataTable

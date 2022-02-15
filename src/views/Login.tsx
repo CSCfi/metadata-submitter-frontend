@@ -73,10 +73,10 @@ const Login: React.FC = () => {
   return (
     <LoginContainer disableGutters maxWidth={false}>
       <LoginBanner elevation={0}>
-        <Typography variant="h2" sx={{ color: "primary.main", fontWeight: 700 }}>
+        <Typography variant="h4" sx={{ color: "primary.main", fontWeight: 700 }}>
           SD Submit
         </Typography>
-        <Typography variant="h5" sx={{ mt: "3.6rem", color: "secondary.main" }}>
+        <Typography variant="subtitle1" sx={{ mt: "3.6rem", color: "secondary.main" }}>
           Tool for submitting metadata.
         </Typography>
         <LoginButton variant="contained" color="primary" href={loginRoute} data-testid="login-button">
@@ -85,18 +85,22 @@ const Login: React.FC = () => {
       </LoginBanner>
       <Footer container justifyContent="center">
         <FooterItem item xs={12} md={4}>
-          <Typography variant="h5">CSC - IT Center for Science Ltd.</Typography>
-          <Typography variant="h6">P.O. Box 405 FI-02101 Espoo, Finland</Typography>
+          <Typography variant="subtitle2" fontWeight="700">
+            CSC - IT Center for Science Ltd.
+          </Typography>
+          <Typography variant="body2">P.O. Box 405 FI-02101 Espoo, Finland</Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <PhoneIcon color="secondary" fontSize="medium" />
-            <Typography variant="h6" component="span">
+            <Typography variant="body2" component="span">
               +358 9 457 2001
             </Typography>
           </Box>
         </FooterItem>
         <FooterItem item xs={12} md={4}>
-          <Typography variant="h5">Service Desk</Typography>
-          <Typography variant="h6">Open Monday to Friday from 8.30 a.m. to 4 p.m.</Typography>
+          <Typography variant="subtitle2" fontWeight="700">
+            Service Desk
+          </Typography>
+          <Typography variant="body2">Open Monday to Friday from 8.30 a.m. to 4 p.m.</Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <PhoneIcon color="secondary" fontSize="small" />
             <Typography variant="h6" component="span">

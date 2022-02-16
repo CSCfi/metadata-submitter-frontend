@@ -36,7 +36,7 @@ const FrontPageContainer = styled(Container)(() => ({
 
 const FrontPageTabs = styled(Tabs)(() => ({
   ["& .MuiTabs-indicator"]: {
-    height: "0.375rem",
+    height: "0.6rem",
     borderRadius: "0.375rem 0.375rem 0 0",
   },
 }))
@@ -250,13 +250,15 @@ const Home: React.FC = () => {
       </Box>
       <Paper square sx={{ padding: "2rem" }}>
         <Grid container>
-          <Grid container item xs={12} justifyContent="flex-end">
-            <WizardSearchBox
-              handleSearchTextChange={() => {
-                return
-              }}
-            />
-          </Grid>
+          {folderRows.length > 0 && (
+            <Grid container item xs={12} justifyContent="flex-end">
+              <WizardSearchBox
+                handleSearchTextChange={() => {
+                  return
+                }}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <SubmissionDataTable
               folderType={
@@ -268,8 +270,8 @@ const Home: React.FC = () => {
               itemsPerPage={tabValue === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
               totalItems={
                 tabValue === FolderSubmissionStatus.unpublished
-                  ? totalFolders.totalUnpublishedFolders
-                  : totalFolders.totalPublishedFolders
+                  ? totalFolders.totalUnpublishedFolders.length
+                  : totalFolders.totalPublishedFolders.length
               }
               fetchItemsPerPage={handleFetchItemsPerPage}
               fetchPageOnChange={handleFetchPageOnChange}

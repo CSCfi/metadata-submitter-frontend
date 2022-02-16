@@ -101,7 +101,7 @@ describe("WizardFillObjectDetailsForm", () => {
     })
   })
 
-  it("should show tooltip on mouse over", async () => {
+  test("should show tooltip on mouse over", async () => {
     render(
       <Provider store={store}>
         <StyledEngineProvider injectFirst>
@@ -117,16 +117,10 @@ describe("WizardFillObjectDetailsForm", () => {
       fireEvent.mouseOver(tooltip)
       expect(tooltip).toBeVisible()
     })
-
-    await waitFor(() => {
-      const tooltip = screen.getByLabelText("More for backwards compatibility, we might not need it.")
-      fireEvent.mouseOver(tooltip)
-      expect(tooltip).toBeVisible()
-    })
   })
 
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
-  it("should call sessionStorage", async () => {
+  test("should call sessionStorage", async () => {
     const spy = jest.spyOn(Storage.prototype, "getItem")
     render(
       <Provider store={store}>

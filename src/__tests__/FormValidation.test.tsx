@@ -59,7 +59,7 @@ describe("Test form render by custom schema", () => {
     render(<FormComponent />)
   })
 
-  it("should validate field on blur", async () => {
+  test("should validate field on blur", async () => {
     const props = schema.properties
     const integerField = screen.getByLabelText(props.integerField.title + " *")
     expect(integerField).toBeInTheDocument()

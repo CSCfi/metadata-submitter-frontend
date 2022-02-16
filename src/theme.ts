@@ -183,7 +183,7 @@ let CSCtheme = createTheme({
   tooltip: {
     backgroundColor: palette.common.white,
     color: palette.common.black,
-    fontSize: defaultTheme.typography.pxToRem(14),
+    fontSize: "1.4rem",
     boxShadow: defaultTheme.shadows[1],
   },
   form: {

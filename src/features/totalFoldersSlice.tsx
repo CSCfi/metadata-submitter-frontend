@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = { totalUnpublishedFolders: 0, totalPublishedFolders: 0 }
+const initialState = { totalUnpublishedFolders: [], totalPublishedFolders: [] }
 
 const totalFoldersSlice = createSlice({
   name: "totalFolders",

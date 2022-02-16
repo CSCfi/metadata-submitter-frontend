@@ -85,5 +85,16 @@ describe("HomePage", () => {
     )
   })
 
-  test("", () => undefined)
+  test("should render its content correctly", () => {
+    expect(screen.getByText("My submissions")).toBeInTheDocument()
+
+    expect(screen.getByRole("tab", { name: "Drafts" })).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: "Published" })).toBeInTheDocument()
+
+    expect(screen.getByTestId("link-create-submission")).toBeInTheDocument()
+
+    expect(screen.getByPlaceholderText("Filter by Name")).toBeInTheDocument()
+
+    expect(screen.getByRole("grid")).toBeInTheDocument()
+  })
 })

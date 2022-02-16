@@ -253,6 +253,7 @@ const Home: React.FC = () => {
           {folderRows.length > 0 && (
             <Grid container item xs={12} justifyContent="flex-end">
               <WizardSearchBox
+                placeholder={"Filter by Name"}
                 handleSearchTextChange={() => {
                   return
                 }}

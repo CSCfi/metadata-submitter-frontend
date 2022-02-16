@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles"
 import MuiTextField from "@mui/material/TextField"
 
 type WizardSearchBoxProps = {
+  placeholder: string
   handleSearchTextChange: (searchText: string) => void
 }
 
@@ -27,7 +28,7 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
 }))
 
 const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
-  const { handleSearchTextChange } = props
+  const { placeholder, handleSearchTextChange } = props
 
   const [searchText, setSearchText] = React.useState<string>("")
 
@@ -44,7 +45,7 @@ const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
       variant="outlined"
       value={searchText}
       onChange={handleOnChange}
-      placeholder="Search items"
+      placeholder={placeholder}
       InputProps={{
         startAdornment: <SearchIcon fontSize="large" color="secondary" sx={{ mr: "0.75rem" }} />,
         endAdornment: (

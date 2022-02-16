@@ -66,6 +66,7 @@ const NavigationLinks = () => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        data-testid="user-setting-button"
       >
         <PersonIcon fontSize="large" />
         <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>

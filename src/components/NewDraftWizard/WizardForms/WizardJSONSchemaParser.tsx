@@ -231,7 +231,7 @@ const traverseFields = (
     case "object": {
       const properties = object.properties
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 1} description={description}>
+        <FormSection key={name} name={name} label={label} level={path.length + 4} description={description}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
@@ -351,7 +351,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
         return (
           <div>
             <div key={`${name}-section`}>
-              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading">
+              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading" color="secondary">
                 {label}
                 {description && level == 2 && (
                   <FieldTooltip title={description} placement="top" arrow>
@@ -1380,7 +1380,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
-  const level = path.length + 1
+  const level = path.length + 4
 
   // Get currentObject and the values of current field
   const currentObject = useAppSelector(state => state.currentObject) || {}
@@ -1449,7 +1449,13 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   return (
     <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
       {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
-      <Typography key={`${name}-header`} variant={`h${level}` as Variant} data-testid={name} role="heading">
+      <Typography
+        key={`${name}-header`}
+        variant={`h${level}` as Variant}
+        data-testid={name}
+        role="heading"
+        color="secondary"
+      >
         <span id={name}>{label}</span> {required ? "*" : null}
         {required && !isValid && errors[name] && (
           <span>

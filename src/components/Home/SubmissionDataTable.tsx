@@ -26,11 +26,11 @@ import type { FolderRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
 const Card = styled(MuiCard)(() => ({
-  // height: "100%",
-  // display: "flex",
-  // flexDirection: "column",
-  // border: "none",
-  // padding: 0,
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  border: "none",
+  padding: 0,
 }))
 
 const CardContent = styled(MuiCardContent)(() => ({

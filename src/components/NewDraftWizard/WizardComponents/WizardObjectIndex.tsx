@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   index: {
     alignSelf: "flex-start",
     marginBottom: 2,
-    width: 30,
+    width: 300,
   },
   submissionTypeList: {
     padding: 0,

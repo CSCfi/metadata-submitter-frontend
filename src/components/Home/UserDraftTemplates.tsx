@@ -75,7 +75,6 @@ const UserDraftTemplates: React.FC = () => {
 
   // Render when there is user's draft template(s)
   const DraftList = () => {
-    console.log(templates)
     return (
       <React.Fragment>
         {templates.map((draft: { [key: string]: ObjectInsideFolderWithTags[] }, index: number) => (

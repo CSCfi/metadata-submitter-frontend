@@ -190,8 +190,15 @@ describe("Basic e2e", function () {
 
     // Submit form
     cy.formActions("Submit")
-    // Saved objects list should have newly added item from Analysis object
+    // Saved objects list should have newly added item from DAC object
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
+    // Test DAC form update
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("[data-testid='contacts.0.name']").type(" edited")
+    cy.get("button[type=submit]").contains("Update").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
 
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()

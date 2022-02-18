@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New navigation bar and new home page #669
+
+  #### Added
+
+  - Moved Log out button to be under User profile in navigation bar
+  - Rendered draft submissions and published submissions as tables with pagination in Home page
+  - Added functionality to sort the dateCreated
+  - Added breakpoints for fontSizes and responsive pagination
+  - Removed components and test files for deprecated features
+  - Update unit tests and integration tests for current UI state
+
 - Drag & drop file upload #653
 - Disallow use of "any" type #624
 - Date picker #559

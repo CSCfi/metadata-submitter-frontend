@@ -19,9 +19,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setPublishedFolders } from "features/publishedFoldersSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { setTotalFolders } from "features/totalFoldersSlice"
 import { setUnpublishedFolders } from "features/unpublishedFoldersSlice"
-import { fetchUserById } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -45,6 +43,7 @@ const FrontPageTab = styled(Tab)(({ theme }) => ({
   ["&.MuiButtonBase-root.MuiTab-root"]: {
     color: theme.palette.primary.main,
     fontWeight: 700,
+    fontSize: "1.6rem",
   },
 }))
 
@@ -61,9 +60,10 @@ const Home: React.FC = () => {
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
   const publishedFolders = useAppSelector(state => state.publishedFolders)
 
-  const totalFolders = useAppSelector(state => state.totalFolders)
-
   const [isFetchingFolders, setFetchingFolders] = useState(true)
+
+  const [totalDraftSubmissions, setTotalDraftSubmissions] = useState(0)
+  const [totalPublishedSubmissions, setTotalPublishedSubmissions] = useState(0)
 
   const [draftPage, setDraftPage] = useState(0)
   const [draftItemsPerPage, setDraftItemsPerPage] = useState(5)
@@ -85,10 +85,6 @@ const Home: React.FC = () => {
   }))
 
   useEffect(() => {
-    dispatch(fetchUserById("current"))
-  }, [dispatch])
-
-  useEffect(() => {
     let isMounted = true
     const getFolders = async () => {
       const unpublishedResponse = await folderAPIService.getFolders({
@@ -103,12 +99,10 @@ const Home: React.FC = () => {
         if (unpublishedResponse.ok && publishedResponse.ok) {
           dispatch(setUnpublishedFolders(unpublishedResponse.data?.folders))
           dispatch(setPublishedFolders(publishedResponse.data.folders))
-          dispatch(
-            setTotalFolders({
-              totalUnpublishedFolders: unpublishedResponse.data.page?.totalFolders,
-              totalPublishedFolders: publishedResponse.data.page?.totalFolders,
-            })
-          )
+
+          setTotalDraftSubmissions(unpublishedResponse.data.page?.totalFolders)
+          setTotalPublishedSubmissions(publishedResponse.data.page?.totalFolders)
+
           setFetchingFolders(false)
         } else {
           dispatch(
@@ -163,7 +157,9 @@ const Home: React.FC = () => {
     }
   }
 
-  // Fire when user selects a page or previous/next arrows
+  // Fire when user selects a page
+  // or selects previous/next arrows
+  // or deletes a submission
   const handleFetchPageOnChange = async (page: number, folderType: string) => {
     const response = await folderAPIService.getFolders({
       page: page + 1,
@@ -175,6 +171,9 @@ const Home: React.FC = () => {
         ? dispatch(setUnpublishedFolders(response.data.folders))
         : dispatch(setPublishedFolders(response.data.folders))
       folderType === FolderSubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
+      folderType === FolderSubmissionStatus.unpublished
+        ? setTotalDraftSubmissions(response.data.page?.totalFolders)
+        : setTotalPublishedSubmissions(response.data.page?.totalFolders)
     } else {
       dispatch(
         updateStatus({
@@ -224,16 +223,8 @@ const Home: React.FC = () => {
           textColor="primary"
           indicatorColor="primary"
         >
-          <FrontPageTab
-            label="Drafts"
-            value={FolderSubmissionStatus.unpublished}
-            sx={{ fontWeight: 500, fontSize: "1em" }}
-          />
-          <FrontPageTab
-            label="Published"
-            value={FolderSubmissionStatus.published}
-            sx={{ fontWeight: 500, fontSize: "1em" }}
-          />
+          <FrontPageTab label="Drafts" value={FolderSubmissionStatus.unpublished} data-testid="drafts-tab" />
+          <FrontPageTab label="Published" value={FolderSubmissionStatus.published} data-testid="published-tab" />
         </FrontPageTabs>
         <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
           <CreateSubmissionButton
@@ -270,9 +261,7 @@ const Home: React.FC = () => {
               page={tabValue === FolderSubmissionStatus.unpublished ? draftPage : publishedPage}
               itemsPerPage={tabValue === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
               totalItems={
-                tabValue === FolderSubmissionStatus.unpublished
-                  ? totalFolders.totalUnpublishedFolders.length
-                  : totalFolders.totalPublishedFolders.length
+                tabValue === FolderSubmissionStatus.unpublished ? totalDraftSubmissions : totalPublishedSubmissions
               }
               fetchItemsPerPage={handleFetchItemsPerPage}
               fetchPageOnChange={handleFetchPageOnChange}

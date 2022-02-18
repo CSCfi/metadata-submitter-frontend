@@ -19,7 +19,7 @@ describe("DOI form", function () {
     }
 
     cy.get("[data-testid='title']").type(testRunData.title)
-    cy.get("[data-testid='experimentRef']").parents().children("button").click()
+    cy.get("h5[data-testid='experimentRef']").parents().children("button").click()
     cy.get("[data-testid='experimentRef.0.accessionId']").type(testRunData.experimentAccessionId)
 
     const testRunFile = {
@@ -128,7 +128,7 @@ describe("DOI form", function () {
 
     // Remove Creators > Affiliations field and add a new field again
     cy.get("div[data-testid='creators.0.affiliation'] > div").children("button").click()
-    cy.get("h3[data-testid='creators.0.affiliation']").parent().children("button").click()
+    cy.get("h4[data-testid='creators.0.affiliation']").parent().children("button").click()
 
     // Repeat search words in autocomplete field
     cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")

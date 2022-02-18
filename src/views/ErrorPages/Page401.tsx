@@ -20,7 +20,7 @@ const Page401: React.FC = () => {
   }, [countdownTime])
 
   const ButtonToMainPage = (
-    <Button href="/" color="primary">
+    <Button href="/" color="primary" size="large">
       Main Page
     </Button>
   )

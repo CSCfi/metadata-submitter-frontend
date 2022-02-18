@@ -13,6 +13,7 @@ import thunk from "redux-thunk"
 import CSCtheme from "../theme"
 
 import App from "App"
+import NewDraftWizard from "views/NewDraftWizard"
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
@@ -25,13 +26,13 @@ describe("NewDraftWizard", () => {
   afterAll(() => server.close())
 
   test("should navigate to 404 page on undefined step", () => {
-    const store = mockStore({ user: { name: "Test user" } })
+    const store = mockStore({})
     render(
       <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=undefined" }]}>
         <Provider store={store}>
           <StyledEngineProvider injectFirst>
             <ThemeProvider theme={CSCtheme}>
-              <App />
+              <NewDraftWizard />
             </ThemeProvider>
           </StyledEngineProvider>
         </Provider>
@@ -57,6 +58,18 @@ describe("NewDraftWizard", () => {
       })
     )
 
+    server.use(
+      rest.get("/users/current", (req, res, ctx) => {
+        return res(
+          ctx.json({
+            userId: "abc",
+            name: "Test user",
+            templates: [],
+            folders: [],
+          })
+        )
+      })
+    )
     const store = mockStore({
       objectType: "",
       submissionType: "",
@@ -75,10 +88,13 @@ describe("NewDraftWizard", () => {
         </Provider>
       </MemoryRouter>
     )
-
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
     expect(screen.getByTestId("folderName")).toBeInTheDocument()
   })
+
+  /*
+   * The test is commented out to be used again later
+   */
 
   // it("should render folder by folderId in URL parameters", async () => {
   //   const folderId = "123456"

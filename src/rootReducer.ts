@@ -14,7 +14,6 @@ import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import templatesReducer from "features/templatesSlice"
-import totalFoldersReducer from "features/totalFoldersSlice"
 import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
@@ -40,7 +39,6 @@ const rootReducer = combineReducers({
   selectedFolder: selectedFolderReducer,
   objectTypesArray: objectTypesArrayReducer,
   openedRows: openedRowsReducer,
-  totalFolders: totalFoldersReducer,
   clearForm: clearFormReducer,
   templateAccessionIds: templatesReducer,
   autocompleteField: autocompleteReducer,

@@ -114,50 +114,40 @@ const UserDraftTemplates: React.FC = () => {
         </FormLabel>
 
         <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
-          {draft[schema]
-            // .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
-            .map((item: ObjectInsideFolderWithTags) => {
-              return (
-                <Grid
-                  container
-                  key={item.accessionId}
-                  className={classes.formControlLabel}
-                  data-testid={`${item.schema}-item`}
-                >
-                  <Grid item xs>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={checkedItems.find((element: string) => element === item.accessionId) !== undefined}
-                          onClick={() => handleChange(item.accessionId)}
-                          color="primary"
-                          name={item.accessionId}
-                          value={item.accessionId}
-                        />
-                      }
-                      label={
-                        <ListItemText
-                          primary={getItemPrimaryText(item)}
-                          secondary={item.accessionId}
-                          data-schema={item.schema}
-                        />
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs="auto">
-                    <UserDraftTemplateActions item={item} />
-                  </Grid>
+          {draft[schema].map((item: ObjectInsideFolderWithTags) => {
+            return (
+              <Grid
+                container
+                key={item.accessionId}
+                className={classes.formControlLabel}
+                data-testid={`${item.schema}-item`}
+              >
+                <Grid item xs>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checkedItems.find((element: string) => element === item.accessionId) !== undefined}
+                        onClick={() => handleChange(item.accessionId)}
+                        color="primary"
+                        name={item.accessionId}
+                        value={item.accessionId}
+                      />
+                    }
+                    label={
+                      <ListItemText
+                        primary={getItemPrimaryText(item)}
+                        secondary={item.accessionId}
+                        data-schema={item.schema}
+                      />
+                    }
+                  />
                 </Grid>
-              )
-            })}
-
-          {/* <Pagination
-            totalNumberOfItems={draft[schema].length}
-            page={page}
-            itemsPerPage={itemsPerPage}
-            // handleChangePage={handleChangePage}
-            handleItemsPerPageChange={handleItemsPerPageChange}
-          /> */}
+                <Grid item xs="auto">
+                  <UserDraftTemplateActions item={item} />
+                </Grid>
+              </Grid>
+            )
+          })}
         </Collapse>
       </FormControl>
     )

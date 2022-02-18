@@ -35,7 +35,6 @@ describe("Basic e2e", function () {
     cy.get("[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Test title")
 
-    cy.scrollTo("top")
     cy.formActions("Clear form")
 
     cy.get("[data-testid='descriptor.studyTitle']").type("New title")
@@ -44,7 +43,7 @@ describe("Basic e2e", function () {
 
     // Submit form
     cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.get("[data-testid='Form-objects']").find("li").should("have.length", 1)
 
     // Upload a Study xml file.
     cy.get("div[role=button]")
@@ -118,7 +117,7 @@ describe("Basic e2e", function () {
       cy.get("select[data-testid='analysisType']").select("Reference Alignment")
       cy.get("select[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
       cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession version")
-      cy.get("h4").contains("Sequence").parents().children("button").click()
+      cy.get("h5").contains("Sequence").parents().children("button").click()
       cy.get("[data-testid='analysisType.referenceAlignment.sequence.0.accession']").type(
         "Sequence Standard Accession Id"
       )
@@ -134,31 +133,31 @@ describe("Basic e2e", function () {
       cy.get("[data-testid='experimentRef.refname']").type("Experiment Test Namespace")
 
       // Sample
-      cy.get("h2").contains("Sample Reference").parents().children("button").click()
+      cy.get("h5").contains("Sample Reference").parents().children("button").click()
       cy.get("[data-testid='sampleRef.0.accessionId']").type("Sample Test Accession Id")
       cy.get("[data-testid='sampleRef.0.identifiers.submitterId.namespace']").type("Sample Test Namespace")
       cy.get("[data-testid='sampleRef.0.identifiers.submitterId.value']").type("Sample Test Value")
 
       // Run
-      cy.get("h2").contains("Run Reference").parents().children("button").click()
+      cy.get("h5").contains("Run Reference").parents().children("button").click()
       cy.get("[data-testid='runRef.0.accessionId']").type("Run Test Accession Id")
       cy.get("[data-testid='runRef.0.identifiers.submitterId.namespace']").type("Run Test Namespace")
       cy.get("[data-testid='runRef.0.identifiers.submitterId.value']").type("Run Test Value")
 
       // Analysis
-      cy.get("h2").contains("Analysis Reference").parents().children("button").click()
+      cy.get("h5").contains("Analysis Reference").parents().children("button").click()
       cy.get("[data-testid='analysisRef.0.accessionId']").type("Analysis Test Accession Id")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.namespace']").type("Analysis Test Namespace")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.value']").type("Analysis Test Value")
 
       // Files
-      cy.get("h2").contains("Files").parents().children("button").click()
+      cy.get("h5").contains("Files").parents().children("button").click()
       cy.get("[data-testid='files.0.filename']").type("filename 1")
       cy.get("select[data-testid='files.0.filetype']").select("other")
       cy.get("select[data-testid='files.0.checksumMethod']").select("MD5")
       cy.get("[data-testid='files.0.checksum']").type("b1f4f9a523e36fd969f4573e25af4540")
 
-      cy.get("h2").contains("Files").parents().children("button").click()
+      cy.get("h5").contains("Files").parents().children("button").click()
       cy.get("[data-testid='files.1.filename']").type("filename 2")
       cy.get("select[data-testid='files.1.filetype']").select("info")
       cy.get("select[data-testid='files.1.checksumMethod']").select("SHA-256")
@@ -179,7 +178,7 @@ describe("Basic e2e", function () {
     cy.formActions("Submit")
     cy.get("span").contains("must have at least 1 item")
 
-    cy.get("h2").contains("Contacts").parents().children("button").click()
+    cy.get("h5").contains("Contacts").parents().children("button").click()
     cy.get("[data-testid='contacts.0.name']").type("Test contact name")
     // Test invalid email address (form array, default)
     cy.get("[data-testid='contacts.0.email']").type("email")

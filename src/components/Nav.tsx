@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
@@ -18,7 +18,7 @@ import logo from "../images/csc_logo.svg"
 
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
-import { resetUser } from "features/userSlice"
+import { fetchUserById, resetUser } from "features/userSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
@@ -50,6 +50,10 @@ const NavigationLinks = () => {
 
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+
+  useEffect(() => {
+    dispatch(fetchUserById("current"))
+  }, [dispatch])
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget)

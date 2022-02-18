@@ -1380,7 +1380,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
-  const level = path.length + 4
+  const level = path.length === 1 ? path.length + 4 : path.length + 2
 
   // Get currentObject and the values of current field
   const currentObject = useAppSelector(state => state.currentObject) || {}

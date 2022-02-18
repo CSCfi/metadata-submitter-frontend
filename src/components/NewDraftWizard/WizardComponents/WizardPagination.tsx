@@ -4,6 +4,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore"
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft"
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight"
 import { Typography } from "@mui/material"
+import Divider from "@mui/material/Divider"
 import IconButton from "@mui/material/IconButton"
 import MuiPagination from "@mui/material/Pagination"
 import { styled, useTheme } from "@mui/material/styles"
@@ -36,17 +37,12 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
     padding: 0,
     color: theme.palette.primary.main,
     fontWeight: 700,
-
     display: "grid",
     alignItems: "center",
   },
   "& .MuiTablePagination-selectIcon": {
     color: theme.palette.primary.main,
     fontSize: "2rem",
-  },
-  "& .MuiTablePagination-displayedRows": {
-    paddingLeft: "3.25rem",
-    borderLeft: `1px solid #707070`,
   },
 }))
 
@@ -132,10 +128,20 @@ const WizardPaginationActions = ({
       </Typography>
       {matches ? (
         <>
-          <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+          <IconButton
+            onClick={handleBackButtonClick}
+            disabled={page === 0}
+            aria-label="previous page"
+            data-testid="previous page"
+          >
             {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
           </IconButton>
-          <IconButton onClick={handleNextButtonClick} disabled={page >= totalPages - 1} aria-label="next page">
+          <IconButton
+            onClick={handleNextButtonClick}
+            disabled={page >= totalPages - 1}
+            aria-label="next page"
+            data-testid="next page"
+          >
             {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
           </IconButton>
         </>
@@ -154,9 +160,31 @@ type WizardPagination = {
   handleItemsPerPageChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
+const DisplayRows = styled("span")(({ theme }) => ({
+  display: "flex",
+  "& hr": {
+    height: "auto",
+    margin: 0,
+  },
+  "& span": {
+    color: theme.palette.secondary,
+    fontSize: "1.4rem",
+    marginLeft: "3.25rem",
+  },
+}))
+
 // Pagination Component
 const WizardPagination: React.FC<WizardPagination> = props => {
   const { totalNumberOfItems, page, itemsPerPage, handleChangePage, handleItemsPerPageChange } = props
+
+  const labelDisplayedRows = ({ from, to, count }) => (
+    <DisplayRows>
+      {totalNumberOfItems > 5 && <Divider orientation="vertical" variant="middle" color="secondary" />}
+      <span>
+        {from}-{to} of {count} items
+      </span>
+    </DisplayRows>
+  )
 
   // Get "rowsPerPageOptions" of TablePagination
   const getRowsPerPageOptions = (totalItems?: number): Array<number | { value: number; label: string }> => {
@@ -177,7 +205,7 @@ const WizardPagination: React.FC<WizardPagination> = props => {
             ActionsComponent={WizardPaginationActions}
             count={totalNumberOfItems}
             labelRowsPerPage="Items per page:"
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count} items`}
+            labelDisplayedRows={labelDisplayedRows}
             page={page}
             rowsPerPage={itemsPerPage}
             rowsPerPageOptions={getRowsPerPageOptions(totalNumberOfItems)}

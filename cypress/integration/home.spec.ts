@@ -5,16 +5,6 @@ describe("Home e2e", function () {
   })
 
   it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
-    // Overview submissions should have 2 different list and max. 5 items each list
-    cy.contains("Your Draft Submissions", { timeout: 10000 }).should("be.visible")
-    cy.contains("Your Published Submissions", { timeout: 10000 }).should("be.visible")
-
-    cy.get("body").then($body => {
-      if ($body.find("ul.MuiList-root").length > 0) {
-        cy.get("ul.MuiList-root").eq(0).children().should("have.length.at.most", 5)
-      }
-    })
-
     // Create a new Unpublished folder
     cy.get("button").contains("Create Submission").click()
 
@@ -45,76 +35,26 @@ describe("Home e2e", function () {
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
-    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
 
-    cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
+    cy.get("[data-field='name']").eq(1).should("have.text", "Test unpublished folder")
+    cy.get("[data-testid='edit-draft-submission']").click()
 
-    // Navigate to home & find folder
-    cy.findDraftFolder("Test unpublished folder")
-
-    cy.get('button[aria-label="Publish current folder"]').should("be.disabled")
-    cy.get('button[aria-label="Edit current folder"]').contains("Edit").click()
-    cy.get("[data-testid='folderName']").clear().type("Edited unpublished folder")
+    cy.get("[data-testid='folderName']", { timeout: 1000 }).clear().type("Edited unpublished folder")
     cy.get("button[type=button]").contains("Next").click()
     cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
+    cy.get("button[type=button]").contains("Save and Exit").click()
+    cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
 
-    // Navigate to home and delete object
-    cy.findDraftFolder("Edited unpublished folder")
+    // Check that submission's name has been edited
+    cy.contains("My submissions", { timeout: 1000 }).should("be.visible")
+    cy.contains("Edited unpublished folder").should("be.visible")
 
-    cy.get("tr[data-testid='Test title']").within(() => cy.get('button[aria-label="Delete this object"]').click())
-    cy.get("tr[data-testid='Test title']").should("not.exist")
-
-    // Edit remaining object
-    cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
-    cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
-
-    cy.get("select[data-testid='descriptor.studyType']").select("Metagenomics")
-    cy.get("select[data-testid='descriptor.studyType']").should("have.value", "Metagenomics")
-    cy.formActions("Submit")
-
-    cy.get("[data-testid='Form-objects']", { timeout: 30000 }).find("li").should("have.length", 1)
-
-    // Navigate to summary
-    cy.get("button[type=button]").contains("Next", { timeout: 30000 }).click()
-
-    // Check the amount of submitted objects in Study
-    cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
-
-    // Navigate to home & edit submitted object
-    cy.findDraftFolder("Edited unpublished folder")
-
-    // Edit draft Sample form
-    cy.get("tr[data-testid='Test sample']").within(() => cy.get('button[aria-label="Edit this object"]').click())
-    cy.get("input[data-testid='title']").type(" edited")
-    cy.get("button[type=button]").contains("Update draft").click()
-    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
-
-    // Navigate to home & check updated draft's new title
-    cy.findDraftFolder("Edited unpublished folder")
-    cy.get("tr[data-testid='Test sample edited']").should("be.visible")
-
-    cy.get("tr[data-testid='Second test title']").within(() => cy.get('button[aria-label="Edit this object"]').click())
-    cy.get("input[data-testid='descriptor.studyTitle']").type(" edited")
-    cy.get("button[type=submit]").contains("Update").click()
-    cy.get("div[role=alert]").contains("Object updated")
-
-    //  Publish test folder from draft folders list
-    cy.findDraftFolder("Edited unpublished folder")
-    cy.get('button[aria-label="Publish current folder"]').click()
-    cy.get('button[aria-label="Publish folder contents and move to frontpage"]').click()
-
-    // Find published folder in corresponding list
-    cy.get("button[data-testid='ViewAll-published']", { timeout: 10000 }).click()
-    cy.get("body").then($body => {
-      if ($body.find("div[aria-haspopup='listbox']").length > 0) {
-        cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-        cy.get("ul").children().last().contains("All").click()
-      }
+    // Delete the submission and it shouldn't be there anymore
+    cy.get("[data-testid='delete-draft-submission']").click()
+    cy.contains(".MuiAlert-message", "The submission has been deleted successfully!", {
+      timeout: 1000,
     })
-
-    cy.get("ul[data-testId='published-submissions']", { timeout: 30000 }).within(() => {
-      cy.get("div[role=button]").contains("Edited unpublished folder")
-    })
+    cy.contains("Currently there are no draft submissions").should("be.visible")
   })
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
@@ -143,7 +83,14 @@ describe("Home e2e", function () {
     cy.get("button[type=button]").contains("Publish").click()
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
-    cy.get("div", { timeout: 10000 }).contains("Logged in as:")
+    // Check that published submission exists in data table
+    cy.contains("My submissions", { timeout: 1000 }).should("be.visible")
+    cy.get("[data-testid='published-tab']").click()
+    cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test name")
+
+    // Check that Edit and Delete button do not appear in Published data table
+    cy.get("[data-testid='edit-draft-submission']").should("not.exist")
+    cy.get("[data-testid='delete-draft-submission']").should("not.exist")
   })
 })
 

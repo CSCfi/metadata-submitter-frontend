@@ -35,7 +35,6 @@ declare global {
       newSubmission(folderName?: string): Chainable<Element>
       clickFillForm(objectType: string): Chainable<Element>
       continueFirstDraft(): Chainable<Element>
-      findDraftFolder(label: string): Chainable<Element>
       openDOIForm(): Chainable<Element>
       formActions(buttonName: string): Chainable<Element>
     }
@@ -66,11 +65,10 @@ Cypress.on("uncaught:exception", () => {
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
   cy.get('a[data-testid="login-button"]').click()
-  cy.get("[data-testid='link-create-submission'", { timeout: 10000 }).should("be.visible")
 })
 
 Cypress.Commands.add("newSubmission", folderName => {
-  cy.intercept("/folders").as("newSubmission")
+  cy.intercept("/folders*").as("newSubmission")
   cy.get("[data-testid='folderName']").type(folderName ? folderName : "Test name")
   cy.get("[data-testid='folderDescription']").type("Test description")
   cy.get("button[type=button]")
@@ -82,6 +80,7 @@ Cypress.Commands.add("newSubmission", folderName => {
 })
 
 Cypress.Commands.add("clickFillForm", objectType => {
+  cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
   cy.get("div[role=button]", { timeout: 10000 }).contains(objectType).click()
   cy.get("div[aria-expanded='true']")
     .siblings()
@@ -100,38 +99,15 @@ Cypress.Commands.add("continueFirstDraft", () => {
     .find("li")
     .first()
     .within(() => {
-      cy.get("button[aria-label='Edit submission']").first().click()
+      cy.get("[data-testid='Edit submission']").first().click()
     })
+  cy.scrollTo("top")
   cy.contains("Update draft", { timeout: 10000 }).should("be.visible")
-})
-
-// Navigate to home & find folder from drafts
-Cypress.Commands.add("findDraftFolder", label => {
-  cy.get('a[aria-label="go to frontpage"]', { timeout: 10000 }).click()
-  cy.get("button[data-testid='ViewAll-draft']", { timeout: 10000 }).click()
-  cy.get("body").then(($body: JQuery<HTMLBodyElement>) => {
-    if ($body.find("div[aria-haspopup='listbox']").length > 0) {
-      cy.get("div[aria-haspopup='listbox']", { timeout: 10000 }).contains(10).click()
-      cy.get("ul").children().last().contains("All").click()
-
-      cy.get("ul[data-testid='draft-submissions']", { timeout: 30000 }).within(() => {
-        cy.get("a").should("exist")
-        cy.get("div[role=button]").should("be.visible")
-        cy.get("div[role=button]")
-          .last()
-          .contains(label)
-          .should("be.visible")
-          .then($el => $el.click())
-      })
-    } else {
-      cy.get("ul[data-testid='draft-submissions']").within(() => cy.get("div[role=button]").contains(label).click())
-    }
-  })
 })
 
 // Go to DOI form
 Cypress.Commands.add("openDOIForm", () => {
-  cy.get("div[role=button]").contains("Study").should("be.visible")
+  cy.get("div[role=button]", { timeout: 10000 }).contains("Study").should("be.visible")
   cy.get("button[type=button]")
     .contains("Next")
     .should("be.visible")

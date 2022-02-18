@@ -13,19 +13,16 @@ describe("Internationalization", function () {
 
     cy.login()
 
-    cy.get("[data-testid='logged-in-as'").contains("Kirjautuneena")
+    /* To be filled with new translation check later */
   })
 
   it("should change translation seamlessly", () => {
     cy.login()
-
-    cy.get("[data-testid='logged-in-as'").contains("Logged in as")
-
+    /* To be filled with new translation check later */
     cy.get("[data-testid='lang-selector']").click()
     cy.get("[data-testid='fi-lang']").contains("Fi").click()
     cy.url().should("include", "/fi/")
-
-    cy.get("[data-testid='logged-in-as'").contains("Kirjautuneena")
+    /* To be filled with new translation check later */
   })
 
   it("should navigate with selected locale", () => {

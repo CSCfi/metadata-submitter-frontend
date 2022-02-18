@@ -94,7 +94,7 @@ describe("Linking Accession Ids", function () {
     // Run form
     cy.clickFillForm("Run")
     cy.get("[data-testid='title']").type("Test Run title")
-    cy.get("h2[data-testid='experimentRef']").parents().children("button").click()
+    cy.get("h5[data-testid='experimentRef']").parents().children("button").click()
 
     // Select experimentAccessionId
     cy.get("@experimentAccessionId").then(id =>
@@ -181,7 +181,7 @@ describe("Linking Accession Ids", function () {
     // Fill DAC form
     cy.clickFillForm("DAC")
 
-    cy.get("h2[data-testid='contacts']").parents().children("button").click()
+    cy.get("h5[data-testid='contacts']").parents().children("button").click()
     cy.get("[data-testid='contacts.0.name']").type("Test contact name")
     cy.get("[data-testid='contacts.0.email']").type("contact@hotmail.com")
     cy.get("[data-testid='contacts.0.telephoneNumber']").type("Test phone number")

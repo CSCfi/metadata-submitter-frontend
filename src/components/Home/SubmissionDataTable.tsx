@@ -51,6 +51,7 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
     "& > *": { fontWeight: 700 },
     "& .MuiDataGrid-sortIcon": {
       color: theme.palette.secondary.main,
+      fontSize: "2rem",
     },
   },
   "& .MuiDataGrid-columnHeader:first-of-type, .MuiDataGrid-cell:first-of-type": {
@@ -131,7 +132,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       type: "actions",
       hide: folderType === FolderSubmissionStatus.published,
       getActions: (params: GridRowParams) => [
-        <div key={params.id}>
+        <div key={params.id} data-testid="edit-draft-submission">
           <GridActionsCellItem
             icon={<EditIcon color="primary" fontSize="large" />}
             onClick={e => handleEditSubmission(e, params.id)}
@@ -139,7 +140,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
             showInMenu
           />
         </div>,
-        <div key={params.id}>
+        <div key={params.id} data-testid="delete-draft-submission">
           <GridActionsCellItem
             icon={<DeleteIcon color="primary" fontSize="large" />}
             onClick={e => {
@@ -221,7 +222,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   // Renders when there is no folders in the list
   const EmptyList = () => (
     <CardContent>
-      <Typography align="center" variant="body2">
+      <Typography align="center" variant="body1">
         Currently there are no {folderType} submissions
       </Typography>
     </CardContent>

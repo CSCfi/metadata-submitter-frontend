@@ -40,7 +40,7 @@ describe("Draft operations", function () {
       .within(() => {
         cy.get("[data-testid='Delete submission']").first().click()
       })
-    cy.get("[data-testid='Draft-objects']").find("li", { timeout: 60000 }).should("have.length", 1)
+    cy.get("[data-testid='Draft-objects']").find("li", { timeout: 10000 }).should("have.length", 1)
 
     // Continue draft
     cy.continueFirstDraft()
@@ -49,7 +49,6 @@ describe("Draft operations", function () {
     // Clear
     cy.formActions("Clear form")
     // Fill
-    // cy.get("[data-testid='descriptor.studyTitle']").should("be.visible").focus()
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "")
     cy.get("[data-testid='descriptor.studyTitle']").type("New title")
 

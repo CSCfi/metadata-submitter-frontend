@@ -34,6 +34,7 @@ describe("draft and submitted objects' titles", function () {
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
 
+    cy.scrollTo("top")
     cy.contains("Update Study", { timeout: 10000 }).should("be.visible")
     cy.get("@studyTitle", { timeout: 10000 }).should("have.value", "Test title")
     cy.get("@studyTitle", { timeout: 10000 }).type(" 2")

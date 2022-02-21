@@ -194,10 +194,14 @@ describe("Basic e2e", function () {
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
     // Test DAC form update
-    cy.get("button[type=button]").contains("Edit").click({ timeout: 1000 })
-    cy.get("[data-testid='contacts.0.name']").should("be.visible").focus()
-    cy.get("[data-testid='contacts.0.name']").type(" edited")
-    cy.get("button[type=submit]").contains("Update").click()
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("[data-testid='contacts']").should("be.visible")
+    cy.get("input[data-testid='contacts.0.name']", { timeout: 1000 }).should("be.visible").click({ force: true })
+    cy.get("input[data-testid='contacts.0.name']").type(" edited")
+    cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
+
+    cy.formActions("Update")
+
     cy.get("button[type=button]").contains("Edit").click()
     cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
 

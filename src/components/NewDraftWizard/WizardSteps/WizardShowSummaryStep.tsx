@@ -115,7 +115,7 @@ const WizardShowSummaryStep: React.FC = () => {
 
   return (
     <>
-      <WizardHeader headerText="Create Submission" />
+      <WizardHeader headerText="Create submission" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>

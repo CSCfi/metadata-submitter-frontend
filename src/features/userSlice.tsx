@@ -2,14 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import _reject from "lodash/reject"
 
 import userAPIService from "services/usersAPI"
-import type { APIResponse, DispatchReducer, ObjectInsideFolderWithTags, ObjectTags } from "types"
-
-type User = {
-  id: string
-  name: string
-  templates: Array<ObjectInsideFolderWithTags>
-  folders: Array<string>
-}
+import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags, ObjectTags } from "types"
 
 const initialState: User = {
   id: "",

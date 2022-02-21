@@ -212,7 +212,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   #### Changed
 
-  - Create New Folder > Create Submission
+  - Create New Folder > Create submission
   - Main grid spacing
   - Consistent card and grid object headers
   - Subtitle colors

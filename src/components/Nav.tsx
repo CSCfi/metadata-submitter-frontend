@@ -62,7 +62,7 @@ const NavigationLinks = () => {
     setAnchorEl(null)
   }
 
-  return (
+  return user.name ? (
     <React.Fragment>
       <Button
         id="user-setting-button"
@@ -76,7 +76,7 @@ const NavigationLinks = () => {
         <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
           {user.name}
         </Typography>
-        {open ? <ExpandLess color="secondary" /> : <ExpandMore color="secondary" fontSize="large" />}
+        {open ? <ExpandLess color="secondary" fontSize="large" /> : <ExpandMore color="secondary" fontSize="large" />}
       </Button>
       <Menu
         id="user-setting-menu"
@@ -90,8 +90,8 @@ const NavigationLinks = () => {
         <MenuItem
           component="a"
           onClick={() => {
-            dispatch(resetUser())
             handleClose
+            dispatch(resetUser())
           }}
           href="/logout"
         >
@@ -101,6 +101,8 @@ const NavigationLinks = () => {
         </MenuItem>
       </Menu>
     </React.Fragment>
+  ) : (
+    <></>
   )
 }
 

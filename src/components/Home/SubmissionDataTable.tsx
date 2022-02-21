@@ -40,6 +40,9 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 const DataTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus, &.MuiDataGrid-root .MuiDataGrid-cell:focus": {
+    outline: "none",
+  },
   "& .MuiDataGrid-columnHeaders": {
     fontSize: "1.4rem",
   },

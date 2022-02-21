@@ -7,7 +7,7 @@ describe("Field validation", function () {
   it("should translate AJV validation messages according to locale", () => {
     cy.get("[data-testid='lang-selector']").should("contain", "en")
 
-    cy.get("button").contains("Create Submission").click()
+    cy.get("button").contains("Create submission").click()
 
     cy.newSubmission()
 

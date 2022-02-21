@@ -2,7 +2,7 @@ describe("draft and submitted objects' titles", function () {
   beforeEach(() => {
     cy.task("resetDb")
     cy.login()
-    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
+    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()

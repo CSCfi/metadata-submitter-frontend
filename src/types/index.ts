@@ -18,6 +18,13 @@ import {
   UseFormWatch,
 } from "react-hook-form"
 
+export type User = {
+  id: string
+  name: string
+  templates: Array<ObjectInsideFolderWithTags>
+  folders: Array<string>
+}
+
 export type Schema = "study" | "sample" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
 
 export type ObjectDetails = {

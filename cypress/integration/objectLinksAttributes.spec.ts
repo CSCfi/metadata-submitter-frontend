@@ -5,7 +5,7 @@ describe("render objects' links and attributes ", function () {
   it("should render correct Study Links and Attributes", () => {
     cy.login()
 
-    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
+    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()

@@ -47,7 +47,7 @@ const WizardAddObjectStep: React.FC = () => {
 
   return (
     <>
-      <WizardHeader headerText="Create Submission" />
+      <WizardHeader headerText="Create submission" />
       <WizardStepper />
 
       <Grid container spacing={2} className={classes.gridContainer}>

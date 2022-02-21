@@ -226,7 +226,7 @@ const Home: React.FC = () => {
           <FrontPageTab label="Drafts" value={FolderSubmissionStatus.unpublished} data-testid="drafts-tab" />
           <FrontPageTab label="Published" value={FolderSubmissionStatus.published} data-testid="published-tab" />
         </FrontPageTabs>
-        <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
+        <Link component={RouterLink} aria-label="Create submission" to={pathWithLocale("newdraft?step=0")}>
           <CreateSubmissionButton
             color="primary"
             variant="contained"
@@ -235,7 +235,7 @@ const Home: React.FC = () => {
             }}
             data-testid="link-create-submission"
           >
-            Create Submission
+            Create submission
           </CreateSubmissionButton>
         </Link>
       </Box>

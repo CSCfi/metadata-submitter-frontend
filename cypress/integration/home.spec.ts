@@ -6,7 +6,7 @@ describe("Home e2e", function () {
 
   it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
     // Create a new Unpublished folder
-    cy.get("button").contains("Create Submission").click()
+    cy.get("button").contains("Create submission").click()
 
     // Add folder name & description, navigate to editing folder
     cy.newSubmission("Test unpublished folder")
@@ -59,7 +59,7 @@ describe("Home e2e", function () {
 
   it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
     // Create a new Published folder
-    cy.get("button").contains("Create Submission").click()
+    cy.get("button").contains("Create submission").click()
 
     // Add folder name & description, navigate to editing folder
     cy.newSubmission()

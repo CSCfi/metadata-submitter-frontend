@@ -18,7 +18,7 @@ describe("WizardFooter", () => {
   let store
   let wrapper
 
-  it("should open dialog on click of cancel", () => {
+  test("should open dialog on click of cancel", () => {
     store = mockStore({
       submissionType: ObjectSubmissionTypes.form,
     })
@@ -46,7 +46,7 @@ describe("WizardFooter", () => {
     fireEvent.click(button)
     expect(screen.getByRole("dialog")).toBeDefined()
   }),
-    it("should disable Publish button if there is no submitted objects", () => {
+    test("should disable Publish button if there is no submitted objects", () => {
       store = mockStore({
         submissionType: ObjectSubmissionTypes.form,
         submissionFolder: {

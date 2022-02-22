@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 
-import BadgeUnstyled from "@mui/base/BadgeUnstyled"
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded"
 import MuiAccordion from "@mui/material/Accordion"
 import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary from "@mui/material/AccordionSummary"
+import Badge from "@mui/material/Badge"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
@@ -26,8 +26,8 @@ import { formatDisplayObjectType } from "utils"
 const useStyles = makeStyles(theme => ({
   index: {
     alignSelf: "flex-start",
-    marginBottom: theme.spacing(2),
-    width: theme.spacing(30),
+    marginBottom: 2,
+    width: 300,
   },
   submissionTypeList: {
     padding: 0,
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
   },
   badge: {
-    margin: theme.spacing(2, 2, 2, "auto"),
+    margin: 2,
     zIndex: 0,
   },
   skipLink: {
@@ -121,7 +121,7 @@ const ObjectCountBadge = withStyles(theme => ({
     padding: theme.spacing(0, 1),
     borderRadius: "50%",
   },
-}))(BadgeUnstyled)
+}))(Badge)
 
 type SubmissionTypeListProps = {
   handleSubmissionTypeChange: (submissionType: string) => void

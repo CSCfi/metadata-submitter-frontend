@@ -1,11 +1,22 @@
+import type {} from "@mui/x-data-grid/themeAugmentation"
+
 declare module "@mui/material/styles" {
-  interface Theme {
+  interface CustomTheme extends Theme {
     typography: {
       fontFamily: string
-      fontSize: number
       pxToRem: (px: number) => string
-      subtitle1: { fontFamily: string; fontSize: string }
+      h1: { fontSize: string }
+      h2: { fontSize: string }
+      h3: { fontSize: string }
+      h4: { fontSize: string }
+      h5: { fontSize: string }
+      h6: { fontSize: string }
+      subtitle1: { fontSize: string }
+      subtitle2: { fontSize: string }
+      body1: { fontSize: string }
+      body2: { fontSize: string }
     }
+    spacing: (factor) => string
     error: {
       main: string
     }
@@ -32,6 +43,7 @@ declare module "@mui/material/styles" {
       fontFamily: string
       fontSize: number
     }
+    spacing: (factor) => string
     error: {
       main: string
     }
@@ -67,8 +79,13 @@ declare module "@mui/material/styles/createPalette" {
 }
 
 declare module "@mui/private-theming" {
-  import type { Theme } from "@mui/material/styles"
+  import type { CustomTheme } from "@mui/material/styles"
 
+  interface DefaultTheme extends CustomTheme {}
+}
+import type { Theme } from "@mui/material/styles"
+
+declare module "@mui/styles/defaultTheme" {
   interface DefaultTheme extends Theme {}
 }
 

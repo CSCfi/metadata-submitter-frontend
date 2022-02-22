@@ -29,23 +29,23 @@ import { getItemPrimaryText, getDraftObjects, getOrigObjectType, pathWithLocale 
 
 const useStyles = makeStyles(theme => ({
   formComponent: {
-    margin: theme.spacing(2),
+    margin: 2,
     padding: 0,
     overflowY: "auto",
   },
   formControl: {
-    marginBottom: theme.spacing(1),
+    marginBottom: 1,
   },
   formLabel: {
     fontWeight: "bold",
     color: theme.palette.grey[900],
-    padding: theme.spacing(1),
+    padding: 1,
     borderBottom: `3px solid ${theme.palette.primary.main}`,
     textTransform: "capitalize",
   },
   formControlLabel: {
     padding: 0,
-    margin: theme.spacing(1, 0),
+    margin: 1,
     borderBottom: `solid 1px ${theme.palette.secondary.main}`,
   },
   label: {
@@ -64,11 +64,11 @@ const useStyles = makeStyles(theme => ({
   },
   viewButton: {
     color: theme.palette.primary.main,
-    margin: theme.spacing(1.5, 0),
+    margin: 1,
     float: "right",
   },
   buttonGroup: {
-    marginTop: theme.spacing(2),
+    marginTop: 2,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",

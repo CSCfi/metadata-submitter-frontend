@@ -62,7 +62,7 @@ describe("WizardAddObjectStep", () => {
     expect(screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")).toBeInTheDocument()
   })
 
-  it("should render appropriate card", async () => {
+  test("should render appropriate card", async () => {
     await act(async () => {
       ObjectSubmissionsArray.forEach(typeName => {
         const store = mockStore({

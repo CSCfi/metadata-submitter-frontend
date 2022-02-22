@@ -23,12 +23,12 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 import { pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
+      margin: 1,
     },
-    padding: theme.spacing(2),
+    padding: 2,
   },
   accordion: {
     "&.MuiAccordion-root": {
@@ -177,7 +177,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
 const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
   <>
-    <WizardHeader headerText="Create Submission" />
+    <WizardHeader headerText="Create submission" />
     <WizardStepper createFolderFormRef={createFolderFormRef} />
     <CreateFolderForm createFolderFormRef={createFolderFormRef} />
   </>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 
-import { Theme } from "@mui/material"
+import { CustomTheme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
@@ -23,19 +23,19 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme: CustomTheme) => ({
   container: {
     padding: 0,
   },
   cardHeader: theme.wizard.cardHeader,
   cardHeaderAction: {
-    margin: theme.spacing(-0.5, 0),
+    margin: -1,
   },
   root: {
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(5, "auto"),
+      margin: 5,
     },
   },
   hiddenInput: {

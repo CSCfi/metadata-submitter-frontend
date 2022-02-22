@@ -35,14 +35,13 @@ import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "re
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
-import CSCtheme from "theme"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
 import { pathToName, traverseValues, getPathName } from "utils/JSONSchemaUtils"
 
 /*
  * Highlight style for required fields
  */
-const highlightStyle = (theme: typeof CSCtheme) => {
+const highlightStyle = theme => {
   return {
     borderColor: theme.palette.primary.main,
     borderWidth: 2,
@@ -52,11 +51,11 @@ const highlightStyle = (theme: typeof CSCtheme) => {
 const useStyles = makeStyles(theme => ({
   fieldTip: {
     color: theme.palette.secondary.main,
-    marginLeft: theme.spacing(0),
+    marginLeft: 0,
   },
   sectionTip: {
     fontSize: "inherit",
-    marginLeft: theme.spacing(0.5),
+    marginLeft: 1,
   },
   divBaseline: {
     display: "flex",
@@ -64,14 +63,14 @@ const useStyles = makeStyles(theme => ({
     alignItems: "baseline",
     width: "100%",
     "& label": {
-      marginRight: theme.spacing(0),
+      marginRight: 0,
     },
   },
   autocomplete: {
     flex: "auto",
     alignSelf: "flex-start",
     "& + svg": {
-      marginTop: theme.spacing(1),
+      marginTop: 1,
     },
   },
   autocompleteInput: {
@@ -81,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   },
   externalLink: {
     fontSize: "1rem",
-    marginBottom: theme.spacing(-0.5),
+    marginBottom: -1,
   },
 }))
 
@@ -94,7 +93,7 @@ const FieldTooltip = withStyles(theme => ({
 }))(Tooltip)
 
 const DatePickerWrapper = styled(Grid)(({ theme }) => ({
-  paddingLeft: theme.spacing(1),
+  paddingLeft: 1,
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -232,7 +231,7 @@ const traverseFields = (
     case "object": {
       const properties = object.properties
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 1} description={description}>
+        <FormSection key={name} name={name} label={label} level={path.length + 4} description={description}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
@@ -352,7 +351,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
         return (
           <div>
             <div key={`${name}-section`}>
-              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading">
+              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading" color="secondary">
                 {label}
                 {description && level == 2 && (
                   <FieldTooltip title={description} placement="top" arrow>
@@ -892,10 +891,7 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                   defaultValue={dateInputValues}
                   InputProps={{
                     endAdornment: (
-                      <IconButton
-                        onClick={handleClearDates}
-                        sx={theme => ({ position: "absolute", right: `-${theme.spacing(1)}`, padding: 0 })}
-                      >
+                      <IconButton onClick={handleClearDates} sx={{ position: "absolute", right: "-1", padding: 0 }}>
                         <ClearIcon fontSize="small" />
                       </IconButton>
                     ),
@@ -1384,7 +1380,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
-  const level = path.length + 1
+  const level = path.length === 1 ? path.length + 4 : path.length + 2
 
   // Get currentObject and the values of current field
   const currentObject = useAppSelector(state => state.currentObject) || {}
@@ -1453,7 +1449,13 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   return (
     <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
       {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
-      <Typography key={`${name}-header`} variant={`h${level}` as Variant} data-testid={name} role="heading">
+      <Typography
+        key={`${name}-header`}
+        variant={`h${level}` as Variant}
+        data-testid={name}
+        role="heading"
+        color="secondary"
+      >
         <span id={name}>{label}</span> {required ? "*" : null}
         {required && !isValid && errors[name] && (
           <span>

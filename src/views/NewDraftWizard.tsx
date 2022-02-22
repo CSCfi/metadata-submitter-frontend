@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(4),
     alignItems: "stretch",
     width: "60%",
-    margin: theme.spacing(10, "auto"),
+    margin: theme.spacing(10),
   },
   paperContent: {
     display: "flex",

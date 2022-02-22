@@ -39,13 +39,34 @@ const palette = {
   },
 }
 
+export const fontSizeBreakpoints = {
+  [defaultTheme.breakpoints.down("sm")]: {
+    fontSize: "1.25rem",
+  },
+  [defaultTheme.breakpoints.between("sm", "lg")]: {
+    fontSize: "1.4rem",
+  },
+  [defaultTheme.breakpoints.up("lg")]: {
+    fontSize: "1.6rem",
+  },
+}
+
 /**
  * Set up custom theme that follows CSC's design guidelines.
  */
 let CSCtheme = createTheme({
   typography: {
     fontFamily: "Museo Sans, Arial, sans-serif",
-    fontSize: 14,
+    h1: { fontSize: "9.6rem" },
+    h2: { fontSize: "6rem" },
+    h3: { fontSize: "4.8rem" },
+    h4: { fontSize: "3.5rem" },
+    h5: { fontSize: "2rem" },
+    h6: { fontSize: "1.25rem" },
+    subtitle1: { fontSize: "1.6rem" },
+    subtitle2: { fontSize: "1.4rem" },
+    body1: { fontSize: "1.6rem" },
+    body2: { fontSize: "1.4rem" },
   },
   components: {
     MuiCssBaseline: {
@@ -76,26 +97,58 @@ let CSCtheme = createTheme({
         }
       `,
     },
+
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: "none",
           fontWeight: 700,
-          fontSize: "1em",
-          paddingLeft: "2em",
-          paddingRight: "2em",
-          lineHeight: "1.2em",
+        },
+        contained: fontSizeBreakpoints,
+        outlined: fontSizeBreakpoints,
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          fontSizeBreakpoints,
         },
       },
     },
-    MuiTypography: {
+    MuiDataGrid: {
       styleOverrides: {
-        subtitle1: {
-          fontWeight: 600,
+        columnHeader: fontSizeBreakpoints,
+        row: fontSizeBreakpoints,
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "capitalize",
+        },
+      },
+    },
+    MuiTablePagination: {
+      styleOverrides: {
+        root: fontSizeBreakpoints,
+        menuItem: {
+          backgroundColor: "white",
+          color: palette.secondary.main,
+          "&:hover": {
+            backgroundColor: palette.primary.light,
+            color: palette.primary.main,
+          },
+          "&.MuiMenuItem-gutters.Mui-selected": {
+            backgroundColor: palette.common.white,
+            color: palette.primary.main,
+          },
         },
       },
     },
   },
+
+  spacing: factor => `${factor}rem`,
   palette: palette,
   error: palette.error,
   info: palette.info,
@@ -130,11 +183,11 @@ let CSCtheme = createTheme({
   tooltip: {
     backgroundColor: palette.common.white,
     color: palette.common.black,
-    fontSize: defaultTheme.typography.pxToRem(14),
+    fontSize: "1.4rem",
     boxShadow: defaultTheme.shadows[1],
   },
   form: {
-    margin: defaultTheme.spacing(3, 2),
+    margin: defaultTheme.spacing(3),
     "& .MuiTextField-root > .Mui-required": {
       color: palette.primary.main,
     },
@@ -144,7 +197,6 @@ let CSCtheme = createTheme({
     },
     "& .MuiTypography-root": {
       margin: defaultTheme.spacing(1),
-      ...defaultTheme.typography.subtitle1,
       fontWeight: "bold",
     },
     "& .MuiTypography-h2": {

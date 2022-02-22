@@ -54,7 +54,7 @@ describe("Test autocomplete on organisation field", () => {
 
   sessionStorage.setItem(`cached_dac_schema`, JSON.stringify(schema))
 
-  it("should render autocomplete field if schema has 'organisation' property", async () => {
+  test("should render autocomplete field if schema has 'organisation' property", async () => {
     jest.setTimeout(30000)
 
     render(
@@ -72,7 +72,7 @@ describe("Test autocomplete on organisation field", () => {
     })
   })
 
-  it("should search for organisations", async () => {
+  test("should search for organisations", async () => {
     render(
       <Provider store={store}>
         <StyledEngineProvider injectFirst>

@@ -27,8 +27,8 @@ import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles(theme => ({
   summary: {
-    padding: theme.spacing(1),
-    width: theme.spacing(100),
+    padding: 1,
+    width: 100,
     [theme.breakpoints.down("sm")]: {
       width: "100%",
     },
@@ -37,9 +37,9 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "space-between",
     borderBottom: `3px solid ${theme.palette.primary.main}`,
-    paddingTop: theme.spacing(1),
+    paddingTop: 1,
     "& .objectAmount": {
-      marginRight: theme.spacing(1),
+      marginRight: 1,
       fontWeight: "bold",
     },
   },
@@ -49,10 +49,10 @@ const useStyles = makeStyles(theme => ({
   objectListItems: {
     borderBottom: `solid 1px ${theme.palette.secondary.main}`,
     alignItems: "flex-start",
-    padding: theme.spacing(1.5),
+    padding: 2,
   },
   doiButton: {
-    marginTop: theme.spacing(4),
+    marginTop: 4,
   },
 }))
 
@@ -115,7 +115,7 @@ const WizardShowSummaryStep: React.FC = () => {
 
   return (
     <>
-      <WizardHeader headerText="Create Submission" />
+      <WizardHeader headerText="Create submission" />
       <WizardStepper />
       <WizardHeader headerText="Summary" />
       <div className={classes.summary}>

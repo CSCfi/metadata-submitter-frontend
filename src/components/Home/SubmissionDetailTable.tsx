@@ -32,7 +32,7 @@ import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { FolderRow } from "types"
+import type { OldFolderRow } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     border: "none",
-    padding: theme.spacing(0),
+    padding: 0,
   },
   cardHeader: {
     fontSize: "0.5em",
     padding: 0,
-    marginTop: theme.spacing(1),
+    marginTop: 8,
     "&:hover": {
       cursor: "pointer",
     },
@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.black,
   },
   tableHeader: {
-    padding: theme.spacing(1),
+    padding: 8,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: theme.palette.common.white,
-    marginRight: theme.spacing(1),
+    marginRight: 8,
   },
   headRows: {
     fontWeight: "bold",
@@ -89,7 +89,7 @@ const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "",
 
 type SubmissionDetailTableProps = {
   folderTitle: string
-  bodyRows: Array<FolderRow>
+  bodyRows: Array<OldFolderRow>
   folderType: string
   location: string
   onEditFolder: (step: number) => void
@@ -100,7 +100,7 @@ type SubmissionDetailTableProps = {
 
 type RowProps = {
   index: number
-  row: FolderRow
+  row: OldFolderRow
   publishedFolder: boolean
   onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
   onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<void>

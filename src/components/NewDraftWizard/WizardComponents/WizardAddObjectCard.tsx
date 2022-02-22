@@ -11,15 +11,15 @@ import { useAppSelector } from "hooks"
 const useStyles = makeStyles(theme => ({
   card: {
     width: "100%",
-    marginBottom: theme.spacing(4),
+    marginBottom: 4,
     padding: 0,
     overflow: "visible",
   },
   submissionTypeButton: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    marginLeft: theme.spacing(4),
-    marginRight: theme.spacing(4),
+    paddingTop: 2,
+    paddingBottom: 2,
+    marginLeft: 4,
+    marginRight: 4,
   },
   hideButton: {
     color: theme.palette.common.white,

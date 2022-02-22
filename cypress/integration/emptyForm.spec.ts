@@ -3,7 +3,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.task("resetDb")
     cy.login()
 
-    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
+    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()
@@ -96,7 +96,7 @@ describe("empty form should not be alerted or saved", function () {
     // Fill in Form and Save
     cy.get("input[data-testid='descriptor.studyTitle']").type("Test study")
     cy.get("input[data-testid='descriptor.studyTitle']").should("have.value", "Test study")
-    // cy.get("button[type=button]").contains("Save as Draft").click()
+
     cy.formActions("Save as Draft")
     cy.get("div[role=alert]").contains("Draft saved with")
 

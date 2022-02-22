@@ -18,6 +18,13 @@ import {
   UseFormWatch,
 } from "react-hook-form"
 
+export type User = {
+  id: string
+  name: string
+  templates: Array<ObjectInsideFolderWithTags>
+  folders: Array<string>
+}
+
 export type Schema = "study" | "sample" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
 
 export type ObjectDetails = {
@@ -29,7 +36,7 @@ export type ObjectDetails = {
   submissionType: string
 }
 
-export type FolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
+export type OldFolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
 
 export type FolderId = {
   folderId: string
@@ -53,6 +60,7 @@ export type ObjectInsideFolderWithTagsBySchema = { [schema: string]: ObjectInsid
 export type FolderDetails = {
   name: string
   description: string
+  dateCreated?: number
   published: boolean
   drafts: Array<ObjectInsideFolderWithTags>
   metadataObjects: Array<ObjectInsideFolderWithTags>
@@ -60,6 +68,14 @@ export type FolderDetails = {
 }
 
 export type FolderDetailsWithId = FolderId & FolderDetails
+
+export type FolderRow = {
+  id: string
+  name: string
+  dateCreated?: number
+  lastModifiedBy: string
+  cscProject: string
+}
 
 export type FolderDataFromForm = {
   name: string

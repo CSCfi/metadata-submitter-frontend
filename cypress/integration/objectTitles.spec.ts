@@ -2,7 +2,7 @@ describe("draft and submitted objects' titles", function () {
   beforeEach(() => {
     cy.task("resetDb")
     cy.login()
-    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
+    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()
@@ -34,6 +34,7 @@ describe("draft and submitted objects' titles", function () {
     // Edit submitted object
     cy.get("button[type=button]").contains("Edit").click()
 
+    cy.scrollTo("top")
     cy.contains("Update Study", { timeout: 10000 }).should("be.visible")
     cy.get("@studyTitle", { timeout: 10000 }).should("have.value", "Test title")
     cy.get("@studyTitle", { timeout: 10000 }).type(" 2")

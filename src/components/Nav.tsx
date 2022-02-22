@@ -1,16 +1,16 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
-import HomeIcon from "@mui/icons-material/Home"
+import ExpandLess from "@mui/icons-material/ExpandLess"
+import ExpandMore from "@mui/icons-material/ExpandMore"
+import PersonIcon from "@mui/icons-material/Person"
 import AppBar from "@mui/material/AppBar"
 import Button from "@mui/material/Button"
-import IconButton from "@mui/material/IconButton"
 import Link from "@mui/material/Link"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
@@ -18,25 +18,10 @@ import logo from "../images/csc_logo.svg"
 
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
-import { resetUser } from "features/userSlice"
-import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetFolder } from "features/wizardSubmissionFolderSlice"
+import { fetchUserById, resetUser } from "features/userSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
-
-const useStyles = makeStyles(theme => ({
-  link: {
-    margin: theme.spacing(1, 1.5),
-    color: theme.palette.secondary.main,
-  },
-  languageSelector: {
-    marginLeft: theme.spacing(1),
-    textTransform: "capitalize",
-  },
-  linkButton: {
-    margin: theme.spacing(1, 1.5),
-  },
-}))
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
@@ -44,8 +29,9 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 }))
 
 const Logo = styled("img")(() => ({
-  width: "4em",
-  height: "2.5em",
+  width: "6.4rem",
+  height: "4rem",
+  flexGrow: 1,
 }))
 
 const ServiceTitle = styled(Typography)(({ theme }) => ({
@@ -58,57 +44,65 @@ type MenuItemProps = {
   currentLocale: string
 }
 
-const NavigationLinks = (props: MenuItemProps) => {
-  const { currentLocale } = props
-  const classes = useStyles()
+const NavigationLinks = () => {
+  const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
 
-  const resetWizard = () => {
-    dispatch(resetObjectType())
-    dispatch(resetFolder())
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
+
+  useEffect(() => {
+    dispatch(fetchUserById("current"))
+  }, [dispatch])
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
   }
 
-  return (
+  return user.name ? (
     <React.Fragment>
-      <IconButton
-        component={RouterLink}
-        to={`/${currentLocale}/home`}
-        aria-label="go to frontpage"
-        color="inherit"
-        size="large"
-      >
-        <HomeIcon />
-      </IconButton>
-      <Link component={RouterLink} to={pathWithLocale("home/drafts")} className={classes.link}>
-        Open submissions
-      </Link>
-      <Link component={RouterLink} to={pathWithLocale("home/published")} className={classes.link}>
-        Submissions
-      </Link>
-      <Link component={RouterLink} aria-label="Create Submission" to={pathWithLocale("newdraft?step=0")}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.linkButton}
-          onClick={() => {
-            resetWizard()
-          }}
-          data-testid="link-create-submission"
-        >
-          Create Submission
-        </Button>
-      </Link>
       <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => {
-          dispatch(resetUser())
-        }}
-        href="/logout"
+        id="user-setting-button"
+        aria-controls={open ? "user-setting-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        data-testid="user-setting-button"
       >
-        Log out
+        <PersonIcon fontSize="large" />
+        <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+          {user.name}
+        </Typography>
+        {open ? <ExpandLess color="secondary" fontSize="large" /> : <ExpandMore color="secondary" fontSize="large" />}
       </Button>
+      <Menu
+        id="user-setting-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "user-setting-button",
+        }}
+      >
+        <MenuItem
+          component="a"
+          onClick={() => {
+            handleClose
+            dispatch(resetUser())
+          }}
+          href="/logout"
+        >
+          <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+            Log out
+          </Typography>
+        </MenuItem>
+      </Menu>
     </React.Fragment>
+  ) : (
+    <></>
   )
 }
 
@@ -152,9 +146,11 @@ const LanguageSelector = (props: MenuItemProps) => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ ml: "spacing(1)", textTransform: "capitalize" }}
+        sx={{ ml: 3, textTransform: "capitalize" }}
       >
-        {currentLocale}
+        <Typography variant="subtitle2" color="primary" fontWeight="700">
+          {currentLocale}
+        </Typography>
       </Button>
       <Menu
         id="lang-menu"
@@ -182,7 +178,7 @@ const NavigationMenu = () => {
 
   return (
     <nav>
-      {location.pathname !== "/" && <NavigationLinks currentLocale={currentLocale} />}
+      {location.pathname !== "/" && <NavigationLinks />}
       <LanguageSelector currentLocale={currentLocale} />
     </nav>
   )
@@ -192,10 +188,10 @@ const Nav: React.FC = () => {
   return (
     <NavBar>
       <Toolbar>
-        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5vh 1vw 1.5vh 2.5vw" }}>
+        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
           <Logo src={logo} alt="CSC_logo" />
         </Link>
-        <ServiceTitle variant="h6" noWrap>
+        <ServiceTitle variant="h5" noWrap>
           Sensitive Data Services - SD Submit
         </ServiceTitle>
         <NavigationMenu />

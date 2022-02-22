@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold",
     color: "#FFF",
     width: "100%",
-    padding: theme.spacing(3),
+    padding: 2,
     backgroundColor: theme.palette.primary.light,
   },
 }))

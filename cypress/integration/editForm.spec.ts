@@ -5,7 +5,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.task("resetDb")
     cy.login()
 
-    cy.get("button", { timeout: 10000 }).contains("Create Submission").click()
+    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()
@@ -65,11 +65,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[data-testid='sampleData.dataDescription']").should("have.value", testData.sampleTypeDescription)
 
     // Clear object in state
-    cy.get("button[type=button]", { timeout: 10000 }).contains("New form").should("exist")
-    cy.get("button[type=button]")
-      .contains("New form")
-      .should("be.visible")
-      .then($el => $el.click())
+    cy.formActions("New form")
 
     // Test updated title
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
@@ -109,7 +105,7 @@ describe("Populate form and render form elements by object data", function () {
     )
 
     // Save Experiment form
-    cy.get("button[type='button']").contains("Save as Draft").click()
+    cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     cy.continueFirstDraft()

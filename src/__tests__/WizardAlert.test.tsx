@@ -16,7 +16,7 @@ describe("WizardAlert", () => {
     submissionType: "",
   })
 
-  it("should render appropriate dialogs", () => {
+  test("should render appropriate dialogs", () => {
     const alerts = [
       { location: "submission", types: ObjectSubmissionsArray },
       { location: "footer", types: ["cancel", "save"] },

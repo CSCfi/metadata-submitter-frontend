@@ -7,8 +7,6 @@ import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
-import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
-import SubmissionFolderList from "components/Home/SubmissionFolderList"
 import Nav from "components/Nav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
@@ -26,21 +24,14 @@ import Home from "views/Home"
 import Login from "views/Login"
 import NewDraftWizard from "views/NewDraftWizard"
 
-const useStyles = makeStyles(theme => ({
-  content: {
-    padding: theme.spacing(8, 0, 6),
-  },
+const useStyles = makeStyles(() => ({
   wizardContent: {
-    padding: theme.spacing(0),
-    margin: theme.spacing(8, 0, 0),
+    padding: 0,
+    margin: 1,
     width: "100%",
     display: "flex",
     flexDirection: "column",
     height: "100%",
-  },
-  errorContent: {
-    width: "100%",
-    marginTop: theme.spacing(10),
   },
 }))
 
@@ -160,40 +151,8 @@ const App: React.FC = () => {
         <Route
           path={setPath("home")}
           element={
-            <Container component="main" maxWidth="md" className={classes.content}>
+            <Container component="main" maxWidth="xl" disableGutters>
               <Home />
-            </Container>
-          }
-        />
-        <Route
-          path={setPath("home/drafts")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SubmissionFolderList />
-            </Container>
-          }
-        />
-        <Route
-          path={setPath("home/drafts/:folderId")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SelectedFolderDetails />
-            </Container>
-          }
-        />
-        <Route
-          path={setPath("home/published")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SubmissionFolderList />
-            </Container>
-          }
-        />
-        <Route
-          path={setPath("home/published/:folderId")}
-          element={
-            <Container component="main" maxWidth="md" className={classes.content}>
-              <SelectedFolderDetails />
             </Container>
           }
         />

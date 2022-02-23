@@ -149,21 +149,6 @@ export const updateNewDraftFolder =
     })
   }
 
-export const addObjectToFolder =
-  (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
-    const response = await folderAPIService.patchFolderById(folderID, changes)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(addObject(objectDetails))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
-  }
-
 export const replaceObjectInFolder =
   (
     folderID: string,
@@ -192,22 +177,6 @@ export const replaceObjectInFolder =
         resolve(response)
       } else {
         reject(JSON.stringify(response))
-      }
-    })
-  }
-
-export const addObjectToDrafts =
-  (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
-    const folderResponse = await folderAPIService.patchFolderById(folderID, changes)
-
-    return new Promise((resolve, reject) => {
-      if (folderResponse.ok) {
-        dispatch(addDraftObject(objectDetails))
-        resolve(folderResponse)
-      } else {
-        reject(JSON.stringify(folderResponse))
       }
     })
   }

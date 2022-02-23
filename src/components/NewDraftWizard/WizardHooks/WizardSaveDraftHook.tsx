@@ -4,7 +4,7 @@ import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObjectToDrafts, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { addDraftObject, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import draftAPIService from "services/draftAPI"
 import type { FolderDetailsWithId, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle } from "utils"
@@ -58,7 +58,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
     dispatch(resetLoading())
     return response
   } else {
-    const response = await draftAPIService.createFromJSON(objectType, values)
+    const response = await draftAPIService.createFromJSON(objectType, folder.folderId, values)
     if (response.ok) {
       dispatch(
         updateStatus({
@@ -69,7 +69,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
       )
       dispatch(resetDraftStatus())
       dispatch(
-        addObjectToDrafts(folder.folderId, {
+        addDraftObject({
           accessionId: response.data.accessionId,
           schema: "draft-" + objectType,
           tags: { displayTitle: draftDisplayTitle },

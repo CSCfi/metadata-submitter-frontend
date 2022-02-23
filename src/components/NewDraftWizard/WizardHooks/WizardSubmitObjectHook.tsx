@@ -6,7 +6,7 @@ import { setFileTypes } from "features/fileTypesSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObjectToFolder } from "features/wizardSubmissionFolderSlice"
+import { addObject } from "features/wizardSubmissionFolderSlice"
 import objectAPIService from "services/objectAPI"
 import { APIResponse, FormDataFiles, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
@@ -28,7 +28,7 @@ const submitObjectHook = async (
   }, 5000)
 
   const cleanedValues = JSONSchemaParser.cleanUpFormValues(formData)
-  const response = await objectAPIService.createFromJSON(objectType, cleanedValues)
+  const response = await objectAPIService.createFromJSON(objectType, folderId, cleanedValues)
 
   if (response.ok) {
     const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues)
@@ -39,32 +39,22 @@ const submitObjectHook = async (
     }
 
     dispatch(
-      addObjectToFolder(folderId, {
+      addObject({
         accessionId: response.data.accessionId,
         schema: objectType,
         tags: { submissionType: ObjectSubmissionTypes.form, displayTitle: objectDisplayTitle },
       })
     )
-      .then(() => {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            response: response,
-            helperText: "",
-          })
-        )
-        dispatch(resetDraftStatus())
-        dispatch(resetCurrentObject())
+
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.success,
+        response: response,
+        helperText: "",
       })
-      .catch(error => {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-            helperText: "Cannot connect to folder API",
-          })
-        )
-      })
+    )
+    dispatch(resetDraftStatus())
+    dispatch(resetCurrentObject())
   } else {
     dispatch(
       updateStatus({
@@ -78,9 +68,7 @@ const submitObjectHook = async (
   clearTimeout(waitForServertimer)
   dispatch(resetLoading())
 
-  return new Promise(resolve => {
-    resolve(response)
-  })
+  return response
 }
 
 export default submitObjectHook

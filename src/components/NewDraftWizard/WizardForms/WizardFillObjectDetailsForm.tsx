@@ -598,7 +598,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   /*
    * Submit form with cleaned values and check for response errors
    */
-  const onSubmit = async (data: Record<string, unknown>) => {
+  const onSubmit = (data: Record<string, unknown>) => {
     setSubmitting(true)
 
     // Handle submitted object update
@@ -631,9 +631,11 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
     if (data.status === ObjectStatus.submitted) {
       patchObject()
     } else {
-      const response = await submitObjectHook(data, folder.folderId, objectType, dispatch)
-
-      if (response) setSubmitting(false)
+      submitObjectHook(data, folder.folderId, objectType, dispatch)
+        .then(() => {
+          setSubmitting(false)
+        })
+        .catch(err => console.error(err))
     }
   }
 

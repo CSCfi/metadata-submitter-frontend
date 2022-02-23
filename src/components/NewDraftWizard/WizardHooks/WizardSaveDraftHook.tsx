@@ -26,18 +26,10 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
 
   if (accessionId && objectStatus === ObjectStatus.draft) {
     const response = await draftAPIService.patchFromJSON(objectType, accessionId, values)
-    const index = folder.drafts.findIndex(item => item.accessionId === accessionId)
+
     if (response.ok) {
       dispatch(resetDraftStatus())
-      dispatch(
-        replaceObjectInFolder(
-          folder.folderId,
-          accessionId,
-          index,
-          { displayTitle: draftDisplayTitle },
-          ObjectStatus.draft
-        )
-      )
+      dispatch(replaceObjectInFolder(accessionId, { displayTitle: draftDisplayTitle }, ObjectStatus.draft))
       dispatch(
         updateStatus({
           status: ResponseStatus.success,

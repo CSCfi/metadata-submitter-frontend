@@ -198,12 +198,10 @@ const patchHandler = (
   dispatch: (reducer: unknown) => void
 ) => {
   if (response.ok) {
-    const index = folder.metadataObjects.findIndex(item => item.accessionId === accessionId)
     dispatch(
       replaceObjectInFolder(
-        folder.folderId,
         accessionId,
-        index,
+
         {
           submissionType: ObjectSubmissionTypes.form,
           displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),

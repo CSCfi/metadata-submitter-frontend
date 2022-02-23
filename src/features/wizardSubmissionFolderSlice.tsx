@@ -151,34 +151,19 @@ export const updateNewDraftFolder =
 
 export const replaceObjectInFolder =
   (
-    folderID: string,
     accessionId: string,
-    index: number,
     tags: { submissionType?: string; displayTitle?: string; fileName?: string },
     objectStatus?: string
   ) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes =
-      objectStatus === ObjectStatus.submitted
-        ? [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
-        : [{ op: "replace", path: `/drafts/${index}/tags`, value: tags }]
-
-    const response = await folderAPIService.patchFolderById(folderID, changes)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        objectStatus === ObjectStatus.submitted
-          ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
-          : dispatch(
-              modifyDraftObjectTags({
-                accessionId,
-                tags,
-              })
-            )
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+  (dispatch: (reducer: DispatchReducer) => void) => {
+    objectStatus === ObjectStatus.submitted
+      ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
+      : dispatch(
+          modifyDraftObjectTags({
+            accessionId,
+            tags,
+          })
+        )
   }
 
 // Delete object from either metaDataObjects or drafts depending on savedType

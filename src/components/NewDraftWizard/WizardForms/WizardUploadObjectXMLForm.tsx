@@ -136,9 +136,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(
-            folderId,
             currentObject.accessionId,
-            currentObject.index,
+
             {
               submissionType: ObjectSubmissionTypes.xml,
               fileName: fileName,
@@ -147,14 +146,9 @@ const WizardUploadObjectXMLForm: React.FC = () => {
             ObjectStatus.submitted
           )
         )
-          .then(() => {
-            dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
-            dispatch(resetCurrentObject())
-            resetForm()
-          })
-          .catch(() => {
-            dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
-          })
+        dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
+        dispatch(resetCurrentObject())
+        resetForm()
       } else {
         dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
       }

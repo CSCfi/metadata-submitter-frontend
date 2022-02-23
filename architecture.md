@@ -80,35 +80,20 @@ export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags
 ```
 
 - import and reuse the data types in different files:
-  - Reuse type `ObjectInsideFolder` in `features/wizardSubmissionFolderSlice.js`:
 
-```
-import type { ObjectInsideFolder } from "types"
+  - Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
 
-export const addObjectToFolder = (
-  folderID: string,
-  objectDetails: ObjectInsideFolder
-) => {}
+  ```
+  import type { ObjectInsideFolderWithTags } from "types"
 
-export const addObjectToDrafts = (
-  folderID: string,
-  objectDetails: ObjectInsideFolder
-) => {}
-```
+  type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+  ```
 
-- Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
+  ```
+  import type { ObjectInsideFolderWithTags } from "types"
 
-```
-import type { ObjectInsideFolderWithTags } from "types"
-
-type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
-```
-
-```
-import type { ObjectInsideFolderWithTags } from "types"
-
-type GroupedBySchema = { [K in Schema]: Array<ObjectInsideFolderWithTags> }
-```
+  type GroupedBySchema = { [K in Schema]: Array<ObjectInsideFolderWithTags> }
+  ```
 
 ## Redux store
 

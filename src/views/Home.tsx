@@ -24,6 +24,7 @@ import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import folderAPIService from "services/folderAPI"
+import type { FolderDetailsWithId, FolderRow } from "types"
 import { pathWithLocale } from "utils"
 
 const FrontPageContainer = styled(Container)(() => ({
@@ -60,18 +61,22 @@ const Home: React.FC = () => {
   const unpublishedFolders = useAppSelector(state => state.unpublishedFolders)
   const publishedFolders = useAppSelector(state => state.publishedFolders)
 
-  const [isFetchingFolders, setFetchingFolders] = useState(true)
+  const [isFetchingFolders, setFetchingFolders] = useState<boolean>(true)
 
-  const [totalDraftSubmissions, setTotalDraftSubmissions] = useState(0)
-  const [totalPublishedSubmissions, setTotalPublishedSubmissions] = useState(0)
+  const [totalDraftSubmissions, setTotalDraftSubmissions] = useState<number>(0)
+  const [totalPublishedSubmissions, setTotalPublishedSubmissions] = useState<number>(0)
 
-  const [draftPage, setDraftPage] = useState(0)
-  const [draftItemsPerPage, setDraftItemsPerPage] = useState(5)
+  const [allSubmissions, setAllSubmissions] = useState<Array<FolderDetailsWithId> | []>([])
 
-  const [publishedPage, setPublishedPage] = useState(0)
-  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState(5)
+  const [draftPage, setDraftPage] = useState<number>(0)
+  const [draftItemsPerPage, setDraftItemsPerPage] = useState<number>(5)
 
-  const [tabValue, setTabValue] = React.useState(FolderSubmissionStatus.unpublished)
+  const [publishedPage, setPublishedPage] = useState<number>(0)
+  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState<number>(5)
+
+  const [tabValue, setTabValue] = useState<string>(FolderSubmissionStatus.unpublished)
+
+  const [filteredFolderRows, setFilteredFolderRows] = useState<Array<FolderRow> | []>([])
 
   // Show folders based on tabValue and convert folders to folderRows for rendering data grid
   const displayFolders = tabValue === FolderSubmissionStatus.unpublished ? unpublishedFolders : publishedFolders
@@ -120,6 +125,33 @@ const Home: React.FC = () => {
       isMounted = false
     }
   }, [dispatch])
+
+  useEffect(() => {
+    let isMounted = true
+    if (isMounted) {
+      const getAllSubmisisons = async () => {
+        if (
+          (tabValue === FolderSubmissionStatus.unpublished && totalDraftSubmissions > 0) ||
+          (tabValue === FolderSubmissionStatus.published && totalPublishedSubmissions > 0)
+        ) {
+          const response = await folderAPIService.getFolders({
+            page: 1,
+            per_page:
+              tabValue === FolderSubmissionStatus.unpublished ? totalDraftSubmissions : totalPublishedSubmissions,
+            published: tabValue === FolderSubmissionStatus.published,
+          })
+
+          const allSubmissions = response.data?.folders
+          setAllSubmissions(allSubmissions)
+        }
+      }
+
+      getAllSubmisisons()
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [totalDraftSubmissions, totalPublishedSubmissions])
 
   const resetWizard = () => {
     dispatch(resetObjectType())
@@ -209,6 +241,20 @@ const Home: React.FC = () => {
       })
   }
 
+  const handleFilterTextChange = (filterText: string) => {
+    const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(filterText))
+
+    const filteredRows = filteredSubmissions.map(item => ({
+      id: item.folderId,
+      name: item.name,
+      dateCreated: item.dateCreated,
+      lastModifiedBy: "TBA",
+      cscProject: "TBA",
+    }))
+
+    setFilteredFolderRows(filteredRows)
+  }
+
   // Render either unpublished or published folders based on selected tab
   return (
     <FrontPageContainer disableGutters maxWidth={false}>
@@ -243,12 +289,7 @@ const Home: React.FC = () => {
         <Grid container>
           {folderRows.length > 0 && (
             <Grid container item xs={12} justifyContent="flex-end">
-              <WizardSearchBox
-                placeholder={"Filter by Name"}
-                handleSearchTextChange={() => {
-                  return
-                }}
-              />
+              <WizardSearchBox placeholder={"Filter by Name"} handleFilterTextChange={handleFilterTextChange} />
             </Grid>
           )}
           <Grid item xs={12}>
@@ -265,7 +306,7 @@ const Home: React.FC = () => {
               }
               fetchItemsPerPage={handleFetchItemsPerPage}
               fetchPageOnChange={handleFetchPageOnChange}
-              rows={folderRows}
+              rows={filteredFolderRows.length > 0 ? filteredFolderRows : folderRows}
               onDeleteSubmission={handleDeleteSubmission}
             />
           </Grid>

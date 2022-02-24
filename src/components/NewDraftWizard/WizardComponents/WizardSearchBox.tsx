@@ -8,7 +8,7 @@ import MuiTextField from "@mui/material/TextField"
 
 type WizardSearchBoxProps = {
   placeholder: string
-  handleSearchTextChange: (searchText: string) => void
+  handleFilterTextChange: (filterText: string) => void
 }
 
 const TextField = styled(MuiTextField)(({ theme }) => ({
@@ -28,22 +28,25 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
 }))
 
 const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
-  const { placeholder, handleSearchTextChange } = props
+  const { placeholder, handleFilterTextChange } = props
 
-  const [searchText, setSearchText] = React.useState<string>("")
+  const [filterText, setFilterText] = React.useState<string>("")
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setSearchText(text)
-    handleSearchTextChange(text)
+    setFilterText(text)
+    handleFilterTextChange(text)
   }
 
-  const clearSearchText = () => setSearchText("")
+  const clearFilterText = () => {
+    setFilterText("")
+    handleFilterTextChange("")
+  }
 
   return (
     <TextField
       variant="outlined"
-      value={searchText}
+      value={filterText}
       onChange={handleOnChange}
       placeholder={placeholder}
       InputProps={{
@@ -53,8 +56,8 @@ const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
             title="Clear"
             aria-label="Clear"
             size="medium"
-            sx={{ visibility: searchText ? "visible" : "hidden" }}
-            onClick={clearSearchText}
+            sx={{ visibility: filterText ? "visible" : "hidden" }}
+            onClick={clearFilterText}
           >
             <ClearIcon fontSize="large" color="secondary" />
           </IconButton>

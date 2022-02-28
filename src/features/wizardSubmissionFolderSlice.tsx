@@ -149,67 +149,21 @@ export const updateNewDraftFolder =
     })
   }
 
-export const addObjectToFolder =
-  (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes = [{ op: "add", path: "/metadataObjects/-", value: objectDetails }]
-    const response = await folderAPIService.patchFolderById(folderID, changes)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(addObject(objectDetails))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
-  }
-
 export const replaceObjectInFolder =
   (
-    folderID: string,
     accessionId: string,
-    index: number,
     tags: { submissionType?: string; displayTitle?: string; fileName?: string },
     objectStatus?: string
   ) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes =
-      objectStatus === ObjectStatus.submitted
-        ? [{ op: "replace", path: `/metadataObjects/${index}/tags`, value: tags }]
-        : [{ op: "replace", path: `/drafts/${index}/tags`, value: tags }]
-
-    const response = await folderAPIService.patchFolderById(folderID, changes)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        objectStatus === ObjectStatus.submitted
-          ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
-          : dispatch(
-              modifyDraftObjectTags({
-                accessionId,
-                tags,
-              })
-            )
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
-  }
-
-export const addObjectToDrafts =
-  (folderID: string, objectDetails: ObjectInsideFolderWithTags) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const changes = [{ op: "add", path: "/drafts/-", value: objectDetails }]
-    const folderResponse = await folderAPIService.patchFolderById(folderID, changes)
-
-    return new Promise((resolve, reject) => {
-      if (folderResponse.ok) {
-        dispatch(addDraftObject(objectDetails))
-        resolve(folderResponse)
-      } else {
-        reject(JSON.stringify(folderResponse))
-      }
-    })
+  (dispatch: (reducer: DispatchReducer) => void) => {
+    objectStatus === ObjectStatus.submitted
+      ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
+      : dispatch(
+          modifyDraftObjectTags({
+            accessionId,
+            tags,
+          })
+        )
   }
 
 // Delete object from either metaDataObjects or drafts depending on savedType

@@ -56,6 +56,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Folder's Id is needed when creating a new object or draft object
+- Patching folder is no longer needed when patching object or draft object
+
+  ### Added
+
+  - Added folderId as query parameter for object's and draft object's Post request
+
 - Updated Node.js version in GitHub workflows and Dockerfile #655
 - Disallow use of any-type #624
 

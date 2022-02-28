@@ -9,6 +9,7 @@ import { getObjectDisplayTitle, getOrigObjectType } from "utils"
 const transformTemplatesToDrafts = async (
   templateAccessionIds: Array<string>,
   templates: Array<ObjectInsideFolder>,
+  folderId: string,
   dispatch: (dispatch: (reducer: AppDispatch) => void) => void
 ): Promise<Array<ObjectInsideFolderWithTags>> => {
   const userTemplates = templates.map(template => ({
@@ -27,7 +28,11 @@ const transformTemplatesToDrafts = async (
         templateDetails[i].accessionId
       )
       // Create a draft based on the selected template
-      const draftResponse = await draftAPIService.createFromJSON(templateDetails[i].schema, templateResponse.data)
+      const draftResponse = await draftAPIService.createFromJSON(
+        templateDetails[i].schema,
+        folderId,
+        templateResponse.data
+      )
 
       // Draft details to be added when creating a new folder
       const draftDetails = {

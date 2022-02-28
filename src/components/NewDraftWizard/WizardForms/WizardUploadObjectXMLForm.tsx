@@ -18,7 +18,7 @@ import { resetFocus } from "features/focusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObjectToFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { addObject, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -136,9 +136,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       if (response.ok) {
         dispatch(
           replaceObjectInFolder(
-            folderId,
             currentObject.accessionId,
-            currentObject.index,
+
             {
               submissionType: ObjectSubmissionTypes.xml,
               fileName: fileName,
@@ -147,24 +146,19 @@ const WizardUploadObjectXMLForm: React.FC = () => {
             ObjectStatus.submitted
           )
         )
-          .then(() => {
-            dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
-            dispatch(resetCurrentObject())
-            resetForm()
-          })
-          .catch(() => {
-            dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
-          })
+        dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
+        dispatch(resetCurrentObject())
+        resetForm()
       } else {
         dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
       }
     } else {
-      const response = await objectAPIService.createFromXML(objectType, file)
+      const response = await objectAPIService.createFromXML(objectType, folderId, file)
 
       if (response.ok) {
         dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
         dispatch(
-          addObjectToFolder(folderId, {
+          addObject({
             accessionId: response.data.accessionId,
             schema: objectType,
             tags: { submissionType: ObjectSubmissionTypes.xml, fileName, displayTitle: fileName },

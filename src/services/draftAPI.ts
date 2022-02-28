@@ -9,8 +9,12 @@ import { APIResponse } from "types"
 const api = create({ baseURL: "/drafts" })
 api.addMonitor(errorMonitor)
 
-const createFromJSON = async (objectType: string, JSONContent: Record<string, unknown>): Promise<APIResponse> => {
-  return await api.post(`/${objectType}`, JSONContent)
+const createFromJSON = async (
+  objectType: string,
+  folderId: string,
+  JSONContent: Record<string, unknown>
+): Promise<APIResponse> => {
+  return await api.post(`/${objectType}?folder=${folderId}`, JSONContent)
 }
 
 const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {

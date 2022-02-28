@@ -78,9 +78,10 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const onSubmit = async (data: FolderDataFromForm) => {
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
-    const selectedDraftsArray = user.templates
-      ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, dispatch)
-      : []
+    const selectedDraftsArray =
+      user.templates && folder?.folderId
+        ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, folder.folderId, dispatch)
+        : []
 
     if (folder && folder?.folderId) {
       dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))

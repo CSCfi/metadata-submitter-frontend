@@ -137,7 +137,7 @@ const traverseFormValuesForCleanUp = (data: Record<string, unknown>) => {
   Object.keys(data).forEach(key => {
     const property = data[key] as Record<string, unknown> | string | null
 
-    if (typeof property === "object") {
+    if (typeof property === "object" && !Array.isArray(property)) {
       if (property !== null) {
         data[key] = traverseFormValuesForCleanUp(property)
         if (Object.keys(property).length === 0) delete data[key]
@@ -1403,18 +1403,22 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const { fields, append, remove } = useFieldArray({ control, name })
 
   const [isValid, setValid] = React.useState(false)
+  const [formFields, setFormFields] = useState<Record<"id", string>[] | null>(null)
 
   // Append the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
   // E.g. Study > StudyLinks or Experiment > Expected Base Call Table
+  // Append only once when form is populated
   useEffect(() => {
-    if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object") {
+    if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object" && !formFields) {
       const fieldsArray: Record<string, unknown>[] = []
       for (let i = 0; i < fieldValues.length; i += 1) {
         fieldsArray.push({ fieldValues: fieldValues[i] })
       }
       append(fieldsArray)
     }
+    // Create initial fields when editing object
+    setFormFields(fields)
   }, [fields])
 
   // Get unique fileTypes from submitted fileTypes
@@ -1443,6 +1447,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     const values = getValues(name)
     const filteredValues = values.filter((_val: unknown, ind: number) => ind !== index)
     setValue(name, filteredValues)
+    setFormFields(filteredValues)
     remove(index)
   }
 
@@ -1471,7 +1476,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
         )}
       </Typography>
 
-      {fields.map((field, index) => {
+      {formFields?.map((field, index) => {
         const pathWithoutLastItem = path.slice(0, -1)
         const lastPathItemWithIndex = `${lastPathItem}.${index}`
 

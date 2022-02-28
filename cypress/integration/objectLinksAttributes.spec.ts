@@ -97,6 +97,11 @@ describe("render objects' links and attributes ", function () {
 
     cy.get("select[data-testid='studyLinks.0']").should("have.value", "XRef Link")
     cy.get("select[data-testid='studyLinks.1']").should("have.value", "Entrez Link")
+
+    // Test that removed link item is removed also from backend
+    cy.formActions("Update")
+    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("div[data-testid='studyLinks'] > div", { timeout: 30000 }).should("have.length", 2)
   })
 })
 

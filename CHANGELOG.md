@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update text field value with `setValue` method #666
 - Cast integer fields as numbers #661
+- Remove form array items in saved / submitted objects #659
 - Disallow object update with invalid form #656
 - Handle required form array fields #484
 - Prevent user deleting object in published folder #486

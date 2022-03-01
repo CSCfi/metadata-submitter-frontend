@@ -3,9 +3,9 @@ import React from "react"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import MuiCard from "@mui/material/Card"
-import MuiCardContent from "@mui/material/CardContent"
+import Stack from "@mui/material/Stack"
 import { styled } from "@mui/material/styles"
-import Typography from "@mui/material/Typography"
+// import Typography from "@mui/material/Typography"
 import {
   DataGrid,
   GridRowParams,
@@ -30,11 +30,6 @@ const Card = styled(MuiCard)(() => ({
   display: "flex",
   flexDirection: "column",
   border: "none",
-  padding: 0,
-}))
-
-const CardContent = styled(MuiCardContent)(() => ({
-  flexGrow: 1,
   padding: 0,
 }))
 
@@ -85,9 +80,9 @@ type SubmissionDataTableProps = {
   page?: number
   itemsPerPage?: number
   totalItems?: number
-  fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
-  fetchPageOnChange?: (page: number, submissionType: string) => Promise<void>
-  onDeleteSubmission?: (submissionId: string, submissionType: string) => void
+  fetchItemsPerPage?: (items: number, folderType: string) => Promise<void>
+  fetchPageOnChange?: (page: number, folderType: string) => Promise<void>
+  onDeleteSubmission?: (submissionId: string, folderType: string) => void
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
@@ -198,6 +193,12 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       />
     ) : null
 
+  const NoRowsOverlay = () => (
+    <Stack height="100%" alignItems="center" justifyContent="center">
+      No results found.
+    </Stack>
+  )
+
   // Renders when there is folder list
   const FolderList = () => (
     <div style={{ height: "37.2rem", width: "100%" }}>
@@ -213,6 +214,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
             hideFooterSelectedRowCount
             components={{
               Pagination: DataGridPagination,
+              NoRowsOverlay: NoRowsOverlay,
             }}
             sortModel={sortModel}
             onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
@@ -222,16 +224,11 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     </div>
   )
 
-  // Renders when there is no folders in the list
-  const EmptyList = () => (
-    <CardContent>
-      <Typography align="center" variant="body1">
-        Currently there are no {folderType} submissions
-      </Typography>
-    </CardContent>
+  return (
+    <Card variant="outlined">
+      <FolderList />
+    </Card>
   )
-
-  return <Card variant="outlined">{rows.length > 0 ? <FolderList /> : <EmptyList />}</Card>
 }
 
 export default SubmissionDataTable

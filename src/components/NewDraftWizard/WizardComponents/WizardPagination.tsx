@@ -165,7 +165,6 @@ const DisplayRows = styled("span")(({ theme }) => ({
   "& span:first-of-type": {
     height: "auto",
     margin: 0,
-    border: `1px solid ${theme.palette.secondary.light}`,
   },
   "& span:last-of-type": {
     color: theme.palette.secondary.main,

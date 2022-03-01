@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -11,6 +11,7 @@ import { styled } from "@mui/material/styles"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
+import { debounce } from "lodash"
 import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
@@ -187,6 +188,15 @@ const Home: React.FC = () => {
     }
   }, [numberOfPublishedSubmissions])
 
+  /*
+   * Cancel the debouncedChangeFilteringText function when the component unmounts
+   */
+  useEffect(() => {
+    return () => {
+      debouncedChangeFilteringText.cancel()
+    }
+  }, [allDraftSubmissions, allPublishedSubmissions, tabValue])
+
   const resetWizard = () => {
     dispatch(resetObjectType())
     dispatch(resetFolder())
@@ -332,8 +342,13 @@ const Home: React.FC = () => {
     tabValue === FolderSubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
     const textValue = e.target.value
     setFilteringText(textValue)
-    getFilter(textValue, tabValue)
+    debouncedChangeFilteringText(textValue, tabValue)
   }
+
+  const debouncedChangeFilteringText = useMemo(
+    () => debounce(getFilter, 300),
+    [allDraftSubmissions, allPublishedSubmissions, tabValue]
+  )
 
   const handleClearFilteringText = () => {
     // Set the current page in pagination to 0 when clearing the filter

@@ -4,7 +4,8 @@ describe("Home e2e", function () {
     cy.login()
   })
 
-  it("show Overview submissions in Home page, create a draft folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
+  it("show draft submission data table in Home page, be able to edit and delete a draft submission inside the table", () => {
+    cy.intercept("/folders*").as("fetchFolders")
     // Create a new Unpublished folder
     cy.get("button").contains("Create submission").click()
 
@@ -35,29 +36,36 @@ describe("Home e2e", function () {
     // Save folder and navigate to Home page
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
+    cy.wait("@fetchFolders", { timeout: 10000 })
 
+    cy.contains("My submissions").should("be.visible")
     cy.get("[data-field='name']").eq(1).should("have.text", "Test unpublished folder")
-    cy.get("[data-testid='edit-draft-submission']").click()
 
-    cy.get("[data-testid='folderName']", { timeout: 1000 }).clear().type("Edited unpublished folder")
+    cy.get("[data-testid='edit-draft-submission']").scrollIntoView().should("be.visible")
+    cy.contains("Edit").click({ force: true })
+
+    cy.get("[data-testid='folderName']", { timeout: 10000 }).clear().type("Edited unpublished folder")
     cy.get("button[type=button]").contains("Next").click()
     cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
     cy.get("button[type=button]").contains("Save and Exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
+    cy.wait("@fetchFolders", { timeout: 10000 })
 
     // Check that submission's name has been edited
-    cy.contains("My submissions", { timeout: 1000 }).should("be.visible")
+    cy.contains("My submissions").should("be.visible").click()
     cy.contains("Edited unpublished folder").should("be.visible")
 
     // Delete the submission and it shouldn't be there anymore
-    cy.get("[data-testid='delete-draft-submission']").click()
+    cy.get("[data-testid='delete-draft-submission']").scrollIntoView().should("be.visible")
+    cy.contains("Delete").click({ force: true })
+
     cy.contains(".MuiAlert-message", "The submission has been deleted successfully!", {
       timeout: 1000,
     })
-    cy.contains("Currently there are no draft submissions").should("be.visible")
+    cy.contains("Currently there are no submissions").should("be.visible")
   })
 
-  it("create a published folder, navigate to see folder details, delete object inside folder, navigate back to Overview submissions", () => {
+  it("create a published submission, not be able to edit or delete that submission inside the data table", () => {
     // Create a new Published folder
     cy.get("button").contains("Create submission").click()
 

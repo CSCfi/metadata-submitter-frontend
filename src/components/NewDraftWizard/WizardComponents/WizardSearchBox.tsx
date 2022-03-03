@@ -42,6 +42,7 @@ const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
       value={filteringText}
       onChange={handleOnChange}
       placeholder={placeholder}
+      inputProps={{ "data-testid": "wizard-search-box" }}
       InputProps={{
         startAdornment: <SearchIcon fontSize="large" color="secondary" sx={{ mr: "0.75rem" }} />,
         endAdornment: (

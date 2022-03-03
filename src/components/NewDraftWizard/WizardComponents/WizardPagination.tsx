@@ -198,7 +198,7 @@ const WizardPagination: React.FC<WizardPagination> = props => {
   }
 
   return (
-    <Table>
+    <Table data-testid="table-pagination">
       <TableFooter>
         <TableRow>
           <TablePagination

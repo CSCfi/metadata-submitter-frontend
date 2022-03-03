@@ -267,6 +267,9 @@ const Home: React.FC = () => {
    * or deletes a submission
    */
   const handleFetchPageOnChange = async (page: number, folderType: string, isDeletingSubmission?: boolean) => {
+    folderType === FolderSubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
+
+    // Fetch new page
     const response = await folderAPIService.getFolders({
       page: page + 1,
       per_page: folderType === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
@@ -278,14 +281,11 @@ const Home: React.FC = () => {
       const displaySubmissions = response.data?.folders
       setDisplaySubmissions(displaySubmissions)
 
-      if (folderType === FolderSubmissionStatus.unpublished) {
-        setDraftPage(page)
-        // Only set again a new total number of submissions if a submission is deleted
-        isDeletingSubmission ? setNumberOfDraftSubmissions(response.data.page?.totalFolders) : null
-      } else {
-        setPublishedPage(page)
-        // Only set again a new total number of submissions if a submission is deleted
-        isDeletingSubmission ? setNumberOfPublishedSubmissions(response.data.page?.totalFolders) : null
+      // Only set again a new total number of submissions if a submission is deleted
+      if (isDeletingSubmission) {
+        folderType === FolderSubmissionStatus.unpublished
+          ? setNumberOfDraftSubmissions(response.data.page?.totalFolders)
+          : setNumberOfPublishedSubmissions(response.data.page?.totalFolders)
       }
     } else {
       dispatch(
@@ -333,6 +333,7 @@ const Home: React.FC = () => {
   const getFilter = (textValue: string, currentTab: string) => {
     const allSubmissions =
       currentTab === FolderSubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
+
     const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
   }

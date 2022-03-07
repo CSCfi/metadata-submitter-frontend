@@ -39,7 +39,7 @@ describe("WizardStepper", () => {
         </StyledEngineProvider>
       </Provider>
     )
-    const button = await screen.findByRole("button", { name: /submit/i })
+    const button = await screen.getByText(/submit/i)
     expect(button).toHaveAttribute("disabled")
   })
 

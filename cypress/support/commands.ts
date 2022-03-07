@@ -119,6 +119,6 @@ Cypress.Commands.add("openDOIForm", () => {
 // Click Form's buttons to edit, clear or submit the form
 Cypress.Commands.add("formActions", buttonName => {
   cy.scrollTo("top")
-  cy.get("button").contains(buttonName).should("be.visible")
-  cy.get("button").contains(buttonName).click()
+  cy.get("button").contains(buttonName, { timeout: 10000 }).should("be.visible")
+  cy.get("button").contains(buttonName, { timeout: 10000 }).click({ force: true })
 })

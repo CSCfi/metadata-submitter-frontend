@@ -7,8 +7,8 @@ import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags, Ob
 const initialState: User = {
   id: "",
   name: "",
+  projects: [],
   templates: [],
-  folders: [],
 }
 
 const userSlice = createSlice({
@@ -41,13 +41,14 @@ export const fetchUserById =
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await userAPIService.getUserById(userId)
 
+    console.log("response :>> ", response)
     return new Promise((resolve, reject) => {
       if (response.ok) {
         const user: User = {
           id: response.data.userId,
           name: response.data.name,
-          templates: response.data.templates,
-          folders: response.data.folders,
+          projects: response.data.projects,
+          templates: [],
         }
         dispatch(setUser(user))
         resolve(response)

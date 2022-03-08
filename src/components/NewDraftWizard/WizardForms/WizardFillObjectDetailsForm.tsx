@@ -409,9 +409,8 @@ const FormContent = ({
       const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
 
       const templates = user.templates
-      const index = templates.findIndex(
-        (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
-      )
+      const index =
+        templates?.findIndex((item: { accessionId: string }) => item.accessionId === currentObject.accessionId) || 0
       const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as unknown as ObjectDisplayValues)
 
       if (response.ok) {

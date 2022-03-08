@@ -4,9 +4,12 @@ import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
+import FormControl from "@mui/material/FormControl"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
+import MenuItem from "@mui/material/MenuItem"
 import Paper from "@mui/material/Paper"
+import Select, { SelectChangeEvent } from "@mui/material/Select"
 import { styled } from "@mui/material/styles"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
@@ -18,13 +21,29 @@ import SubmissionDataTable from "components/Home/SubmissionDataTable"
 import WizardSearchBox from "components/NewDraftWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
+import { setProjectId } from "features/projectSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
-import { useAppDispatch } from "hooks"
+import { useAppDispatch, useAppSelector } from "hooks"
 import folderAPIService from "services/folderAPI"
 import type { FolderDetailsWithId, FolderRow } from "types"
 import { pathWithLocale } from "utils"
+
+const ProjectDropdown = styled(FormControl)(({ theme }) => ({
+  width: "40rem",
+  height: "4rem",
+  marginTop: "1rem",
+  marginBottom: "2rem",
+  borderRadius: "0.375rem",
+
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.secondary.main,
+    border: `0.1rem solid #757575`,
+  },
+  "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+}))
 
 const FrontPageContainer = styled(Container)(() => ({
   display: "flex",
@@ -67,6 +86,8 @@ const getDisplayRows = (items: Array<FolderDetailsWithId>): Array<FolderRow> => 
 
 const Home: React.FC = () => {
   const dispatch = useAppDispatch()
+  const user = useAppSelector(state => state.user)
+  const projectId = useAppSelector(state => state.projectId)
 
   const [isFetchingFolders, setFetchingFolders] = useState<boolean>(true)
 
@@ -97,6 +118,15 @@ const Home: React.FC = () => {
   const [numberOfPublishedSubmissions, setNumberOfPublishedSubmissions] = useState<number>(0)
 
   /*
+   *  Set the current projectId as the first one if no projectId has been selected
+   */
+  useEffect(() => {
+    if (user.projects.length > 0) {
+      dispatch(setProjectId(user.projects[0].projectId))
+    }
+  }, [user])
+
+  /*
    *  Get draft and published submissions for the first page in data table
    */
   useEffect(() => {
@@ -106,9 +136,15 @@ const Home: React.FC = () => {
         page: 1,
         per_page: 5,
         published: false,
+        projectId: projectId,
       })
 
-      const publishedResponse = await folderAPIService.getFolders({ page: 1, per_page: 5, published: true })
+      const publishedResponse = await folderAPIService.getFolders({
+        page: 1,
+        per_page: 5,
+        published: true,
+        projectId: projectId,
+      })
 
       if (isMounted) {
         if (unpublishedResponse.ok && publishedResponse.ok) {
@@ -136,11 +172,11 @@ const Home: React.FC = () => {
         }
       }
     }
-    getFolders()
+    if (projectId) getFolders()
     return () => {
       isMounted = false
     }
-  }, [dispatch, tabValue])
+  }, [dispatch, tabValue, projectId])
 
   /*
    *  Get the list of all draft submissions
@@ -154,6 +190,7 @@ const Home: React.FC = () => {
             page: 1,
             per_page: numberOfDraftSubmissions,
             published: false,
+            projectId,
           })
           setAllDraftSubmissions(unpublishedResponse.data?.folders)
         }
@@ -177,6 +214,7 @@ const Home: React.FC = () => {
             page: 1,
             per_page: numberOfPublishedSubmissions,
             published: true,
+            projectId,
           })
           setAllPublishedSubmissions(publishedResponse.data?.folders)
         }
@@ -201,6 +239,27 @@ const Home: React.FC = () => {
     dispatch(resetObjectType())
     dispatch(resetFolder())
   }
+
+  const handleChange = (event: SelectChangeEvent) => {
+    dispatch(setProjectId(event.target.value))
+  }
+
+  const projectSelection = (
+    <ProjectDropdown color="secondary">
+      <Select
+        value={user.projects.length > 0 ? projectId : ""}
+        onChange={handleChange}
+        displayEmpty
+        inputProps={{ "aria-label": "Select project id" }}
+      >
+        {user.projects.map(project => (
+          <MenuItem key={project.projectId} value={project.projectId} sx={{ color: "secondary.main" }}>
+            {project.projectId}
+          </MenuItem>
+        ))}
+      </Select>
+    </ProjectDropdown>
+  )
 
   const handleChangeTab = (event, newValue) => {
     setTabValue(newValue)
@@ -235,7 +294,8 @@ const Home: React.FC = () => {
     const response = await folderAPIService.getFolders({
       page: 1,
       per_page: numberOfItems,
-      published: folderType === FolderSubmissionStatus.published,
+      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      projectId,
     })
 
     if (response.ok) {
@@ -273,7 +333,8 @@ const Home: React.FC = () => {
     const response = await folderAPIService.getFolders({
       page: page + 1,
       per_page: folderType === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
-      published: folderType === FolderSubmissionStatus.published,
+      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      projectId,
     })
 
     if (response.ok) {
@@ -363,6 +424,7 @@ const Home: React.FC = () => {
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
         My submissions
       </Typography>
+      {projectSelection}
       <Box sx={{ mt: 4, position: "relative" }}>
         <FrontPageTabs
           value={tabValue}

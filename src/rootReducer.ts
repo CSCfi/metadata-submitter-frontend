@@ -10,6 +10,7 @@ import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import openedDoiFormReducer from "features/openedDoiFormSlice"
 import openedRowsReducer from "features/openedRowsSlice"
+import projectReducer from "features/projectSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import templatesReducer from "features/templatesSlice"
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
   autocompleteField: autocompleteReducer,
   fileTypes: fileTypesReducer,
   openedDoiForm: openedDoiFormReducer,
+  projectId: projectReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

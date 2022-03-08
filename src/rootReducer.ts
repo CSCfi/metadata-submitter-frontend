@@ -10,11 +10,9 @@ import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import openedDoiFormReducer from "features/openedDoiFormSlice"
 import openedRowsReducer from "features/openedRowsSlice"
-import publishedFoldersReducer from "features/publishedFoldersSlice"
 import selectedFolderReducer from "features/selectedFolderSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import templatesReducer from "features/templatesSlice"
-import unpublishedFoldersReducer from "features/unpublishedFoldersSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
@@ -34,8 +32,6 @@ const rootReducer = combineReducers({
   draftStatus: draftStatusReducer,
   currentObject: currentObjectReducer,
   user: userReducer,
-  unpublishedFolders: unpublishedFoldersReducer,
-  publishedFolders: publishedFoldersReducer,
   selectedFolder: selectedFolderReducer,
   objectTypesArray: objectTypesArrayReducer,
   openedRows: openedRowsReducer,

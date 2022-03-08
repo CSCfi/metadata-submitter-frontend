@@ -162,12 +162,12 @@ type WizardPagination = {
 
 const DisplayRows = styled("span")(({ theme }) => ({
   display: "flex",
-  "& hr": {
+  "& span:first-of-type": {
     height: "auto",
     margin: 0,
   },
-  "& span": {
-    color: theme.palette.secondary,
+  "& span:last-of-type": {
+    color: theme.palette.secondary.main,
     fontSize: "1.4rem",
     marginLeft: "3.25rem",
   },
@@ -179,7 +179,7 @@ const WizardPagination: React.FC<WizardPagination> = props => {
 
   const labelDisplayedRows = ({ from, to, count }) => (
     <DisplayRows>
-      {totalNumberOfItems > 5 && <Divider orientation="vertical" variant="middle" color="secondary" />}
+      {totalNumberOfItems > 5 && <Divider component="span" orientation="vertical" variant="middle" />}
       <span>
         {from}-{to} of {count} items
       </span>
@@ -198,7 +198,7 @@ const WizardPagination: React.FC<WizardPagination> = props => {
   }
 
   return (
-    <Table>
+    <Table data-testid="table-pagination">
       <TableFooter>
         <TableRow>
           <TablePagination

@@ -38,10 +38,6 @@ export type ObjectDetails = {
 
 export type OldFolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
 
-export type FolderId = {
-  folderId: string
-}
-
 export type ObjectInsideFolder = {
   accessionId: string
   schema: string
@@ -56,6 +52,10 @@ export type ObjectTags = {
 export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }
 
 export type ObjectInsideFolderWithTagsBySchema = { [schema: string]: ObjectInsideFolderWithTags[] }
+
+export type FolderId = {
+  folderId: string
+}
 
 export type FolderDetails = {
   name: string

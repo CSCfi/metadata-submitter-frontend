@@ -41,7 +41,6 @@ export const fetchUserById =
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await userAPIService.getUserById(userId)
 
-    console.log("response :>> ", response)
     return new Promise((resolve, reject) => {
       if (response.ok) {
         const user: User = {

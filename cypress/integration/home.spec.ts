@@ -6,6 +6,10 @@ describe("Home e2e", function () {
 
   it("show draft submission data table in Home page, be able to edit and delete a draft submission inside the table", () => {
     cy.intercept("/folders*").as("fetchFolders")
+
+    // Check that there is projectId in home page
+    cy.get("[data-testid='project-id-selection']").should("be.visible")
+    cy.get("[data-testid='project-id-selection'] > div > input").invoke("val").should("not.be.empty")
     // Create a new Unpublished folder
     cy.get("button").contains("Create submission").click()
 

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = ""
 
-const projectSlice = createSlice({
+const projectIdSlice = createSlice({
   name: "project",
   initialState,
   reducers: {
@@ -10,5 +10,5 @@ const projectSlice = createSlice({
     resetProjectId: () => initialState,
   },
 })
-export const { setProjectId, resetProjectId } = projectSlice.actions
-export default projectSlice.reducer
+export const { setProjectId, resetProjectId } = projectIdSlice.actions
+export default projectIdSlice.reducer

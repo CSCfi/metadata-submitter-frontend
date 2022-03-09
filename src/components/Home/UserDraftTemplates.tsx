@@ -68,7 +68,6 @@ const UserDraftTemplates: React.FC = () => {
   const user = useAppSelector(state => state.user)
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
-  console.log("user :>> ", user)
   const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
 
   type TemplateGroupProps = { draft: { [schema: string]: ObjectInsideFolderWithTags[] } }

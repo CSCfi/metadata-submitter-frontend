@@ -21,7 +21,7 @@ import SubmissionDataTable from "components/Home/SubmissionDataTable"
 import WizardSearchBox from "components/NewDraftWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { setProjectId } from "features/projectSlice"
+import { setProjectId } from "features/projectIdSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
@@ -88,7 +88,6 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(state => state.user)
   const projectId = useAppSelector(state => state.projectId)
-
   const [isFetchingFolders, setFetchingFolders] = useState<boolean>(true)
 
   // Selected tab value
@@ -240,16 +239,15 @@ const Home: React.FC = () => {
     dispatch(resetFolder())
   }
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleProjectIdChange = (event: SelectChangeEvent) => {
     dispatch(setProjectId(event.target.value))
   }
 
   const projectSelection = (
-    <ProjectDropdown color="secondary">
+    <ProjectDropdown color="secondary" data-testid="project-id-selection">
       <Select
-        value={user.projects.length > 0 ? projectId : ""}
-        onChange={handleChange}
-        displayEmpty
+        value={projectId ? projectId : ""}
+        onChange={handleProjectIdChange}
         inputProps={{ "aria-label": "Select project id" }}
       >
         {user.projects.map(project => (

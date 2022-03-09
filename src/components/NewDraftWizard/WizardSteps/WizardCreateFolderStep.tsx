@@ -64,6 +64,7 @@ const useStyles = makeStyles(() => ({
 const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const projectId = useAppSelector(state => state.projectId)
   const folder = useAppSelector(state => state.submissionFolder)
   const user = useAppSelector(state => state.user)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
@@ -94,7 +95,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         })
     } else {
       // Create a new folder with selected templates as drafts
-      dispatch(createNewDraftFolder(data, selectedDraftsArray))
+      dispatch(createNewDraftFolder(projectId, data, selectedDraftsArray))
         .then(response => {
           const folderId = response.data.folderId
           navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: "step=1" })

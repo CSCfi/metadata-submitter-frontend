@@ -31,18 +31,18 @@ import type { FolderDetailsWithId, FolderRow } from "types"
 import { pathWithLocale } from "utils"
 
 const ProjectDropdown = styled(FormControl)(({ theme }) => ({
-  width: "40rem",
-  height: "4rem",
   marginTop: "1rem",
   marginBottom: "2rem",
-  borderRadius: "0.375rem",
-
   "& .MuiOutlinedInput-root": {
+    width: "40rem",
+    height: "4rem",
     backgroundColor: theme.palette.common.white,
     color: theme.palette.secondary.main,
-    border: `0.1rem solid #757575`,
+    border: `0.15rem solid ${theme.palette.secondary.main}`,
+    borderRadius: "0.375rem",
   },
   "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+  "& svg": { fontSize: "2rem" },
 }))
 
 const FrontPageContainer = styled(Container)(() => ({

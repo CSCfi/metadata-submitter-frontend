@@ -10,7 +10,7 @@ import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/W
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
-import { deleteTemplateByAccessionId } from "features/userSlice"
+import { deleteTemplateByAccessionId } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { setFolder } from "features/wizardSubmissionFolderSlice"

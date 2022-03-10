@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-import _reject from "lodash/reject"
 
 import userAPIService from "services/usersAPI"
 import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags } from "types"
@@ -8,7 +7,6 @@ const initialState: User = {
   id: "",
   name: "",
   projects: [],
-  templates: [],
 }
 
 const userSlice = createSlice({
@@ -16,24 +14,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (_state, action) => action.payload,
-    updateTemplateDisplayTitle: (state: { templates: ObjectInsideFolderWithTags[] }, action) => {
-      const selectedTemplate = state.templates.find(
-        (item: { accessionId: string }) => item.accessionId === action.payload.accessionId
-      )
-      if (selectedTemplate) {
-        selectedTemplate.tags.displayTitle = action.payload.displayTitle
-      }
-    },
-    deleteTemplateByAccessionId: (state, action) => {
-      state.templates = _reject(state.templates, (template: { accessionId: string }) => {
-        return template.accessionId === action.payload
-      })
-    },
     resetUser: () => initialState,
   },
 })
 
-export const { setUser, resetUser, updateTemplateDisplayTitle, deleteTemplateByAccessionId } = userSlice.actions
+export const { setUser, resetUser } = userSlice.actions
 export default userSlice.reducer
 
 export const fetchUserById =
@@ -47,7 +32,6 @@ export const fetchUserById =
           id: response.data.userId,
           name: response.data.name,
           projects: response.data.projects,
-          templates: [],
         }
         dispatch(setUser(user))
         resolve(response)

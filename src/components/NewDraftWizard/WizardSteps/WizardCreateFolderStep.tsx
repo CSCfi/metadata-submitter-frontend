@@ -66,7 +66,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const folder = useAppSelector(state => state.submissionFolder)
-  const user = useAppSelector(state => state.user)
+  const templates = useAppSelector(state => state.templates)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
   const {
@@ -80,8 +80,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const onSubmit = async (data: FolderDataFromForm) => {
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
     const selectedDraftsArray =
-      user.templates && folder?.folderId
-        ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, folder.folderId, dispatch)
+      templates && folder?.folderId
+        ? await transformTemplatesToDrafts(templateAccessionIds, templates, folder.folderId, dispatch)
         : []
 
     if (folder && folder?.folderId) {

@@ -22,7 +22,6 @@ export type User = {
   id: string
   name: string
   projects: Array<{ projectId: string; projectNumber: string }>
-  templates: Array<ObjectInsideFolderWithTags>
 }
 
 export type Schema = "study" | "sample" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"

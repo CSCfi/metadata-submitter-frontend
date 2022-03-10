@@ -1,19 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit"
+import _reject from "lodash/reject"
 
 import templateAPIService from "services/templateAPI"
-import { APIResponse, DispatchReducer } from "types"
+import { ObjectInsideFolderWithTags, APIResponse, DispatchReducer } from "types"
 
-const initialState = []
+const initialState: Array<ObjectInsideFolderWithTags> | [] = []
 
 const templateSlice = createSlice({
   name: "project",
   initialState,
   reducers: {
     setTemplates: (_state, action) => action.payload,
+    updateTemplateDisplayTitle: (state, action) => {
+      const selectedTemplate = state.find(item => item.accessionId === action.payload.accessionId)
+      if (selectedTemplate) {
+        selectedTemplate.tags.displayTitle = action.payload.displayTitle
+      }
+    },
+    deleteTemplateByAccessionId: (state, action) => {
+      state = _reject(state, (template: { accessionId: string }) => {
+        return template.accessionId === action.payload
+      })
+    },
     resetTemplates: () => initialState,
   },
 })
-export const { setTemplates, resetTemplates } = templateSlice.actions
+export const { setTemplates, updateTemplateDisplayTitle, deleteTemplateByAccessionId, resetTemplates } =
+  templateSlice.actions
 export default templateSlice.reducer
 
 export const getTemplates =

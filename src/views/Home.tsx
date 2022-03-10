@@ -80,7 +80,6 @@ const getDisplayRows = (items: Array<FolderDetailsWithId>): Array<FolderRow> => 
     name: item.name,
     dateCreated: item.dateCreated,
     lastModifiedBy: "TBA",
-    cscProject: "TBA",
   }))
 }
 
@@ -418,7 +417,7 @@ const Home: React.FC = () => {
 
   // Render either unpublished or published folders based on selected tab
   return (
-    <FrontPageContainer disableGutters maxWidth={false}>
+    <FrontPageContainer maxWidth={false}>
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
         My submissions
       </Typography>

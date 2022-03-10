@@ -73,7 +73,6 @@ export type FolderRow = {
   name: string
   dateCreated?: number
   lastModifiedBy: string
-  cscProject: string
 }
 
 export type FolderDataFromForm = {

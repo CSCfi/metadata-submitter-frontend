@@ -24,14 +24,24 @@ const getTemplateByAccessionId = async (objectType: string, accessionId: string)
 const patchTemplateFromJSON = async (
   objectType: string,
   accessionId: string,
-  JSONContent: Record<string, unknown>
+  JSONContent: Record<string, unknown>,
+  index: number
 ): Promise<APIResponse> => {
   const draftTags = { tags: { displayTitle: getObjectDisplayTitle(objectType, JSONContent as ObjectDisplayValues) } }
-  return await api.patch(`/${objectType}/${accessionId}`, { ...omit(JSONContent, OmitObjectValues), draftTags })
+  const draftIndex = { index }
+  return await api.patch(`/${objectType}/${accessionId}`, {
+    ...omit(JSONContent, OmitObjectValues),
+    draftTags,
+    draftIndex,
+  })
 }
 
 const deleteTemplateByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
   return await api.delete(`/${objectType}/${accessionId}`)
+}
+
+const getTemplates = async (params: { projectId: string }): Promise<APIResponse> => {
+  return await api.get("", params)
 }
 
 export default {
@@ -39,4 +49,5 @@ export default {
   getTemplateByAccessionId,
   patchTemplateFromJSON,
   deleteTemplateByAccessionId,
+  getTemplates,
 }

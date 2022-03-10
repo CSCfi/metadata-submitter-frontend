@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import _reject from "lodash/reject"
 
 import userAPIService from "services/usersAPI"
-import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags, ObjectTags } from "types"
+import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags } from "types"
 
 const initialState: User = {
   id: "",
@@ -64,24 +64,6 @@ export const addDraftsToUser =
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
-  }
-
-export const replaceTemplate =
-  (index: number, displayTitle: string, accessionId: string) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const tags: ObjectTags = { displayTitle: displayTitle }
-
-    const changes = [{ op: "replace", path: `/templates/${index}/tags`, value: tags }]
-    const response = await userAPIService.patchUserById("current", changes)
-
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(updateTemplateDisplayTitle({ accessionId: accessionId, displayTitle: displayTitle }))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

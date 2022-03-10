@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
 const WizardFooter: React.FC = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const projectId = useAppSelector(state => state.projectId)
   const folder = useAppSelector(state => state.submissionFolder)
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -81,7 +82,7 @@ const WizardFooter: React.FC = () => {
       resetDispatch()
     } else if (alertWizard && alertType === "publish") {
       if (formData && formData?.length > 0) {
-        await saveDraftsAsTemplates(formData, dispatch)
+        await saveDraftsAsTemplates(projectId, formData, dispatch)
       }
       // Publish the folder
       dispatch(publishFolderContent(folder))

@@ -28,7 +28,7 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { replaceTemplate } from "features/userSlice"
+import { updateTemplateDisplayTitle } from "features/userSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -406,34 +406,29 @@ const FormContent = ({
     const cleanedValues = getCleanedValues()
 
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
-      const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
-
       const templates = user.templates
       const index =
         templates?.findIndex((item: { accessionId: string }) => item.accessionId === currentObject.accessionId) || 0
+      const response = await templateAPI.patchTemplateFromJSON(
+        objectType,
+        currentObject.accessionId,
+        cleanedValues,
+        index
+      )
+
       const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as unknown as ObjectDisplayValues)
 
       if (response.ok) {
         closeDialog()
-        dispatch(replaceTemplate(index, displayTitle, currentObject.accessionId))
-          .then(() =>
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.success,
-                response: response,
-                helperText: "",
-              })
-            )
-          )
-          .catch(error => {
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.error,
-                response: error,
-                helperText: "Cannot replace template",
-              })
-            )
+        dispatch(updateTemplateDisplayTitle({ accessionId: currentObject.accessionId, displayTitle: displayTitle }))
+
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            response: response,
+            helperText: "",
           })
+        )
       } else {
         dispatch(
           updateStatus({

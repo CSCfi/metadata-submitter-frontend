@@ -250,8 +250,8 @@ const Home: React.FC = () => {
         inputProps={{ "aria-label": "Select project id" }}
       >
         {user.projects.map(project => (
-          <MenuItem key={project.projectId} value={project.projectId} sx={{ color: "secondary.main" }}>
-            {project.projectId}
+          <MenuItem key={project.projectId} value={project.projectId} sx={{ color: "secondary.main", p: "1rem" }}>
+            {`Project_${project.projectNumber}`}
           </MenuItem>
         ))}
       </Select>

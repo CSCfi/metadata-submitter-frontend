@@ -33,7 +33,7 @@ describe("Internationalization", function () {
 
     cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
-    cy.url().should("include", "/fi/newdraft")
+    cy.url().should("include", "/fi/submission")
   })
 })
 

@@ -7,7 +7,7 @@ import { Provider } from "react-redux"
 import { MemoryRouter as Router } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import WizardSavedObjectsList from "../components/NewDraftWizard/WizardComponents/WizardSavedObjectsList"
+import WizardSavedObjectsList from "../components/SubmissionWizard/WizardComponents/WizardSavedObjectsList"
 import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"

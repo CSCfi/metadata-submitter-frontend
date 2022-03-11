@@ -3,8 +3,8 @@ import React from "react"
 import Card from "@mui/material/Card"
 import { makeStyles } from "@mui/styles"
 
-import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
-import WizardUploadObjectXMLForm from "components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
+import WizardUploadObjectXMLForm from "components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
 

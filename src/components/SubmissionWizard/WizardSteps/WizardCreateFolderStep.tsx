@@ -14,11 +14,11 @@ import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
 import UserDraftTemplates from "components/Home/UserDraftTemplates"
-import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
+import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetTemplateAccessionIds } from "features/templatesSlice"
-import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
+import { createSubmissionFolder, updateSubmissionFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 import { pathWithLocale } from "utils"
@@ -84,9 +84,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         : []
 
     if (folder && folder?.folderId) {
-      dispatch(updateNewDraftFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
+      dispatch(updateSubmissionFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
         .then(() => {
-          navigate({ pathname: pathWithLocale(`newdraft/${folder.folderId}`), search: "step=1" })
+          navigate({ pathname: pathWithLocale(`submission/${folder.folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch((error: string) => {
@@ -94,10 +94,10 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         })
     } else {
       // Create a new folder with selected templates as drafts
-      dispatch(createNewDraftFolder(data, selectedDraftsArray))
+      dispatch(createSubmissionFolder(data, selectedDraftsArray))
         .then(response => {
           const folderId = response.data.folderId
-          navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: "step=1" })
+          navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
         })
         .catch((error: string) => {

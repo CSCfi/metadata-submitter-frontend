@@ -15,7 +15,7 @@ import { debounce } from "lodash"
 import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
-import WizardSearchBox from "components/NewDraftWizard/WizardComponents/WizardSearchBox"
+import WizardSearchBox from "components/SubmissionWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { updateStatus } from "features/statusMessageSlice"
@@ -374,7 +374,7 @@ const Home: React.FC = () => {
           <FrontPageTab label="Drafts" value={FolderSubmissionStatus.unpublished} data-testid="drafts-tab" />
           <FrontPageTab label="Published" value={FolderSubmissionStatus.published} data-testid="published-tab" />
         </FrontPageTabs>
-        <Link component={RouterLink} aria-label="Create submission" to={pathWithLocale("newdraft?step=0")}>
+        <Link component={RouterLink} aria-label="Create submission" to={pathWithLocale("submission?step=0")}>
           <CreateSubmissionButton
             color="primary"
             variant="contained"

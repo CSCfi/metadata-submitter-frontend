@@ -9,7 +9,7 @@ import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import WizardFillObjectDetailsForm from "../components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
+import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"

@@ -14,7 +14,7 @@ import CSCtheme from "../theme"
 import CustomSchema from "./fixtures/custom_schema.json"
 
 import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
-import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
+import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
 
 const mockStore = configureStore([])
 const store = mockStore({

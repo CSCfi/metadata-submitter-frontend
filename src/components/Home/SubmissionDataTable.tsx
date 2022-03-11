@@ -16,7 +16,7 @@ import {
 } from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
 
-import WizardPagination from "components/NewDraftWizard/WizardComponents/WizardPagination"
+import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { setFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppDispatch } from "hooks"
@@ -163,7 +163,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     const response = await folderAPIService.getFolderById(id)
     dispatch(setFolder(response.data))
     navigate({
-      pathname: pathWithLocale(`newdraft/${id}`),
+      pathname: pathWithLocale(`submission/${id}`),
       search: `step=0`,
     })
   }

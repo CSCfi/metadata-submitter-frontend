@@ -7,7 +7,7 @@ import { Provider } from "react-redux"
 import { Routes, Route, MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import WizardFooter from "../components/NewDraftWizard/WizardComponents/WizardFooter"
+import WizardFooter from "../components/SubmissionWizard/WizardComponents/WizardFooter"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
@@ -24,11 +24,11 @@ describe("WizardFooter", () => {
     })
 
     wrapper = (
-      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
         <Provider store={store}>
           <Routes>
             <Route
-              path="/newdraft"
+              path="/submission"
               element={
                 <StyledEngineProvider injectFirst>
                   <ThemeProvider theme={CSCtheme}>
@@ -60,11 +60,11 @@ describe("WizardFooter", () => {
       })
 
       wrapper = (
-        <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=1" }]}>
+        <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
           <Provider store={store}>
             <Routes>
               <Route
-                path="/newdraft"
+                path="/submission"
                 element={
                   <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={CSCtheme}>

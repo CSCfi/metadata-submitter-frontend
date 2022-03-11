@@ -7,7 +7,7 @@ import { useNavigate, Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
 
-import saveDraftsAsTemplates from "components/NewDraftWizard/WizardHooks/WizardSaveTemplatesHook"
+import saveDraftsAsTemplates from "components/SubmissionWizard/WizardHooks/WizardSaveTemplatesHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { resetFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"

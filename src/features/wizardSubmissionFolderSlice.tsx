@@ -86,7 +86,7 @@ export const {
 } = wizardSubmissionFolderSlice.actions
 export default wizardSubmissionFolderSlice.reducer
 
-export const createNewDraftFolder =
+export const createSubmissionFolder =
   (folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[]) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const folderForBackend: FolderDetails = {
@@ -111,7 +111,7 @@ export const createNewDraftFolder =
     })
   }
 
-export const updateNewDraftFolder =
+export const updateSubmissionFolder =
   (
     folderId: string,
     folderDetails: FolderDataFromForm & { folder: { drafts: ObjectInsideFolderWithTags[] } } & {

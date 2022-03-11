@@ -10,8 +10,8 @@ import configureStore from "redux-mock-store"
 
 import CSCtheme from "../theme"
 
-import { WizardAjvResolver } from "components/NewDraftWizard/WizardForms/WizardAjvResolver"
-import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import { WizardAjvResolver } from "components/SubmissionWizard/WizardForms/WizardAjvResolver"
+import JSONSchemaParser from "components/SubmissionWizard/WizardForms/WizardJSONSchemaParser"
 import { FormObject } from "types"
 
 const mockStore = configureStore([])

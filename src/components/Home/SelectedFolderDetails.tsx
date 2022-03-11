@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom"
 
-import WizardAlert from "../NewDraftWizard/WizardComponents/WizardAlert"
+import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import { ResponseStatus } from "constants/responseStatus"
@@ -150,7 +150,7 @@ const SelectedFolderDetails: React.FC = () => {
   const handleEditFolder = (step: number) => {
     dispatch(setFolder(selectedFolder.originalFolderData))
     navigate({
-      pathname: pathWithLocale(`newdraft/${selectedFolder.originalFolderData.folderId}`),
+      pathname: pathWithLocale(`submission/${selectedFolder.originalFolderData.folderId}`),
       search: `step=${step}`,
     })
   }
@@ -205,7 +205,7 @@ const SelectedFolderDetails: React.FC = () => {
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
       dispatch(setFolder(selectedFolder.originalFolderData))
-      navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: `step=1` })
+      navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: `step=1` })
     } else {
       dispatch(
         updateStatus({

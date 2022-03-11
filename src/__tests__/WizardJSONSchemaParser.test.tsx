@@ -13,7 +13,7 @@ import CSCtheme from "../theme"
 
 import CustomSchema from "./fixtures/custom_schema.json"
 
-import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import JSONSchemaParser from "components/SubmissionWizard/WizardForms/WizardJSONSchemaParser"
 import { FormObject } from "types"
 import { pathToName } from "utils/JSONSchemaUtils"
 

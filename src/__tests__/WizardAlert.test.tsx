@@ -5,7 +5,7 @@ import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import WizardAlert from "../components/NewDraftWizard/WizardComponents/WizardAlert"
+import WizardAlert from "../components/SubmissionWizard/WizardComponents/WizardAlert"
 
 import { ObjectSubmissionsArray } from "constants/wizardObject"
 

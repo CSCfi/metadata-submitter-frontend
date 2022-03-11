@@ -138,7 +138,7 @@ const WizardStepper = ({
   const params = useParams()
 
   const folderId = params.folderId
-  const newDraftPath = pathWithLocale(`newdraft/${folderId}`)
+  const newDraftPath = pathWithLocale(`submission/${folderId}`)
 
   const queryParams = useQuery()
   const wizardStep = Number(queryParams.get("step"))

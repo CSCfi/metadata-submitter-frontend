@@ -1,4 +1,4 @@
-import JSONSchemaParser from "components/NewDraftWizard/WizardForms/WizardJSONSchemaParser"
+import JSONSchemaParser from "components/SubmissionWizard/WizardForms/WizardJSONSchemaParser"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"

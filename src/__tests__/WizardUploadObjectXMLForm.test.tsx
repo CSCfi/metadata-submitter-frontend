@@ -8,7 +8,7 @@ import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
-import WizardUploadObjectXMLForm from "../components/NewDraftWizard/WizardForms/WizardUploadObjectXMLForm"
+import WizardUploadObjectXMLForm from "../components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"

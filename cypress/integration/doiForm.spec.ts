@@ -198,6 +198,22 @@ describe("DOI form", function () {
       cy.get("[data-testid='subjects']").parent().children("button").click()
       cy.get("select[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
+      // Fill in required Keywords
+      cy.get("[data-testid='keywords']").parent().children("button").click()
+      cy.get("input[data-testid='keywords.0']").type("keyword-1,")
+      cy.get("input[data-testid='keywords.0']").type("keyword-2{enter}")
+      cy.get("input[data-testid='keywords.0']").type("keyword-3{enter}")
+      // Try typing the same keyword and check that we don't show repeated keyword
+      cy.get("input[data-testid='keywords.0']").type("keyword-2{enter}")
+
+      cy.get("div[data-testid='keyword-1']").should("be.visible")
+      cy.get("div[data-testid='keyword-2']").should("be.visible")
+      cy.get("div[data-testid='keyword-3']").should("be.visible")
+
+      // Try deleting a tag and check that it shouldn't exist anymore
+      cy.get("div[data-testid='keyword-2'] > [data-testid='ClearIcon']").click()
+      cy.get("div[data-testid='keyword-2']").should("not.exist")
+
       cy.get("button[type='submit']").click()
       cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
 
@@ -205,6 +221,8 @@ describe("DOI form", function () {
       cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
       cy.get("[data-testid='creators.0.givenName']").should("have.value", "John Smith")
       cy.get("select[data-testid='subjects.0.subject']").should("have.value", "FOS: Mathematics")
+      cy.get("div[data-testid='keyword-1']").scrollIntoView().should("be.visible")
+      cy.get("div[data-testid='keyword-3']").scrollIntoView().should("be.visible")
     }),
     it("should autofill full name based on family and given name", () => {
       // Go to DOI form
@@ -237,6 +255,10 @@ describe("DOI form", function () {
     // Fill in required Subjects field
     cy.get("[data-testid='subjects']").parent().children("button").click()
     cy.get("[data-testid='subjects.0.subject']").select("FOS: Mathematics")
+
+    // Fill in required Keywords
+    cy.get("[data-testid='keywords']").parent().children("button").click()
+    cy.get("input[data-testid='keywords.0']").type("keyword-1,")
 
     // Select Dates
     cy.get("[data-testid='dates']").parent().children("button").click()

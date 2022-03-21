@@ -1554,7 +1554,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
 
   return (
     <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
-      {required && !isValid && <input hidden={true} value="" {...register(name)} />}
+      {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
       <Typography
         key={`${name}-header`}
         variant={`h${level}` as Variant}

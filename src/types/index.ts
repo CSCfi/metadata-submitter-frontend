@@ -126,7 +126,7 @@ export type ConnectFormChildren = { children: (...args: ConnectFormMethods[]) =>
 
 export type NestedField = {
   id: string
-  fieldValues: Record<string, unknown>
+  fieldValues: string
 }
 
 // ApiSauce uses "any" as argument for response type

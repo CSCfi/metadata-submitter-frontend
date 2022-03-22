@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Field Keywords in DOI form #715
 - Option to filter by submission's name in Home page #685
 - New navigation bar and new home page #669
 

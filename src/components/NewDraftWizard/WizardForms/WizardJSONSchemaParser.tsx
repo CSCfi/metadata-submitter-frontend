@@ -1282,18 +1282,30 @@ const FormTagField = ({
             control={control}
             defaultValue={defaultValue}
             render={({ field, fieldState: { error } }) => {
+              const handleKeywordAsTag = (keyword: string) => {
+                // newTags with unique values
+                const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
+                setTags(newTags)
+                setInputValue("")
+                // Convert tags to string for hidden registered input's values
+                field.onChange(newTags.join(","))
+              }
+
               const handleKeyDown = e => {
                 const { key } = e
                 const trimmedInput = inputValue.trim()
                 // Convert to tags if users press "," OR "Enter"
                 if ((key === "," || key === "Enter") && trimmedInput.length > 0) {
                   e.preventDefault()
-                  // newTags with unique values
-                  const newTags = !tags.includes(trimmedInput) ? [...tags, trimmedInput] : tags
-                  setTags(newTags)
-                  setInputValue("")
-                  // Convert tags to string for hidden registered input's values
-                  field.onChange(newTags.join(","))
+                  handleKeywordAsTag(trimmedInput)
+                }
+              }
+
+              // Convert to tags when user clicks outside of input field
+              const handleOnBlur = () => {
+                const trimmedInput = inputValue.trim()
+                if (trimmedInput.length > 0) {
+                  handleKeywordAsTag(trimmedInput)
                 }
               }
 
@@ -1331,6 +1343,7 @@ const FormTagField = ({
                       value={inputValue}
                       onChange={handleInputChange}
                       onKeyDown={handleKeyDown}
+                      onBlur={handleOnBlur}
                     />
                     {description && (
                       <FieldTooltip title={description} placement="top" arrow>

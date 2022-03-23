@@ -6,7 +6,7 @@
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.8.1",
-    "@mui/codemod": "^5.3.0",
+    "@mui/codemod": "^5.5.1",
     "@mui/icons-material": "^5.3.1",
     "@mui/lab": "^5.0.0-alpha.71",
     "@mui/material": "^5.5.0",
@@ -85,7 +85,7 @@
     "@types/react-redux": "^7.1.22",
     "@types/react-router-dom": "^5.3.3",
     "@types/redux-mock-store": "^1.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
     "chokidar": "^3.5.3",
     "concurrently": "^7.0.0",
     "cypress": "^9.4.1",
@@ -102,10 +102,10 @@
     "mongo": "^0.1.0",
     "msw": "^0.39.1",
     "pinst": "^3.0.0",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.0",
     "redux-mock-store": "^1.5.4",
     "snapshot-diff": "^0.9.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.2"
   },
   "husky": {
     "hooks": {

@@ -387,7 +387,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
         const error = get(errors, name)
         return (
           <>
-            <Grid container key={`${name}-section`} spacing={0}>
+            <Grid container key={`${name}-section`} sx={{ my: "3rem" }}>
               {heading}
               <Grid item xs={12} md={level > 0 ? 8 : 12}>
                 {children}
@@ -1523,7 +1523,7 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
   const level = path.length === 1 ? path.length + 4 : path.length + 2
-
+  console.log("path :>> ", path)
   // Get currentObject and the values of current field
   const currentObject = useAppSelector(state => state.currentObject) || {}
   const fileTypes = useAppSelector(state => state.fileTypes)
@@ -1594,101 +1594,113 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   }
 
   return (
-    <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
-      {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
-      <Typography
-        key={`${name}-header`}
-        variant={`h${level}` as Variant}
-        data-testid={name}
-        role="heading"
-        color="secondary"
-      >
-        <span id={name}>{label}</span> {required ? "*" : null}
-        {required && !isValid && errors[name] && (
-          <span>
-            <FormControl error>
-              <FormHelperText>must have at least 1 item</FormHelperText>
-            </FormControl>
-          </span>
-        )}
-        {description && (
-          <FieldTooltip title={description} placement="top" arrow>
-            <HelpOutlineIcon className={classes.sectionTip} />
-          </FieldTooltip>
-        )}
-      </Typography>
+    <Grid container key={`${name}-array`} aria-labelledby={name} data-testid={name} sx={{ my: "3rem" }}>
+      <Grid item xs={12} md={4}>
+        <Paper
+          component={Stack}
+          square={true}
+          justifyContent="center"
+          alignItems={"center"}
+          elevation={0}
+          sx={{
+            backgroundColor: level > 0 ? "primary.lighter" : "white",
+            height: "100%",
+            ml: "5rem",
+            mr: "3rem",
+          }}
+        >
+          {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
+          <Typography key={`${name}-header`} variant={"subtitle1"} data-testid={name} role="heading" color="secondary">
+            {label}
+            {required ? "*" : null}
+            {required && !isValid && errors[name] && (
+              <span>
+                <FormControl error>
+                  <FormHelperText>must have at least 1 item</FormHelperText>
+                </FormControl>
+              </span>
+            )}
+            {description && (
+              <FieldTooltip title={description} placement="top" arrow>
+                <HelpOutlineIcon className={classes.sectionTip} />
+              </FieldTooltip>
+            )}
+          </Typography>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} md={8}>
+        {formFields?.map((field, index) => {
+          const pathWithoutLastItem = path.slice(0, -1)
+          const lastPathItemWithIndex = `${lastPathItem}.${index}`
 
-      {formFields?.map((field, index) => {
-        const pathWithoutLastItem = path.slice(0, -1)
-        const lastPathItemWithIndex = `${lastPathItem}.${index}`
+          if (items.oneOf) {
+            const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
-        if (items.oneOf) {
-          const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
+            return (
+              <div className="arrayRow" key={field.id} data-testid={`${name}[${index}]`}>
+                <Paper elevation={2}>
+                  <FormOneOfField
+                    key={field.id}
+                    nestedField={field as NestedField}
+                    path={pathForThisIndex}
+                    object={items}
+                  />
+                </Paper>
+                <IconButton onClick={() => handleRemove(index)}>
+                  <RemoveIcon />
+                </IconButton>
+              </div>
+            )
+          }
+
+          const properties = object.items.properties
+          let requiredProperties =
+            index === 0 && object.contains?.allOf
+              ? object.contains?.allOf?.flatMap((item: FormObject) => item.required) // Case: DAC - Main Contact needs at least 1
+              : object.items?.required
+
+          // Force first array item as required field if array is required but none of the items are required
+          if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
           return (
-            <div className="arrayRow" key={field.id} data-testid={`${name}[${index}]`}>
+            <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
               <Paper elevation={2}>
-                <FormOneOfField
-                  key={field.id}
-                  nestedField={field as NestedField}
-                  path={pathForThisIndex}
-                  object={items}
-                />
+                {
+                  items
+                    ? Object.keys(items).map(item => {
+                        const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
+                        const requiredField = requiredProperties
+                          ? requiredProperties.filter((prop: string) => prop === item)
+                          : []
+                        return traverseFields(
+                          properties[item] as FormObject,
+                          pathForThisIndex,
+                          requiredField,
+                          false,
+                          field as NestedField
+                        )
+                      })
+                    : traverseFields(
+                        object.items,
+                        [...pathWithoutLastItem, lastPathItemWithIndex],
+                        [],
+                        false,
+                        field as NestedField
+                      ) // special case for doiSchema's "sizes" and "formats"
+                }
               </Paper>
               <IconButton onClick={() => handleRemove(index)}>
                 <RemoveIcon />
               </IconButton>
-            </div>
+            </Box>
           )
-        }
+        })}
 
-        const properties = object.items.properties
-        let requiredProperties =
-          index === 0 && object.contains?.allOf
-            ? object.contains?.allOf?.flatMap((item: FormObject) => item.required) // Case: DAC - Main Contact needs at least 1
-            : object.items?.required
-
-        // Force first array item as required field if array is required but none of the items are required
-        if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
-
-        return (
-          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
-            <Paper elevation={2}>
-              {
-                items
-                  ? Object.keys(items).map(item => {
-                      const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                      const requiredField = requiredProperties
-                        ? requiredProperties.filter((prop: string) => prop === item)
-                        : []
-                      return traverseFields(
-                        properties[item] as FormObject,
-                        pathForThisIndex,
-                        requiredField,
-                        false,
-                        field as NestedField
-                      )
-                    })
-                  : traverseFields(
-                      object.items,
-                      [...pathWithoutLastItem, lastPathItemWithIndex],
-                      [],
-                      false,
-                      field as NestedField
-                    ) // special case for doiSchema's "sizes" and "formats"
-              }
-            </Paper>
-            <IconButton onClick={() => handleRemove(index)}>
-              <RemoveIcon />
-            </IconButton>
-          </Box>
-        )
-      })}
-
-      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => handleAppend()}>
-        Add new item
-      </Button>
-    </div>
+        <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => handleAppend()}>
+          Add new item
+        </Button>
+      </Grid>
+    </Grid>
   )
 }
 

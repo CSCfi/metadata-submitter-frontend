@@ -23,6 +23,7 @@ import FormHelperText from "@mui/material/FormHelperText"
 import Grid from "@mui/material/Grid"
 import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
+import Stack from "@mui/material/Stack"
 import { styled } from "@mui/material/styles"
 import { Variant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
@@ -62,7 +63,6 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "baseline",
-    width: "100%",
     "& label": {
       marginRight: 0,
     },
@@ -230,8 +230,9 @@ const traverseFields = (
   switch (object.type) {
     case "object": {
       const properties = object.properties
+
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 4} description={description}>
+        <FormSection key={name} name={name} label={label} level={path.length} description={description}>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
@@ -272,14 +273,16 @@ const traverseFields = (
       ) : name.includes("keywords") ? (
         <FormTagField key={name} name={name} label={label} required={required} description={description} />
       ) : (
-        <FormTextField
-          key={name}
-          name={name}
-          label={label}
-          required={required}
-          description={description}
-          nestedField={nestedField}
-        />
+        <FormSection key={name} name={name} label={""} level={path.length} description={""}>
+          <FormTextField
+            key={name}
+            name={name}
+            label={label}
+            required={required}
+            description={description}
+            nestedField={nestedField}
+          />
+        </FormSection>
       )
     }
     case "integer": {
@@ -345,24 +348,51 @@ type FormSectionProps = {
  */
 const FormSection = ({ name, label, level, children, description }: FormSectionProps & { description: string }) => {
   const classes = useStyles()
-
+  const heading = label ? (
+    <Grid item xs={12} md={4}>
+      <Paper
+        component={Stack}
+        square={true}
+        justifyContent="center"
+        alignItems={level === 1 ? "center" : "start"}
+        elevation={0}
+        sx={{
+          backgroundColor: level > 0 ? "primary.lighter" : "white",
+          height: "100%",
+          ml: "5rem",
+          mr: "3rem",
+        }}
+      >
+        <Typography
+          key={`${name}-header`}
+          variant={level > 0 ? "subtitle1" : (`h${level + 4}` as Variant)}
+          role="heading"
+          color="secondary"
+        >
+          {label}
+          {description && level === 1 && (
+            <FieldTooltip title={description} placement="top" arrow>
+              <HelpOutlineIcon className={classes.sectionTip} />
+            </FieldTooltip>
+          )}
+        </Typography>
+      </Paper>
+    </Grid>
+  ) : (
+    <Grid item xs={0} md={level === 1 ? 4 : 0} />
+  )
   return (
     <ConnectForm>
       {({ errors }: ConnectFormMethods) => {
         const error = get(errors, name)
         return (
-          <div>
-            <div key={`${name}-section`}>
-              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading" color="secondary">
-                {label}
-                {description && level == 2 && (
-                  <FieldTooltip title={description} placement="top" arrow>
-                    <HelpOutlineIcon className={classes.sectionTip} />
-                  </FieldTooltip>
-                )}
-              </Typography>
-              {children}
-            </div>
+          <>
+            <Grid container key={`${name}-section`} spacing={0}>
+              {heading}
+              <Grid item xs={12} md={level > 0 ? 8 : 12}>
+                {children}
+              </Grid>
+            </Grid>
             <div>
               {error ? (
                 <FormControl error>
@@ -372,7 +402,7 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
                 </FormControl>
               ) : null}
             </div>
-          </div>
+          </>
         )
       }}
     </ConnectForm>

@@ -12,6 +12,7 @@ const palette = {
     // green colors
     main: "#006778",
     light: "#c2dbdf",
+    lighter: "#d8e8ea",
     lightest: "#e5eff1",
   },
   secondary: {
@@ -200,12 +201,11 @@ let CSCtheme = createTheme({
     boxShadow: defaultTheme.shadows[1],
   },
   form: {
-    margin: defaultTheme.spacing(3),
     "& .MuiTextField-root > .Mui-required": {
       color: palette.primary.main,
     },
     "& .MuiTextField-root": {
-      width: "48%",
+      width: "70%",
       margin: defaultTheme.spacing(1),
     },
     "& .MuiTypography-root": {
@@ -222,7 +222,6 @@ let CSCtheme = createTheme({
     },
     "& .array": {
       margin: defaultTheme.spacing(1),
-
       "& .arrayRow": {
         display: "flex",
         alignItems: "center",
@@ -235,7 +234,6 @@ let CSCtheme = createTheme({
       "& h2, h3, h4, h5, h6": {
         margin: defaultTheme.spacing(1, 0),
       },
-
       "& .MuiPaper-elevation2": {
         paddingRight: defaultTheme.spacing(1),
         marginBottom: defaultTheme.spacing(1),

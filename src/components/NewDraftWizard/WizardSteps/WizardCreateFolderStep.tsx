@@ -17,7 +17,7 @@ import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import transformTemplatesToDrafts from "components/NewDraftWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
-import { resetTemplateAccessionIds } from "features/templatesSlice"
+import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
 import { createNewDraftFolder, updateNewDraftFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
@@ -64,8 +64,9 @@ const useStyles = makeStyles(() => ({
 const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const projectId = useAppSelector(state => state.projectId)
   const folder = useAppSelector(state => state.submissionFolder)
-  const user = useAppSelector(state => state.user)
+  const templates = useAppSelector(state => state.templates)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
   const {
@@ -79,8 +80,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
   const onSubmit = async (data: FolderDataFromForm) => {
     // Transform the format of templates to drafts with proper values to be added to current folder or new folder
     const selectedDraftsArray =
-      user.templates && folder?.folderId
-        ? await transformTemplatesToDrafts(templateAccessionIds, user.templates, folder.folderId, dispatch)
+      templates && folder?.folderId
+        ? await transformTemplatesToDrafts(templateAccessionIds, templates, folder.folderId, dispatch)
         : []
 
     if (folder && folder?.folderId) {
@@ -94,7 +95,7 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         })
     } else {
       // Create a new folder with selected templates as drafts
-      dispatch(createNewDraftFolder(data, selectedDraftsArray))
+      dispatch(createNewDraftFolder(projectId, data, selectedDraftsArray))
         .then(response => {
           const folderId = response.data.folderId
           navigate({ pathname: pathWithLocale(`newdraft/${folderId}`), search: "step=1" })

@@ -9,13 +9,13 @@ const defaultTheme = createTheme()
 
 const palette = {
   primary: {
-    // green
+    // green colors
     main: "#006778",
     light: "#c2dbdf",
     lightest: "#e5eff1",
   },
   secondary: {
-    // grey
+    // grey colors
     main: "#595959",
     light: "#dfe1e3",
   },
@@ -118,8 +118,14 @@ let CSCtheme = createTheme({
     },
     MuiDataGrid: {
       styleOverrides: {
-        columnHeader: fontSizeBreakpoints,
-        row: fontSizeBreakpoints,
+        cell: { minWidth: "none !important", maxWidth: "none !important" },
+        columnHeader: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },
+        row: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: { padding: 0, fontSizeBreakpoints },
       },
     },
     MuiTab: {

@@ -36,45 +36,11 @@ describe("Page403", () => {
   test("redirects to Home Page after 10s", () => {
     jest.useFakeTimers()
     const store = mockStore({
-      user: { name: "test" },
-      unpublishedFolders: [
-        { descriptioni: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub", published: false },
-      ],
-      publishedFolders: [
-        { descriptioni: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub", published: false },
-        { descriptioni: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub", published: false },
-      ],
-      totalFolders: {
-        totalUnpublishedFolders: [
-          { descriptioni: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub", published: false },
-        ],
-        totalPublishedFolders: [
-          { descriptioni: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB6", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB7", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB8", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB9", metadataObjects: [], name: "Pub", published: false },
-          { descriptioni: "d", drafts: [], folderId: "PUB10", metadataObjects: [], name: "Pub", published: false },
+      user: {
+        name: "test",
+        projects: [
+          { projectId: "PROJECT1", projectName: "Project 1" },
+          { projectId: "PROJECT2", projectName: "Project 2" },
         ],
       },
     })

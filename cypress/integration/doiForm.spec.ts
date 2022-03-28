@@ -1,9 +1,7 @@
 describe("DOI form", function () {
   beforeEach(() => {
     cy.task("resetDb")
-
     cy.login()
-
     cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
     // Add folder name & description, navigate to submissions

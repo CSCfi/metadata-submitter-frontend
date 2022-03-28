@@ -21,8 +21,7 @@ import {
 export type User = {
   id: string
   name: string
-  templates: Array<ObjectInsideFolderWithTags>
-  folders: Array<string>
+  projects: Array<{ projectId: string; projectNumber: string }>
 }
 
 export type Schema = "study" | "sample" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
@@ -74,7 +73,6 @@ export type FolderRow = {
   name: string
   dateCreated?: number
   lastModifiedBy: string
-  cscProject: string
 }
 
 export type FolderDataFromForm = {

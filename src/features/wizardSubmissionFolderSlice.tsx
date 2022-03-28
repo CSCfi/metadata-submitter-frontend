@@ -87,10 +87,11 @@ export const {
 export default wizardSubmissionFolderSlice.reducer
 
 export const createNewDraftFolder =
-  (folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[]) =>
+  (projectId: string, folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[]) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const folderForBackend: FolderDetails = {
+    const folderForBackend: FolderDetails & { projectId: string } = {
       ...folderDetails,
+      projectId,
       published: false,
       metadataObjects: [],
       drafts: drafts ? drafts : [],

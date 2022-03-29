@@ -6,7 +6,7 @@
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
-    "@mui/codemod": "^5.5.1",
+    "@mui/codemod": "^5.5.3",
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.74",
     "@mui/material": "^5.5.2",

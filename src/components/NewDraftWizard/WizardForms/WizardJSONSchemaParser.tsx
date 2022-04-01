@@ -270,14 +270,7 @@ const traverseFields = (
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
         <FormAutocompleteField key={name} name={name} label={label} required={required} description={description} />
       ) : name.includes("keywords") ? (
-        <FormTagField
-          key={name}
-          name={name}
-          label={label}
-          required={required}
-          description={description}
-          nestedField={nestedField}
-        />
+        <FormTagField key={name} name={name} label={label} required={required} description={description} />
       ) : (
         <FormTextField
           key={name}
@@ -1249,21 +1242,19 @@ const FormAutocompleteField = ({
   )
 }
 
-const FormTagField = ({
-  name,
-  label,
-  required,
-  description,
-  nestedField,
-}: FormFieldBaseProps & { description: string; nestedField?: NestedField }) => {
+const ValidationTagField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root.MuiInputBase-root": { flexWrap: "wrap", padding: "1rem" },
+  "& input": { flex: 1, padding: 0, minWidth: "2rem" },
+  "& label": { color: theme.palette.primary.main },
+  "& .MuiOutlinedInput-notchedOutline, div:hover .MuiOutlinedInput-notchedOutline": highlightStyle(theme),
+}))
+
+const FormTagField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
   const classes = useStyles()
 
-  // Check if there are tags already existing and define the initialTags for rendering
-  let initialTags: Array<string> = []
-  if (nestedField) {
-    const { fieldValues } = nestedField
-    initialTags = fieldValues ? fieldValues.split(",") : []
-  }
+  // Check initialValues of the tag field and define the initialTags for rendering
+  const initialValues = useWatch({ name })
+  const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
 
   const [inputValue, setInputValue] = React.useState("")
   const [tags, setTags] = useState<Array<string>>(initialTags)
@@ -1275,13 +1266,14 @@ const FormTagField = ({
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
-        const defaultValue = nestedField?.fieldValues || ""
+        const defaultValue = initialValues || ""
         return (
           <Controller
             name={name}
             control={control}
             defaultValue={defaultValue}
-            render={({ field, fieldState: { error } }) => {
+            rules={{ required: true }}
+            render={({ field, formState }) => {
               const handleKeywordAsTag = (keyword: string) => {
                 // newTags with unique values
                 const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
@@ -1316,42 +1308,40 @@ const FormTagField = ({
               }
 
               return (
-                <Box>
-                  <div className={classes.divBaseline}>
-                    <input hidden={true} {...field} />
-                    <ValidationTextField
-                      InputProps={{
-                        startAdornment: tags.map(item => (
-                          <Chip
-                            key={item}
-                            tabIndex={-1}
-                            label={item}
-                            onDelete={handleTagDelete(item)}
-                            color="primary"
-                            deleteIcon={<ClearIcon fontSize="small" />}
-                            data-testid={item}
-                            sx={{ fontSize: "1.4rem", mr: "0.5rem" }}
-                          />
-                        )),
-                      }}
-                      inputProps={{ "data-testid": name }}
-                      label={label}
-                      id={name}
-                      error={!!error}
-                      helperText={error?.message}
-                      required={required}
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      onBlur={handleOnBlur}
-                    />
-                    {description && (
-                      <FieldTooltip title={description} placement="top" arrow>
-                        <HelpOutlineIcon className={classes.fieldTip} />
-                      </FieldTooltip>
-                    )}
-                  </div>
-                </Box>
+                <div className={classes.divBaseline}>
+                  <input hidden={true} {...field} />
+                  <ValidationTagField
+                    InputProps={{
+                      startAdornment: tags.map(item => (
+                        <Chip
+                          key={item}
+                          tabIndex={-1}
+                          label={item}
+                          onDelete={handleTagDelete(item)}
+                          color="primary"
+                          deleteIcon={<ClearIcon fontSize="small" />}
+                          data-testid={item}
+                          sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                        />
+                      )),
+                    }}
+                    inputProps={{ "data-testid": name }}
+                    label={`${label} *`}
+                    id={name}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onBlur={handleOnBlur}
+                  />
+                  {description && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.fieldTip} />
+                    </FieldTooltip>
+                  )}
+                  {required && formState.isSubmitted && !formState.isValid && tags.length === 0 && (
+                    <FormHelperText error>must have at least 1 keyword</FormHelperText>
+                  )}
+                </div>
               )
             }}
           />

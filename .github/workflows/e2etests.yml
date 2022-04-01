@@ -10,7 +10,7 @@ jobs:
         node: ["16"]
         browser: ["firefox", "chrome"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build Frontend
         run: |
           npx --quiet pinst --disable
@@ -25,7 +25,7 @@ jobs:
              echo "VERSION=develop" >> $GITHUB_ENV
           fi
       - name: Clone backend
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'CSCfi/metadata-submitter'
           ref: ${{ env.VERSION }}

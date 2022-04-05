@@ -131,15 +131,14 @@ Cypress.Commands.add("saveDoiForm", () => {
   cy.get("button").contains("Add DOI information (optional)").click()
   // Fill in required Creators field
   cy.get("[data-testid='creators']").parent().children("button").click()
-  cy.get("[data-testid='creators.0.givenName']", { timeout: 10000 }).type("John Smith")
-
+  cy.get("[data-testid='creators.0.givenName']", { timeout: 10000 }).type("Test given name")
+  cy.get("[data-testid='creators.0.familyName']", { timeout: 10000 }).type("Test given name")
   // Fill in required Subjects field
   cy.get("[data-testid='subjects']").parent().children("button").click()
   cy.get("select[data-testid='subjects.0.subject']", { timeout: 10000 }).select("FOS: Mathematics")
 
   // Fill in required Keywords
-  cy.get("[data-testid='keywords']").parent().children("button").click()
-  cy.get("input[data-testid='keywords.0']", { timeout: 10000 }).type("keyword-1,")
+  cy.get("input[data-testid='keywords']", { timeout: 10000 }).type("keyword-1,")
 
   cy.get("button[type='submit']").click()
   cy.contains(".MuiAlert-message", "DOI form has been saved successfully")

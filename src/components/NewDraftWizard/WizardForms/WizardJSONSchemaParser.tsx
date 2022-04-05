@@ -656,6 +656,8 @@ const FormTextField = ({
   let watchAutocompleteFieldName = ""
   let prefilledValue: null | undefined = null
 
+  // Case: DOI form - Check if it's <creators>'s and <contributors>'s FullName field in DOI form
+  const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
   let fullNameValue = "" // Case: DOI form - Creators and Contributors' FullName
 
   let disabled = false // boolean if inputValue is disabled
@@ -671,8 +673,6 @@ const FormTextField = ({
     prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
 
     // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and FamilyName
-    const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
-
     if (isFullNameField) {
       const givenName = getPathName(path, "givenName")
       const givenNameValue = get(watchValues, givenName) || ""
@@ -692,7 +692,6 @@ const FormTextField = ({
   /*
    * Handle DOI form values
    */
-
   const { setValue, getValues } = useFormContext()
 
   // Check value of current name path
@@ -711,6 +710,11 @@ const FormTextField = ({
   useEffect(() => {
     if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm) setValue(name, "")
   }, [prefilledValue])
+
+  useEffect(() => {
+    // Set value of <creators>'s and <contributors>'s FullName field with the fullNameValue from givenName and familyName
+    if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
+  }, [isFullNameField, fullNameValue])
 
   return (
     <ConnectForm>
@@ -1243,8 +1247,8 @@ const FormAutocompleteField = ({
 }
 
 const ValidationTagField = styled(TextField)(({ theme }) => ({
-  "& .MuiOutlinedInput-root.MuiInputBase-root": { flexWrap: "wrap", padding: "1rem" },
-  "& input": { flex: 1, padding: 0, minWidth: "2rem" },
+  "& .MuiOutlinedInput-root.MuiInputBase-root": { flexWrap: "wrap" },
+  "& input": { flex: 1, minWidth: "2rem" },
   "& label": { color: theme.palette.primary.main },
   "& .MuiOutlinedInput-notchedOutline, div:hover .MuiOutlinedInput-notchedOutline": highlightStyle(theme),
 }))
@@ -1312,18 +1316,21 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
                   <input hidden={true} {...field} />
                   <ValidationTagField
                     InputProps={{
-                      startAdornment: tags.map(item => (
-                        <Chip
-                          key={item}
-                          tabIndex={-1}
-                          label={item}
-                          onDelete={handleTagDelete(item)}
-                          color="primary"
-                          deleteIcon={<ClearIcon fontSize="small" />}
-                          data-testid={item}
-                          sx={{ fontSize: "1.4rem", m: "0.5rem" }}
-                        />
-                      )),
+                      startAdornment:
+                        tags.length > 0
+                          ? tags.map(item => (
+                              <Chip
+                                key={item}
+                                tabIndex={-1}
+                                label={item}
+                                onDelete={handleTagDelete(item)}
+                                color="primary"
+                                deleteIcon={<ClearIcon fontSize="small" />}
+                                data-testid={item}
+                                sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                              />
+                            ))
+                          : null,
                     }}
                     inputProps={{ "data-testid": name }}
                     label={`${label} *`}

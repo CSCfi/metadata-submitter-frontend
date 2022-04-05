@@ -192,21 +192,20 @@ describe("DOI form", function () {
 
       // Fill in required Creators field
       cy.get("[data-testid='creators']").parent().children("button").click()
-      cy.get("[data-testid='creators.0.givenName']").type("John Smith")
-
+      cy.get("[data-testid='creators.0.givenName']").type("Test given name")
+      cy.get("[data-testid='creators.0.familyName']").type("Test family name")
       // Fill in required Subjects field
       cy.get("[data-testid='subjects']").parent().children("button").click()
       cy.get("select[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
       // Fill in required Keywords
-      cy.get("[data-testid='keywords']").parent().children("button").click()
-      cy.get("input[data-testid='keywords.0']").type("keyword-1,")
-      cy.get("input[data-testid='keywords.0']").type("keyword-2{enter}")
-      cy.get("input[data-testid='keywords.0']").type("keyword-3{enter}")
+      cy.get("input[data-testid='keywords']").type("keyword-1,")
+      cy.get("input[data-testid='keywords']").type("keyword-2{enter}")
+      cy.get("input[data-testid='keywords']").type("keyword-3{enter}")
       // Try typing the same keyword and check that we don't show repeated keyword
-      cy.get("input[data-testid='keywords.0']").type("keyword-2{enter}")
+      cy.get("input[data-testid='keywords']").type("keyword-2{enter}")
 
-      cy.get("div[data-testid='keyword-1']").should("be.visible")
+      cy.get("div[data-testid='keyword-1']").scrollIntoView().should("be.visible")
       cy.get("div[data-testid='keyword-2']").should("be.visible")
       cy.get("div[data-testid='keyword-3']").should("be.visible")
 
@@ -219,7 +218,8 @@ describe("DOI form", function () {
 
       // Open the DOI form again and check the fields render correctly
       cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
-      cy.get("[data-testid='creators.0.givenName']").should("have.value", "John Smith")
+      cy.get("[data-testid='creators.0.givenName']").should("have.value", "Test given name")
+      cy.get("[data-testid='creators.0.familyName']").should("have.value", "Test family name")
       cy.get("select[data-testid='subjects.0.subject']").should("have.value", "FOS: Mathematics")
       cy.get("div[data-testid='keyword-1']").scrollIntoView().should("be.visible")
       cy.get("div[data-testid='keyword-3']").scrollIntoView().should("be.visible")
@@ -251,14 +251,14 @@ describe("DOI form", function () {
     // Fill in required Creators field
     cy.get("[data-testid='creators']").parent().children("button").click()
     cy.get("[data-testid='creators.0.givenName']").type("Test given name")
+    cy.get("[data-testid='creators.0.familyName']").type("Test family name")
 
     // Fill in required Subjects field
     cy.get("[data-testid='subjects']").parent().children("button").click()
     cy.get("[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
     // Fill in required Keywords
-    cy.get("[data-testid='keywords']").parent().children("button").click()
-    cy.get("input[data-testid='keywords.0']").type("keyword-1,")
+    cy.get("input[data-testid='keywords']").type("keyword-1,")
 
     // Select Dates
     cy.get("[data-testid='dates']").parent().children("button").click()

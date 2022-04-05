@@ -123,24 +123,28 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       type: "actions",
       hide: folderType === FolderSubmissionStatus.published,
       getActions: (params: GridRowParams) => [
-        <div key={params.id} data-testid="edit-draft-submission">
+        <>
           <GridActionsCellItem
+            key={params.id}
             icon={<EditIcon color="primary" fontSize="large" />}
             onClick={e => handleEditSubmission(e, params.id)}
             label="Edit"
             showInMenu
+            data-testid="edit-draft-submission"
           />
-        </div>,
-        <div key={params.id} data-testid="delete-draft-submission">
+        </>,
+        <>
           <GridActionsCellItem
+            key={params.id}
             icon={<DeleteIcon color="primary" fontSize="large" />}
             onClick={e => {
               handleDeleteSubmission(e, params.id)
             }}
             label="Delete"
+            data-testid="delete-draft-submission"
             showInMenu
           />
-        </div>,
+        </>,
       ],
     },
   ]

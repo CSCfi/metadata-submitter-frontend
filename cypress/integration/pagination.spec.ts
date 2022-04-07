@@ -259,11 +259,10 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("[data-testid='page info']").contains("2 of 10 pages", { timeout: 10000 }).should("be.visible")
     // Check "Items per page" options
     cy.wait(0)
-    cy.get("@button")
-      .then($el => {
-        expect(Cypress.dom.isAttached($el).valueOf()).to.be.true
-      })
-      .click()
+    cy.get("@button").then($el => {
+      expect(Cypress.dom.isAttached($el).valueOf()).to.be.true
+    })
+    cy.get("@button").click()
 
     cy.get("li[data-value='5']", { timeout: 10000 }).should("be.visible")
     cy.get("li[data-value='15']").should("be.visible")

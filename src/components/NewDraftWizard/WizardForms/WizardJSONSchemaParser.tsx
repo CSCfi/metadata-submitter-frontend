@@ -15,6 +15,7 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Checkbox from "@mui/material/Checkbox"
+import Chip from "@mui/material/Chip"
 import CircularProgress from "@mui/material/CircularProgress"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormGroup from "@mui/material/FormGroup"
@@ -219,7 +220,6 @@ const traverseFields = (
 ) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
-
   const label = object.title ?? lastPathItem
   const required = !!requiredProperties?.includes(lastPathItem) || requireFirst || false
   const description = object.description
@@ -269,6 +269,8 @@ const traverseFields = (
         <FormDatePicker key={name} name={name} label={label} required={required} description={description} />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
         <FormAutocompleteField key={name} name={name} label={label} required={required} description={description} />
+      ) : name.includes("keywords") ? (
+        <FormTagField key={name} name={name} label={label} required={required} description={description} />
       ) : (
         <FormTextField
           key={name}
@@ -654,6 +656,8 @@ const FormTextField = ({
   let watchAutocompleteFieldName = ""
   let prefilledValue: null | undefined = null
 
+  // Case: DOI form - Check if it's <creators>'s and <contributors>'s FullName field in DOI form
+  const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
   let fullNameValue = "" // Case: DOI form - Creators and Contributors' FullName
 
   let disabled = false // boolean if inputValue is disabled
@@ -669,8 +673,6 @@ const FormTextField = ({
     prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
 
     // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and FamilyName
-    const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
-
     if (isFullNameField) {
       const givenName = getPathName(path, "givenName")
       const givenNameValue = get(watchValues, givenName) || ""
@@ -690,7 +692,6 @@ const FormTextField = ({
   /*
    * Handle DOI form values
    */
-
   const { setValue, getValues } = useFormContext()
 
   // Check value of current name path
@@ -709,6 +710,11 @@ const FormTextField = ({
   useEffect(() => {
     if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm) setValue(name, "")
   }, [prefilledValue])
+
+  useEffect(() => {
+    // Set value of <creators>'s and <contributors>'s FullName field with the fullNameValue from givenName and familyName
+    if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
+  }, [isFullNameField, fullNameValue])
 
   return (
     <ConnectForm>
@@ -761,6 +767,72 @@ const FormTextField = ({
             control={control}
             defaultValue={defaultValue}
             rules={{ required: required }}
+          />
+        )
+      }}
+    </ConnectForm>
+  )
+}
+
+/*
+ * FormSelectField is rendered for selection from options where it's possible to choose many options
+ */
+
+const FormSelectField = ({
+  name,
+  label,
+  required,
+  options,
+  description,
+}: FormSelectFieldProps & { description: string }) => {
+  const classes = useStyles()
+
+  return (
+    <ConnectForm>
+      {({ control }: ConnectFormMethods) => {
+        return (
+          <Controller
+            name={name}
+            control={control}
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <div className={classes.divBaseline}>
+                  <ValidationSelectField
+                    {...field}
+                    label={label}
+                    id={name}
+                    value={field.value || ""}
+                    error={!!error}
+                    helperText={error?.message}
+                    required={required}
+                    select
+                    SelectProps={{ native: true }}
+                    onChange={e => {
+                      let val = e.target.value
+                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                      if (val?.includes("Title")) {
+                        const hyphenIndex = val.indexOf("-")
+                        val = val.slice(0, hyphenIndex - 1)
+                      }
+                      return field.onChange(val)
+                    }}
+                    inputProps={{ "data-testid": name }}
+                  >
+                    <option aria-label="None" value="" disabled />
+                    {options.map(option => (
+                      <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
+                        {option}
+                      </option>
+                    ))}
+                  </ValidationSelectField>
+                  {description && (
+                    <FieldTooltip title={description} placement="top" arrow>
+                      <HelpOutlineIcon className={classes.fieldTip} />
+                    </FieldTooltip>
+                  )}
+                </div>
+              )
+            }}
           />
         )
       }}
@@ -1078,8 +1150,6 @@ const FormAutocompleteField = ({
       {({ errors, control }: ConnectFormMethods) => {
         const error = get(errors, name)
 
-        // const fieldsToBePrefilled = ["schemeUri", "affiliationIdentifier", "affiliationIdentifierScheme"]
-
         const handleAutocompleteValueChange = (_event: unknown, option: RORItem) => {
           setSelection(option)
           setValue(name, option?.name)
@@ -1176,60 +1246,107 @@ const FormAutocompleteField = ({
   )
 }
 
-/*
- * FormSelectField is rendered for choosing one from many options
- */
-const FormSelectField = ({
-  name,
-  label,
-  required,
-  options,
-  description,
-}: FormSelectFieldProps & { description: string }) => {
+const ValidationTagField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root.MuiInputBase-root": { flexWrap: "wrap" },
+  "& input": { flex: 1, minWidth: "2rem" },
+  "& label": { color: theme.palette.primary.main },
+  "& .MuiOutlinedInput-notchedOutline, div:hover .MuiOutlinedInput-notchedOutline": highlightStyle(theme),
+}))
+
+const FormTagField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
   const classes = useStyles()
+
+  // Check initialValues of the tag field and define the initialTags for rendering
+  const initialValues = useWatch({ name })
+  const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
+
+  const [inputValue, setInputValue] = React.useState("")
+  const [tags, setTags] = useState<Array<string>>(initialTags)
+
+  const handleInputChange = e => {
+    setInputValue(e.target.value)
+  }
 
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
+        const defaultValue = initialValues || ""
         return (
           <Controller
             name={name}
             control={control}
-            render={({ field, fieldState: { error } }) => {
+            defaultValue={defaultValue}
+            rules={{ required: true }}
+            render={({ field, formState }) => {
+              const handleKeywordAsTag = (keyword: string) => {
+                // newTags with unique values
+                const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
+                setTags(newTags)
+                setInputValue("")
+                // Convert tags to string for hidden registered input's values
+                field.onChange(newTags.join(","))
+              }
+
+              const handleKeyDown = e => {
+                const { key } = e
+                const trimmedInput = inputValue.trim()
+                // Convert to tags if users press "," OR "Enter"
+                if ((key === "," || key === "Enter") && trimmedInput.length > 0) {
+                  e.preventDefault()
+                  handleKeywordAsTag(trimmedInput)
+                }
+              }
+
+              // Convert to tags when user clicks outside of input field
+              const handleOnBlur = () => {
+                const trimmedInput = inputValue.trim()
+                if (trimmedInput.length > 0) {
+                  handleKeywordAsTag(trimmedInput)
+                }
+              }
+
+              const handleTagDelete = item => () => {
+                const newTags = tags.filter(tag => tag !== item)
+                setTags(newTags)
+                field.onChange(newTags.join(","))
+              }
+
               return (
                 <div className={classes.divBaseline}>
-                  <ValidationSelectField
-                    {...field}
-                    label={label}
-                    id={name}
-                    value={field.value || ""}
-                    error={!!error}
-                    helperText={error?.message}
-                    required={required}
-                    select
-                    SelectProps={{ native: true }}
-                    onChange={e => {
-                      let val = e.target.value
-                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
-                      if (val?.includes("Title")) {
-                        const hyphenIndex = val.indexOf("-")
-                        val = val.slice(0, hyphenIndex - 1)
-                      }
-                      return field.onChange(val)
+                  <input hidden={true} {...field} />
+                  <ValidationTagField
+                    InputProps={{
+                      startAdornment:
+                        tags.length > 0
+                          ? tags.map(item => (
+                              <Chip
+                                key={item}
+                                tabIndex={-1}
+                                label={item}
+                                onDelete={handleTagDelete(item)}
+                                color="primary"
+                                deleteIcon={<ClearIcon fontSize="small" />}
+                                data-testid={item}
+                                sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                              />
+                            ))
+                          : null,
                     }}
                     inputProps={{ "data-testid": name }}
-                  >
-                    <option aria-label="None" value="" disabled />
-                    {options.map(option => (
-                      <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
-                        {option}
-                      </option>
-                    ))}
-                  </ValidationSelectField>
+                    label={`${label} *`}
+                    id={name}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onBlur={handleOnBlur}
+                  />
                   {description && (
                     <FieldTooltip title={description} placement="top" arrow>
                       <HelpOutlineIcon className={classes.fieldTip} />
                     </FieldTooltip>
+                  )}
+                  {required && formState.isSubmitted && !formState.isValid && tags.length === 0 && (
+                    <FormHelperText error>must have at least 1 keyword</FormHelperText>
                   )}
                 </div>
               )
@@ -1250,9 +1367,6 @@ const ValidationFormControlLabel = withStyles(theme => ({
   },
 }))(FormControlLabel)
 
-/*
- * FormSelectField is rendered for checkboxes
- */
 const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
   const classes = useStyles()
 
@@ -1303,9 +1417,6 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
   )
 }
 
-/*
- * FormSelectField is rendered for selection from options where it's possible to choose many options
- */
 const FormCheckBoxArray = ({
   name,
   label,

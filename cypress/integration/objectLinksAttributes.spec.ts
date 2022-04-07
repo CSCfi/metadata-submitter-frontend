@@ -20,6 +20,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Test title")
     cy.get("select[data-testid='descriptor.studyType']").select("Metagenomics")
+    cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
 
     // Add new Study Link
     cy.get("div").contains("Study Links").parents().children("button").click()
@@ -57,12 +58,12 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyAttributes.0.tag']").type("Test Attributes Tag")
     cy.get("[data-testid='studyAttributes.0.value']").type("Test Attributes Value")
 
-    // Submit form
-    cy.formActions("Submit")
+    // Save as draft
+    cy.formActions("Save as Draft")
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
-    // Check submitted object has correnct rendering data
-    cy.get("button[type=button]").contains("Edit").click()
+    // Check saved object has correnct rendering data
+    cy.get("button[type=button]").contains("Continue").click()
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Test title")
 
     // Check XRef Link
@@ -97,7 +98,7 @@ describe("render objects' links and attributes ", function () {
 
     // Test that removed link item is removed also from backend
     cy.formActions("Update")
-    cy.get("button[type=button]").contains("Edit").click()
+    cy.get("button[type=button]").contains("Continue").click()
     cy.get("div[data-testid='studyLinks'] > div", { timeout: 30000 }).should("have.length", 2)
   })
 })

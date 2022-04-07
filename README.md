@@ -1,8 +1,9 @@
 # Submission interface frontend
 
-![Unit tests and coverage](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Unit%20tests%20and%20coverage/badge.svg)
+[![Unit tests and coverage](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/unittests.yml/badge.svg)](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/unittests.yml)
 ![Code style check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Code%20style%20check/badge.svg)
-![Static type check](https://github.com/CSCfi/metadata-submitter-frontend/workflows/Static%20type%20check/badge.svg)
+[![Static type checks](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/typechecks.yml/badge.svg)](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/typechecks.yml)
+[![End-to-end tests](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/e2etests.yml/badge.svg)](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/e2etests.yml)
 [![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
 Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for more info](https://github.com/CSCfi/metadata-submitter/)
@@ -11,7 +12,7 @@ Frontend for CSCs Sensitive Data Archive metadata submitter. [See backend for mo
 
 Requirements:
 
-- Node 14+
+- Node 16+
 - Optionally Docker + docker-compose
 - Backend
 
@@ -19,8 +20,9 @@ Install backend from [backend repository](https://github.com/CSCfi/metadata-subm
 
 Install and run frontend either with:
 
-- Docker by running `docker-compose up --build` (add `-d` flag to run container in the background).
-  - By default, frontend tries to connect to docker-container running the backend. Feel free to modify `docker-compose.yml` if you want to use some other setup.
+- Docker by running `docker-compose --env-file .env.example up --build` (add `-d` flag to run container in the background).
+  - By default, frontend tries to connect to docker-container running the backend. Feel free to modify `docker-compose.yml` if you want to use some other setup;
+  - modify `.env.example` if there are other parameters that need to be set up.
 - Local node setup by running `npm install` followed with `npm start`.
   - If `npm install` leaves corrupted package-lock.json, try to fix with `npm ci`
 
@@ -28,7 +30,7 @@ After installing and running, frontend can be found from `http://localhost:3000`
 
 ## Tests
 
-Run Jest-based tests with `npm test`. Check code formatting and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`. Possible type errors can be checked with `npm run flow`.
+Run Jest-based tests with `npm test`. Check code formatting, TypeScript types and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`.
 
 End-to-end tests can be run with `npx cypress open`.
 

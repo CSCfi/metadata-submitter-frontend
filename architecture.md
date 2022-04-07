@@ -80,35 +80,20 @@ export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags
 ```
 
 - import and reuse the data types in different files:
-  - Reuse type `ObjectInsideFolder` in `features/wizardSubmissionFolderSlice.js`:
 
-```
-import type { ObjectInsideFolder } from "types"
+  - Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
 
-export const addObjectToFolder = (
-  folderID: string,
-  objectDetails: ObjectInsideFolder
-) => {}
+  ```
+  import type { ObjectInsideFolderWithTags } from "types"
 
-export const addObjectToDrafts = (
-  folderID: string,
-  objectDetails: ObjectInsideFolder
-) => {}
-```
+  type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+  ```
 
-- Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
+  ```
+  import type { ObjectInsideFolderWithTags } from "types"
 
-```
-import type { ObjectInsideFolderWithTags } from "types"
-
-type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
-```
-
-```
-import type { ObjectInsideFolderWithTags } from "types"
-
-type GroupedBySchema = {| [Schema]: Array<ObjectInsideFolderWithTags> |}
-```
+  type GroupedBySchema = { [K in Schema]: Array<ObjectInsideFolderWithTags> }
+  ```
 
 ## Redux store
 
@@ -166,6 +151,8 @@ console.log(response.data)
 
 App uses [Material UI](https://material-ui.com/) components.
 
-Global styles are defined with `style.css` and Material UI theme, customized for CSC. Material UI theme is set in `index.js` file.
+Global styles are defined with `style.css` and Material UI theme, customized for CSC. Material UI theme is set in `theme.ts` file. Since we are using Typescript, we also need to make a declaration in `theme.d.ts` in order to use the theme. See [example](https://mui.com/customization/theming/#custom-variables).
 
-Styles are also used inside components, either with `withStyles` (modifies Material UI components) or `makeStyles` (creates css for component and its children). See [customizing components](https://material-ui.com/customization/components/) for more info.
+Material UI has been updated to [version 5](https://mui.com/guides/migration-v4/). `withStyles` or `makeStyles` may be deprecated sooner or later. To style the components, we can use [sx property](https://mui.com/system/the-sx-prop/#main-content) for defining custom style that has access to the theme, and [styled() utility](https://mui.com/system/styled/#how-can-i-use-the-sx-syntax-with-the-styled-utility) for creating styled components.
+
+It is also worth to know about their [Performances](https://mui.com/system/basics/#performance-tradeoff) when using the two. See [customizing components](https://material-ui.com/customization/components/) for more info.

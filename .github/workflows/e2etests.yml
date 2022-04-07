@@ -7,13 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["14"]
+        node: ["16"]
         browser: ["firefox", "chrome"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build Frontend
         run: |
-          sudo npm install -g npm@7.21.0
           npx --quiet pinst --disable
           npm install --production
           npm run build --production
@@ -26,7 +25,7 @@ jobs:
              echo "VERSION=develop" >> $GITHUB_ENV
           fi
       - name: Clone backend
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'CSCfi/metadata-submitter'
           ref: ${{ env.VERSION }}
@@ -35,7 +34,7 @@ jobs:
         run: |
           mkdir -p metadata-submitter/metadata_backend/frontend
           cp -r build/* metadata-submitter/metadata_backend/frontend/
-          docker-compose -f metadata-submitter/docker-compose.yml up -d --build
+          docker-compose -f metadata-submitter/docker-compose.yml --env-file metadata-submitter/.env.example up -d --build
           sleep 30
       - uses: cypress-io/github-action@v2
         with:

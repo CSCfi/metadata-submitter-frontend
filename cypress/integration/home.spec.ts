@@ -6,6 +6,10 @@ describe("Home e2e", function () {
 
   it("show draft submission data table in Home page, be able to edit and delete a draft submission inside the table", () => {
     cy.intercept("/folders*").as("fetchFolders")
+
+    // Check that there is projectId in home page
+    cy.get("[data-testid='project-id-selection']").should("be.visible")
+    cy.get("[data-testid='project-id-selection'] > div > input").invoke("val").should("not.be.empty")
     // Create a new Unpublished folder
     cy.get("button").contains("Create submission").click()
 
@@ -16,7 +20,7 @@ describe("Home e2e", function () {
     cy.clickFillForm("Study")
     cy.get("input[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("select[data-testid='descriptor.studyType']").select("Resequencing")
-
+    cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
     // Save draft
     cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
@@ -76,8 +80,17 @@ describe("Home e2e", function () {
     cy.get("div[role=button]").contains("Fill Form").click()
     cy.get("input[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("select[data-testid='descriptor.studyType']").select("Resequencing")
+    cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
 
     // Submit form
+    cy.formActions("Submit")
+    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+
+    // Fill Dataset form
+    cy.clickFillForm("Dataset")
+    cy.get("[data-testid='title']").type("Test Dataset title")
+    cy.get("[data-testid='description']").type("Dataset description")
+    cy.get("[data-testid='datasetType']").first().check()
     cy.formActions("Submit")
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
 
@@ -86,6 +99,9 @@ describe("Home e2e", function () {
     cy.get("h1", { timeout: 10000 }).contains("Summary").should("be.visible")
     // Check the amount of submitted objects in Study
     cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
+
+    // Fill and save DOI form
+    cy.saveDoiForm()
 
     // Navigate to publish
     cy.get("button[type=button]").contains("Publish").click()

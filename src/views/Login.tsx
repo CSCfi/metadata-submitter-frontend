@@ -111,7 +111,7 @@ const Login: React.FC = () => {
               +358 9 457 2821
             </Typography>
           </Box>
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <MailOutlineIcon fontSize="small" />
             <Typography variant="body2" component="span">
               servicedesk@csc.fi

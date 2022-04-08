@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp"
@@ -17,10 +17,11 @@ import { makeStyles } from "@mui/styles"
 
 import UserDraftTemplateActions from "./UserDraftTemplateActions"
 
-import { setTemplateAccessionIds } from "features/templatesSlice"
+import { setTemplateAccessionIds } from "features/templateAccessionIdsSlice"
+import { getTemplates } from "features/templateSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { ObjectInsideFolderWithTags } from "types"
-import { formatDisplayObjectType, getUserTemplates, getItemPrimaryText } from "utils"
+import { formatDisplayObjectType, getItemPrimaryText, getUserTemplates } from "utils"
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -65,19 +66,25 @@ const useStyles = makeStyles(theme => ({
 
 const UserDraftTemplates: React.FC = () => {
   const classes = useStyles()
-  const user = useAppSelector(state => state.user)
+  const dispatch = useAppDispatch()
+
+  const projectId = useAppSelector(state => state.projectId)
+  const templates: Array<ObjectInsideFolderWithTags> | [] = useAppSelector(state => state.templates)
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
-  const templates = user.templates ? getUserTemplates(user.templates, objectTypesArray) : []
-
+  const displayTemplates = getUserTemplates(templates, objectTypesArray)
   type TemplateGroupProps = { draft: { [schema: string]: ObjectInsideFolderWithTags[] } }
+
+  useEffect(() => {
+    dispatch(getTemplates(projectId))
+  }, [dispatch])
 
   // Render when there is user's draft template(s)
   const DraftList = () => {
     return (
       <React.Fragment>
-        {templates.map((draft: { [key: string]: ObjectInsideFolderWithTags[] }, index: number) => (
+        {displayTemplates.map((draft: { [key: string]: ObjectInsideFolderWithTags[] }, index: number) => (
           <TemplateGroup key={index} draft={draft} />
         ))}
       </React.Fragment>
@@ -87,7 +94,6 @@ const UserDraftTemplates: React.FC = () => {
   const TemplateGroup = (props: TemplateGroupProps) => {
     const { draft } = props
 
-    const dispatch = useAppDispatch()
     const [checkedItems, setCheckedItems] = useState<string[]>(templateAccessionIds)
 
     const handleChange = (accessionId: string) => {

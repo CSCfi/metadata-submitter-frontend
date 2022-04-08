@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2021-04-7
+
 ### Added
 
+- Field Keywords in DOI form #715
 - Option to filter by submission's name in Home page #685
 - New navigation bar and new home page #669
 
@@ -57,12 +60,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Folder's Id is needed when creating a new object or draft object
-- Patching folder is no longer needed when patching object or draft object
+- Updated projectId in GET and POST requests for folders and templates #696
+
+  ### Added
+
+  - ProjectId is a mandatory query parameter in GET requests for folders and templates
+  - ProjectId is a mandatory propperty in POST requests for folders and templates
+  - Templates has a separate API endpoint and is no longer a propety under User
+  - Template's index is a mandatory property in PATCH request for a template
+
+- Folder's Id is needed when creating a new object or draft object #672
 
   ### Added
 
   - Added folderId as query parameter for object's and draft object's Post request
+  - Patching folder is no longer needed when patching object or draft object
 
 - Updated Node.js version in GitHub workflows and Dockerfile #655
 - Disallow use of any-type #624
@@ -447,7 +459,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[unreleased]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.11.0...HEAD
+[unreleased]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.11.0...v0.13.0
 [0.11.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.2...v0.10.0
 [0.9.2]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.1...v0.9.2

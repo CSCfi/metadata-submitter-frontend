@@ -34,4 +34,4 @@ export const ObjectSubmissionTypes = {
 
 export const ObjectSubmissionsArray = [ObjectSubmissionTypes.form, ObjectSubmissionTypes.xml]
 
-export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate"]
+export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate", "metaxIdentifier", "doi"]

@@ -8,7 +8,11 @@ import templateAPIService from "services/templateAPI"
 import { ObjectInsideFolderWithTags } from "types"
 import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
-const saveDraftsAsTemplates = async (formData: ObjectInsideFolderWithTags[], dispatch: (reducer: unknown) => void) => {
+const saveDraftsAsTemplates = async (
+  projectId: string,
+  formData: ObjectInsideFolderWithTags[],
+  dispatch: (reducer: unknown) => void
+) => {
   // Filter unique draft-schemas existing in formData
   const draftSchemas = formData
     .map((item: { schema: string }) => item.schema)
@@ -40,7 +44,7 @@ const saveDraftsAsTemplates = async (formData: ObjectInsideFolderWithTags[], dis
 
         // Remove unnecessary values such as "date"
         // Add the object in the form of {template: draft's values, tags: {displayTitle}} to the array
-        draftsArr.push({ template: { ...omit(draftResponse.data, OmitObjectValues) }, ...draftTags })
+        draftsArr.push({ projectId, template: { ...omit(draftResponse.data, OmitObjectValues) }, ...draftTags })
       } catch (err) {
         dispatch(
           updateStatus({

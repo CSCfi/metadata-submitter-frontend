@@ -36,13 +36,18 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
   "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus, &.MuiDataGrid-root .MuiDataGrid-cell:focus": {
     outline: "none",
-  },
-  "& .MuiDataGrid-columnHeaders": {
-    fontSize: "1.4rem",
+    position: "relative",
   },
   "& .MuiDataGrid-columnSeparator": {
     display: "none",
   },
+  "& .MuiDataGrid-cell:last-of-type:not(.MuiDataGrid-cell--withRenderer)": {
+    display: "none",
+  },
+  "& .MuiDataGrid-columnHeadersInner, .MuiDataGrid-columnHeader, .MuiDataGrid-virtualScrollerRenderZone, .MuiDataGrid-cell, .MuiDataGrid-cell--withRenderer":
+    {
+      width: "100% !important",
+    },
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     padding: 0,
     "& > *": { fontWeight: 700 },
@@ -56,19 +61,17 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   },
   "& .MuiDataGrid-row": {
     border: `1px solid ${theme.palette.secondary.light}`,
+    width: "100% !important",
   },
-  "& .MuiDataGrid-virtualScrollerContent": {
-    fontSize: "1.6rem",
-  },
-  "& .MuiDataGrid-cell--withRenderer": {
-    width: "100%",
-    maxWidth: "none !important",
-  },
+
   "& .MuiDataGrid-actionsCell": {
     color: theme.palette.primary.main,
-    marginRight: "1rem",
-    "& .MuiMenuItem-root": {
-      fontSize: "1.6rem",
+    alignItems: "flex-start",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      flexDirection: "column",
+      gridGap: 0,
+      "& .MuiMenuItem-root.MuiMenuItem-gutters.MuiButtonBase-root": { minHeight: "0 !important" },
     },
   },
 }))
@@ -95,12 +98,10 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       field: "name",
       headerName: "Name",
       sortable: false,
-      width: 310,
     },
     {
       field: "dateCreated",
       headerName: "Date created",
-      width: 250,
       type: "date",
       valueFormatter: (params: GridValueFormatterParams): GridCellValue => {
         const { convertedDate } = params.value as Record<string, string>
@@ -115,13 +116,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     {
       field: "lastModifiedBy",
       headerName: "Last modified by",
-      width: 250,
-      sortable: false,
-    },
-    {
-      field: "cscProject",
-      headerName: "CSC Project",
-      width: 250,
       sortable: false,
     },
     {
@@ -129,24 +123,28 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       type: "actions",
       hide: folderType === FolderSubmissionStatus.published,
       getActions: (params: GridRowParams) => [
-        <div key={params.id} data-testid="edit-draft-submission">
+        <>
           <GridActionsCellItem
+            key={params.id}
             icon={<EditIcon color="primary" fontSize="large" />}
             onClick={e => handleEditSubmission(e, params.id)}
             label="Edit"
             showInMenu
+            data-testid="edit-draft-submission"
           />
-        </div>,
-        <div key={params.id} data-testid="delete-draft-submission">
+        </>,
+        <>
           <GridActionsCellItem
+            key={params.id}
             icon={<DeleteIcon color="primary" fontSize="large" />}
             onClick={e => {
               handleDeleteSubmission(e, params.id)
             }}
             label="Delete"
+            data-testid="delete-draft-submission"
             showInMenu
           />
-        </div>,
+        </>,
       ],
     },
   ]

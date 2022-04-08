@@ -54,6 +54,7 @@ describe("Draft operations", function () {
 
     cy.get("[data-testid='descriptor.studyTitle']", { timeout: 10000 }).should("have.value", "New title")
     cy.get("[data-testid='descriptor.studyType']").select("Metagenomics")
+    cy.get("[data-testid='descriptor.studyAbstract']").type("New abstract")
     cy.get("button[type=button]").contains("Update draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft updated with")
 
@@ -63,6 +64,7 @@ describe("Draft operations", function () {
     cy.get("[data-testid='descriptor.studyTitle']").type("New title 2")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "New title 2")
     cy.get("[data-testid='descriptor.studyType']").select("Resequencing")
+    cy.get("[data-testid='descriptor.studyAbstract']").type("New abstract 2")
     cy.formActions("Save as Draft")
 
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
@@ -76,16 +78,8 @@ describe("Draft operations", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Submitted with")
     cy.get("[data-testid='Form-objects']").find("li").should("have.length", 1)
 
-    // Submit second form draft
-    cy.get("[data-testid='Draft-objects']").find("li").should("have.length", 1)
-
-    cy.continueFirstDraft()
-    cy.formActions("Submit")
-    // Check that there are 2 submitted objects
-    cy.get("[data-testid='Form-objects']", { timeout: 10000 }).find("li").should("have.length", 2)
-
     // Drafts list should be unmounted
-    cy.get("[data-testid='Draft-objects']").should("not.exist")
+    cy.get("[data-testid='Draft-objects']").should("have.length", 1)
   })
 })
 

@@ -21,7 +21,13 @@ jest.mock("react-i18next", () => ({
 
 describe("HomePage", () => {
   const store = mockStore({
-    user: { name: "Test User" },
+    user: {
+      name: "Test User",
+      projects: [
+        { projectId: "PROJECT1", projectName: "Project 1" },
+        { projectId: "PROJECT2", projectName: "Project 2" },
+      ],
+    },
   })
   beforeEach(() => {
     render(

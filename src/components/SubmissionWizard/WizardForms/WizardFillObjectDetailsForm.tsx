@@ -28,7 +28,7 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
 import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { replaceTemplate } from "features/userSlice"
+import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -246,8 +246,8 @@ const FormContent = ({
   const draftStatus = useAppSelector(state => state.draftStatus)
   const alert = useAppSelector(state => state.alert)
   const clearForm = useAppSelector(state => state.clearForm)
-  const user = useAppSelector(state => state.user)
 
+  const templates = useAppSelector(state => state.templates)
   const methods = useForm({ mode: "onBlur", resolver })
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
@@ -406,35 +406,28 @@ const FormContent = ({
     const cleanedValues = getCleanedValues()
 
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
-      const response = await templateAPI.patchTemplateFromJSON(objectType, currentObject.accessionId, cleanedValues)
-
-      const templates = user.templates
-      const index = templates.findIndex(
-        (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
+      const index =
+        templates?.findIndex((item: { accessionId: string }) => item.accessionId === currentObject.accessionId) || 0
+      const response = await templateAPI.patchTemplateFromJSON(
+        objectType,
+        currentObject.accessionId,
+        cleanedValues,
+        index
       )
+
       const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as unknown as ObjectDisplayValues)
 
       if (response.ok) {
         closeDialog()
-        dispatch(replaceTemplate(index, displayTitle, currentObject.accessionId))
-          .then(() =>
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.success,
-                response: response,
-                helperText: "",
-              })
-            )
-          )
-          .catch(error => {
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.error,
-                response: error,
-                helperText: "Cannot replace template",
-              })
-            )
+        dispatch(updateTemplateDisplayTitle({ accessionId: currentObject.accessionId, displayTitle: displayTitle }))
+
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            response: response,
+            helperText: "",
           })
+        )
       } else {
         dispatch(
           updateStatus({

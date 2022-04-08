@@ -14,7 +14,7 @@ describe("draft selections and templates", function () {
     cy.get("[data-testid='descriptor.studyTitle']").type("Study test title")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Study test title")
     cy.get("[data-testid='descriptor.studyType']").select("Metagenomics")
-
+    cy.get("[data-testid='descriptor.studyAbstract']").type("Study test abstract")
     // Submit Study form
     cy.formActions("Submit")
     cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
@@ -38,8 +38,18 @@ describe("draft selections and templates", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
     cy.get("[data-testid='Draft-objects']").find("li").should("have.length", 1)
 
+    // Fill Dataset form
+    cy.clickFillForm("Dataset")
+    cy.get("[data-testid='title']").type("Test Dataset title")
+    cy.get("[data-testid='description']").type("Dataset description")
+    cy.get("[data-testid='datasetType']").first().check()
+    cy.formActions("Submit")
+
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
+
+    // Fill and save DOI form
+    cy.saveDoiForm()
 
     // Navigate to publish button at the bottom
     cy.get("button[type=button]").contains("Publish").click()

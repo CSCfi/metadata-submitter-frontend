@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import { useForm, Controller } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
+
 import WizardHeader from "../WizardComponents/WizardHeader"
 import WizardStepper from "../WizardComponents/WizardStepper"
 
@@ -16,10 +17,8 @@ import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
-
 import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
 import { createSubmissionFolder, updateSubmissionFolder } from "features/wizardSubmissionFolderSlice"
-
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 import { pathWithLocale } from "utils"

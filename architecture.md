@@ -121,7 +121,7 @@ const folder = {
 const dispatch = useDispatch()
 
 // Dispatch the action with folder
-dispatch(createNewDraftFolder(folder))
+dispatch(createSubmissionFolder(projectId: string, folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[] ))
 
 // Folder is now submitted to backend and added to redux store
 

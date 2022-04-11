@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
+
 ## [0.13.0] - 2021-04-7
 
 ### Added

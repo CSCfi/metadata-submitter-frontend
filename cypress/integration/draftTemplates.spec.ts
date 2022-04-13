@@ -44,7 +44,7 @@ describe("draft selections and templates", function () {
     cy.get("[data-testid='description']").type("Dataset description")
     cy.get("[data-testid='datasetType']").first().check()
     cy.formActions("Submit")
-
+    cy.get("[data-testid='Form-objects']").find("li").should("have.length", 1)
     // Navigate to summary
     cy.get("button[type=button]").contains("Next").click()
 

@@ -108,7 +108,7 @@ describe("Home e2e", function () {
     cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
 
     // Check that published submission exists in data table
-    cy.contains("My submissions", { timeout: 1000 }).should("be.visible")
+    cy.contains("My submissions", { timeout: 10000 }).should("be.visible")
     cy.get("[data-testid='published-tab']").click()
     cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test name")
 

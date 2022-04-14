@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Update datacite's affiliation fields in cypress tests #770
+
 ## [0.13.0] - 2021-04-7
 
 ### Added

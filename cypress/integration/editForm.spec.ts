@@ -110,7 +110,7 @@ describe("Populate form and render form elements by object data", function () {
       .as("sampleAccessionId")
 
     // Expected Base Call Table
-    cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
+    cy.get("div[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable'] > div").children("button").click()
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
       "Test read group tag"

@@ -34,6 +34,7 @@ declare module "@mui/material/styles" {
       color: string
       fontSize: string
       boxShadow: string
+      border: string
     }
     form: Object
   }
@@ -47,6 +48,14 @@ declare module "@mui/material/styles" {
     error: {
       main: string
     }
+    palette: {
+      primary: {
+        main: string
+        light: string
+        lighter: string
+        lightest: string
+      }
+    }
     info: {
       main: string
     }
@@ -58,10 +67,12 @@ declare module "@mui/material/styles" {
       objectListItem?: Record<string, unknown>
     }
     tooltip?: {
+      padding: string
       backgroundColor?: string
       color?: string
       fontSize?: string
       boxShadow?: string
+      border?: string
     }
     form?: Object
     props: Record<string, unknown>

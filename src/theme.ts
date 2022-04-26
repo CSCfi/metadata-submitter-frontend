@@ -67,7 +67,7 @@ let CSCtheme = createTheme({
     h1: { fontSize: "9.6rem" },
     h2: { fontSize: "6rem" },
     h3: { fontSize: "4.8rem" },
-    h4: { fontSize: "3.5rem" },
+    h4: { fontSize: "3.2rem" },
     h5: { fontSize: "2rem" },
     h6: { fontSize: "1.25rem" },
     subtitle1: { fontSize: "1.6rem" },
@@ -195,21 +195,18 @@ let CSCtheme = createTheme({
     },
   },
   tooltip: {
+    padding: "2rem 1rem",
     backgroundColor: palette.common.white,
-    color: palette.common.black,
+    color: palette.secondary.main,
     fontSize: "1.4rem",
     boxShadow: defaultTheme.shadows[1],
+    border: `0.1rem solid ${palette.primary.main}`,
   },
   form: {
-    "& .MuiTextField-root > .Mui-required": {
-      color: palette.primary.main,
-    },
     "& .MuiTextField-root": {
       width: "70%",
-      margin: defaultTheme.spacing(1),
     },
     "& .MuiTypography-root": {
-      margin: defaultTheme.spacing(1),
       fontWeight: "bold",
     },
     "& .MuiTypography-h2": {

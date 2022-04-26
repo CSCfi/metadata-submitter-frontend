@@ -180,7 +180,7 @@ describe("Basic application flow", function () {
       cy.get("select[data-testid='analysisType']").select("Reference Alignment")
       cy.get("select[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
       cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession version")
-      cy.get("h5").contains("Sequence").parents().children("button").click()
+      cy.get("div[data-testid='analysisType.referenceAlignment.sequence'] > div").eq(1).children("button").click()
       cy.get("[data-testid='analysisType.referenceAlignment.sequence.0.accession']").type(
         "Sequence Standard Accession Id"
       )
@@ -209,19 +209,19 @@ describe("Basic application flow", function () {
       cy.get("[data-testid='runRef.0.identifiers.submitterId.value']").type("Run Test Value")
 
       // Analysis
-      cy.get("h5").contains("Analysis Reference").parents().children("button").click()
+      cy.get("div[data-testid='analysisRef'] > div").eq(1).children("button").click()
       cy.get("[data-testid='analysisRef.0.accessionId']").type("Analysis Test Accession Id")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.namespace']").type("Analysis Test Namespace")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.value']").type("Analysis Test Value")
 
       // Files
-      cy.get("h5").contains("Files").parents().children("button").click()
+      cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
       cy.get("[data-testid='files.0.filename']").type("filename 1")
       cy.get("select[data-testid='files.0.filetype']").select("other")
       cy.get("select[data-testid='files.0.checksumMethod']").select("MD5")
       cy.get("[data-testid='files.0.checksum']").type("b1f4f9a523e36fd969f4573e25af4540")
 
-      cy.get("h5").contains("Files").parents().children("button").click()
+      cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
       cy.get("[data-testid='files.1.filename']").type("filename 2")
       cy.get("select[data-testid='files.1.filetype']").select("info")
       cy.get("select[data-testid='files.1.checksumMethod']").select("SHA-256")

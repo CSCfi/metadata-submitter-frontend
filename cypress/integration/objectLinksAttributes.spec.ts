@@ -19,7 +19,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
 
     // Add new Study Link
-    cy.get("div").contains("Study Links").parents().children("button").click()
+    cy.get("div[data-testid='studyLinks'] > div").children("button").click()
 
     // Choose XRef Link
     cy.get("select[data-testid='studyLinks.0']").select("XRef Link")
@@ -29,7 +29,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyLinks.0.label']").type("Test XRef Label")
 
     // URL Links
-    cy.get("div").contains("Study Links").parents().children("button").click()
+    cy.get("div[data-testid='studyLinks'] > div").children("button").click()
     cy.get("select[data-testid='studyLinks.1']").select("URL Link")
     cy.get("[data-testid='studyLinks.1.label']").type("Test URL Label")
 
@@ -41,7 +41,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyLinks.1.url']").clear().type("https://testlink.com").blur()
 
     // Add new Entrez Link
-    cy.get("div").contains("Study Links").parents().children("button").click()
+    cy.get("div[data-testid='studyLinks'] > div").children("button").click()
     cy.get("select[data-testid='studyLinks.2']").select("Entrez Link")
 
     cy.get("select[data-testid='studyLinks.2.entrezDb']").select("genome")
@@ -49,7 +49,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyLinks.2.label']").type("Test Entrez Label")
 
     // Choose Study Attributes
-    cy.get("div").contains("Study Attributes").parents().children("button").click()
+    cy.get("div[data-testid='studyAttributes'] > div").children("button").click()
 
     cy.get("[data-testid='studyAttributes.0.tag']").type("Test Attributes Tag")
     cy.get("[data-testid='studyAttributes.0.value']").type("Test Attributes Value")
@@ -82,7 +82,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyAttributes.0.tag']").should("have.value", "Test Attributes Tag")
     cy.get("[data-testid='studyAttributes.0.value']").should("have.value", "Test Attributes Value")
 
-    cy.get("div[data-testid='studyLinks'] > div", { timeout: 10000 }).should("have.length", 3)
+    cy.get("div[data-testid='studyLinks'] > div", { timeout: 10000 }).eq(1).children("div").should("have.length", 3)
     // Remove URL Link and check that the rest of the Study Links render correctly
     cy.wait(0)
     cy.get("[data-testid='studyLinks[1]'] > button", { timeout: 10000 }).should("be.visible").click()

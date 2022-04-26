@@ -30,7 +30,7 @@ describe("DOI form", function () {
       checksumMethod: "MD5",
       checksum: "Run file check sum",
     }
-    cy.get("[data-testid='files']").parents().children("button").click()
+    cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
     cy.get("[data-testid='files.0.filename']").type(testRunFile.fileName)
     cy.get("[data-testid='files.0.filetype']").select(testRunFile.fileType)
     cy.get("[data-testid='files.0.checksumMethod']").select(testRunFile.checksumMethod)
@@ -66,7 +66,7 @@ describe("DOI form", function () {
       checksum: "Analysis file check sum",
     }
     // Select fileType
-    cy.get("[data-testid='files']").parents().children("button").click()
+    cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
     cy.get("[data-testid='files.0.filename']").type(testAnalysisFile.fileName)
     cy.get("[data-testid='files.0.filetype']").select(testAnalysisFile.fileType1)
     cy.get("[data-testid='files.0.checksumMethod']").select(testAnalysisFile.checksumMethod)
@@ -104,8 +104,8 @@ describe("DOI form", function () {
     cy.get("[data-testid='formats.1']", { timeout: 10000 }).should("have.value", "cram")
 
     // Go to Creators section and Add new item
-    cy.get("[data-testid='creators']").parents().children("button").click()
-    cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+    cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
+    cy.get("div[data-testid='creators.0.affiliation'] > div").eq(1).children("button").click()
 
     // Type search words in autocomplete field
     cy.intercept("/organizations*").as("searchOrganization")
@@ -130,12 +130,11 @@ describe("DOI form", function () {
 
     // Remove Creators > Affiliations field and add a new field again
     cy.get("div[data-testid='creators.0.affiliation'] > div").children("button").click()
-    cy.get("h4[data-testid='creators.0.affiliation']").parent().children("button").click()
 
     // Repeat search words in autocomplete field
     cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
     // Select the first result
-    cy.get(".MuiAutocomplete-option")
+    cy.get(".MuiAutocomplete-popper")
       .should("be.visible")
       .then($el => $el.first().click())
 
@@ -153,8 +152,9 @@ describe("DOI form", function () {
     cy.get("[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
 
     // Go to Contributors and Add new item
-    cy.get("[data-testid='contributors']").parents().children("button").click()
-    cy.get("[data-testid='contributors.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+    cy.get("div[data-testid='contributors'] > div").children("button").click()
+    cy.get("div[data-testid='contributors.0.affiliation'] > div").children("button").click()
+
     // Type search words in autocomplete field
     cy.get("[data-testid='contributors.0.affiliation.0.name-inputField']").type("demos")
     // Select the first result
@@ -196,10 +196,10 @@ describe("DOI form", function () {
       // Go to DOI form
       cy.openDOIForm()
       // Fill in required Creators field
-      cy.get("[data-testid='creators']").parent().children("button").click()
+      cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Test given name")
       cy.get("[data-testid='creators.0.familyName']").type("Test family name")
-      cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+      cy.get("div[data-testid='creators.0.affiliation'] > div").eq(1).children("button").click()
       cy.intercept("/organizations*").as("searchOrganization")
       cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
       cy.wait("@searchOrganization")
@@ -208,7 +208,7 @@ describe("DOI form", function () {
         .then($el => $el.first().click())
       cy.get("[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
       // Fill in required Subjects field
-      cy.get("[data-testid='subjects']").parent().children("button").click()
+      cy.get("div[data-testid='subjects'] > div").eq(1).children("button").click()
       cy.get("select[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
       // Fill in required Keywords
@@ -242,14 +242,14 @@ describe("DOI form", function () {
       // Go to DOI form
       cy.openDOIForm()
       // Go to Creators section and fill in given name, family name
-      cy.get("[data-testid='creators']").parents().children("button").click()
+      cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Creator's given name")
       cy.get("[data-testid='creators.0.familyName']").type("Creator's family name")
       // Check full name is autofilled from family name and given name
       cy.get("[data-testid='creators.0.name']").should("have.value", "Creator's family name,Creator's given name")
 
       // Go to Contributors and fill in given name, family name
-      cy.get("[data-testid='contributors']").parents().children("button").click()
+      cy.get("div[data-testid='contributors'] > div").eq(1).children("button").click()
       cy.get("[data-testid='contributors.0.givenName']").type("Contributor's given name")
       cy.get("[data-testid='contributors.0.familyName']").type("Contributor's family name")
       // Check full name is autofilled from family name and given name

@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, waitFor, act } from "@testing-library/react"
+import { render, screen, waitFor, act, fireEvent } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { rest } from "msw"
 import { setupServer } from "msw/node"
@@ -88,7 +88,8 @@ describe("Test autocomplete on organisation field", () => {
 
     act(() => {
       // Assign value to autocomplete field
-      userEvent.type(autocomplete, "test")
+      // Note: userEvent doesn't work inside act(), which in this case is needed for MUI autocomplete field
+      fireEvent.change(autocomplete, { target: { value: "test" } })
     })
 
     // Find loading indicator

@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { get } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
@@ -103,20 +103,22 @@ describe("Test form render by custom schema", () => {
     expect(screen.getAllByRole("button", { name: "Add new item" })).toHaveLength(buttonCount)
   })
 
-  it("should render fields when clicking 'Add new item' button", () => {
+  it("should render fields when clicking 'Add new item' button", async () => {
     // Eg. Study > Study Links
     const addNewItemButton = screen.getByRole("button", { name: "Add new item" })
-    userEvent.click(addNewItemButton)
+    await userEvent.click(addNewItemButton)
 
     const items = schema.properties.arrayFields.properties.oneOfArray.items
     const select = screen.getByLabelText(items.title)
     const selectedItem = items.oneOf[1]
-    userEvent.selectOptions(select, selectedItem.title)
+    await userEvent.selectOptions(select, selectedItem.title)
 
-    testLabels(selectedItem as unknown as FormObject)
+    await waitFor(() => {
+      testLabels(selectedItem as unknown as FormObject)
+    })
   })
 
-  it("should render option fields when selecting option", () => {
+  it("should render option fields when selecting option", async () => {
     // Eg. Study > Study Links > Link Type
     const options = schema.properties.oneOf.properties.oneOfField
 
@@ -124,7 +126,7 @@ describe("Test form render by custom schema", () => {
     expect(oneOfSelect).toBeDefined()
 
     const source = options.oneOf[0]
-    userEvent.selectOptions(oneOfSelect, source.title)
+    await userEvent.selectOptions(oneOfSelect, source.title)
 
     // OneOf option fields are rendered as required
     const properties = options.oneOf[0].properties as unknown as { [key: string]: { type: string; title: string } }

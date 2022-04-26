@@ -55,7 +55,7 @@ describe("WizardStepper", () => {
       </Provider>
     )
     const input = (await screen.findByTestId("xml-upload")) as HTMLInputElement
-    userEvent.upload(input, file)
+    await userEvent.upload(input, file)
 
     if (input.files) expect(input.files[0]).toStrictEqual(file)
     expect(input.files).toHaveLength(1)

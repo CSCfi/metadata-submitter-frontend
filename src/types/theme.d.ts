@@ -29,13 +29,7 @@ declare module "@mui/material/styles" {
       cardHeader: Record<string, unknown>
       objectListItem: Record<string, unknown>
     }
-    tooltip: {
-      backgroundColor: string
-      color: string
-      fontSize: string
-      boxShadow: string
-      border: string
-    }
+
     form: Object
   }
 
@@ -66,14 +60,7 @@ declare module "@mui/material/styles" {
       cardHeader?: Record<string, unknown>
       objectListItem?: Record<string, unknown>
     }
-    tooltip?: {
-      padding: string
-      backgroundColor?: string
-      color?: string
-      fontSize?: string
-      boxShadow?: string
-      border?: string
-    }
+
     form?: Object
     props: Record<string, unknown>
   }

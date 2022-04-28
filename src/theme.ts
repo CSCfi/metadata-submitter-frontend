@@ -194,14 +194,7 @@ let CSCtheme = createTheme({
       padding: defaultTheme.spacing(1, 0, 1, 2),
     },
   },
-  tooltip: {
-    padding: "2rem 1rem",
-    backgroundColor: palette.common.white,
-    color: palette.secondary.main,
-    fontSize: "1.4rem",
-    boxShadow: defaultTheme.shadows[1],
-    border: `0.1rem solid ${palette.primary.main}`,
-  },
+
   form: {
     "& .MuiTextField-root": {
       width: "70%",

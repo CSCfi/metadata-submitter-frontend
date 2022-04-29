@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 
-import WizardFillObjectDetailsForm from "components/NewDraftWizard/WizardForms/WizardFillObjectDetailsForm"
+import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"

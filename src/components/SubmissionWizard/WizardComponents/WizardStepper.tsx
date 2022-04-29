@@ -138,7 +138,7 @@ const WizardStepper = ({
   const params = useParams()
 
   const folderId = params.folderId
-  const newDraftPath = pathWithLocale(`newdraft/${folderId}`)
+  const submissionPath = pathWithLocale(`submission/${folderId}`)
 
   const queryParams = useQuery()
   const wizardStep = Number(queryParams.get("step"))
@@ -151,7 +151,7 @@ const WizardStepper = ({
     dispatch(resetDraftStatus())
 
     if (step) {
-      direction === "previous" ? navigate(-1) : navigate({ pathname: newDraftPath, search: "step=2" })
+      direction === "previous" ? navigate(-1) : navigate({ pathname: submissionPath, search: "step=2" })
       dispatch(resetObjectType())
       dispatch(resetSubmissionType())
     }
@@ -170,7 +170,7 @@ const WizardStepper = ({
             setDirection("previous")
             setAlert(true)
           } else {
-            navigate({ pathname: newDraftPath, search: `step=${wizardStep - 1}` })
+            navigate({ pathname: submissionPath, search: `step=${wizardStep - 1}` })
           }
         }}
       >
@@ -203,7 +203,7 @@ const WizardStepper = ({
             setDirection("next")
             setAlert(true)
           } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            navigate({ pathname: newDraftPath, search: "step=2" })
+            navigate({ pathname: submissionPath, search: "step=2" })
           }
         }}
       >

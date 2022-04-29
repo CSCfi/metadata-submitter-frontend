@@ -8,7 +8,7 @@ import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
-import WizardShowSummaryStep from "../components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
+import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
@@ -63,11 +63,11 @@ describe("WizardShowSummaryStep", () => {
       },
     })
     wrapper = (
-      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "step=2" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=2" }]}>
         <Provider store={store}>
           <Routes>
             <Route
-              path="/newdraft"
+              path="/submission"
               element={
                 <StyledEngineProvider injectFirst>
                   <ThemeProvider theme={CSCtheme}>

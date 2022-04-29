@@ -125,7 +125,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
       dispatch(setObjectType(objectType))
       props.onHandleDialog(false)
-      navigate({ pathname: pathWithLocale("newdraft"), search: "step=1" })
+      navigate({ pathname: pathWithLocale("submission"), search: "step=1" })
     } else {
       dispatch(
         updateStatus({

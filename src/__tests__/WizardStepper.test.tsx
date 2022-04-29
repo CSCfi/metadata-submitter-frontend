@@ -7,7 +7,7 @@ import { Provider } from "react-redux"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 import configureStore from "redux-mock-store"
 
-import WizardStepper from "../components/NewDraftWizard/WizardComponents/WizardStepper"
+import WizardStepper from "../components/SubmissionWizard/WizardComponents/WizardStepper"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
@@ -20,11 +20,11 @@ describe("WizardStepper", () => {
       submissionType: "",
     })
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=0" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=0" }]}>
         <Provider store={store}>
           <Routes>
             <Route
-              path="/newdraft"
+              path="/submission"
               element={
                 <StyledEngineProvider injectFirst>
                   <ThemeProvider theme={CSCtheme}>
@@ -46,11 +46,11 @@ describe("WizardStepper", () => {
       draftStatus: "notSaved",
     })
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=1" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=1" }]}>
         <Provider store={store}>
           <Routes>
             <Route
-              path="/newdraft"
+              path="/submission"
               element={
                 <StyledEngineProvider injectFirst>
                   <ThemeProvider theme={CSCtheme}>

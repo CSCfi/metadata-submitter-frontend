@@ -6,10 +6,10 @@ import Paper from "@mui/material/Paper"
 import { makeStyles } from "@mui/styles"
 import { useNavigate, useParams } from "react-router-dom"
 
-import WizardFooter from "components/NewDraftWizard/WizardComponents/WizardFooter"
-import WizardAddObjectStep from "components/NewDraftWizard/WizardSteps/WizardAddObjectStep"
-import WizardCreateFolderStep from "components/NewDraftWizard/WizardSteps/WizardCreateFolderStep"
-import WizardShowSummaryStep from "components/NewDraftWizard/WizardSteps/WizardShowSummaryStep"
+import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
+import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
+import WizardCreateFolderStep from "components/SubmissionWizard/WizardSteps/WizardCreateFolderStep"
+import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { setFolder, resetFolder } from "features/wizardSubmissionFolderSlice"
@@ -62,7 +62,7 @@ const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFor
  *
  * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
  */
-const NewDraftWizard: React.FC = () => {
+const SubmissionWizard: React.FC = () => {
   const dispatch = useAppDispatch()
   const classes = useStyles()
   const navigate = useNavigate()
@@ -85,7 +85,7 @@ const NewDraftWizard: React.FC = () => {
 
           setFetchingFolder(false)
         } else {
-          navigate({ pathname: pathWithLocale("newdraft"), search: "step=0" })
+          navigate({ pathname: pathWithLocale("submission"), search: "step=0" })
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
@@ -120,4 +120,4 @@ const NewDraftWizard: React.FC = () => {
   )
 }
 
-export default NewDraftWizard
+export default SubmissionWizard

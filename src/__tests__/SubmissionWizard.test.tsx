@@ -13,14 +13,14 @@ import thunk from "redux-thunk"
 import CSCtheme from "../theme"
 
 import App from "App"
-import NewDraftWizard from "views/NewDraftWizard"
+import SubmissionWizard from "views/Submission"
 
 const middlewares = [thunk]
 const mockStore = configureStore(middlewares)
 
 const server = setupServer()
 
-describe("NewDraftWizard", () => {
+describe("SubmissionWizard", () => {
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
@@ -28,11 +28,11 @@ describe("NewDraftWizard", () => {
   test("should navigate to 404 page on undefined step", () => {
     const store = mockStore({})
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/newdraft", search: "?step=undefined" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=undefined" }]}>
         <Provider store={store}>
           <StyledEngineProvider injectFirst>
             <ThemeProvider theme={CSCtheme}>
-              <NewDraftWizard />
+              <SubmissionWizard />
             </ThemeProvider>
           </StyledEngineProvider>
         </Provider>
@@ -78,7 +78,7 @@ describe("NewDraftWizard", () => {
       user: { name: "test" },
     })
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/en/newdraft/123456", search: "?step=1" }]}>
+      <MemoryRouter initialEntries={[{ pathname: "/en/submission/123456", search: "?step=1" }]}>
         <Provider store={store}>
           <StyledEngineProvider injectFirst>
             <ThemeProvider theme={CSCtheme}>
@@ -128,7 +128,7 @@ describe("NewDraftWizard", () => {
   //     objectTypesArray: ["study"],
   //   })
   //   render(
-  //     <MemoryRouter initialEntries={[{ pathname: `/en/newdraft/${folderId}`, search: "?step=0" }]}>
+  //     <MemoryRouter initialEntries={[{ pathname: `/en/submission/${folderId}`, search: "?step=0" }]}>
   //       <Provider store={store}>
   //         <StyledEngineProvider injectFirst>
   //           <ThemeProvider theme={CSCtheme}>

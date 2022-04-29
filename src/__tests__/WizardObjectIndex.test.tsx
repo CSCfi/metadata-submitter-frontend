@@ -6,7 +6,7 @@ import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
-import WizardObjectIndex from "../components/NewDraftWizard/WizardComponents/WizardObjectIndex"
+import WizardObjectIndex from "../components/SubmissionWizard/WizardComponents/WizardObjectIndex"
 import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"

@@ -27,7 +27,7 @@ import Typography from "@mui/material/Typography"
 import { makeStyles, withStyles } from "@mui/styles"
 import { Link as RouterLink } from "react-router-dom"
 
-import WizardObjectDetails from "components/NewDraftWizard/WizardComponents/WizardObjectDetails"
+import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
 import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import { addRow, removeRow, resetRows } from "features/openedRowsSlice"

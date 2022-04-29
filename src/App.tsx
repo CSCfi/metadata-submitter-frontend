@@ -22,7 +22,7 @@ import Page404 from "views/ErrorPages/Page404"
 import Page500 from "views/ErrorPages/Page500"
 import Home from "views/Home"
 import Login from "views/Login"
-import NewDraftWizard from "views/NewDraftWizard"
+import SubmissionWizard from "views/Submission"
 
 const useStyles = makeStyles(() => ({
   wizardContent: {
@@ -128,9 +128,9 @@ const App: React.FC = () => {
     return `/:locale/${path}`
   }
 
-  const newDraftElement = (
+  const submissionElement = (
     <Container component="main" maxWidth={false} className={classes.wizardContent}>
-      <NewDraftWizard />
+      <SubmissionWizard />
     </Container>
   )
 
@@ -156,9 +156,9 @@ const App: React.FC = () => {
             </Container>
           }
         />
-        <Route path={setPath("newdraft")}>
-          <Route path=":folderId" element={newDraftElement} />
-          <Route path="" element={newDraftElement} />
+        <Route path={setPath("submission")}>
+          <Route path=":folderId" element={submissionElement} />
+          <Route path="" element={submissionElement} />
         </Route>
         <Route path="/error401" element={<Page401 />} />
         <Route path="/error403" element={<Page403 />} />

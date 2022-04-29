@@ -1,6 +1,6 @@
 ## Internal structure
 
-Reusable components are stored in `src/components` and views in `src/views`. View-components reflect page structure, such as `/`, `/newdraft`, `/login` etc. One should not define and export views to be rendered inside other views, but rather always build views using components.
+Reusable components are stored in `src/components` and views in `src/views`. View-components reflect page structure, such as `/`, `/submission`, `/login` etc. One should not define and export views to be rendered inside other views, but rather always build views using components.
 
 React Router is used to render different views in App-component. All components are wrapped with `Nav` which provider app menu and navigation.
 
@@ -109,7 +109,7 @@ Examples for storing and dispatching with async folder function:
 
 ```
 import { useSelector, useDispatch } from "react-redux"
-import { createNewDraftFolder } from "features/submissionFolderSlice"
+import { createSubmissionFolder } from "features/submissionFolderSlice"
 
 // Create base folder (normally from form)
 const folder = {
@@ -121,7 +121,7 @@ const folder = {
 const dispatch = useDispatch()
 
 // Dispatch the action with folder
-dispatch(createNewDraftFolder(folder))
+dispatch(createSubmissionFolder(projectId: string, folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[] ))
 
 // Folder is now submitted to backend and added to redux store
 

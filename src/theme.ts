@@ -180,10 +180,13 @@ let CSCtheme = createTheme({
   },
   wizard: {
     cardHeader: {
-      backgroundColor: palette.primary.main,
-      color: "#FFF",
-      fontWeight: "bold",
-      minHeight: defaultTheme.spacing(6.875),
+      backgroundColor: palette.common.white,
+      position: "sticky",
+      top: 8,
+      zIndex: 2,
+      borderBottom: `0.1rem solid ${palette.primary.light}`,
+      paddingTop: "1.5rem",
+      paddingBottom: "1.5rem",
     },
     objectListItem: {
       border: "none",

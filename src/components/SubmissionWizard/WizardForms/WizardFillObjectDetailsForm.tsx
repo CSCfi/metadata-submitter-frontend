@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from "react"
 
-import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined"
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import { CustomTheme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
+import IconButton from "@mui/material/IconButton"
 import LinearProgress from "@mui/material/LinearProgress"
+import Menu from "@mui/material/Menu"
+import MenuItem from "@mui/material/MenuItem"
+import Stack from "@mui/material/Stack"
+import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { ApiResponse } from "apisauce"
@@ -26,7 +31,6 @@ import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wiza
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
-import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -47,18 +51,18 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
   cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(7.7), zIndex: 2 },
   resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
-    marginTop: "-4px",
-    marginBottom: "-4px",
+    margin: "0 !important",
   },
   buttonGroup: {
-    display: "flex",
-    flexDirection: "row",
-    "& > :not(:last-child)": {
-      marginRight: 1,
-    },
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    columnGap: "1.5rem",
+    marginRight: "6rem",
     "& button": {
-      backgroundColor: "#FFF",
-      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      height: "5rem",
+      width: "18rem",
     },
   },
   addIcon: {
@@ -70,7 +74,6 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
 type CustomCardHeaderProps = {
   objectType: string
   currentObject: ObjectDetails
-  onClickNewForm: () => void
   onClickClearForm: () => void
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
@@ -98,7 +101,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     objectType,
     currentObject,
     refForm,
-    onClickNewForm,
     onClickClearForm,
     onClickSaveDraft,
     onClickUpdateTemplate,
@@ -106,19 +108,12 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     onClickCloseDialog,
   } = props
 
-  const dispatch = useAppDispatch()
-
   const focusTarget = useRef<HTMLButtonElement>(null)
   const shouldFocus = useAppSelector(state => state.focus)
 
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
   }, [shouldFocus])
-
-  const handleClick = () => {
-    onClickNewForm()
-    dispatch(resetFocus())
-  }
 
   const templateButtonGroup = (
     <div className={classes.buttonGroup}>
@@ -139,23 +134,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const buttonGroup = (
     <div className={classes.buttonGroup}>
-      <Button
-        ref={focusTarget}
-        variant="contained"
-        aria-label="create new form"
-        size="small"
-        onClick={() => handleClick()}
-        onBlur={() => dispatch(resetFocus())}
-      >
-        <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
-        New form
-      </Button>
-      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
-        Clear form
-      </Button>
-
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
-        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
+        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as draft"}
       </Button>
       <Button
         variant="contained"
@@ -165,24 +145,86 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {formatDisplayObjectType(objectType)}
+        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
+        {formatDisplayObjectType(objectType)}
       </Button>
     </div>
   )
 
-  //
-
   return (
-    <CardHeader
-      title="Fill form"
-      titleTypographyProps={{ variant: "inherit" }}
-      classes={{
-        root: classes.cardHeader,
-        action: classes.cardHeaderAction,
-      }}
-      className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
-      action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
-    />
+    <>
+      <CardHeader
+        classes={{
+          root: classes.cardHeader,
+          action: classes.cardHeaderAction,
+        }}
+        className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
+        action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
+      />
+      <Options onClearForm={onClickClearForm} />
+    </>
+  )
+}
+
+const options = ["Upload XML", "Clear form"]
+
+const Options = ({ onClearForm }: { onClearForm: () => void }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = (e, option?: string) => {
+    setAnchorEl(null)
+    option === options[1] ? onClearForm() : null
+  }
+  return (
+    <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ mt: "4rem", pr: "6rem" }}>
+      <Typography variant="subtitle2" color="primary" fontWeight={700}>
+        Options
+      </Typography>
+      <IconButton
+        aria-label="options-button"
+        id="options-button"
+        aria-controls={open ? "options" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+        color="primary"
+      >
+        <MoreHorizIcon fontSize="large" />
+      </IconButton>
+      <Menu
+        id="options"
+        MenuListProps={{
+          "aria-labelledby": "options-button",
+          style: { padding: 0, width: "17rem" },
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        {options.map(option => (
+          <MenuItem
+            key={option}
+            selected={option === "Upload XML"}
+            onClick={e => handleClose(e, option)}
+            sx={{
+              p: "1.2rem",
+              "&.Mui-selected": { backgroundColor: "primary.lighter", color: "primary.main" },
+              color: "secondary.main",
+              fontWeight: 700,
+            }}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Stack>
   )
 }
 
@@ -279,13 +321,6 @@ const FormContent = ({
         handleDraftDelete(currentObjectId)
     }
   }, [isSubmitSuccessful])
-
-  const handleCreateNewForm = () => {
-    resetTimer()
-    handleClearForm()
-    setCurrentObjectId(null)
-    dispatch(resetCurrentObject())
-  }
 
   const handleClearForm = () => {
     resetTimer()
@@ -472,13 +507,13 @@ const FormContent = ({
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickNewForm={() => handleCreateNewForm()}
         onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
       />
+
       <form
         id="hook-form"
         className={classes.formComponents}

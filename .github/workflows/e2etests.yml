@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p metadata-submitter/metadata_backend/frontend
           cp -r build/* metadata-submitter/metadata_backend/frontend/
-          docker-compose -f metadata-submitter/docker-compose.yml --env-file metadata-submitter/.env.example up -d --build
+          docker-compose -f metadata-submitter/docker-compose.yml up -d --build
           sleep 30
       - uses: cypress-io/github-action@v2
         with:

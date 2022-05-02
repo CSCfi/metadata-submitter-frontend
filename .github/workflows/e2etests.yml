@@ -40,7 +40,7 @@ jobs:
         with:
           browser: ${{ matrix.browser }}
           headless: true
-          env: port=5430
+          env: port=3000
       - uses: actions/upload-artifact@v2
         if: failure()
         with:

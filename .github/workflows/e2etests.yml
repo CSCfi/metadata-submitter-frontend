@@ -22,7 +22,7 @@ jobs:
           if [[ $BRANCH == master ]]; then
              echo "VERSION=master" >> $GITHUB_ENV
           else
-             echo "VERSION=develop" >> $GITHUB_ENV
+             echo "VERSION=fix/add-retry-to-metax-calls" >> $GITHUB_ENV
           fi
       - name: Clone backend
         uses: actions/checkout@v3
@@ -42,13 +42,11 @@ jobs:
           headless: true
           env: port=5430
       - uses: actions/upload-artifact@v2
-        if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
           retention-days: 5
       - uses: actions/upload-artifact@v2
-        if: failure()
         with:
           name: cypress-videos
           path: cypress/videos

@@ -37,7 +37,7 @@ const CancelFormDialog = ({
   currentSubmissionType,
 }: {
   handleDialog: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => void
-  alertType: string
+  alertType?: string
   parentLocation: string
   currentSubmissionType: string
 }) => {
@@ -177,6 +177,7 @@ const CancelFormDialog = ({
 
       break
     }
+    case "header":
     case "footer": {
       switch (alertType) {
         case "cancel": {
@@ -234,8 +235,7 @@ const CancelFormDialog = ({
       break
     }
     case "stepper": {
-      dialogTitle = "Move to " + alertType + " step?"
-      dialogContent = "You have unsaved data. You can save current form as draft"
+      dialogTitle = "You have unsaved data"
       switch (currentSubmissionType) {
         case ObjectSubmissionTypes.form: {
           dialogContent = formContent
@@ -303,7 +303,7 @@ const WizardAlert = ({
 }: {
   onAlert: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => void
   parentLocation: string
-  alertType: string
+  alertType?: string
 }) => {
   const currentSubmissionType = useAppSelector(state => state.submissionType)
 

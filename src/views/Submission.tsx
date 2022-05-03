@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useState } from "react"
 
 import Container from "@mui/material/Container"
+import Grid from "@mui/material/Grid"
 import LinearProgress from "@mui/material/LinearProgress"
 import Paper from "@mui/material/Paper"
 import { makeStyles } from "@mui/styles"
 import { useNavigate, useParams } from "react-router-dom"
 
 import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
+import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateFolderStep from "components/SubmissionWizard/WizardSteps/WizardCreateFolderStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
@@ -23,21 +25,29 @@ const useStyles = makeStyles(theme => ({
   paper: {
     alignItems: "stretch",
   },
-  paperFirstStep: {
-    padding: theme.spacing(4),
-    alignItems: "stretch",
-    width: "60%",
-    margin: theme.spacing(10),
-  },
   paperContent: {
+    padding: theme.spacing(2),
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "flex-start",
+    justifyContent: "start",
     flexDirection: "column",
   },
   container: {
     flex: "1 0 auto",
     padding: 0,
+  },
+  gridContainer: {
+    marginTop: theme.spacing(7.7),
+    minHeight: "calc(100vh - 137px)",
+    backgroundColor: theme.palette.background.wizard,
+  },
+  stepper: {
+    paddingTop: "0 !important",
+    backgroundColor: theme.palette.primary.main,
+  },
+  stepContent: {
+    paddingTop: `${theme.spacing(5)} !important`,
+    paddingLeft: `${theme.spacing(5)} !important`,
   },
 }))
 
@@ -46,11 +56,13 @@ const useStyles = makeStyles(theme => ({
  */
 const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFormRef) => {
   switch (wizardStep) {
-    case 0:
-      return <WizardCreateFolderStep createFolderFormRef={createFolderFormRef} />
     case 1:
-      return <WizardAddObjectStep />
+      return <WizardCreateFolderStep createFolderFormRef={createFolderFormRef} />
     case 2:
+    case 3:
+    case 4:
+      return <WizardAddObjectStep />
+    case 5:
       return <WizardShowSummaryStep />
     default:
       return <Page404 />
@@ -85,7 +97,7 @@ const SubmissionWizard: React.FC = () => {
 
           setFetchingFolder(false)
         } else {
-          navigate({ pathname: pathWithLocale("submission"), search: "step=0" })
+          navigate({ pathname: pathWithLocale("submission"), search: "step=1" })
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
@@ -109,12 +121,20 @@ const SubmissionWizard: React.FC = () => {
 
   return (
     <Container maxWidth={false} className={classes.container}>
-      {isFetchingFolder && folderId && <LinearProgress />}
-      {(!isFetchingFolder || !folderId) && (
-        <Paper className={wizardStep < 0 ? classes.paperFirstStep : classes.paper} elevation={wizardStep < 0 ? 2 : 0}>
-          <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
-        </Paper>
-      )}
+      <Grid container spacing={2} className={classes.gridContainer}>
+        <Grid item xs={3} className={classes.stepper}>
+          <WizardStepper />
+        </Grid>
+        <Grid item xs={7} className={classes.stepContent}>
+          {isFetchingFolder && folderId && <LinearProgress />}
+          {(!isFetchingFolder || !folderId) && (
+            <Paper className={classes.paper} elevation={2}>
+              <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
+            </Paper>
+          )}
+        </Grid>
+      </Grid>
+
       <WizardFooter />
     </Container>
   )

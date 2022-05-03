@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
     margin: 0,
     padding: 0,
   },
-  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: 8, zIndex: 2 },
+  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(7.7), zIndex: 2 },
   resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
     marginTop: "-4px",

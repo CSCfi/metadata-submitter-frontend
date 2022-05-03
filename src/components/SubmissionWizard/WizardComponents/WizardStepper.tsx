@@ -1,219 +1,276 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
-import Check from "@mui/icons-material/Check"
-import Button from "@mui/material/Button"
-import Step from "@mui/material/Step"
-import StepConnector from "@mui/material/StepConnector"
-import StepLabel from "@mui/material/StepLabel"
-import Stepper from "@mui/material/Stepper"
-import { makeStyles, withStyles } from "@mui/styles"
-import clsx from "clsx"
-import { useNavigate, useParams } from "react-router-dom"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion"
+import MuiAccordionDetails from "@mui/material/AccordionDetails"
+import MuiAccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary"
+import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
+import { useLocation } from "react-router-dom"
 
-import WizardAlert from "./WizardAlert"
+import WizardStep from "./WizardStep"
 
-import { resetDraftStatus } from "features/draftStatusSlice"
+import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetSubmissionType } from "features/wizardSubmissionTypeSlice"
-import { useAppSelector, useAppDispatch } from "hooks"
-import { useQuery, pathWithLocale } from "utils"
-/*
- * Customized stepper inspired by https://material-ui.com/components/steppers/#customized-stepper
- */
-const QontoConnector = withStyles(theme => ({
-  alternativeLabel: {
-    top: 10,
-    left: `calc(-50% + ${8})`,
-    right: `calc(50% + ${8})`,
-  },
-  active: {
-    "& $line": {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  completed: {
-    "& $line": {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  line: {
-    borderColor: theme.palette.secondary.main,
-    borderTopWidth: 3,
-    borderRadius: 1,
-  },
-}))(StepConnector)
+import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
+import { useAppDispatch, useAppSelector } from "hooks"
+import { Schema } from "types"
 
-const useQontoStepIconStyles = makeStyles(theme => ({
-  root: {
-    color: theme.palette.secondary.main,
-    display: "flex",
-    height: 22,
-    alignItems: "center",
+// Top & bottom borders for first and last disabled elements
+const AccordionWrapper = styled("div")(({ theme }) => ({
+  "& > .Mui-disabled > .MuiAccordionSummary-root": {
+    borderTop: `1px solid ${theme.palette.secondary.light}`,
   },
-  active: {
-    color: theme.palette.primary.main,
-  },
-  circle: {
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    backgroundColor: "currentColor",
-  },
-  completed: {
-    color: theme.palette.primary.main,
-    zIndex: 1,
-    fontSize: 18,
-  },
-  floating: {
-    border: "solid 1px #000",
-    backgroundColor: theme.palette.background.default,
-    boxShadow: "0",
+  "& .MuiAccordion-root:last-of-type > .Mui-disabled": {
+    borderBottom: `1px solid ${theme.palette.secondary.light}`,
   },
 }))
 
-function QontoStepIcon(props: { active: boolean; completed: boolean }) {
-  const classes = useQontoStepIconStyles()
-  const { active, completed } = props
-
-  return (
-    <div
-      className={clsx(classes.root, {
-        [classes.active]: active,
-      })}
-    >
-      {completed ? <Check className={classes.completed} /> : <div className={classes.circle} />}
-    </div>
-  )
-}
-
-const useStyles = makeStyles({
-  stepper: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    borderBottom: "solid 1px #ccc",
-    marginTop: 50,
-  },
-  stepperContainer: {
-    width: "80%",
-  },
-  centeredStepButton: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 0,
-    border: "none",
-    width: "10%",
-    backgroundColor: "rgba(139, 26, 79, 0.04)",
-    "&:hover": {
-      border: "none",
-      backgroundColor: "rgba(139, 26, 79, 0.16)",
+const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(
+  () => ({
+    "&:not(:last-child)": {
+      borderBottom: 0,
     },
-    "&.Mui-disabled": {
-      border: "none",
+    "&:before": {
+      display: "none",
     },
+  })
+)
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => <MuiAccordionSummary {...props} />)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.common.white,
+  borderBottom: `1px solid ${theme.palette.primary.light}`,
+  "& .MuiTypography-root": {
+    fontWeight: "bold",
   },
-})
+  "& .MuiSvgIcon-root": {
+    fontSize: "3rem",
+    color: theme.palette.common.white,
+  },
+  "& .MuiAccordionSummary-content": {
+    marginLeft: theme.spacing(1),
+  },
+  "&.Mui-disabled": {
+    backgroundColor: theme.palette.secondary.lightest,
+    opacity: 1,
+    color: theme.palette.secondary.light,
+  },
+  "&.Mui-disabled .MuiSvgIcon-root": {
+    color: theme.palette.secondary.light,
+  },
+}))
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.lightest,
+  color: theme.palette.primary.main,
+  padding: 0,
+}))
 
 /**
  * Show info about wizard steps to user.
  * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
  */
 
-const WizardStepper = ({
-  createFolderFormRef,
-}: {
-  createFolderFormRef?: { current: HTMLElement | null } | undefined
-}) => {
-  const classes = useStyles()
+const WizardStepper = () => {
+  const objectsArray = useAppSelector(state => state.objectTypesArray)
+  const folder = useAppSelector(state => state.submissionFolder)
+  const currentStepObject = useAppSelector(state => state.stepObject)
   const dispatch = useAppDispatch()
-  const steps = ["Folder Name & Description", "Add Objects", "Summary"]
-  const formState = useAppSelector(state => state.submissionType)
-  const [alert, setAlert] = useState(false)
-  const [direction, setDirection] = useState("")
-  const draftStatus = useAppSelector(state => state.draftStatus)
-  const navigate = useNavigate()
-  const params = useParams()
+  const location = useLocation()
 
-  const folderId = params.folderId
-  const submissionPath = pathWithLocale(`submission/${folderId}`)
-
-  const queryParams = useQuery()
-  const wizardStep = Number(queryParams.get("step"))
-
-  const unsavedSubmission = wizardStep === 1 && formState.trim().length > 0 && draftStatus === "notSaved"
-
-  const handleNavigation = (step: boolean) => {
-    setDirection("")
-    setAlert(false)
-    dispatch(resetDraftStatus())
-
-    if (step) {
-      direction === "previous" ? navigate(-1) : navigate({ pathname: submissionPath, search: "step=2" })
-      dispatch(resetObjectType())
-      dispatch(resetSubmissionType())
+  // Set step on initialization based on query paramater in url
+  useEffect(() => {
+    if (location.search.includes("step")) {
+      const stepInUrl = location.search.split("step=")[1].slice(0, 1)
+      dispatch(updateStep({ step: Number(stepInUrl), objectType: "submissionDetails" }))
     }
+  }, [])
+
+  // Group objects by schema and status of the object
+  const groupedObjects = objectsArray
+    .map((schema: Schema) => {
+      const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
+      return {
+        [schema]: {
+          drafts: folder.drafts
+            .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
+            .map(item => mapItem(item)),
+          ready: folder.metadataObjects
+            .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
+            .map(item => mapItem(item)),
+        },
+      }
+    })
+    .reduce((map, obj) => {
+      const key = Object.keys(obj)[0]
+      map[key] = obj[key]
+      return map
+    }, {})
+
+  // Test if object type has ready or draft objects
+  const allStepItemsReady = (objectTypes: string[]) => {
+    const foundObjects: string[] = []
+
+    objectTypes.forEach(type => {
+      if (groupedObjects[type]?.drafts.length || groupedObjects[type]?.ready.length) {
+        foundObjects.push(type)
+      }
+    })
+
+    return foundObjects.length === objectTypes.length
   }
 
+  /*
+   * List of accordion steps and configurations.
+   * Steps are disabled by checking if previous step has been filled.
+   * First step is always enabled.
+   */
+  const accordionSteps = [
+    {
+      label: "Submission details",
+      stepItems: [
+        {
+          objectType: "submissionDetails",
+          label: "Name your submission",
+          objects: {
+            ready: folder.folderId ? [{ id: folder.folderId, displayTitle: folder.name }] : [],
+          },
+        },
+      ],
+      actionButtonText: "Edit",
+    },
+    {
+      label: "Study, DAC and policy",
+      stepItems: [
+        {
+          objectType: ObjectTypes.study,
+          label: DisplayObjectTypes[ObjectTypes.study],
+          objects: groupedObjects[ObjectTypes.study],
+        },
+        {
+          objectType: ObjectTypes.dac,
+          label: DisplayObjectTypes[ObjectTypes.dac],
+          objects: groupedObjects[ObjectTypes.dac],
+        },
+        {
+          objectType: ObjectTypes.policy,
+          label: DisplayObjectTypes[ObjectTypes.policy],
+          objects: groupedObjects[ObjectTypes.policy],
+        },
+      ],
+      actionButtonText: "Add",
+      disabled: folder.folderId === "",
+    },
+    {
+      label: "Datafolder",
+      stepItems: [
+        {
+          objectType: "datafolder",
+          label: "Datafolder",
+        },
+      ],
+      actionButtonText: "Link datafolder",
+      disabled: !allStepItemsReady([ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy]), // Placeholder rule until feature is ready
+    },
+    {
+      label: "Describe",
+      stepItems: [
+        {
+          objectType: ObjectTypes.sample,
+          label: DisplayObjectTypes[ObjectTypes.sample],
+          objects: groupedObjects[ObjectTypes.sample],
+        },
+        {
+          objectType: ObjectTypes.experiment,
+          label: DisplayObjectTypes[ObjectTypes.experiment],
+          objects: groupedObjects[ObjectTypes.experiment],
+        },
+        {
+          objectType: ObjectTypes.run,
+          label: DisplayObjectTypes[ObjectTypes.run],
+          objects: groupedObjects[ObjectTypes.run],
+        },
+        {
+          objectType: ObjectTypes.analysis,
+          label: DisplayObjectTypes[ObjectTypes.analysis],
+          objects: groupedObjects[ObjectTypes.analysis],
+        },
+        {
+          objectType: ObjectTypes.dataset,
+          label: DisplayObjectTypes[ObjectTypes.dataset],
+          objects: groupedObjects[ObjectTypes.dataset],
+        },
+      ],
+      actionButtonText: "Add",
+      disabled: !allStepItemsReady([ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy]),
+    },
+    {
+      label: "Identifier and publish",
+      stepItems: [
+        {
+          objectType: "publish",
+          label: "Publish",
+        },
+      ],
+      actionButtonText: "Publish",
+      disabled: !allStepItemsReady([
+        ObjectTypes.sample,
+        ObjectTypes.run,
+        ObjectTypes.experiment,
+        ObjectTypes.dataset,
+        ObjectTypes.analysis,
+      ]),
+    },
+  ]
+
+  // Reset object type state on component destroy
+  useEffect(
+    () => () => {
+      dispatch(resetStepObject())
+      dispatch(resetObjectType())
+    },
+    []
+  )
+
+  const [expandedPanels, setExpandedPanels] = useState<number[]>([0]) // Open first panel on init
+
+  const handlePanelChange = (stepIndex: number) => {
+    setExpandedPanels(
+      expandedPanels.includes(stepIndex) ? expandedPanels.filter(i => i !== stepIndex) : [...expandedPanels, stepIndex]
+    )
+  }
+
+  // Open panel when navigating to next step and close others
+  useEffect(() => {
+    const change = [...expandedPanels.filter(i => i === currentStepObject.step), currentStepObject.step]
+    setExpandedPanels(change)
+  }, [currentStepObject.step])
+
   return (
-    <div className={classes.stepper}>
-      <Button
-        className={classes.centeredStepButton}
-        disableElevation
-        color="primary"
-        variant="outlined"
-        disabled={wizardStep < 1}
-        onClick={() => {
-          if (unsavedSubmission) {
-            setDirection("previous")
-            setAlert(true)
-          } else {
-            navigate({ pathname: submissionPath, search: `step=${wizardStep - 1}` })
-          }
-        }}
-      >
-        <ArrowBackIosIcon fontSize="large" />
-        Back
-      </Button>
-      <Stepper
-        activeStep={wizardStep}
-        className={classes.stepperContainer}
-        alternativeLabel
-        connector={<QontoConnector />}
-      >
-        {steps.map(label => (
-          <Step key={label}>
-            <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Button
-        disabled={wizardStep >= 2}
-        className={classes.centeredStepButton}
-        disableElevation
-        color="primary"
-        variant="outlined"
-        onClick={async () => {
-          if (createFolderFormRef?.current) {
-            await createFolderFormRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
-          }
-          if (unsavedSubmission) {
-            setDirection("next")
-            setAlert(true)
-          } else if (wizardStep !== 2 && !createFolderFormRef?.current) {
-            navigate({ pathname: submissionPath, search: "step=2" })
-          }
-        }}
-      >
-        Next
-        <ArrowForwardIosIcon fontSize="large" />
-      </Button>
-      {wizardStep === 1 && alert && (
-        <WizardAlert onAlert={handleNavigation} parentLocation="stepper" alertType={direction}></WizardAlert>
-      )}
-    </div>
+    <AccordionWrapper data-testid="wizard-stepper">
+      {accordionSteps.map((step, index) => {
+        const stepNumber = index + 1
+        return (
+          <Accordion
+            key={index}
+            disabled={step.disabled}
+            expanded={expandedPanels.includes(stepNumber)}
+            onChange={() => handlePanelChange(stepNumber)}
+            data-testid={`${stepNumber}-step-${step.disabled ? "disabled" : "enabled"}`}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>
+                {stepNumber}. {step.label}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <WizardStep step={stepNumber} stepItems={step.stepItems} actionButtonText={step.actionButtonText} />
+            </AccordionDetails>
+          </Accordion>
+        )
+      })}
+    </AccordionWrapper>
   )
 }
 

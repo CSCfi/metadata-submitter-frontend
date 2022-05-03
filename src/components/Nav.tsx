@@ -16,9 +16,13 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
 import logo from "../images/csc_logo.svg"
 
+import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
+
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
 import { fetchUserById, resetUser } from "features/userSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
@@ -26,6 +30,7 @@ import { pathWithLocale } from "utils"
 const NavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
   boxShadow: "0 0.25em 0.25em 0 rgba(0, 0, 0,0.25)",
+  zIndex: 3,
 }))
 
 const Logo = styled("img")(() => ({
@@ -38,6 +43,12 @@ const ServiceTitle = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
   color: theme.palette.secondary.main,
   fontWeight: 700,
+}))
+
+const NavLinks = styled("nav")(({ theme }) => ({
+  "& button": {
+    margin: theme.spacing(0, 1),
+  },
 }))
 
 type MenuItemProps = {
@@ -176,17 +187,37 @@ const NavigationMenu = () => {
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
 
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const handleAlert = () => {
+    navigate(pathWithLocale("home"))
+    dispatch(resetObjectType())
+    dispatch(resetFolder())
+    setDialogOpen(false)
+  }
+
   return (
-    <nav>
-      {location.pathname !== "/" && <NavigationLinks />}
-      <LanguageSelector currentLocale={currentLocale} />
-    </nav>
+    <React.Fragment>
+      <NavLinks>
+        {location.pathname.includes("/submission") && (
+          <Button size="large" variant="outlined" onClick={() => setDialogOpen(true)}>
+            Save submission and exit
+          </Button>
+        )}
+        {location.pathname !== "/" && <NavigationLinks />}
+        <LanguageSelector currentLocale={currentLocale} />
+      </NavLinks>
+      {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>}
+    </React.Fragment>
   )
 }
 
 const Nav: React.FC = () => {
   return (
-    <NavBar>
+    <NavBar position="fixed">
       <Toolbar>
         <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
           <Logo src={logo} alt="CSC_logo" />

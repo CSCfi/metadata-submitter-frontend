@@ -1,15 +1,19 @@
+import { ObjectTypes } from "constants/wizardObject"
+
 describe("DOI form", function () {
   beforeEach(() => {
     cy.task("resetDb")
     cy.login()
-    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
-
-    // Add folder name & description, navigate to submissions
-    cy.newSubmission()
   })
   it("should render DOI form correctly with formats' prefilled values and affiliation's autocomplete field", () => {
+    cy.generateFolderAndObjects()
+
+    cy.contains("Edit").click({ force: true })
+
+    cy.clickAccordionPanel("Describe")
+
     // Fill in Run form
-    cy.clickFillForm("Run")
+    cy.clickAddObject(ObjectTypes.run)
 
     const testRunData = {
       title: "Test Run",
@@ -18,7 +22,7 @@ describe("DOI form", function () {
 
     cy.get("[data-testid='title']").type(testRunData.title)
     cy.get("h5[data-testid='experimentRef']").parents().children("button").click()
-    cy.get("[data-testid='experimentRef.0.accessionId']").type(testRunData.experimentAccessionId)
+    cy.get("[data-testid='experimentRef.0.accessionId']").select(1)
 
     const testRunFile = {
       fileName: "Run file name",
@@ -35,11 +39,11 @@ describe("DOI form", function () {
     // Submit form
     cy.formActions("Submit")
 
-    // Submitted objects list should have newly added item from Run form
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    // Run objects container should have contain created object
+    cy.get("[data-testid='run-objects-list']").find("li").should("have.length", 2)
 
     // Fill in Analysis form
-    cy.clickFillForm("Analysis")
+    cy.clickAddObject(ObjectTypes.analysis)
 
     const testAnalysisData = {
       title1: "Test Analysis",
@@ -71,8 +75,8 @@ describe("DOI form", function () {
     // Submit form
     cy.formActions("Submit")
 
-    // Submitted objects list should have newly added item from Run form
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    // Analysis objects container should have contain created object
+    cy.get("[data-testid='analysis-objects-list']").find("li").should("have.length", 2)
 
     // Fill another Analysis form with the same fileType as Run form: "bam"
     cy.formActions("New form")
@@ -89,8 +93,8 @@ describe("DOI form", function () {
     // Submit form
     cy.formActions("Submit")
 
-    // Submitted objects list should have newly added item from Run form
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 2)
+    // Analysis objects container should have contain both newly created objects
+    cy.get("[data-testid='analysis-objects-list']").find("li").should("have.length", 3)
 
     // Go to DOI form
     cy.openDOIForm()
@@ -187,9 +191,10 @@ describe("DOI form", function () {
     cy.get("[data-testid='contributors.0.affiliation.0.affiliationIdentifier").should("be.disabled")
   }),
     it("should fill the required fields and save DOI form successfully", () => {
+      cy.generateFolderAndObjects()
+      cy.contains("Edit").click({ force: true })
       // Go to DOI form
       cy.openDOIForm()
-
       // Fill in required Creators field
       cy.get("[data-testid='creators']").parent().children("button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Test given name")
@@ -223,7 +228,6 @@ describe("DOI form", function () {
 
       cy.get("button[type='submit']").click()
       cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
-
       // Open the DOI form again and check the fields render correctly
       cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
       cy.get("[data-testid='creators.0.givenName']").should("have.value", "Test given name")
@@ -233,6 +237,8 @@ describe("DOI form", function () {
       cy.get("div[data-testid='keyword-3']").scrollIntoView().should("be.visible")
     }),
     it("should autofill full name based on family and given name", () => {
+      cy.generateFolderAndObjects()
+      cy.contains("Edit").click({ force: true })
       // Go to DOI form
       cy.openDOIForm()
       // Go to Creators section and fill in given name, family name
@@ -251,72 +257,74 @@ describe("DOI form", function () {
         "have.value",
         "Contributor's family name,Contributor's given name"
       )
+    }),
+    it("should fill in the required fields, Dates fields and save DOI form successfully", () => {
+      cy.generateFolderAndObjects()
+      cy.contains("Edit").click({ force: true })
+      // Go to DOI form
+      cy.openDOIForm()
+
+      // Fill in required Creators field
+      cy.get("[data-testid='creators']").parent().children("button").click()
+      cy.get("[data-testid='creators.0.givenName']").type("Test given name")
+      cy.get("[data-testid='creators.0.familyName']").type("Test family name")
+      cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+      cy.intercept("/organizations*").as("searchOrganization")
+      cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
+      cy.wait("@searchOrganization")
+      cy.get(".MuiAutocomplete-option")
+        .should("be.visible")
+        .then($el => $el.first().click())
+      cy.get("[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
+
+      // Fill in required Subjects field
+      cy.get("[data-testid='subjects']").parent().children("button").click()
+      cy.get("[data-testid='subjects.0.subject']").select("FOS: Mathematics")
+
+      // Fill in required Keywords
+      cy.get("input[data-testid='keywords']").type("keyword-1,")
+
+      // Select Dates
+      cy.get("[data-testid='dates']").parent().children("button").click()
+
+      cy.get("[data-testid='dates.0.date']").scrollIntoView()
+      cy.get("[data-testid='dates.0.date']").should("be.visible")
+      // Set a constant Date in advance so the calendar will open to certain date
+      cy.clock(new Date(2021, 9, 1), ["Date"])
+
+      cy.get("[data-testid='Start']")
+        .scrollIntoView({ offset: { left: 0, top: -100 } })
+        .should("be.visible")
+
+      cy.get("[data-testid='Start'] > div", { timeout: 10000 })
+        .should("be.visible")
+        .then(() => cy.get("[data-testid='Start'] > div > button").click({ force: true }))
+      cy.get("div[role='cell']").contains("4", { timeout: 10000 }).click()
+      cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-04/")
+
+      cy.get("[data-testid='End'] > div > button").click()
+      cy.get("div[role='cell']").contains("23", { timeout: 10000 }).click()
+      cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-04/2021-10-23")
+
+      cy.get("[data-testid='startDateCheck']").click()
+      cy.get("[data-testid='dates.0.date']").should("have.value", "/2021-10-23")
+      cy.get("[data-testid='Start'] > div > button").should("be.disabled")
+
+      cy.get("[data-testid='startDateCheck']").click()
+      cy.get("[data-testid='Start'] > div > button").click()
+      cy.get("div[role='cell']").contains("10", { timeout: 10000 }).click()
+      cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-10/2021-10-23")
+
+      cy.get("[data-testid='endDateCheck']").click()
+      cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-10/")
+      cy.get("[data-testid='End'] > div > button").should("be.disabled")
+
+      // Select Date Type
+      cy.get("select[data-testid='dates.0.dateType']").select("Valid")
+
+      cy.get("button[type='submit']").click()
+      cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
     })
-  it("should fill in the required fields, Dates fields and save DOI form successfully", () => {
-    // Go to DOI form
-    cy.openDOIForm()
-
-    // Fill in required Creators field
-    cy.get("[data-testid='creators']").parent().children("button").click()
-    cy.get("[data-testid='creators.0.givenName']").type("Test given name")
-    cy.get("[data-testid='creators.0.familyName']").type("Test family name")
-    cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
-    cy.intercept("/organizations*").as("searchOrganization")
-    cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
-    cy.wait("@searchOrganization")
-    cy.get(".MuiAutocomplete-option")
-      .should("be.visible")
-      .then($el => $el.first().click())
-    cy.get("[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
-
-    // Fill in required Subjects field
-    cy.get("[data-testid='subjects']").parent().children("button").click()
-    cy.get("[data-testid='subjects.0.subject']").select("FOS: Mathematics")
-
-    // Fill in required Keywords
-    cy.get("input[data-testid='keywords']").type("keyword-1,")
-
-    // Select Dates
-    cy.get("[data-testid='dates']").parent().children("button").click()
-
-    cy.get("[data-testid='dates.0.date']").scrollIntoView()
-    cy.get("[data-testid='dates.0.date']").should("be.visible")
-    // Set a constant Date in advance so the calendar will open to certain date
-    cy.clock(new Date(2021, 9, 1), ["Date"])
-
-    cy.get("[data-testid='Start']")
-      .scrollIntoView({ offset: { left: 0, top: -100 } })
-      .should("be.visible")
-
-    cy.get("[data-testid='Start'] > div", { timeout: 10000 })
-      .should("be.visible")
-      .then(() => cy.get("[data-testid='Start'] > div > button").click({ force: true }))
-    cy.get("div").contains("4", { timeout: 10000 }).click()
-    cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-04/")
-
-    cy.get("[data-testid='End'] > div > button").click()
-    cy.get("div").contains("23", { timeout: 10000 }).click()
-    cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-04/2021-10-23")
-
-    cy.get("[data-testid='startDateCheck']").click()
-    cy.get("[data-testid='dates.0.date']").should("have.value", "/2021-10-23")
-    cy.get("[data-testid='Start'] > div > button").should("be.disabled")
-
-    cy.get("[data-testid='startDateCheck']").click()
-    cy.get("[data-testid='Start'] > div > button").click()
-    cy.get("div").contains("10", { timeout: 10000 }).click()
-    cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-10/2021-10-23")
-
-    cy.get("[data-testid='endDateCheck']").click()
-    cy.get("[data-testid='dates.0.date']").should("have.value", "2021-10-10/")
-    cy.get("[data-testid='End'] > div > button").should("be.disabled")
-
-    // Select Date Type
-    cy.get("select[data-testid='dates.0.dateType']").select("Valid")
-
-    cy.get("button[type='submit']").click()
-    cy.contains(".MuiAlert-message", "DOI form has been saved successfully")
-  })
 })
 
 export {}

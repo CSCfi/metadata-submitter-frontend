@@ -32,6 +32,23 @@ export const ObjectSubmissionTypes = {
   existing: "Existing",
 }
 
+export const ObjectSubmissionStepsList = [
+  {
+    stepNumber: 2,
+    objectTypes: [ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy],
+  },
+  {
+    stepNumber: 4,
+    objectTypes: [
+      ObjectTypes.sample,
+      ObjectTypes.experiment,
+      ObjectTypes.run,
+      ObjectTypes.analysis,
+      ObjectTypes.dataset,
+    ],
+  },
+]
+
 export const ObjectSubmissionsArray = [ObjectSubmissionTypes.form, ObjectSubmissionTypes.xml]
 
 export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate", "metaxIdentifier", "doi"]

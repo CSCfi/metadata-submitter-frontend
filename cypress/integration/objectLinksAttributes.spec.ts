@@ -1,3 +1,5 @@
+import { ObjectTypes } from "constants/wizardObject"
+
 describe("render objects' links and attributes ", function () {
   beforeEach(() => {
     cy.task("resetDb")
@@ -9,12 +11,6 @@ describe("render objects' links and attributes ", function () {
 
     // Add folder name & description, navigate to submissions
     cy.newSubmission()
-    // Focus on the Study title input in the Study form (not type anything)
-    cy.get("div[role=button]")
-      .contains("Study")
-      .should("be.visible")
-      .then($el => $el.click())
-    cy.get("div[role=button]").contains("Fill Form").click()
 
     // Fill a Study form and submit object
     cy.get("[data-testid='descriptor.studyTitle']").type("Test title")
@@ -60,10 +56,10 @@ describe("render objects' links and attributes ", function () {
 
     // Save as draft
     cy.formActions("Save as Draft")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.get("[data-testid='study-objects-list']").find("li").should("have.length", 1)
 
-    // Check saved object has correnct rendering data
-    cy.get("button[type=button]").contains("Continue").click()
+    // Check submitted object has correnct rendering data
+    cy.continueLatestDraft(ObjectTypes.study)
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Test title")
 
     // Check XRef Link
@@ -98,7 +94,7 @@ describe("render objects' links and attributes ", function () {
 
     // Test that removed link item is removed also from backend
     cy.formActions("Update")
-    cy.get("button[type=button]").contains("Continue").click()
+    cy.continueLatestDraft(ObjectTypes.study)
     cy.get("div[data-testid='studyLinks'] > div", { timeout: 30000 }).should("have.length", 2)
   })
 })

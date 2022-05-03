@@ -5,10 +5,7 @@ import Grid from "@mui/material/Grid"
 import { makeStyles } from "@mui/styles"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
-import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardObjectIndex from "../WizardComponents/WizardObjectIndex"
 import WizardSavedObjectsList from "../WizardComponents/WizardSavedObjectsList"
-import WizardStepper from "../WizardComponents/WizardStepper"
 
 import { useAppSelector } from "hooks"
 
@@ -20,6 +17,9 @@ const useStyles = makeStyles(() => ({
     },
     "& > :last-child": {
       paddingRight: 0,
+    },
+    "& .MuiGrid-item": {
+      paddingTop: 0,
     },
   },
   formBox: {
@@ -47,14 +47,8 @@ const WizardAddObjectStep: React.FC = () => {
 
   return (
     <>
-      <WizardHeader headerText="Create submission" />
-      <WizardStepper />
-
       <Grid container spacing={2} className={classes.gridContainer}>
-        <Grid item>
-          <WizardObjectIndex />
-        </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={12}>
           <div className={classes.formBox}>
             {objectType === "" ? (
               <div className={classes.objectInfo}>

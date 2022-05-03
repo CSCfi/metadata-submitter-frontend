@@ -1276,8 +1276,7 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
             name={name}
             control={control}
             defaultValue={defaultValue}
-            rules={{ required: true }}
-            render={({ field, formState }) => {
+            render={({ field }) => {
               const handleKeywordAsTag = (keyword: string) => {
                 // newTags with unique values
                 const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
@@ -1313,7 +1312,11 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
 
               return (
                 <div className={classes.divBaseline}>
-                  <input hidden={true} {...field} />
+                  <input
+                    {...field}
+                    required={required}
+                    style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
+                  />
                   <ValidationTagField
                     InputProps={{
                       startAdornment:
@@ -1340,13 +1343,11 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
                     onKeyDown={handleKeyDown}
                     onBlur={handleOnBlur}
                   />
+
                   {description && (
                     <FieldTooltip title={description} placement="top" arrow>
                       <HelpOutlineIcon className={classes.fieldTip} />
                     </FieldTooltip>
-                  )}
-                  {required && formState.isSubmitted && !formState.isValid && tags.length === 0 && (
-                    <FormHelperText error>must have at least 1 keyword</FormHelperText>
                   )}
                 </div>
               )

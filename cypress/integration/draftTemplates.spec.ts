@@ -3,56 +3,25 @@ describe("draft selections and templates", function () {
     cy.task("resetDb")
     cy.login()
 
-    cy.get("button", { timeout: 10000 }).contains("Create submission").click()
+    // Generate folder and objects, navigate to publish step
+    cy.generateFolderAndObjects()
+    // Edit newly created folder
+    cy.contains("Edit").click({ force: true })
 
-    // Add folder name & description, navigate to submissions
-    cy.newSubmission()
-
-    // Fill a Study form
-    cy.get("div[role=button]", { timeout: 10000 }).contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get("[data-testid='descriptor.studyTitle']").type("Study test title")
-    cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Study test title")
-    cy.get("[data-testid='descriptor.studyType']").select("Metagenomics")
-    cy.get("[data-testid='descriptor.studyAbstract']").type("Study test abstract")
-    // Submit Study form
-    cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
-
-    // Create another Study draft form
-    cy.formActions("New form")
-    cy.get("[data-testid='descriptor.studyTitle']").type("Study draft title")
-
-    // Save a draft
+    // Create a draft Policy object
+    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAddObject("policy")
+    cy.get("[data-testid=title]").type("Policy draft title")
     cy.formActions("Save as Draft")
-    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
-    cy.get("div[role=button]").contains("Study").click()
+    cy.clickAccordionPanel("publish")
 
-    // Create and Save another draft - Sample draft
-    cy.clickFillForm("Sample")
-
-    cy.get("[data-testid='title']").type("Sample draft title")
-    cy.get("[data-testid='sampleName.taxonId']").type("123")
-    cy.formActions("Save as Draft")
-    cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
-    cy.get("[data-testid='Draft-objects']").find("li").should("have.length", 1)
-
-    // Fill Dataset form
-    cy.clickFillForm("Dataset")
-    cy.get("[data-testid='title']").type("Test Dataset title")
-    cy.get("[data-testid='description']").type("Dataset description")
-    cy.get("[data-testid='datasetType']").first().check()
-    cy.formActions("Submit")
-    cy.get("[data-testid='Form-objects']").find("li").should("have.length", 1)
-    // Navigate to summary
-    cy.get("button[type=button]").contains("Next").click()
+    cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
 
     // Fill and save DOI form
     cy.saveDoiForm()
 
-    // Navigate to publish button at the bottom
-    cy.get("button[type=button]").contains("Publish").click()
+    cy.get("[data-testid='summary-publish']").click()
     cy.get("[data-testid='alert-dialog-content']").should(
       "have.text",
       "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
@@ -77,8 +46,8 @@ describe("draft selections and templates", function () {
         cy.get("button[aria-label='View draft']").last().click()
       })
 
-      cy.contains("Sample", { timeout: 10000 }).should("be.visible")
-      cy.get("[data-testid='title']").should("have.value", "Sample draft title")
+      cy.get("[role='heading']", { timeout: 10000 }).contains("Policy").should("be.visible")
+      cy.get("[data-testid='title']").should("have.value", "Policy draft title")
     })
 })
 

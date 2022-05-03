@@ -24,7 +24,7 @@ export type User = {
   projects: Array<{ projectId: string; projectNumber: string }>
 }
 
-export type Schema = "study" | "sample" | "experiment" | "run" | "analysis" | "dac" | "policy" | "dataset"
+export type Schema = "study" | "dac" | "policy" | "sample" | "experiment" | "run" | "analysis" | "dataset"
 
 export type ObjectDetails = {
   accessionId: string
@@ -54,6 +54,10 @@ export type ObjectInsideFolderWithTagsBySchema = { [schema: string]: ObjectInsid
 
 export type FolderId = {
   folderId: string
+}
+
+export type ObjectInsideFolderWithTagsBySchemaAndStatus = {
+  [schema: string]: { drafts: ObjectInsideFolderWithTags[]; ready: ObjectInsideFolderWithTags[] }
 }
 
 export type FolderDetails = {

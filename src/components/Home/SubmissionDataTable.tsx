@@ -162,7 +162,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     dispatch(setFolder(response.data))
     navigate({
       pathname: pathWithLocale(`submission/${id}`),
-      search: `step=0`,
+      search: `step=1`,
     })
   }
 

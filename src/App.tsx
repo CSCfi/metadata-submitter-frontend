@@ -27,7 +27,6 @@ import SubmissionWizard from "views/Submission"
 const useStyles = makeStyles(() => ({
   wizardContent: {
     padding: 0,
-    margin: 1,
     width: "100%",
     display: "flex",
     flexDirection: "column",

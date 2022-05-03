@@ -12,7 +12,7 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectStatus, ObjectSubmissionStepsList } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
@@ -125,7 +125,10 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
       dispatch(setSubmissionType(ObjectSubmissionTypes.form))
       dispatch(setObjectType(objectType))
       props.onHandleDialog(false)
-      navigate({ pathname: pathWithLocale("submission"), search: "step=1" })
+      const objectStepNumber = ObjectSubmissionStepsList.find(step =>
+        step.objectTypes.find(item => item === objectType)
+      )?.stepNumber
+      navigate({ pathname: pathWithLocale("submission"), search: `step=${objectStepNumber}` })
     } else {
       dispatch(
         updateStatus({

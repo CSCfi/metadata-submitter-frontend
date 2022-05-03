@@ -1,60 +1,53 @@
 import React, { RefObject } from "react"
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import Accordion from "@mui/material/Accordion"
-import AccordionDetails from "@mui/material/AccordionDetails"
-import AccordionSummary from "@mui/material/AccordionSummary"
+import Button from "@mui/material/Button"
+import FormControl from "@mui/material/FormControl"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import Grid from "@mui/material/Grid"
+import Radio from "@mui/material/Radio"
+import RadioGroup from "@mui/material/RadioGroup"
 import MuiTextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import { useForm, Controller } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
-import WizardHeader from "../WizardComponents/WizardHeader"
-import WizardStepper from "../WizardComponents/WizardStepper"
-
-import UserDraftTemplates from "components/Home/UserDraftTemplates"
 import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
+import { setObjectType } from "features/wizardObjectTypeSlice"
+import { updateStep } from "features/wizardStepObjectSlice"
 import { createSubmissionFolder, updateSubmissionFolder } from "features/wizardSubmissionFolderSlice"
+import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { FolderDataFromForm, CreateFolderFormRef } from "types"
 import { pathWithLocale } from "utils"
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     "& .MuiTextField-root": {
-      margin: 1,
+      margin: "1rem 0",
     },
-    padding: 2,
+    padding: "2rem",
   },
-  accordion: {
-    "&.MuiAccordion-root": {
-      "&:before": {
-        display: "none",
-        border: "none",
-      },
-      marginTop: "1rem",
-    },
-    "&.MuiPaper-elevation1": {
-      boxShadow: "none",
-    },
-    width: "100%",
+  submitButton: {
+    marginTop: "2rem",
+    padding: "1rem 5rem",
   },
-  accordionSummary: {
-    width: "20%",
-    margin: "0 auto",
-    borderRadius: "0.375rem",
-    border: "1px solid #bdbdbd",
-    marginBottom: "1rem",
+  typeOfSubmissionRow: {
+    marginTop: theme.spacing(-1),
   },
-  accordionDetails: {
-    width: "70%",
-    margin: "0 auto",
-    borderRadius: "0.375rem",
-    boxShadow: "0 0.1875rem 0.375rem rgba(0, 0, 0, 0.16)",
+  typeOfSubmissionLabel: {
+    background: theme.palette.background.wizard,
+    borderRadius: theme.spacing(0.4),
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 3, 0, 1.5),
+    fontWeight: 600,
+    color: theme.palette.secondary.main,
   },
 }))
 
@@ -87,8 +80,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     if (folder && folder?.folderId) {
       dispatch(updateSubmissionFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
         .then(() => {
-          navigate({ pathname: pathWithLocale(`submission/${folder.folderId}`), search: "step=1" })
           dispatch(resetTemplateAccessionIds())
+          dispatch(updateStatus({ status: ResponseStatus.success, helperText: "Folder updated" }))
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
@@ -99,7 +92,10 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
       dispatch(createSubmissionFolder(projectId, data, selectedDraftsArray))
         .then(response => {
           const folderId = response.data.folderId
-          navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=1" })
+          navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=2" })
+          dispatch(setObjectType(ObjectTypes.study))
+          dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+          dispatch(updateStep({ step: 2, objectType: ObjectTypes.study }))
           dispatch(resetTemplateAccessionIds())
         })
         .catch((error: string) => {
@@ -115,6 +111,9 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         onSubmit={handleSubmit(async data => onSubmit(data as FolderDataFromForm))}
         ref={createFolderFormRef as RefObject<HTMLFormElement>}
       >
+        <Typography variant="h4" gutterBottom component="div" color="secondary">
+          Name your submission
+        </Typography>
         <Controller
           control={control}
           name="name"
@@ -153,23 +152,33 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
           )}
           rules={{ required: true, validate: { description: value => value.length > 0 } }}
         />
-      </form>
-      <Accordion className={classes.accordion} TransitionProps={{ unmountOnExit: true }}>
-        <AccordionSummary
-          className={classes.accordionSummary}
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="user-drafts-content"
-          id="user-drafts-header"
-          data-testid="toggle-user-drafts"
+
+        <Grid container spacing={2} className={classes.typeOfSubmissionRow}>
+          <Grid item>
+            <div className={classes.typeOfSubmissionLabel} id="submission-type-selection-label">
+              Type of submission
+            </div>
+          </Grid>
+          <Grid item xs={6}>
+            <FormControl>
+              <RadioGroup name="submission-type-selection" aria-labelledby="submission-type-selection-label">
+                <FormControlLabel value="FEGA" control={<Radio checked={true} />} label="FEGA" />
+                <FormControlLabel value="BigPicture" control={<Radio disabled />} label="BigPicture (placeholder)" />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Button
+          size="large"
+          variant="contained"
+          type="submit"
+          className={classes.submitButton}
+          aria-label="Save submission details"
         >
-          <Typography align="center" variant="subtitle1">
-            Saved Draft Templates
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails className={classes.accordionDetails}>
-          <UserDraftTemplates />
-        </AccordionDetails>
-      </Accordion>
+          Save
+        </Button>
+      </form>
     </React.Fragment>
   )
 }
@@ -180,8 +189,6 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
 const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
   <>
-    <WizardHeader headerText="Create submission" />
-    <WizardStepper createFolderFormRef={createFolderFormRef} />
     <CreateFolderForm createFolderFormRef={createFolderFormRef} />
   </>
 )

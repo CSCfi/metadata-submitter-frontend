@@ -13,6 +13,7 @@ import thunk from "redux-thunk"
 import CSCtheme from "../theme"
 
 import App from "App"
+import { ObjectTypes } from "constants/wizardObject"
 import SubmissionWizard from "views/Submission"
 
 const middlewares = [thunk]
@@ -25,8 +26,20 @@ describe("SubmissionWizard", () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
+  const initialStore = {
+    submissionType: "",
+    objectTypesArray: Object.keys(ObjectTypes),
+    submissionFolder: {
+      drafts: [],
+      metadataObjects: [],
+    },
+  }
+
   test("should navigate to 404 page on undefined step", () => {
-    const store = mockStore({})
+    const store = mockStore({
+      ...initialStore,
+      stepObject: { step: 1, stepObjectType: "submissionDetails" },
+    })
     render(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=undefined" }]}>
         <Provider store={store}>
@@ -71,11 +84,9 @@ describe("SubmissionWizard", () => {
       })
     )
     const store = mockStore({
-      objectType: "",
-      submissionType: "",
-      submissionFolder: { metaDataObjects: [] },
-      objectTypesArray: ["study"],
+      ...initialStore,
       user: { name: "test" },
+      stepObject: { step: 2, stepObjectType: "study" },
     })
     render(
       <MemoryRouter initialEntries={[{ pathname: "/en/submission/123456", search: "?step=1" }]}>

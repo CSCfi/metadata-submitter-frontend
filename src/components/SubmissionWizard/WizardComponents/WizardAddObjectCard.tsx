@@ -47,9 +47,13 @@ const WizardAddObjectCard: React.FC = () => {
   }
 
   return (
-    <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
-      {cards[submissionType]["component"]}
-    </Card>
+    <>
+      {submissionType && (
+        <Card className={classes.card} data-testid={cards[submissionType]["testId"]}>
+          {cards[submissionType]["component"]}
+        </Card>
+      )}
+    </>
   )
 }
 

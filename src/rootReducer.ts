@@ -16,6 +16,7 @@ import statusMessageReducer from "features/statusMessageSlice"
 import templateAccessionIdsReducer from "features/templateAccessionIdsSlice"
 import templatesReducer from "features/templateSlice"
 import userReducer from "features/userSlice"
+import accordionReducer from "features/wizardAccordionObjects"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   fileTypes: fileTypesReducer,
   openedDoiForm: openedDoiFormReducer,
   projectId: projectReducer,
+  accordion: accordionReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

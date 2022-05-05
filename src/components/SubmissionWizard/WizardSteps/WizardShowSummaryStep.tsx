@@ -15,6 +15,7 @@ import { makeStyles } from "@mui/styles"
 import { useNavigate } from "react-router-dom"
 
 import WizardAlert from "../WizardComponents/WizardAlert"
+import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
 import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
@@ -69,6 +70,7 @@ const useStyles = makeStyles(theme => ({
  */
 const WizardShowSummaryStep: React.FC = () => {
   const folder = useAppSelector(state => state.submissionFolder)
+  const accordion = useAppSelector(state => state.accordion)
   const { metadataObjects } = folder
   const objectsArray = useAppSelector(state => state.objectTypesArray)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
@@ -154,8 +156,43 @@ const WizardShowSummaryStep: React.FC = () => {
     setDialogOpen(false)
   }
 
+  // console.log(folder)
+  // console.log("accordion: ", accordion.slice(0, accordion.length - 1))
+
   return (
     <>
+      <Typography variant="h4">Summary</Typography>
+
+      {accordion.slice(0, accordion.length - 1).map((summaryItem, index) => {
+        return (
+          <div key={summaryItem.label}>
+            {index + 1}. {summaryItem.label}
+            {summaryItem.stepItems?.map(stepItem => {
+              const objects = stepItem.objects
+
+              if (objects) {
+                const objectsList = Object.values(objects).flat()
+                console.log(objectsList)
+                return (
+                  <ul key={stepItem.objectType}>
+                    {objectsList.map(item => {
+                      return (
+                        <li key={item.id}>
+                          <WizardObjectStatusBadge
+                            status={item.objectData?.schema.includes("draft-") ? "draft" : "ready"}
+                          />{" "}
+                          {item.displayTitle}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )
+              }
+            })}
+          </div>
+        )
+      })}
+
       <div className={classes.summary}>
         {groupedObjects.map((group: ObjectInsideFolderWithTagsBySchema) => {
           const schema = Object.keys(group)[0]

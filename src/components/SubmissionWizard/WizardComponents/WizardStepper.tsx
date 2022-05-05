@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom"
 import WizardStep from "./WizardStep"
 
 import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
+import { updateAccordionItems } from "features/wizardAccordionObjects"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
@@ -209,11 +210,11 @@ const WizardStepper = () => {
       label: "Identifier and publish",
       stepItems: [
         {
-          objectType: "publish",
-          label: "Publish",
+          objectType: "summary",
+          label: "Summary",
         },
       ],
-      actionButtonText: "Publish",
+      actionButtonText: "View summary",
       disabled: !allStepItemsReady([
         ObjectTypes.sample,
         ObjectTypes.run,
@@ -246,6 +247,11 @@ const WizardStepper = () => {
     const change = [...expandedPanels.filter(i => i === currentStepObject.step), currentStepObject.step]
     setExpandedPanels(change)
   }, [currentStepObject.step])
+
+  // Update accordion to state
+  useEffect(() => {
+    dispatch(updateAccordionItems(accordionSteps))
+  }, [accordionSteps])
 
   return (
     <AccordionWrapper data-testid="wizard-stepper">

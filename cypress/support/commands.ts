@@ -66,6 +66,7 @@ Cypress.on("uncaught:exception", () => {
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
   cy.intercept("/folders*").as("getFolders")
+  cy.get('a[data-testid="login-button"]').should("be.visible")
   cy.get('a[data-testid="login-button"]').click()
   cy.wait("@getFolders")
 })

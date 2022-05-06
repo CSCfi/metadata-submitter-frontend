@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
-import { Typography } from "@mui/material"
 import Button from "@mui/material/Button"
 import Collapse from "@mui/material/Collapse"
 import Grid from "@mui/material/Grid"
@@ -12,45 +11,21 @@ import { styled } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
 import { TransitionGroup } from "react-transition-group"
 
-import WizardAlert from "./WizardAlert"
+import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
-import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import WizardAlert from "./WizardAlert"
+import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
+
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { updateStatus } from "features/statusMessageSlice"
-import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import draftAPIService from "services/draftAPI"
-import objectAPIService from "services/objectAPI"
 import { ObjectInsideFolderWithTags } from "types"
 import { pathWithLocale } from "utils"
-
-const StatusBadge = (props: { draft: boolean }) => {
-  const { draft } = props
-  const statusLabel = draft ? "Draft" : "Ready"
-
-  return (
-    <Typography
-      align="center"
-      sx={theme => ({
-        fontWeight: "bold",
-        fontSize: "1.4rem",
-        border: `1px solid`,
-        borderRadius: theme.spacing(0.4),
-        padding: theme.spacing(0.1, 0),
-        width: theme.spacing(7.3),
-        backgroundColor: draft ? theme.palette.secondary.lightest : theme.palette.success.lightest,
-        color: draft ? theme.palette.secondary.main : theme.palette.success.main,
-      })}
-    >
-      {statusLabel}
-    </Typography>
-  )
-}
 
 const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
   const { step, parent, buttonText, disabled } = props
@@ -141,7 +116,6 @@ const StepItems = (props: {
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
   const navigate = useNavigate()
-  const pathname = pathWithLocale(`submission/${folderId}`)
   const [alert, setAlert] = useState(false)
   const [clickedItem, setClickedItem] = useState({ objectData: { accessionId: "", schema: "", tags: {} } })
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
@@ -158,36 +132,6 @@ const StepItems = (props: {
   const handleItemEdit = formObject => {
     dispatch(updateStep({ step: step, objectType: objectType }))
 
-    const editFormObject = async (item: ObjectInsideFolderWithTags) => {
-      const service = draft ? draftAPIService : objectAPIService
-
-      const response = await service.getObjectByAccessionId(objectType, item.accessionId)
-
-      if (response.ok) {
-        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
-        dispatch(setObjectType(objectType))
-        dispatch(resetCurrentObject())
-        dispatch(
-          setCurrentObject({
-            ...response.data,
-            status: draft ? ObjectStatus.draft : ObjectStatus.submitted,
-            ...(!draft && { tags: item.tags }),
-            ...(!draft && { index: objects.findIndex(object => object.id === item.accessionId) }),
-          })
-        )
-        dispatch(setFocus())
-        navigate({ pathname: pathname, search: "step=2" })
-      } else {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: response,
-            helperText: `Error while fetching${draft && "draft"} object`,
-          })
-        )
-      }
-    }
-
     switch (step) {
       case 1: {
         dispatch(resetObjectType())
@@ -195,7 +139,17 @@ const StepItems = (props: {
         break
       }
       default: {
-        editFormObject(formObject.objectData)
+        const item = formObject.objectData
+        editObjectHook(
+          draft,
+          objectType,
+          item,
+          step,
+          folderId,
+          dispatch,
+          navigate,
+          objects.findIndex(object => object.id === item.accessionId)
+        )
       }
     }
   }
@@ -237,7 +191,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid item>
-                    <StatusBadge draft={draft} />
+                    <WizardObjectStatusBadge draft={draft} />
                   </Grid>
                 </Grid>
               </ObjectItem>

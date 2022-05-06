@@ -30,7 +30,10 @@ const palette = {
     lightest: "#e5f2da",
   },
   error: {
+    // red & orange
     main: "#b90729",
+    light: "#c74600",
+    lightest: "#fff7e3",
   },
   info: {
     main: "#006778",

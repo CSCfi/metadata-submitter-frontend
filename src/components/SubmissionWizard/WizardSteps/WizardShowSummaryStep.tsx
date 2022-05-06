@@ -1,11 +1,14 @@
 import React, { useState } from "react"
 
 import Button from "@mui/material/Button"
+import Container from "@mui/material/Container"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
+import Grid from "@mui/material/Grid"
+import Link from "@mui/material/Link"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
@@ -18,6 +21,7 @@ import WizardAlert from "../WizardComponents/WizardAlert"
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
+import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -27,6 +31,7 @@ import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { updateStep } from "features/wizardStepObjectSlice"
 import { publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { ObjectInsideFolderWithTags, ObjectInsideFolderWithTagsBySchema, Schema } from "types"
@@ -159,37 +164,98 @@ const WizardShowSummaryStep: React.FC = () => {
   // console.log(folder)
   // console.log("accordion: ", accordion.slice(0, accordion.length - 1))
 
+  const handleEdit = (draft, objectType, item, step, objects) => {
+    dispatch(updateStep({ step: step, objectType: objectType }))
+    const folderId = folder.folderId
+
+    switch (step) {
+      case 1: {
+        dispatch(resetObjectType())
+        navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=1" })
+        break
+      }
+      default: {
+        editObjectHook(
+          draft,
+          objectType,
+          item,
+          step,
+          folderId,
+          dispatch,
+          navigate,
+          objects.findIndex(object => object.id === item.accessionId)
+        )
+      }
+    }
+  }
+
   return (
-    <>
+    <Container sx={theme => ({ paddingTop: theme.spacing(1) })}>
       <Typography variant="h4">Summary</Typography>
 
       {accordion.slice(0, accordion.length - 1).map((summaryItem, index) => {
         return (
-          <div key={summaryItem.label}>
-            {index + 1}. {summaryItem.label}
+          <Container
+            key={summaryItem.label}
+            disableGutters
+            sx={theme => {
+              const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
+              return {
+                "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
+                "& ul:last-child .MuiGrid-container:last-child": { borderBottom: itemBorder },
+              }
+            }}
+          >
+            <Typography variant="h5" sx={theme => ({ padding: theme.spacing(3, 0) })}>
+              {index + 1}. {summaryItem.label}
+            </Typography>
+
             {summaryItem.stepItems?.map(stepItem => {
               const objects = stepItem.objects
 
               if (objects) {
                 const objectsList = Object.values(objects).flat()
-                console.log(objectsList)
+
                 return (
                   <ul key={stepItem.objectType}>
                     {objectsList.map(item => {
+                      const draft = item.objectData?.schema.includes("draft-")
                       return (
-                        <li key={item.id}>
-                          <WizardObjectStatusBadge
-                            status={item.objectData?.schema.includes("draft-") ? "draft" : "ready"}
-                          />{" "}
-                          {item.displayTitle}
-                        </li>
+                        <Grid
+                          key={item.id}
+                          container
+                          spacing={2}
+                          sx={theme => ({
+                            margin: 0,
+                            "& .MuiGrid-item": { padding: theme.spacing(1, 2), alignSelf: "center" },
+                          })}
+                        >
+                          <Grid item xs={3} md>
+                            <WizardObjectStatusBadge draft={draft || false} />
+                          </Grid>
+                          <Grid item xs={7} md={7}>
+                            {item.displayTitle}
+                          </Grid>
+                          <Grid item xs={2} md sx={{ textAlign: "right" }}>
+                            <Link
+                              href="#"
+                              onClick={() =>
+                                handleEdit(draft, stepItem.objectType, item.objectData, index + 1, objectsList)
+                              }
+                            >
+                              Edit
+                            </Link>
+                          </Grid>
+                        </Grid>
                       )
                     })}
                   </ul>
                 )
+              } else {
+                return <div>No added items.</div>
               }
             })}
-          </div>
+          </Container>
         )
       })}
 
@@ -242,7 +308,7 @@ const WizardShowSummaryStep: React.FC = () => {
       {dialogOpen && (
         <WizardAlert onAlert={handlePublishDialog} parentLocation="footer" alertType={"publish"}></WizardAlert>
       )}
-    </>
+    </Container>
   )
 }
 

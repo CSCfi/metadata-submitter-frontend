@@ -49,7 +49,7 @@ jobs:
           retention-days: 5
       - uses: actions/upload-artifact@v2
         if: failure()
-        with:
+        with:         
           name: cypress-videos
           path: cypress/videos
           retention-days: 5

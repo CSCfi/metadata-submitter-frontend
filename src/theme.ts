@@ -21,8 +21,7 @@ const palette = {
     lightest: "#dfe1e3",
   },
   background: {
-    default: "#e5eff1",
-    wizard: "#d8e8ea",
+    default: "#d8e8ea",
     paper: "#fff",
   },
   success: {

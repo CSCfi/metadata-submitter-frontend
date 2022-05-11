@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   gridContainer: {
     marginTop: theme.spacing(7.7),
     minHeight: "calc(100vh - 137px)",
-    backgroundColor: theme.palette.background.wizard,
+    backgroundColor: theme.palette.background.default,
   },
   stepper: {
     paddingTop: "0 !important",

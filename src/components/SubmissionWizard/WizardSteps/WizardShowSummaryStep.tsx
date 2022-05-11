@@ -184,7 +184,7 @@ const WizardShowSummaryStep: React.FC = () => {
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         return (
-          <StepContainer key={summaryItem.label} disableGutters>
+          <StepContainer key={summaryItem.label} disableGutters data-testid={`summary-step-${step}`}>
             <Typography variant="h5" color="secondary" sx={theme => ({ p: theme.spacing(3, 0) })}>
               {step}. {summaryItem.label}
             </Typography>

@@ -43,7 +43,7 @@ describe("Generate objects", function () {
     cy.contains("Edit").click({ force: true })
 
     // Open 2nd step and test that last generated object type is DAC
-    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAccordionPanel("Study, DAC and Policy")
     cy.get("[data-testid='study-objects-list']").find("li").should("have.length", 1)
     cy.get("[data-testid='dac-objects-list']").find("li").should("have.length", 1)
     cy.get("[data-testid='policy-objects-list']").find("li").should("have.length", 0)

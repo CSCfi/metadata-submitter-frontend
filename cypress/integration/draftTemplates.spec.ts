@@ -9,7 +9,7 @@ describe("draft selections and templates", function () {
     cy.contains("Edit").click({ force: true })
 
     // Create a draft Policy object
-    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAccordionPanel("Study, DAC and Policy")
     cy.clickAddObject("policy")
     cy.get("[data-testid=title]").type("Policy draft title")
     cy.formActions("Save as Draft")

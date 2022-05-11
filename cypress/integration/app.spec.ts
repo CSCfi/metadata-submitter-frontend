@@ -24,7 +24,7 @@ describe("Basic application flow", function () {
     cy.newSubmission()
 
     /*
-     * 2nd step, Study, DAC and policy
+     * 2nd step, Study, DAC and Policy
      */
 
     // Try to send invalid form

@@ -12,7 +12,7 @@ describe("Draft operations", function () {
   })
 
   it("should create new folder, save, delete and continue draft", () => {
-    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAccordionPanel("Study, DAC and Policy")
     // Fill a Policy form
     cy.clickAddObject("policy")
 

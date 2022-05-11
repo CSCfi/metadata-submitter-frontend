@@ -56,7 +56,7 @@ const mapObjectsToStepsHook = (folder: SubmissionFolder, objectTypesArray: Schem
       actionButtonText: "Edit",
     },
     {
-      label: "Study, DAC and policy",
+      label: "Study, DAC and Policy",
       stepItems: [
         {
           objectType: ObjectTypes.study,

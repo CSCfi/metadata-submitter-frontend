@@ -192,7 +192,7 @@ const WizardShowSummaryStep: React.FC = () => {
                     {objectsList.map(item => {
                       const draft = item.objectData?.schema.includes("draft-")
                       return (
-                        <SummaryItem key={item.id} container spacing={2}>
+                        <SummaryItem key={item.id} container spacing={2} data-testid="summary-item">
                           <Grid item xs={3} md sx={{ flexGrow: "0 !important", paddingRight: 0 }}>
                             <WizardObjectStatusBadge draft={draft || false} />
                           </Grid>

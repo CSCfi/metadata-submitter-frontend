@@ -82,10 +82,6 @@ declare module "@mui/material/styles/createPalette" {
     lighter: string
     lightest: string
   }
-
-  interface TypeBackground {
-    wizard: string
-  }
 }
 
 declare module "@mui/private-theming" {

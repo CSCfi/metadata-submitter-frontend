@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(-1),
   },
   typeOfSubmissionLabel: {
-    background: theme.palette.background.wizard,
+    background: theme.palette.background.default,
     borderRadius: theme.spacing(0.4),
     height: "100%",
     display: "flex",

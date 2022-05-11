@@ -9,17 +9,12 @@ import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
-import ListItemText from "@mui/material/ListItemText"
+import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
 import { useNavigate } from "react-router-dom"
 
 import WizardAlert from "../WizardComponents/WizardAlert"
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
-import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
@@ -34,40 +29,33 @@ import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { ObjectInsideFolderWithTags, ObjectInsideFolderWithTagsBySchema, Schema } from "types"
-import { getItemPrimaryText, formatDisplayObjectType, pathWithLocale } from "utils"
+import type { ObjectInsideFolderWithTags } from "types"
+import { pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  summary: {
-    width: "100%",
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
-    },
-  },
-  schemaTitleRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    borderBottom: `3px solid ${theme.palette.primary.main}`,
-    paddingTop: 1,
-    "& .objectAmount": {
-      marginRight: 1,
-      fontWeight: "bold",
-    },
-  },
-  listGroup: {
-    padding: "0",
-  },
-  objectListItems: {
-    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
-    alignItems: "flex-start",
-    padding: 2,
-  },
-  buttonContainer: {
-    marginTop: theme.spacing(1),
-    display: "flex",
-    width: "100%",
-    justifyContent: "space-between",
-  },
+const StepContainer = styled(Container)(({ theme }) => {
+  const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
+  return {
+    "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
+    "& ul:last-child .MuiGrid-container:last-child": { borderBottom: itemBorder },
+  }
+})
+
+const SummaryItem = styled(Grid)(({ theme }) => ({
+  margin: 0,
+  padding: theme.spacing(1.5, 2),
+  "& .MuiGrid-item": { padding: theme.spacing(0, 1), alignSelf: "center" },
+}))
+
+const ButtonContainer = styled("div")(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  display: "flex",
+  width: "100%",
+  justifyContent: "space-between",
+}))
+
+const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
+  flexGrow: "2 !important",
+  color: theme.palette.secondary.main,
 }))
 
 /**
@@ -76,19 +64,9 @@ const useStyles = makeStyles(theme => ({
 const WizardShowSummaryStep: React.FC = () => {
   const folder = useAppSelector(state => state.submissionFolder)
   const accordion = useAppSelector(state => state.accordion)
-  const { metadataObjects } = folder
-  const objectsArray = useAppSelector(state => state.objectTypesArray)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const projectId = useAppSelector(state => state.projectId)
-  const groupedObjects: ObjectInsideFolderWithTagsBySchema[] = objectsArray.map((schema: Schema) => {
-    return {
-      [schema]: metadataObjects.filter(
-        (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
-      ),
-    }
-  })
 
-  const classes = useStyles()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -190,24 +168,17 @@ const WizardShowSummaryStep: React.FC = () => {
   }
 
   return (
-    <Container sx={theme => ({ paddingTop: theme.spacing(1) })}>
-      <Typography variant="h4">Summary</Typography>
+    <Container sx={theme => ({ pt: theme.spacing(1) })}>
+      <Typography variant="h4" color="secondary">
+        Summary
+      </Typography>
 
       {accordion.slice(0, accordion.length - 1).map((summaryItem, index) => {
+        const step = index + 1
         return (
-          <Container
-            key={summaryItem.label}
-            disableGutters
-            sx={theme => {
-              const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
-              return {
-                "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
-                "& ul:last-child .MuiGrid-container:last-child": { borderBottom: itemBorder },
-              }
-            }}
-          >
-            <Typography variant="h5" sx={theme => ({ padding: theme.spacing(3, 0) })}>
-              {index + 1}. {summaryItem.label}
+          <StepContainer key={summaryItem.label} disableGutters>
+            <Typography variant="h5" color="secondary" sx={theme => ({ p: theme.spacing(3, 0) })}>
+              {step}. {summaryItem.label}
             </Typography>
 
             {summaryItem.stepItems?.map(stepItem => {
@@ -221,79 +192,40 @@ const WizardShowSummaryStep: React.FC = () => {
                     {objectsList.map(item => {
                       const draft = item.objectData?.schema.includes("draft-")
                       return (
-                        <Grid
-                          key={item.id}
-                          container
-                          spacing={2}
-                          sx={theme => ({
-                            margin: 0,
-                            "& .MuiGrid-item": { padding: theme.spacing(1, 2), alignSelf: "center" },
-                          })}
-                        >
-                          <Grid item xs={3} md>
+                        <SummaryItem key={item.id} container spacing={2}>
+                          <Grid item xs={3} md sx={{ flexGrow: "0 !important", paddingRight: 0 }}>
                             <WizardObjectStatusBadge draft={draft || false} />
                           </Grid>
-                          <Grid item xs={7} md={7}>
+                          <Grid item md>
                             {item.displayTitle}
                           </Grid>
+                          {draft && (
+                            <DraftHelperGridItem item md>
+                              Please mark your {stepItem.objectType} as ready.
+                            </DraftHelperGridItem>
+                          )}
                           <Grid item xs={2} md sx={{ textAlign: "right" }}>
                             <Link
                               href="#"
-                              onClick={() =>
-                                handleEdit(draft, stepItem.objectType, item.objectData, index + 1, objectsList)
-                              }
+                              onClick={() => handleEdit(draft, stepItem.objectType, item.objectData, step, objectsList)}
                             >
                               Edit
                             </Link>
                           </Grid>
-                        </Grid>
+                        </SummaryItem>
                       )
                     })}
                   </ul>
                 )
               } else {
-                return <div>No added items.</div>
+                return <span>No added items. {step === 3 && "Datafolder feature not implemented."}</span>
               }
             })}
-          </Container>
+          </StepContainer>
         )
       })}
 
-      <div className={classes.summary}>
-        {groupedObjects.map((group: ObjectInsideFolderWithTagsBySchema) => {
-          const schema = Object.keys(group)[0]
-          return (
-            <List key={schema} aria-label={schema} className={classes.listGroup}>
-              <div className={classes.schemaTitleRow}>
-                <Typography variant="subtitle1">{formatDisplayObjectType(schema)}</Typography>
-                <div className="objectAmount">{group[schema].length}</div>
-              </div>
-              <div>
-                {group[schema].map((item: ObjectInsideFolderWithTags) => (
-                  <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
-                    <ListItemText
-                      primary={getItemPrimaryText(item)}
-                      secondary={item.accessionId}
-                      data-schema={item.schema}
-                    />
-                    <ListItemSecondaryAction>
-                      <WizardSavedObjectActions
-                        submissions={metadataObjects}
-                        objectType={schema}
-                        objectId={item.accessionId}
-                        submissionType={item.tags?.submissionType ? item.tags.submissionType : ""}
-                        tags={item.tags}
-                        summary={true}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </div>
-            </List>
-          )
-        })}
-      </div>
-      <div className={classes.buttonContainer}>
+      <ButtonContainer>
         <Button variant="contained" color="secondary" onClick={handleOpenDoiDialog}>
           Add DOI information (optional)
         </Button>
@@ -301,7 +233,7 @@ const WizardShowSummaryStep: React.FC = () => {
         <Button variant="contained" onClick={() => setDialogOpen(true)} data-testid="summary-publish">
           Publish
         </Button>
-      </div>
+      </ButtonContainer>
 
       {openedDoiForm && <DOIDialog />}
 

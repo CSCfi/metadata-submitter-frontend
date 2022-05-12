@@ -21,6 +21,7 @@ import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHo
 import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
 
 import { ResponseStatus } from "constants/responseStatus"
+import { DisplayObjectTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { resetFileTypes } from "features/fileTypesSlice"
 import { setOpenedDoiForm } from "features/openedDoiFormSlice"
@@ -37,7 +38,8 @@ const StepContainer = styled(Container)(({ theme }) => {
   const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
   return {
     "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
-    "& ul:last-child .MuiGrid-container:last-child": { borderBottom: itemBorder },
+    "& .MuiGrid-container:last-child": { borderBottom: itemBorder },
+    "& ul:first-of-type p:first-of-type": { paddingTop: "0 !important" },
   }
 })
 
@@ -47,16 +49,20 @@ const SummaryItem = styled(Grid)(({ theme }) => ({
   "& .MuiGrid-item": { padding: theme.spacing(0, 1), alignSelf: "center" },
 }))
 
-const ButtonContainer = styled("div")(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  display: "flex",
-  width: "100%",
-  justifyContent: "space-between",
+const ObjectTypeHeading = styled(Typography)(({ theme }) => ({
+  padding: `${theme.spacing(1, 0)}  !important`,
 }))
 
 const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
   flexGrow: "2 !important",
   color: theme.palette.secondary.main,
+}))
+
+const ButtonContainer = styled("div")(({ theme }) => ({
+  marginTop: theme.spacing(3),
+  display: "flex",
+  width: "100%",
+  justifyContent: "space-between",
 }))
 
 /**
@@ -143,7 +149,6 @@ const WizardShowSummaryStep: React.FC = () => {
   useEffect(() => {
     WizardMapObjectsToStepHook(folder, objectTypesArray)
   })
-  // console.log("accordion: ", accordion.slice(0, accordion.length - 1))
 
   const handleEdit = (draft, objectType, item, step, objects) => {
     dispatch(updateStep({ step: step, objectType: objectType }))
@@ -197,6 +202,9 @@ const WizardShowSummaryStep: React.FC = () => {
 
                 return (
                   <ul key={stepItem.objectType}>
+                    {DisplayObjectTypes[stepItem.objectType] && (
+                      <ObjectTypeHeading color="secondary">{DisplayObjectTypes[stepItem.objectType]}</ObjectTypeHeading>
+                    )}
                     {objectsList.map(item => {
                       const draft = item.objectData?.schema.includes("draft-")
                       return (

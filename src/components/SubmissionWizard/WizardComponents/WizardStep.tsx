@@ -286,20 +286,20 @@ const WizardStep = (params: {
 
                 {objects && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
-                    {objects.ready && (
-                      <StepItems
-                        step={step}
-                        objects={objects.ready}
-                        draft={false}
-                        folderId={folder.folderId}
-                        objectType={objectType}
-                      />
-                    )}
                     {objects.drafts && (
                       <StepItems
                         step={step}
                         objects={objects.drafts}
                         draft={true}
+                        folderId={folder.folderId}
+                        objectType={objectType}
+                      />
+                    )}
+                    {objects.ready && (
+                      <StepItems
+                        step={step}
+                        objects={objects.ready}
+                        draft={false}
                         folderId={folder.folderId}
                         objectType={objectType}
                       />

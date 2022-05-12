@@ -3,6 +3,7 @@ import { Schema, StepObject, SubmissionFolder } from "types"
 
 const mapObjectsToStepsHook = (folder: SubmissionFolder, objectTypesArray: Schema[]): StepObject[] => {
   // Group objects by schema and status of the object
+  // Sort newest first by reversing array order
   const groupedObjects = objectTypesArray
     .map((schema: Schema) => {
       const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
@@ -10,10 +11,12 @@ const mapObjectsToStepsHook = (folder: SubmissionFolder, objectTypesArray: Schem
         [schema]: {
           drafts: folder.drafts
             .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
-            .map(item => mapItem(item)),
+            .map(item => mapItem(item))
+            .reverse(),
           ready: folder.metadataObjects
             .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
-            .map(item => mapItem(item)),
+            .map(item => mapItem(item))
+            .reverse(),
         },
       }
     })

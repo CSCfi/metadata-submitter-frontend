@@ -217,7 +217,7 @@ const WizardShowSummaryStep: React.FC = () => {
                           </Grid>
                           {draft && (
                             <DraftHelperGridItem item md>
-                              Please mark your {stepItem.objectType} as ready.
+                              Please mark {stepItem.objectType} as ready.
                             </DraftHelperGridItem>
                           )}
                           <Grid item xs={2} md sx={{ textAlign: "right" }}>

@@ -25,6 +25,7 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
+import WizardUploadXMLModal from "./WizardUploadXMLModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
@@ -34,7 +35,8 @@ import { setFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
+import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -79,6 +81,7 @@ type CustomCardHeaderProps = {
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
   onClickCloseDialog: () => void
+  onOpenXMLModal: () => void
   refForm: string
 }
 
@@ -106,6 +109,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     onClickUpdateTemplate,
     onClickSubmit,
     onClickCloseDialog,
+    onOpenXMLModal,
   } = props
 
   const focusTarget = useRef<HTMLButtonElement>(null)
@@ -161,14 +165,14 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
         action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
       />
-      <Options onClearForm={onClickClearForm} />
+      <Options onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
     </>
   )
 }
 
 const options = ["Upload XML", "Clear form"]
 
-const Options = ({ onClearForm }: { onClearForm: () => void }) => {
+const Options = ({ onClearForm, onOpenXMLModal }: { onClearForm: () => void; onOpenXMLModal: () => void }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -178,6 +182,7 @@ const Options = ({ onClearForm }: { onClearForm: () => void }) => {
 
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
+    option === options[0] ? onOpenXMLModal() : null
     option === options[1] ? onClearForm() : null
   }
   return (
@@ -501,6 +506,10 @@ const FormContent = ({
     }
   }
 
+  const handleXMLModalOpen = () => {
+    dispatch(setXMLModalOpen(true))
+  }
+
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
@@ -512,6 +521,7 @@ const FormContent = ({
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
+        onOpenXMLModal={() => handleXMLModalOpen()}
       />
 
       <form
@@ -538,6 +548,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
+  const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
   // States that will update in useEffect()
   const [states, setStates] = useState({
@@ -682,6 +693,12 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
         closeDialog={closeDialog || (() => ({}))}
       />
       {submitting && <LinearProgress />}
+      <WizardUploadXMLModal
+        open={openedXMLModal}
+        handleClose={() => {
+          dispatch(resetXMLModalOpen())
+        }}
+      />
     </Container>
   )
 }

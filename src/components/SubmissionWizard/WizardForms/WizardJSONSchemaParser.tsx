@@ -1400,7 +1400,7 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
               }
 
               return (
-                <div className={classes.divBaseline}>
+                <BaselineDiv>
                   <input
                     {...field}
                     required={required}
@@ -1443,7 +1443,7 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
                       <TooltipIcon />
                     </FieldTooltip>
                   )}
-                </div>
+                </BaselineDiv>
               )
             }}
           />

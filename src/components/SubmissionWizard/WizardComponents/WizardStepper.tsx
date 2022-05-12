@@ -8,14 +8,13 @@ import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useLocation } from "react-router-dom"
 
+import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
+
 import WizardStep from "./WizardStep"
 
-import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
-import { updateAccordionItems } from "features/wizardAccordionObjects"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import { Schema } from "types"
 
 // Top & bottom borders for first and last disabled elements
 const AccordionWrapper = styled("div")(({ theme }) => ({
@@ -74,7 +73,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
  */
 
 const WizardStepper = () => {
-  const objectsArray = useAppSelector(state => state.objectTypesArray)
+  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const folder = useAppSelector(state => state.submissionFolder)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const dispatch = useAppDispatch()
@@ -87,143 +86,6 @@ const WizardStepper = () => {
       dispatch(updateStep({ step: Number(stepInUrl), objectType: "submissionDetails" }))
     }
   }, [])
-
-  // Group objects by schema and status of the object
-  const groupedObjects = objectsArray
-    .map((schema: Schema) => {
-      const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
-      return {
-        [schema]: {
-          drafts: folder.drafts
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
-            .map(item => mapItem(item)),
-          ready: folder.metadataObjects
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
-            .map(item => mapItem(item)),
-        },
-      }
-    })
-    .reduce((map, obj) => {
-      const key = Object.keys(obj)[0]
-      map[key] = obj[key]
-      return map
-    }, {})
-
-  // Test if object type has ready or draft objects
-  const allStepItemsReady = (objectTypes: string[]) => {
-    const foundObjects: string[] = []
-
-    objectTypes.forEach(type => {
-      if (groupedObjects[type]?.drafts.length || groupedObjects[type]?.ready.length) {
-        foundObjects.push(type)
-      }
-    })
-
-    return foundObjects.length === objectTypes.length
-  }
-
-  /*
-   * List of accordion steps and configurations.
-   * Steps are disabled by checking if previous step has been filled.
-   * First step is always enabled.
-   */
-  const accordionSteps = [
-    {
-      label: "Submission details",
-      stepItems: [
-        {
-          objectType: "submissionDetails",
-          label: "Name your submission",
-          objects: {
-            ready: folder.folderId ? [{ id: folder.folderId, displayTitle: folder.name }] : [],
-          },
-        },
-      ],
-      actionButtonText: "Edit",
-    },
-    {
-      label: "Study, DAC and policy",
-      stepItems: [
-        {
-          objectType: ObjectTypes.study,
-          label: DisplayObjectTypes[ObjectTypes.study],
-          objects: groupedObjects[ObjectTypes.study],
-        },
-        {
-          objectType: ObjectTypes.dac,
-          label: DisplayObjectTypes[ObjectTypes.dac],
-          objects: groupedObjects[ObjectTypes.dac],
-        },
-        {
-          objectType: ObjectTypes.policy,
-          label: DisplayObjectTypes[ObjectTypes.policy],
-          objects: groupedObjects[ObjectTypes.policy],
-        },
-      ],
-      actionButtonText: "Add",
-      disabled: folder.folderId === "",
-    },
-    {
-      label: "Datafolder",
-      stepItems: [
-        {
-          objectType: "datafolder",
-          label: "Datafolder",
-        },
-      ],
-      actionButtonText: "Link datafolder",
-      disabled: !allStepItemsReady([ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy]), // Placeholder rule until feature is ready
-    },
-    {
-      label: "Describe",
-      stepItems: [
-        {
-          objectType: ObjectTypes.sample,
-          label: DisplayObjectTypes[ObjectTypes.sample],
-          objects: groupedObjects[ObjectTypes.sample],
-        },
-        {
-          objectType: ObjectTypes.experiment,
-          label: DisplayObjectTypes[ObjectTypes.experiment],
-          objects: groupedObjects[ObjectTypes.experiment],
-        },
-        {
-          objectType: ObjectTypes.run,
-          label: DisplayObjectTypes[ObjectTypes.run],
-          objects: groupedObjects[ObjectTypes.run],
-        },
-        {
-          objectType: ObjectTypes.analysis,
-          label: DisplayObjectTypes[ObjectTypes.analysis],
-          objects: groupedObjects[ObjectTypes.analysis],
-        },
-        {
-          objectType: ObjectTypes.dataset,
-          label: DisplayObjectTypes[ObjectTypes.dataset],
-          objects: groupedObjects[ObjectTypes.dataset],
-        },
-      ],
-      actionButtonText: "Add",
-      disabled: !allStepItemsReady([ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy]),
-    },
-    {
-      label: "Identifier and publish",
-      stepItems: [
-        {
-          objectType: "summary",
-          label: "Summary",
-        },
-      ],
-      actionButtonText: "View summary",
-      disabled: !allStepItemsReady([
-        ObjectTypes.sample,
-        ObjectTypes.run,
-        ObjectTypes.experiment,
-        ObjectTypes.dataset,
-        ObjectTypes.analysis,
-      ]),
-    },
-  ]
 
   // Reset object type state on component destroy
   useEffect(
@@ -248,14 +110,9 @@ const WizardStepper = () => {
     setExpandedPanels(change)
   }, [currentStepObject.step])
 
-  // Update accordion to state
-  useEffect(() => {
-    dispatch(updateAccordionItems(accordionSteps))
-  }, [accordionSteps])
-
   return (
     <AccordionWrapper data-testid="wizard-stepper">
-      {accordionSteps.map((step, index) => {
+      {WizardMapObjectsToStepHook(folder, objectTypesArray).map((step, index) => {
         const stepNumber = index + 1
         return (
           <Accordion
@@ -270,9 +127,11 @@ const WizardStepper = () => {
                 {stepNumber}. {step.label}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails>
-              <WizardStep step={stepNumber} stepItems={step.stepItems} actionButtonText={step.actionButtonText} />
-            </AccordionDetails>
+            {step.stepItems && step.actionButtonText && (
+              <AccordionDetails>
+                <WizardStep step={stepNumber} stepItems={step.stepItems} actionButtonText={step.actionButtonText} />
+              </AccordionDetails>
+            )}
           </Accordion>
         )
       })}

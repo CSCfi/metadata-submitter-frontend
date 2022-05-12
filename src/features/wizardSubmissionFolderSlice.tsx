@@ -18,11 +18,10 @@ import type {
   DoiContributor,
   DoiSubject,
   DispatchReducer,
+  SubmissionFolder,
 } from "types"
 
-type InitialState = FolderDetailsWithId & { doiInfo: Record<string, unknown> & DoiFormDetails }
-
-const initialState: InitialState = {
+const initialState: SubmissionFolder = {
   folderId: "",
   name: "",
   description: "",
@@ -45,13 +44,13 @@ const wizardSubmissionFolderSlice = createSlice({
     addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
-    addDraftObject: (state: InitialState, action) => {
+    addDraftObject: (state: SubmissionFolder, action) => {
       state.drafts.push(action.payload)
     },
     addDoiInfo: (state, action) => {
       state.doiInfo = action.payload
     },
-    deleteObject: (state: InitialState, action) => {
+    deleteObject: (state: SubmissionFolder, action) => {
       if (state)
         state.metadataObjects = reject(state.metadataObjects, function (o: { accessionId: string }) {
           return o.accessionId === action.payload

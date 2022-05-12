@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
@@ -17,6 +17,7 @@ import WizardAlert from "../WizardComponents/WizardAlert"
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
+import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
 import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -63,9 +64,9 @@ const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
  */
 const WizardShowSummaryStep: React.FC = () => {
   const folder = useAppSelector(state => state.submissionFolder)
-  const accordion = useAppSelector(state => state.accordion)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const projectId = useAppSelector(state => state.projectId)
+  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -139,7 +140,9 @@ const WizardShowSummaryStep: React.FC = () => {
     setDialogOpen(false)
   }
 
-  // console.log(folder)
+  useEffect(() => {
+    WizardMapObjectsToStepHook(folder, objectTypesArray)
+  })
   // console.log("accordion: ", accordion.slice(0, accordion.length - 1))
 
   const handleEdit = (draft, objectType, item, step, objects) => {
@@ -167,13 +170,18 @@ const WizardShowSummaryStep: React.FC = () => {
     }
   }
 
+  // Display other steps than last (summary)
+
+  const mappedSteps = WizardMapObjectsToStepHook(folder, objectTypesArray)
+  const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
+
   return (
     <Container sx={theme => ({ pt: theme.spacing(1) })}>
       <Typography variant="h4" color="secondary">
         Summary
       </Typography>
 
-      {accordion.slice(0, accordion.length - 1).map((summaryItem, index) => {
+      {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         return (
           <StepContainer key={summaryItem.label} disableGutters>
@@ -218,7 +226,11 @@ const WizardShowSummaryStep: React.FC = () => {
                   </ul>
                 )
               } else {
-                return <span>No added items. {step === 3 && "Datafolder feature not implemented."}</span>
+                return (
+                  <span key={stepItem.objectType}>
+                    No added items. {step === 3 && "Datafolder feature not implemented."}
+                  </span>
+                )
               }
             })}
           </StepContainer>

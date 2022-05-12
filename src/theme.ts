@@ -17,14 +17,17 @@ const palette = {
   secondary: {
     // grey colors
     main: "#595959",
-    light: "#dfe1e3",
+    light: "#b1b2b2",
+    lightest: "#dfe1e3",
   },
   background: {
-    default: "#e5eff1",
+    default: "#d8e8ea",
     paper: "#fff",
   },
   success: {
-    main: "#51a808",
+    main: "#3A7A06",
+    light: "#51a808",
+    lightest: "#e5f2da",
   },
   error: {
     main: "#b90729",
@@ -156,6 +159,7 @@ let CSCtheme = createTheme({
 
   spacing: factor => `${factor}rem`,
   palette: palette,
+  secondary: palette.secondary,
   error: palette.error,
   info: palette.info,
   success: palette.success,

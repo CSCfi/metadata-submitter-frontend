@@ -50,6 +50,7 @@ declare module "@mui/material/styles" {
     info: {
       main: string
     }
+    secondary: { main: string; light: string; lightest: string }
     success: { main: string }
     warning: { main: string }
     wizard?: {
@@ -75,6 +76,11 @@ declare module "@mui/material/styles/createPalette" {
   interface PaletteOptions {
     third?: { main?: string }
     button?: { edit?: string; delete: string }
+  }
+
+  interface PaletteColor {
+    lighter: string
+    lightest: string
   }
 }
 

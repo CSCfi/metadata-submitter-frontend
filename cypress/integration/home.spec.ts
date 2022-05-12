@@ -1,3 +1,5 @@
+import { ObjectTypes } from "constants/wizardObject"
+
 describe("Home e2e", function () {
   beforeEach(() => {
     cy.task("resetDb")
@@ -17,7 +19,7 @@ describe("Home e2e", function () {
     cy.newSubmission("Test unpublished folder")
 
     // Fill a Study form
-    cy.clickFillForm("Study")
+    cy.clickAddObject(ObjectTypes.study)
     cy.get("input[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("select[data-testid='descriptor.studyType']").select("Resequencing")
     cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
@@ -25,20 +27,20 @@ describe("Home e2e", function () {
     cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
-    // Save another draft for later use
-    cy.formActions("New form")
-    cy.get("input[data-testid='descriptor.studyTitle']").type("Second test title")
+    // Fill a Policy form draft
+    cy.clickAddObject(ObjectTypes.policy)
+    cy.get("[data-testid='title']").type("Test Policy title")
     cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
-    // Fill a Sample form draft
-    cy.clickFillForm("Sample")
-    cy.get("input[data-testid='title']").type("Test sample")
+    // Save another draft for later use
+    cy.formActions("New form")
+    cy.get("input[data-testid='title']").type("Second test title")
     cy.formActions("Save as Draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Save folder and navigate to Home page
-    cy.get("button[type=button]").contains("Save and Exit").click()
+    cy.get("button[type=button]").contains("Save submission and exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
     cy.wait("@fetchFolders", { timeout: 10000 })
 
@@ -49,9 +51,8 @@ describe("Home e2e", function () {
     cy.contains("Edit").click({ force: true })
 
     cy.get("[data-testid='folderName']", { timeout: 10000 }).clear().type("Edited unpublished folder")
-    cy.get("button[type=button]").contains("Next").click()
-    cy.get("[data-testid='wizard-objects']", { timeout: 10000 }).should("be.visible")
-    cy.get("button[type=button]").contains("Save and Exit").click()
+    cy.get("button[type=submit]").contains("Save").click()
+    cy.get("button[type=button]").contains("Save submission and exit").click()
     cy.get('button[aria-label="Save a new folder and move to frontpage"]').contains("Return to homepage").click()
     cy.wait("@fetchFolders", { timeout: 10000 })
 
@@ -70,47 +71,25 @@ describe("Home e2e", function () {
   })
 
   it("create a published submission, not be able to edit or delete that submission inside the data table", () => {
-    // Create a new Published folder
-    cy.get("button").contains("Create submission").click()
+    cy.generateFolderAndObjects()
+    // Edit newly created folder
+    cy.contains("Edit").click({ force: true })
 
-    // Add folder name & description, navigate to editing folder
-    cy.newSubmission()
-    // Fill a Study form
-    cy.get("div[role=button]").contains("Study").click()
-    cy.get("div[role=button]").contains("Fill Form").click()
-    cy.get("input[data-testid='descriptor.studyTitle']").type("Test title")
-    cy.get("select[data-testid='descriptor.studyType']").select("Resequencing")
-    cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
+    cy.clickAccordionPanel("publish")
 
-    // Submit form
-    cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
-
-    // Fill Dataset form
-    cy.clickFillForm("Dataset")
-    cy.get("[data-testid='title']").type("Test Dataset title")
-    cy.get("[data-testid='description']").type("Dataset description")
-    cy.get("[data-testid='datasetType']").first().check()
-    cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
-
-    // Navigate to summary
-    cy.get("button[type=button]").contains("Next").click()
-    cy.get("h1", { timeout: 10000 }).contains("Summary").should("be.visible")
-    // Check the amount of submitted objects in Study
-    cy.get("h6").contains("Study").parent("div").children().eq(1).should("have.text", 1)
+    cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
 
     // Fill and save DOI form
     cy.saveDoiForm()
 
-    // Navigate to publish
-    cy.get("button[type=button]").contains("Publish").click()
-    cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
+    cy.get("button[data-testid='summary-publish']").contains("Publish").click()
+
+    cy.get('[data-testid="confirm-publish-folder"]').contains("Publish").click()
 
     // Check that published submission exists in data table
     cy.contains("My submissions", { timeout: 10000 }).should("be.visible")
     cy.get("[data-testid='published-tab']").click()
-    cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test name")
+    cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test generated folder")
 
     // Check that Edit and Delete button do not appear in Published data table
     cy.get("[data-testid='edit-draft-submission']").should("not.exist")

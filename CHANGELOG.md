@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Field Keywords in DOI form #715
+- New UI for wizard stepper #763
 - Option to filter by submission's name in Home page #685
 - New navigation bar and new home page #669
 
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disallow use of "any" type #624
 - Date picker #559
 - New login page #573
+- Wizard stepper as accordion #538
 - Autocomplete name field in DOI form #529
 - Enable draft template update #528
 - Auto-add subject scheme to all subjects #522

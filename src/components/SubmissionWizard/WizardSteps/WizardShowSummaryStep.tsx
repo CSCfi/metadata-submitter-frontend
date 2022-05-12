@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
@@ -12,23 +12,28 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
 import ListItemText from "@mui/material/ListItemText"
 import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
+import { useNavigate } from "react-router-dom"
 
-import WizardHeader from "../WizardComponents/WizardHeader"
+import WizardAlert from "../WizardComponents/WizardAlert"
 import WizardSavedObjectActions from "../WizardComponents/WizardSavedObjectActions"
-import WizardStepper from "../WizardComponents/WizardStepper"
 import WizardDOIForm from "../WizardForms/WizardDOIForm"
+import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
 
+import { ResponseStatus } from "constants/responseStatus"
 import { resetAutocompleteField } from "features/autocompleteSlice"
+import { resetFileTypes } from "features/fileTypesSlice"
 import { setOpenedDoiForm } from "features/openedDoiFormSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { ObjectInsideFolderWithTags, ObjectInsideFolderWithTagsBySchema, Schema } from "types"
-import { getItemPrimaryText, formatDisplayObjectType } from "utils"
+import { getItemPrimaryText, formatDisplayObjectType, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
   summary: {
-    padding: 1,
-    width: 100,
+    width: "100%",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
     },
@@ -51,8 +56,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start",
     padding: 2,
   },
-  doiButton: {
-    marginTop: 4,
+  buttonContainer: {
+    marginTop: theme.spacing(1),
+    display: "flex",
+    width: "100%",
+    justifyContent: "space-between",
   },
 }))
 
@@ -64,6 +72,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const { metadataObjects } = folder
   const objectsArray = useAppSelector(state => state.objectTypesArray)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
+  const projectId = useAppSelector(state => state.projectId)
   const groupedObjects: ObjectInsideFolderWithTagsBySchema[] = objectsArray.map((schema: Schema) => {
     return {
       [schema]: metadataObjects.filter(
@@ -74,6 +83,8 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const classes = useStyles()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const DOIDialog = () => (
     <Dialog
@@ -113,11 +124,38 @@ const WizardShowSummaryStep: React.FC = () => {
     dispatch(setCurrentObject(folder.doiInfo))
   }
 
+  const handlePublishDialog = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
+    const resetDispatch = () => {
+      navigate(pathWithLocale("home"))
+      dispatch(resetObjectType())
+      dispatch(resetFolder())
+    }
+
+    if (alertWizard) {
+      if (formData && formData?.length > 0) {
+        await saveDraftsAsTemplates(projectId, formData, dispatch)
+      }
+      // Publish the folder
+      dispatch(publishFolderContent(folder))
+        .then(() => resetDispatch())
+        .catch(error => {
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: error,
+              helperText: `Couldn't publish folder with id ${folder.folderId}`,
+            })
+          )
+        })
+      dispatch(resetFileTypes())
+    } else {
+      setDialogOpen(false)
+    }
+    setDialogOpen(false)
+  }
+
   return (
     <>
-      <WizardHeader headerText="Create submission" />
-      <WizardStepper />
-      <WizardHeader headerText="Summary" />
       <div className={classes.summary}>
         {groupedObjects.map((group: ObjectInsideFolderWithTagsBySchema) => {
           const schema = Object.keys(group)[0]
@@ -152,10 +190,21 @@ const WizardShowSummaryStep: React.FC = () => {
           )
         })}
       </div>
-      <Button variant="contained" color="secondary" className={classes.doiButton} onClick={handleOpenDoiDialog}>
-        Add DOI information (optional)
-      </Button>
+      <div className={classes.buttonContainer}>
+        <Button variant="contained" color="secondary" onClick={handleOpenDoiDialog}>
+          Add DOI information (optional)
+        </Button>
+
+        <Button variant="contained" onClick={() => setDialogOpen(true)} data-testid="summary-publish">
+          Publish
+        </Button>
+      </div>
+
       {openedDoiForm && <DOIDialog />}
+
+      {dialogOpen && (
+        <WizardAlert onAlert={handlePublishDialog} parentLocation="footer" alertType={"publish"}></WizardAlert>
+      )}
     </>
   )
 }

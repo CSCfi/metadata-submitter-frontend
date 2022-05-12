@@ -1,3 +1,5 @@
+import { ObjectTypes } from "constants/wizardObject"
+
 describe("Field validation", function () {
   beforeEach(() => {
     cy.task("resetDb")
@@ -7,11 +9,12 @@ describe("Field validation", function () {
   it("should translate AJV validation messages according to locale", () => {
     cy.get("[data-testid='lang-selector']").should("contain", "en")
 
-    cy.get("button").contains("Create submission").click()
+    cy.generateFolderAndObjects()
+    cy.contains("Edit").click({ force: true })
 
-    cy.newSubmission()
+    cy.clickAccordionPanel("Describe")
 
-    cy.clickFillForm("Sample")
+    cy.clickAddObject(ObjectTypes.sample)
 
     cy.get("input[data-testid='sampleName.taxonId']").type("Test id").blur()
     cy.get("p[id='sampleName.taxonId-helper-text']").should("have.text", "must be integer")

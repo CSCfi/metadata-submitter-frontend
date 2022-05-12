@@ -19,6 +19,7 @@ import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
+import stepObjectReducer from "features/wizardStepObjectSlice"
 import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   loading: loadingReducer,
   statusDetails: statusMessageReducer,
   objectType: objectTypeReducer,
+  stepObject: stepObjectReducer,
   submissionFolder: submissionFolderReducer,
   submissionType: submissionTypeReducer,
   draftStatus: draftStatusReducer,

@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
-import { Typography } from "@mui/material"
 import Button from "@mui/material/Button"
 import Collapse from "@mui/material/Collapse"
 import Grid from "@mui/material/Grid"
@@ -15,6 +14,7 @@ import { TransitionGroup } from "react-transition-group"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
 import WizardAlert from "./WizardAlert"
+import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
@@ -26,29 +26,6 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import { ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
-
-const StatusBadge = (props: { draft: boolean }) => {
-  const { draft } = props
-  const statusLabel = draft ? "Draft" : "Ready"
-
-  return (
-    <Typography
-      align="center"
-      sx={theme => ({
-        fontWeight: "bold",
-        fontSize: "1.4rem",
-        border: `1px solid`,
-        borderRadius: theme.spacing(0.4),
-        padding: theme.spacing(0.1, 0),
-        width: theme.spacing(7.3),
-        backgroundColor: draft ? theme.palette.secondary.lightest : theme.palette.success.lightest,
-        color: draft ? theme.palette.secondary.main : theme.palette.success.main,
-      })}
-    >
-      {statusLabel}
-    </Typography>
-  )
-}
 
 const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
   const { step, parent, buttonText, disabled } = props
@@ -214,7 +191,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid item>
-                    <StatusBadge draft={draft} />
+                    <WizardObjectStatusBadge draft={draft} />
                   </Grid>
                 </Grid>
               </ObjectItem>

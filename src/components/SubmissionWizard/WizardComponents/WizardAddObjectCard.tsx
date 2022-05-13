@@ -4,14 +4,14 @@ import Card from "@mui/material/Card"
 import { makeStyles } from "@mui/styles"
 
 import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
-import WizardUploadObjectXMLForm from "components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
+// import WizardUploadObjectXMLForm from "components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
+import WizardXMLObjectPage from "components/SubmissionWizard/WizardForms/WizardXMLObjectPage"
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
 
 const useStyles = makeStyles(theme => ({
   card: {
     width: "100%",
-    marginBottom: 4,
     padding: 0,
     overflow: "visible",
   },
@@ -41,7 +41,7 @@ const WizardAddObjectCard: React.FC = () => {
       testId: ObjectSubmissionTypes.form,
     },
     [ObjectSubmissionTypes.xml]: {
-      component: <WizardUploadObjectXMLForm key={objectType + submissionType} />,
+      component: <WizardXMLObjectPage key={objectType + submissionType} />,
       testId: ObjectSubmissionTypes.xml,
     },
   }

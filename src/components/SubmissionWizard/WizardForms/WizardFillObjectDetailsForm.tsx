@@ -1,18 +1,12 @@
 import React, { useEffect, useState, useRef } from "react"
 
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import { CustomTheme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
-import IconButton from "@mui/material/IconButton"
 import LinearProgress from "@mui/material/LinearProgress"
-import Menu from "@mui/material/Menu"
-import MenuItem from "@mui/material/MenuItem"
-import Stack from "@mui/material/Stack"
-import Typography from "@mui/material/Typography"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { ApiResponse } from "apisauce"
@@ -25,6 +19,7 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
+import WizardOptions from "./WizardOptions"
 import WizardUploadXMLModal from "./WizardUploadXMLModal"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -42,7 +37,7 @@ import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
 import type { SubmissionDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
-import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
+import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const useStyles = makeStyles((theme: CustomTheme) => ({
@@ -101,7 +96,6 @@ type FormContentProps = {
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
   const {
-    objectType,
     currentObject,
     refForm,
     onClickClearForm,
@@ -150,7 +144,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         form={refForm}
       >
         {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
-        {formatDisplayObjectType(objectType)}
       </Button>
     </div>
   )
@@ -165,71 +158,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
         action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
       />
-      <Options onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
+      <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
     </>
-  )
-}
-
-const options = ["Upload XML", "Clear form"]
-
-const Options = ({ onClearForm, onOpenXMLModal }: { onClearForm: () => void; onOpenXMLModal: () => void }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = (e, option?: string) => {
-    setAnchorEl(null)
-    option === options[0] ? onOpenXMLModal() : null
-    option === options[1] ? onClearForm() : null
-  }
-  return (
-    <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ mt: "4rem", pr: "6rem" }}>
-      <Typography variant="subtitle2" color="primary" fontWeight={700}>
-        Options
-      </Typography>
-      <IconButton
-        aria-label="options-button"
-        id="options-button"
-        aria-controls={open ? "options" : undefined}
-        aria-expanded={open ? "true" : undefined}
-        aria-haspopup="true"
-        onClick={handleClick}
-        color="primary"
-      >
-        <MoreHorizIcon fontSize="large" />
-      </IconButton>
-      <Menu
-        id="options"
-        MenuListProps={{
-          "aria-labelledby": "options-button",
-          style: { padding: 0, width: "17rem" },
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        {options.map(option => (
-          <MenuItem
-            key={option}
-            selected={option === "Upload XML"}
-            onClick={e => handleClose(e, option)}
-            sx={{
-              p: "1.2rem",
-              "&.Mui-selected": { backgroundColor: "primary.lighter", color: "primary.main" },
-              color: "secondary.main",
-              fontWeight: 700,
-            }}
-          >
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
-    </Stack>
   )
 }
 

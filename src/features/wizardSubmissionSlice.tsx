@@ -153,7 +153,7 @@ export const updateSubmission =
 export const replaceObjectInSubmission =
   (
     accessionId: string,
-    tags: { submissionType?: string; displayTitle?: string; fileName?: string },
+    tags: { submissionType?: string; displayTitle?: string; fileName?: string; fileSize?: number },
     objectStatus?: string
   ) =>
   (dispatch: (reducer: DispatchReducer) => void) => {

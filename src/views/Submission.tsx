@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper"
 import { makeStyles } from "@mui/styles"
 import { useNavigate, useParams } from "react-router-dom"
 
-import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
+// import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
@@ -23,15 +23,9 @@ import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    alignItems: "stretch",
+    padding: 0,
   },
-  paperContent: {
-    padding: theme.spacing(2),
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "start",
-    flexDirection: "column",
-  },
+
   container: {
     flex: "1 0 auto",
     padding: 0,
@@ -40,13 +34,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(7.7),
     minHeight: "calc(100vh - 137px)",
     backgroundColor: theme.palette.background.default,
+    "& .MuiGrid-item": { paddingTop: 0 },
   },
   stepper: {
     paddingTop: "0 !important",
     backgroundColor: theme.palette.primary.main,
   },
   stepContent: {
-    paddingTop: `${theme.spacing(5)} !important`,
     paddingLeft: `${theme.spacing(5)} !important`,
   },
 }))
@@ -135,7 +129,7 @@ const SubmissionWizard: React.FC = () => {
         </Grid>
       </Grid>
 
-      <WizardFooter />
+      {/* <WizardFooter /> */}
     </Container>
   )
 }

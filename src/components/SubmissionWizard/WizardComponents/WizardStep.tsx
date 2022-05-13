@@ -162,7 +162,7 @@ const StepItems = (props: {
   }
 
   const ObjectItem = styled("div")(({ theme }) => ({
-    paddingTop: theme.spacing(3),
+    paddingTop: theme.spacing(2.5),
   }))
 
   return (
@@ -172,8 +172,8 @@ const StepItems = (props: {
           return (
             <Collapse component={"li"} key={item.id}>
               <ObjectItem>
-                <Grid container spacing={2} justifyContent="space-around">
-                  <Grid item xs={6}>
+                <Grid container justifyContent="space-between">
+                  <Grid item xs={6} display="flex" alignItems="center">
                     <Link
                       tabIndex={0} // "href with # target will cause Firefox to refresh the page"
                       onClick={() => handleClick(item)}

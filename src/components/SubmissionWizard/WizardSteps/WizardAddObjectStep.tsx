@@ -5,12 +5,12 @@ import Grid from "@mui/material/Grid"
 import { makeStyles } from "@mui/styles"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
-import WizardSavedObjectsList from "../WizardComponents/WizardSavedObjectsList"
 
 import { useAppSelector } from "hooks"
 
 const useStyles = makeStyles(() => ({
   gridContainer: {
+    margin: 0,
     width: "100%",
     "& > :first-child": {
       paddingLeft: 0,
@@ -40,9 +40,6 @@ const useStyles = makeStyles(() => ({
 const WizardAddObjectStep: React.FC = () => {
   const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
-  const submission = useAppSelector(state => state.submission)
-  const submissions = submission?.metadataObjects?.filter((obj: { schema: string }) => obj.schema === objectType)
-  const draftObjects = submission?.drafts?.filter((obj: { schema: string }) => obj.schema === `draft-${objectType}`)
   const loading = useAppSelector(state => state.loading)
 
   return (
@@ -62,14 +59,6 @@ const WizardAddObjectStep: React.FC = () => {
         </Grid>
 
         <Grid item xs>
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              {submissions?.length > 0 && <WizardSavedObjectsList objects={submissions} />}
-            </Grid>
-            <Grid item xs={12}>
-              {draftObjects?.length > 0 && <WizardSavedObjectsList objects={draftObjects} />}
-            </Grid>
-          </Grid>
           {loading && (
             <Grid container justifyContent="center">
               <CircularProgress />

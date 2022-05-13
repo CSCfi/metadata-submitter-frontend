@@ -58,6 +58,7 @@ export type ObjectInsideSubmission = {
 export type ObjectTags = {
   submissionType?: string
   fileName?: string
+  fileSize?: string
   displayTitle?: string
 }
 

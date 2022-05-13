@@ -85,8 +85,17 @@ const WizardStepper = () => {
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
   useEffect(() => {
     if (location.search.includes("step")) {
-      const stepInUrl = location.search.split("step=")[1].slice(0, 1)
-      dispatch(updateStep({ step: Number(stepInUrl), objectType: "submissionDetails" }))
+      const stepInUrl = Number(location.search.split("step=")[1].slice(0, 1))
+      const currentStep = mappedSteps[stepInUrl - 1]
+
+      if (currentStep && currentStep.stepItems?.length) {
+        dispatch(
+          updateStep({
+            step: Number(stepInUrl),
+            objectType: currentStep.stepItems.length === 1 ? currentStep.stepItems[0].objectType : "",
+          })
+        )
+      }
     }
   }, [])
 

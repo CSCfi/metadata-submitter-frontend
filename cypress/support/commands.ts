@@ -130,7 +130,7 @@ Cypress.Commands.add("clickAddObject", objectType => {
 Cypress.Commands.add("continueLatestDraft", objectType => {
   cy.wait(0)
   cy.get(`[data-testid='${objectType}-objects-list']`).within(() => {
-    cy.get(`[data-testid='draft-${objectType}-list-item']`).last().click()
+    cy.get(`[data-testid='draft-${objectType}-list-item']`).first().click()
   })
   cy.scrollTo("top")
   cy.contains("Update draft", { timeout: 10000 }).should("be.visible")
@@ -139,7 +139,7 @@ Cypress.Commands.add("continueLatestDraft", objectType => {
 Cypress.Commands.add("editLatestSubmittedObject", objectType => {
   cy.wait(0)
   cy.get(`[data-testid='${objectType}-objects-list']`).within(() => {
-    cy.get(`[data-testid='submitted-${objectType}-list-item']`).last().click()
+    cy.get(`[data-testid='submitted-${objectType}-list-item']`).first().click()
   })
   cy.scrollTo("top")
   cy.contains(`Update ${DisplayObjectTypes[objectType]}`, { timeout: 10000 }).should("be.visible")
@@ -148,7 +148,7 @@ Cypress.Commands.add("editLatestSubmittedObject", objectType => {
 // Go to DOI form
 Cypress.Commands.add("openDOIForm", () => {
   cy.clickAccordionPanel("publish")
-  cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
+  cy.get("button[role=button]", { timeout: 10000 }).contains("summary").click()
   cy.get("button").contains("Add DOI information (optional)", { timeout: 10000 }).click()
   cy.get("div[role='dialog']").should("be.visible")
 })

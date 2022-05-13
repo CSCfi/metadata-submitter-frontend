@@ -49,10 +49,6 @@ const SummaryItem = styled(Grid)(({ theme }) => ({
   "& .MuiGrid-item": { padding: theme.spacing(0, 1), alignSelf: "center" },
 }))
 
-const ObjectTypeHeading = styled(Typography)(({ theme }) => ({
-  padding: `${theme.spacing(1, 0)}  !important`,
-}))
-
 const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
   flexGrow: "2 !important",
   color: theme.palette.secondary.main,
@@ -182,7 +178,7 @@ const submission = useAppSelector(state => state.submission)
 
   return (
     <Container sx={theme => ({ pt: theme.spacing(1) })}>
-      <Typography variant="h4" color="secondary">
+      <Typography component="h1" variant="h4" color="secondary">
         Summary
       </Typography>
 
@@ -190,7 +186,7 @@ const submission = useAppSelector(state => state.submission)
         const step = index + 1
         return (
           <StepContainer key={summaryItem.label} disableGutters data-testid={`summary-step-${step}`}>
-            <Typography variant="h5" color="secondary" sx={theme => ({ p: theme.spacing(3, 0) })}>
+            <Typography component="h2" variant="h5" color="secondary" sx={theme => ({ p: theme.spacing(3, 0) })}>
               {step}. {summaryItem.label}
             </Typography>
 
@@ -203,7 +199,9 @@ const submission = useAppSelector(state => state.submission)
                 return (
                   <ul key={stepItem.objectType}>
                     {DisplayObjectTypes[stepItem.objectType] && (
-                      <ObjectTypeHeading color="secondary">{DisplayObjectTypes[stepItem.objectType]}</ObjectTypeHeading>
+                      <Typography component="h3" color="secondary" sx={theme => ({ p: theme.spacing(1, 0) })}>
+                        {DisplayObjectTypes[stepItem.objectType]}
+                      </Typography>
                     )}
                     {objectsList.map(item => {
                       const draft = item.objectData?.schema.includes("draft-")

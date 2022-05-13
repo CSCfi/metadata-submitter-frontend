@@ -12,20 +12,18 @@ import { styled } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
 import { TransitionGroup } from "react-transition-group"
 
+import editObjectHook from "../WizardHooks/WizardEditObjectHook"
+
 import WizardAlert from "./WizardAlert"
 
-import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { updateStatus } from "features/statusMessageSlice"
-import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import draftAPIService from "services/draftAPI"
-import objectAPIService from "services/objectAPI"
 import { ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
@@ -141,7 +139,6 @@ const StepItems = (props: {
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
   const navigate = useNavigate()
-  const pathname = pathWithLocale(`submission/${submissionId}`)
   const [alert, setAlert] = useState(false)
   const [clickedItem, setClickedItem] = useState({ objectData: { accessionId: "", schema: "", tags: {} } })
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
@@ -158,36 +155,6 @@ const StepItems = (props: {
   const handleItemEdit = formObject => {
     dispatch(updateStep({ step: step, objectType: objectType }))
 
-    const editFormObject = async (item: ObjectInsideSubmissionWithTags) => {
-      const service = draft ? draftAPIService : objectAPIService
-
-      const response = await service.getObjectByAccessionId(objectType, item.accessionId)
-
-      if (response.ok) {
-        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
-        dispatch(setObjectType(objectType))
-        dispatch(resetCurrentObject())
-        dispatch(
-          setCurrentObject({
-            ...response.data,
-            status: draft ? ObjectStatus.draft : ObjectStatus.submitted,
-            ...(!draft && { tags: item.tags }),
-            ...(!draft && { index: objects.findIndex(object => object.id === item.accessionId) }),
-          })
-        )
-        dispatch(setFocus())
-        navigate({ pathname: pathname, search: "step=2" })
-      } else {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: response,
-            helperText: `Error while fetching${draft && "draft"} object`,
-          })
-        )
-      }
-    }
-
     switch (step) {
       case 1: {
         dispatch(resetObjectType())
@@ -195,7 +162,17 @@ const StepItems = (props: {
         break
       }
       default: {
-        editFormObject(formObject.objectData)
+        const item = formObject.objectData
+        editObjectHook(
+          draft,
+          objectType,
+          item,
+          step,
+          submissionId,
+          dispatch,
+          navigate,
+          objects.findIndex(object => object.id === item.accessionId)
+        )
       }
     }
   }

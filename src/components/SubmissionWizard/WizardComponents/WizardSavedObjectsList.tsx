@@ -13,7 +13,7 @@ import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { ObjectInsideSubmissionWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
 const useStyles = makeStyles((theme: CustomTheme) => ({
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
  * List objects by submission type. Enables deletion of objects
  */
 
-type WizardSavedObjectsListProps = { objects: Array<ObjectInsideFolderWithTags> }
+type WizardSavedObjectsListProps = { objects: Array<ObjectInsideSubmissionWithTags> }
 
 const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
   const classes = useStyles()
@@ -77,7 +77,7 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
   const draftList = !!draftObjects[0].items.length
   const listItems = draftList ? draftObjects : groupedSubmissions
 
-  const displaySubmissionType = (submission: { submissionType: string; items: Array<ObjectInsideFolderWithTags> }) => {
+  const displaySubmissionType = (submission: { submissionType: string; items: Array<ObjectInsideSubmissionWithTags> }) => {
     switch (submission.submissionType) {
       case ObjectSubmissionTypes.form:
         return submission.items.length >= 2 ? "Forms" : "Form"

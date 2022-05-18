@@ -7,10 +7,10 @@ import { APIResponse } from "types"
 const api = create({ baseURL: "/publish" })
 api.addMonitor(errorMonitor)
 
-const publishFolderById = async (folderId: string): Promise<APIResponse> => {
-  return await api.patch(`/${folderId}`)
+const publishSubmissionById = async (submissionId: string): Promise<APIResponse> => {
+  return await api.patch(`/${submissionId}`)
 }
 
 export default {
-  publishFolderById,
+  publishSubmissionById,
 }

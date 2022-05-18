@@ -18,7 +18,7 @@ module.exports = function (app) {
       "/schemas",
       "/validate",
       "/submit",
-      "/folders",
+      "/submissions",
       "/publish",
       "/drafts",
       "/aai",

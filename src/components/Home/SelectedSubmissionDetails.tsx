@@ -12,19 +12,19 @@ import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import { ResponseStatus } from "constants/responseStatus"
-import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
+import { SubmissionStatus } from "constants/wizardSubmission"
 import { updateStatus } from "features/statusMessageSlice"
 import { addDraftsToUser } from "features/userSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishFolderContent, setFolder, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { publishSubmissionContent, setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
-import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
-import type { OldFolderRow, ObjectInsideFolderWithTags } from "types"
+import submissionAPIService from "services/submissionAPI"
+import type { OldSubmissionRow, ObjectInsideSubmissionWithTags } from "types"
 import { getItemPrimaryText, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(() => ({
@@ -36,48 +36,48 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-interface SelectedFolder {
-  folderId: string
-  folderTitle: string
-  allObjects: OldFolderRow[]
-  originalFolderData: Record<string, unknown>
+interface SelectedSubmission {
+  submissionId: string
+  submissionTitle: string
+  allObjects: OldSubmissionRow[]
+  originalSubmissionData: Record<string, unknown>
   published: boolean
 }
 
-const SelectedFolderDetails: React.FC = () => {
+const SelectedSubmissionDetails: React.FC = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
-  const [isFetchingFolder, setFetchingFolder] = useState(true)
+  const [isFetchingSubmission, setFetchingSubmission] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [selectedFolder, setSelectedFolder] = useState<SelectedFolder>({
-    folderId: "",
-    folderTitle: "",
+  const [selectedSubmission, setSelectedSubmission] = useState<SelectedSubmission>({
+    submissionId: "",
+    submissionTitle: "",
     allObjects: [],
-    originalFolderData: {},
+    originalSubmissionData: {},
     published: false,
   })
-  const currentFolder = useAppSelector(state => state.submissionFolder)
+  const currentSubmission = useAppSelector(state => state.submission)
 
-  const folderId = useLocation().pathname.split("/").pop()
+  const submissionId = useLocation().pathname.split("/").pop()
   const navigate = useNavigate()
 
-  // Fetch folder data and map objects
+  // Fetch submission data and map objects
   useEffect(() => {
     let isMounted = true
 
-    const objectsArr: OldFolderRow[] = []
+    const objectsArr: OldSubmissionRow[] = []
 
-    const handleObject = async (draft: boolean, objectType: string, objectInFolder: ObjectInsideFolderWithTags) => {
+    const handleObject = async (draft: boolean, objectType: string, objectInSubmission: ObjectInsideSubmissionWithTags) => {
       const service = draft ? draftAPIService : objectAPIService
-      const response = await service.getObjectByAccessionId(objectType, objectInFolder.accessionId)
+      const response = await service.getObjectByAccessionId(objectType, objectInSubmission.accessionId)
 
       if (response.ok) {
-        const objectDetails: OldFolderRow = {
-          accessionId: objectInFolder.accessionId,
-          title: getItemPrimaryText(objectInFolder),
+        const objectDetails: OldSubmissionRow = {
+          accessionId: objectInSubmission.accessionId,
+          title: getItemPrimaryText(objectInSubmission),
           objectType,
-          submissionType: objectInFolder.tags.submissionType || ObjectSubmissionTypes.form, // Fallback for 'Form'. Used in drafts
+          submissionType: objectInSubmission.tags.submissionType || ObjectSubmissionTypes.form, // Fallback for 'Form'. Used in drafts
           status: draft ? ObjectStatus.draft : ObjectStatus.submitted,
           lastModified: response.data.dateModified,
           objectData: response.data,
@@ -94,9 +94,9 @@ const SelectedFolderDetails: React.FC = () => {
       }
     }
 
-    const getFolder = async () => {
-      if (folderId) {
-        const response = await folderAPIService.getFolderById(folderId)
+    const getSubmission = async () => {
+      if (submissionId) {
+        const response = await submissionAPIService.getSubmissionById(submissionId)
         if (isMounted) {
           if (response.ok) {
             const data = response.data
@@ -114,62 +114,62 @@ const SelectedFolderDetails: React.FC = () => {
               await handleObject(false, objectType, data.metadataObjects[i])
             }
 
-            setSelectedFolder({
-              folderId: folderId,
-              originalFolderData: data,
-              folderTitle: data.name,
+            setSelectedSubmission({
+              submissionId: submissionId,
+              originalSubmissionData: data,
+              submissionTitle: data.name,
               allObjects: objectsArr,
               published: data.published,
             })
 
-            setFetchingFolder(false)
+            setFetchingSubmission(false)
           } else {
             dispatch(
               updateStatus({
                 status: ResponseStatus.error,
                 response: response,
-                helperText: "Fetching folders error.",
+                helperText: "Fetching submissions error.",
               })
             )
           }
         }
       }
     }
-    getFolder()
+    getSubmission()
     return () => {
       isMounted = false
     }
-  }, [dispatch, folderId])
+  }, [dispatch, submissionId])
 
   const resetDispatch = () => {
     navigate(pathWithLocale("home"))
     dispatch(resetObjectType())
-    dispatch(resetFolder())
+    dispatch(resetSubmission())
   }
 
-  const handleEditFolder = (step: number) => {
-    dispatch(setFolder(selectedFolder.originalFolderData))
+  const handleEditSubmission = (step: number) => {
+    dispatch(setSubmission(selectedSubmission.originalSubmissionData))
     navigate({
-      pathname: pathWithLocale(`submission/${selectedFolder.originalFolderData.folderId}`),
+      pathname: pathWithLocale(`submission/${selectedSubmission.originalSubmissionData.submissionId}`),
       search: `step=${step}`,
     })
   }
 
-  const handlePublishFolder = () => {
-    dispatch(setFolder(selectedFolder.originalFolderData))
+  const handlePublishSubmission = () => {
+    dispatch(setSubmission(selectedSubmission.originalSubmissionData))
     setDialogOpen(true)
   }
 
-  const handlePublish = (confirm: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
+  const handlePublish = (confirm: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
     if (confirm) {
-      dispatch(publishFolderContent(currentFolder))
+      dispatch(publishSubmissionContent(currentSubmission))
         .then(() => resetDispatch())
         .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: JSON.parse(error),
-              helperText: `Couldn't publish folder with id ${selectedFolder.originalFolderData.folderId}`,
+              helperText: `Couldn't publish submission with id ${selectedSubmission.originalSubmissionData.submissionId}`,
             })
           )
         })
@@ -204,8 +204,8 @@ const SelectedFolderDetails: React.FC = () => {
       dispatch(setCurrentObject({ ...response.data, status: objectStatus }))
       dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
-      dispatch(setFolder(selectedFolder.originalFolderData))
-      navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: `step=1` })
+      dispatch(setSubmission(selectedSubmission.originalSubmissionData))
+      navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: `step=1` })
     } else {
       dispatch(
         updateStatus({
@@ -217,16 +217,16 @@ const SelectedFolderDetails: React.FC = () => {
     }
   }
 
-  // Delete object from current folder
+  // Delete object from current submission
   const handleDeleteObject = async (objectId: string, objectType: string, objectStatus: string) => {
     const service = objectStatus === ObjectStatus.draft ? draftAPIService : objectAPIService
     const response = await service.deleteObjectByAccessionId(objectType, objectId)
     if (response.ok) {
-      const updatedFolder = { ...selectedFolder }
-      updatedFolder.allObjects = selectedFolder.allObjects.filter(
+      const updatedSubmission = { ...selectedSubmission }
+      updatedSubmission.allObjects = selectedSubmission.allObjects.filter(
         (item: { accessionId: string }) => item.accessionId !== objectId
       )
-      setSelectedFolder(updatedFolder)
+      setSelectedSubmission(updatedSubmission)
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
@@ -252,8 +252,8 @@ const SelectedFolderDetails: React.FC = () => {
       alignItems="stretch"
       className={classes.tableGrid}
     >
-      {isFetchingFolder && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
-      {!isFetchingFolder && (
+      {isFetchingSubmission && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
+      {!isFetchingSubmission && (
         <>
           <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
             <Link color="inherit" component={RouterLink} to={pathWithLocale("home")}>
@@ -262,21 +262,21 @@ const SelectedFolderDetails: React.FC = () => {
             <Link
               color="inherit"
               component={RouterLink}
-              to={`${pathWithLocale("home")}/${selectedFolder.published ? "published" : "drafts"}`}
+              to={`${pathWithLocale("home")}/${selectedSubmission.published ? "published" : "drafts"}`}
             >
-              {selectedFolder.published ? "Published" : "Drafts"}
+              {selectedSubmission.published ? "Published" : "Drafts"}
             </Link>
-            <Typography color="textPrimary">{selectedFolder.folderTitle}</Typography>
+            <Typography color="textPrimary">{selectedSubmission.submissionTitle}</Typography>
           </Breadcrumbs>
           <SubmissionDetailTable
-            bodyRows={selectedFolder.allObjects}
-            folderTitle={selectedFolder.folderTitle}
-            folderType={
-              selectedFolder.published ? FolderSubmissionStatus.published : FolderSubmissionStatus.unpublished
+            bodyRows={selectedSubmission.allObjects}
+            submissionTitle={selectedSubmission.submissionTitle}
+            submissionType={
+              selectedSubmission.published ? SubmissionStatus.published : SubmissionStatus.unpublished
             }
-            location={selectedFolder.published ? "published" : "drafts"}
-            onEditFolder={handleEditFolder}
-            onPublishFolder={handlePublishFolder}
+            location={selectedSubmission.published ? "published" : "drafts"}
+            onEditSubmission={handleEditSubmission}
+            onPublishSubmission={handlePublishSubmission}
             onEditObject={handleEditObject}
             onDeleteObject={handleDeleteObject}
           />
@@ -287,4 +287,4 @@ const SelectedFolderDetails: React.FC = () => {
   )
 }
 
-export default SelectedFolderDetails
+export default SelectedSubmissionDetails

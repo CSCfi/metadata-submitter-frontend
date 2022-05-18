@@ -20,7 +20,7 @@ import UserDraftTemplateActions from "./UserDraftTemplateActions"
 import { setTemplateAccessionIds } from "features/templateAccessionIdsSlice"
 import { getTemplates } from "features/templateSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { ObjectInsideFolderWithTags } from "types"
+import { ObjectInsideSubmissionWithTags } from "types"
 import { formatDisplayObjectType, getItemPrimaryText, getUserTemplates } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -69,12 +69,12 @@ const UserDraftTemplates: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const projectId = useAppSelector(state => state.projectId)
-  const templates: Array<ObjectInsideFolderWithTags> | [] = useAppSelector(state => state.templates)
+  const templates: Array<ObjectInsideSubmissionWithTags> | [] = useAppSelector(state => state.templates)
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
   const displayTemplates = getUserTemplates(templates, objectTypesArray)
-  type TemplateGroupProps = { draft: { [schema: string]: ObjectInsideFolderWithTags[] } }
+  type TemplateGroupProps = { draft: { [schema: string]: ObjectInsideSubmissionWithTags[] } }
 
   useEffect(() => {
     dispatch(getTemplates(projectId))
@@ -84,7 +84,7 @@ const UserDraftTemplates: React.FC = () => {
   const DraftList = () => {
     return (
       <React.Fragment>
-        {displayTemplates.map((draft: { [key: string]: ObjectInsideFolderWithTags[] }, index: number) => (
+        {displayTemplates.map((draft: { [key: string]: ObjectInsideSubmissionWithTags[] }, index: number) => (
           <TemplateGroup key={index} draft={draft} />
         ))}
       </React.Fragment>
@@ -120,7 +120,7 @@ const UserDraftTemplates: React.FC = () => {
         </FormLabel>
 
         <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
-          {draft[schema].map((item: ObjectInsideFolderWithTags) => {
+          {draft[schema].map((item: ObjectInsideSubmissionWithTags) => {
             return (
               <Grid
                 container
@@ -174,7 +174,7 @@ const UserDraftTemplates: React.FC = () => {
         className={classes.cardTitle}
         title={"Your Draft Templates"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
-        subheader="You could choose which draft(s) you would like to reuse when creating a new folder."
+        subheader="You could choose which draft(s) you would like to reuse when creating a new submission."
       />
       {templates?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>

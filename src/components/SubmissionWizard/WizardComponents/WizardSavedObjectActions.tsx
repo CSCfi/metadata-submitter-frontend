@@ -11,12 +11,12 @@ import { deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import { deleteObjectFromFolder } from "features/wizardSubmissionFolderSlice"
+import { deleteObjectFromSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
-import type { ObjectInsideFolderWithTags, ObjectTags } from "types"
+import type { ObjectInsideSubmissionWithTags, ObjectTags } from "types"
 
 const useStyles = makeStyles(theme => ({
   buttonEdit: {
@@ -31,7 +31,7 @@ type WizardSavedObjectActionsProps = {
   objectId: string
   objectType: string
   submissionType: string
-  submissions: Array<ObjectInsideFolderWithTags>
+  submissions: Array<ObjectInsideSubmissionWithTags>
   tags: ObjectTags
   summary?: boolean
 }
@@ -92,7 +92,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
 
   const handleObjectDelete = () => {
     dispatch(
-      deleteObjectFromFolder(
+      deleteObjectFromSubmission(
         props.submissionType === "Draft" ? ObjectStatus.draft : ObjectStatus.submitted,
         props.objectId,
         props.objectType

@@ -9,7 +9,7 @@ describe("Field validation", function () {
   it("should translate AJV validation messages according to locale", () => {
     cy.get("[data-testid='lang-selector']").should("contain", "en")
 
-    cy.generateFolderAndObjects()
+    cy.generateSubmissionAndObjects()
     cy.contains("Edit").click({ force: true })
 
     cy.clickAccordionPanel("Describe")

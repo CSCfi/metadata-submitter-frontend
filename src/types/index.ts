@@ -35,9 +35,9 @@ export type ObjectDetails = {
   submissionType: string
 }
 
-export type OldFolderRow = ObjectDetails & { objectData: Record<string, unknown>; folderType?: string }
+export type OldSubmissionRow = ObjectDetails & { objectData: Record<string, unknown>; submissionType?: string }
 
-export type ObjectInsideFolder = {
+export type ObjectInsideSubmission = {
   accessionId: string
   schema: string
 }
@@ -48,43 +48,43 @@ export type ObjectTags = {
   displayTitle?: string
 }
 
-export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }
+export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: ObjectTags }
 
-export type ObjectInsideFolderWithTagsBySchema = { [schema: string]: ObjectInsideFolderWithTags[] }
+export type ObjectInsideSubmissionWithTagsBySchema = { [schema: string]: ObjectInsideSubmissionWithTags[] }
 
-export type FolderId = {
-  folderId: string
+export type SubmissionId = {
+  submissionId: string
 }
 
-export type ObjectInsideFolderWithTagsBySchemaAndStatus = {
-  [schema: string]: { drafts: ObjectInsideFolderWithTags[]; ready: ObjectInsideFolderWithTags[] }
+export type ObjectInsideSubmissionWithTagsBySchemaAndStatus = {
+  [schema: string]: { drafts: ObjectInsideSubmissionWithTags[]; ready: ObjectInsideSubmissionWithTags[] }
 }
 
-export type FolderDetails = {
+export type SubmissionDetails = {
   name: string
   description: string
   dateCreated?: number
   published: boolean
-  drafts: Array<ObjectInsideFolderWithTags>
-  metadataObjects: Array<ObjectInsideFolderWithTags>
+  drafts: Array<ObjectInsideSubmissionWithTags>
+  metadataObjects: Array<ObjectInsideSubmissionWithTags>
   allObjects?: Array<ObjectDetails>
 }
 
-export type FolderDetailsWithId = FolderId & FolderDetails
+export type SubmissionDetailsWithId = SubmissionId & SubmissionDetails
 
-export type FolderRow = {
+export type SubmissionRow = {
   id: string
   name: string
   dateCreated?: number
   lastModifiedBy: string
 }
 
-export type FolderDataFromForm = {
+export type SubmissionDataFromForm = {
   name: string
   description: string
 }
 
-export type CreateFolderFormRef = { current: HTMLElement | null } | undefined
+export type CreateSubmissionFormRef = { current: HTMLElement | null } | undefined
 
 export type StatusDetails = {
   status: string | null

@@ -30,12 +30,12 @@ import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
-import type { FolderDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
+import type { SubmissionDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -84,7 +84,7 @@ type FormContentProps = {
   formSchema: FormObject
   onSubmit: SubmitHandler<FieldValues>
   objectType: string
-  folder: FolderDetailsWithId
+  submission: SubmissionDetailsWithId
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
   closeDialog: () => void
 }
@@ -191,7 +191,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
  */
 const patchHandler = (
   response: ApiResponse<unknown>,
-  folder: FolderDetailsWithId,
+  submission: SubmissionDetailsWithId,
   accessionId: string,
   objectType: string,
   cleanedValues: Record<string, unknown>,
@@ -199,7 +199,7 @@ const patchHandler = (
 ) => {
   if (response.ok) {
     dispatch(
-      replaceObjectInFolder(
+      replaceObjectInSubmission(
         accessionId,
 
         {
@@ -236,7 +236,7 @@ const FormContent = ({
   formSchema,
   onSubmit,
   objectType,
-  folder,
+  submission,
   currentObject,
   closeDialog,
 }: FormContentProps) => {
@@ -343,7 +343,7 @@ const FormContent = ({
   }
 
   const handleDraftDelete = (draftId: string) => {
-    dispatch(deleteObjectFromFolder(ObjectStatus.draft, draftId, objectType))
+    dispatch(deleteObjectFromSubmission(ObjectStatus.draft, draftId, objectType))
     setCurrentObjectId(() => null)
     handleChange()
   }
@@ -454,7 +454,7 @@ const FormContent = ({
         accessionId: currentObject.accessionId || currentObject.objectId,
         objectType: objectType,
         objectStatus: currentObject.status,
-        folder: folder,
+        submission: submission,
         values: cleanedValues,
         dispatch: dispatch,
       })
@@ -500,7 +500,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   const dispatch = useAppDispatch()
 
   const objectType = useAppSelector(state => state.objectType)
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
 
@@ -547,7 +547,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
         currentObject,
         parsedSchema.title.toLowerCase(),
         dereferencedSchema,
-        folder.metadataObjects,
+        submission.metadataObjects,
         analysisAccessionIds
       )
 
@@ -569,7 +569,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   }, [objectType])
 
   // All Analysis AccessionIds
-  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, folder.metadataObjects)
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, submission.metadataObjects)
 
   useEffect(() => {
     if (ObjectTypes.analysis) {
@@ -598,7 +598,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
       const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
       try {
         const response = await objectAPIService.patchFromJSON(objectType, accessionId, cleanedValues)
-        patchHandler(response, folder, currentObject.accessionId, objectType, cleanedValues, dispatch)
+        patchHandler(response, submission, currentObject.accessionId, objectType, cleanedValues, dispatch)
 
         // Dispatch fileTypes if object is Run or Analysis
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
@@ -622,7 +622,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
     if (data.status === ObjectStatus.submitted) {
       patchObject()
     } else {
-      submitObjectHook(data, folder.folderId, objectType, dispatch)
+      submitObjectHook(data, submission.submissionId, objectType, dispatch)
         .then(() => {
           setSubmitting(false)
         })
@@ -641,9 +641,9 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
         resolver={WizardAjvResolver(states.validationSchema, locale)}
         onSubmit={onSubmit as SubmitHandler<FieldValues>}
         objectType={objectType}
-        folder={folder}
+        submission={submission}
         currentObject={currentObject}
-        key={currentObject?.accessionId || folder.folderId}
+        key={currentObject?.accessionId || submission.submissionId}
         closeDialog={closeDialog || (() => ({}))}
       />
       {submitting && <LinearProgress />}

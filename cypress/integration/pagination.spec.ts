@@ -1,4 +1,4 @@
-describe("unpublished folders, published folders, and user's draft templates pagination", function () {
+describe("unpublished submissions, published submissions, and user's draft templates pagination", function () {
   beforeEach(() => {
     cy.task("resetDb")
     const userResponse = {
@@ -12,235 +12,235 @@ describe("unpublished folders, published folders, and user's draft templates pag
 
     cy.intercept({ method: "GET", url: "/users/current" }, userResponse)
   })
-  it("should renders pagination for unpublished folders list correctly", () => {
-    // Mock responses for Unpublished Folders
-    const unpublishedFoldersResponse5 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+  it("should renders pagination for unpublished submissions list correctly", () => {
+    // Mock responses for Unpublished Submissions
+    const unpublishedSubmissionsResponse5 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
       ],
-      page: { page: 1, size: 5, totalPages: 10, totalFolders: 50 },
+      page: { page: 1, size: 5, totalPages: 10, totalSubmissions: 50 },
     }
 
-    const unpublishedFoldersResponse15 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub11", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub12", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub13", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub14", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub15", published: false },
+    const unpublishedSubmissionsResponse15 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub11", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub12", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub13", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub14", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub15", published: false },
       ],
-      page: { page: 1, size: 15, totalPages: 4, totalFolders: 50 },
+      page: { page: 1, size: 15, totalPages: 4, totalSubmissions: 50 },
     }
 
-    const unpublishedFoldersResponse25 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub11", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub12", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub13", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub14", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub15", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub16", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub17", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub18", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub19", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub20", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub21", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub22", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub23", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub24", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub25", published: false },
+    const unpublishedSubmissionsResponse25 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub11", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub12", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub13", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub14", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub15", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub16", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub17", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub18", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub19", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub20", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub21", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub22", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub23", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub24", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub25", published: false },
       ],
-      page: { page: 1, size: 25, totalPages: 2, totalFolders: 50 },
+      page: { page: 1, size: 25, totalPages: 2, totalSubmissions: 50 },
     }
 
-    const unpublishedFoldersResponse50 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+    const unpublishedSubmissionsResponse50 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
       ],
-      page: { page: 1, size: 50, totalPages: 1, totalFolders: 50 },
+      page: { page: 1, size: 50, totalPages: 1, totalSubmissions: 50 },
     }
 
-    const unpublishedFoldersResponsePage2 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+    const unpublishedSubmissionsResponsePage2 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
       ],
-      page: { page: 2, size: 5, totalPages: 10, totalFolders: 50 },
+      page: { page: 2, size: 5, totalPages: 10, totalSubmissions: 50 },
     }
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=5&published=false&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponse5
+      unpublishedSubmissionsResponse5
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=15&published=false&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponse15
+      unpublishedSubmissionsResponse15
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=25&published=false&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=25&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponse25
+      unpublishedSubmissionsResponse25
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=50&published=false&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=50&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponse50
+      unpublishedSubmissionsResponse50
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=2&per_page=5&published=false&projectId=PROJECT1",
+        url: "/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponsePage2
+      unpublishedSubmissionsResponsePage2
     ).as("unpublishedPage2")
 
-    // Mock response for Published Folders
-    const publishedFoldersResponse5 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+    // Mock response for Published Submissions
+    const publishedSubmissionsResponse5 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
       ],
-      page: { page: 1, size: 5, totalPages: 10, totalFolders: 50 },
+      page: { page: 1, size: 5, totalPages: 10, totalSubmissions: 50 },
     }
 
-    const publishedFoldersResponse50 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+    const publishedSubmissionsResponse50 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
       ],
-      page: { page: 1, size: 50, totalPages: 1, totalFolders: 50 },
+      page: { page: 1, size: 50, totalPages: 1, totalSubmissions: 50 },
     }
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=5&published=true&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponse5
+      publishedSubmissionsResponse5
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=50&published=true&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponse50
+      publishedSubmissionsResponse50
     )
     cy.login()
     cy.get("[data-testid='table-pagination']", { timeout: 10000 }).should("be.visible")
@@ -287,146 +287,146 @@ describe("unpublished folders, published folders, and user's draft templates pag
     cy.get("[data-testid='page info']").contains("1 of 1 pages").should("be.visible")
   })
 
-  it("should render pagination for unpublished folders list correctly", () => {
-    // Mock responses for Unpublished Folders
-    const unpublishedFoldersResponse5 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+  it("should render pagination for unpublished submissions list correctly", () => {
+    // Mock responses for Unpublished Submissions
+    const unpublishedSubmissionsResponse5 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
       ],
-      page: { page: 1, size: 5, totalPages: 10, totalFolders: 5 },
+      page: { page: 1, size: 5, totalPages: 10, totalSubmissions: 5 },
     }
-    // Mock responses for Published Folders
-    const publishedFoldersResponse5 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-        { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-        { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-        { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-        { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+    // Mock responses for Published Submissions
+    const publishedSubmissionsResponse5 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+        { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+        { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+        { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+        { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
       ],
-      page: { page: 1, size: 5, totalPages: 1, totalFolders: 50 },
-    }
-
-    const publishedFoldersResponse50 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
-      ],
-      page: { page: 1, size: 50, totalPages: 1, totalFolders: 50 },
+      page: { page: 1, size: 5, totalPages: 1, totalSubmissions: 50 },
     }
 
-    const publishedFoldersResponsePage2 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+    const publishedSubmissionsResponse50 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB10", metadataObjects: [], name: "Unpub10", published: false },
       ],
-      page: { page: 2, size: 5, totalPages: 10, totalFolders: 50 },
+      page: { page: 1, size: 50, totalPages: 1, totalSubmissions: 50 },
     }
 
-    const publishedFoldersResponsePage3 = {
-      folders: [
-        { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-        { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+    const publishedSubmissionsResponsePage2 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
       ],
-      page: { page: 3, size: 5, totalPages: 10, totalFolders: 50 },
+      page: { page: 2, size: 5, totalPages: 10, totalSubmissions: 50 },
+    }
+
+    const publishedSubmissionsResponsePage3 = {
+      submissions: [
+        { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+        { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+      ],
+      page: { page: 3, size: 5, totalPages: 10, totalSubmissions: 50 },
     }
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=5&published=false&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
       },
-      unpublishedFoldersResponse5
+      unpublishedSubmissionsResponse5
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=5&published=true&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponse5
+      publishedSubmissionsResponse5
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=1&per_page=50&published=true&projectId=PROJECT1",
+        url: "/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponse50
+      publishedSubmissionsResponse50
     )
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=2&per_page=5&published=true&projectId=PROJECT1",
+        url: "/submissions?page=2&per_page=5&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponsePage2
+      publishedSubmissionsResponsePage2
     ).as("publishedPage2")
 
     cy.intercept(
       {
         method: "GET",
-        url: "/folders?page=3&per_page=5&published=true&projectId=PROJECT1",
+        url: "/submissions?page=3&per_page=5&published=true&projectId=PROJECT1",
       },
-      publishedFoldersResponsePage3
+      publishedSubmissionsResponsePage3
     )
 
     cy.login()
@@ -466,129 +466,129 @@ describe("unpublished folders, published folders, and user's draft templates pag
   }),
     it("should render pagination correctly when filtering the submission name", () => {
       const unpublishedPage1 = {
-        folders: [
+        submissions: [
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB1",
+            submissionId: "UNPUB1",
             metadataObjects: [],
-            name: "draft-folder1",
+            name: "draft-submission1",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "test", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "test", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
         ],
-        page: { page: 1, size: 5, totalPages: 6, totalFolders: 30 },
+        page: { page: 1, size: 5, totalPages: 6, totalSubmissions: 30 },
       }
 
       const unpublishedPage2 = {
-        folders: [
-          { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+        submissions: [
+          { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB10",
+            submissionId: "UNPUB10",
             metadataObjects: [],
             name: "Unpub10",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
         ],
-        page: { page: 2, size: 5, totalPages: 6, totalFolders: 30 },
+        page: { page: 2, size: 5, totalPages: 6, totalSubmissions: 30 },
       }
 
       const unpublished15 = {
-        folders: [
+        submissions: [
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB1",
+            submissionId: "UNPUB1",
             metadataObjects: [],
-            name: "draft-folder1",
+            name: "draft-submission1",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "test", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "test", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB10",
+            submissionId: "UNPUB10",
             metadataObjects: [],
             name: "Unpub10",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "test3", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "test3", published: false },
         ],
-        page: { page: 1, size: 15, totalPages: 2, totalFolders: 30 },
+        page: { page: 1, size: 15, totalPages: 2, totalSubmissions: 30 },
       }
 
       const allUnpublished = {
-        folders: [
+        submissions: [
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB1",
+            submissionId: "UNPUB1",
             metadataObjects: [],
-            name: "draft-folder1",
+            name: "draft-submission1",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "test", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "test", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Biology", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "test2", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "Unpub6", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "Unpub7", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "Unpub8", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB10",
-            metadataObjects: [],
-            name: "Unpub10",
-            published: false,
-          },
-          { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB6", metadataObjects: [], name: "test3", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB7", metadataObjects: [], name: "test4", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "test5", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "test6", published: false },
-          {
-            description: "d",
-            drafts: [],
-            folderId: "UNPUB10",
+            submissionId: "UNPUB10",
             metadataObjects: [],
             name: "Unpub10",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB1", metadataObjects: [], name: "test7", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB2", metadataObjects: [], name: "test8", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB3", metadataObjects: [], name: "test9", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB4", metadataObjects: [], name: "test10", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "Unpub1", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "Unpub2", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "Unpub3", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "Unpub4", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB5", metadataObjects: [], name: "Unpub5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB6", metadataObjects: [], name: "test3", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB7", metadataObjects: [], name: "test4", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "test5", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "test6", published: false },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB5",
+            submissionId: "UNPUB10",
+            metadataObjects: [],
+            name: "Unpub10",
+            published: false,
+          },
+          { description: "d", drafts: [], submissionId: "UNPUB1", metadataObjects: [], name: "test7", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB2", metadataObjects: [], name: "test8", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB3", metadataObjects: [], name: "test9", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB4", metadataObjects: [], name: "test10", published: false },
+          {
+            description: "d",
+            drafts: [],
+            submissionId: "UNPUB5",
             metadataObjects: [],
             name: "this-draft",
             published: false,
@@ -596,49 +596,49 @@ describe("unpublished folders, published folders, and user's draft templates pag
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB6",
+            submissionId: "UNPUB6",
             metadataObjects: [],
-            name: "draft-folder2",
+            name: "draft-submission2",
             published: false,
           },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB7",
+            submissionId: "UNPUB7",
             metadataObjects: [],
-            name: "draft-folder3",
+            name: "draft-submission3",
             published: false,
           },
-          { description: "d", drafts: [], folderId: "UNPUB8", metadataObjects: [], name: "abc", published: false },
-          { description: "d", drafts: [], folderId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB8", metadataObjects: [], name: "abc", published: false },
+          { description: "d", drafts: [], submissionId: "UNPUB9", metadataObjects: [], name: "Unpub9", published: false },
           {
             description: "d",
             drafts: [],
-            folderId: "UNPUB10",
+            submissionId: "UNPUB10",
             metadataObjects: [],
             name: "Unpub10",
             published: false,
           },
         ],
-        page: { page: 1, size: 30, totalPages: 1, totalFolders: 30 },
+        page: { page: 1, size: 30, totalPages: 1, totalSubmissions: 30 },
       }
 
-      // Mock responses for Published Folders
-      const publishedFoldersResponse5 = {
-        folders: [
-          { description: "d", drafts: [], folderId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
-          { description: "d", drafts: [], folderId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
-          { description: "d", drafts: [], folderId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
-          { description: "d", drafts: [], folderId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
-          { description: "d", drafts: [], folderId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
+      // Mock responses for Published Submissions
+      const publishedSubmissionsResponse5 = {
+        submissions: [
+          { description: "d", drafts: [], submissionId: "PUB1", metadataObjects: [], name: "Pub1", published: false },
+          { description: "d", drafts: [], submissionId: "PUB2", metadataObjects: [], name: "Pub2", published: false },
+          { description: "d", drafts: [], submissionId: "PUB3", metadataObjects: [], name: "Pub3", published: false },
+          { description: "d", drafts: [], submissionId: "PUB4", metadataObjects: [], name: "Pub4", published: false },
+          { description: "d", drafts: [], submissionId: "PUB5", metadataObjects: [], name: "Pub5", published: false },
         ],
-        page: { page: 1, size: 5, totalPages: 1, totalFolders: 5 },
+        page: { page: 1, size: 5, totalPages: 1, totalSubmissions: 5 },
       }
 
       cy.intercept(
         {
           method: "GET",
-          url: "/folders?page=1&per_page=5&published=false&projectId=PROJECT1",
+          url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
         },
         unpublishedPage1
       )
@@ -646,7 +646,7 @@ describe("unpublished folders, published folders, and user's draft templates pag
       cy.intercept(
         {
           method: "GET",
-          url: "/folders?page=2&per_page=5&published=false&projectId=PROJECT1",
+          url: "/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
         },
         unpublishedPage2
       )
@@ -654,19 +654,19 @@ describe("unpublished folders, published folders, and user's draft templates pag
       cy.intercept(
         {
           method: "GET",
-          url: "/folders?page=1&per_page=30&published=false&projectId=PROJECT1",
+          url: "/submissions?page=1&per_page=30&published=false&projectId=PROJECT1",
         },
         allUnpublished
       )
 
-      cy.intercept("DELETE", "/folders/UNPUB9", {
+      cy.intercept("DELETE", "/submissions/UNPUB9", {
         statusCode: 200,
       }).as("deleteSubmission")
 
       cy.intercept(
         {
           method: "GET",
-          url: "/folders?page=1&per_page=15&published=false&projectId=PROJECT1",
+          url: "/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
         },
         unpublished15
       ).as("unpublished15")
@@ -674,9 +674,9 @@ describe("unpublished folders, published folders, and user's draft templates pag
       cy.intercept(
         {
           method: "GET",
-          url: "/folders?page=1&per_page=5&published=true&projectId=PROJECT1",
+          url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
         },
-        publishedFoldersResponse5
+        publishedSubmissionsResponse5
       )
 
       cy.login()

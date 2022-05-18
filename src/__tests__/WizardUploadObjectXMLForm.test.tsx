@@ -20,7 +20,7 @@ expect.extend({ toMatchDiffSnapshot })
 describe("WizardStepper", () => {
   const store = mockStore({
     submissionType: ObjectSubmissionTypes.form,
-    submissionFolder: {
+    submission: {
       description: "AWD",
       id: "FOL90524783",
       name: "Testname",

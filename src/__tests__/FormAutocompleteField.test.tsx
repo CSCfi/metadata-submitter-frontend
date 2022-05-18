@@ -40,7 +40,7 @@ describe("Test autocomplete on organisation field", () => {
   const store = mockStore({
     objectType: ObjectTypes.dac,
     submissionType: ObjectSubmissionTypes.form,
-    submissionFolder: {
+    submission: {
       description: "Test desciption",
       id: "FOL90524783",
       name: "Test name",

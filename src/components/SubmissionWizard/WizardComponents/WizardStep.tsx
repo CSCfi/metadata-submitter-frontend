@@ -26,7 +26,7 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
-import { ObjectInsideFolderWithTags } from "types"
+import { ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
 const StatusBadge = (props: { draft: boolean }) => {
@@ -55,14 +55,14 @@ const StatusBadge = (props: { draft: boolean }) => {
 const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
   const { step, parent, buttonText, disabled } = props
   const navigate = useNavigate()
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
   const dispatch = useAppDispatch()
   const [alert, setAlert] = useState(false)
 
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
-  const pathname = pathWithLocale(folder.folderId ? `submission/${folder.folderId}` : `submission`)
+  const pathname = pathWithLocale(submission.submissionId ? `submission/${submission.submissionId}` : `submission`)
 
   const handleClick = () => {
     if (unsavedSubmission) {
@@ -84,7 +84,7 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         navigate({ pathname: pathname, search: stepParam })
         break
       }
-      case "datafolder": {
+      case "datasubmission": {
         navigate({ pathname: pathname, search: stepParam })
         break
       }
@@ -127,21 +127,21 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
 
 /*
  * Render items belonging to step.
- * Step can host for example folder details and ready & draft objects.
+ * Step can host for example submission details and ready & draft objects.
  */
 const StepItems = (props: {
   step: number
-  objects: { id: string; displayTitle: string; objectData?: ObjectInsideFolderWithTags }[]
+  objects: { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }[]
   draft: boolean
-  folderId: string
+  submissionId: string
   objectType: string
 }) => {
-  const { step, objects, draft, folderId, objectType } = props
+  const { step, objects, draft, submissionId, objectType } = props
   const dispatch = useAppDispatch()
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
   const navigate = useNavigate()
-  const pathname = pathWithLocale(`submission/${folderId}`)
+  const pathname = pathWithLocale(`submission/${submissionId}`)
   const [alert, setAlert] = useState(false)
   const [clickedItem, setClickedItem] = useState({ objectData: { accessionId: "", schema: "", tags: {} } })
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
@@ -158,7 +158,7 @@ const StepItems = (props: {
   const handleItemEdit = formObject => {
     dispatch(updateStep({ step: step, objectType: objectType }))
 
-    const editFormObject = async (item: ObjectInsideFolderWithTags) => {
+    const editFormObject = async (item: ObjectInsideSubmissionWithTags) => {
       const service = draft ? draftAPIService : objectAPIService
 
       const response = await service.getObjectByAccessionId(objectType, item.accessionId)
@@ -191,7 +191,7 @@ const StepItems = (props: {
     switch (step) {
       case 1: {
         dispatch(resetObjectType())
-        navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=1" })
+        navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=1" })
         break
       }
       default: {
@@ -252,7 +252,7 @@ const StepItems = (props: {
   )
 }
 
-type stepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideFolderWithTags }
+type stepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }
 
 const ObjectWrapper = styled("div")(({ theme }) => {
   const treeBorder = `1px solid ${theme.palette.primary.main}`
@@ -308,7 +308,7 @@ const WizardStep = (params: {
   actionButtonText: string
 }) => {
   const { step, stepItems, actionButtonText } = params
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const singleObjectStepItems = [ObjectTypes.study]
 
@@ -337,7 +337,7 @@ const WizardStep = (params: {
                         step={step}
                         objects={objects.ready}
                         draft={false}
-                        folderId={folder.folderId}
+                        submissionId={submission.submissionId}
                         objectType={objectType}
                       />
                     )}
@@ -346,7 +346,7 @@ const WizardStep = (params: {
                         step={step}
                         objects={objects.drafts}
                         draft={true}
-                        folderId={folder.folderId}
+                        submissionId={submission.submissionId}
                         objectType={objectType}
                       />
                     )}

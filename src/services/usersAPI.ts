@@ -2,7 +2,7 @@ import { create } from "apisauce"
 
 import { errorMonitor } from "./errorMonitor"
 
-import { APIResponse, ObjectInsideFolderWithTags, ObjectTags } from "types"
+import { APIResponse, ObjectInsideSubmissionWithTags, ObjectTags } from "types"
 
 const api = create({ baseURL: "/users" })
 api.addMonitor(errorMonitor)
@@ -17,7 +17,7 @@ const deleteUserById = async (userID: string): Promise<APIResponse> => {
 
 const patchUserById = async (
   userID: string,
-  changes: { op: string; path: string; value: Array<ObjectInsideFolderWithTags> | ObjectTags }[]
+  changes: { op: string; path: string; value: Array<ObjectInsideSubmissionWithTags> | ObjectTags }[]
 ): Promise<APIResponse> => {
   return await api.patch(`/${userID}`, changes)
 }

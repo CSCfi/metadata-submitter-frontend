@@ -49,10 +49,10 @@ describe("WizardFooter", () => {
     test("should disable Publish button if there is no submitted objects", () => {
       store = mockStore({
         submissionType: ObjectSubmissionTypes.form,
-        submissionFolder: {
+        submission: {
           id: "FOL001",
-          name: "Test folder",
-          description: "Test folder",
+          name: "Test submission",
+          description: "Test submission",
           published: false,
           drafts: [],
           metadataObjects: [],

@@ -3,15 +3,15 @@ import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
 import { AppDispatch } from "store"
-import type { ObjectInsideFolder, ObjectInsideFolderWithTags } from "types"
+import type { ObjectInsideSubmission, ObjectInsideSubmissionWithTags } from "types"
 import { getObjectDisplayTitle, getOrigObjectType } from "utils"
 
 const transformTemplatesToDrafts = async (
   templateAccessionIds: Array<string>,
-  templates: Array<ObjectInsideFolder>,
-  folderId: string,
+  templates: Array<ObjectInsideSubmission>,
+  submissionId: string,
   dispatch: (dispatch: (reducer: AppDispatch) => void) => void
-): Promise<Array<ObjectInsideFolderWithTags>> => {
+): Promise<Array<ObjectInsideSubmissionWithTags>> => {
   const userTemplates = templates.map(template => ({
     ...template,
     schema: getOrigObjectType(template.schema),
@@ -19,7 +19,7 @@ const transformTemplatesToDrafts = async (
 
   const templateDetails = userTemplates?.filter(item => templateAccessionIds.includes(item.accessionId))
 
-  const draftsArray: ObjectInsideFolderWithTags[] = []
+  const draftsArray: ObjectInsideSubmissionWithTags[] = []
   for (let i = 0; i < templateDetails.length; i += 1) {
     try {
       // Get full details of template
@@ -30,11 +30,11 @@ const transformTemplatesToDrafts = async (
       // Create a draft based on the selected template
       const draftResponse = await draftAPIService.createFromJSON(
         templateDetails[i].schema,
-        folderId,
+        submissionId,
         templateResponse.data
       )
 
-      // Draft details to be added when creating a new folder
+      // Draft details to be added when creating a new submission
       const draftDetails = {
         accessionId: draftResponse.data.accessionId,
         schema: "draft-" + templateDetails[i].schema,

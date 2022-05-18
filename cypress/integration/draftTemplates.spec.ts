@@ -3,9 +3,9 @@ describe("draft selections and templates", function () {
     cy.task("resetDb")
     cy.login()
 
-    // Generate folder and objects, navigate to publish step
-    cy.generateFolderAndObjects()
-    // Edit newly created folder
+    // Generate submission and objects, navigate to publish step
+    cy.generateSubmissionAndObjects()
+    // Edit newly created submission
     cy.contains("Edit").click({ force: true })
 
     // Create a draft Policy object
@@ -24,17 +24,17 @@ describe("draft selections and templates", function () {
     cy.get("[data-testid='summary-publish']").click()
     cy.get("[data-testid='alert-dialog-content']").should(
       "have.text",
-      "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
+      "Objects in this submission will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this submission."
     )
   })
-  it("should show the list of drafts before folder is published, and show saved drafts in Home page", () => {
+  it("should show the list of drafts before submission is published, and show saved drafts in Home page", () => {
     // Select drafts inside the dialog
     cy.get("form").within(() => {
       cy.get("input[type='checkbox']").first().check()
       cy.get("input[type='checkbox']").last().check()
 
-      // Publish folder
-      cy.get('button[aria-label="Publish folder contents and move to frontpage"]').contains("Publish").click()
+      // Publish submission
+      cy.get('button[aria-label="Publish submission contents and move to frontpage"]').contains("Publish").click()
     })
 
     // Navigate back to home page

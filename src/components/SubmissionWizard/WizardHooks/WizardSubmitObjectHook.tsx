@@ -6,14 +6,14 @@ import { setFileTypes } from "features/fileTypesSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObject } from "features/wizardSubmissionFolderSlice"
+import { addObject } from "features/wizardSubmissionSlice"
 import objectAPIService from "services/objectAPI"
 import { APIResponse, FormDataFiles, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
 
 const submitObjectHook = async (
   formData: Record<string, unknown>,
-  folderId: string,
+  submissionId: string,
   objectType: string,
   dispatch: (reducer: unknown) => Promise<APIResponse>
 ): Promise<APIResponse> => {
@@ -28,7 +28,7 @@ const submitObjectHook = async (
   }, 5000)
 
   const cleanedValues = JSONSchemaParser.cleanUpFormValues(formData)
-  const response = await objectAPIService.createFromJSON(objectType, folderId, cleanedValues)
+  const response = await objectAPIService.createFromJSON(objectType, submissionId, cleanedValues)
 
   if (response.ok) {
     const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues)

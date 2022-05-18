@@ -7,8 +7,8 @@ describe("Populate form and render form elements by object data", function () {
     cy.task("resetDb")
     cy.login()
 
-    cy.generateFolderAndObjects()
-    // Edit newly created folder
+    cy.generateSubmissionAndObjects()
+    // Edit newly created submission
     cy.contains("Edit").click({ force: true })
 
     // Open 4th step

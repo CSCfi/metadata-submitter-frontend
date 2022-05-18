@@ -13,7 +13,7 @@ import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addDoiInfoToFolder } from "features/wizardSubmissionFolderSlice"
+import { addDoiInfoToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import schemaAPIService from "services/schemaAPI"
 import { DoiFormDetails, FormObject } from "types"
@@ -65,7 +65,7 @@ const DOIForm = ({ formId }: { formId: string }) => {
     }
   }, [])
 
-  const currentFolder = useAppSelector(state => state.submissionFolder)
+  const currentSubmission = useAppSelector(state => state.submission)
   const resolver = WizardAjvResolver(dataciteSchema, locale)
   const methods = useForm({ mode: "onBlur", resolver })
 
@@ -74,11 +74,11 @@ const DOIForm = ({ formId }: { formId: string }) => {
 
   // Set form default values
   useEffect(() => {
-    methods.reset(currentFolder.doiInfo)
+    methods.reset(currentSubmission.doiInfo)
   }, [])
 
   const onSubmit = async (data: DoiFormDetails) => {
-    dispatch(addDoiInfoToFolder(currentFolder.folderId, data))
+    dispatch(addDoiInfoToSubmission(currentSubmission.submissionId, data))
       .then(() => {
         dispatch(resetAutocompleteField())
         dispatch(setOpenedDoiForm(false))

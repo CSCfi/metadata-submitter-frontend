@@ -8,7 +8,7 @@ React Router is used to render different views in App-component. All components 
 
 Form components are crucial part of the application:
 
-- All submissions and folder creation are made with `react-hook-form`. Latter uses form as a reference so submission can be triggered outside the form.
+- All submissions are made with `react-hook-form`. Latter uses form as a reference so submission can be triggered outside the form.
 - Form for json schema based forms are created with custom json schema parser, which builds `react-hook-form` based forms from given json schema. Json schema-based forms are validated against json schema with `Ajv`. React-hook-form is used for performance reasons: it uses uncontrolled components so adding a lot of fields to array doesn't slow rendering of the application.
 
 ### Constants
@@ -66,7 +66,7 @@ For example:
 - declare and export these data types in `src/types/index.js`
 
 ```
-export type ObjectInsideFolder = {
+export type ObjectInsideSubmission = {
   accessionId: string,
   schema: string,
 }
@@ -76,23 +76,23 @@ export type ObjectTags = {
   fileName?: string,
 }
 
-export type ObjectInsideFolderWithTags = ObjectInsideFolder & { tags: ObjectTags }
+export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: ObjectTags }
 ```
 
 - import and reuse the data types in different files:
 
-  - Reuse type `ObjectInsideFolderWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
+  - Reuse type `ObjectInsideSubmissionWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
 
   ```
-  import type { ObjectInsideFolderWithTags } from "types"
+  import type { ObjectInsideSubmissionWithTags } from "types"
 
-  type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideFolderWithTags> }
+  type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideSubmissionWithTags> }
   ```
 
   ```
-  import type { ObjectInsideFolderWithTags } from "types"
+  import type { ObjectInsideSubmissionWithTags } from "types"
 
-  type GroupedBySchema = { [K in Schema]: Array<ObjectInsideFolderWithTags> }
+  type GroupedBySchema = { [K in Schema]: Array<ObjectInsideSubmissionWithTags> }
   ```
 
 ## Redux store
@@ -105,29 +105,29 @@ Redux is handled with [Redux Toolkit](https://redux-toolkit.js.org/) and app is 
   - Slices are configured for different features in `features/` -folder.
   - Async reducer functions are also configured inside slices.
 
-Examples for storing and dispatching with async folder function:
+Examples for storing and dispatching with async submission function:
 
 ```
 import { useSelector, useDispatch } from "react-redux"
-import { createSubmissionFolder } from "features/submissionFolderSlice"
+import { createSubmission } from "features/submissionSlice"
 
-// Create base folder (normally from form)
-const folder = {
+// Create base submission (normally from form)
+const submission = {
   name: "Test",
-  description: "Test description for very best folder."
+  description: "Test description for very best submission."
 }
 
 // Initialize dispatch with hook
 const dispatch = useDispatch()
 
-// Dispatch the action with folder
-dispatch(createSubmissionFolder(projectId: string, folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[] ))
+// Dispatch the action with submission
+dispatch(createSubmission(projectId: string, submissionDetails: SubmissionDataFromForm, drafts?: ObjectInsideSubmissionWithTags[] ))
 
-// Folder is now submitted to backend and added to redux store
+// Submission is now submitted to backend and added to redux store
 
-// Take folder from redux state, destructure and log values
-const folder = useSelector(state => state.submissionFolder)
-const { id, name, description, metadataObjects } = folder
+// Take submission from redux state, destructure and log values
+const submission = useSelector(state => state.submission)
+const { id, name, description, metadataObjects } = submission
 console.log(id) // Should be id generated in backend
 console.log(name) // Should be name we set earlier
 console.log(description) // Should be description we set earlier

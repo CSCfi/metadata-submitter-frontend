@@ -5,12 +5,12 @@ import { OmitObjectValues } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import draftAPIService from "services/draftAPI"
 import templateAPIService from "services/templateAPI"
-import { ObjectInsideFolderWithTags } from "types"
+import { ObjectInsideSubmissionWithTags } from "types"
 import { getOrigObjectType, getObjectDisplayTitle } from "utils"
 
 const saveDraftsAsTemplates = async (
   projectId: string,
-  formData: ObjectInsideFolderWithTags[],
+  formData: ObjectInsideSubmissionWithTags[],
   dispatch: (reducer: unknown) => void
 ) => {
   // Filter unique draft-schemas existing in formData

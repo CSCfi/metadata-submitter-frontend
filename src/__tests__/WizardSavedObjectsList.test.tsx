@@ -11,11 +11,11 @@ import WizardSavedObjectsList from "../components/SubmissionWizard/WizardCompone
 import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
-import { ObjectInsideFolderWithTags } from "types"
+import { ObjectInsideSubmissionWithTags } from "types"
 
 const mockStore = configureStore([])
 
-const submissions: ObjectInsideFolderWithTags[] = [
+const submissions: ObjectInsideSubmissionWithTags[] = [
   {
     accessionId: "EDAG1",
     schema: ObjectTypes.sample,
@@ -44,9 +44,9 @@ const drafts = [
 const store = mockStore({
   objectType: ObjectTypes.sample,
   wizardStep: 1,
-  submissionFolder: {
-    name: "folder name",
-    description: "folder description",
+  submission: {
+    name: "submission name",
+    description: "submission description",
     published: false,
     metadataObjects: [],
     id: "FOL12341234",

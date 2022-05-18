@@ -4,16 +4,16 @@ import _reject from "lodash/reject"
 import { ObjectStatus } from "constants/wizardObject"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
-import type { APIResponse, DispatchReducer, FolderDetailsWithId } from "types"
+import type { APIResponse, DispatchReducer, SubmissionDetailsWithId } from "types"
 
-const initialState = {} as FolderDetailsWithId
+const initialState = {} as SubmissionDetailsWithId
 
-const selectedFolderSlice = createSlice({
-  name: "selectedFolder",
+const selectedSubmissionSlice = createSlice({
+  name: "selectedSubmission",
   initialState,
   reducers: {
-    setSelectedFolder: (state, action) => action.payload,
-    resetSelectedFolder: () => initialState,
+    setSelectedSubmission: (state, action) => action.payload,
+    resetSelectedSubmission: () => initialState,
     deleteFromAllObjects: (state, action) => {
       state.allObjects = _reject(state.allObjects, function (o: { accessionId: string }) {
         return o.accessionId === action.payload
@@ -32,12 +32,12 @@ const selectedFolderSlice = createSlice({
   },
 })
 
-export const { setSelectedFolder, resetSelectedFolder, deleteFromAllObjects, deleteDraftObject, deleteMetadataObject } =
-  selectedFolderSlice.actions
-export default selectedFolderSlice.reducer
+export const { setSelectedSubmission, resetSelectedSubmission, deleteFromAllObjects, deleteDraftObject, deleteMetadataObject } =
+  selectedSubmissionSlice.actions
+export default selectedSubmissionSlice.reducer
 
-// Delete object from selectedFolder only available for Unpublished folder atm
-export const deleteObjectFromSelectedFolder =
+// Delete object from selectedSubmission only available for Unpublished submission atm
+export const deleteObjectFromSelectedSubmission =
   (objectId: string, objectType: string, objectStatus: string) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const service = objectStatus === ObjectStatus.draft ? draftAPIService : objectAPIService

@@ -20,7 +20,7 @@ describe("Basic application flow", function () {
      * 1st step, Submission details
      */
 
-    // Add folder name & description, navigate to submissions
+    // Add submission name & description, navigate to submissions
     cy.newSubmission()
 
     /*
@@ -107,12 +107,12 @@ describe("Basic application flow", function () {
      * 3rd step, Describe
      */
 
-    cy.clickAccordionPanel("Datafolder")
-    cy.get("[data-testid='datafolder-details']", { timeout: 10000 }).should("be.visible")
-    cy.get("button[role=button]", { timeout: 10000 }).contains("Link datafolder").click()
+    cy.clickAccordionPanel("Datasubmission")
+    cy.get("[data-testid='datasubmission-details']", { timeout: 10000 }).should("be.visible")
+    cy.get("button[role=button]", { timeout: 10000 }).contains("Link datasubmission").click()
 
     /*
-     * 4th step, Datafolder
+     * 4th step, Datasubmission
      */
     cy.clickAccordionPanel("Describe")
 
@@ -273,8 +273,8 @@ describe("Basic application flow", function () {
     cy.get("h6").contains("Dataset").parents("div").children().eq(1).should("have.text", 1)
 
     cy.get("button[data-testid='summary-publish']").contains("Publish").click()
-    cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this folder will be published.")
-    cy.get('[data-testid="confirm-publish-folder"]').contains("Publish").click()
+    cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this submission will be published.")
+    cy.get('[data-testid="confirm-publish-submission"]').contains("Publish").click()
   })
 })
 

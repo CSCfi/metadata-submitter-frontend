@@ -17,11 +17,11 @@ import {
 import { useNavigate } from "react-router-dom"
 
 import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
-import { FolderSubmissionStatus } from "constants/wizardFolder"
-import { setFolder } from "features/wizardSubmissionFolderSlice"
+import { SubmissionStatus } from "constants/wizardSubmission"
+import { setSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
-import folderAPIService from "services/folderAPI"
-import type { FolderRow } from "types"
+import submissionAPIService from "services/submissionAPI"
+import type { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
 const Card = styled(MuiCard)(() => ({
@@ -77,18 +77,18 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
 }))
 
 type SubmissionDataTableProps = {
-  folderType: string
-  rows: Array<FolderRow>
+  submissionType: string
+  rows: Array<SubmissionRow>
   page?: number
   itemsPerPage?: number
   totalItems?: number
-  fetchItemsPerPage?: (items: number, folderType: string) => Promise<void>
-  fetchPageOnChange?: (page: number, folderType: string) => Promise<void>
-  onDeleteSubmission?: (submissionId: string, folderType: string) => void
+  fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
+  fetchPageOnChange?: (page: number, submissionType: string) => Promise<void>
+  onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
-  const { folderType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
+  const { submissionType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
     props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -121,7 +121,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     {
       field: "actions",
       type: "actions",
-      hide: folderType === FolderSubmissionStatus.published,
+      hide: submissionType === SubmissionStatus.published,
       getActions: (params: GridRowParams) => [
         <>
           <GridActionsCellItem
@@ -158,8 +158,8 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   const handleEditSubmission = async (e, id) => {
     e.stopPropagation()
-    const response = await folderAPIService.getFolderById(id)
-    dispatch(setFolder(response.data))
+    const response = await submissionAPIService.getSubmissionById(id)
+    dispatch(setSubmission(response.data))
     navigate({
       pathname: pathWithLocale(`submission/${id}`),
       search: `step=1`,
@@ -168,15 +168,15 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   const handleDeleteSubmission = async (e, id) => {
     e.stopPropagation()
-    onDeleteSubmission ? onDeleteSubmission(id, folderType) : null
+    onDeleteSubmission ? onDeleteSubmission(id, submissionType) : null
   }
 
   const handleChangePage = (_e: unknown, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page, folderType) : null
+    fetchPageOnChange ? fetchPageOnChange(page, submissionType) : null
   }
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), folderType) : null
+    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), submissionType) : null
   }
 
   const DataGridPagination = () =>
@@ -196,8 +196,8 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     </Stack>
   )
 
-  // Renders when there is folder list
-  const FolderList = () => (
+  // Renders when there is submission list
+  const SubmissionList = () => (
     <div style={{ height: "37.2rem", width: "100%" }}>
       <div style={{ display: "flex", height: "100%" }}>
         <div style={{ flexGrow: 1 }}>
@@ -223,7 +223,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   return (
     <Card variant="outlined">
-      <FolderList />
+      <SubmissionList />
     </Card>
   )
 }

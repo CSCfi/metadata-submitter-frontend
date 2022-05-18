@@ -32,7 +32,7 @@ declare global {
     interface Chainable {
       setMockUser(eppnUser: string, familyName: string, givenName: string): Chainable<Element>
       login(): Chainable<Element>
-      newSubmission(folderName?: string): Chainable<Element>
+      newSubmission(submissionName?: string): Chainable<Element>
       clickFillForm(objectType: string): Chainable<Element>
       clickAccordionPanel(label: string): Chainable<Element>
       clickAddObject(objectType: string): Chainable<Element>
@@ -41,7 +41,7 @@ declare global {
       openDOIForm(): Chainable<Element>
       formActions(buttonName: string): Chainable<Element>
       saveDoiForm(): Chainable<Element>
-      generateFolderAndObjects(stopToObjectType?: string): Chainable<Element>
+      generateSubmissionAndObjects(stopToObjectType?: string): Chainable<Element>
       generateObject(objectType: string): Chainable<Element>
     }
   }
@@ -84,16 +84,16 @@ Cypress.on("uncaught:exception", () => {
 
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
-  cy.intercept("/folders*").as("getFolders")
+  cy.intercept("/submissions*").as("getSubmissions")
   cy.get('a[data-testid="login-button"]').should("be.visible")
   cy.get('a[data-testid="login-button"]').click()
-  cy.wait("@getFolders")
+  cy.wait("@getSubmissions")
 })
 
-Cypress.Commands.add("newSubmission", folderName => {
-  cy.intercept("/folders*").as("newSubmission")
-  cy.get("[data-testid='folderName']").type(folderName ? folderName : "Test name")
-  cy.get("[data-testid='folderDescription']").type("Test description")
+Cypress.Commands.add("newSubmission", submissionName => {
+  cy.intercept("/submissions*").as("newSubmission")
+  cy.get("[data-testid='submissionName']").type(submissionName ? submissionName : "Test name")
+  cy.get("[data-testid='submissionDescription']").type("Test description")
   cy.get("button[type=submit]")
     .contains("Save")
     .should("be.visible")
@@ -187,12 +187,12 @@ Cypress.Commands.add("saveDoiForm", () => {
 })
 
 // Method for hanlding request path when generating objects
-const addObjectPath = (objectType: string, folderId: string) => `${baseUrl}objects/${objectType}?folder=${folderId}`
+const addObjectPath = (objectType: string, submissionId: string) => `${baseUrl}objects/${objectType}?submission=${submissionId}`
 
 // Create objects from predefined templates
 // Possible to stop into specific object type. Add object type as argument
-Cypress.Commands.add("generateFolderAndObjects", (stopToObjectType = "") => {
-  cy.intercept("/folders*").as("fetchFolders")
+Cypress.Commands.add("generateSubmissionAndObjects", (stopToObjectType = "") => {
+  cy.intercept("/submissions*").as("fetchSubmissions")
 
   // List of object types in particular order
   // This list is used to choose into what point of object generation is stopped
@@ -217,22 +217,22 @@ Cypress.Commands.add("generateFolderAndObjects", (stopToObjectType = "") => {
       // Select a project
       const selectedProject = userResponse.body.projects[0]
 
-      // Generate folder
-      cy.request("POST", baseUrl + "folders", {
-        name: "Test generated folder",
-        description: "Description for generated folder",
+      // Generate submission
+      cy.request("POST", baseUrl + "submissions", {
+        name: "Test generated submission",
+        description: "Description for generated submission",
         projectId: selectedProject.projectId,
         published: false,
         metadataObjects: [],
         drafts: [],
-      }).then(folderResponse => {
-        // Share context from generated folder
-        cy.wrap(folderResponse.body.folderId).as("generatedFolderId")
+      }).then(submissionResponse => {
+        // Share context from generated submission
+        cy.wrap(submissionResponse.body.submissionId).as("generatedSubmissionId")
 
-        // Reloading the view doesn't work in GitHub CI and results in failing test since generated folder isn't rendered
+        // Reloading the view doesn't work in GitHub CI and results in failing test since generated submission isn't rendered
         // Changing routes seems to work in this case
         cy.login()
-        cy.get("[data-field='name']", { timeout: 10000 }).eq(1).should("have.text", "Test generated folder")
+        cy.get("[data-field='name']", { timeout: 10000 }).eq(1).should("have.text", "Test generated submission")
         cy.get("[data-testid='edit-draft-submission']").scrollIntoView().should("be.visible")
 
         // Generate objects from templates
@@ -240,7 +240,7 @@ Cypress.Commands.add("generateFolderAndObjects", (stopToObjectType = "") => {
         // Doing async request as Promises doesn't work with GitHub CI
         const generateObject = (objectType, template) => {
           if (objectTypesArray.includes(objectType)) {
-            return cy.request("POST", addObjectPath(objectType, folderResponse.body.folderId), template)
+            return cy.request("POST", addObjectPath(objectType, submissionResponse.body.submissionId), template)
           }
         }
 
@@ -283,7 +283,7 @@ Cypress.Commands.add("generateFolderAndObjects", (stopToObjectType = "") => {
 
 // Generate single object for given object type
 // Note: This doesn't automatically refresh view
-// Manually reload route or do a folder action in UI (eg. add new object) to render generated object
+// Manually reload route or do a submission action in UI (eg. add new object) to render generated object
 Cypress.Commands.add("generateObject", (objectType: string) => {
   let template: Record<string, unknown>
 
@@ -322,8 +322,8 @@ Cypress.Commands.add("generateObject", (objectType: string) => {
     }
   }
 
-  cy.get("@generatedFolderId").then(folderId => {
-    cy.request("POST", addObjectPath(objectType, folderId.toString()), template).then(response => {
+  cy.get("@generatedSubmissionId").then(submissionId => {
+    cy.request("POST", addObjectPath(objectType, submissionId.toString()), template).then(response => {
       if (response.isOkStatusCode) {
         cy.log(`${DisplayObjectTypes[objectType]} object generated`)
       } else {

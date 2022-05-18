@@ -20,14 +20,14 @@ import { Link as RouterLink } from "react-router-dom"
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
 import WizardSearchBox from "components/SubmissionWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
-import { FolderSubmissionStatus } from "constants/wizardFolder"
+import { SubmissionStatus } from "constants/wizardSubmission"
 import { setProjectId } from "features/projectIdSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { deleteSubmissionAndContent, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import folderAPIService from "services/folderAPI"
-import type { FolderDetailsWithId, FolderRow } from "types"
+import submissionAPIService from "services/submissionAPI"
+import type { SubmissionDetailsWithId, SubmissionRow } from "types"
 import { pathWithLocale } from "utils"
 
 const ProjectDropdown = styled(FormControl)(({ theme }) => ({
@@ -74,9 +74,9 @@ const CreateSubmissionButton = styled(Button)(() => ({
   bottom: "2rem",
 }))
 
-const getDisplayRows = (items: Array<FolderDetailsWithId>): Array<FolderRow> => {
+const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
   return items.map(item => ({
-    id: item.folderId,
+    id: item.submissionId,
     name: item.name,
     dateCreated: item.dateCreated,
     lastModifiedBy: "TBA",
@@ -87,21 +87,21 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(state => state.user)
   const projectId = useAppSelector(state => state.projectId)
-  const [isFetchingFolders, setFetchingFolders] = useState<boolean>(true)
+  const [isFetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true)
 
   // Selected tab value
-  const [tabValue, setTabValue] = useState<string>(FolderSubmissionStatus.unpublished)
+  const [tabValue, setTabValue] = useState<string>(SubmissionStatus.unpublished)
 
   // Current submissions to be displayed in the data table
-  const [displaySubmissions, setDisplaySubmissions] = useState<Array<FolderDetailsWithId> | []>([])
+  const [displaySubmissions, setDisplaySubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
 
   // List of all draft and published submissions depending on the selected tab
-  const [allDraftSubmissions, setAllDraftSubmissions] = useState<Array<FolderDetailsWithId> | []>([])
-  const [allPublishedSubmissions, setAllPublishedSubmissions] = useState<Array<FolderDetailsWithId> | []>([])
+  const [allDraftSubmissions, setAllDraftSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
+  const [allPublishedSubmissions, setAllPublishedSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
 
   // Filtered submission rows based on filtering text
   const [filteringText, setFilteringText] = useState<string>("")
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Array<FolderDetailsWithId> | []>([])
+  const [filteredSubmissions, setFilteredSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
 
   // Current page of draft submission table
   const [draftPage, setDraftPage] = useState<number>(0)
@@ -129,15 +129,15 @@ const Home: React.FC = () => {
    */
   useEffect(() => {
     let isMounted = true
-    const getFolders = async () => {
-      const unpublishedResponse = await folderAPIService.getFolders({
+    const getSubmissions = async () => {
+      const unpublishedResponse = await submissionAPIService.getSubmissions({
         page: 1,
         per_page: 5,
         published: false,
         projectId: projectId,
       })
 
-      const publishedResponse = await folderAPIService.getFolders({
+      const publishedResponse = await submissionAPIService.getSubmissions({
         page: 1,
         per_page: 5,
         published: true,
@@ -148,29 +148,29 @@ const Home: React.FC = () => {
         if (unpublishedResponse.ok && publishedResponse.ok) {
           // Set submissions to be displayed based on tabValue
           const displaySubmissions =
-            tabValue === FolderSubmissionStatus.unpublished
-              ? unpublishedResponse.data?.folders
-              : publishedResponse.data?.folders
+            tabValue === SubmissionStatus.unpublished
+              ? unpublishedResponse.data?.submissions
+              : publishedResponse.data?.submissions
 
           setDisplaySubmissions(displaySubmissions)
 
           // Set total number of submissions
-          setNumberOfDraftSubmissions(unpublishedResponse.data.page?.totalFolders)
-          setNumberOfPublishedSubmissions(publishedResponse.data.page?.totalFolders)
+          setNumberOfDraftSubmissions(unpublishedResponse.data.page?.totalSubmissions)
+          setNumberOfPublishedSubmissions(publishedResponse.data.page?.totalSubmissions)
 
-          setFetchingFolders(false)
+          setFetchingSubmissions(false)
         } else {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
-              helperText: "Fetching folders error.",
+              helperText: "Fetching submissions error.",
             })
           )
         }
       }
     }
-    if (projectId) getFolders()
+    if (projectId) getSubmissions()
     return () => {
       isMounted = false
     }
@@ -184,13 +184,13 @@ const Home: React.FC = () => {
     if (isMounted) {
       const getAllDraftSubmisisons = async () => {
         if (numberOfDraftSubmissions > 0) {
-          const unpublishedResponse = await folderAPIService.getFolders({
+          const unpublishedResponse = await submissionAPIService.getSubmissions({
             page: 1,
             per_page: numberOfDraftSubmissions,
             published: false,
             projectId,
           })
-          setAllDraftSubmissions(unpublishedResponse.data?.folders)
+          setAllDraftSubmissions(unpublishedResponse.data?.submissions)
         }
       }
       getAllDraftSubmisisons()
@@ -208,13 +208,13 @@ const Home: React.FC = () => {
     if (isMounted) {
       const getAllPublishedSubmisisons = async () => {
         if (numberOfPublishedSubmissions > 0) {
-          const publishedResponse = await folderAPIService.getFolders({
+          const publishedResponse = await submissionAPIService.getSubmissions({
             page: 1,
             per_page: numberOfPublishedSubmissions,
             published: true,
             projectId,
           })
-          setAllPublishedSubmissions(publishedResponse.data?.folders)
+          setAllPublishedSubmissions(publishedResponse.data?.submissions)
         }
       }
       getAllPublishedSubmisisons()
@@ -235,7 +235,7 @@ const Home: React.FC = () => {
 
   const resetWizard = () => {
     dispatch(resetObjectType())
-    dispatch(resetFolder())
+    dispatch(resetSubmission())
   }
 
   const handleProjectIdChange = (event: SelectChangeEvent) => {
@@ -263,12 +263,12 @@ const Home: React.FC = () => {
     if (filteringText) getFilter(filteringText, newValue)
   }
 
-  const getCurrentRows = (): Array<FolderRow> => {
+  const getCurrentRows = (): Array<SubmissionRow> => {
     const displaySubmissionRows = getDisplayRows(displaySubmissions)
     const filteredSubmissionRows = getDisplayRows(filteredSubmissions)
     // Show filteredRows based on tabValue
     const displayFilteredSubmissionRows =
-      tabValue === FolderSubmissionStatus.unpublished
+      tabValue === SubmissionStatus.unpublished
         ? filteredSubmissionRows.slice(draftPage * draftItemsPerPage, draftPage * draftItemsPerPage + draftItemsPerPage)
         : filteredSubmissionRows.slice(
             publishedPage * publishedItemsPerPage,
@@ -280,27 +280,27 @@ const Home: React.FC = () => {
   const getCurrentTotalItems = () => {
     if (filteringText) return filteredSubmissions.length
     else {
-      return tabValue === FolderSubmissionStatus.unpublished ? numberOfDraftSubmissions : numberOfPublishedSubmissions
+      return tabValue === SubmissionStatus.unpublished ? numberOfDraftSubmissions : numberOfPublishedSubmissions
     }
   }
 
   /*
    *  Fire when user selects an option from "Items per page"
    */
-  const handleFetchItemsPerPage = async (numberOfItems: number, folderType: string) => {
-    const response = await folderAPIService.getFolders({
+  const handleFetchItemsPerPage = async (numberOfItems: number, submissionType: string) => {
+    const response = await submissionAPIService.getSubmissions({
       page: 1,
       per_page: numberOfItems,
-      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      published: submissionType === SubmissionStatus.unpublished ? false : true,
       projectId,
     })
 
     if (response.ok) {
       // Set new display submissions
-      const displaySubmissions = response.data?.folders
+      const displaySubmissions = response.data?.submissions
       setDisplaySubmissions(displaySubmissions)
 
-      if (folderType === FolderSubmissionStatus.unpublished) {
+      if (submissionType === SubmissionStatus.unpublished) {
         setDraftPage(0)
         setDraftItemsPerPage(numberOfItems)
       } else {
@@ -312,7 +312,7 @@ const Home: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Fetching folders error.",
+          helperText: "Fetching submissions error.",
         })
       )
     }
@@ -323,42 +323,42 @@ const Home: React.FC = () => {
    * or selects previous/next arrows
    * or deletes a submission
    */
-  const handleFetchPageOnChange = async (page: number, folderType: string, isDeletingSubmission?: boolean) => {
-    folderType === FolderSubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
+  const handleFetchPageOnChange = async (page: number, submissionType: string, isDeletingSubmission?: boolean) => {
+    submissionType === SubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
 
     // Fetch new page
-    const response = await folderAPIService.getFolders({
+    const response = await submissionAPIService.getSubmissions({
       page: page + 1,
-      per_page: folderType === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
-      published: folderType === FolderSubmissionStatus.unpublished ? false : true,
+      per_page: submissionType === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
+      published: submissionType === SubmissionStatus.unpublished ? false : true,
       projectId,
     })
 
     if (response.ok) {
       // Set new display submissions
-      const displaySubmissions = response.data?.folders
+      const displaySubmissions = response.data?.submissions
       setDisplaySubmissions(displaySubmissions)
 
       // Only set again a new total number of submissions if a submission is deleted
       if (isDeletingSubmission) {
-        folderType === FolderSubmissionStatus.unpublished
-          ? setNumberOfDraftSubmissions(response.data.page?.totalFolders)
-          : setNumberOfPublishedSubmissions(response.data.page?.totalFolders)
+        submissionType === SubmissionStatus.unpublished
+          ? setNumberOfDraftSubmissions(response.data.page?.totalSubmissions)
+          : setNumberOfPublishedSubmissions(response.data.page?.totalSubmissions)
       }
     } else {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Fetching folders error.",
+          helperText: "Fetching submissions error.",
         })
       )
     }
   }
 
-  const handleDeleteSubmission = (submissionId: string, folderType: string) => {
+  const handleDeleteSubmission = (submissionId: string, submissionType: string) => {
     // Dispatch action to delete the submission
-    dispatch(deleteFolderAndContent(submissionId))
+    dispatch(deleteSubmissionAndContent(submissionId))
       .then(() => {
         dispatch(
           updateStatus({
@@ -368,13 +368,13 @@ const Home: React.FC = () => {
         )
         // Then fetch current page again to get new list of display submissions and a new total number of submissions
         handleFetchPageOnChange(
-          folderType === FolderSubmissionStatus.unpublished ? draftPage : publishedPage,
-          folderType,
+          submissionType === SubmissionStatus.unpublished ? draftPage : publishedPage,
+          submissionType,
           true
         )
         // If there is a filtering text, get a new filtered list of submissions again
         if (filteringText) {
-          const newFilteredSubmissions = filteredSubmissions.filter(item => item.folderId !== submissionId)
+          const newFilteredSubmissions = filteredSubmissions.filter(item => item.submissionId !== submissionId)
           setFilteredSubmissions(newFilteredSubmissions)
         }
       })
@@ -390,7 +390,7 @@ const Home: React.FC = () => {
 
   const getFilter = (textValue: string, currentTab: string) => {
     const allSubmissions =
-      currentTab === FolderSubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
+      currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
 
     const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
@@ -398,7 +398,7 @@ const Home: React.FC = () => {
 
   const handleChangeFilteringText = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Set the current page in pagination to 0 when starting the filter
-    tabValue === FolderSubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
+    tabValue === SubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
     const textValue = e.target.value
     setFilteringText(textValue)
     debouncedChangeFilteringText(textValue, tabValue)
@@ -411,11 +411,11 @@ const Home: React.FC = () => {
 
   const handleClearFilteringText = () => {
     // Set the current page in pagination to 0 when clearing the filter
-    tabValue === FolderSubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
+    tabValue === SubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
     setFilteringText("")
   }
 
-  // Render either unpublished or published folders based on selected tab
+  // Render either unpublished or published submissions based on selected tab
   return (
     <FrontPageContainer maxWidth={false}>
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
@@ -430,8 +430,8 @@ const Home: React.FC = () => {
           textColor="primary"
           indicatorColor="primary"
         >
-          <FrontPageTab label="Drafts" value={FolderSubmissionStatus.unpublished} data-testid="drafts-tab" />
-          <FrontPageTab label="Published" value={FolderSubmissionStatus.published} data-testid="published-tab" />
+          <FrontPageTab label="Drafts" value={SubmissionStatus.unpublished} data-testid="drafts-tab" />
+          <FrontPageTab label="Published" value={SubmissionStatus.published} data-testid="published-tab" />
         </FrontPageTabs>
         <Link component={RouterLink} aria-label="Create submission" to={pathWithLocale("submission?step=1")}>
           <CreateSubmissionButton
@@ -459,14 +459,14 @@ const Home: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               <SubmissionDataTable
-                folderType={
-                  tabValue === FolderSubmissionStatus.unpublished
-                    ? FolderSubmissionStatus.unpublished
-                    : FolderSubmissionStatus.published
+                submissionType={
+                  tabValue === SubmissionStatus.unpublished
+                    ? SubmissionStatus.unpublished
+                    : SubmissionStatus.published
                 }
-                page={tabValue === FolderSubmissionStatus.unpublished ? draftPage : publishedPage}
+                page={tabValue === SubmissionStatus.unpublished ? draftPage : publishedPage}
                 itemsPerPage={
-                  tabValue === FolderSubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage
+                  tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage
                 }
                 totalItems={getCurrentTotalItems()}
                 fetchItemsPerPage={handleFetchItemsPerPage}
@@ -476,7 +476,7 @@ const Home: React.FC = () => {
               />
             </Grid>
 
-            {isFetchingFolders && <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />}
+            {isFetchingSubmissions && <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />}
           </Grid>
         ) : (
           <Grid container>

@@ -33,7 +33,7 @@ describe("WizardShowSummaryStep", () => {
         ObjectTypes.policy,
         ObjectTypes.dataset,
       ],
-      submissionFolder: {
+      submission: {
         description: "AWD",
         id: "FOL90524783",
         metadataObjects: [

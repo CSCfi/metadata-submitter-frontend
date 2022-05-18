@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 import userAPIService from "services/usersAPI"
-import type { User, APIResponse, DispatchReducer, ObjectInsideFolderWithTags } from "types"
+import type { User, APIResponse, DispatchReducer, ObjectInsideSubmissionWithTags } from "types"
 
 const initialState: User = {
   id: "",
@@ -42,7 +42,7 @@ export const fetchUserById =
   }
 
 export const addDraftsToUser =
-  (userId: string, drafts: Array<ObjectInsideFolderWithTags>) => async (): Promise<APIResponse> => {
+  (userId: string, drafts: Array<ObjectInsideSubmissionWithTags>) => async (): Promise<APIResponse> => {
     const changes = [{ op: "add", path: "/templates/-", value: drafts }]
     const response = await userAPIService.patchUserById("current", changes)
 

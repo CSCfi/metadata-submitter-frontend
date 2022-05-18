@@ -8,7 +8,7 @@ describe("draft and submitted objects' titles", function () {
 
   it("should show correct Submitted object's displayTitle", () => {
     cy.get("button", { timeout: 10000 }).contains("Create submission").click()
-    // Add folder name & description, navigate to submissions
+    // Add submission name & description, navigate to submissions
     cy.newSubmission()
     // Variables
     cy.get("[data-testid='descriptor.studyTitle']").as("studyTitle")
@@ -47,7 +47,7 @@ describe("draft and submitted objects' titles", function () {
   })
 
   it("should show correct Draft object's displayTitle", () => {
-    cy.generateFolderAndObjects(ObjectTypes.policy)
+    cy.generateSubmissionAndObjects(ObjectTypes.policy)
     cy.contains("Edit").click({ force: true })
 
     cy.clickAccordionPanel("Describe")

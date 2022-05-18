@@ -22,7 +22,7 @@ import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
 import { fetchUserById, resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { resetFolder } from "features/wizardSubmissionFolderSlice"
+import { resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
@@ -195,7 +195,7 @@ const NavigationMenu = () => {
   const handleAlert = () => {
     navigate(pathWithLocale("home"))
     dispatch(resetObjectType())
-    dispatch(resetFolder())
+    dispatch(resetSubmission())
     setDialogOpen(false)
   }
 

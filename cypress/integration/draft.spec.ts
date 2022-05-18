@@ -5,13 +5,13 @@ describe("Draft operations", function () {
     cy.task("resetDb")
     cy.login()
 
-    // Add folder name & description, navigate to submissions
-    cy.generateFolderAndObjects(ObjectTypes.dac)
-    // // Edit newly created folder
+    // Add submission name & description, navigate to submissions
+    cy.generateSubmissionAndObjects(ObjectTypes.dac)
+    // // Edit newly created submission
     cy.contains("Edit").click({ force: true })
   })
 
-  it("should create new folder, save, delete and continue draft", () => {
+  it("should create new submission, save, delete and continue draft", () => {
     cy.clickAccordionPanel("Study, DAC and policy")
     // Fill a Policy form
     cy.clickAddObject("policy")

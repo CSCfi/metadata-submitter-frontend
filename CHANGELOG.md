@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
+- Refactor **folder** -> **submission**
 
 ### Added
 

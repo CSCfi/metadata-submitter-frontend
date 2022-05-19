@@ -75,11 +75,12 @@ const CreateSubmissionButton = styled(Button)(() => ({
 }))
 
 const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
+  console.log(items)
   return items.map(item => ({
     id: item.submissionId,
     name: item.name,
     dateCreated: item.dateCreated,
-    lastModifiedBy: "TBA",
+    lastModified: item.lastModified,
   }))
 }
 
@@ -136,7 +137,7 @@ const Home: React.FC = () => {
         published: false,
         projectId: projectId,
       })
-
+      console.log(unpublishedResponse)
       const publishedResponse = await submissionAPIService.getSubmissions({
         page: 1,
         per_page: 5,
@@ -389,8 +390,7 @@ const Home: React.FC = () => {
   }
 
   const getFilter = (textValue: string, currentTab: string) => {
-    const allSubmissions =
-      currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
+    const allSubmissions = currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
 
     const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
@@ -460,14 +460,10 @@ const Home: React.FC = () => {
             <Grid item xs={12}>
               <SubmissionDataTable
                 submissionType={
-                  tabValue === SubmissionStatus.unpublished
-                    ? SubmissionStatus.unpublished
-                    : SubmissionStatus.published
+                  tabValue === SubmissionStatus.unpublished ? SubmissionStatus.unpublished : SubmissionStatus.published
                 }
                 page={tabValue === SubmissionStatus.unpublished ? draftPage : publishedPage}
-                itemsPerPage={
-                  tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage
-                }
+                itemsPerPage={tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
                 totalItems={getCurrentTotalItems()}
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}

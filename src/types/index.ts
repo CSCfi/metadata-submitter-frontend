@@ -64,6 +64,7 @@ export type SubmissionDetails = {
   name: string
   description: string
   dateCreated?: number
+  lastModified?: number
   published: boolean
   drafts: Array<ObjectInsideSubmissionWithTags>
   metadataObjects: Array<ObjectInsideSubmissionWithTags>
@@ -76,7 +77,7 @@ export type SubmissionRow = {
   id: string
   name: string
   dateCreated?: number
-  lastModifiedBy: string
+  lastModified?: number | undefined
 }
 
 export type SubmissionDataFromForm = {

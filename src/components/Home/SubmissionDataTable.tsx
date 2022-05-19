@@ -88,8 +88,16 @@ type SubmissionDataTableProps = {
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
-  const { submissionType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
-    props
+  const {
+    submissionType,
+    page,
+    itemsPerPage,
+    totalItems,
+    fetchPageOnChange,
+    fetchItemsPerPage,
+    rows,
+    onDeleteSubmission,
+  } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -114,9 +122,19 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       sortComparator: (v1, v2) => v2.timestamp - v1.timestamp,
     },
     {
-      field: "lastModifiedBy",
-      headerName: "Last modified by",
-      sortable: false,
+      field: "lastModified",
+      headerName: "Last modified",
+      type: "date",
+      valueFormatter: (params: GridValueFormatterParams): GridCellValue => {
+        const { convertedDate } = params.value as Record<string, string>
+        return convertedDate
+      },
+      valueGetter: (params: GridValueGetterParams): GridCellValue => ({
+        convertedDate: getConvertedDate(params.value),
+        timestamp: params.value,
+      }),
+      sortComparator: (v1, v2) => v2.timestamp - v1.timestamp,
+      sortable: true,
     },
     {
       field: "actions",

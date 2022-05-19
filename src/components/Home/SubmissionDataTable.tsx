@@ -105,7 +105,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     {
       field: "name",
       headerName: "Name",
-      sortable: false,
+      sortable: true,
     },
     {
       field: "dateCreated",

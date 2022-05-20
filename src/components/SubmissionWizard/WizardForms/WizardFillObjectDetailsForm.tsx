@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from "react"
 import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
-// import CardHeader from "@mui/material/CardHeader"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
@@ -31,7 +30,7 @@ import { setFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { deleteObjectFromFolder, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
@@ -434,7 +433,7 @@ const FormContent = ({
   }
 
   const handleXMLModalOpen = () => {
-    dispatch(setXMLModalOpen(true))
+    dispatch(setXMLModalOpen())
   }
 
   return (

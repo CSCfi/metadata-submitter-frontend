@@ -124,7 +124,7 @@ const SubmissionWizard: React.FC = () => {
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper className={classes.paper} elevation={2}>
-              <div className={classes.paperContent}>{getStepContent(wizardStep, createSubmissionFormRef)}</div>
+              {getStepContent(wizardStep, createSubmissionFormRef)}
             </Paper>
           )}
         </Grid>

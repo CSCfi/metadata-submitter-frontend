@@ -19,12 +19,12 @@ import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import { addObject, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { addObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import objectAPIService from "services/objectAPI"
-import submissionAPIService from "services/submissionAPI"
+import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
 import { ObjectDetails, ObjectTags } from "types"
 
 type WizardUploadXMLModalProps = {
@@ -67,7 +67,7 @@ const StyledButton = styled(Button)(() => ({
 const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUploadXMLModalProps) => {
   const dispatch = useAppDispatch()
   const objectType = useAppSelector(state => state.objectType)
-  const { folderId } = useAppSelector(state => state.submissionFolder)
+  const { submissionId } = useAppSelector(state => state.submission)
   const loading = useAppSelector(state => state.loading)
 
   const {
@@ -95,12 +95,11 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
 
         if (response.ok) {
           dispatch(
-            replaceObjectInFolder(
+            replaceObjectInSubmission(
               currentObject.accessionId,
               {
                 submissionType: ObjectSubmissionTypes.xml,
                 fileName: file.name,
-                displayTitle: file.name,
                 fileSize: file.size,
               },
               ObjectStatus.submitted
@@ -114,7 +113,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
               tags: {
                 submissionType: ObjectSubmissionTypes.xml,
                 fileName: file.name,
-                displayTitle: file.name,
                 fileSize: file.size,
               },
             })
@@ -124,7 +122,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
           dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
         }
       } else {
-        const response = await objectAPIService.createFromXML(objectType, folderId, file)
+        const response = await objectAPIService.createFromXML(objectType, submissionId, file)
 
         if (response.ok) {
           dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
@@ -135,7 +133,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
               tags: {
                 submissionType: ObjectSubmissionTypes.xml,
                 fileName: file.name,
-                displayTitle: file.name,
                 fileSize: file.size,
               },
             })
@@ -149,7 +146,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
               tags: {
                 submissionType: ObjectSubmissionTypes.xml,
                 fileName: file.name,
-                displayTitle: file.name,
                 fileSize: file.size,
               },
             })
@@ -225,7 +221,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
                   isFile: value => value?.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
-                    const response = await submissionAPIService.validateXMLFile(objectType, value[0])
+                    const response = await xmlSubmissionAPIService.validateXMLFile(objectType, value[0])
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
                       our server reported following error:
@@ -260,12 +256,9 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
             left="0"
             justifyContent="center"
             alignItems="center"
-            bgcolor="common.white"
+            bgcolor="rgba(0, 0, 0, 0.5)"
           >
             <CircularProgress />
-            <Typography variant="subtitle1" color="secondary" sx={{ mt: "2rem" }}>
-              Uploading file...
-            </Typography>
           </Stack>
         )}
       </StyledContainer>

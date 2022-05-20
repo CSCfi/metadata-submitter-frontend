@@ -2,7 +2,7 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { Provider } from "react-redux"
 import configureStore from "redux-mock-store"
 
@@ -21,17 +21,17 @@ describe("WizardFillObjectDetailsForm", () => {
     properties: {
       descriptor: {
         type: "object",
-        title: "Study Description",
+        title: "Study Details",
         required: ["studyTitle"],
         properties: {
           studyTitle: {
             title: "Study Title",
-            description: "Title of the study as would be used in a publication.",
+            description: "Title of the study",
             type: "string",
           },
-          studyTestField: {
-            title: "Study Test Field",
-            description: "Study test field description.",
+          studyDescription: {
+            title: "Study Description",
+            description: "Study Description should provide additional information about the study.",
             type: "string",
           },
         },
@@ -65,6 +65,7 @@ describe("WizardFillObjectDetailsForm", () => {
         { accessionId: "id2", schema: ObjectTypes.sample },
       ],
     },
+    openedXMLModal: false,
   })
 
   sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
@@ -79,8 +80,8 @@ describe("WizardFillObjectDetailsForm", () => {
         </StyledEngineProvider>
       </Provider>
     )
-    await waitFor(() => screen.getByText("Study Description"))
-    expect(screen.getByText("Study Description")).toBeDefined()
+    await waitFor(() => screen.getByText("Study Details"))
+    expect(screen.getByText("Study Details")).toBeDefined()
   })
 
   it("should validate without errors on blur", async () => {
@@ -101,7 +102,7 @@ describe("WizardFillObjectDetailsForm", () => {
     })
   })
 
-  test("should show tooltip on mouse over", async () => {
+  test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
     render(
       <Provider store={store}>
         <StyledEngineProvider injectFirst>
@@ -112,11 +113,55 @@ describe("WizardFillObjectDetailsForm", () => {
       </Provider>
     )
 
-    await waitFor(() => {
-      const tooltip = screen.getByLabelText("Title of the study as would be used in a publication.")
-      fireEvent.mouseOver(tooltip)
-      expect(tooltip).toBeVisible()
+    // For description with length equal or less than 60, the tooltip should display all content
+    const TooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[0])
+
+    act(() => {
+      fireEvent.mouseOver(TooltipIcon)
     })
+
+    const tooltipBox = await waitFor(() => screen.getByRole("tooltip"))
+    expect(tooltipBox).toBeVisible()
+    expect(tooltipBox).toHaveTextContent("Title of the study")
+  })
+
+  test("should show partly tooltip with Read more/Expand option on mouse over if the text length is > 60 chars", async () => {
+    render(
+      <Provider store={store}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardFillObjectDetailsForm />
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </Provider>
+    )
+
+    // For description with length more than 60, the tooltip should display Read more/Expand
+    const tooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[1])
+
+    act(() => {
+      fireEvent.mouseOver(tooltipIcon)
+    })
+
+    const tooltipBox = await waitFor(() => screen.getByRole("tooltip"))
+    expect(tooltipBox).toBeVisible()
+    expect(tooltipBox).toHaveTextContent("Read more/Expand")
+
+    const showmoreLink = await waitFor(() => screen.getByText("Read more/Expand"))
+
+    act(() => {
+      fireEvent.click(showmoreLink)
+    })
+
+    expect(tooltipBox).toHaveTextContent("Study Description should provide additional information about the study.")
+
+    const showlessLink = await waitFor(() => screen.getByText("Show less"))
+
+    act(() => {
+      fireEvent.click(showlessLink)
+    })
+
+    expect(tooltipBox).toHaveTextContent("Read more/Expand")
   })
 
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow

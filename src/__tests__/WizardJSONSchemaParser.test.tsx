@@ -89,9 +89,6 @@ describe("Test form render by custom schema", () => {
           )
         }
 
-        // Most fields are rendered with labels. Test that label exists in form
-        if (source.properties) testLabels(source)
-
         // Loop through properties recursively
         if (source.properties) traverse(source, [...path, prop])
       }

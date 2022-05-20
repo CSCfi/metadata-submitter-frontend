@@ -6,7 +6,7 @@ const wizardXMLModalSlice = createSlice({
   name: "wizardXMLModal",
   initialState,
   reducers: {
-    setXMLModalOpen: (_state, action) => action.payload,
+    setXMLModalOpen: () => true,
     resetXMLModalOpen: () => initialState,
   },
 })

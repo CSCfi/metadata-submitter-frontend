@@ -1,7 +1,6 @@
 import React from "react"
 
 import Box from "@mui/material/Box"
-// import CardHeader from "@mui/material/CardHeader"
 import Container from "@mui/material/Container"
 import Link from "@mui/material/Link"
 import { styled } from "@mui/material/styles"
@@ -59,10 +58,10 @@ const WizardXMLObjectPage = () => {
             <TableBody>
               <StyledTableRow>
                 <TableCell>{xmlObject.tags?.fileName}</TableCell>
-                <TableCell>{xmlObject.tags?.fileSize}</TableCell>
+                <TableCell>{xmlObject.tags?.fileSize || 1} B</TableCell>
                 <TableCell align="right">
                   <Link
-                    onClick={() => dispatch(setXMLModalOpen(true))}
+                    onClick={() => dispatch(setXMLModalOpen())}
                     sx={{ mr: "4rem", "&:hover": { cursor: "pointer" } }}
                   >
                     Replace

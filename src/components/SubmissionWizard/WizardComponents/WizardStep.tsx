@@ -84,7 +84,7 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         navigate({ pathname: pathname, search: stepParam })
         break
       }
-      case "datasubmission": {
+      case "datafolder": {
         navigate({ pathname: pathname, search: stepParam })
         break
       }

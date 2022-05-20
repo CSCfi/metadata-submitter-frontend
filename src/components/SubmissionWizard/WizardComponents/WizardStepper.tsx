@@ -163,14 +163,14 @@ const WizardStepper = () => {
       disabled: submission.submissionId === "",
     },
     {
-      label: "Datasubmission",
+      label: "Datafolder",
       stepItems: [
         {
-          objectType: "datasubmission",
-          label: "Datasubmission",
+          objectType: "datafolder",
+          label: "Datafolder",
         },
       ],
-      actionButtonText: "Link datasubmission",
+      actionButtonText: "Link datafolder",
       disabled: !allStepItemsReady([ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy]), // Placeholder rule until feature is ready
     },
     {

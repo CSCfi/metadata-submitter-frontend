@@ -107,12 +107,12 @@ describe("Basic application flow", function () {
      * 3rd step, Describe
      */
 
-    cy.clickAccordionPanel("Datasubmission")
-    cy.get("[data-testid='datasubmission-details']", { timeout: 10000 }).should("be.visible")
-    cy.get("button[role=button]", { timeout: 10000 }).contains("Link datasubmission").click()
+    cy.clickAccordionPanel("Datafolder")
+    cy.get("[data-testid='datafolder-details']", { timeout: 10000 }).should("be.visible")
+    cy.get("button[role=button]", { timeout: 10000 }).contains("Link datafolder").click()
 
     /*
-     * 4th step, Datasubmission
+     * 4th step, Datafolder
      */
     cy.clickAccordionPanel("Describe")
 

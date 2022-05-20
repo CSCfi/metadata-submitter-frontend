@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper"
 import { makeStyles } from "@mui/styles"
 import { useNavigate, useParams } from "react-router-dom"
 
-// import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
+import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
@@ -22,10 +22,6 @@ import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: 0,
-  },
-
   container: {
     flex: "1 0 auto",
     padding: 0,
@@ -42,6 +38,11 @@ const useStyles = makeStyles(theme => ({
   },
   stepContent: {
     paddingLeft: `${theme.spacing(5)} !important`,
+    paddingRight: `${theme.spacing(5)} !important`,
+  },
+  paper: {
+    padding: 0,
+    height: "100%",
   },
 }))
 
@@ -114,12 +115,12 @@ const SubmissionWizard: React.FC = () => {
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
   return (
-    <Container maxWidth={false} className={classes.container}>
-      <Grid container spacing={2} className={classes.gridContainer}>
+    <Container maxWidth={false} className={classes.container} disableGutters>
+      <Grid container className={classes.gridContainer}>
         <Grid item xs={3} className={classes.stepper}>
           <WizardStepper />
         </Grid>
-        <Grid item xs={7} className={classes.stepContent}>
+        <Grid item xs={9} className={classes.stepContent}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper className={classes.paper} elevation={2}>
@@ -129,7 +130,7 @@ const SubmissionWizard: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* <WizardFooter /> */}
+      <WizardFooter />
     </Container>
   )
 }

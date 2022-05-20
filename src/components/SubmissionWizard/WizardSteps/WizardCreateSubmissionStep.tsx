@@ -30,14 +30,14 @@ const useStyles = makeStyles(theme => ({
     "& .MuiTextField-root": {
       margin: "1rem 0",
     },
-    padding: "2rem",
+    padding: "4rem",
   },
   submitButton: {
     marginTop: "2rem",
     padding: "1rem 5rem",
   },
   typeOfSubmissionRow: {
-    marginTop: theme.spacing(-1),
+    marginTop: theme.spacing(2),
   },
   typeOfSubmissionLabel: {
     background: theme.palette.background.default,
@@ -111,7 +111,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
         ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
-        <Typography variant="h4" gutterBottom component="div" color="secondary">
+        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
           Name your submission
         </Typography>
         <Controller

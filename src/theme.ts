@@ -118,7 +118,7 @@ let CSCtheme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          padding: 0,
+          padding: "0 !important",
           fontSizeBreakpoints,
         },
       },
@@ -182,11 +182,10 @@ let CSCtheme = createTheme({
     cardHeader: {
       backgroundColor: palette.common.white,
       position: "sticky",
-      top: 8,
       zIndex: 2,
+      top: defaultTheme.spacing(7.7),
+      height: "8rem",
       borderBottom: `0.1rem solid ${palette.primary.light}`,
-      paddingTop: "1.5rem",
-      paddingBottom: "1.5rem",
     },
     objectListItem: {
       border: "none",

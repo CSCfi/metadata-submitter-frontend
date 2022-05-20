@@ -1,17 +1,13 @@
 import React from "react"
 
 import Alert from "@mui/material/Alert"
-import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
+import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import FormControl from "@mui/material/FormControl"
 import Modal from "@mui/material/Modal"
+import Stack from "@mui/material/Stack"
 import { styled } from "@mui/material/styles"
-import Table from "@mui/material/Table"
-import TableCell from "@mui/material/TableCell"
-import TableContainer from "@mui/material/TableContainer"
-import TableHead from "@mui/material/TableHead"
-import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
 import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
@@ -44,25 +40,27 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   left: "50%",
   width: "92rem",
   height: "42rem",
-  padding: "5rem",
-  bgcolor: "white",
+  padding: "5rem !important",
   transform: "translate(-50%, -50%)",
   borderRadius: "0.375rem",
   boxShadow: "0 4px 4px 0 rgba(0,0,0,0.25)",
 }))
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
+const StyledFormControl = styled(FormControl, { shouldForwardProp: prop => prop !== "isDragActive" })<{
+  isDragActive: boolean
+}>(({ theme, isDragActive }) => ({
   width: "100%",
-  height: "14rem",
+  height: "19rem",
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
   padding: "4rem",
-  border: `2px dashed ${theme.palette.primary.main}`,
+  marginBottom: "2.5rem",
+  border: isDragActive ? `2px dashed ${theme.palette.primary.main}` : `2px dashed ${theme.palette.secondary.lightest}`,
 }))
 
 const StyledButton = styled(Button)(() => ({
-  width: "17rem",
+  width: "12rem",
   height: "5rem",
 }))
 
@@ -70,6 +68,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
   const dispatch = useAppDispatch()
   const objectType = useAppSelector(state => state.objectType)
   const { folderId } = useAppSelector(state => state.submissionFolder)
+  const loading = useAppSelector(state => state.loading)
 
   const {
     register,
@@ -90,10 +89,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
       dispatch(resetStatusDetails())
       dispatch(setLoading())
       const file = data.fileUpload[0] || {}
-
-      const waitForServertimer = setTimeout(() => {
-        dispatch(updateStatus({ status: ResponseStatus.info }))
-      }, 5000)
 
       if (currentObject?.accessionId) {
         const response = await objectAPIService.replaceXML(objectType, currentObject.accessionId, file)
@@ -164,7 +159,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
           dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
         }
       }
-      clearTimeout(waitForServertimer)
       dispatch(resetLoading())
       dispatch(resetXMLModalOpen())
     }
@@ -188,7 +182,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
     handleSubmit(async data => onSubmit(data as FileUpload))()
   }
 
-  const { getRootProps } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     maxFiles: 1,
     noClick: true,
     noKeyboard: true,
@@ -207,28 +201,8 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
         <Typography variant="h4" role="heading" color="secondary" sx={{ pb: "2.5rem", fontWeight: 700 }}>
           Upload XML File
         </Typography>
-        <TableContainer component={Box}>
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={theme => ({
-                  border: `1px solid ${theme.palette.secondary.light}`,
-                  "& th": {
-                    px: "3.2rem",
-                    py: "1.6rem",
-                    color: theme.palette.secondary.main,
-                  },
-                })}
-              >
-                <TableCell width={"25%"}>Name</TableCell>
-                <TableCell width={"25%"}>Size</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-          </Table>
-        </TableContainer>
         <form>
-          <StyledFormControl>
+          <StyledFormControl isDragActive={isDragActive}>
             <Typography variant="body1" color="secondary">
               Drag and drop the file here or
             </Typography>
@@ -252,7 +226,6 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
                     const response = await submissionAPIService.validateXMLFile(objectType, value[0])
-
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
                       our server reported following error:
@@ -268,16 +241,33 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
         <StyledButton
           variant="outlined"
           color="primary"
-          sx={{ border: "2px solid", mt: "2.5rem" }}
+          sx={{ "&.MuiButton-root, &:hover": { border: "2px solid" } }}
           onClick={() => dispatch(resetXMLModalOpen())}
         >
           Cancel
         </StyledButton>
-        <Box position="absolute" bottom="-30%" left="0" right="0">
+        <Stack position="absolute" bottom="-30%" left="0" right="0">
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
           {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
           {errors.fileUpload?.type === "isValidXML" && <Alert severity="error">{errors?.fileUpload?.message}</Alert>}
-        </Box>
+        </Stack>
+        {loading && (
+          <Stack
+            width="100%"
+            height="100%"
+            position="absolute"
+            top="0"
+            left="0"
+            justifyContent="center"
+            alignItems="center"
+            bgcolor="common.white"
+          >
+            <CircularProgress />
+            <Typography variant="subtitle1" color="secondary" sx={{ mt: "2rem" }}>
+              Uploading file...
+            </Typography>
+          </Stack>
+        )}
       </StyledContainer>
     </Modal>
   )

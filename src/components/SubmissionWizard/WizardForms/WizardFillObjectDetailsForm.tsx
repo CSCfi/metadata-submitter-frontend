@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react"
 
-import { CustomTheme } from "@mui/material"
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
-import CardHeader from "@mui/material/CardHeader"
+// import CardHeader from "@mui/material/CardHeader"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
@@ -13,6 +13,7 @@ import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
 
+import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
@@ -40,15 +41,16 @@ import type { SubmissionDetailsWithId, FormDataFiles, FormObject, ObjectDetails,
 import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: CustomTheme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     margin: 0,
     padding: 0,
   },
-  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(7.7), zIndex: 2 },
+  cardHeader: { ...theme.wizard.cardHeader },
   resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
     margin: "0 !important",
+    border: "1px solid red",
   },
   buttonGroup: {
     display: "grid",
@@ -150,12 +152,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   return (
     <>
-      <CardHeader
-        classes={{
-          root: classes.cardHeader,
-          action: classes.cardHeaderAction,
-        }}
-        className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
+      <WizardStepContentHeader
         action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
       />
       <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />

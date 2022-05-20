@@ -187,7 +187,11 @@ const StepItems = (props: {
                         color: theme.palette.primary.main,
                       })}
                     >
-                      {item.displayTitle !== "" ? item.displayTitle : item.id}
+                      {item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
+                        ? item.objectData.tags.fileName
+                        : item.displayTitle !== ""
+                        ? item.displayTitle
+                        : item.id}
                     </Link>
                   </Grid>
                   <Grid item>

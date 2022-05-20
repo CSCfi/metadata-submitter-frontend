@@ -1,6 +1,6 @@
 import React from "react"
 
-import { CustomTheme } from "@mui/material"
+import { Theme } from "@mui/material"
 import Box from "@mui/material/Box"
 import CardHeader from "@mui/material/CardHeader"
 import List from "@mui/material/List"
@@ -16,7 +16,7 @@ import { useAppSelector } from "hooks"
 import type { ObjectInsideSubmissionWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
-const useStyles = makeStyles((theme: CustomTheme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   objectList: {
     flex: "auto",
   },

@@ -5,7 +5,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.task("resetDb")
     cy.login()
 
-    cy.generateFolderAndObjects()
+    cy.generateSubmissionAndObjects()
     cy.contains("Edit").click({ force: true })
 
     cy.clickAccordionPanel("Describe")

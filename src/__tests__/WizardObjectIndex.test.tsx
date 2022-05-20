@@ -26,7 +26,7 @@ describe("WizardObjectIndex", () => {
         ObjectTypes.policy,
         ObjectTypes.dataset,
       ],
-      submissionFolder: {
+      submission: {
         drafts: [
           { accessionId: "TESTID1234", schema: `draft-${ObjectTypes.study}` },
           { accessionId: "TESTID5678", schema: `draft-${ObjectTypes.study}` },

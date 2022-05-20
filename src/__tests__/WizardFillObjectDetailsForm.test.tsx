@@ -55,7 +55,7 @@ describe("WizardFillObjectDetailsForm", () => {
   const store = mockStore({
     objectType: ObjectTypes.study,
     submissionType: ObjectSubmissionTypes.form,
-    submissionFolder: {
+    submission: {
       description: "AWD",
       id: "FOL90524783",
       name: "Testname",

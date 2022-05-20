@@ -29,7 +29,7 @@ describe("SubmissionWizard", () => {
   const initialStore = {
     submissionType: "",
     objectTypesArray: Object.keys(ObjectTypes),
-    submissionFolder: {
+    submission: {
       drafts: [],
       metadataObjects: [],
     },
@@ -55,17 +55,17 @@ describe("SubmissionWizard", () => {
     expect(screen.getByText("404 Not Found")).toBeInTheDocument()
   })
 
-  test("should redirect back to draft wizard start on invalid folderId", async () => {
+  test("should redirect back to draft wizard start on invalid submissionId", async () => {
     server.use(
-      rest.get("/folders/:folderId", (req, res, ctx) => {
-        const { folderId } = req.params
+      rest.get("/submissions/:submissionId", (req, res, ctx) => {
+        const { submissionId } = req.params
         return res(
           ctx.status(404),
           ctx.json({
             type: "about:blank",
             title: "Not Found",
-            detail: `Folder with id ${folderId} was not found.`,
-            instance: `/folders/${folderId}`,
+            detail: `Submission with id ${submissionId} was not found.`,
+            instance: `/submissions/${submissionId}`,
           })
         )
       })
@@ -78,7 +78,7 @@ describe("SubmissionWizard", () => {
             userId: "abc",
             name: "Test user",
             templates: [],
-            folders: [],
+            submissions: [],
           })
         )
       })
@@ -100,26 +100,26 @@ describe("SubmissionWizard", () => {
       </MemoryRouter>
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    expect(screen.getByTestId("folderName")).toBeInTheDocument()
+    expect(screen.getByTestId("submissionName")).toBeInTheDocument()
   })
 
   /*
    * The test is commented out to be used again later
    */
 
-  // it("should render folder by folderId in URL parameters", async () => {
-  //   const folderId = "123456"
-  //   const folderName = "Folder name"
-  //   const folderDescription = "Folder description"
+  // it("should render submission by submissionId in URL parameters", async () => {
+  //   const submissionId = "123456"
+  //   const submissionName = "Submission name"
+  //   const submissionDescription = "Submission description"
 
   //   server.use(
-  //     rest.get("/folders/:folderId", (req, res, ctx) => {
-  //       const { folderId } = req.params
+  //     rest.get("/submissions/:submissionId", (req, res, ctx) => {
+  //       const { submissionId } = req.params
   //       return res(
   //         ctx.json({
-  //           name: folderName,
-  //           description: folderDescription,
-  //           folderId: folderId,
+  //           name: submissionName,
+  //           description: submissionDescription,
+  //           submissionId: submissionId,
   //         })
   //       )
   //     })
@@ -128,18 +128,18 @@ describe("SubmissionWizard", () => {
   //   const store = mockStore({
   //     objectType: "",
   //     submissionType: "",
-  //     submissionFolder: {
-  //       name: folderName,
-  //       folderDescription: folderDescription,
+  //     submission: {
+  //       name: submissionName,
+  //       submissionDescription: submissionDescription,
   //       published: false,
   //       metadataObjects: [],
   //       drafts: [],
-  //       folderId: folderId,
+  //       submissionId: submissionId,
   //     },
   //     objectTypesArray: ["study"],
   //   })
   //   render(
-  //     <MemoryRouter initialEntries={[{ pathname: `/en/submission/${folderId}`, search: "?step=0" }]}>
+  //     <MemoryRouter initialEntries={[{ pathname: `/en/submission/${submissionId}`, search: "?step=0" }]}>
   //       <Provider store={store}>
   //         <StyledEngineProvider injectFirst>
   //           <ThemeProvider theme={CSCtheme}>
@@ -151,7 +151,7 @@ describe("SubmissionWizard", () => {
   //   )
 
   //   await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-  //   const folderNameInput = screen.getByTestId("folderName")
-  //   expect(folderNameInput).toHaveValue(folderName)
+  //   const submissionNameInput = screen.getByTestId("submissionName")
+  //   expect(submissionNameInput).toHaveValue(submissionName)
   // })
 })

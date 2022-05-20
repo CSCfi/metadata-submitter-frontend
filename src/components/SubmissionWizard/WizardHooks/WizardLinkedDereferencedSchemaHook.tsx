@@ -1,14 +1,14 @@
 import { merge } from "lodash"
 
 import { ObjectTypes } from "constants/wizardObject"
-import type { FormObject, ObjectInsideFolderWithTags } from "types"
+import type { FormObject, ObjectInsideSubmissionWithTags } from "types"
 import { getAccessionIds } from "utils"
 
 const getLinkedDereferencedSchema = (
   currentObject: Record<string, unknown>,
   objectType: string,
   dereferencedSchema: Promise<FormObject>,
-  metadataObjects: Array<ObjectInsideFolderWithTags>,
+  metadataObjects: Array<ObjectInsideSubmissionWithTags>,
   analysisAccessionIds: Array<string>
 ): Promise<FormObject> => {
   // AccessionIds of submitted objects

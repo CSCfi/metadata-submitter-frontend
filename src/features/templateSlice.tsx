@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit"
 import _reject from "lodash/reject"
 
 import templateAPIService from "services/templateAPI"
-import { ObjectInsideFolderWithTags, APIResponse, DispatchReducer } from "types"
+import { ObjectInsideSubmissionWithTags, APIResponse, DispatchReducer } from "types"
 
-const initialState: Array<ObjectInsideFolderWithTags> | [] = []
+const initialState: Array<ObjectInsideSubmissionWithTags> | [] = []
 
 const templateSlice = createSlice({
   name: "project",

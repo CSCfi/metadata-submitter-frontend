@@ -11,10 +11,10 @@ api.addMonitor(errorMonitor)
 
 const createFromJSON = async (
   objectType: string,
-  folderId: string,
+  submissionId: string,
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
-  return await api.post(`/${objectType}?folder=${folderId}`, JSONContent)
+  return await api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
 }
 
 const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {

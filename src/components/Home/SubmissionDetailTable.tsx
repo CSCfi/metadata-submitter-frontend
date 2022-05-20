@@ -28,11 +28,11 @@ import { makeStyles, withStyles } from "@mui/styles"
 import { Link as RouterLink } from "react-router-dom"
 
 import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
-import { FolderSubmissionStatus } from "constants/wizardFolder"
 import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { SubmissionStatus } from "constants/wizardSubmission"
 import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { OldFolderRow } from "types"
+import type { OldSubmissionRow } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -88,20 +88,20 @@ const SubmissionTooltip = withStyles(theme => ({
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
 type SubmissionDetailTableProps = {
-  folderTitle: string
-  bodyRows: Array<OldFolderRow>
-  folderType: string
+  submissionTitle: string
+  bodyRows: Array<OldSubmissionRow>
+  submissionType: string
   location: string
-  onEditFolder: (step: number) => void
-  onPublishFolder: () => void
+  onEditSubmission: (step: number) => void
+  onPublishSubmission: () => void
   onEditObject: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
   onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
 
 type RowProps = {
   index: number
-  row: OldFolderRow
-  publishedFolder: boolean
+  row: OldSubmissionRow
+  publishedSubmission: boolean
   onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
   onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
@@ -109,7 +109,7 @@ type RowProps = {
 const Row = (props: RowProps) => {
   const dispatch = useAppDispatch()
   const openedRows = useAppSelector(state => state.openedRows) || []
-  const { index, row, publishedFolder, onEdit, onDelete } = props
+  const { index, row, publishedSubmission, onEdit, onDelete } = props
 
   const getDateFormat = (date: string) => {
     const d = new Date(date)
@@ -139,11 +139,11 @@ const Row = (props: RowProps) => {
         <TableCell>
           <Button disabled>View</Button>
         </TableCell>
-        {!publishedFolder && (
+        {!publishedSubmission && (
           <>
             <TableCell>
               <Button
-                disabled={row.folderType === FolderSubmissionStatus.published}
+                disabled={row.submissionType === SubmissionStatus.published}
                 aria-label="Edit this object"
                 data-testid="edit-object"
                 onClick={() => onEdit(row.accessionId, row.objectType, row.status, row.submissionType)}
@@ -153,7 +153,7 @@ const Row = (props: RowProps) => {
             </TableCell>
             <TableCell>
               <Button
-                disabled={row.folderType === FolderSubmissionStatus.published}
+                disabled={row.submissionType === SubmissionStatus.published}
                 aria-label="Delete this object"
                 data-testid="delete-object"
                 onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
@@ -187,12 +187,12 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
-  const { folderTitle, bodyRows, folderType, location, onEditFolder, onPublishFolder, onEditObject, onDeleteObject } =
+  const { submissionTitle, bodyRows, submissionType, location, onEditSubmission, onPublishSubmission, onEditObject, onDeleteObject } =
     props
 
   const hasSubmittedObject = bodyRows.find(row => row.status === ObjectStatus.submitted)
 
-  const publishedFolder = folderType === FolderSubmissionStatus.published
+  const publishedSubmission = submissionType === SubmissionStatus.published
 
   // Reset opened rows
   useEffect(() => {
@@ -201,39 +201,39 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
     }
   }, [dispatch])
 
-  const CurrentFolder = () => (
+  const CurrentSubmission = () => (
     <CardContent>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell colSpan={publishedFolder ? 6 : 8} padding="none">
+              <TableCell colSpan={publishedSubmission ? 6 : 8} padding="none">
                 <ListItem dense className={classes.tableHeader}>
                   <ListItemIcon className={classes.tableIcon}>
-                    {folderType === FolderSubmissionStatus.published ? (
+                    {submissionType === SubmissionStatus.published ? (
                       <FolderIcon color="primary" />
                     ) : (
                       <FolderOpenIcon color="primary" />
                     )}
                   </ListItemIcon>
-                  <ListItemText primary={folderTitle} />
-                  {folderType === FolderSubmissionStatus.unpublished && (
+                  <ListItemText primary={submissionTitle} />
+                  {submissionType === SubmissionStatus.unpublished && (
                     <Button
                       color="secondary"
-                      aria-label="Edit current folder"
+                      aria-label="Edit current submission"
                       data-testid="edit-button"
-                      onClick={() => onEditFolder(0)}
+                      onClick={() => onEditSubmission(0)}
                     >
                       Edit
                     </Button>
                   )}
-                  {folderType === FolderSubmissionStatus.unpublished && (
+                  {submissionType === SubmissionStatus.unpublished && (
                     <Button
                       disabled={!hasSubmittedObject}
-                      aria-label="Publish current folder"
+                      aria-label="Publish current submission"
                       variant="contained"
                       data-testid="publish-button"
-                      onClick={() => onPublishFolder()}
+                      onClick={() => onPublishSubmission()}
                     >
                       Publish
                     </Button>
@@ -249,7 +249,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
               </TableCell>
             </TableRow>
             <TableRow>
-              {headRows.slice(0, publishedFolder ? 6 : headRows.length).map((row, index) => (
+              {headRows.slice(0, publishedSubmission ? 6 : headRows.length).map((row, index) => (
                 <TableCell key={index} className={classes.headRows}>
                   {row}
                 </TableCell>
@@ -262,7 +262,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                 key={index}
                 index={index}
                 row={row}
-                publishedFolder={publishedFolder}
+                publishedSubmission={publishedSubmission}
                 onEdit={onEditObject}
                 onDelete={onDeleteObject}
               ></Row>
@@ -273,22 +273,22 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
     </CardContent>
   )
 
-  const EmptyFolder = () => (
+  const EmptySubmission = () => (
     <>
       <CardContent>
         <Typography align="center" variant="body2">
-          Current folder is empty
+          Current submission is empty
         </Typography>
       </CardContent>
       <CardActions className={classes.cardActions}>
         <Button
           color="primary"
           variant="contained"
-          aria-label="Add objects to this folder"
+          aria-label="Add objects to this submission"
           data-testid="add-objects-button"
-          onClick={() => onEditFolder(1)}
+          onClick={() => onEditSubmission(1)}
         >
-          Add objects to folder
+          Add objects to submission
         </Button>
       </CardActions>
     </>
@@ -300,12 +300,12 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
         <CardHeader
           className={classes.cardHeader}
           avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
-          title={`Your ${folderType} submissions`}
+          title={`Your ${submissionType} submissions`}
           titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         />
       </Link>
 
-      {bodyRows?.length > 0 ? <CurrentFolder /> : <EmptyFolder />}
+      {bodyRows?.length > 0 ? <CurrentSubmission /> : <EmptySubmission />}
     </Card>
   )
 }

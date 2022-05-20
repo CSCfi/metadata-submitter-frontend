@@ -19,10 +19,10 @@ import { updateStatus } from "features/statusMessageSlice"
 import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
-import { createSubmissionFolder, updateSubmissionFolder } from "features/wizardSubmissionFolderSlice"
+import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { FolderDataFromForm, CreateFolderFormRef } from "types"
+import type { SubmissionDataFromForm, CreateSubmissionFormRef } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -52,13 +52,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Define React Hook Form for adding new folder. Ref is added to RHF so submission can be triggered outside this component.
+ * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => {
+const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const templates = useAppSelector(state => state.templates)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
@@ -70,29 +70,29 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 
   const navigate = useNavigate()
 
-  const onSubmit = async (data: FolderDataFromForm) => {
-    // Transform the format of templates to drafts with proper values to be added to current folder or new folder
+  const onSubmit = async (data: SubmissionDataFromForm) => {
+    // Transform the format of templates to drafts with proper values to be added to current submission or new submission
     const selectedDraftsArray =
-      templates && folder?.folderId
-        ? await transformTemplatesToDrafts(templateAccessionIds, templates, folder.folderId, dispatch)
+      templates && submission?.submissionId
+        ? await transformTemplatesToDrafts(templateAccessionIds, templates, submission.submissionId, dispatch)
         : []
 
-    if (folder && folder?.folderId) {
-      dispatch(updateSubmissionFolder(folder.folderId, Object.assign({ ...data, folder, selectedDraftsArray })))
+    if (submission && submission?.submissionId) {
+      dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission, selectedDraftsArray })))
         .then(() => {
           dispatch(resetTemplateAccessionIds())
-          dispatch(updateStatus({ status: ResponseStatus.success, helperText: "Folder updated" }))
+          dispatch(updateStatus({ status: ResponseStatus.success, helperText: "Submission updated" }))
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
         })
     } else {
-      // Create a new folder with selected templates as drafts
+      // Create a new submission with selected templates as drafts
 
-      dispatch(createSubmissionFolder(projectId, data, selectedDraftsArray))
+      dispatch(createSubmission(projectId, data, selectedDraftsArray))
         .then(response => {
-          const folderId = response.data.folderId
-          navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=2" })
+          const submissionId = response.data.submissionId
+          navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
           dispatch(setObjectType(ObjectTypes.study))
           dispatch(setSubmissionType(ObjectSubmissionTypes.form))
           dispatch(updateStep({ step: 2, objectType: ObjectTypes.study }))
@@ -108,8 +108,8 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
     <React.Fragment>
       <form
         className={classes.root}
-        onSubmit={handleSubmit(async data => onSubmit(data as FolderDataFromForm))}
-        ref={createFolderFormRef as RefObject<HTMLFormElement>}
+        onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
+        ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
         <Typography variant="h4" gutterBottom component="div" color="secondary">
           Name your submission
@@ -117,17 +117,17 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         <Controller
           control={control}
           name="name"
-          defaultValue={folder ? folder.name : ""}
+          defaultValue={submission ? submission.name : ""}
           render={({ field, fieldState: { error } }) => (
             <MuiTextField
               {...field}
-              label="Folder Name *"
+              label="Submission Name *"
               variant="outlined"
               fullWidth
               error={!!error}
-              helperText={error ? "Please give a name for folder." : null}
+              helperText={error ? "Please give a name for submission." : null}
               disabled={isSubmitting}
-              inputProps={{ "data-testid": "folderName" }}
+              inputProps={{ "data-testid": "submissionName" }}
             />
           )}
           rules={{ required: true, validate: { name: value => value.length > 0 } }}
@@ -135,19 +135,19 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
         <Controller
           control={control}
           name="description"
-          defaultValue={folder ? folder.description : ""}
+          defaultValue={submission ? submission.description : ""}
           render={({ field, fieldState: { error } }) => (
             <MuiTextField
               {...field}
-              label="Folder Description *"
+              label="Submission Description *"
               variant="outlined"
               fullWidth
               multiline
               rows={5}
               error={!!error}
-              helperText={error ? "Please give a description for folder." : null}
+              helperText={error ? "Please give a description for submission." : null}
               disabled={isSubmitting}
-              inputProps={{ "data-testid": "folderDescription" }}
+              inputProps={{ "data-testid": "submissionDescription" }}
             />
           )}
           rules={{ required: true, validate: { description: value => value.length > 0 } }}
@@ -184,13 +184,13 @@ const CreateFolderForm = ({ createFolderFormRef }: { createFolderFormRef: Create
 }
 
 /**
- * Show form to create folder as first step of new draft wizard
+ * Show form to create submission as first step of new draft wizard
  */
 
-const WizardCreateFolderStep = ({ createFolderFormRef }: { createFolderFormRef: CreateFolderFormRef }) => (
+const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => (
   <>
-    <CreateFolderForm createFolderFormRef={createFolderFormRef} />
+    <CreateSubmissionForm createSubmissionFormRef={createSubmissionFormRef} />
   </>
 )
 
-export default WizardCreateFolderStep
+export default WizardCreateSubmissionStep

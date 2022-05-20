@@ -13,7 +13,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { deleteTemplateByAccessionId } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
-import { setFolder } from "features/wizardSubmissionFolderSlice"
+import { setSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
 import templateAPI from "services/templateAPI"
 
@@ -53,7 +53,7 @@ const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: 
   const editTemplate = async (schema: string, accessionId: string) => {
     const objectType = getObjectType(schema)
 
-    dispatch(setFolder({}))
+    dispatch(setSubmission({}))
     dispatch(setObjectType(objectType))
 
     setDialogOpen(true)

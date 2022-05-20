@@ -18,10 +18,10 @@ import { resetFocus } from "features/focusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObject, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { addObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
-import submissionAPIService from "services/submissionAPI"
+import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
 
 const useStyles = makeStyles((theme: CustomTheme) => ({
   container: {
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
 const WizardUploadObjectXMLForm: React.FC = () => {
   const [isSubmitting, setSubmitting] = useState(false)
   const objectType = useAppSelector(state => state.objectType)
-  const { folderId } = useAppSelector(state => state.submissionFolder)
+  const { submissionId } = useAppSelector(state => state.submission)
   const dispatch = useAppDispatch()
   const classes = useStyles()
   const currentObject = useAppSelector(state => state.currentObject)
@@ -135,7 +135,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
       if (response.ok) {
         dispatch(
-          replaceObjectInFolder(
+          replaceObjectInSubmission(
             currentObject.accessionId,
 
             {
@@ -153,7 +153,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
         dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
       }
     } else {
-      const response = await objectAPIService.createFromXML(objectType, folderId, file)
+      const response = await objectAPIService.createFromXML(objectType, submissionId, file)
 
       if (response.ok) {
         dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
@@ -234,7 +234,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
                   isFile: value => value.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
-                    const response = await submissionAPIService.validateXMLFile(objectType, value[0])
+                    const response = await xmlSubmissionAPIService.validateXMLFile(objectType, value[0])
 
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},

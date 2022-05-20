@@ -32,9 +32,9 @@ describe("WizardAddObjectStep", () => {
         ObjectTypes.dataset,
       ],
       submissionType: ObjectSubmissionTypes.xml,
-      submissionFolder: {
-        name: "folder name",
-        description: "folder description",
+      submission: {
+        name: "submission name",
+        description: "submission description",
         published: false,
         metadataObjects: [],
         id: "FOL12341234",
@@ -78,7 +78,7 @@ describe("WizardAddObjectStep", () => {
             ObjectTypes.dataset,
           ],
           submissionType: typeName,
-          submissionFolder: {
+          submission: {
             description: "Test",
             id: "FOL12341234",
             name: "Testname",

@@ -12,9 +12,9 @@ import { ResponseStatus } from "constants/responseStatus"
 import { resetFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishFolderContent, deleteFolderAndContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { publishSubmissionContent, deleteSubmissionAndContent, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { ObjectInsideSubmissionWithTags } from "types"
 import { useQuery, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -48,7 +48,7 @@ const WizardFooter: React.FC = () => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [alertType, setAlertType] = useState("")
@@ -62,12 +62,12 @@ const WizardFooter: React.FC = () => {
   const resetDispatch = () => {
     navigate(pathWithLocale("home"))
     dispatch(resetObjectType())
-    dispatch(resetFolder())
+    dispatch(resetSubmission())
   }
 
-  const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
+  const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
     if (alertWizard && alertType === "cancel") {
-      dispatch(deleteFolderAndContent(folder.folderId))
+      dispatch(deleteSubmissionAndContent(submission.submissionId))
         .then(() => resetDispatch())
         .catch(error => {
           dispatch(
@@ -84,15 +84,15 @@ const WizardFooter: React.FC = () => {
       if (formData && formData?.length > 0) {
         await saveDraftsAsTemplates(projectId, formData, dispatch)
       }
-      // Publish the folder
-      dispatch(publishFolderContent(folder))
+      // Publish the submission
+      dispatch(publishSubmissionContent(submission))
         .then(() => resetDispatch())
         .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: `Couldn't publish folder with id ${folder.folderId}`,
+              helperText: `Couldn't publish submission with id ${submission.submissionId}`,
             })
           )
         })
@@ -107,8 +107,8 @@ const WizardFooter: React.FC = () => {
     if (wizardStep !== 2) {
       return true
     }
-    if (folder && wizardStep === 2) {
-      const { metadataObjects } = folder
+    if (submission && wizardStep === 2) {
+      const { metadataObjects } = submission
       if (metadataObjects.length === 0) {
         return true
       }

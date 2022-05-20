@@ -8,12 +8,12 @@ describe("catch error codes and display corresponding error page", function () {
   })
 
   it("should redirect to 401 page if no granted access", () => {
-    cy.visit(baseUrl + "folders")
+    cy.visit(baseUrl + "submissions")
     cy.contains(".MuiAlert-message", "401 Authorization Error")
   })
 
   it("should redirect to 403 page if response status code is 403 ", () => {
-    cy.intercept("GET", "/folders*", {
+    cy.intercept("GET", "/submissions*", {
       statusCode: 403,
       body: "Error 403",
     })
@@ -28,7 +28,7 @@ describe("catch error codes and display corresponding error page", function () {
   })
 
   it("should redirect to 500 page if response status code is 500 ", () => {
-    cy.intercept("GET", "/folders*", {
+    cy.intercept("GET", "/submissions*", {
       statusCode: 500,
       body: "Error 500",
     })

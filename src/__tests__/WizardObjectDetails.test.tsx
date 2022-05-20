@@ -13,7 +13,7 @@ import CSCtheme from "../theme"
 
 import CustomSchema from "./fixtures/custom_schema.json"
 
-import SelectedFolderDetails from "components/Home/SelectedFolderDetails"
+import SelectedSubmissionDetails from "components/Home/SelectedSubmissionDetails"
 import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
 
 const mockStore = configureStore([])
@@ -35,11 +35,11 @@ describe("Object details", () => {
       rest.get("/schemas/:schema", (req, res, ctx) => {
         return res(ctx.json(schema))
       }),
-      rest.get("/folders/:folderId", (req, res, ctx) => {
+      rest.get("/submissions/:submissionId", (req, res, ctx) => {
         return res(
           ctx.json({
-            name: "Test Folder",
-            description: "Folder description",
+            name: "Test Submission",
+            description: "Submission description",
             published: true,
             metadataObjects: [
               {
@@ -49,7 +49,7 @@ describe("Object details", () => {
               },
             ],
             drafts: [],
-            folderId: "testaccessionid",
+            submissionId: "testaccessionid",
             dateCreated: 1111111111,
           })
         )
@@ -72,7 +72,7 @@ describe("Object details", () => {
         <Provider store={store}>
           <StyledEngineProvider injectFirst>
             <ThemeProvider theme={CSCtheme}>
-              <SelectedFolderDetails />
+              <SelectedSubmissionDetails />
             </ThemeProvider>
           </StyledEngineProvider>
         </Provider>

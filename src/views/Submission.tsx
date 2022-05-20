@@ -10,14 +10,14 @@ import { useNavigate, useParams } from "react-router-dom"
 import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
-import WizardCreateFolderStep from "components/SubmissionWizard/WizardSteps/WizardCreateFolderStep"
+import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
-import { setFolder, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
-import folderAPIService from "services/folderAPI"
-import type { CreateFolderFormRef } from "types"
+import submissionAPIService from "services/submissionAPI"
+import type { CreateSubmissionFormRef } from "types"
 import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
@@ -54,10 +54,10 @@ const useStyles = makeStyles(theme => ({
 /**
  * Return correct content for each step
  */
-const getStepContent = (wizardStep: number, createFolderFormRef: CreateFolderFormRef) => {
+const getStepContent = (wizardStep: number, createSubmissionFormRef: CreateSubmissionFormRef) => {
   switch (wizardStep) {
     case 1:
-      return <WizardCreateFolderStep createFolderFormRef={createFolderFormRef} />
+      return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
     case 2:
     case 3:
     case 4:
@@ -80,44 +80,44 @@ const SubmissionWizard: React.FC = () => {
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
-  const [isFetchingFolder, setFetchingFolder] = useState(true)
+  const [isFetchingSubmission, setFetchingSubmission] = useState(true)
 
   const step = queryParams.get("step")
 
-  const folderId = params.folderId || ""
+  const submissionId = params.submissionId || ""
 
-  // Get folder if URL parameters have folderId. Redirect to home if invalid folderId
+  // Get submission if URL parameters have submissionId. Redirect to home if invalid submissionId
   useEffect(() => {
     let isMounted = true
-    const getFolder = async () => {
-      const response = await folderAPIService.getFolderById(folderId)
+    const getSubmission = async () => {
+      const response = await submissionAPIService.getSubmissionById(submissionId)
       if (isMounted) {
         if (response.ok) {
-          dispatch(setFolder(response.data))
+          dispatch(setSubmission(response.data))
 
-          setFetchingFolder(false)
+          setFetchingSubmission(false)
         } else {
           navigate({ pathname: pathWithLocale("submission"), search: "step=1" })
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: response,
-              helperText: "Fetching folder error.",
+              helperText: "Fetching submission error.",
             })
           )
-          dispatch(resetFolder())
+          dispatch(resetSubmission())
         }
       }
     }
-    if (folderId) getFolder()
+    if (submissionId) getSubmission()
     return () => {
       isMounted = false
     }
-  }, [dispatch, folderId, navigate])
+  }, [dispatch, submissionId, navigate])
 
   const wizardStep = step ? Number(step) : -1
 
-  const createFolderFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
+  const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
   return (
     <Container maxWidth={false} className={classes.container}>
@@ -126,10 +126,10 @@ const SubmissionWizard: React.FC = () => {
           <WizardStepper />
         </Grid>
         <Grid item xs={7} className={classes.stepContent}>
-          {isFetchingFolder && folderId && <LinearProgress />}
-          {(!isFetchingFolder || !folderId) && (
+          {isFetchingSubmission && submissionId && <LinearProgress />}
+          {(!isFetchingSubmission || !submissionId) && (
             <Paper className={classes.paper} elevation={2}>
-              <div className={classes.paperContent}>{getStepContent(wizardStep, createFolderFormRef)}</div>
+              <div className={classes.paperContent}>{getStepContent(wizardStep, createSubmissionFormRef)}</div>
             </Paper>
           )}
         </Grid>

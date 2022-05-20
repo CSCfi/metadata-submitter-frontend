@@ -21,8 +21,8 @@ describe("WizardStepper", () => {
     const store = mockStore({
       submissionType: "",
       objectTypesArray: Object.keys(ObjectTypes),
-      submissionFolder: {
-        folderId: "",
+      submission: {
+        submissionId: "",
         name: "",
         description: "",
         published: false,
@@ -57,10 +57,10 @@ describe("WizardStepper", () => {
     const store = mockStore({
       submissionType: ObjectSubmissionTypes.form,
       objectTypesArray: Object.keys(ObjectTypes),
-      submissionFolder: {
-        folderId: "FOLD1234",
-        name: "Test folder",
-        description: "Folder description",
+      submission: {
+        submissionId: "FOLD1234",
+        name: "Test submission",
+        description: "Submission description",
         published: false,
         drafts: [],
         metadataObjects: [],

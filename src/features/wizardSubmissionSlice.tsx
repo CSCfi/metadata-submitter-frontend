@@ -3,14 +3,14 @@ import { extend, reject, merge } from "lodash"
 
 import { ObjectStatus } from "constants/wizardObject"
 import draftAPIService from "services/draftAPI"
-import folderAPIService from "services/folderAPI"
 import objectAPIService from "services/objectAPI"
 import publishAPIService from "services/publishAPI"
+import submissionAPIService from "services/submissionAPI"
 import type {
-  FolderDetails,
-  FolderDetailsWithId,
-  FolderDataFromForm,
-  ObjectInsideFolderWithTags,
+  SubmissionDetails,
+  SubmissionDetailsWithId,
+  SubmissionDataFromForm,
+  ObjectInsideSubmissionWithTags,
   DoiFormDetails,
   ObjectTags,
   APIResponse,
@@ -20,10 +20,10 @@ import type {
   DispatchReducer,
 } from "types"
 
-type InitialState = FolderDetailsWithId & { doiInfo: Record<string, unknown> & DoiFormDetails }
+type InitialState = SubmissionDetailsWithId & { doiInfo: Record<string, unknown> & DoiFormDetails }
 
 const initialState: InitialState = {
-  folderId: "",
+  submissionId: "",
   name: "",
   description: "",
   published: false,
@@ -32,16 +32,16 @@ const initialState: InitialState = {
   doiInfo: { creators: [], contributors: [], subjects: [] },
 }
 
-const setTags = (objects: ObjectInsideFolderWithTags[], accessionId: string, tags: ObjectTags) => {
+const setTags = (objects: ObjectInsideSubmissionWithTags[], accessionId: string, tags: ObjectTags) => {
   const item = objects.find((item: { accessionId: string }) => item.accessionId === accessionId)
   if (item) item.tags = tags
 }
 
-const wizardSubmissionFolderSlice = createSlice({
-  name: "folder",
+const wizardSubmissionSlice = createSlice({
+  name: "submission",
   initialState,
   reducers: {
-    setFolder: (_state, action) => action.payload,
+    setSubmission: (_state, action) => action.payload,
     addObject: (state, action) => {
       state.metadataObjects.push(action.payload)
     },
@@ -69,12 +69,12 @@ const wizardSubmissionFolderSlice = createSlice({
     modifyDraftObjectTags: (state, action) => {
       setTags(state.drafts, action.payload.accessionId, action.payload.tags)
     },
-    resetFolder: () => initialState,
+    resetSubmission: () => initialState,
   },
 })
 
 export const {
-  setFolder,
+  setSubmission,
   addObject,
   addDraftObject,
   addDoiInfo,
@@ -82,29 +82,29 @@ export const {
   deleteDraftObject,
   modifyObjectTags,
   modifyDraftObjectTags,
-  resetFolder,
-} = wizardSubmissionFolderSlice.actions
-export default wizardSubmissionFolderSlice.reducer
+  resetSubmission,
+} = wizardSubmissionSlice.actions
+export default wizardSubmissionSlice.reducer
 
-export const createSubmissionFolder =
-  (projectId: string, folderDetails: FolderDataFromForm, drafts?: ObjectInsideFolderWithTags[]) =>
+export const createSubmission =
+  (projectId: string, submissionDetails: SubmissionDataFromForm, drafts?: ObjectInsideSubmissionWithTags[]) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const folderForBackend: FolderDetails & { projectId: string } = {
-      ...folderDetails,
+    const submissionForBackend: SubmissionDetails & { projectId: string } = {
+      ...submissionDetails,
       projectId,
       published: false,
       metadataObjects: [],
       drafts: drafts ? drafts : [],
     }
-    const response = await folderAPIService.createNewFolder(folderForBackend)
+    const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        const folder: FolderDetailsWithId = {
-          ...folderForBackend,
-          folderId: response.data.folderId,
+        const submission: SubmissionDetailsWithId = {
+          ...submissionForBackend,
+          submissionId: response.data.submissionId,
         }
-        dispatch(setFolder(folder))
+        dispatch(setSubmission(submission))
         resolve(response)
       } else {
         reject(JSON.stringify(response))
@@ -112,37 +112,37 @@ export const createSubmissionFolder =
     })
   }
 
-export const updateSubmissionFolder =
+export const updateSubmission =
   (
-    folderId: string,
-    folderDetails: FolderDataFromForm & { folder: { drafts: ObjectInsideFolderWithTags[] } } & {
-      selectedDraftsArray: Array<ObjectInsideFolderWithTags>
+    submissionId: string,
+    submissionDetails: SubmissionDataFromForm & { submission: { drafts: ObjectInsideSubmissionWithTags[] } } & {
+      selectedDraftsArray: Array<ObjectInsideSubmissionWithTags>
     }
   ) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const { selectedDraftsArray } = folderDetails
+    const { selectedDraftsArray } = submissionDetails
     // Add templates as selectedDrafts to current drafts in case there is any
     const updatedDrafts =
       selectedDraftsArray.length > 0
-        ? folderDetails.folder.drafts.concat(selectedDraftsArray)
-        : folderDetails.folder.drafts
+        ? submissionDetails.submission.drafts.concat(selectedDraftsArray)
+        : submissionDetails.submission.drafts
 
-    const updatedFolder = extend(
-      { ...folderDetails.folder },
-      { name: folderDetails.name, description: folderDetails.description, drafts: updatedDrafts }
+    const updatedSubmission = extend(
+      { ...submissionDetails.submission },
+      { name: submissionDetails.name, description: submissionDetails.description, drafts: updatedDrafts }
     )
 
     const changes = [
-      { op: "add", path: "/name", value: folderDetails.name },
-      { op: "add", path: "/description", value: folderDetails.description },
+      { op: "add", path: "/name", value: submissionDetails.name },
+      { op: "add", path: "/description", value: submissionDetails.description },
       { op: "add", path: "/drafts/-", value: updatedDrafts },
     ]
 
-    const response = await folderAPIService.patchFolderById(folderId, changes)
+    const response = await submissionAPIService.patchSubmissionById(submissionId, changes)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        dispatch(setFolder(updatedFolder))
+        dispatch(setSubmission(updatedSubmission))
         resolve(response)
       } else {
         reject(JSON.stringify(response))
@@ -150,7 +150,7 @@ export const updateSubmissionFolder =
     })
   }
 
-export const replaceObjectInFolder =
+export const replaceObjectInSubmission =
   (
     accessionId: string,
     tags: { submissionType?: string; displayTitle?: string; fileName?: string },
@@ -168,7 +168,7 @@ export const replaceObjectInFolder =
   }
 
 // Delete object from either metaDataObjects or drafts depending on savedType
-export const deleteObjectFromFolder =
+export const deleteObjectFromSubmission =
   (savedType: string, objectId: string, objectType: string) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const service = savedType === ObjectStatus.submitted ? objectAPIService : draftAPIService
@@ -183,10 +183,10 @@ export const deleteObjectFromFolder =
     })
   }
 
-export const publishFolderContent =
-  (folder: FolderDetailsWithId): (() => Promise<APIResponse>) =>
+export const publishSubmissionContent =
+  (submission: SubmissionDetailsWithId): (() => Promise<APIResponse>) =>
   async () => {
-    const response = await publishAPIService.publishFolderById(folder.folderId)
+    const response = await publishAPIService.publishSubmissionById(submission.submissionId)
     return new Promise((resolve, reject) => {
       if (response.ok) {
         resolve(response)
@@ -196,10 +196,10 @@ export const publishFolderContent =
     })
   }
 
-export const deleteFolderAndContent =
-  (folderId: string): (() => Promise<APIResponse | undefined>) =>
+export const deleteSubmissionAndContent =
+  (submissionId: string): (() => Promise<APIResponse | undefined>) =>
   async () => {
-    const response = await folderAPIService.deleteFolderById(folderId)
+    const response = await submissionAPIService.deleteSubmissionById(submissionId)
     return new Promise((resolve, reject) => {
       if (response.ok) {
         resolve(response)
@@ -209,8 +209,8 @@ export const deleteFolderAndContent =
     })
   }
 
-export const addDoiInfoToFolder =
-  (folderId: string, doiFormDetails: DoiFormDetails) =>
+export const addDoiInfoToSubmission =
+  (submissionId: string, doiFormDetails: DoiFormDetails) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const nameType = { nameType: "Personal" }
     // Add "nameType": "Personal" to "creators" and "contributors"
@@ -239,7 +239,7 @@ export const addDoiInfoToFolder =
     })
 
     const changes = [{ op: "add", path: "/doiInfo", value: modifiedDoiFormDetails }]
-    const response = await folderAPIService.patchFolderById(folderId, changes)
+    const response = await submissionAPIService.patchSubmissionById(submissionId, changes)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {

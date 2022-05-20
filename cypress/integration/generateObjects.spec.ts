@@ -7,8 +7,8 @@ describe("Generate objects", function () {
   })
 
   it("should generate objects from templates and publish", () => {
-    cy.generateFolderAndObjects()
-    // Edit newly created folder
+    cy.generateSubmissionAndObjects()
+    // Edit newly created submission
     cy.contains("Edit").click({ force: true })
 
     cy.clickAccordionPanel("publish")
@@ -28,18 +28,18 @@ describe("Generate objects", function () {
     // Fill and save DOI form
     cy.saveDoiForm()
 
-    // Publish folder and test that folder is listed in published folders tab
+    // Publish submission and test that submission is listed in published submissions tab
     cy.get("button[data-testid='summary-publish']").contains("Publish").click()
-    cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this folder will be published.")
-    cy.get('[data-testid="confirm-publish-folder"]').contains("Publish").click()
+    cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this submission will be published.")
+    cy.get('[data-testid="confirm-publish-submission"]').contains("Publish").click()
 
     cy.get("[data-testid='published-tab']").click()
-    cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test generated folder")
+    cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test generated submission")
   })
 
   it("should generate objects and stop in specific object type", () => {
-    cy.generateFolderAndObjects(ObjectTypes.dac)
-    // // Edit newly created folder
+    cy.generateSubmissionAndObjects(ObjectTypes.dac)
+    // // Edit newly created submission
     cy.contains("Edit").click({ force: true })
 
     // Open 2nd step and test that last generated object type is DAC

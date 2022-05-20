@@ -231,9 +231,9 @@ const WizardObjectIndex: React.FC = () => {
   const currentObjectType = useAppSelector(state => state.objectType)
   const currentSubmissionType = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
 
-  const savedObjects = folder.metadataObjects
+  const savedObjects = submission.metadataObjects
     ?.map((draft: { schema: string }) => draft.schema)
     .reduce((acc: { [x: string]: number }, val: string | number) => ((acc[val] = (acc[val] || 0) + 1), acc), {})
 

@@ -69,12 +69,12 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 /**
  * Show info about wizard steps to user.
- * If createFolderForm is passed as reference it is used to trigger correct form when clicking next.
+ * If createSubmissionForm is passed as reference it is used to trigger correct form when clicking next.
  */
 
 const WizardStepper = () => {
   const objectsArray = useAppSelector(state => state.objectTypesArray)
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const dispatch = useAppDispatch()
   const location = useLocation()
@@ -93,10 +93,10 @@ const WizardStepper = () => {
       const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
       return {
         [schema]: {
-          drafts: folder.drafts
+          drafts: submission.drafts
             .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
             .map(item => mapItem(item)),
-          ready: folder.metadataObjects
+          ready: submission.metadataObjects
             .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
             .map(item => mapItem(item)),
         },
@@ -134,7 +134,7 @@ const WizardStepper = () => {
           objectType: "submissionDetails",
           label: "Name your submission",
           objects: {
-            ready: folder.folderId ? [{ id: folder.folderId, displayTitle: folder.name }] : [],
+            ready: submission.submissionId ? [{ id: submission.submissionId, displayTitle: submission.name }] : [],
           },
         },
       ],
@@ -160,7 +160,7 @@ const WizardStepper = () => {
         },
       ],
       actionButtonText: "Add",
-      disabled: folder.folderId === "",
+      disabled: submission.submissionId === "",
     },
     {
       label: "Datafolder",

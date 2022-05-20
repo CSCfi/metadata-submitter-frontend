@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom"
 
 import { Locale } from "constants/locale"
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
-import type { FormDataFiles, ObjectDisplayValues, ObjectInsideFolderWithTags } from "types"
+import type { FormDataFiles, ObjectDisplayValues, ObjectInsideSubmissionWithTags } from "types"
 
 export const getObjectDisplayTitle = (objectType: string, cleanedValues: ObjectDisplayValues): string => {
   switch (objectType) {
@@ -18,7 +18,7 @@ export const getObjectDisplayTitle = (objectType: string, cleanedValues: ObjectD
 }
 
 // Get Primary text for displaying item's title
-export const getItemPrimaryText = (item: ObjectInsideFolderWithTags): string => {
+export const getItemPrimaryText = (item: ObjectInsideSubmissionWithTags): string => {
   if (item.tags?.displayTitle) {
     switch (item.schema) {
       case ObjectTypes.dac:
@@ -50,9 +50,9 @@ export const formatDisplayObjectType = (objectType: string): string => {
 
 // draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
 export const getDraftObjects = (
-  drafts: Array<ObjectInsideFolderWithTags>,
+  drafts: Array<ObjectInsideSubmissionWithTags>,
   objectTypesArray: Array<string>
-): { [draftObjectType: string]: ObjectInsideFolderWithTags[] }[] => {
+): { [draftObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
   const draftObjects = objectTypesArray.flatMap((schema: string) => {
     const draftSchema = `draft-${schema}`
     const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
@@ -63,9 +63,9 @@ export const getDraftObjects = (
 }
 
 export const getUserTemplates = (
-  templates: Array<ObjectInsideFolderWithTags>,
+  templates: Array<ObjectInsideSubmissionWithTags>,
   objectTypesArray: Array<string>
-): { [templateObjectType: string]: ObjectInsideFolderWithTags[] }[] => {
+): { [templateObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
   const userTemplates = objectTypesArray.flatMap((schema: string) => {
     const templateSchema = `template-${schema}`
     const templatesArray = templates.filter(template => template.schema.toLowerCase() === templateSchema.toLowerCase())
@@ -77,7 +77,7 @@ export const getUserTemplates = (
 
 export const getAccessionIds = (
   objectType: string,
-  metadataObjects?: Array<ObjectInsideFolderWithTags>
+  metadataObjects?: Array<ObjectInsideSubmissionWithTags>
 ): Array<string> => {
   if (metadataObjects) {
     const submissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === objectType)

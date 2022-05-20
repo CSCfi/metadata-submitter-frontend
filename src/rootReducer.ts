@@ -11,7 +11,7 @@ import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import openedDoiFormReducer from "features/openedDoiFormSlice"
 import openedRowsReducer from "features/openedRowsSlice"
 import projectReducer from "features/projectIdSlice"
-import selectedFolderReducer from "features/selectedFolderSlice"
+import selectedSubmissionReducer from "features/selectedSubmissionSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import templateAccessionIdsReducer from "features/templateAccessionIdsSlice"
 import templatesReducer from "features/templateSlice"
@@ -20,7 +20,7 @@ import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
 import stepObjectReducer from "features/wizardStepObjectSlice"
-import submissionFolderReducer from "features/wizardSubmissionFolderSlice"
+import submissionReducer from "features/wizardSubmissionSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 
 const rootReducer = combineReducers({
@@ -31,12 +31,12 @@ const rootReducer = combineReducers({
   statusDetails: statusMessageReducer,
   objectType: objectTypeReducer,
   stepObject: stepObjectReducer,
-  submissionFolder: submissionFolderReducer,
+  submission: submissionReducer,
   submissionType: submissionTypeReducer,
   draftStatus: draftStatusReducer,
   currentObject: currentObjectReducer,
   user: userReducer,
-  selectedFolder: selectedFolderReducer,
+  selectedSubmission: selectedSubmissionReducer,
   objectTypesArray: objectTypesArrayReducer,
   openedRows: openedRowsReducer,
   clearForm: clearFormReducer,

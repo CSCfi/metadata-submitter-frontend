@@ -40,9 +40,9 @@ const useStyles = makeStyles(() => ({
 const WizardAddObjectStep: React.FC = () => {
   const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
-  const folder = useAppSelector(state => state.submissionFolder)
-  const submissions = folder?.metadataObjects?.filter((obj: { schema: string }) => obj.schema === objectType)
-  const draftObjects = folder?.drafts?.filter((obj: { schema: string }) => obj.schema === `draft-${objectType}`)
+  const submission = useAppSelector(state => state.submission)
+  const submissions = submission?.metadataObjects?.filter((obj: { schema: string }) => obj.schema === objectType)
+  const draftObjects = submission?.drafts?.filter((obj: { schema: string }) => obj.schema === `draft-${objectType}`)
   const loading = useAppSelector(state => state.loading)
 
   return (

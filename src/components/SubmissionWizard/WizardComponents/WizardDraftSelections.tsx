@@ -22,8 +22,8 @@ import draftAPIService from "services/draftAPI"
 import type {
   ConnectFormChildren,
   ConnectFormMethods,
-  ObjectInsideFolderWithTags,
-  ObjectInsideFolderWithTagsBySchema,
+  ObjectInsideSubmissionWithTags,
+  ObjectInsideSubmissionWithTagsBySchema,
 } from "types"
 import { getItemPrimaryText, getDraftObjects, getOrigObjectType, pathWithLocale } from "utils"
 
@@ -92,26 +92,26 @@ const ConnectForm = ({ children }: ConnectFormChildren) => {
 }
 
 type WizardDraftSelectionsProps = {
-  onHandleDialog: (status: boolean, data?: Array<ObjectInsideFolderWithTags>) => void
+  onHandleDialog: (status: boolean, data?: Array<ObjectInsideSubmissionWithTags>) => void
 }
 
 const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
-  const folder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const objectsArray = useAppSelector(state => state.objectTypesArray)
   const navigate = useNavigate()
 
-  const draftObjects = getDraftObjects(folder.drafts, objectsArray)
+  const draftObjects = getDraftObjects(submission.drafts, objectsArray)
 
   const methods = useForm()
 
   const onSubmit = (data: Record<string, unknown>) => {
     const checkedBoxValues = Object.values(data).filter(data => data)
 
-    const selectedDrafts: Array<ObjectInsideFolderWithTags> = checkedBoxValues.map(
+    const selectedDrafts: Array<ObjectInsideSubmissionWithTags> = checkedBoxValues.map(
       item =>
-        folder.drafts.find((draft: { accessionId: string }) => draft.accessionId === item) as ObjectInsideFolderWithTags
+        submission.drafts.find((draft: { accessionId: string }) => draft.accessionId === item) as ObjectInsideSubmissionWithTags
     )
     props.onHandleDialog(true, selectedDrafts)
   }
@@ -143,7 +143,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponent}>
-        {draftObjects.map((draft: ObjectInsideFolderWithTagsBySchema) => {
+        {draftObjects.map((draft: ObjectInsideSubmissionWithTagsBySchema) => {
           const schema = Object.keys(draft)[0]
           return (
             <ConnectForm key={schema}>
@@ -199,7 +199,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
         <div className={classes.buttonGroup}>
           <Button
             variant="contained"
-            aria-label="Cancel publishing folder contents"
+            aria-label="Cancel publishing submission contents"
             color="secondary"
             onClick={() => props.onHandleDialog(false)}
           >
@@ -207,10 +207,10 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
           </Button>
           <Button
             variant="contained"
-            aria-label="Publish folder contents and move to frontpage"
+            aria-label="Publish submission contents and move to frontpage"
             color="primary"
             type="submit"
-            data-testid="confirm-publish-folder"
+            data-testid="confirm-publish-submission"
           >
             Publish
           </Button>

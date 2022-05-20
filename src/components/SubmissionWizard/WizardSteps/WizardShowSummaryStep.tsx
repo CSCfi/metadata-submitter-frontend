@@ -26,9 +26,9 @@ import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishFolderContent, resetFolder } from "features/wizardSubmissionFolderSlice"
+import { publishSubmissionContent, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { ObjectInsideFolderWithTags, ObjectInsideFolderWithTagsBySchema, Schema } from "types"
+import type { ObjectInsideSubmissionWithTags, ObjectInsideSubmissionWithTagsBySchema, Schema } from "types"
 import { getItemPrimaryText, formatDisplayObjectType, pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -65,15 +65,15 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Show summary of objects added to folder
+ * Show summary of objects added to submission
  */
 const WizardShowSummaryStep: React.FC = () => {
-  const folder = useAppSelector(state => state.submissionFolder)
-  const { metadataObjects } = folder
+  const submission = useAppSelector(state => state.submission)
+  const { metadataObjects } = submission
   const objectsArray = useAppSelector(state => state.objectTypesArray)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const projectId = useAppSelector(state => state.projectId)
-  const groupedObjects: ObjectInsideFolderWithTagsBySchema[] = objectsArray.map((schema: Schema) => {
+  const groupedObjects: ObjectInsideSubmissionWithTagsBySchema[] = objectsArray.map((schema: Schema) => {
     return {
       [schema]: metadataObjects.filter(
         (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
@@ -121,29 +121,29 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const handleOpenDoiDialog = () => {
     dispatch(setOpenedDoiForm(true))
-    dispatch(setCurrentObject(folder.doiInfo))
+    dispatch(setCurrentObject(submission.doiInfo))
   }
 
-  const handlePublishDialog = async (alertWizard: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
+  const handlePublishDialog = async (alertWizard: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
     const resetDispatch = () => {
       navigate(pathWithLocale("home"))
       dispatch(resetObjectType())
-      dispatch(resetFolder())
+      dispatch(resetSubmission())
     }
 
     if (alertWizard) {
       if (formData && formData?.length > 0) {
         await saveDraftsAsTemplates(projectId, formData, dispatch)
       }
-      // Publish the folder
-      dispatch(publishFolderContent(folder))
+      // Publish the submission
+      dispatch(publishSubmissionContent(submission))
         .then(() => resetDispatch())
         .catch(error => {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: `Couldn't publish folder with id ${folder.folderId}`,
+              helperText: `Couldn't publish submission with id ${submission.submissionId}`,
             })
           )
         })
@@ -157,7 +157,7 @@ const WizardShowSummaryStep: React.FC = () => {
   return (
     <>
       <div className={classes.summary}>
-        {groupedObjects.map((group: ObjectInsideFolderWithTagsBySchema) => {
+        {groupedObjects.map((group: ObjectInsideSubmissionWithTagsBySchema) => {
           const schema = Object.keys(group)[0]
           return (
             <List key={schema} aria-label={schema} className={classes.listGroup}>
@@ -166,7 +166,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 <div className="objectAmount">{group[schema].length}</div>
               </div>
               <div>
-                {group[schema].map((item: ObjectInsideFolderWithTags) => (
+                {group[schema].map((item: ObjectInsideSubmissionWithTags) => (
                   <ListItem button key={item.accessionId} dense className={classes.objectListItems}>
                     <ListItemText
                       primary={getItemPrimaryText(item)}

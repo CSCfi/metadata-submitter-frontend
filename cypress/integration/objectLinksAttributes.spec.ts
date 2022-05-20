@@ -9,7 +9,7 @@ describe("render objects' links and attributes ", function () {
 
     cy.get("button", { timeout: 10000 }).contains("Create submission").click()
 
-    // Add folder name & description, navigate to submissions
+    // Add submission name & description, navigate to submissions
     cy.newSubmission()
 
     // Fill a Study form and submit object

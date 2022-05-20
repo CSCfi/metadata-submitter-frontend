@@ -20,7 +20,7 @@ import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
-import type { ObjectInsideFolderWithTags } from "types"
+import type { ObjectInsideSubmissionWithTags } from "types"
 
 // Simple template for error messages
 const ErrorMessage = (props: { message: string }) => {
@@ -36,12 +36,12 @@ const CancelFormDialog = ({
   parentLocation,
   currentSubmissionType,
 }: {
-  handleDialog: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => void
+  handleDialog: (status: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => void
   alertType?: string
   parentLocation: string
   currentSubmissionType: string
 }) => {
-  const submissionFolder = useAppSelector(state => state.submissionFolder)
+  const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const objectType = useAppSelector(state => state.objectType)
   const [error, setError] = useState(false)
@@ -56,7 +56,7 @@ const CancelFormDialog = ({
       accessionId: currentObject.accessionId || currentObject.objectId,
       objectType: objectType,
       objectStatus: currentObject.status,
-      folder: submissionFolder,
+      submission: submission,
       values: currentObject.cleanedValues || currentObject,
       dispatch: dispatch,
     })
@@ -181,34 +181,34 @@ const CancelFormDialog = ({
     case "footer": {
       switch (alertType) {
         case "cancel": {
-          dialogTitle = "Cancel creating a submission folder?"
+          dialogTitle = "Cancel creating a submission submission?"
           dialogContent =
-            "If you cancel creating submission folder, the folder and its content will not be saved anywhere."
+            "If you cancel creating submission submission, the submission and its content will not be saved anywhere."
           dialogActions = (
             <DialogActions>
               <Button variant="outlined" onClick={() => handleDialog(false)} color="primary" autoFocus>
-                No, continue creating the folder
+                No, continue creating the submission
               </Button>
               <Button
                 variant="contained"
-                aria-label="Cancel a new folder and move to frontpage"
+                aria-label="Cancel a new submission and move to frontpage"
                 onClick={() => handleDialog(true)}
                 color="primary"
               >
-                Yes, cancel creating folder
+                Yes, cancel creating submission
               </Button>
             </DialogActions>
           )
           break
         }
         case "save": {
-          dialogTitle = "Folder saved"
-          dialogContent = "Folder has been saved"
+          dialogTitle = "Submission saved"
+          dialogContent = "Submission has been saved"
           dialogActions = (
             <DialogActions style={{ justifyContent: "center" }}>
               <Button
                 variant="contained"
-                aria-label="Save a new folder and move to frontpage"
+                aria-label="Save a new submission and move to frontpage"
                 onClick={() => handleDialog(true)}
                 color="primary"
               >
@@ -221,9 +221,9 @@ const CancelFormDialog = ({
         case "publish": {
           dialogTitle = "Publishing objects"
           dialogContent =
-            submissionFolder?.drafts.length > 0
-              ? "Objects in this folder will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this folder."
-              : "Objects in this folder will be published."
+            submission?.drafts.length > 0
+              ? "Objects in this submission will be published. Please choose the drafts you would like to save, unsaved drafts will be removed from this submission."
+              : "Objects in this submission will be published."
           dialogActions = <WizardDraftSelections onHandleDialog={handleDialog} />
           break
         }
@@ -301,7 +301,7 @@ const WizardAlert = ({
   parentLocation,
   alertType,
 }: {
-  onAlert: (status: boolean, formData?: Array<ObjectInsideFolderWithTags>) => void
+  onAlert: (status: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => void
   parentLocation: string
   alertType?: string
 }) => {
@@ -313,7 +313,7 @@ const WizardAlert = ({
     dispatch(setAlert())
   }, [dispatch])
 
-  const handleDialog = (action: boolean, formData?: Array<ObjectInsideFolderWithTags>) => {
+  const handleDialog = (action: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
     dispatch(resetAlert())
     onAlert(action, formData)
   }

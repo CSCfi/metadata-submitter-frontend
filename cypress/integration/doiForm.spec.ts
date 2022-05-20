@@ -6,7 +6,7 @@ describe("DOI form", function () {
     cy.login()
   })
   it("should render DOI form correctly with formats' prefilled values and affiliation's autocomplete field", () => {
-    cy.generateFolderAndObjects()
+    cy.generateSubmissionAndObjects()
 
     cy.contains("Edit").click({ force: true })
 
@@ -191,7 +191,7 @@ describe("DOI form", function () {
     cy.get("[data-testid='contributors.0.affiliation.0.affiliationIdentifier").should("be.disabled")
   }),
     it("should fill the required fields and save DOI form successfully", () => {
-      cy.generateFolderAndObjects()
+      cy.generateSubmissionAndObjects()
       cy.contains("Edit").click({ force: true })
       // Go to DOI form
       cy.openDOIForm()
@@ -237,7 +237,7 @@ describe("DOI form", function () {
       cy.get("div[data-testid='keyword-3']").scrollIntoView().should("be.visible")
     }),
     it("should autofill full name based on family and given name", () => {
-      cy.generateFolderAndObjects()
+      cy.generateSubmissionAndObjects()
       cy.contains("Edit").click({ force: true })
       // Go to DOI form
       cy.openDOIForm()
@@ -259,7 +259,7 @@ describe("DOI form", function () {
       )
     }),
     it("should fill in the required fields, Dates fields and save DOI form successfully", () => {
-      cy.generateFolderAndObjects()
+      cy.generateSubmissionAndObjects()
       cy.contains("Edit").click({ force: true })
       // Go to DOI form
       cy.openDOIForm()

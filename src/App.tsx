@@ -156,7 +156,7 @@ const App: React.FC = () => {
           }
         />
         <Route path={setPath("submission")}>
-          <Route path=":folderId" element={submissionElement} />
+          <Route path=":submissionId" element={submissionElement} />
           <Route path="" element={submissionElement} />
         </Route>
         <Route path="/error401" element={<Page401 />} />

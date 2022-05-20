@@ -4,22 +4,22 @@ import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addDraftObject, replaceObjectInFolder } from "features/wizardSubmissionFolderSlice"
+import { addDraftObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import draftAPIService from "services/draftAPI"
-import type { FolderDetailsWithId, ObjectDisplayValues } from "types"
+import type { SubmissionDetailsWithId, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle } from "utils"
 
 type SaveDraftHookProps = {
   accessionId?: string
   objectType: string
   objectStatus: string
-  folder: FolderDetailsWithId
+  submission: SubmissionDetailsWithId
   values: Record<string, unknown>
   dispatch: (reducer: unknown) => void
 }
 
 const saveDraftHook = async (props: SaveDraftHookProps) => {
-  const { accessionId, objectType, objectStatus, folder, values, dispatch } = props
+  const { accessionId, objectType, objectStatus, submission, values, dispatch } = props
   const draftDisplayTitle = getObjectDisplayTitle(objectType, values as ObjectDisplayValues)
 
   dispatch(setLoading())
@@ -29,7 +29,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
 
     if (response.ok) {
       dispatch(resetDraftStatus())
-      dispatch(replaceObjectInFolder(accessionId, { displayTitle: draftDisplayTitle }, ObjectStatus.draft))
+      dispatch(replaceObjectInSubmission(accessionId, { displayTitle: draftDisplayTitle }, ObjectStatus.draft))
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
@@ -50,7 +50,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
     dispatch(resetLoading())
     return response
   } else {
-    const response = await draftAPIService.createFromJSON(objectType, folder.folderId, values)
+    const response = await draftAPIService.createFromJSON(objectType, submission.submissionId, values)
     if (response.ok) {
       dispatch(
         updateStatus({

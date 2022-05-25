@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef, useEffect } from "react"
 
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
@@ -69,6 +69,12 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
   const objectType = useAppSelector(state => state.objectType)
   const { submissionId } = useAppSelector(state => state.submission)
   const loading = useAppSelector(state => state.loading)
+  const focusTarget = useRef<HTMLButtonElement | null>(null)
+  const shouldFocus = useAppSelector(state => state.focus)
+
+  useEffect(() => {
+    if (shouldFocus && focusTarget.current) focusTarget.current.focus()
+  }, [shouldFocus])
 
   const {
     register,
@@ -186,13 +192,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
   })
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      {...getRootProps()}
-    >
+    <Modal open={open} onClose={handleClose} aria-labelledby="xml-modal" {...getRootProps()}>
       <StyledContainer>
         <Typography variant="h4" role="heading" color="secondary" sx={{ pb: "2.5rem", fontWeight: 700 }}>
           Upload XML File
@@ -203,6 +203,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
               Drag and drop the file here or
             </Typography>
             <StyledButton
+              ref={focusTarget}
               variant="contained"
               color="primary"
               onClick={() => handleButton()}

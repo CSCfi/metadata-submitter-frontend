@@ -7,6 +7,7 @@ import { makeStyles } from "@mui/styles"
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
 import { useAppSelector } from "hooks"
+import type { FormRef } from "types"
 
 const useStyles = makeStyles(() => ({
   gridContainer: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles(() => ({
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
-const WizardAddObjectStep: React.FC = () => {
+const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
   const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
@@ -49,7 +50,7 @@ const WizardAddObjectStep: React.FC = () => {
               <p>You can also add objects and edit them after saving your draft.</p>
             </div>
           ) : (
-            <WizardAddObjectCard />
+            <WizardAddObjectCard formRef={formRef} />
           )}
         </Grid>
 

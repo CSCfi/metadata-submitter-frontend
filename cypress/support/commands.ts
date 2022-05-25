@@ -40,6 +40,7 @@ declare global {
       continueLatestDraft(objectType: string): Chainable<Element>
       openDOIForm(): Chainable<Element>
       formActions(buttonName: string): Chainable<Element>
+      optionsActions(optionName: string): Chainable<Element>
       saveDoiForm(): Chainable<Element>
       generateSubmissionAndObjects(stopToObjectType?: string): Chainable<Element>
       generateObject(objectType: string): Chainable<Element>
@@ -142,7 +143,7 @@ Cypress.Commands.add("editLatestSubmittedObject", objectType => {
     cy.get(`[data-testid='submitted-${objectType}-list-item']`).first().click()
   })
   cy.scrollTo("top")
-  cy.contains(`Update ${DisplayObjectTypes[objectType]}`, { timeout: 10000 }).should("be.visible")
+  cy.contains("Update", { timeout: 10000 }).should("be.visible")
 })
 
 // Go to DOI form
@@ -158,6 +159,11 @@ Cypress.Commands.add("formActions", buttonName => {
   cy.scrollTo("top")
   cy.get("button").contains(buttonName, { timeout: 10000 }).should("be.visible")
   cy.get("button").contains(buttonName, { timeout: 10000 }).click({ force: true })
+})
+
+Cypress.Commands.add("optionsActions", optionName => {
+  cy.get("[data-testid='MoreHorizIcon']", { timeout: 10000 }).click()
+  cy.contains(optionName).click()
 })
 
 // Fill required fields to submit DOI form
@@ -185,7 +191,8 @@ Cypress.Commands.add("saveDoiForm", () => {
 })
 
 // Method for hanlding request path when generating objects
-const addObjectPath = (objectType: string, submissionId: string) => `${baseUrl}objects/${objectType}?submission=${submissionId}`
+const addObjectPath = (objectType: string, submissionId: string) =>
+  `${baseUrl}objects/${objectType}?submission=${submissionId}`
 
 // Create objects from predefined templates
 // Possible to stop into specific object type. Add object type as argument

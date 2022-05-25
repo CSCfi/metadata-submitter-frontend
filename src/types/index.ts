@@ -99,8 +99,7 @@ export type SubmissionDataFromForm = {
 }
 
 export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails }
-
-export type CreateSubmissionFormRef = { current: HTMLElement | null } | undefined
+export type FormRef = { current: HTMLElement | null } | undefined
 
 export type StatusDetails = {
   status: string | null

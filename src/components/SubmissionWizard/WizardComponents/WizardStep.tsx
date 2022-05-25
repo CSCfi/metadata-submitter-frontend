@@ -24,7 +24,9 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import { ObjectInsideSubmissionWithTags } from "types"
+import draftAPIService from "services/draftAPI"
+import objectAPIService from "services/objectAPI"
+import type { FormRef, ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
 const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
@@ -71,6 +73,7 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         navigate({ pathname: pathname, search: stepParam })
         dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         dispatch(setObjectType(parent))
+        if (formRef?.current) formRef.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
     }
   }
@@ -90,6 +93,8 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         variant="contained"
         onClick={() => handleClick()}
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
+        form="hook-form"
+        type="reset"
       >
         {buttonText}
       </Button>
@@ -264,8 +269,9 @@ const WizardStep = (params: {
     objects?: { ready?: stepItemObject[]; drafts?: stepItemObject[] }
   }[]
   actionButtonText: string
+  formRef?: FormRef
 }) => {
-  const { step, stepItems, actionButtonText } = params
+  const { step, stepItems, actionButtonText, formRef } = params
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const singleObjectStepItems = [ObjectTypes.study]
@@ -320,6 +326,7 @@ const WizardStep = (params: {
                       : actionButtonText
                   }
                   disabled={hasObjects && singleObjectStepItems.indexOf(objectType) > -1}
+                  formRef={formRef}
                 />
               </ObjectWrapper>
             </ListItem>

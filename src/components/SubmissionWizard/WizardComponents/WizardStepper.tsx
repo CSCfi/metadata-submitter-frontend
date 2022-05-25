@@ -15,6 +15,7 @@ import WizardStep from "./WizardStep"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
+import type { Schema, FormRef } from "types"
 
 // Top & bottom borders for first and last disabled elements
 const AccordionWrapper = styled("div")(({ theme }) => ({
@@ -72,8 +73,8 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
  * If createSubmissionForm is passed as reference it is used to trigger correct form when clicking next.
  */
 
-const WizardStepper = () => {
-  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
+const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
+  const objectsArray = useAppSelector(state => state.objectTypesArray)
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const dispatch = useAppDispatch()
@@ -141,7 +142,12 @@ const WizardStepper = () => {
             </AccordionSummary>
             {step.stepItems && step.actionButtonText && (
               <AccordionDetails>
-                <WizardStep step={stepNumber} stepItems={step.stepItems} actionButtonText={step.actionButtonText} />
+                <WizardStep
+                  step={stepNumber}
+                  stepItems={step.stepItems}
+                  actionButtonText={step.actionButtonText}
+                  formRef={formRef}
+                />
               </AccordionDetails>
             )}
           </Accordion>

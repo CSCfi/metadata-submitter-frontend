@@ -55,7 +55,7 @@ describe("render objects' links and attributes ", function () {
     cy.get("[data-testid='studyAttributes.0.value']").type("Test Attributes Value")
 
     // Save as draft
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("[data-testid='study-objects-list']").find("li").should("have.length", 1)
 
     // Check submitted object has correnct rendering data

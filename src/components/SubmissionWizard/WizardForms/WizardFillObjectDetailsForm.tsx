@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, RefObject } from "react"
 
 import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
@@ -36,7 +36,14 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
-import type { SubmissionDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
+import type {
+  SubmissionDetailsWithId,
+  FormDataFiles,
+  FormObject,
+  ObjectDetails,
+  ObjectDisplayValues,
+  FormRef,
+} from "types"
 import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
@@ -89,6 +96,7 @@ type FormContentProps = {
   submission: SubmissionDetailsWithId
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
   closeDialog: () => void
+  formRef?: FormRef
 }
 
 /*
@@ -212,6 +220,7 @@ const FormContent = ({
   submission,
   currentObject,
   closeDialog,
+  formRef,
 }: FormContentProps) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
@@ -436,6 +445,11 @@ const FormContent = ({
     dispatch(setXMLModalOpen())
   }
 
+  const handleReset = () => {
+    methods.reset({ undefined })
+    setCurrentObjectId(null)
+  }
+
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
@@ -455,6 +469,8 @@ const FormContent = ({
         className={classes.formComponents}
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
+        ref={formRef as RefObject<HTMLFormElement>}
+        onReset={handleReset}
       >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
       </form>
@@ -465,8 +481,8 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
-  const { closeDialog } = props
+const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?: FormRef }) => {
+  const { closeDialog, formRef } = props
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
@@ -617,6 +633,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
         currentObject={currentObject}
         key={currentObject?.accessionId || submission.submissionId}
         closeDialog={closeDialog || (() => ({}))}
+        formRef={formRef}
       />
       {submitting && <LinearProgress />}
       <WizardUploadXMLModal

@@ -17,7 +17,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
-import type { CreateSubmissionFormRef } from "types"
+import type { FormRef } from "types"
 import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
@@ -49,14 +49,14 @@ const useStyles = makeStyles(theme => ({
 /**
  * Return correct content for each step
  */
-const getStepContent = (wizardStep: number, createSubmissionFormRef: CreateSubmissionFormRef) => {
+const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, objectFormRef: FormRef) => {
   switch (wizardStep) {
     case 1:
       return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
     case 2:
     case 3:
     case 4:
-      return <WizardAddObjectStep />
+      return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       return <WizardShowSummaryStep />
     default:
@@ -114,17 +114,19 @@ const SubmissionWizard: React.FC = () => {
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
+  const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
+
   return (
     <Container maxWidth={false} className={classes.container} disableGutters>
       <Grid container className={classes.gridContainer}>
         <Grid item xs={3} className={classes.stepper}>
-          <WizardStepper />
+          <WizardStepper formRef={objectFormRef} />
         </Grid>
         <Grid item xs={9} className={classes.stepContent}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper className={classes.paper} elevation={2}>
-              {getStepContent(wizardStep, createSubmissionFormRef)}
+              {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef)}
             </Paper>
           )}
         </Grid>

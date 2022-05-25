@@ -22,7 +22,7 @@ import { updateStep } from "features/wizardStepObjectSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { SubmissionDataFromForm, CreateSubmissionFormRef } from "types"
+import type { SubmissionDataFromForm, FormRef } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => {
+const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
@@ -187,7 +187,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
  * Show form to create submission as first step of new draft wizard
  */
 
-const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => (
+const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => (
   <>
     <CreateSubmissionForm createSubmissionFormRef={createSubmissionFormRef} />
   </>

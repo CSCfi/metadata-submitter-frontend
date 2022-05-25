@@ -12,7 +12,7 @@ describe("draft selections and templates", function () {
     cy.clickAccordionPanel("Study, DAC and Policy")
     cy.clickAddObject("policy")
     cy.get("[data-testid=title]").type("Policy draft title")
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
 
     cy.clickAccordionPanel("publish")
 

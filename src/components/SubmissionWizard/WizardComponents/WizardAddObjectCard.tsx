@@ -6,6 +6,7 @@ import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms
 import WizardXMLObjectPage from "components/SubmissionWizard/WizardForms/WizardXMLObjectPage"
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
+import type { FormRef } from "types"
 
 const StyledContent = styled("div")(() => ({
   width: "100%",
@@ -16,13 +17,13 @@ const StyledContent = styled("div")(() => ({
 /*
  * Render correct form to add objects based on submission type in store
  */
-const WizardAddObjectCard: React.FC = () => {
+const WizardAddObjectCard = ({ formRef }: { formRef?: FormRef }) => {
   const submissionType = useAppSelector(state => state.submissionType)
   const objectType = useAppSelector(state => state.objectType)
 
   const content = {
     [ObjectSubmissionTypes.form]: {
-      component: <WizardFillObjectDetailsForm key={objectType + submissionType} />,
+      component: <WizardFillObjectDetailsForm key={objectType + submissionType} formRef={formRef} />,
       testId: ObjectSubmissionTypes.form,
     },
     [ObjectSubmissionTypes.xml]: {

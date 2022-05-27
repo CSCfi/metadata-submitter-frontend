@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Change url of ROR from http to https #813
 - Refactor **folder** -> **submission** #807
 - Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
 

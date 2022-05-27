@@ -19,7 +19,7 @@ const mockStore = configureStore([])
 const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
 
 const server = setupServer(
-  rest.get("http://api.ror.org/organizations", (req, res, ctx) => {
+  rest.get("https://api.ror.org/organizations", (req, res, ctx) => {
     const searchTerm = req.url.searchParams.get("query") as string
     return res(ctx.json({ items: mockOrganisations.filter(item => item.name.toLowerCase().includes(searchTerm)) }))
   })

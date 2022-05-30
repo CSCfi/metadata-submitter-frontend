@@ -65,7 +65,7 @@ const ButtonContainer = styled("div")(({ theme }) => ({
  * Show summary of objects added to submission
  */
 const WizardShowSummaryStep: React.FC = () => {
-const submission = useAppSelector(state => state.submission)
+  const submission = useAppSelector(state => state.submission)
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const projectId = useAppSelector(state => state.projectId)
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)

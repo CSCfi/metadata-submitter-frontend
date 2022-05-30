@@ -100,16 +100,14 @@ describe("WizardShowSummaryStep", () => {
         ObjectTypes.analysis,
         ObjectTypes.dataset,
       ],
-      submissionFolder: {
+      submission: {
+        submissionId: "FOL90524783",
         name: "Test folder",
         description: "Description for folder",
         projectId: "a0981b1b4df349e5af7ecbe22a1a1f75",
         published: false,
         metadataObjects: submittedObjects,
         drafts: [],
-        id: "2c05e65fd9084f58938df577371f6b76",
-        text_name: "Test generated folder",
-        dateCreated: 1652262407,
       },
     })
     wrapper = (

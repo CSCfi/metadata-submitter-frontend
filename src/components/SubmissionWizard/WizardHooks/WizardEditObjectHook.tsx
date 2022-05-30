@@ -9,15 +9,15 @@ import { setObjectType } from "features/wizardObjectTypeSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
-import type { APIResponse, ObjectInsideFolderWithTags } from "types"
+import type { APIResponse, ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
 const editObjectHook = async (
   draft: boolean,
   objectType: string,
-  item: ObjectInsideFolderWithTags,
+  item: ObjectInsideSubmissionWithTags,
   step: number,
-  folderId: string,
+  submissionId: string,
   dispatch: (reducer: unknown) => Promise<APIResponse>,
   navigate: NavigateFunction,
   index?: number
@@ -25,7 +25,7 @@ const editObjectHook = async (
   const service = draft ? draftAPIService : objectAPIService
 
   const response = await service.getObjectByAccessionId(objectType, item.accessionId)
-  const pathname = pathWithLocale(`submission/${folderId}`)
+  const pathname = pathWithLocale(`submission/${submissionId}`)
 
   if (response.ok) {
     dispatch(setSubmissionType(ObjectSubmissionTypes.form))

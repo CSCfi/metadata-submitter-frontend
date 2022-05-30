@@ -18,8 +18,7 @@ jobs:
           npm run build --production
       - name: Set up branch
         run: |
-          BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-          if [[ $BRANCH == master ]]; then
+          if [[ github.base_ref == master ]]; then
              echo "VERSION=master" >> $GITHUB_ENV
           else
              echo "VERSION=develop" >> $GITHUB_ENV

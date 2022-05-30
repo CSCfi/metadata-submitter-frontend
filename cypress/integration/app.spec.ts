@@ -85,10 +85,10 @@ describe("Basic application flow", function () {
 
     cy.formActions("Update")
 
-    cy.get("[data-testid='dac-objects-list']").within(() => {
-      cy.contains("Test title").should("be.visible").click({ force: true })
+    cy.get("div[role=alert]").contains("Object updated")
+    cy.get("[data-testid='dac-objects-list']", { timeout: 10000 }).within(() => {
+      cy.get("a").contains("Test contact name edited").should("be.visible")
     })
-    cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
 
     // Fill Policy form
     cy.clickAddObject(ObjectTypes.policy)

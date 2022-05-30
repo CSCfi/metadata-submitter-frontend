@@ -113,35 +113,19 @@ export const createSubmission =
   }
 
 export const updateSubmission =
-  (
-    submissionId: string,
-    submissionDetails: SubmissionDataFromForm & { submission: { drafts: ObjectInsideSubmissionWithTags[] } } & {
-      selectedDraftsArray: Array<ObjectInsideSubmissionWithTags>
-    }
-  ) =>
+  (submissionId: string, submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const { selectedDraftsArray } = submissionDetails
-    // Add templates as selectedDrafts to current drafts in case there is any
-    const updatedDrafts =
-      selectedDraftsArray.length > 0
-        ? submissionDetails.submission.drafts.concat(selectedDraftsArray)
-        : submissionDetails.submission.drafts
-
-    const updatedSubmission = extend(
-      { ...submissionDetails.submission },
-      { name: submissionDetails.name, description: submissionDetails.description, drafts: updatedDrafts }
-    )
-
-    const changes = [
-      { op: "add", path: "/name", value: submissionDetails.name },
-      { op: "add", path: "/description", value: submissionDetails.description },
-      { op: "add", path: "/drafts/-", value: updatedDrafts },
-    ]
-
-    const response = await submissionAPIService.patchSubmissionById(submissionId, changes)
+    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+      name: submissionDetails.name,
+      description: submissionDetails.description,
+    })
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
+        const updatedSubmission = extend(
+          { ...submissionDetails.submission },
+          { name: submissionDetails.name, description: submissionDetails.description }
+        )
         dispatch(setSubmission(updatedSubmission))
         resolve(response)
       } else {
@@ -238,8 +222,7 @@ export const addDoiInfoToSubmission =
       subjects: modifiedSubjects,
     })
 
-    const changes = [{ op: "add", path: "/doiInfo", value: modifiedDoiFormDetails }]
-    const response = await submissionAPIService.patchSubmissionById(submissionId, changes)
+    const response = await submissionAPIService.putDOIInfo(submissionId, modifiedDoiFormDetails)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {

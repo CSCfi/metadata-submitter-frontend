@@ -46,6 +46,7 @@ describe("Test autocomplete on organisation field", () => {
       name: "Test name",
       published: false,
     },
+    openedXMLModal: false,
   })
 
   beforeAll(() => server.listen())

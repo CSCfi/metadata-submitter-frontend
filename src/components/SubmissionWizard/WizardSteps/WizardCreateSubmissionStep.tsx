@@ -22,7 +22,7 @@ import { updateStep } from "features/wizardStepObjectSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import type { SubmissionDataFromForm, CreateSubmissionFormRef } from "types"
+import type { SubmissionDataFromForm, FormRef } from "types"
 import { pathWithLocale } from "utils"
 
 const useStyles = makeStyles(theme => ({
@@ -30,14 +30,14 @@ const useStyles = makeStyles(theme => ({
     "& .MuiTextField-root": {
       margin: "1rem 0",
     },
-    padding: "2rem",
+    padding: "4rem",
   },
   submitButton: {
     marginTop: "2rem",
     padding: "1rem 5rem",
   },
   typeOfSubmissionRow: {
-    marginTop: theme.spacing(-1),
+    marginTop: theme.spacing(2),
   },
   typeOfSubmissionLabel: {
     background: theme.palette.background.default,
@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => {
+const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
@@ -111,7 +111,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
         ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
-        <Typography variant="h4" gutterBottom component="div" color="secondary">
+        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
           Name your submission
         </Typography>
         <Controller
@@ -187,7 +187,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
  * Show form to create submission as first step of new draft wizard
  */
 
-const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: CreateSubmissionFormRef }) => (
+const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => (
   <>
     <CreateSubmissionForm createSubmissionFormRef={createSubmissionFormRef} />
   </>

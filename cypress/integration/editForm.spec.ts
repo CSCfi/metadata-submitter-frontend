@@ -33,11 +33,10 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("select[data-testid='sampleData.gender']").select(testData.gender)
 
     // Submit form
-    cy.get("button[type=submit]").contains("Submit").click()
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.formActions("Mark as ready")
 
     // Clear form
-    cy.get("button[type=button]").contains("Clear").click()
+    cy.optionsActions("Clear form")
 
     // Edit saved submission
     cy.get("[data-testid='sample-objects-list']").within(() => {
@@ -71,9 +70,6 @@ describe("Populate form and render form elements by object data", function () {
     })
     cy.get("select[data-testid='sampleData']").should("have.value", testData.sampleData2)
     cy.get("[data-testid='sampleData.dataDescription']").should("have.value", testData.sampleTypeDescription)
-
-    // Clear object in state
-    cy.formActions("New form")
 
     // Test updated title
     cy.get("[data-testid='sample-objects-list']").find("li").should("have.length", 2)
@@ -110,14 +106,14 @@ describe("Populate form and render form elements by object data", function () {
       .as("sampleAccessionId")
 
     // Expected Base Call Table
-    cy.get("div").contains("Expected Base Call Table").parents().children("button").click()
+    cy.get("div[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable'] > div").children("button").click()
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.baseCall']").type("Test base call")
     cy.get("[data-testid='design.spotDescriptor.readSpec.expectedBaseCallTable.0.readGroupTag']").type(
       "Test read group tag"
     )
 
     // Save Experiment form
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     cy.continueLatestDraft(ObjectTypes.experiment)
@@ -160,7 +156,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[data-testid='runType.referenceAlignment.assembly.accession']").type(testData.accessionId)
 
     // Save draft
-    cy.get("button[type='button']").contains("Save as Draft").click()
+    cy.get("button[type='button']").contains("Save as draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select newly saved draft
@@ -181,7 +177,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[type='checkbox']").first().check()
 
     // Save draft
-    cy.get("button[type='button']").contains("Save as Draft").click()
+    cy.get("button[type='button']").contains("Save as draft").click()
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select newly saved draft
@@ -190,10 +186,7 @@ describe("Populate form and render form elements by object data", function () {
     cy.get("[type='checkbox']").first().should("be.checked")
 
     // Test that checkbox clears with form clear -button
-    cy.get("button[type=button]")
-      .contains("Clear form")
-      .should("be.visible")
-      .then($el => $el.click())
+    cy.optionsActions("Clear form")
     cy.get("[type='checkbox']").first().should("not.be.checked")
   })
 
@@ -201,17 +194,16 @@ describe("Populate form and render form elements by object data", function () {
     cy.clickAddObject(ObjectTypes.sample)
     cy.get("[data-testid='title']").type("Test sample title")
     // Save draft
-    cy.get("button[type='button']").contains("Save as Draft").click()
+    cy.get("button[type='button']").contains("Save as draft").click()
     // Edit the draft and try to submit invalid form
     cy.continueLatestDraft(ObjectTypes.sample)
-    cy.get("button[type=submit]").contains("Submit").click()
+    cy.formActions("Mark as ready")
     // Taxon field should be empty and the draft cannot be submitted yet
     cy.get("[data-testid='sampleName.taxonId']").should("have.value", "")
-    cy.get("[data-testid='Draft-objects']").should("have.length", 1)
 
     // Fill in taxonId and submit the form again
     cy.get("[data-testid='sampleName.taxonId']").type("123")
-    cy.get("button[type=submit]").contains("Submit").click()
+    cy.formActions("Mark as ready")
 
     // Check that the draft is removed from the draft objects list and submitted
     cy.get(`[data-testid='sample-objects-list']`).within(() => {

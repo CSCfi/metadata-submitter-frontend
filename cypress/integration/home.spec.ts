@@ -24,19 +24,19 @@ describe("Home e2e", function () {
     cy.get("select[data-testid='descriptor.studyType']").select("Resequencing")
     cy.get("[data-testid='descriptor.studyAbstract']").type("Test abstract")
     // Save draft
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Fill a Policy form draft
     cy.clickAddObject(ObjectTypes.policy)
     cy.get("[data-testid='title']").type("Test Policy title")
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Save another draft for later use
-    cy.formActions("New form")
+    cy.get("button").contains("Add policy").click()
     cy.get("input[data-testid='title']").type("Second test title")
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Save submission and navigate to Home page

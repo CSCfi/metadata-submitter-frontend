@@ -26,9 +26,8 @@ import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
 import { Variant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
-import Tooltip from "@mui/material/Tooltip"
+import Tooltip, { TooltipProps } from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import { makeStyles, withStyles } from "@mui/styles"
 import { get, flatten, uniq, debounce } from "lodash"
 import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
@@ -49,49 +48,39 @@ const highlightStyle = theme => {
   }
 }
 
-const useStyles = makeStyles(theme => ({
-  fieldTip: {
-    color: theme.palette.secondary.main,
-    marginLeft: 0,
-  },
-  sectionTip: {
-    fontSize: "inherit",
-    marginLeft: 1,
-  },
-  divBaseline: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "baseline",
-    width: "100%",
-    "& label": {
-      marginRight: 0,
-    },
-  },
-  autocomplete: {
-    flex: "auto",
-    alignSelf: "flex-start",
-    "& + svg": {
-      marginTop: 1,
-    },
-  },
-  autocompleteInput: {
-    "& .MuiAutocomplete-endAdornment": {
-      top: 0,
-    },
-  },
-  externalLink: {
-    fontSize: "1rem",
-    marginBottom: -1,
-  },
-}))
-
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   "data-testid": string
 }
 
-const FieldTooltip = withStyles(theme => ({
-  tooltip: theme.tooltip,
-}))(Tooltip)
+const BaselineDiv = styled("div")({
+  display: "flex",
+  alignItems: "baseline",
+})
+
+const FieldTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  "& .MuiTooltip-tooltip": {
+    padding: "2rem",
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.secondary.main,
+    fontSize: "1.4rem",
+    boxShadow: theme.shadows[1],
+    border: `0.1rem solid ${theme.palette.primary.main}`,
+    maxWidth: "25rem",
+  },
+  "& .MuiTooltip-arrow": {
+    "&:before": {
+      border: `0.1rem solid ${theme.palette.primary.main}`,
+    },
+    color: theme.palette.common.white,
+  },
+}))
+
+const TooltipIcon = styled(HelpOutlineIcon)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  marginLeft: "1rem",
+}))
 
 const DatePickerWrapper = styled(Grid)(({ theme }) => ({
   paddingLeft: 1,
@@ -225,13 +214,19 @@ const traverseFields = (
   const description = object.description
   const autoCompleteIdentifiers = ["organisation", "name of the place of affiliation"]
 
-  if (object.oneOf) return <FormOneOfField key={name} path={path} object={object} required={required} />
+  if (object.oneOf)
+    return (
+      <FormSection key={name} name={name} label={label} level={path.length}>
+        <FormOneOfField key={name} path={path} object={object} required={required} />
+      </FormSection>
+    )
 
   switch (object.type) {
     case "object": {
       const properties = object.properties
+
       return (
-        <FormSection key={name} name={name} label={label} level={path.length + 4} description={description}>
+        <FormSection key={name} name={name} label={label} level={path.length} description={description} isTitleShown>
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
@@ -257,29 +252,35 @@ const traverseFields = (
     }
     case "string": {
       return object["enum"] ? (
-        <FormSelectField
-          key={name}
-          name={name}
-          label={label}
-          options={object.enum}
-          required={required}
-          description={description}
-        />
+        <FormSection key={name} name={name} label={label} level={path.length}>
+          <FormSelectField
+            key={name}
+            name={name}
+            label={label}
+            options={object.enum}
+            required={required}
+            description={description}
+          />
+        </FormSection>
       ) : object.title === "Date" ? (
         <FormDatePicker key={name} name={name} label={label} required={required} description={description} />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
         <FormAutocompleteField key={name} name={name} label={label} required={required} description={description} />
       ) : name.includes("keywords") ? (
-        <FormTagField key={name} name={name} label={label} required={required} description={description} />
+        <FormSection key={name} name={name} label={label} level={path.length}>
+          <FormTagField key={name} name={name} label={label} required={required} description={description} />
+        </FormSection>
       ) : (
-        <FormTextField
-          key={name}
-          name={name}
-          label={label}
-          required={required}
-          description={description}
-          nestedField={nestedField}
-        />
+        <FormSection key={name} name={name} label={label} level={path.length}>
+          <FormTextField
+            key={name}
+            name={name}
+            label={label}
+            required={required}
+            description={description}
+            nestedField={nestedField}
+          />
+        </FormSection>
       )
     }
     case "integer": {
@@ -287,7 +288,11 @@ const traverseFields = (
       const fieldName = name.split(".").pop()
       if (fieldName && integerFields.indexOf(fieldName) < 0) integerFields.push(fieldName)
 
-      return <FormTextField key={name} name={name} label={label} required={required} description={description} />
+      return (
+        <FormSection key={name} name={name} label={label} level={path.length}>
+          <FormTextField key={name} name={name} label={label} required={required} description={description} />
+        </FormSection>
+      )
     }
     case "number": {
       return (
@@ -306,14 +311,16 @@ const traverseFields = (
     }
     case "array": {
       return object.items.enum ? (
-        <FormCheckBoxArray
-          key={name}
-          name={name}
-          label={label}
-          options={object.items.enum}
-          required={required}
-          description={description}
-        />
+        <FormSection key={name} name={name} label={label} level={path.length}>
+          <FormCheckBoxArray
+            key={name}
+            name={name}
+            label=""
+            options={object.items.enum}
+            required={required}
+            description={description}
+          />
+        </FormSection>
       ) : (
         <FormArray key={name} object={object} path={path} required={required} description={description} />
       )
@@ -333,36 +340,107 @@ const traverseFields = (
   }
 }
 
+const DisplayDescription = ({ description, children }: { description: string; children?: React.ReactElement }) => {
+  const [isReadMore, setIsReadMore] = useState(description.length > 60)
+
+  const toggleReadMore = () => {
+    setIsReadMore(!isReadMore)
+  }
+
+  const ReadmoreText = styled("span")(({ theme }) => ({
+    fontWeight: 700,
+    textDecoration: "underline",
+    display: "block",
+    marginTop: "0.5rem",
+    color: theme.palette.primary.main,
+    "&:hover": { cursor: "pointer" },
+  }))
+
+  return (
+    <p>
+      {isReadMore ? `${description.slice(0, 60)}...` : description}
+      {!isReadMore && children}
+      {description?.length >= 60 && (
+        <ReadmoreText onClick={toggleReadMore}>{isReadMore ? "Read more/Expand" : " Show less"}</ReadmoreText>
+      )}
+    </p>
+  )
+}
+
 type FormSectionProps = {
   name: string
   label: string
   level: number
+  isTitleShown?: boolean
   children?: React.ReactNode
 }
+
+const FormSectionTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{ level: number }>(
+  ({ theme, level }) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "start",
+    alignItems: "start",
+    backgroundColor: level === 1 ? theme.palette.primary.lighter : theme.palette.common.white,
+    height: "100%",
+    marginLeft: level <= 1 ? "5rem" : 0,
+    marginRight: "3rem",
+    padding: level === 0 ? "4rem 0 3rem 0" : level === 1 ? "2rem" : 0,
+  })
+)
 
 /*
  * FormSection is rendered for properties with type object
  */
-const FormSection = ({ name, label, level, children, description }: FormSectionProps & { description: string }) => {
-  const classes = useStyles()
+const FormSection = ({
+  name,
+  label,
+  level,
+  children,
+  description,
+  isTitleShown,
+}: FormSectionProps & { description?: string }) => {
+  const splittedPath = name.split(".") // Have a fully splitted path for names such as "studyLinks.0", "dacLinks.0"
+
+  const heading = (
+    <Grid item xs={12} md={level === 0 ? 12 : level > 1 ? 0 : 4}>
+      {(level <= 1 || ((level === 3 || level === 2) && isTitleShown)) && label && (
+        <FormSectionTitle square={true} elevation={0} level={level}>
+          <Typography
+            key={`${name}-header`}
+            variant={level === 0 ? "h4" : ("subtitle1" as Variant)}
+            role="heading"
+            color="secondary"
+          >
+            {label}
+            {description && level === 1 && (
+              <FieldTooltip
+                title={<DisplayDescription description={description} />}
+                placement="top"
+                arrow
+                describeChild
+              >
+                <TooltipIcon />
+              </FieldTooltip>
+            )}
+          </Typography>
+        </FormSectionTitle>
+      )}
+    </Grid>
+  )
 
   return (
     <ConnectForm>
       {({ errors }: ConnectFormMethods) => {
         const error = get(errors, name)
         return (
-          <div>
-            <div key={`${name}-section`}>
-              <Typography key={`${name}-header`} variant={`h${level}` as Variant} role="heading" color="secondary">
-                {label}
-                {description && level == 2 && (
-                  <FieldTooltip title={description} placement="top" arrow>
-                    <HelpOutlineIcon className={classes.sectionTip} />
-                  </FieldTooltip>
-                )}
-              </Typography>
-              {children}
-            </div>
+          <>
+            <Grid container key={`${name}-section`} sx={{ mb: level <= 1 && splittedPath.length <= 1 ? "3rem" : 0 }}>
+              {heading}
+              <Grid item xs={12} md={level === 1 && label ? 8 : 12}>
+                {children}
+              </Grid>
+            </Grid>
             <div>
               {error ? (
                 <FormControl error>
@@ -372,29 +450,12 @@ const FormSection = ({ name, label, level, children, description }: FormSectionP
                 </FormControl>
               ) : null}
             </div>
-          </div>
+          </>
         )
       }}
     </ConnectForm>
   )
 }
-
-type FormFieldBaseProps = {
-  name: string
-  label: string
-  required: boolean
-}
-
-type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
-
-/*
- * Highlight required oneOf and select fields
- */
-const ValidationSelectField = withStyles(theme => ({
-  root: {
-    "& select:required:not(:valid) + svg + fieldset": highlightStyle(theme),
-  },
-}))(TextField)
 
 /*
  * FormOneOfField is rendered if property can be choosed from many possible.
@@ -437,7 +498,7 @@ const FormOneOfField = ({
       return acc
     }, {} as Record<string, string>)
 
-  if (Object.keys(values).length > 0) {
+  if (Object.keys(values).length > 0 && lastPathItem !== "prevStepIndex") {
     for (const item of path) {
       if (values[item]) {
         const itemValues = values[item]
@@ -520,7 +581,6 @@ const FormOneOfField = ({
     return {}
   }
 
-  const classes = useStyles()
   const [field, setField] = useState(fieldValue)
   const clearForm = useAppSelector(state => state.clearForm)
 
@@ -570,10 +630,22 @@ const FormOneOfField = ({
           requiredProp = childObject?.required?.toString() || Object.keys(selectedOption)[0]
         }
 
+        let child
+        if (field) {
+          const fieldObject = options?.filter((option: { title: string }) => option.title === field)[0]
+          child = traverseFields(
+            { ...fieldObject, title: "" },
+            path,
+            required && requiredProp ? requiredProp.split(",") : [],
+            childObject?.required ? false : true,
+            nestedField
+          )
+        } else child = null
+
         return (
-          <div>
-            <div className={classes.divBaseline}>
-              <ValidationSelectField
+          <>
+            <BaselineDiv>
+              <TextField
                 name={name}
                 label={label}
                 id={name}
@@ -588,6 +660,7 @@ const FormOneOfField = ({
                 helperText={error?.message}
                 required={required}
                 inputProps={{ "data-testid": name }}
+                sx={{ mb: "1rem" }}
               >
                 <option aria-label="None" value="" disabled />
                 {options?.map((optionObject: { title: string }) => {
@@ -598,38 +671,33 @@ const FormOneOfField = ({
                     </option>
                   )
                 })}
-              </ValidationSelectField>
+              </TextField>
               {description && (
-                <FieldTooltip title={description} placement="top" arrow>
-                  <HelpOutlineIcon className={classes.fieldTip} />
+                <FieldTooltip
+                  title={<DisplayDescription description={description} />}
+                  placement="right"
+                  arrow
+                  describeChild
+                >
+                  <TooltipIcon />
                 </FieldTooltip>
               )}
-            </div>
-            {field
-              ? traverseFields(
-                  options?.filter((option: { title: string }) => option.title === field)[0],
-                  path,
-                  required && requiredProp ? requiredProp.split(",") : [],
-                  childObject?.required ? false : true,
-                  nestedField
-                )
-              : null}
-          </div>
+            </BaselineDiv>
+            {child}
+          </>
         )
       }}
     </ConnectForm>
   )
 }
 
-/*
- * Highlight required input fields
- */
-const ValidationTextField = withStyles(theme => ({
-  root: {
-    "& input:invalid:not(:valid) + fieldset, input:invalid:not(:valid) + button + fieldset, textarea:invalid:not(:valid) + fieldset":
-      highlightStyle(theme),
-  },
-}))(TextField)
+type FormFieldBaseProps = {
+  name: string
+  label: string
+  required: boolean
+}
+
+type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 
 /*
  * FormTextField is the most usual type, rendered for strings, integers and numbers.
@@ -642,7 +710,6 @@ const FormTextField = ({
   type = "string",
   nestedField,
 }: FormFieldBaseProps & { description: string; type?: string; nestedField?: NestedField }) => {
-  const classes = useStyles()
   const openedDoiForm = useAppSelector(state => state.openedDoiForm)
   const autocompleteField = useAppSelector(state => state.autocompleteField)
   const path = name.split(".")
@@ -738,8 +805,8 @@ const FormTextField = ({
               }
 
               return (
-                <div className={classes.divBaseline}>
-                  <ValidationTextField
+                <BaselineDiv>
+                  <TextField
                     {...field}
                     inputProps={{ "data-testid": name }}
                     label={label}
@@ -754,13 +821,19 @@ const FormTextField = ({
                     value={inputValue}
                     onChange={handleChange}
                     disabled={disabled}
+                    sx={{ mb: "1rem" }}
                   />
                   {description && (
-                    <FieldTooltip title={description} placement="top" arrow>
-                      <HelpOutlineIcon className={classes.fieldTip} />
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
                     </FieldTooltip>
                   )}
-                </div>
+                </BaselineDiv>
               )
             }}
             name={name}
@@ -784,68 +857,69 @@ const FormSelectField = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => {
-  const classes = useStyles()
-
-  return (
-    <ConnectForm>
-      {({ control }: ConnectFormMethods) => {
-        return (
-          <Controller
-            name={name}
-            control={control}
-            render={({ field, fieldState: { error } }) => {
-              return (
-                <div className={classes.divBaseline}>
-                  <ValidationSelectField
-                    {...field}
-                    label={label}
-                    id={name}
-                    value={field.value || ""}
-                    error={!!error}
-                    helperText={error?.message}
-                    required={required}
-                    select
-                    SelectProps={{ native: true }}
-                    onChange={e => {
-                      let val = e.target.value
-                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
-                      if (val?.includes("Title")) {
-                        const hyphenIndex = val.indexOf("-")
-                        val = val.slice(0, hyphenIndex - 1)
-                      }
-                      return field.onChange(val)
-                    }}
-                    inputProps={{ "data-testid": name }}
+}: FormSelectFieldProps & { description: string }) => (
+  <ConnectForm>
+    {({ control }: ConnectFormMethods) => {
+      return (
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <BaselineDiv>
+                <TextField
+                  {...field}
+                  label={label}
+                  id={name}
+                  value={field.value || ""}
+                  error={!!error}
+                  helperText={error?.message}
+                  required={required}
+                  select
+                  SelectProps={{ native: true }}
+                  onChange={e => {
+                    let val = e.target.value
+                    // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                    if (val?.includes("Title")) {
+                      const hyphenIndex = val.indexOf("-")
+                      val = val.slice(0, hyphenIndex - 1)
+                    }
+                    return field.onChange(val)
+                  }}
+                  inputProps={{ "data-testid": name }}
+                  sx={{ mb: "1rem" }}
+                >
+                  <option aria-label="None" value="" disabled />
+                  {options.map(option => (
+                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
+                      {option}
+                    </option>
+                  ))}
+                </TextField>
+                {description && (
+                  <FieldTooltip
+                    title={<DisplayDescription description={description} />}
+                    placement="right"
+                    arrow
+                    describeChild
                   >
-                    <option aria-label="None" value="" disabled />
-                    {options.map(option => (
-                      <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
-                        {option}
-                      </option>
-                    ))}
-                  </ValidationSelectField>
-                  {description && (
-                    <FieldTooltip title={description} placement="top" arrow>
-                      <HelpOutlineIcon className={classes.fieldTip} />
-                    </FieldTooltip>
-                  )}
-                </div>
-              )
-            }}
-          />
-        )
-      }}
-    </ConnectForm>
-  )
-}
+                    <TooltipIcon />
+                  </FieldTooltip>
+                )}
+              </BaselineDiv>
+            )
+          }}
+        />
+      )
+    }}
+  </ConnectForm>
+)
 
 /*
  * FormDatePicker used for selecting date or date rage in DOI form
  */
 
 const FormDatePicker = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
-  const classes = useStyles()
   const dateCheckboxStyles = {
     padding: 0,
     margin: 0,
@@ -949,8 +1023,8 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                 alignItems: "center",
               }}
             >
-              <div className={classes.divBaseline}>
-                <ValidationTextField
+              <BaselineDiv>
+                <TextField
                   inputProps={{ "data-testid": name }}
                   label={label}
                   id={name}
@@ -970,11 +1044,16 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                   }}
                 />
                 {description && (
-                  <FieldTooltip title={description} placement="bottom" arrow>
-                    <HelpOutlineIcon className={classes.fieldTip} />
+                  <FieldTooltip
+                    title={<DisplayDescription description={description} />}
+                    placement="right"
+                    arrow
+                    describeChild
+                  >
+                    <TooltipIcon />
                   </FieldTooltip>
                 )}
-              </div>
+              </BaselineDiv>
               <Grid container direction="column">
                 <DatePickerWrapper item xs="auto">
                   <span>Start</span>
@@ -1082,6 +1161,14 @@ type RORItem = {
   id: string
 }
 
+const StyledAutocomplete = styled(Autocomplete)(() => ({
+  flex: "auto",
+  alignSelf: "flex-start",
+  "& + svg": {
+    marginTop: 1,
+  },
+})) as typeof Autocomplete
+
 const FormAutocompleteField = ({
   name,
   label,
@@ -1092,7 +1179,6 @@ const FormAutocompleteField = ({
 
   const { setValue, getValues } = useFormContext()
 
-  const classes = useStyles()
   const defaultValue = getValues(name) || ""
   const [selection, setSelection] = useState<RORItem | null>(null)
   const [open, setOpen] = useState(false)
@@ -1174,24 +1260,22 @@ const FormAutocompleteField = ({
         return (
           <Controller
             render={() => (
-              <div className={classes.divBaseline}>
-                <Autocomplete
-                  freeSolo
-                  className={classes.autocomplete}
-                  open={open}
-                  onOpen={() => {
-                    setOpen(true)
-                  }}
-                  onClose={() => {
-                    setOpen(false)
-                  }}
-                  options={options}
-                  getOptionLabel={option => option.name || ""}
-                  disableClearable={inputValue.length === 0}
-                  renderInput={params => (
+              <StyledAutocomplete
+                freeSolo
+                open={open}
+                onOpen={() => {
+                  setOpen(true)
+                }}
+                onClose={() => {
+                  setOpen(false)
+                }}
+                options={options}
+                getOptionLabel={option => option.name || ""}
+                disableClearable={inputValue.length === 0}
+                renderInput={params => (
+                  <BaselineDiv>
                     <TextField
                       {...params}
-                      className={classes.autocompleteInput}
                       label={label}
                       id={name}
                       name={name}
@@ -1208,34 +1292,42 @@ const FormAutocompleteField = ({
                         ),
                       }}
                       inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
+                      sx={[
+                        {
+                          "&.MuiAutocomplete-endAdornment": {
+                            top: 0,
+                          },
+                        },
+                      ]}
                     />
-                  )}
-                  onChange={handleAutocompleteValueChange}
-                  onInputChange={handleInputChange}
-                  value={defaultValue}
-                  inputValue={inputValue || defaultValue}
-                />
-                {description && (
-                  <FieldTooltip
-                    title={
-                      <React.Fragment>
-                        {description}
-                        <br />
-                        {"Organisations provided by "}
-                        <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                          {"ror.org"}
-                          <LaunchIcon className={classes.externalLink} />
-                        </a>
-                        {"."}
-                      </React.Fragment>
-                    }
-                    placement="top"
-                    arrow
-                  >
-                    <HelpOutlineIcon className={classes.fieldTip} />
-                  </FieldTooltip>
+                    {description && (
+                      <FieldTooltip
+                        title={
+                          <DisplayDescription description={description}>
+                            <>
+                              <br />
+                              {"Organisations provided by "}
+                              <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                                {"ror.org"}
+                                <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
+                              </a>
+                            </>
+                          </DisplayDescription>
+                        }
+                        placement="right"
+                        arrow
+                        describeChild
+                      >
+                        <TooltipIcon />
+                      </FieldTooltip>
+                    )}
+                  </BaselineDiv>
                 )}
-              </div>
+                onChange={handleAutocompleteValueChange}
+                onInputChange={handleInputChange}
+                value={defaultValue}
+                inputValue={inputValue || defaultValue}
+              />
             )}
             name={name}
             control={control}
@@ -1254,8 +1346,6 @@ const ValidationTagField = styled(TextField)(({ theme }) => ({
 }))
 
 const FormTagField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
-  const classes = useStyles()
-
   // Check initialValues of the tag field and define the initialTags for rendering
   const initialValues = useWatch({ name })
   const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
@@ -1311,7 +1401,7 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
               }
 
               return (
-                <div className={classes.divBaseline}>
+                <BaselineDiv>
                   <input
                     {...field}
                     required={required}
@@ -1345,11 +1435,16 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
                   />
 
                   {description && (
-                    <FieldTooltip title={description} placement="top" arrow>
-                      <HelpOutlineIcon className={classes.fieldTip} />
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
                     </FieldTooltip>
                   )}
-                </div>
+                </BaselineDiv>
               )
             }}
           />
@@ -1362,15 +1457,13 @@ const FormTagField = ({ name, label, required, description }: FormFieldBaseProps
 /*
  * Highlight required Checkbox
  */
-const ValidationFormControlLabel = withStyles(theme => ({
+const ValidationFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   label: {
     "& span": { color: theme.palette.primary.main },
   },
-}))(FormControlLabel)
+}))
 
 const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
-  const classes = useStyles()
-
   return (
     <ConnectForm>
       {({ register, errors, getValues }: ConnectFormMethods) => {
@@ -1382,32 +1475,40 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
         return (
           <Box display="inline" px={1}>
             <FormControl error={!!error} required={required}>
-              <FormGroup className={classes.divBaseline}>
-                <ValidationFormControlLabel
-                  control={
-                    <Checkbox
-                      id={name}
-                      {...rest}
-                      name={name}
-                      required={required}
-                      inputRef={ref}
-                      color="primary"
-                      checked={values || false}
-                      inputProps={{ "data-testid": name } as InputProps}
-                    />
-                  }
-                  label={
-                    <label>
-                      {label}
-                      <span>{required ? ` * ` : ""}</span>
-                    </label>
-                  }
-                />
-                {description && (
-                  <FieldTooltip title={description} placement="bottom" arrow>
-                    <HelpOutlineIcon className={classes.fieldTip} />
-                  </FieldTooltip>
-                )}
+              <FormGroup>
+                <BaselineDiv>
+                  <ValidationFormControlLabel
+                    control={
+                      <Checkbox
+                        id={name}
+                        {...rest}
+                        name={name}
+                        required={required}
+                        inputRef={ref}
+                        color="primary"
+                        checked={values || false}
+                        inputProps={{ "data-testid": name } as InputProps}
+                      />
+                    }
+                    label={
+                      <label>
+                        {label}
+                        <span>{required ? ` * ` : ""}</span>
+                      </label>
+                    }
+                  />
+                  {description && (
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
+                    </FieldTooltip>
+                  )}
+                </BaselineDiv>
+
                 <FormHelperText>{error?.message}</FormHelperText>
               </FormGroup>
             </FormControl>
@@ -1424,59 +1525,58 @@ const FormCheckBoxArray = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => {
-  const classes = useStyles()
+}: FormSelectFieldProps & { description: string }) => (
+  <Box px={1}>
+    <p>{label} Check from following options</p>
+    <ConnectForm>
+      {({ register, errors, getValues }: ConnectFormMethods) => {
+        const values = getValues()[name]
 
-  return (
-    <Box px={1}>
-      <p>
-        <strong id={name}>{label}</strong> - check from following options
-      </p>
-      <ConnectForm>
-        {({ register, errors, getValues }: ConnectFormMethods) => {
-          const values = getValues()[name]
+        const error = get(errors, name)
 
-          const error = get(errors, name)
+        const { ref, ...rest } = register(name)
 
-          const { ref, ...rest } = register(name)
-
-          return (
-            <FormControl error={!!error} required={required}>
-              <FormGroup aria-labelledby={name}>
-                {options.map(option => (
-                  <React.Fragment key={option}>
-                    <FormControlLabel
-                      key={option}
-                      control={
-                        <Checkbox
-                          {...rest}
-                          inputRef={ref}
-                          name={name}
-                          value={option}
-                          checked={values && values?.includes(option) ? true : false}
-                          color="primary"
-                          defaultValue=""
-                          inputProps={{ "data-testid": name } as InputProps}
-                        />
-                      }
-                      label={option}
-                    />
-                    {description && (
-                      <FieldTooltip title={description} placement="bottom" arrow>
-                        <HelpOutlineIcon className={classes.fieldTip} />
-                      </FieldTooltip>
-                    )}
-                  </React.Fragment>
-                ))}
-                <FormHelperText>{error?.message}</FormHelperText>
-              </FormGroup>
-            </FormControl>
-          )
-        }}
-      </ConnectForm>
-    </Box>
-  )
-}
+        return (
+          <FormControl error={!!error} required={required}>
+            <FormGroup aria-labelledby={name}>
+              {options.map(option => (
+                <React.Fragment key={option}>
+                  <FormControlLabel
+                    key={option}
+                    control={
+                      <Checkbox
+                        {...rest}
+                        inputRef={ref}
+                        name={name}
+                        value={option}
+                        checked={values && values?.includes(option) ? true : false}
+                        color="primary"
+                        defaultValue=""
+                        inputProps={{ "data-testid": name } as InputProps}
+                      />
+                    }
+                    label={option}
+                  />
+                  {description && (
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
+                    </FieldTooltip>
+                  )}
+                </React.Fragment>
+              ))}
+              <FormHelperText>{error?.message}</FormHelperText>
+            </FormGroup>
+          </FormControl>
+        )
+      }}
+    </ConnectForm>
+  </Box>
+)
 
 type FormArrayProps = {
   object: FormObject
@@ -1484,15 +1584,36 @@ type FormArrayProps = {
   required: boolean
 }
 
+const FormArrayTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{ level: number }>(
+  ({ theme, level }) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "start",
+    alignItems: "start",
+    backgroundColor: level < 2 ? theme.palette.primary.lighter : theme.palette.common.white,
+    height: "100%",
+    marginLeft: level < 2 ? "5rem" : 0,
+    marginRight: "3rem",
+    padding: level === 1 ? "2rem" : 0,
+  })
+)
+
+const FormArrayChildrenTitle = styled(Paper)(() => ({
+  width: "70%",
+  display: "inline-block",
+  marginBottom: "1rem",
+  paddingLeft: "1rem",
+  paddingTop: "1rem",
+}))
+
 /*
  * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
  */
 const FormArray = ({ object, path, required, description }: FormArrayProps & { description: string }) => {
-  const classes = useStyles()
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
+  const level = path.length
   const label = object.title ?? lastPathItem
-  const level = path.length === 1 ? path.length + 4 : path.length + 2
 
   // Get currentObject and the values of current field
   const currentObject = useAppSelector(state => state.currentObject) || {}
@@ -1557,108 +1678,136 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
     if (index === 0) setValid(false)
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
-    const filteredValues = values.filter((_val: unknown, ind: number) => ind !== index)
+    const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
     setValue(name, filteredValues)
     setFormFields(filteredValues)
     remove(index)
   }
 
   return (
-    <div className="array" key={`${name}-array`} aria-labelledby={name} data-testid={name}>
-      {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
-      <Typography
-        key={`${name}-header`}
-        variant={`h${level}` as Variant}
-        data-testid={name}
-        role="heading"
-        color="secondary"
-      >
-        <span id={name}>{label}</span> {required ? "*" : null}
-        {required && !isValid && errors[name] && (
-          <span>
-            <FormControl error>
-              <FormHelperText>must have at least 1 item</FormHelperText>
-            </FormControl>
-          </span>
-        )}
-        {description && (
-          <FieldTooltip title={description} placement="top" arrow>
-            <HelpOutlineIcon className={classes.sectionTip} />
-          </FieldTooltip>
-        )}
-      </Typography>
+    <Grid
+      container
+      key={`${name}-array`}
+      aria-labelledby={name}
+      data-testid={name}
+      direction={level < 2 ? "row" : "column"}
+      sx={{ mb: level === 1 ? "3rem" : 0 }}
+    >
+      <Grid item xs={12} md={4}>
+        {
+          <FormArrayTitle square={true} elevation={0} level={level}>
+            {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
+            <Typography
+              key={`${name}-header`}
+              variant={"subtitle1"}
+              data-testid={name}
+              role="heading"
+              color="secondary"
+            >
+              {label}
+              {required ? "*" : null}
+              {required && !isValid && errors[name] && (
+                <span>
+                  <FormControl error>
+                    <FormHelperText>must have at least 1 item</FormHelperText>
+                  </FormControl>
+                </span>
+              )}
+              {description && (
+                <FieldTooltip
+                  title={<DisplayDescription description={description} />}
+                  placement="top"
+                  arrow
+                  describeChild
+                >
+                  <TooltipIcon />
+                </FieldTooltip>
+              )}
+            </Typography>
+          </FormArrayTitle>
+        }
+      </Grid>
 
-      {formFields?.map((field, index) => {
-        const pathWithoutLastItem = path.slice(0, -1)
-        const lastPathItemWithIndex = `${lastPathItem}.${index}`
+      <Grid item xs={12} md={8}>
+        {formFields?.map((field, index) => {
+          const pathWithoutLastItem = path.slice(0, -1)
+          const lastPathItemWithIndex = `${lastPathItem}.${index}`
 
-        if (items.oneOf) {
-          const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
+          if (items.oneOf) {
+            const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
+
+            return (
+              <Box key={field.id || index} data-testid={`${name}[${index}]`} display="flex" alignItems="center">
+                <FormArrayChildrenTitle elevation={2} square>
+                  <FormOneOfField
+                    key={field.id}
+                    nestedField={field as NestedField}
+                    path={pathForThisIndex}
+                    object={items}
+                  />
+                </FormArrayChildrenTitle>
+                <IconButton onClick={() => handleRemove(index)}>
+                  <RemoveIcon />
+                </IconButton>
+              </Box>
+            )
+          }
+
+          const properties = object.items.properties
+          let requiredProperties =
+            index === 0 && object.contains?.allOf
+              ? object.contains?.allOf?.flatMap((item: FormObject) => item.required) // Case: DAC - Main Contact needs at least 1
+              : object.items?.required
+
+          // Force first array item as required field if array is required but none of the items are required
+          if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
 
           return (
-            <div className="arrayRow" key={field.id} data-testid={`${name}[${index}]`}>
-              <Paper elevation={2}>
-                <FormOneOfField
-                  key={field.id}
-                  nestedField={field as NestedField}
-                  path={pathForThisIndex}
-                  object={items}
-                />
-              </Paper>
-              <IconButton onClick={() => handleRemove(index)}>
-                <RemoveIcon />
-              </IconButton>
-            </div>
-          )
-        }
-
-        const properties = object.items.properties
-        let requiredProperties =
-          index === 0 && object.contains?.allOf
-            ? object.contains?.allOf?.flatMap((item: FormObject) => item.required) // Case: DAC - Main Contact needs at least 1
-            : object.items?.required
-
-        // Force first array item as required field if array is required but none of the items are required
-        if (required && !requiredProperties) requiredProperties = [Object.keys(items)[0]]
-
-        return (
-          <Box px={1} className="arrayRow" key={field.id} aria-labelledby={name}>
-            <Paper elevation={2}>
-              {
-                items
-                  ? Object.keys(items).map(item => {
-                      const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
-                      const requiredField = requiredProperties
-                        ? requiredProperties.filter((prop: string) => prop === item)
-                        : []
-                      return traverseFields(
-                        properties[item] as FormObject,
-                        pathForThisIndex,
-                        requiredField,
+            <Box key={field.id || index} aria-labelledby={name} display="flex" alignItems="center">
+              <FormArrayChildrenTitle elevation={2} square>
+                {
+                  items
+                    ? Object.keys(items).map(item => {
+                        const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
+                        const requiredField = requiredProperties
+                          ? requiredProperties.filter((prop: string) => prop === item)
+                          : []
+                        return traverseFields(
+                          properties[item] as FormObject,
+                          pathForThisIndex,
+                          requiredField,
+                          false,
+                          field as NestedField
+                        )
+                      })
+                    : traverseFields(
+                        object.items,
+                        [...pathWithoutLastItem, lastPathItemWithIndex],
+                        [],
                         false,
                         field as NestedField
-                      )
-                    })
-                  : traverseFields(
-                      object.items,
-                      [...pathWithoutLastItem, lastPathItemWithIndex],
-                      [],
-                      false,
-                      field as NestedField
-                    ) // special case for doiSchema's "sizes" and "formats"
-              }
-            </Paper>
-            <IconButton onClick={() => handleRemove(index)}>
-              <RemoveIcon />
-            </IconButton>
-          </Box>
-        )
-      })}
+                      ) // special case for doiSchema's "sizes" and "formats"
+                }
+              </FormArrayChildrenTitle>
+              <IconButton onClick={() => handleRemove(index)} size="large">
+                <RemoveIcon />
+              </IconButton>
+            </Box>
+          )
+        })}
 
-      <Button variant="contained" color="primary" size="small" startIcon={<AddIcon />} onClick={() => handleAppend()}>
-        Add new item
-      </Button>
-    </div>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          startIcon={<AddIcon />}
+          onClick={() => handleAppend()}
+          sx={{ mb: "1rem" }}
+        >
+          Add new item
+        </Button>
+      </Grid>
+    </Grid>
   )
 }
 

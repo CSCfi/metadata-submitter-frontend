@@ -10,6 +10,7 @@ const initialObject = {
   status: "",
   title: "",
   submissionType: "",
+  fileSize: "",
   tags: {},
 }
 

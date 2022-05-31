@@ -24,11 +24,17 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import { ObjectInsideSubmissionWithTags } from "types"
+import type { FormRef, ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
-const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
-  const { step, parent, buttonText, disabled } = props
+const ActionButton = (props: {
+  step: number
+  parent: string
+  buttonText: string
+  disabled: boolean
+  formRef?: FormRef
+}) => {
+  const { step, parent, buttonText, disabled, formRef } = props
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
   const formState = useAppSelector(state => state.submissionType)
@@ -71,6 +77,7 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         navigate({ pathname: pathname, search: stepParam })
         dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         dispatch(setObjectType(parent))
+        if (formRef?.current) formRef.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
     }
   }
@@ -90,6 +97,8 @@ const ActionButton = (props: { step: number; parent: string; buttonText: string;
         variant="contained"
         onClick={() => handleClick()}
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
+        form="hook-form"
+        type="reset"
       >
         {buttonText}
       </Button>
@@ -162,7 +171,7 @@ const StepItems = (props: {
   }
 
   const ObjectItem = styled("div")(({ theme }) => ({
-    paddingTop: theme.spacing(3),
+    paddingTop: theme.spacing(2.5),
   }))
 
   return (
@@ -172,8 +181,8 @@ const StepItems = (props: {
           return (
             <Collapse component={"li"} key={item.id}>
               <ObjectItem>
-                <Grid container spacing={2} justifyContent="space-around">
-                  <Grid item xs={6}>
+                <Grid container justifyContent="space-between">
+                  <Grid item xs={6} display="flex" alignItems="center">
                     <Link
                       tabIndex={0} // "href with # target will cause Firefox to refresh the page"
                       onClick={() => handleClick(item)}
@@ -187,7 +196,11 @@ const StepItems = (props: {
                         color: theme.palette.primary.main,
                       })}
                     >
-                      {item.displayTitle !== "" ? item.displayTitle : item.id}
+                      {item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
+                        ? item.objectData.tags.fileName
+                        : item.displayTitle !== ""
+                        ? item.displayTitle
+                        : item.id}
                     </Link>
                   </Grid>
                   <Grid item>
@@ -260,8 +273,9 @@ const WizardStep = (params: {
     objects?: { ready?: stepItemObject[]; drafts?: stepItemObject[] }
   }[]
   actionButtonText: string
+  formRef?: FormRef
 }) => {
-  const { step, stepItems, actionButtonText } = params
+  const { step, stepItems, actionButtonText, formRef } = params
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const singleObjectStepItems = [ObjectTypes.study]
@@ -316,6 +330,7 @@ const WizardStep = (params: {
                       : actionButtonText
                   }
                   disabled={hasObjects && singleObjectStepItems.indexOf(objectType) > -1}
+                  formRef={formRef}
                 />
               </ObjectWrapper>
             </ListItem>

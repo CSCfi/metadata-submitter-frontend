@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, RefObject } from "react"
 
-import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined"
-import { CustomTheme } from "@mui/material"
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
-import CardHeader from "@mui/material/CardHeader"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
@@ -14,51 +12,62 @@ import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
 
+import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
+import WizardOptions from "./WizardOptions"
+import WizardUploadXMLModal from "./WizardUploadXMLModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
-import { resetFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
+import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
-import type { SubmissionDetailsWithId, FormDataFiles, FormObject, ObjectDetails, ObjectDisplayValues } from "types"
-import { getObjectDisplayTitle, formatDisplayObjectType, getAccessionIds, getNewUniqueFileTypes } from "utils"
+import type {
+  SubmissionDetailsWithId,
+  FormDataFiles,
+  FormObject,
+  ObjectDetails,
+  ObjectDisplayValues,
+  FormRef,
+} from "types"
+import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: CustomTheme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     margin: 0,
     padding: 0,
   },
-  cardHeader: { ...theme.wizard.cardHeader, position: "sticky", top: theme.spacing(7.7), zIndex: 2 },
+  cardHeader: { ...theme.wizard.cardHeader },
   resetTopMargin: { top: "0 !important" },
   cardHeaderAction: {
-    marginTop: "-4px",
-    marginBottom: "-4px",
+    margin: "0 !important",
+    border: "1px solid red",
   },
   buttonGroup: {
-    display: "flex",
-    flexDirection: "row",
-    "& > :not(:last-child)": {
-      marginRight: 1,
-    },
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    columnGap: "1.5rem",
+    marginRight: "6rem",
     "& button": {
-      backgroundColor: "#FFF",
-      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      height: "5rem",
+      width: "18rem",
     },
   },
   addIcon: {
@@ -70,12 +79,12 @@ const useStyles = makeStyles((theme: CustomTheme) => ({
 type CustomCardHeaderProps = {
   objectType: string
   currentObject: ObjectDetails
-  onClickNewForm: () => void
   onClickClearForm: () => void
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
   onClickCloseDialog: () => void
+  onOpenXMLModal: () => void
   refForm: string
 }
 
@@ -87,6 +96,7 @@ type FormContentProps = {
   submission: SubmissionDetailsWithId
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
   closeDialog: () => void
+  formRef?: FormRef
 }
 
 /*
@@ -95,18 +105,15 @@ type FormContentProps = {
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const classes = useStyles()
   const {
-    objectType,
     currentObject,
     refForm,
-    onClickNewForm,
     onClickClearForm,
     onClickSaveDraft,
     onClickUpdateTemplate,
     onClickSubmit,
     onClickCloseDialog,
+    onOpenXMLModal,
   } = props
-
-  const dispatch = useAppDispatch()
 
   const focusTarget = useRef<HTMLButtonElement>(null)
   const shouldFocus = useAppSelector(state => state.focus)
@@ -114,11 +121,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
   }, [shouldFocus])
-
-  const handleClick = () => {
-    onClickNewForm()
-    dispatch(resetFocus())
-  }
 
   const templateButtonGroup = (
     <div className={classes.buttonGroup}>
@@ -139,23 +141,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const buttonGroup = (
     <div className={classes.buttonGroup}>
-      <Button
-        ref={focusTarget}
-        variant="contained"
-        aria-label="create new form"
-        size="small"
-        onClick={() => handleClick()}
-        onBlur={() => dispatch(resetFocus())}
-      >
-        <AddCircleOutlinedIcon fontSize="small" className={classes.addIcon} />
-        New form
-      </Button>
-      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickClearForm}>
-        Clear form
-      </Button>
-
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
-        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as Draft"}
+        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as draft"}
       </Button>
       <Button
         variant="contained"
@@ -165,24 +152,18 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClick={onClickSubmit}
         form={refForm}
       >
-        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Submit"} {formatDisplayObjectType(objectType)}
+        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
       </Button>
     </div>
   )
 
-  //
-
   return (
-    <CardHeader
-      title="Fill form"
-      titleTypographyProps={{ variant: "inherit" }}
-      classes={{
-        root: classes.cardHeader,
-        action: classes.cardHeaderAction,
-      }}
-      className={currentObject?.status === ObjectStatus.template ? classes.resetTopMargin : ""}
-      action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
-    />
+    <>
+      <WizardStepContentHeader
+        action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
+      />
+      <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
+    </>
   )
 }
 
@@ -239,6 +220,7 @@ const FormContent = ({
   submission,
   currentObject,
   closeDialog,
+  formRef,
 }: FormContentProps) => {
   const classes = useStyles()
   const dispatch = useAppDispatch()
@@ -279,13 +261,6 @@ const FormContent = ({
         handleDraftDelete(currentObjectId)
     }
   }, [isSubmitSuccessful])
-
-  const handleCreateNewForm = () => {
-    resetTimer()
-    handleClearForm()
-    setCurrentObjectId(null)
-    dispatch(resetCurrentObject())
-  }
 
   const handleClearForm = () => {
     resetTimer()
@@ -466,24 +441,36 @@ const FormContent = ({
     }
   }
 
+  const handleXMLModalOpen = () => {
+    dispatch(setXMLModalOpen())
+  }
+
+  const handleReset = () => {
+    methods.reset({ undefined })
+    setCurrentObjectId(null)
+  }
+
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickNewForm={() => handleCreateNewForm()}
         onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
+        onOpenXMLModal={() => handleXMLModalOpen()}
       />
+
       <form
         id="hook-form"
         className={classes.formComponents}
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
+        ref={formRef as RefObject<HTMLFormElement>}
+        onReset={handleReset}
       >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
       </form>
@@ -494,8 +481,8 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
-  const { closeDialog } = props
+const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?: FormRef }) => {
+  const { closeDialog, formRef } = props
   const classes = useStyles()
   const dispatch = useAppDispatch()
 
@@ -503,6 +490,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
   const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
+  const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
   // States that will update in useEffect()
   const [states, setStates] = useState({
@@ -645,8 +633,15 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void }) => {
         currentObject={currentObject}
         key={currentObject?.accessionId || submission.submissionId}
         closeDialog={closeDialog || (() => ({}))}
+        formRef={formRef}
       />
       {submitting && <LinearProgress />}
+      <WizardUploadXMLModal
+        open={openedXMLModal}
+        handleClose={() => {
+          dispatch(resetXMLModalOpen())
+        }}
+      />
     </Container>
   )
 }

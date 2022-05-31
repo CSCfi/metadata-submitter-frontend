@@ -20,8 +20,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("[data-testid='descriptor.studyAbstract']").type("New abstract")
 
     // Submit form
-    cy.formActions("Submit")
-    cy.get(".MuiListItem-container", { timeout: 10000 }).should("have.length", 1)
+    cy.formActions("Mark as ready")
 
     // Check the submitted object has correct displayTitle
     cy.get("[data-testid='study-objects-list']").within(() => {
@@ -32,7 +31,7 @@ describe("draft and submitted objects' titles", function () {
     cy.editLatestSubmittedObject(ObjectTypes.study)
 
     cy.scrollTo("top")
-    cy.contains("Update Study", { timeout: 10000 }).should("be.visible")
+    cy.contains("Update", { timeout: 10000 }).should("be.visible")
     cy.get("@studyTitle", { timeout: 10000 }).should("have.value", "Test title")
     cy.get("@studyTitle", { timeout: 10000 }).type(" 2")
 
@@ -59,7 +58,7 @@ describe("draft and submitted objects' titles", function () {
     cy.get("input[data-testid='sampleName.taxonId']").type("123")
 
     // Save a draft
-    cy.formActions("Save as Draft")
+    cy.formActions("Save as draft")
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
     cy.get("[data-testid='sample-objects-list']").find("li").should("have.length", 1)
 

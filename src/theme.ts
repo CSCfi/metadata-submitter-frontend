@@ -12,6 +12,7 @@ const palette = {
     // green colors
     main: "#006778",
     light: "#c2dbdf",
+    lighter: "#d8e8ea",
     lightest: "#e5eff1",
   },
   secondary: {
@@ -66,7 +67,7 @@ let CSCtheme = createTheme({
     h1: { fontSize: "9.6rem" },
     h2: { fontSize: "6rem" },
     h3: { fontSize: "4.8rem" },
-    h4: { fontSize: "3.5rem" },
+    h4: { fontSize: "3.2rem" },
     h5: { fontSize: "2rem" },
     h6: { fontSize: "1.25rem" },
     subtitle1: { fontSize: "1.6rem" },
@@ -117,7 +118,7 @@ let CSCtheme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          padding: 0,
+          padding: "0 !important",
           fontSizeBreakpoints,
         },
       },
@@ -179,10 +180,12 @@ let CSCtheme = createTheme({
   },
   wizard: {
     cardHeader: {
-      backgroundColor: palette.primary.main,
-      color: "#FFF",
-      fontWeight: "bold",
-      minHeight: defaultTheme.spacing(6.875),
+      backgroundColor: palette.common.white,
+      position: "sticky",
+      zIndex: 2,
+      top: defaultTheme.spacing(7.7),
+      height: "8rem",
+      borderBottom: `0.1rem solid ${palette.primary.light}`,
     },
     objectListItem: {
       border: "none",
@@ -193,23 +196,12 @@ let CSCtheme = createTheme({
       padding: defaultTheme.spacing(1, 0, 1, 2),
     },
   },
-  tooltip: {
-    backgroundColor: palette.common.white,
-    color: palette.common.black,
-    fontSize: "1.4rem",
-    boxShadow: defaultTheme.shadows[1],
-  },
+
   form: {
-    margin: defaultTheme.spacing(3),
-    "& .MuiTextField-root > .Mui-required": {
-      color: palette.primary.main,
-    },
     "& .MuiTextField-root": {
-      width: "48%",
-      margin: defaultTheme.spacing(1),
+      width: "70%",
     },
     "& .MuiTypography-root": {
-      margin: defaultTheme.spacing(1),
       fontWeight: "bold",
     },
     "& .MuiTypography-h2": {
@@ -222,7 +214,6 @@ let CSCtheme = createTheme({
     },
     "& .array": {
       margin: defaultTheme.spacing(1),
-
       "& .arrayRow": {
         display: "flex",
         alignItems: "center",
@@ -235,7 +226,6 @@ let CSCtheme = createTheme({
       "& h2, h3, h4, h5, h6": {
         margin: defaultTheme.spacing(1, 0),
       },
-
       "& .MuiPaper-elevation2": {
         paddingRight: defaultTheme.spacing(1),
         marginBottom: defaultTheme.spacing(1),

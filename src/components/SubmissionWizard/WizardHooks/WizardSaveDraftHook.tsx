@@ -1,5 +1,5 @@
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus } from "constants/wizardObject"
+import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
@@ -29,7 +29,13 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
 
     if (response.ok) {
       dispatch(resetDraftStatus())
-      dispatch(replaceObjectInSubmission(accessionId, { displayTitle: draftDisplayTitle }, ObjectStatus.draft))
+      dispatch(
+        replaceObjectInSubmission(
+          accessionId,
+          { displayTitle: draftDisplayTitle, submissionType: ObjectSubmissionTypes.form },
+          ObjectStatus.draft
+        )
+      )
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
@@ -64,7 +70,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
         addDraftObject({
           accessionId: response.data.accessionId,
           schema: "draft-" + objectType,
-          tags: { displayTitle: draftDisplayTitle },
+          tags: { displayTitle: draftDisplayTitle, submissionType: ObjectSubmissionTypes.form },
         })
       )
       dispatch(resetCurrentObject())

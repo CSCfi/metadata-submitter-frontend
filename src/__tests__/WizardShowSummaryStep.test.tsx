@@ -108,6 +108,7 @@ describe("WizardShowSummaryStep", () => {
         published: false,
         metadataObjects: submittedObjects,
         drafts: [],
+        openedXMLModal: true,
       },
     })
     wrapper = (

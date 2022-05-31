@@ -5,12 +5,13 @@ import Grid from "@mui/material/Grid"
 import { makeStyles } from "@mui/styles"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
-import WizardSavedObjectsList from "../WizardComponents/WizardSavedObjectsList"
 
 import { useAppSelector } from "hooks"
+import type { FormRef } from "types"
 
 const useStyles = makeStyles(() => ({
   gridContainer: {
+    margin: 0,
     width: "100%",
     "& > :first-child": {
       paddingLeft: 0,
@@ -21,10 +22,6 @@ const useStyles = makeStyles(() => ({
     "& .MuiGrid-item": {
       paddingTop: 0,
     },
-  },
-  formBox: {
-    display: "flex",
-    justifyContent: "center",
   },
   objectList: {
     width: "40%",
@@ -37,40 +34,28 @@ const useStyles = makeStyles(() => ({
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
-const WizardAddObjectStep: React.FC = () => {
+const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
   const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
-  const submission = useAppSelector(state => state.submission)
-  const submissions = submission?.metadataObjects?.filter((obj: { schema: string }) => obj.schema === objectType)
-  const draftObjects = submission?.drafts?.filter((obj: { schema: string }) => obj.schema === `draft-${objectType}`)
   const loading = useAppSelector(state => state.loading)
+  const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
   return (
     <>
       <Grid container spacing={2} className={classes.gridContainer}>
         <Grid item xs={12}>
-          <div className={classes.formBox}>
-            {objectType === "" ? (
-              <div className={classes.objectInfo}>
-                <p>Add objects by clicking the name, then fill form or upload XML File.</p>
-                <p>You can also add objects and edit them after saving your draft.</p>
-              </div>
-            ) : (
-              <WizardAddObjectCard />
-            )}
-          </div>
+          {objectType === "" ? (
+            <div className={classes.objectInfo}>
+              <p>Add objects by clicking the name, then fill form or upload XML File.</p>
+              <p>You can also add objects and edit them after saving your draft.</p>
+            </div>
+          ) : (
+            <WizardAddObjectCard formRef={formRef} />
+          )}
         </Grid>
 
         <Grid item xs>
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              {submissions?.length > 0 && <WizardSavedObjectsList objects={submissions} />}
-            </Grid>
-            <Grid item xs={12}>
-              {draftObjects?.length > 0 && <WizardSavedObjectsList objects={draftObjects} />}
-            </Grid>
-          </Grid>
-          {loading && (
+          {!openedXMLModal && loading && (
             <Grid container justifyContent="center">
               <CircularProgress />
             </Grid>

@@ -24,7 +24,7 @@ describe("Basic application flow", function () {
     cy.newSubmission()
 
     /*
-     * 2nd step, Study, DAC and policy
+     * 2nd step, Study, DAC and Policy
      */
 
     // Try to send invalid form
@@ -260,17 +260,7 @@ describe("Basic application flow", function () {
      * 5th step, Identifier and publish
      */
     cy.clickAccordionPanel("publish")
-    cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
-
-    // Check the amount of submitted objects in each object type
-    cy.get("h6").contains("Study").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("DAC").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Policy").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Sample").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Experiment").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Run").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Analysis").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Dataset").parents("div").children().eq(1).should("have.text", 1)
+    cy.get("button[role=button]", { timeout: 10000 }).contains("summary").click()
 
     cy.get("button[data-testid='summary-publish']").contains("Publish").click()
     cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this submission will be published.")

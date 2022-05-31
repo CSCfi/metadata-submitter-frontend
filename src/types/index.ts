@@ -26,6 +26,19 @@ export type User = {
 
 export type Schema = "study" | "dac" | "policy" | "sample" | "experiment" | "run" | "analysis" | "dataset"
 
+export type StepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }
+
+export type StepObject = {
+  label: string
+  stepItems?: {
+    objectType: string
+    label: string
+    objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
+  }[]
+  actionButtonText?: string
+  disabled?: boolean
+}
+
 export type ObjectDetails = {
   accessionId: string
   lastModified: string
@@ -83,6 +96,8 @@ export type SubmissionDataFromForm = {
   name: string
   description: string
 }
+
+export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails }
 
 export type CreateSubmissionFormRef = { current: HTMLElement | null } | undefined
 

@@ -13,17 +13,7 @@ describe("Generate objects", function () {
 
     cy.clickAccordionPanel("publish")
 
-    cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
-
-    // Check the amount of submitted objects in each object type
-    cy.get("h6").contains("Study").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("DAC").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Policy").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Sample").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Experiment").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Run").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Analysis").parents("div").children().eq(1).should("have.text", 1)
-    cy.get("h6").contains("Dataset").parents("div").children().eq(1).should("have.text", 1)
+    cy.get("button[role=button]", { timeout: 10000 }).contains("summary").click()
 
     // Fill and save DOI form
     cy.saveDoiForm()
@@ -43,7 +33,7 @@ describe("Generate objects", function () {
     cy.contains("Edit").click({ force: true })
 
     // Open 2nd step and test that last generated object type is DAC
-    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAccordionPanel("Study, DAC and Policy")
     cy.get("[data-testid='study-objects-list']").find("li").should("have.length", 1)
     cy.get("[data-testid='dac-objects-list']").find("li").should("have.length", 1)
     cy.get("[data-testid='policy-objects-list']").find("li").should("have.length", 0)

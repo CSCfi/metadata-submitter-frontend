@@ -12,7 +12,7 @@ describe("Draft operations", function () {
   })
 
   it("should create new submission, save, delete and continue draft", () => {
-    cy.clickAccordionPanel("Study, DAC and policy")
+    cy.clickAccordionPanel("Study, DAC and Policy")
     // Fill a Policy form
     cy.clickAddObject("policy")
 
@@ -32,7 +32,7 @@ describe("Draft operations", function () {
 
     // Update draft, save from dialog
     cy.get("[data-testid=title]").type(" second save")
-    cy.get("[data-testid='policy-objects-list']").find("li").first().click()
+    cy.get("[data-testid='policy-objects-list']").find("a").first().click()
     cy.get("h2").contains("Would you like to save draft version of this form")
     cy.get("div[role=dialog]").contains("Save").click()
     cy.get("[data-testid='policy-objects-list']").find("li").should("have.length", 2)

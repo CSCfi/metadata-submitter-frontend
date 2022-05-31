@@ -77,7 +77,7 @@ describe("Home e2e", function () {
 
     cy.clickAccordionPanel("publish")
 
-    cy.get("button[role=button]", { timeout: 10000 }).contains("Publish").click()
+    cy.get("button[role=button]", { timeout: 10000 }).contains("summary").click()
 
     // Fill and save DOI form
     cy.saveDoiForm()

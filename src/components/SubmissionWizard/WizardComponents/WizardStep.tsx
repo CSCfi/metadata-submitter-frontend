@@ -24,13 +24,17 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import draftAPIService from "services/draftAPI"
-import objectAPIService from "services/objectAPI"
 import type { FormRef, ObjectInsideSubmissionWithTags } from "types"
 import { pathWithLocale } from "utils"
 
-const ActionButton = (props: { step: number; parent: string; buttonText: string; disabled: boolean }) => {
-  const { step, parent, buttonText, disabled } = props
+const ActionButton = (props: {
+  step: number
+  parent: string
+  buttonText: string
+  disabled: boolean
+  formRef?: FormRef
+}) => {
+  const { step, parent, buttonText, disabled, formRef } = props
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
   const formState = useAppSelector(state => state.submissionType)

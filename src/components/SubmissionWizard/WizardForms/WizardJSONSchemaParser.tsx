@@ -347,12 +347,13 @@ const DisplayDescription = ({ description, children }: { description: string; ch
     setIsReadMore(!isReadMore)
   }
 
-  const ReadmoreText = styled("span")(() => ({
+  const ReadmoreText = styled("span")(({ theme }) => ({
     fontWeight: 700,
     textDecoration: "underline",
     display: "block",
     marginTop: "0.5rem",
-    color: "#006778",
+    color: theme.palette.primary.main,
+    "&:hover": { cursor: "pointer" },
   }))
 
   return (

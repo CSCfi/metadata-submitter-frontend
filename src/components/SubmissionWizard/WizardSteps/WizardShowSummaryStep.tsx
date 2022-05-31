@@ -186,7 +186,12 @@ const WizardShowSummaryStep: React.FC = () => {
         const step = index + 1
         return (
           <StepContainer key={summaryItem.label} disableGutters data-testid={`summary-step-${step}`}>
-            <Typography component="h2" variant="h5" color="secondary" sx={theme => ({ p: theme.spacing(3, 0) })}>
+            <Typography
+              component="h2"
+              variant="h5"
+              color="secondary"
+              sx={theme => ({ p: theme.spacing(3, 0), fontWeight: "bold" })}
+            >
               {step}. {summaryItem.label}
             </Typography>
 
@@ -199,7 +204,11 @@ const WizardShowSummaryStep: React.FC = () => {
                 return (
                   <ul key={stepItem.objectType}>
                     {DisplayObjectTypes[stepItem.objectType] && (
-                      <Typography component="h3" color="secondary" sx={theme => ({ p: theme.spacing(1, 0) })}>
+                      <Typography
+                        component="h3"
+                        color="secondary"
+                        sx={theme => ({ p: theme.spacing(1, 0), fontWeight: "bold" })}
+                      >
                         {DisplayObjectTypes[stepItem.objectType]}
                       </Typography>
                     )}
@@ -211,7 +220,7 @@ const WizardShowSummaryStep: React.FC = () => {
                             <WizardObjectStatusBadge draft={draft || false} />
                           </Grid>
                           <Grid item md>
-                            {item.displayTitle}
+                            <Typography color="secondary">{item.displayTitle}</Typography>
                           </Grid>
                           {draft && (
                             <DraftHelperGridItem item md>

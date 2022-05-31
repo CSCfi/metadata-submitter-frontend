@@ -18,8 +18,7 @@ jobs:
           npm run build --production
       - name: Set up branch
         run: |
-          BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-          if [[ $BRANCH == master ]]; then
+          if [[ "${{github.base_ref}}" == "master" ]]; then
              echo "VERSION=master" >> $GITHUB_ENV
           else
              echo "VERSION=develop" >> $GITHUB_ENV
@@ -41,15 +40,15 @@ jobs:
           browser: ${{ matrix.browser }}
           headless: true
           env: port=5430
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
           retention-days: 5
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
-        with:
+        with:         
           name: cypress-videos
           path: cypress/videos
           retention-days: 5

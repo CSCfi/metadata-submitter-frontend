@@ -78,9 +78,8 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         : []
 
     if (submission && submission?.submissionId) {
-      dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission, selectedDraftsArray })))
+      dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
-          dispatch(resetTemplateAccessionIds())
           dispatch(updateStatus({ status: ResponseStatus.success, helperText: "Submission updated" }))
         })
         .catch((error: string) => {

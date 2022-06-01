@@ -16,8 +16,11 @@ const getSubmissionById = async (submissionId: string): Promise<APIResponse> => 
   return await api.get(`/${submissionId}`)
 }
 
-const patchSubmissionById = async (submissionId: string, changes: Record<string, unknown>[]): Promise<APIResponse> => {
-  return await api.patch(`/${submissionId}`, changes)
+const patchSubmissionById = async (
+  submissionId: string,
+  JSONContent: { name: string; description: string }
+): Promise<APIResponse> => {
+  return await api.patch(`/${submissionId}`, JSONContent)
 }
 
 const deleteSubmissionById = async (submissionId: string): Promise<APIResponse> => {
@@ -33,10 +36,15 @@ const getSubmissions = async (params: {
   return await api.get("", params)
 }
 
+const putDOIInfo = async (submissionId: string, doiFormDetails: Record<string, unknown>[]): Promise<APIResponse> => {
+  return await api.put(`${submissionId}/doi`, doiFormDetails)
+}
+
 export default {
   createNewSubmission,
   getSubmissionById,
   patchSubmissionById,
   deleteSubmissionById,
   getSubmissions,
+  putDOIInfo,
 }

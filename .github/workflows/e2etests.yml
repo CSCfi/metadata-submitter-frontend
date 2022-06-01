@@ -22,7 +22,7 @@ jobs:
           if [[ $BRANCH == master ]]; then
              echo "VERSION=master" >> $GITHUB_ENV
           else
-             echo "VERSION=refactor/patch-folder" >> $GITHUB_ENV
+             echo "VERSION=develop" >> $GITHUB_ENV
           fi
       - name: Clone backend
         uses: actions/checkout@v3

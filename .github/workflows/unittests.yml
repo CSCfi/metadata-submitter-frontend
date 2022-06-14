@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies and coveralls
         run: |
-          npm ci
+          npm i
           npm install coveralls
       - name: Run unit tests and save coverage
         run: CI=true npm test -- --coverage

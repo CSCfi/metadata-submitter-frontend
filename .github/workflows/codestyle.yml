@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
-          npm ci
+          npm i
       - name: Run code style check with ESLint
         run: |
           npm run lint:check

@@ -28,8 +28,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: 'CSCfi/metadata-submitter'
-          ref: ${{ env.VERSION }}
           path: metadata-submitter
+          client-payload: '{"ref": "${{ env.VERSION }}", "sha": "639efda700276584e3928edb08309f620e70917a"}'
       - name: Set up branch
         run: |
           mkdir -p metadata-submitter/metadata_backend/frontend

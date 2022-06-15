@@ -22,6 +22,7 @@ import objectTypeReducer from "features/wizardObjectTypeSlice"
 import stepObjectReducer from "features/wizardStepObjectSlice"
 import submissionReducer from "features/wizardSubmissionSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
+import wizardXMLModalReducer from "features/wizardXMLModalSlice"
 
 const rootReducer = combineReducers({
   locale: localeReducer,
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   fileTypes: fileTypesReducer,
   openedDoiForm: openedDoiFormReducer,
   projectId: projectReducer,
+  openedXMLModal: wizardXMLModalReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

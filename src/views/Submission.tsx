@@ -17,21 +17,11 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
-import type { CreateSubmissionFormRef } from "types"
+import type { FormRef } from "types"
 import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
 const useStyles = makeStyles(theme => ({
-  paper: {
-    alignItems: "stretch",
-  },
-  paperContent: {
-    padding: theme.spacing(2),
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "start",
-    flexDirection: "column",
-  },
   container: {
     flex: "1 0 auto",
     padding: 0,
@@ -40,28 +30,33 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(7.7),
     minHeight: "calc(100vh - 137px)",
     backgroundColor: theme.palette.background.default,
+    "& .MuiGrid-item": { paddingTop: 0 },
   },
   stepper: {
     paddingTop: "0 !important",
     backgroundColor: theme.palette.primary.main,
   },
   stepContent: {
-    paddingTop: `${theme.spacing(5)} !important`,
     paddingLeft: `${theme.spacing(5)} !important`,
+    paddingRight: `${theme.spacing(5)} !important`,
+  },
+  paper: {
+    padding: 0,
+    height: "100%",
   },
 }))
 
 /**
  * Return correct content for each step
  */
-const getStepContent = (wizardStep: number, createSubmissionFormRef: CreateSubmissionFormRef) => {
+const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, objectFormRef: FormRef) => {
   switch (wizardStep) {
     case 1:
       return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
     case 2:
     case 3:
     case 4:
-      return <WizardAddObjectStep />
+      return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       return <WizardShowSummaryStep />
     default:
@@ -119,17 +114,19 @@ const SubmissionWizard: React.FC = () => {
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
+  const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
+
   return (
-    <Container maxWidth={false} className={classes.container}>
-      <Grid container spacing={2} className={classes.gridContainer}>
+    <Container maxWidth={false} className={classes.container} disableGutters>
+      <Grid container className={classes.gridContainer}>
         <Grid item xs={3} className={classes.stepper}>
-          <WizardStepper />
+          <WizardStepper formRef={objectFormRef} />
         </Grid>
-        <Grid item xs={7} className={classes.stepContent}>
+        <Grid item xs={9} className={classes.stepContent}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper className={classes.paper} elevation={2}>
-              <div className={classes.paperContent}>{getStepContent(wizardStep, createSubmissionFormRef)}</div>
+              {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef)}
             </Paper>
           )}
         </Grid>

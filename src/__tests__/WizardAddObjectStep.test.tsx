@@ -40,6 +40,14 @@ describe("WizardAddObjectStep", () => {
         id: "FOL12341234",
         drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.study }],
       },
+      currentObject: {
+        accessionId: "TESTID0000",
+        tags: {
+          fileName: "Test XML file",
+          fileSize: 1,
+        },
+      },
+      openedXMLModal: false,
     })
     render(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
@@ -85,6 +93,14 @@ describe("WizardAddObjectStep", () => {
             published: false,
             drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.study }],
           },
+          currentObject: {
+            accessionId: "TESTID0000",
+            tags: {
+              fileName: "Test XML file",
+              fileSize: 1,
+            },
+          },
+          openedXMLModal: false,
         })
         render(
           <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>

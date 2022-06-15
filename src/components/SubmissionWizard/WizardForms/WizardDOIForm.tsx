@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 
-import { CustomTheme } from "@mui/material"
+import { Theme } from "@mui/material"
 import { makeStyles } from "@mui/styles"
 import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
@@ -19,7 +19,7 @@ import schemaAPIService from "services/schemaAPI"
 import { DoiFormDetails, FormObject } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: CustomTheme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   form: { ...theme.form },
 }))
 

@@ -1,7 +1,7 @@
 import type {} from "@mui/x-data-grid/themeAugmentation"
 
 declare module "@mui/material/styles" {
-  interface CustomTheme extends Theme {
+  interface CustomTheme {
     typography: {
       fontFamily: string
       pxToRem: (px: number) => string
@@ -16,6 +16,7 @@ declare module "@mui/material/styles" {
       body1: { fontSize: string }
       body2: { fontSize: string }
     }
+    secondary: { main: string; light: string; lightest: string }
     spacing: (factor) => string
     error: {
       main: string
@@ -25,57 +26,41 @@ declare module "@mui/material/styles" {
     }
     success: { main: string }
     warning: { main: string }
+    components: {
+      wizard?: {
+        cardHeader?: Record<string, unknown>
+        objectListItem?: Record<string, unknown>
+      }
+    }
     wizard: {
       cardHeader: Record<string, unknown>
       objectListItem: Record<string, unknown>
     }
-    tooltip: {
-      backgroundColor: string
-      color: string
-      fontSize: string
-      boxShadow: string
-    }
-    form: Object
-  }
 
-  interface ThemeOptions {
-    typography: {
-      fontFamily: string
-      fontSize: number
-    }
-    spacing: (factor) => string
-    error: {
-      main: string
-    }
-    info: {
-      main: string
-    }
-    secondary: { main: string; light: string; lightest: string }
-    success: { main: string }
-    warning: { main: string }
-    wizard?: {
-      cardHeader?: Record<string, unknown>
-      objectListItem?: Record<string, unknown>
-    }
-    tooltip?: {
-      backgroundColor?: string
-      color?: string
-      fontSize?: string
-      boxShadow?: string
-    }
-    form?: Object
+    form: Object
     props: Record<string, unknown>
   }
+
+  interface Theme extends CustomTheme {}
+  interface ThemeOptions extends CustomTheme {}
 }
 
 declare module "@mui/material/styles/createPalette" {
   interface Palette {
     third: { main: string }
     button: { edit: string; delete: string }
+    wizard?: {
+      cardHeader?: Record<string, unknown>
+      objectListItem?: Record<string, unknown>
+    }
   }
   interface PaletteOptions {
     third?: { main?: string }
     button?: { edit?: string; delete: string }
+    wizard?: {
+      cardHeader?: Record<string, unknown>
+      objectListItem?: Record<string, unknown>
+    }
   }
 
   interface PaletteColor {
@@ -89,6 +74,7 @@ declare module "@mui/private-theming" {
 
   interface DefaultTheme extends CustomTheme {}
 }
+
 import type { Theme } from "@mui/material/styles"
 
 declare module "@mui/styles/defaultTheme" {

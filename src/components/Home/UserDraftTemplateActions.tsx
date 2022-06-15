@@ -22,7 +22,7 @@ const FormDialog = (props: { open: boolean; onClose: () => void }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true}>
-      <WizardFillObjectDetailsForm closeDialog={onClose} />
+      <WizardFillObjectDetailsForm closeDialog={onClose} formRef={{ current: null }} />
     </Dialog>
   )
 }

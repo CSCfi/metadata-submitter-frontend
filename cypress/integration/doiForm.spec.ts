@@ -21,7 +21,7 @@ describe("DOI form", function () {
     }
 
     cy.get("[data-testid='title']").type(testRunData.title)
-    cy.get("h5[data-testid='experimentRef']").parents().children("button").click()
+    cy.get("div[data-testid='experimentRef'] > div > button").click()
     cy.get("[data-testid='experimentRef.0.accessionId']").select(1)
 
     const testRunFile = {
@@ -30,14 +30,14 @@ describe("DOI form", function () {
       checksumMethod: "MD5",
       checksum: "Run file check sum",
     }
-    cy.get("[data-testid='files']").parents().children("button").click()
+    cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
     cy.get("[data-testid='files.0.filename']").type(testRunFile.fileName)
     cy.get("[data-testid='files.0.filetype']").select(testRunFile.fileType)
     cy.get("[data-testid='files.0.checksumMethod']").select(testRunFile.checksumMethod)
     cy.get("[data-testid='files.0.checksum']").type(testRunFile.checksum)
 
     // Submit form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Run objects container should have contain created object
     cy.get("[data-testid='run-objects-list']").find("li").should("have.length", 2)
@@ -66,20 +66,20 @@ describe("DOI form", function () {
       checksum: "Analysis file check sum",
     }
     // Select fileType
-    cy.get("[data-testid='files']").parents().children("button").click()
+    cy.get("div[data-testid='files'] > div").eq(1).children("button").click()
     cy.get("[data-testid='files.0.filename']").type(testAnalysisFile.fileName)
     cy.get("[data-testid='files.0.filetype']").select(testAnalysisFile.fileType1)
     cy.get("[data-testid='files.0.checksumMethod']").select(testAnalysisFile.checksumMethod)
     cy.get("[data-testid='files.0.checksum']").type(testAnalysisFile.checksum)
 
     // Submit form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Analysis objects container should have contain created object
     cy.get("[data-testid='analysis-objects-list']").find("li").should("have.length", 2)
 
     // Fill another Analysis form with the same fileType as Run form: "bam"
-    cy.formActions("New form")
+    cy.get("button").contains("Add analysis").click()
     cy.get("[data-testid='title']").type(testAnalysisData.title2)
     cy.get("[data-testid='analysisType']").select("Reference Alignment")
     cy.get("[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
@@ -91,7 +91,7 @@ describe("DOI form", function () {
     cy.get("[data-testid='files.0.checksum']").type(testAnalysisFile.checksum)
 
     // Submit form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Analysis objects container should have contain both newly created objects
     cy.get("[data-testid='analysis-objects-list']").find("li").should("have.length", 3)
@@ -104,8 +104,8 @@ describe("DOI form", function () {
     cy.get("[data-testid='formats.1']", { timeout: 10000 }).should("have.value", "cram")
 
     // Go to Creators section and Add new item
-    cy.get("[data-testid='creators']").parents().children("button").click()
-    cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+    cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
+    cy.get("div[data-testid='creators.0.affiliation'] > div").eq(1).children("button").click()
 
     // Type search words in autocomplete field
     cy.intercept("/organizations*").as("searchOrganization")
@@ -130,12 +130,11 @@ describe("DOI form", function () {
 
     // Remove Creators > Affiliations field and add a new field again
     cy.get("div[data-testid='creators.0.affiliation'] > div").children("button").click()
-    cy.get("h4[data-testid='creators.0.affiliation']").parent().children("button").click()
 
     // Repeat search words in autocomplete field
     cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
     // Select the first result
-    cy.get(".MuiAutocomplete-option")
+    cy.get(".MuiAutocomplete-popper")
       .should("be.visible")
       .then($el => $el.first().click())
 
@@ -153,8 +152,9 @@ describe("DOI form", function () {
     cy.get("[data-testid='creators.0.affiliation.0.affiliationIdentifierScheme']").should("be.disabled")
 
     // Go to Contributors and Add new item
-    cy.get("[data-testid='contributors']").parents().children("button").click()
-    cy.get("[data-testid='contributors.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+    cy.get("div[data-testid='contributors'] > div").children("button").click()
+    cy.get("div[data-testid='contributors.0.affiliation'] > div").children("button").click()
+
     // Type search words in autocomplete field
     cy.get("[data-testid='contributors.0.affiliation.0.name-inputField']").type("demos")
     // Select the first result
@@ -196,10 +196,10 @@ describe("DOI form", function () {
       // Go to DOI form
       cy.openDOIForm()
       // Fill in required Creators field
-      cy.get("[data-testid='creators']").parent().children("button").click()
+      cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Test given name")
       cy.get("[data-testid='creators.0.familyName']").type("Test family name")
-      cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+      cy.get("div[data-testid='creators.0.affiliation'] > div").eq(1).children("button").click()
       cy.intercept("/organizations*").as("searchOrganization")
       cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
       cy.wait("@searchOrganization")
@@ -208,7 +208,7 @@ describe("DOI form", function () {
         .then($el => $el.first().click())
       cy.get("[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
       // Fill in required Subjects field
-      cy.get("[data-testid='subjects']").parent().children("button").click()
+      cy.get("div[data-testid='subjects'] > div").eq(1).children("button").click()
       cy.get("select[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
       // Fill in required Keywords
@@ -242,14 +242,14 @@ describe("DOI form", function () {
       // Go to DOI form
       cy.openDOIForm()
       // Go to Creators section and fill in given name, family name
-      cy.get("[data-testid='creators']").parents().children("button").click()
+      cy.get("div[data-testid='creators'] > div").eq(1).children("button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Creator's given name")
       cy.get("[data-testid='creators.0.familyName']").type("Creator's family name")
       // Check full name is autofilled from family name and given name
       cy.get("[data-testid='creators.0.name']").should("have.value", "Creator's family name,Creator's given name")
 
       // Go to Contributors and fill in given name, family name
-      cy.get("[data-testid='contributors']").parents().children("button").click()
+      cy.get("div[data-testid='contributors'] > div").eq(1).children("button").click()
       cy.get("[data-testid='contributors.0.givenName']").type("Contributor's given name")
       cy.get("[data-testid='contributors.0.familyName']").type("Contributor's family name")
       // Check full name is autofilled from family name and given name
@@ -265,10 +265,10 @@ describe("DOI form", function () {
       cy.openDOIForm()
 
       // Fill in required Creators field
-      cy.get("[data-testid='creators']").parent().children("button").click()
+      cy.get("div[data-testid='creators'] > div > button").click()
       cy.get("[data-testid='creators.0.givenName']").type("Test given name")
       cy.get("[data-testid='creators.0.familyName']").type("Test family name")
-      cy.get("[data-testid='creators.0.affiliation']", { timeout: 10000 }).parent().children("button").click()
+      cy.get("div[data-testid='creators.0.affiliation'] > div > button").click()
       cy.intercept("/organizations*").as("searchOrganization")
       cy.get("[data-testid='creators.0.affiliation.0.name-inputField']").type("csc")
       cy.wait("@searchOrganization")
@@ -278,14 +278,14 @@ describe("DOI form", function () {
       cy.get("[data-testid='creators.0.affiliation.0.schemeUri']").should("have.value", "https://ror.org")
 
       // Fill in required Subjects field
-      cy.get("[data-testid='subjects']").parent().children("button").click()
+      cy.get("div[data-testid='subjects'] > div > button").click()
       cy.get("[data-testid='subjects.0.subject']").select("FOS: Mathematics")
 
       // Fill in required Keywords
       cy.get("input[data-testid='keywords']").type("keyword-1,")
 
       // Select Dates
-      cy.get("[data-testid='dates']").parent().children("button").click()
+      cy.get("div[data-testid='dates'] > div > button").click()
 
       cy.get("[data-testid='dates.0.date']").scrollIntoView()
       cy.get("[data-testid='dates.0.date']").should("be.visible")

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 
-import { CustomTheme } from "@mui/material"
+import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CardHeader from "@mui/material/CardHeader"
@@ -23,7 +23,7 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
 
-const useStyles = makeStyles((theme: CustomTheme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     padding: 0,
   },
@@ -176,7 +176,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   const handleButton = () => {
     const fileSelect = document && document.getElementById("file-select-button")
-    if (fileSelect && fileSelect.click()) {
+    if (fileSelect) {
       fileSelect.click()
     }
     dispatch(resetFocus())

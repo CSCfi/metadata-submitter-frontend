@@ -28,7 +28,7 @@ describe("Basic application flow", function () {
      */
 
     // Try to send invalid form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     cy.get<FormInput[]>("input[data-testid='descriptor.studyTitle']").then($input => {
       expect($input[0].validationMessage).to.contain("Please fill")
@@ -38,7 +38,7 @@ describe("Basic application flow", function () {
     cy.get("[data-testid='descriptor.studyTitle']").type("Test title")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "Test title")
 
-    cy.formActions("Clear form")
+    cy.optionsActions("Clear form")
 
     cy.get("[data-testid='descriptor.studyTitle']").type("New title")
     cy.get("[data-testid='descriptor.studyTitle']").should("have.value", "New title")
@@ -46,7 +46,7 @@ describe("Basic application flow", function () {
     cy.get("[data-testid='descriptor.studyAbstract']").type("New abstract")
 
     // Submit form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
     cy.get("[data-testid='study-objects-list']").find("li").should("have.length", 1)
 
     // DAC form
@@ -54,10 +54,10 @@ describe("Basic application flow", function () {
 
     // Try to submit empty DAC form. This should be invalid
     cy.get("[data-testid=title]").type("Test title")
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
     cy.get("span").contains("must have at least 1 item")
 
-    cy.get("h5").contains("Contacts").parents().children("button").click()
+    cy.get("div[data-testid='contacts'] > div > button").click()
     cy.get("[data-testid='contacts.0.name']").type("Test contact name")
     // Test invalid email address (form array, default)
     cy.get("[data-testid='contacts.0.email']").type("email")
@@ -71,11 +71,11 @@ describe("Basic application flow", function () {
     cy.get("[data-testid='contacts.0.mainContact']").check()
 
     // Submit DAC form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Test DAC form update
     cy.get("[data-testid='dac-objects-list']").within(() => {
-      cy.get("a").contains("Test contact name").click()
+      cy.get("a").contains("Test title").click()
     })
 
     cy.get("[data-testid='contacts']").should("be.visible")
@@ -86,7 +86,7 @@ describe("Basic application flow", function () {
     cy.formActions("Update")
 
     cy.get("[data-testid='dac-objects-list']").within(() => {
-      cy.get("a").contains("Test contact name").click()
+      cy.contains("Test title").should("be.visible").click({ force: true })
     })
     cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
 
@@ -101,7 +101,7 @@ describe("Basic application flow", function () {
     cy.get("textarea[data-testid='policy.policyText']").type("Test policy text")
 
     // Submit Policy form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     /*
      * 3rd step, Describe
@@ -121,7 +121,7 @@ describe("Basic application flow", function () {
     cy.get("[data-testid='title']").type("Test Sample title")
     cy.get("[data-testid='sampleName.taxonId']").type("123")
     // Submit Sample form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Fill a Experiment form
     cy.clickAddObject(ObjectTypes.experiment)
@@ -155,12 +155,12 @@ describe("Basic application flow", function () {
     )
 
     // Submit Experiment form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Fill a Run form
     cy.clickAddObject(ObjectTypes.run)
     cy.get("[data-testid='title']").type("Test Run title")
-    cy.get("h5[data-testid='experimentRef']").parents().children("button").click()
+    cy.get("[data-testid='experimentRef'] > div > button").click()
 
     // Select experimentAccessionId
     cy.get("select[data-testid='experimentRef.0.accessionId']").select(1)
@@ -168,7 +168,7 @@ describe("Basic application flow", function () {
     cy.get("select[data-testid='experimentRef.0.accessionId']").should("contain", " - Title:")
 
     // Submit Run form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Fill an Analysis form
     cy.clickAddObject(ObjectTypes.analysis)
@@ -180,7 +180,7 @@ describe("Basic application flow", function () {
       cy.get("select[data-testid='analysisType']").select("Reference Alignment")
       cy.get("select[data-testid='analysisType.referenceAlignment.assembly']").select("Standard")
       cy.get("[data-testid='analysisType.referenceAlignment.assembly.accession']").type("Standard Accession version")
-      cy.get("h5").contains("Sequence").parents().children("button").click()
+      cy.get("div[data-testid='analysisType.referenceAlignment.sequence'] > div").eq(1).children("button").click()
       cy.get("[data-testid='analysisType.referenceAlignment.sequence.0.accession']").type(
         "Sequence Standard Accession Id"
       )
@@ -197,31 +197,31 @@ describe("Basic application flow", function () {
       cy.get("[data-testid='experimentRef.refname']").type("Experiment Test Namespace")
 
       // Sample
-      cy.get("h5").contains("Sample Reference").parents().children("button").click()
+      cy.get("[data-testid='sampleRef'] > div > button").click()
       cy.get("[data-testid='sampleRef.0.accessionId']").select(1)
       cy.get("[data-testid='sampleRef.0.identifiers.submitterId.namespace']").type("Sample Test Namespace")
       cy.get("[data-testid='sampleRef.0.identifiers.submitterId.value']").type("Sample Test Value")
 
       // Run
-      cy.get("h5").contains("Run Reference").parents().children("button").click()
+      cy.get("[data-testid='runRef'] > div > button").click()
       cy.get("[data-testid='runRef.0.accessionId']").select(1)
       cy.get("[data-testid='runRef.0.identifiers.submitterId.namespace']").type("Run Test Namespace")
       cy.get("[data-testid='runRef.0.identifiers.submitterId.value']").type("Run Test Value")
 
       // Analysis
-      cy.get("h5").contains("Analysis Reference").parents().children("button").click()
+      cy.get("[data-testid='analysisRef'] > div > button").click()
       cy.get("[data-testid='analysisRef.0.accessionId']").type("Analysis Test Accession Id")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.namespace']").type("Analysis Test Namespace")
       cy.get("[data-testid='analysisRef.0.identifiers.submitterId.value']").type("Analysis Test Value")
 
       // Files
-      cy.get("h5").contains("Files").parents().children("button").click()
+      cy.get("[data-testid='files'] > div > button").click()
       cy.get("[data-testid='files.0.filename']").type("filename 1")
       cy.get("select[data-testid='files.0.filetype']").select("other")
       cy.get("select[data-testid='files.0.checksumMethod']").select("MD5")
       cy.get("[data-testid='files.0.checksum']").type("b1f4f9a523e36fd969f4573e25af4540")
 
-      cy.get("h5").contains("Files").parents().children("button").click()
+      cy.get("[data-testid='files'] > div > button").click()
       cy.get("[data-testid='files.1.filename']").type("filename 2")
       cy.get("select[data-testid='files.1.filetype']").select("info")
       cy.get("select[data-testid='files.1.checksumMethod']").select("SHA-256")
@@ -230,7 +230,7 @@ describe("Basic application flow", function () {
       )
     })
     // Submit Analysis form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     // Fill a Dataset form
     cy.clickAddObject(ObjectTypes.dataset)
@@ -244,17 +244,17 @@ describe("Basic application flow", function () {
     cy.get("select[data-testid='policyRef.accessionId']").should("contain", " - Title:")
 
     // Select runAccessionId
-    cy.get("div").contains("Run Reference").parents().children("button").click()
+    cy.get("[data-testid='runRef'] > div > button").click()
     cy.get("select[data-testid='runRef.0.accessionId']").select(1)
     cy.get("select[data-testid='runRef.0.accessionId']").should("contain", " - Title:")
 
     // Select analysisAccessionId
-    cy.get("div").contains("Analysis Reference").parents().children("button").click()
+    cy.get("[data-testid='analysisRef'] > div > button").click()
     cy.get("select[data-testid='analysisRef.0.accessionId']").select(1)
     cy.get("select[data-testid='analysisRef.0.accessionId']").should("contain", " - Title:")
 
     // Submit Dataset form
-    cy.formActions("Submit")
+    cy.formActions("Mark as ready")
 
     /*
      * 5th step, Identifier and publish

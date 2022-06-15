@@ -176,7 +176,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   const handleButton = () => {
     const fileSelect = document && document.getElementById("file-select-button")
-    if (fileSelect && fileSelect.click()) {
+    if (fileSelect) {
       fileSelect.click()
     }
     dispatch(resetFocus())

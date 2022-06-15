@@ -7,7 +7,7 @@ export const errorMonitor = (res: APIResponse) => {
   if (!res.ok && !exceptionalCase) {
     switch (res.status) {
       case 400:
-        // window.location.href = "/error400"
+        window.location.href = "/error400"
         break
       case 401:
         window.location.href = "/error401"

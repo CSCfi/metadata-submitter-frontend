@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: |
-          npm i
+          npm ci
       - name: Run type checks with TSC
         run: |
           npm run tsc

@@ -10,7 +10,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
       ],
     }
 
-    cy.intercept({ method: "GET", url: "/users/current" }, userResponse)
+    cy.intercept({ method: "GET", url: "/v1/users/current" }, userResponse)
   })
   it("should renders pagination for unpublished submissions list correctly", () => {
     // Mock responses for Unpublished Submissions
@@ -147,7 +147,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponse5
     )
@@ -155,7 +155,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponse15
     )
@@ -163,7 +163,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=25&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=25&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponse25
     )
@@ -171,7 +171,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=50&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=50&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponse50
     )
@@ -179,7 +179,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponsePage2
     ).as("unpublishedPage2")
@@ -230,7 +230,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponse5
     )
@@ -238,7 +238,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponse50
     )
@@ -393,7 +393,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
       },
       unpublishedSubmissionsResponse5
     )
@@ -401,7 +401,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponse5
     )
@@ -409,7 +409,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=1&per_page=50&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponse50
     )
@@ -417,7 +417,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=2&per_page=5&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=2&per_page=5&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponsePage2
     ).as("publishedPage2")
@@ -425,7 +425,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.intercept(
       {
         method: "GET",
-        url: "/submissions?page=3&per_page=5&published=true&projectId=PROJECT1",
+        url: "/v1/submissions?page=3&per_page=5&published=true&projectId=PROJECT1",
       },
       publishedSubmissionsResponsePage3
     )
@@ -639,7 +639,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
       cy.intercept(
         {
           method: "GET",
-          url: "/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
+          url: "/v1/submissions?page=1&per_page=5&published=false&projectId=PROJECT1",
         },
         unpublishedPage1
       )
@@ -647,7 +647,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
       cy.intercept(
         {
           method: "GET",
-          url: "/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
+          url: "/v1/submissions?page=2&per_page=5&published=false&projectId=PROJECT1",
         },
         unpublishedPage2
       )
@@ -655,19 +655,19 @@ describe("unpublished submissions, published submissions, and user's draft templ
       cy.intercept(
         {
           method: "GET",
-          url: "/submissions?page=1&per_page=30&published=false&projectId=PROJECT1",
+          url: "/v1/submissions?page=1&per_page=30&published=false&projectId=PROJECT1",
         },
         allUnpublished
       )
 
-      cy.intercept("DELETE", "/submissions/UNPUB9", {
+      cy.intercept("DELETE", "/v1/submissions/UNPUB9", {
         statusCode: 200,
       }).as("deleteSubmission")
 
       cy.intercept(
         {
           method: "GET",
-          url: "/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
+          url: "/v1/submissions?page=1&per_page=15&published=false&projectId=PROJECT1",
         },
         unpublished15
       ).as("unpublished15")
@@ -675,7 +675,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
       cy.intercept(
         {
           method: "GET",
-          url: "/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
+          url: "/v1/submissions?page=1&per_page=5&published=true&projectId=PROJECT1",
         },
         publishedSubmissionsResponse5
       )

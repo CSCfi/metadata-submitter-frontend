@@ -85,14 +85,14 @@ Cypress.on("uncaught:exception", () => {
 
 Cypress.Commands.add("login", () => {
   cy.visit(baseUrl)
-  cy.intercept("/submissions*").as("getSubmissions")
+  cy.intercept("/v1/submissions*").as("getSubmissions")
   cy.get('a[data-testid="login-button"]').should("be.visible")
   cy.get('a[data-testid="login-button"]').click()
   cy.wait("@getSubmissions")
 })
 
 Cypress.Commands.add("newSubmission", submissionName => {
-  cy.intercept("/submissions*").as("newSubmission")
+  cy.intercept("/v1/submissions*").as("newSubmission")
   cy.get("[data-testid='submissionName']").type(submissionName ? submissionName : "Test name")
   cy.get("[data-testid='submissionDescription']").type("Test description")
   cy.get("button[type=submit]")
@@ -192,12 +192,12 @@ Cypress.Commands.add("saveDoiForm", () => {
 
 // Method for hanlding request path when generating objects
 const addObjectPath = (objectType: string, submissionId: string) =>
-  `${baseUrl}objects/${objectType}?submission=${submissionId}`
+  `${baseUrl}v1/objects/${objectType}?submission=${submissionId}`
 
 // Create objects from predefined templates
 // Possible to stop into specific object type. Add object type as argument
 Cypress.Commands.add("generateSubmissionAndObjects", (stopToObjectType = "") => {
-  cy.intercept("/submissions*").as("fetchSubmissions")
+  cy.intercept("/v1/submissions*").as("fetchSubmissions")
 
   // List of object types in particular order
   // This list is used to choose into what point of object generation is stopped
@@ -217,13 +217,13 @@ Cypress.Commands.add("generateSubmissionAndObjects", (stopToObjectType = "") => 
     objectTypesArray = objectTypesArray.slice(0, objectTypesArray.indexOf(stopToObjectType) + 1)
   }
 
-  cy.request("GET", "/users/current").then(userResponse => {
+  cy.request("GET", "/v1/users/current").then(userResponse => {
     if (userResponse.statusText === "OK") {
       // Select a project
       const selectedProject = userResponse.body.projects[0]
 
       // Generate submission
-      cy.request("POST", baseUrl + "submissions", {
+      cy.request("POST", baseUrl + "v1/submissions", {
         name: "Test generated submission",
         description: "Description for generated submission",
         projectId: selectedProject.projectId,

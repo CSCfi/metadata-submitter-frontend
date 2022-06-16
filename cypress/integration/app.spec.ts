@@ -26,7 +26,7 @@ describe("Basic application flow", function () {
     /*
      * 2nd step, Study, DAC and Policy
      */
-
+    cy.get("h4").contains("Study").should("be.visible")
     // Try to send invalid form
     cy.formActions("Mark as ready")
 
@@ -78,16 +78,15 @@ describe("Basic application flow", function () {
       cy.get("a").contains("Test title").click()
     })
 
-    cy.get("[data-testid='contacts']").should("be.visible")
-    cy.get("input[data-testid='contacts.0.name']", { timeout: 1000 }).should("be.visible").click({ force: true })
-    cy.get("input[data-testid='contacts.0.name']").type(" edited")
-    cy.get("[data-testid='contacts.0.name']").should("have.value", "Test contact name edited")
+    cy.get("input[data-testid='title']").should("be.visible")
+    cy.get("input[data-testid='title']").type(" edited")
+    cy.get("input[data-testid='title']").should("have.value", "Test title edited")
 
     cy.formActions("Update")
 
     cy.get("div[role=alert]").contains("Object updated")
     cy.get("[data-testid='dac-objects-list']", { timeout: 10000 }).within(() => {
-      cy.get("a").contains("Test contact name edited").should("be.visible")
+      cy.get("a").contains("Test title edited").should("be.visible")
     })
 
     // Fill Policy form

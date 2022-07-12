@@ -7,7 +7,7 @@ describe("Home e2e", function () {
   })
 
   it("show draft submission data table in Home page, be able to edit and delete a draft submission inside the table", () => {
-    cy.intercept("/v1/submissions*").as("fetchSubmissions")
+    cy.intercept("/submissions*").as("fetchSubmissions")
 
     // Check that there is projectId in home page
     cy.get("[data-testid='project-id-selection']").should("be.visible")

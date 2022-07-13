@@ -157,6 +157,7 @@ describe("DOI form", function () {
 
     // Type search words in autocomplete field
     cy.get("[data-testid='contributors.0.affiliation.0.name-inputField']").type("demos")
+    cy.wait("@searchOrganization")
     // Select the first result
     cy.get(".MuiAutocomplete-option")
       .should("be.visible")

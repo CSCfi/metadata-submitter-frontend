@@ -284,7 +284,10 @@ const FormContent = ({
   }
 
   const checkDirty = () => {
-    if (methods.formState.isDirty && draftStatus === "" && checkFormCleanedValuesEmpty(getCleanedValues())) {
+    const isFormTouched = () => {
+      return Object.keys(methods.formState.dirtyFields).length > 0
+    }
+    if (isFormTouched() && draftStatus === "" && checkFormCleanedValuesEmpty(getCleanedValues())) {
       dispatch(setDraftStatus("notSaved"))
     }
   }

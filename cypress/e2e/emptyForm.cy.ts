@@ -38,6 +38,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("div[role=alert]", { timeout: 10000 }).contains("Draft saved with")
 
     // Select the Experiment draft
+    cy.wait(0)
     cy.continueLatestDraft(ObjectTypes.experiment)
 
     cy.get("input[data-testid='title']").should("have.value", "Test experiment")
@@ -79,6 +80,7 @@ describe("empty form should not be alerted or saved", function () {
     cy.get("input[data-testid='title']").should("have.value", "Test Sample title")
 
     cy.formActions("Save as draft")
+    cy.wait(0)
     cy.get("div[role=alert]").contains("Draft saved with")
 
     // Clear Study title input and Save

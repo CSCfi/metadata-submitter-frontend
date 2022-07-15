@@ -262,6 +262,7 @@ describe("unpublished submissions, published submissions, and user's draft templ
     cy.get("@button").then($el => {
       expect(Cypress.dom.isAttached($el).valueOf()).to.be.true
     })
+    cy.wait(0)
     cy.get("@button").click()
 
     cy.get("li[data-value='5']", { timeout: 10000 }).should("be.visible")

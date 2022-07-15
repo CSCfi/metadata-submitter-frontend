@@ -40,6 +40,7 @@ describe("Draft operations", function () {
     cy.get("[data-testid='policy-objects-list']").find("li").should("have.length", 2)
 
     // Continue first draft
+    cy.wait(0)
     cy.get("[data-testid='draft-policy-list-item']", { timeout: 10000 }).first().click({ force: true })
 
     // Clear form

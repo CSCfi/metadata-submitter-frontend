@@ -5,7 +5,7 @@ describe("Login e2e", function () {
 
   it("should contain session cookie", () => {
     cy.login()
-    cy.getCookie("MTD_SESSION").should("exist")
+    cy.getCookie("AIOHTTP_SESSION").should("exist")
   })
 
   it("should contain the test user name", () => {

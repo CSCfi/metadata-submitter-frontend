@@ -35,7 +35,7 @@ jobs:
           cp -r build/* metadata-submitter/metadata_backend/frontend/
           docker-compose -f metadata-submitter/docker-compose.yml --env-file metadata-submitter/.env.example up -d --build
           sleep 30
-      - uses: cypress-io/github-action@v4
+      - uses: cypress-io/github-action@v5
         with:
           browser: ${{ matrix.browser }}
           env: port=5430

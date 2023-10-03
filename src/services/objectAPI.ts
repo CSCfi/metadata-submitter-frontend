@@ -6,7 +6,7 @@ import { errorMonitor } from "./errorMonitor"
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
 
-const api = create({ baseURL: "/objects" })
+const api = create({ baseURL: "/v1/objects" })
 api.addMonitor(errorMonitor)
 
 const createFromXML = async (objectType: string, submissionId: string, XMLFile: File): Promise<APIResponse> => {

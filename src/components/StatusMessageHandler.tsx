@@ -67,7 +67,7 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
   let message = ""
   if (response) {
     switch (response?.config?.baseURL) {
-      case "/drafts": {
+      case "/v1/drafts": {
         switch (response?.config.method) {
           case "patch": {
             message = `Draft updated with accessionid ${response.data.accessionId}`
@@ -79,7 +79,7 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
         }
         break
       }
-      case "/objects": {
+      case "/v1/objects": {
         switch (response.config.method) {
           case "patch": {
             message = `Object updated with accessionid ${response.data.accessionId}`
@@ -95,7 +95,7 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
         }
         break
       }
-      case "/templates": {
+      case "/v1/templates": {
         switch (response.config.method) {
           default: {
             message = `Template updated with accessionid ${response.data.accessionId}`

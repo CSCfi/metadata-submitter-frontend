@@ -14,18 +14,18 @@ const proxy = process.env.REACT_APP_BACKEND_PROXY || "localhost:5430"
 module.exports = function (app) {
   app.use(
     [
-      "/objects",
-      "/schemas",
-      "/validate",
-      "/submit",
-      "/submissions",
-      "/publish",
-      "/drafts",
+      "/v1/objects",
+      "/v1/schemas",
+      "/v1/validate",
+      "/v1/submit",
+      "/v1/submissions",
+      "/v1/publish",
+      "/v1/drafts",
       "/aai",
       "/callback",
       "/logout",
-      "/users",
-      "/templates",
+      "/v1/users",
+      "/v1/templates",
     ],
     createProxyMiddleware({
       target: `http://${proxy}`,

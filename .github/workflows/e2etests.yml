@@ -28,7 +28,7 @@ jobs:
         with:
           repository: 'CSCfi/metadata-submitter'
           path: metadata-submitter
-          ref: 639efda700276584e3928edb08309f620e70917a         
+          ref: ${{ env.VERSION }}
       - name: Set up branch
         run: |
           mkdir -p metadata-submitter/metadata_backend/frontend

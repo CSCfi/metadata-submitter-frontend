@@ -44,7 +44,7 @@ describe("StatusMessageHandler", () => {
   })
 
   it("should render success message", () => {
-    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/drafts" } }
+    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/v1/drafts" } }
 
     const store = mockStore({
       statusDetails: { status: ResponseStatus.success, response: responseMock },

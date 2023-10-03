@@ -4,7 +4,7 @@ import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse, ObjectInsideSubmissionWithTags, ObjectTags } from "types"
 
-const api = create({ baseURL: "/users" })
+const api = create({ baseURL: "/v1/users" })
 api.addMonitor(errorMonitor)
 
 const getUserById = async (userID: string): Promise<APIResponse> => {

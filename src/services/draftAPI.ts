@@ -6,7 +6,7 @@ import { errorMonitor } from "./errorMonitor"
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
 
-const api = create({ baseURL: "/drafts" })
+const api = create({ baseURL: "/v1/drafts" })
 api.addMonitor(errorMonitor)
 
 const createFromJSON = async (

@@ -10,7 +10,7 @@ api.addMonitor(errorMonitor)
 const validateXMLFile = async (objectType: string, XMLFile: string | Blob): Promise<APIResponse> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return await api.post("/validate", formData)
+  return await api.post("/v1/validate", formData)
 }
 
 export default { validateXMLFile }

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
 - Modify Patch submission with only "name" and "description" #816
 - Modified Form layout, Tooltip and Upload XML according to new UI design #811
 

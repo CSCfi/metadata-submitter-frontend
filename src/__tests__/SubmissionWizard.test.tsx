@@ -57,7 +57,7 @@ describe("SubmissionWizard", () => {
 
   test("should redirect back to draft wizard start on invalid submissionId", async () => {
     server.use(
-      rest.get("/submissions/:submissionId", (req, res, ctx) => {
+      rest.get("/v1/submissions/:submissionId", (req, res, ctx) => {
         const { submissionId } = req.params
         return res(
           ctx.status(404),
@@ -65,14 +65,14 @@ describe("SubmissionWizard", () => {
             type: "about:blank",
             title: "Not Found",
             detail: `Submission with id ${submissionId} was not found.`,
-            instance: `/submissions/${submissionId}`,
+            instance: `/v1/submissions/${submissionId}`,
           })
         )
       })
     )
 
     server.use(
-      rest.get("/users/current", (req, res, ctx) => {
+      rest.get("/v1/users/current", (req, res, ctx) => {
         return res(
           ctx.json({
             userId: "abc",
@@ -113,7 +113,7 @@ describe("SubmissionWizard", () => {
   //   const submissionDescription = "Submission description"
 
   //   server.use(
-  //     rest.get("/submissions/:submissionId", (req, res, ctx) => {
+  //     rest.get("/v1/submissions/:submissionId", (req, res, ctx) => {
   //       const { submissionId } = req.params
   //       return res(
   //         ctx.json({

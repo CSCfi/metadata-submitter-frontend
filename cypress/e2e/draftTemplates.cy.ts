@@ -37,6 +37,7 @@ describe("draft selections and templates", function () {
       cy.get('button[aria-label="Publish submission contents and move to frontpage"]').contains("Publish").click()
     })
 
+    // Comment out this part as it may need to have Metax part(?) to be filled:
     // Navigate back to home page
     //cy.get("h4", { timeout: 10000 }).contains("My submissions") //For github actions e2e test to pass
   }),

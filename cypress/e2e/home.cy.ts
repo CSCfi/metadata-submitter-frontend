@@ -85,7 +85,7 @@ describe("Home e2e", function () {
     cy.get("button[data-testid='summary-publish']").contains("Publish").click()
 
     cy.get('[data-testid="confirm-publish-submission"]').contains("Publish").click()
-
+    // Comment out this part as it may need to have Metax part(?) to be filled:
     // Check that published submission exists in data table
     //cy.contains("My submissions", { timeout: 10000 }).should("be.visible") //For github actions e2e test to pass
     cy.get("[data-testid='published-tab']").click()

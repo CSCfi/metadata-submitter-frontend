@@ -4,7 +4,7 @@ import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
 
-const api = create({ baseURL: "/schemas" })
+const api = create({ baseURL: "/v1/schemas" })
 api.addMonitor(errorMonitor)
 
 const getSchemaByObjectType = async (objectType: string): Promise<APIResponse> => {

@@ -32,10 +32,10 @@ describe("Object details", () => {
 
   it("should render object details when row has been opened", async () => {
     server.use(
-      rest.get("/schemas/:schema", (req, res, ctx) => {
+      rest.get("/v1/schemas/:schema", (req, res, ctx) => {
         return res(ctx.json(schema))
       }),
-      rest.get("/submissions/:submissionId", (req, res, ctx) => {
+      rest.get("/v1/submissions/:submissionId", (req, res, ctx) => {
         return res(
           ctx.json({
             name: "Test Submission",
@@ -54,7 +54,7 @@ describe("Object details", () => {
           })
         )
       }),
-      rest.get("/objects/study/:accessionId", (req, res, ctx) => {
+      rest.get("/v1/objects/study/:accessionId", (req, res, ctx) => {
         return res(
           ctx.json({
             descriptor: { studyTitle: "Published object", studyType: "Synthetic Genomics" },
@@ -88,7 +88,7 @@ describe("Object details", () => {
 
   it("should render object details by object data and schema", async () => {
     server.use(
-      rest.get("/schemas/:schema", (req, res, ctx) => {
+      rest.get("/v1/schemas/:schema", (req, res, ctx) => {
         return res(ctx.json(schema))
       })
     )

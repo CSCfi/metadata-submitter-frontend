@@ -23,7 +23,7 @@ describe("Generate objects", function () {
     cy.get("[data-testid='alert-dialog-content']").should("have.text", "Objects in this submission will be published.")
     cy.get('[data-testid="confirm-publish-submission"]').contains("Publish").click()
 
-    cy.get("[data-testid='published-tab']").click()
+    cy.get("[data-testid='published-tab']").click() //For github actions e2e test to pass
     cy.get("[data-field='name']").eq(1).invoke("text").should("eq", "Test generated submission")
   })
 

@@ -7,7 +7,7 @@ import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse, ObjectDisplayValues } from "types"
 import { getObjectDisplayTitle } from "utils"
 
-const api = create({ baseURL: "/templates" })
+const api = create({ baseURL: "/v1/templates" })
 api.addMonitor(errorMonitor)
 
 const createTemplatesFromJSON = async (

@@ -4,7 +4,7 @@ import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse, SubmissionDetails } from "types"
 
-const api = create({ baseURL: "/submissions" })
+const api = create({ baseURL: "/v1/submissions" })
 
 api.addMonitor(errorMonitor)
 

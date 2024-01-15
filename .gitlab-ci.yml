@@ -3,7 +3,7 @@ stages:
   - test
 
 variables:
-  BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/swift-browser-ui-ci
+  BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci
 
 code-style:
   stage: verify

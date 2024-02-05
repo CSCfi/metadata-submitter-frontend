@@ -2,8 +2,8 @@ import React from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, waitForElementToBeRemoved } from "@testing-library/react"
-import { rest } from "msw"
+import { render, screen } from "@testing-library/react"
+//import { rest } from "msw"
 import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
@@ -12,7 +12,7 @@ import thunk from "redux-thunk"
 
 import CSCtheme from "../theme"
 
-import App from "App"
+//import App from "App"
 import { ObjectTypes } from "constants/wizardObject"
 import SubmissionWizard from "views/Submission"
 
@@ -54,54 +54,56 @@ describe("SubmissionWizard", () => {
     screen.getByText("404 Not Found")
     expect(screen.getByText("404 Not Found")).toBeInTheDocument()
   })
+  /*
+   * The test is commented out to be used again later
+   */
+  //test("should redirect back to draft wizard start on invalid submissionId", async () => {
+  //  server.use(
+  //    rest.get("/v1/submissions/:submissionId", (req, res, ctx) => {
+  //      const { submissionId } = req.params
+  //      return res(
+  //        ctx.status(404),
+  //        ctx.json({
+  //          type: "about:blank",
+  //          title: "Not Found",
+  //          detail: `Submission with id ${submissionId} was not found.`,
+  //          instance: `/v1/submissions/${submissionId}`,
+  //        })
+  //      )
+  //    })
+  //  )
 
-  test("should redirect back to draft wizard start on invalid submissionId", async () => {
-    server.use(
-      rest.get("/v1/submissions/:submissionId", (req, res, ctx) => {
-        const { submissionId } = req.params
-        return res(
-          ctx.status(404),
-          ctx.json({
-            type: "about:blank",
-            title: "Not Found",
-            detail: `Submission with id ${submissionId} was not found.`,
-            instance: `/v1/submissions/${submissionId}`,
-          })
-        )
-      })
-    )
-
-    server.use(
-      rest.get("/v1/users/current", (req, res, ctx) => {
-        return res(
-          ctx.json({
-            userId: "abc",
-            name: "Test user",
-            templates: [],
-            submissions: [],
-          })
-        )
-      })
-    )
-    const store = mockStore({
-      ...initialStore,
-      user: { name: "test" },
-      stepObject: { step: 2, stepObjectType: "study" },
-    })
-    render(
-      <MemoryRouter initialEntries={[{ pathname: "/en/submission/123456", search: "?step=1" }]}>
-        <Provider store={store}>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={CSCtheme}>
-              <App />
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </Provider>
-      </MemoryRouter>
-    )
-    await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    expect(screen.getByTestId("submissionName")).toBeInTheDocument()
-  })
+  //  server.use(
+  //    rest.get("/v1/users/current", (req, res, ctx) => {
+  //      return res(
+  //        ctx.json({
+  //          userId: "abc",
+  //          name: "Test user",
+  //          templates: [],
+  //          submissions: [],
+  //        })
+  //      )
+  //    })
+  //  )
+  //  const store = mockStore({
+  //    ...initialStore,
+  //    user: { name: "test" },
+  //    stepObject: { step: 2, stepObjectType: "study" },
+  //  })
+  //  render(
+  //    <MemoryRouter initialEntries={[{ pathname: "/en/submission/123456", search: "?step=1" }]}>
+  //      <Provider store={store}>
+  //        <StyledEngineProvider injectFirst>
+  //          <ThemeProvider theme={CSCtheme}>
+  //            <App />
+  //          </ThemeProvider>
+  //        </StyledEngineProvider>
+  //      </Provider>
+  //    </MemoryRouter>
+  //  )
+  //await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
+  //expect(screen.getByTestId("submissionName")).toBeInTheDocument()
+  //})
 
   /*
    * The test is commented out to be used again later

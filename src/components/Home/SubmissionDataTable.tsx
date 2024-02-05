@@ -11,7 +11,6 @@ import {
   GridValueGetterParams,
   GridValueFormatterParams,
   GridActionsCellItem,
-  GridCellValue,
   GridSortModel,
 } from "@mui/x-data-grid"
 import { useNavigate } from "react-router-dom"
@@ -88,8 +87,16 @@ type SubmissionDataTableProps = {
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
-  const { submissionType, page, itemsPerPage, totalItems, fetchPageOnChange, fetchItemsPerPage, rows, onDeleteSubmission } =
-    props
+  const {
+    submissionType,
+    page,
+    itemsPerPage,
+    totalItems,
+    fetchPageOnChange,
+    fetchItemsPerPage,
+    rows,
+    onDeleteSubmission,
+  } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -103,11 +110,11 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       field: "dateCreated",
       headerName: "Date created",
       type: "date",
-      valueFormatter: (params: GridValueFormatterParams): GridCellValue => {
+      valueFormatter: (params: GridValueFormatterParams) => {
         const { convertedDate } = params.value as Record<string, string>
         return convertedDate
       },
-      valueGetter: (params: GridValueGetterParams): GridCellValue => ({
+      valueGetter: (params: GridValueGetterParams) => ({
         convertedDate: getConvertedDate(params.value),
         timestamp: params.value,
       }),
@@ -204,7 +211,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
           <DataTable
             rows={rows}
             columns={columns}
-            disableSelectionOnClick
+            disableRowSelectionOnClick
             disableColumnMenu
             disableColumnFilter
             disableColumnSelector

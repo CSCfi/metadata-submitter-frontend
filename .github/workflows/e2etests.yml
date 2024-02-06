@@ -39,13 +39,13 @@ jobs:
         with:
           browser: ${{ matrix.browser }}
           env: port=5430
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
           retention-days: 5
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:         
           name: cypress-videos

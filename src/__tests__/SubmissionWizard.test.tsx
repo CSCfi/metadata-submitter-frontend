@@ -8,7 +8,7 @@ import { setupServer } from "msw/node"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
-import thunk from "redux-thunk"
+//import { thunk } from "redux-thunk"
 
 import CSCtheme from "../theme"
 
@@ -16,7 +16,7 @@ import CSCtheme from "../theme"
 import { ObjectTypes } from "constants/wizardObject"
 import SubmissionWizard from "views/Submission"
 
-const middlewares = [thunk]
+const middlewares = []
 const mockStore = configureStore(middlewares)
 
 const server = setupServer()

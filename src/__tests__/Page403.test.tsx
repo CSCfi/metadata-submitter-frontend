@@ -1,6 +1,6 @@
 import React from "react"
 
-import "@testing-library/jest-dom/extend-expect"
+import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, act } from "@testing-library/react"
 import { Provider } from "react-redux"

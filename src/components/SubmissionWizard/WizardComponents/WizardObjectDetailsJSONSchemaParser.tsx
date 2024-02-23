@@ -8,20 +8,18 @@ import ListItemText from "@mui/material/ListItemText"
 import Paper from "@mui/material/Paper"
 import { Variant } from "@mui/material/styles/createTypography"
 import Typography from "@mui/material/Typography"
-import { makeStyles, withStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import { get } from "lodash"
 
 import { FormObject, NestedField, ObjectDetails } from "types"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles(theme => ({
-  sectionHeader: {
-    margin: 1,
-    fontWeight: 600,
-    lineHeight: "1.75",
-    letterSpacing: "0.00938em",
-    color: theme.palette.primary.main,
-  },
+const SectionHeader = styled(Typography)(({ theme }) => ({
+  margin: 1,
+  fontWeight: 600,
+  lineHeight: "1.75",
+  letterSpacing: "0.00938em",
+  color: theme.palette.primary.main,
 }))
 
 /*
@@ -83,7 +81,7 @@ const traverseFields = (object: FormObject, path: string[], objectValues: Object
       default: {
         console.error(`
           No field parsing support for type ${object.type} yet.
-    
+
           Pretty printed version of object with unsupported type:
           ${JSON.stringify(object, null, 2)}
           `)
@@ -93,18 +91,19 @@ const traverseFields = (object: FormObject, path: string[], objectValues: Object
   }
 }
 
-const DetailsListItem = withStyles(() => ({
-  root: {
-    paddingTop: "0",
-    paddingBottom: "0",
-  },
-}))(ListItem) as typeof ListItem
-
 const ObjectDetailsListItem = ({ name, label, value }: { name: string; label: string; value: string | number }) => {
   return (
-    <DetailsListItem data-testid={name}>
+    <ListItem
+      sx={{
+        "&.MuiListItem-root": {
+          pt: "0",
+          pb: "0",
+        },
+      }}
+      data-testid={name}
+    >
       <ListItemText disableTypography primary={`${label}: ${value}`}></ListItemText>
-    </DetailsListItem>
+    </ListItem>
   )
 }
 
@@ -115,18 +114,14 @@ type DetailsSectionProps = {
   children?: React.ReactNode
 }
 
-const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) => {
-  const classes = useStyles()
-
-  return (
-    <div className="detailsSection" key={`${name}-section`} data-testid="section">
-      <Typography key={`${name}-header`} className={classes.sectionHeader} variant={`h${level}` as Variant}>
-        {label}
-      </Typography>
-      {children}
-    </div>
-  )
-}
+const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) => (
+  <div className="detailsSection" key={`${name}-section`} data-testid="section">
+    <SectionHeader key={`${name}-header`} variant={`h${level}` as Variant}>
+      {label}
+    </SectionHeader>
+    {children}
+  </div>
+)
 
 type OneOfFieldProps = {
   path: string[]
@@ -176,10 +171,19 @@ const CheckboxArray = ({ label, values }: CheckboxArrayProps) => {
     <List>
       <Typography color="primary">{label}</Typography>
       {values.map((item: string) => (
-        <DetailsListItem key={item} data-testid="checkbox-item">
+        <ListItem
+          sx={{
+            "&.MuiListItem-root": {
+              pt: "0",
+              pb: "0",
+            },
+          }}
+          key={item}
+          data-testid="checkbox-item"
+        >
           <Checkbox checked={true} color="primary" disabled></Checkbox>
           {item}
-        </DetailsListItem>
+        </ListItem>
       ))}
     </List>
   )
@@ -193,7 +197,6 @@ type DetailsArrayProps = {
 }
 
 const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps) => {
-  const classes = useStyles()
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -202,14 +205,9 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
   const items = traverseValues(object.items) as Record<string, unknown>
   return (
     <div className="array" key={`${name}-array`}>
-      <Typography
-        className={classes.sectionHeader}
-        key={`${name}-header`}
-        variant={`h${level}` as Variant}
-        data-testid={name}
-      >
+      <SectionHeader key={`${name}-header`} variant={`h${level}` as Variant} data-testid={name}>
         {label}
-      </Typography>
+      </SectionHeader>
 
       {values.map((_field: unknown, index: number) => {
         const [lastPathItem] = path.slice(-1)

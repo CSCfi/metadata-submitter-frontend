@@ -1,6 +1,6 @@
 import type {} from "@mui/x-data-grid/themeAugmentation"
 
-declare module "@mui/material/styles" {
+declare module "@mui/system" {
   interface CustomTheme {
     typography: {
       fontFamily: string

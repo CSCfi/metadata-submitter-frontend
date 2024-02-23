@@ -4,7 +4,6 @@ import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import LinearProgress from "@mui/material/LinearProgress"
 import Paper from "@mui/material/Paper"
-import { makeStyles } from "@mui/styles"
 import { useNavigate, useParams } from "react-router-dom"
 
 import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
@@ -20,31 +19,6 @@ import submissionAPIService from "services/submissionAPI"
 import type { FormRef } from "types"
 import { useQuery, pathWithLocale } from "utils"
 import Page404 from "views/ErrorPages/Page404"
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    flex: "1 0 auto",
-    padding: 0,
-  },
-  gridContainer: {
-    marginTop: theme.spacing(7.7),
-    minHeight: "calc(100vh - 137px)",
-    backgroundColor: theme.palette.background.default,
-    "& .MuiGrid-item": { paddingTop: 0 },
-  },
-  stepper: {
-    paddingTop: "0 !important",
-    backgroundColor: theme.palette.primary.main,
-  },
-  stepContent: {
-    paddingLeft: `${theme.spacing(5)} !important`,
-    paddingRight: `${theme.spacing(5)} !important`,
-  },
-  paper: {
-    padding: 0,
-    height: "100%",
-  },
-}))
 
 /**
  * Return correct content for each step
@@ -71,7 +45,6 @@ const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, ob
  */
 const SubmissionWizard: React.FC = () => {
   const dispatch = useAppDispatch()
-  const classes = useStyles()
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
@@ -117,15 +90,23 @@ const SubmissionWizard: React.FC = () => {
   const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
   return (
-    <Container maxWidth={false} className={classes.container} disableGutters>
-      <Grid container className={classes.gridContainer}>
-        <Grid item xs={3} className={classes.stepper}>
+    <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
+      <Grid
+        sx={{
+          mt: 7.7,
+          minHeight: "calc(100vh - 137px)",
+          bgcolor: "background.default",
+          "&.MuiGrid-item": { pt: 0 },
+        }}
+        container
+      >
+        <Grid item sx={{ pt: 0, bgcolor: "primary.main" }} xs={3}>
           <WizardStepper formRef={objectFormRef} />
         </Grid>
-        <Grid item xs={9} className={classes.stepContent}>
+        <Grid item sx={{ pl: 5, pr: 5 }} xs={9}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
-            <Paper className={classes.paper} elevation={2}>
+            <Paper sx={{ p: 0, height: "100%" }} elevation={2}>
               {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef)}
             </Paper>
           )}

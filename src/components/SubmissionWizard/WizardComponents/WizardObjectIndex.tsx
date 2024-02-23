@@ -10,7 +10,7 @@ import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import { makeStyles, withStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 
 import WizardAlert from "./WizardAlert"
 
@@ -23,45 +23,24 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { formatDisplayObjectType } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  index: {
-    alignSelf: "flex-start",
-    marginBottom: 2,
-    width: 300,
-  },
-  submissionTypeList: {
-    padding: 0,
-  },
-  submissionTypeListItem: {
-    backgroundColor: theme.palette.secondary.main,
-    "&.Mui-selected": {
-      backgroundColor: theme.palette.secondary.main,
-      boxShadow: `inset 10px 0px 0px 0px ${theme.palette.primary.main}`,
-    },
-  },
-  nonSelectedAccordion: {
-    backgroundColor: theme.palette.grey["800"],
-  },
-  selectedAccordion: {
-    backgroundColor: theme.palette.primary.main,
-  },
-  badge: {
-    margin: 2,
-    zIndex: 0,
-  },
-  skipLink: {
-    color: theme.palette.primary.main,
-    "&:hover, &:focus": {
-      textDecoration: "underline",
-    },
+const Index = styled("div")({
+  alignSelf: "flex-start",
+  marginBottom: 2,
+  width: 300,
+})
+
+const SkipLink = styled("a")(({ theme }) => ({
+  color: theme.palette.primary.main,
+  "&:hover, &:focus": {
+    textDecoration: "underline",
   },
 }))
 
 /*
  * Customized accordion from https://material-ui.com/components/accordion/#customized-accordions
  */
-const Accordion = withStyles({
-  root: {
+const Accordion = styled(MuiAccordion)({
+  "&.MuiAccordion-root": {
     borderTop: "1px solid rgba(0, 0, 0, .125)",
     boxShadow: "none",
     "&:before": {
@@ -75,17 +54,17 @@ const Accordion = withStyles({
     },
   },
   expanded: {},
-})(MuiAccordion)
+})
 
-const AccordionSummary = withStyles(theme => ({
-  root: {
+const AccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
+  "&.MuiAccordionSummary-root": {
     height: 56,
     marginBottom: -1,
     "&$expanded": {
       minHeight: 56,
     },
   },
-  content: {
+  "&.MuiAccordionSummary-content": {
     color: "#FFF",
     fontWeight: "bold",
     "&$expanded": {
@@ -102,26 +81,26 @@ const AccordionSummary = withStyles(theme => ({
     },
   },
   expanded: {},
-}))(MuiAccordionSummary)
+}))
 
-const AccordionDetails = withStyles({
-  root: {
+const AccordionDetails = styled(MuiAccordionDetails)({
+  "&.MuiAccordionDetails-root": {
     display: "inherit",
     padding: 0,
   },
-})(MuiAccordionDetails)
+})
 
-const ObjectCountBadge = withStyles(theme => ({
-  badge: {
+const ObjectCountBadge = styled(Badge)(({ theme }) => ({
+  "&.MuiBadge-badge": {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: 700,
   },
-  anchorOriginTopRight: {
+  "&.MuiBadge-anchorOriginTopRight": {
     padding: theme.spacing(0, 1),
     borderRadius: "50%",
   },
-}))(Badge)
+}))
 
 type SubmissionTypeListProps = {
   handleSubmissionTypeChange: (submissionType: string) => void
@@ -140,7 +119,6 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
     [ObjectSubmissionTypes.xml]: "Upload XML File",
   }
 
-  const classes = useStyles()
   const [showSkipLink, setSkipLinkVisible] = useState(false)
   const dispatch = useAppDispatch()
 
@@ -176,8 +154,7 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
       }
     }
     return (
-      <a
-        className={classes.skipLink}
+      <SkipLink
         role="button"
         tabIndex={0}
         onBlur={() => setSkipLinkVisible(false)}
@@ -185,14 +162,21 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
         onKeyDown={event => toggleFocusWithEnter(event)}
       >
         Skip to {target}
-      </a>
+      </SkipLink>
     )
   }
 
   return (
-    <List dense className={classes.submissionTypeList}>
+    <List sx={{ p: 0 }} dense>
       {ObjectSubmissionsArray.map(submissionType => (
         <ListItem
+          sx={theme => ({
+            bgcolor: theme.palette.secondary.main,
+            "&.Mui-selected": {
+              bgcolor: theme.palette.secondary.main,
+              boxShadow: `inset 10px 0px 0px 0px ${theme.palette.primary.main}`,
+            },
+          })}
           selected={isCurrentObjectType && currentSubmissionType === submissionType}
           divider
           key={submissionType}
@@ -201,7 +185,6 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
             handleSkipLink(event, submissionType)
             handleSubmissionTypeChange(submissionType)
           }}
-          className={classes.submissionTypeListItem}
         >
           <ListItemText
             primary={submissionTypeMap[submissionType]}
@@ -220,7 +203,6 @@ const SubmissionTypeList = (props: SubmissionTypeListProps) => {
  * Render accordion for choosing object type and submission type
  */
 const WizardObjectIndex: React.FC = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const [expandedObjectType, setExpandedObjectType] = useState<string | boolean>("")
@@ -274,7 +256,7 @@ const WizardObjectIndex: React.FC = () => {
   }
 
   return (
-    <div className={classes.index} data-testid="wizard-objects">
+    <Index data-testid="wizard-objects">
       {objectsArray.map((objectType: string) => {
         const typeCapitalized = formatDisplayObjectType(objectType)
         const isCurrentObjectType = objectType === currentObjectType
@@ -286,7 +268,9 @@ const WizardObjectIndex: React.FC = () => {
             onChange={handlePanelChange(objectType)}
           >
             <AccordionSummary
-              className={isCurrentObjectType ? classes.selectedAccordion : classes.nonSelectedAccordion}
+              sx={theme => ({
+                bgcolor: isCurrentObjectType ? theme.palette.primary.main : theme.palette.grey["800"],
+              })}
               aria-controls="type-content"
               id="type-header"
             >
@@ -294,8 +278,8 @@ const WizardObjectIndex: React.FC = () => {
               {getSavedObjectCount(objectType) > 0 && (
                 <Tooltip title="Submitted objects">
                   <ObjectCountBadge
+                    sx={{ m: 2, zIndex: 0 }}
                     badgeContent={getSavedObjectCount(objectType)}
-                    className={classes.badge}
                     data-testid="badge"
                   >
                     <DescriptionRoundedIcon />
@@ -320,7 +304,7 @@ const WizardObjectIndex: React.FC = () => {
           alertType={currentSubmissionType}
         ></WizardAlert>
       )}
-    </div>
+    </Index>
   )
 }
 

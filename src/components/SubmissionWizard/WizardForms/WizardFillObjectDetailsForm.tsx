@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef, RefObject } from "react"
 
-import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import Ajv from "ajv"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
@@ -47,33 +46,21 @@ import type {
 import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    margin: 0,
-    padding: 0,
+const ButtonGroup = styled("div")(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  columnGap: "1.5rem",
+  marginRight: "6rem",
+  "& button": {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    height: "5rem",
+    width: "18rem",
   },
-  cardHeader: { ...theme.wizard.cardHeader },
-  resetTopMargin: { top: "0 !important" },
-  cardHeaderAction: {
-    margin: "0 !important",
-    border: "1px solid red",
-  },
-  buttonGroup: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    columnGap: "1.5rem",
-    marginRight: "6rem",
-    "& button": {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white,
-      height: "5rem",
-      width: "18rem",
-    },
-  },
-  addIcon: {
-    marginRight: 1,
-  },
-  formComponents: { ...theme.form },
+}))
+
+const Form = styled("form")(({ theme }) => ({
+  ...theme.form,
 }))
 
 type CustomCardHeaderProps = {
@@ -103,7 +90,6 @@ type FormContentProps = {
  * Create header for form card with button to close the card
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
-  const classes = useStyles()
   const {
     currentObject,
     refForm,
@@ -123,7 +109,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   }, [shouldFocus])
 
   const templateButtonGroup = (
-    <div className={classes.buttonGroup}>
+    <ButtonGroup>
       <Button
         type="submit"
         variant="contained"
@@ -136,11 +122,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <Button variant="contained" aria-label="clear form" size="small" onClick={onClickCloseDialog}>
         Close
       </Button>
-    </div>
+    </ButtonGroup>
   )
 
   const buttonGroup = (
-    <div className={classes.buttonGroup}>
+    <ButtonGroup>
       <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
         {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as draft"}
       </Button>
@@ -154,7 +140,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       >
         {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
       </Button>
-    </div>
+    </ButtonGroup>
   )
 
   return (
@@ -222,7 +208,6 @@ const FormContent = ({
   closeDialog,
   formRef,
 }: FormContentProps) => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const draftStatus = useAppSelector(state => state.draftStatus)
@@ -467,16 +452,15 @@ const FormContent = ({
         onOpenXMLModal={() => handleXMLModalOpen()}
       />
 
-      <form
+      <Form
         id="hook-form"
-        className={classes.formComponents}
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={formRef as RefObject<HTMLFormElement>}
         onReset={handleReset}
       >
         <div>{JSONSchemaParser.buildFields(formSchema)}</div>
-      </form>
+      </Form>
     </FormProvider>
   )
 }
@@ -486,7 +470,6 @@ const FormContent = ({
  */
 const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?: FormRef }) => {
   const { closeDialog, formRef } = props
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const objectType = useAppSelector(state => state.objectType)
@@ -626,7 +609,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
   if (states.error) return <Alert severity="error">{states.helperText}</Alert>
 
   return (
-    <Container maxWidth={false} className={classes.container}>
+    <Container sx={{ m: 0, p: 0 }} maxWidth={false}>
       <FormContent
         formSchema={states.formSchema as FormObject}
         resolver={WizardAjvResolver(states.validationSchema, locale)}

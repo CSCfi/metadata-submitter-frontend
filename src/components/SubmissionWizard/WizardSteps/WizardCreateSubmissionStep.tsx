@@ -8,7 +8,7 @@ import Radio from "@mui/material/Radio"
 import RadioGroup from "@mui/material/RadioGroup"
 import MuiTextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
@@ -25,37 +25,28 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import type { SubmissionDataFromForm, FormRef } from "types"
 import { pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    "& .MuiTextField-root": {
-      margin: "1rem 0",
-    },
-    padding: "4rem",
+const Form = styled("form")({
+  "& .MuiTextField-root": {
+    margin: "1rem 0",
   },
-  submitButton: {
-    marginTop: "2rem",
-    padding: "1rem 5rem",
-  },
-  typeOfSubmissionRow: {
-    marginTop: theme.spacing(2),
-  },
-  typeOfSubmissionLabel: {
-    background: theme.palette.background.default,
-    borderRadius: theme.spacing(0.4),
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 3, 0, 1.5),
-    fontWeight: 600,
-    color: theme.palette.secondary.main,
-  },
+  padding: "4rem",
+})
+
+const TypeOfSubmissionLabel = styled("div")(({ theme }) => ({
+  background: theme.palette.background.default,
+  borderRadius: theme.spacing(0.4),
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 3, 0, 1.5),
+  fontWeight: 600,
+  color: theme.palette.secondary.main,
 }))
 
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
 const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
@@ -105,8 +96,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
 
   return (
     <React.Fragment>
-      <form
-        className={classes.root}
+      <Form
         onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
         ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
@@ -152,11 +142,9 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           rules={{ required: true, validate: { description: value => value.length > 0 } }}
         />
 
-        <Grid container spacing={2} className={classes.typeOfSubmissionRow}>
+        <Grid sx={{ mt: 2 }} container spacing={2}>
           <Grid item>
-            <div className={classes.typeOfSubmissionLabel} id="submission-type-selection-label">
-              Type of submission
-            </div>
+            <TypeOfSubmissionLabel id="submission-type-selection-label">Type of submission</TypeOfSubmissionLabel>
           </Grid>
           <Grid item xs={6}>
             <FormControl>
@@ -169,15 +157,15 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         </Grid>
 
         <Button
+          sx={{ mt: "2rem", p: "1rem 5rem" }}
           size="large"
           variant="contained"
           type="submit"
-          className={classes.submitButton}
           aria-label="Save submission details"
         >
           Save
         </Button>
-      </form>
+      </Form>
     </React.Fragment>
   )
 }

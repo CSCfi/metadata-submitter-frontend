@@ -24,7 +24,6 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
-import { makeStyles, withStyles } from "@mui/styles"
 import { Link as RouterLink } from "react-router-dom"
 
 import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
@@ -34,56 +33,6 @@ import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { OldSubmissionRow } from "types"
 import { pathWithLocale } from "utils"
-
-const useStyles = makeStyles(theme => ({
-  backIcon: {
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  card: {
-    border: "none",
-    padding: 0,
-  },
-  cardHeader: {
-    fontSize: "0.5em",
-    padding: 0,
-    marginTop: 8,
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  cardActions: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  headerLink: {
-    color: theme.palette.common.black,
-  },
-  tableHeader: {
-    padding: 8,
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-  },
-  tableIcon: {
-    minWidth: 35,
-    minHeight: 35,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.palette.common.white,
-    marginRight: 8,
-  },
-  headRows: {
-    fontWeight: "bold",
-  },
-  tooltipContainer: {
-    display: "flex",
-  },
-}))
-
-const SubmissionTooltip = withStyles(theme => ({
-  tooltip: theme.tooltip,
-}))(Tooltip)
 
 const headRows = ["Title", "Object type", "Status", "Last modified", "", "", "", ""]
 
@@ -184,11 +133,18 @@ const Row = (props: RowProps) => {
 }
 
 const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
-  const { submissionTitle, bodyRows, submissionType, location, onEditSubmission, onPublishSubmission, onEditObject, onDeleteObject } =
-    props
+  const {
+    submissionTitle,
+    bodyRows,
+    submissionType,
+    location,
+    onEditSubmission,
+    onPublishSubmission,
+    onEditObject,
+    onDeleteObject,
+  } = props
 
   const hasSubmittedObject = bodyRows.find(row => row.status === ObjectStatus.submitted)
 
@@ -208,8 +164,24 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
           <TableHead>
             <TableRow>
               <TableCell colSpan={publishedSubmission ? 6 : 8} padding="none">
-                <ListItem dense className={classes.tableHeader}>
-                  <ListItemIcon className={classes.tableIcon}>
+                <ListItem
+                  dense
+                  sx={{
+                    p: 8,
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 35,
+                      minHeight: 35,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      bgcolor: "common.white",
+                      mr: 8,
+                    }}
+                  >
                     {submissionType === SubmissionStatus.published ? (
                       <FolderIcon color="primary" />
                     ) : (
@@ -239,10 +211,10 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                     </Button>
                   )}
                   {!hasSubmittedObject && (
-                    <Box pl={1} className={classes.tooltipContainer}>
-                      <SubmissionTooltip title={"Publishing requires submitted object(s)."} placement="top" arrow>
+                    <Box pl={1} display="flex">
+                      <Tooltip title={"Publishing requires submitted object(s)."} placement="top" arrow>
                         <HelpOutlineIcon></HelpOutlineIcon>
-                      </SubmissionTooltip>
+                      </Tooltip>
                     </Box>
                   )}
                 </ListItem>
@@ -250,7 +222,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
             </TableRow>
             <TableRow>
               {headRows.slice(0, publishedSubmission ? 6 : headRows.length).map((row, index) => (
-                <TableCell key={index} className={classes.headRows}>
+                <TableCell key={index} sx={{ fontWeight: "bold" }}>
                   {row}
                 </TableCell>
               ))}
@@ -280,7 +252,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
           Current submission is empty
         </Typography>
       </CardContent>
-      <CardActions className={classes.cardActions}>
+      <CardActions sx={{ display: "flex", justifyContent: "center" }}>
         <Button
           color="primary"
           variant="contained"
@@ -295,13 +267,28 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
   )
 
   return (
-    <Card className={classes.card} variant="outlined">
-      <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`} className={classes.headerLink}>
+    <Card variant="outlined" sx={{ border: "none", padding: 0 }}>
+      <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`} sx={{ color: "common.black" }}>
         <CardHeader
-          className={classes.cardHeader}
-          avatar={<KeyboardBackspaceIcon className={classes.backIcon} />}
+          avatar={
+            <KeyboardBackspaceIcon
+              sx={{
+                "&:hover": {
+                  cursor: "pointer",
+                },
+              }}
+            />
+          }
           title={`Your ${submissionType} submissions`}
           titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
+          sx={{
+            fontSize: "0.5em",
+            p: 0,
+            mt: 8,
+            "&:hover": {
+              cursor: "pointer",
+            },
+          }}
         />
       </Link>
 

@@ -177,7 +177,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
 
   return (
-    <Container sx={theme => ({ pt: theme.spacing(1) })}>
+    <Container sx={{ pt: 1 }}>
       <Typography component="h1" variant="h4" color="secondary">
         Summary
       </Typography>

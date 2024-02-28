@@ -5,7 +5,6 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
 import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
@@ -27,15 +26,6 @@ import submissionAPIService from "services/submissionAPI"
 import type { OldSubmissionRow, ObjectInsideSubmissionWithTags } from "types"
 import { getItemPrimaryText, pathWithLocale } from "utils"
 
-const useStyles = makeStyles(() => ({
-  tableGrid: {
-    margin: 2,
-  },
-  circularProgress: {
-    margin: 10,
-  },
-}))
-
 interface SelectedSubmission {
   submissionId: string
   submissionTitle: string
@@ -45,7 +35,6 @@ interface SelectedSubmission {
 }
 
 const SelectedSubmissionDetails: React.FC = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const [isFetchingSubmission, setFetchingSubmission] = useState(true)
@@ -68,7 +57,11 @@ const SelectedSubmissionDetails: React.FC = () => {
 
     const objectsArr: OldSubmissionRow[] = []
 
-    const handleObject = async (draft: boolean, objectType: string, objectInSubmission: ObjectInsideSubmissionWithTags) => {
+    const handleObject = async (
+      draft: boolean,
+      objectType: string,
+      objectInSubmission: ObjectInsideSubmissionWithTags
+    ) => {
       const service = draft ? draftAPIService : objectAPIService
       const response = await service.getObjectByAccessionId(objectType, objectInSubmission.accessionId)
 
@@ -245,14 +238,8 @@ const SelectedSubmissionDetails: React.FC = () => {
   }
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-      className={classes.tableGrid}
-    >
-      {isFetchingSubmission && <CircularProgress className={classes.circularProgress} size={50} thickness={2.5} />}
+    <Grid container direction="column" justifyContent="space-between" alignItems="stretch" sx={{ m: 2 }}>
+      {isFetchingSubmission && <CircularProgress size={50} thickness={2.5} sx={{ m: 10 }} />}
       {!isFetchingSubmission && (
         <>
           <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
@@ -271,9 +258,7 @@ const SelectedSubmissionDetails: React.FC = () => {
           <SubmissionDetailTable
             bodyRows={selectedSubmission.allObjects}
             submissionTitle={selectedSubmission.submissionTitle}
-            submissionType={
-              selectedSubmission.published ? SubmissionStatus.published : SubmissionStatus.unpublished
-            }
+            submissionType={selectedSubmission.published ? SubmissionStatus.published : SubmissionStatus.unpublished}
             location={selectedSubmission.published ? "published" : "drafts"}
             onEditSubmission={handleEditSubmission}
             onPublishSubmission={handlePublishSubmission}

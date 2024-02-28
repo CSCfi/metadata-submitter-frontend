@@ -7,7 +7,7 @@ import MuiFormControlLabel from "@mui/material/FormControlLabel"
 import FormGroup from "@mui/material/FormGroup"
 import FormLabel from "@mui/material/FormLabel"
 import ListItemText from "@mui/material/ListItemText"
-import { makeStyles, withStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
@@ -27,63 +27,27 @@ import type {
 } from "types"
 import { getItemPrimaryText, getDraftObjects, getOrigObjectType, pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  formComponent: {
-    margin: 2,
-    padding: 0,
-    overflowY: "auto",
-  },
-  formControl: {
-    marginBottom: 1,
-  },
-  formLabel: {
-    fontWeight: "bold",
-    color: theme.palette.grey[900],
-    padding: 1,
-    borderBottom: `3px solid ${theme.palette.primary.main}`,
-    textTransform: "capitalize",
-  },
-  formControlLabel: {
-    padding: 0,
-    margin: 1,
-    borderBottom: `solid 1px ${theme.palette.secondary.main}`,
-  },
-  label: {
-    margin: 0,
-    padding: 0,
-  },
-  listItemText: {
-    float: "left",
-    maxWidth: "50%",
-    "& span, & p": {
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      maxWidth: "50vw",
-    },
-  },
-  viewButton: {
-    color: theme.palette.primary.main,
-    margin: 1,
-    float: "right",
-  },
-  buttonGroup: {
-    marginTop: 2,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    position: "sticky",
-    zIndex: 1,
-    backgroundColor: theme.palette.background.paper,
-    bottom: 0,
-  },
-}))
+const Form = styled("form")({
+  margin: 2,
+  padding: 0,
+  overflowY: "auto",
+})
 
-const FormControlLabel = withStyles({
-  label: {
-    width: "100%",
-  },
-})(MuiFormControlLabel)
+const Label = styled("div")({
+  margin: 0,
+  padding: 0,
+})
+
+const ButtonGroup = styled("div")(({ theme }) => ({
+  marginTop: 2,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  position: "sticky",
+  zIndex: 1,
+  backgroundColor: theme.palette.background.paper,
+  bottom: 0,
+}))
 
 const ConnectForm = ({ children }: ConnectFormChildren) => {
   const methods = useFormContext()
@@ -96,7 +60,6 @@ type WizardDraftSelectionsProps = {
 }
 
 const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
   const objectsArray = useAppSelector(state => state.objectTypesArray)
@@ -111,7 +74,9 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
 
     const selectedDrafts: Array<ObjectInsideSubmissionWithTags> = checkedBoxValues.map(
       item =>
-        submission.drafts.find((draft: { accessionId: string }) => draft.accessionId === item) as ObjectInsideSubmissionWithTags
+        submission.drafts.find(
+          (draft: { accessionId: string }) => draft.accessionId === item
+        ) as ObjectInsideSubmissionWithTags
     )
     props.onHandleDialog(true, selectedDrafts)
   }
@@ -142,22 +107,37 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className={classes.formComponent}>
+      <Form onSubmit={methods.handleSubmit(onSubmit)}>
         {draftObjects.map((draft: ObjectInsideSubmissionWithTagsBySchema) => {
           const schema = Object.keys(draft)[0]
           return (
             <ConnectForm key={schema}>
               {({ register }: ConnectFormMethods) => {
                 return (
-                  <FormControl className={classes.formControl} fullWidth>
-                    <FormLabel className={classes.formLabel}>{schema}</FormLabel>
+                  <FormControl sx={{ marginBottom: 1 }} fullWidth>
+                    <FormLabel
+                      sx={theme => ({
+                        fontWeight: "bold",
+                        color: theme.palette.grey[900],
+                        p: 1,
+                        borderBottom: `3px solid ${theme.palette.primary.main}`,
+                        textTransform: "capitalize",
+                      })}
+                    >
+                      {schema}
+                    </FormLabel>
                     <FormGroup>
                       {draft[schema].map(item => {
                         const { ref, ...rest } = register(`${item.accessionId}`)
                         return (
-                          <FormControlLabel
+                          <MuiFormControlLabel
+                            sx={{
+                              width: "100%",
+                              padding: 0,
+                              margin: 1,
+                              borderBottom: theme => `solid 1px ${theme.palette.secondary.main}`,
+                            }}
                             key={item.accessionId}
-                            className={classes.formControlLabel}
                             control={
                               <Checkbox
                                 color="primary"
@@ -168,15 +148,24 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
                               />
                             }
                             label={
-                              <div className={classes.label}>
+                              <Label>
                                 <ListItemText
-                                  className={classes.listItemText}
+                                  sx={{
+                                    float: "left",
+                                    maxWidth: "50%",
+                                    "& span, & p": {
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      maxWidth: "50vw",
+                                    },
+                                  }}
                                   primary={getItemPrimaryText(item)}
                                   secondary={item.accessionId}
                                   data-schema={item.schema}
                                 />
                                 <Button
-                                  className={classes.viewButton}
+                                  sx={{ color: theme => theme.palette.primary.main, m: 1, float: "right" }}
                                   aria-label="View draft"
                                   variant="outlined"
                                   size="small"
@@ -184,7 +173,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
                                 >
                                   View
                                 </Button>
-                              </div>
+                              </Label>
                             }
                           />
                         )
@@ -196,7 +185,7 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
             </ConnectForm>
           )
         })}
-        <div className={classes.buttonGroup}>
+        <ButtonGroup>
           <Button
             variant="contained"
             aria-label="Cancel publishing submission contents"
@@ -214,8 +203,8 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
           >
             Publish
           </Button>
-        </div>
-      </form>
+        </ButtonGroup>
+      </Form>
     </FormProvider>
   )
 }

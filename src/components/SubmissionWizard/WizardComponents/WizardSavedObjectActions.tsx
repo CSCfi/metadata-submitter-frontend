@@ -2,7 +2,6 @@ import React from "react"
 
 import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
-import { makeStyles } from "@mui/styles"
 import { useNavigate } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -18,15 +17,6 @@ import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideSubmissionWithTags, ObjectTags } from "types"
 
-const useStyles = makeStyles(theme => ({
-  buttonEdit: {
-    color: theme.palette.primary.main,
-  },
-  buttonDelete: {
-    color: theme.palette.primary.main,
-  },
-}))
-
 type WizardSavedObjectActionsProps = {
   objectId: string
   objectType: string
@@ -37,7 +27,6 @@ type WizardSavedObjectActionsProps = {
 }
 
 const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
   const currentObject = useAppSelector(state => state.currentObject)
 
@@ -139,7 +128,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
   return (
     <ButtonGroup aria-label="Draft actions button group">
       <Button
-        className={classes.buttonEdit}
+        sx={{ color: theme => theme.palette.primary.main }}
         aria-label="Edit submission"
         onClick={() => (props.submissionType === "Draft" ? handleObjectContinue() : handleObjectEdit())}
         data-testid="Edit submission"
@@ -147,7 +136,7 @@ const WizardSavedObjectActions = (props: WizardSavedObjectActionsProps) => {
         {renderEditLabel(props.submissionType)}
       </Button>
       <Button
-        className={classes.buttonDelete}
+        sx={{ color: theme => theme.palette.primary.main }}
         aria-label="Delete submission"
         onClick={() => handleObjectDelete()}
         data-testid="Delete submission"

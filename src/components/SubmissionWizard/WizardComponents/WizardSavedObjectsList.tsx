@@ -1,13 +1,12 @@
 import React from "react"
 
-import { Theme } from "@mui/material"
 import Box from "@mui/material/Box"
 import CardHeader from "@mui/material/CardHeader"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
 import ListItemText from "@mui/material/ListItemText"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 
 import WizardSavedObjectActions from "./WizardSavedObjectActions"
 
@@ -16,32 +15,9 @@ import { useAppSelector } from "hooks"
 import type { ObjectInsideSubmissionWithTags } from "types"
 import { getItemPrimaryText, formatDisplayObjectType } from "utils"
 
-const useStyles = makeStyles((theme: Theme) => ({
-  objectList: {
-    flex: "auto",
-  },
-  header: {
-    marginBlockEnd: "0",
-  },
-  cardHeader: theme.wizard.cardHeader,
-  draftCardHeader: { ...theme.wizard.cardHeader, backgroundColor: theme.palette.secondary.dark },
-  objectListItem: theme.wizard.objectListItem,
-  listItemText: {
-    display: "inline-block",
-    maxWidth: "50%",
-    "& span, & p": {
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-  },
-  buttonEdit: {
-    color: "#007bff",
-  },
-  buttonDelete: {
-    color: "#dc3545",
-  },
-}))
+const ObjectList = styled("div")({
+  flex: "auto",
+})
 
 /**
  * List objects by submission type. Enables deletion of objects
@@ -50,7 +26,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 type WizardSavedObjectsListProps = { objects: Array<ObjectInsideSubmissionWithTags> }
 
 const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
-  const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
 
   // filter submissionTypes that exist in current submissions & sort them according to alphabetical order
@@ -77,7 +52,10 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
   const draftList = !!draftObjects[0].items.length
   const listItems = draftList ? draftObjects : groupedSubmissions
 
-  const displaySubmissionType = (submission: { submissionType: string; items: Array<ObjectInsideSubmissionWithTags> }) => {
+  const displaySubmissionType = (submission: {
+    submissionType: string
+    items: Array<ObjectInsideSubmissionWithTags>
+  }) => {
     switch (submission.submissionType) {
       case ObjectSubmissionTypes.form:
         return submission.items.length >= 2 ? "Forms" : "Form"
@@ -89,22 +67,34 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
   }
 
   return (
-    <div className={classes.objectList}>
+    <ObjectList>
       {listItems &&
         listItems.map(group => (
           <Box pt={0} key={group.submissionType}>
             <CardHeader
+              sx={theme => {
+                return draftList
+                  ? { ...theme.wizard.cardHeader, backgroundColor: theme.palette.secondary.dark }
+                  : { ...theme.wizard.cardHeader }
+              }}
               title={`${draftList ? "" : "Submitted "}${formatDisplayObjectType(objectType)} ${displaySubmissionType(
                 group
               )}`}
               titleTypographyProps={{ variant: "inherit" }}
-              className={draftList ? classes.draftCardHeader : classes.cardHeader}
             />
             <List aria-label={group.submissionType} data-testid={`${group.submissionType}-objects`}>
               {group.items.map(item => (
-                <ListItem key={item.accessionId} className={classes.objectListItem}>
+                <ListItem sx={theme => ({ ...theme.wizard.objectListItem })} key={item.accessionId}>
                   <ListItemText
-                    className={classes.listItemText}
+                    sx={{
+                      display: "inline-block",
+                      maxWidth: "50%",
+                      "& span, & p": {
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      },
+                    }}
                     primary={getItemPrimaryText(item)}
                     secondary={item.accessionId}
                     data-schema={item.schema}
@@ -123,7 +113,7 @@ const WizardSavedObjectsList = ({ objects }: WizardSavedObjectsListProps) => {
             </List>
           </Box>
         ))}
-    </div>
+    </ObjectList>
   )
 }
 

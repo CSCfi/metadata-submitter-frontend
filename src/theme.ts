@@ -82,25 +82,25 @@ let CSCtheme = createTheme({
           font-family: 'Museo Sans';
           font-style: normal;
           font-weight: 100;
-          src: url(${MuseoSans_100}) format("opentype");          
+          src: url(${MuseoSans_100}) format("opentype");
         }
         @font-face {
           font-family: 'Museo Sans';
           font-style: normal;
           font-weight: 300;
-          src: url(${MuseoSans_300}) format("opentype");          
+          src: url(${MuseoSans_300}) format("opentype");
         }
         @font-face {
           font-family: 'Museo Sans';
           font-style: normal;
           font-weight: 500;
-          src: url(${MuseoSans_500}) format("opentype");          
+          src: url(${MuseoSans_500}) format("opentype");
         }
         @font-face {
           font-family: 'Museo Sans';
           font-style: normal;
           font-weight: 700;
-          src: url(${MuseoSans_700}) format("opentype");          
+          src: url(${MuseoSans_700}) format("opentype");
         }
       `,
     },

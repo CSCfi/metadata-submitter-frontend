@@ -2,7 +2,9 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, act } from "@testing-library/react"
+import { screen } from "@testing-library/react"
+import { createRoot } from "react-dom/client"
+import { act } from "react-dom/test-utils"
 import { Provider } from "react-redux"
 import { MemoryRouter } from "react-router-dom"
 import configureStore from "redux-mock-store"
@@ -44,23 +46,25 @@ describe("Page403", () => {
         ],
       },
     })
-    const component = render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
-              <App />
-            </MemoryRouter>
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
-    )
-
-    expect(component.getByText("403 Forbidden Error")).toBeInTheDocument()
+    const container = document.createElement("div")
+    document.body.appendChild(container)
+    const root = createRoot(container)
 
     act(() => {
+      root.render(
+        <Provider store={store}>
+          <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={CSCtheme}>
+              <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
+                <App />
+              </MemoryRouter>
+            </ThemeProvider>
+          </StyledEngineProvider>
+        </Provider>
+      )
       jest.advanceTimersByTime(10000)
     })
+    expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
 
     jest.useRealTimers()
   })

@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from "react"
 
-import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
-import CardHeader from "@mui/material/CardHeader"
+import MuiCardHeader from "@mui/material/CardHeader"
 import Container from "@mui/material/Container"
-import FormControl from "@mui/material/FormControl"
+import MuiFormControl from "@mui/material/FormControl"
 import LinearProgress from "@mui/material/LinearProgress"
 import TextField from "@mui/material/TextField"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
 
@@ -23,44 +22,24 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
 
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    padding: 0,
-  },
-  cardHeader: theme.wizard.cardHeader,
-  cardHeaderAction: {
-    margin: -1,
-  },
-  root: {
+const CardHeader = styled(MuiCardHeader)(({ theme }) => ({
+  "&.MuiCardHeader-root": { ...theme.wizard.cardHeader },
+  "&.MuiCardHeader-action": { margin: -1 },
+}))
+
+const FormControl = styled(MuiFormControl)({
+  "&.MuiFormControl-root": {
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
       margin: 5,
     },
   },
-  hiddenInput: {
-    border: "0",
-    clip: "rect(0, 0, 0, 0)",
-    height: "1px",
-    overflow: "hidden",
-    padding: "0",
-    position: "absolute !important" as "absolute",
-    whiteSpace: "nowrap",
-    width: "1px",
-  },
-  fileField: {
-    display: "inline-flex",
-  },
-  submitButton: {
-    backgroundColor: "#FFF",
-    color: theme.palette.primary.main,
-  },
-  dropzone: {
-    flex: 1,
-    backgroundColor: theme.palette.primary.light,
-    border: "2px dashed #51A808",
-  },
-}))
+})
+
+const FileField = styled("div")({
+  display: "inline-flex",
+})
 
 /*
  * Return React Hook Form based form for uploading xml files. Handles form submitting, validating and error/success alerts.
@@ -70,7 +49,6 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   const objectType = useAppSelector(state => state.objectType)
   const { submissionId } = useAppSelector(state => state.submission)
   const dispatch = useAppDispatch()
-  const classes = useStyles()
   const currentObject = useAppSelector(state => state.currentObject)
   const {
     register,
@@ -184,8 +162,8 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   const submitButton = (
     <Button
+      sx={{ bgcolor: "#FFF", color: "primary.main" }}
       variant="contained"
-      className={classes.submitButton}
       size="small"
       disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || isValidating}
       onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
@@ -195,20 +173,18 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   )
 
   return (
-    <Container maxWidth={false} className={isDragActive ? classes.dropzone : classes.container} {...getRootProps()}>
-      <CardHeader
-        title="Upload XML File"
-        titleTypographyProps={{ variant: "inherit" }}
-        classes={{
-          root: classes.cardHeader,
-          action: classes.cardHeaderAction,
-        }}
-        action={submitButton}
-      />
+    <Container
+      sx={theme =>
+        isDragActive ? { flex: 1, bgcolor: theme.palette.primary.light, border: "2px dashed #51A808" } : { p: 0 }
+      }
+      maxWidth={false}
+      {...getRootProps()}
+    >
+      <CardHeader title="Upload XML File" titleTypographyProps={{ variant: "inherit" }} action={submitButton} />
       {/* React Hook Form */}
       <form onSubmit={handleSubmit(async data => onSubmit(data as FileUpload))}>
-        <FormControl className={classes.root}>
-          <div className={classes.fileField}>
+        <FormControl>
+          <FileField>
             <TextField
               placeholder={placeHolder}
               inputProps={{ readOnly: true, tabIndex: -1 }}
@@ -245,7 +221,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
                 },
               })}
             />
-          </div>
+          </FileField>
           {/* Helper text for selecting / submitting file */}
           {!watchFile || watchFile.length === 0 || errors.fileUpload != null ? (
             <p>Choose a file or drag it here.</p>

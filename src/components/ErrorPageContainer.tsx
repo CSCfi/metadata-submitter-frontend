@@ -1,14 +1,13 @@
 import React, { ReactElement } from "react"
 
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined"
-import { Theme } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Avatar from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 
 import logo from "../images/csc_logo.svg"
 
@@ -22,56 +21,47 @@ type ErrorTypeProps = {
   errorType: string
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  errorContainer: {
-    width: "100%",
-    marginTop: 10,
-  },
-  card: {
-    padding: "2vw",
-  },
-  logo: {
-    backgroundColor: "transparent",
-    width: "6vw",
-    height: "auto",
-    margin: "1vh auto",
-  },
-  errorTitle: {
-    color: theme.palette.common.black,
-    backgroundColor: theme.palette.common.white,
-    border: (props: ErrorTypeProps) =>
-      props.errorType === "warning"
-        ? `1px solid ${theme.palette.warning.main}`
-        : `1px solid ${theme.palette.error.main}`,
-  },
-  errorIcon: {
-    color: (props: ErrorTypeProps) =>
-      props.errorType === "warning" ? theme.palette.warning.main : theme.palette.error.main,
-  },
+const MainContainer = styled(Container)({
+  width: "100%",
+  marginTop: 10,
+})
+
+const MUIAlert = styled(Alert, {
+  shouldForwardProp: prop => prop !== "errorType",
+})<ErrorTypeProps>(({ theme, errorType }) => ({
+  color: theme.palette.common.black,
+  backgroundColor: theme.palette.common.white,
+  border: errorType === "warning" ? `1px solid ${theme.palette.warning.main}` : `1px solid ${theme.palette.error.main}`,
+}))
+
+const ErrorIcon = styled(ErrorOutlineOutlinedIcon, {
+  shouldForwardProp: prop => prop !== "errorType",
+})<ErrorTypeProps>(({ theme, errorType }) => ({
+  color: errorType === "warning" ? theme.palette.warning.main : theme.palette.error.main,
 }))
 
 const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {
   const { children, errorType, title } = props
 
-  const classes = useStyles({ errorType })
-  const errorIcon = <ErrorOutlineOutlinedIcon className={classes.errorIcon} />
+  const errorIcon = <ErrorIcon errorType={errorType} />
 
+  const logoStyles = { backgroundColor: "transparent", width: "6vw", height: "auto", margin: "1vh auto" }
   return (
-    <Container component="main" maxWidth={false} className={classes.errorContainer}>
+    <MainContainer maxWidth={false}>
       <Grid container direction="column" justifyContent="center" alignItems="center">
         <Grid item xs={3}>
-          <Card className={classes.card}>
-            <Avatar variant="square" className={classes.logo}>
-              <img className={classes.logo} src={logo} alt="CSC" />
+          <Card sx={{ p: "2vw" }}>
+            <Avatar variant="square" sx={logoStyles}>
+              <img style={logoStyles} src={logo} alt="CSC" />
             </Avatar>
-            <Alert icon={errorIcon} className={classes.errorTitle}>
+            <MUIAlert icon={errorIcon} errorType={errorType}>
               <strong>{title}</strong>
-            </Alert>
+            </MUIAlert>
             <CardContent>{children}</CardContent>
           </Card>
         </Grid>
       </Grid>
-    </Container>
+    </MainContainer>
   )
 }
 

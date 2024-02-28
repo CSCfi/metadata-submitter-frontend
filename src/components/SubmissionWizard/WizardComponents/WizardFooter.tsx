@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import Button from "@mui/material/Button"
 import Link from "@mui/material/Link"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import { useNavigate, Link as RouterLink } from "react-router-dom"
 
 import WizardAlert from "./WizardAlert"
@@ -17,35 +17,33 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import type { ObjectInsideSubmissionWithTags } from "types"
 import { useQuery, pathWithLocale } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  footerRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flexShrink: 0,
-    borderTop: "solid 1px #ccc",
-    backgroundColor: theme.palette.background.default,
-    position: "fixed",
-    zIndex: 1,
-    left: 0,
-    bottom: 0,
-    padding: "10px",
-    height: "60px",
-    width: "100%",
-  },
-  phantom: {
-    display: "block",
-    padding: "20px",
-    height: "60px",
-    width: "100%",
-  },
+const FooterRow = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  flexShrink: 0,
+  borderTop: "solid 1px #ccc",
+  backgroundColor: theme.palette.background.default,
+  position: "fixed",
+  zIndex: 1,
+  left: 0,
+  bottom: 0,
+  padding: "10px",
+  height: "60px",
+  width: "100%",
 }))
+
+const Phantom = styled("div")({
+  display: "block",
+  padding: "20px",
+  height: "60px",
+  width: "100%",
+})
 
 /**
  * Define wizard footer with changing button actions.
  */
 const WizardFooter: React.FC = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
@@ -117,8 +115,8 @@ const WizardFooter: React.FC = () => {
 
   return (
     <div>
-      <div className={classes.phantom} />
-      <div className={classes.footerRow}>
+      <Phantom />
+      <FooterRow>
         <div>
           {wizardStep < 0 && (
             <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
@@ -166,7 +164,7 @@ const WizardFooter: React.FC = () => {
             </Button>
           </div>
         )}
-      </div>
+      </FooterRow>
       {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
     </div>
   )

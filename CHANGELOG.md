@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
 - Modify Patch submission with only "name" and "description" #816
 - Modified Form layout, Tooltip and Upload XML according to new UI design #811
 
@@ -20,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change url of ROR from http to https #813
 - Refactor **folder** -> **submission** #807
 - Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
+- Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
+- Update major and non-major depencies
 
 ### Added
 

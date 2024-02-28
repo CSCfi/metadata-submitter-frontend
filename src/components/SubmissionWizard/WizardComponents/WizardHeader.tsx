@@ -1,17 +1,6 @@
 import React from "react"
 
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
-
-const useStyles = makeStyles(theme => ({
-  paperTitle: {
-    fontWeight: "bold",
-    color: "#FFF",
-    width: "100%",
-    padding: 2,
-    backgroundColor: theme.palette.primary.light,
-  },
-}))
 
 type DraftHeaderProps = {
   headerText: string
@@ -21,9 +10,19 @@ type DraftHeaderProps = {
  * Render header component for wizards.
  */
 const WizardHeader: React.FC<DraftHeaderProps> = ({ headerText }: DraftHeaderProps) => {
-  const classes = useStyles()
   return (
-    <Typography component="h1" variant="h6" align="center" className={classes.paperTitle}>
+    <Typography
+      sx={{
+        fontWeight: "bold",
+        color: "#FFF",
+        width: "100%",
+        p: 2,
+        bgcolor: theme => theme.palette.primary.light,
+      }}
+      component="h1"
+      variant="h6"
+      align="center"
+    >
       {headerText}
     </Typography>
   )

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 
 import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import Ajv from "ajv"
 import { isEmpty } from "lodash"
 
@@ -15,41 +15,39 @@ import schemaAPIService from "services/schemaAPI"
 import { FormObject, ObjectDetails } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles(theme => ({
-  detailComponents: {
-    "& .MuiTextField-root > .Mui-required": {
-      color: theme.palette.primary.main,
-    },
-    "& .MuiTypography-root": {
-      fontWeight: "bold",
-    },
-    "& .MuiTypography-h2": {
+const DetailComponents = styled("div")(({ theme }) => ({
+  "& .MuiTextField-root > .Mui-required": {
+    color: theme.palette.primary.main,
+  },
+  "& .MuiTypography-root": {
+    fontWeight: "bold",
+  },
+  "& .MuiTypography-h2": {
+    width: "100%",
+    color: theme.palette.primary.light,
+    borderBottom: `2px solid ${theme.palette.secondary.main}`,
+  },
+  "& .MuiTypography-h3": {
+    width: "100%",
+  },
+  "& .array": {
+    "& .arrayRow": {
+      display: "flex",
+      alignItems: "center",
+      marginBottom: 1,
       width: "100%",
-      color: theme.palette.primary.light,
-      borderBottom: `2px solid ${theme.palette.secondary.main}`,
+      "& .MuiTextField-root": {
+        width: "95%",
+      },
     },
-    "& .MuiTypography-h3": {
-      width: "100%",
+    "& h2, h3, h4, h5, h6": {
+      margin: "1 0",
     },
-    "& .array": {
-      "& .arrayRow": {
-        display: "flex",
-        alignItems: "center",
-        marginBottom: 1,
-        width: "100%",
-        "& .MuiTextField-root": {
-          width: "95%",
-        },
-      },
-      "& h2, h3, h4, h5, h6": {
-        margin: "1 0",
-      },
-      "& .MuiPaper-elevation2": {
-        "& .array": { margin: 0 },
-        "& h2": { padding: "0 1" },
-        "& h3, h4": { margin: 1 },
-        "& button": { margin: "0 1" },
-      },
+    "& .MuiPaper-elevation2": {
+      "& .array": { margin: 0 },
+      "& h2": { padding: "0 1" },
+      "& h3, h4": { margin: 1 },
+      "& button": { margin: "0 1" },
     },
   },
 }))
@@ -64,7 +62,6 @@ type ObjectDetailsType = {
  */
 const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
   const { objectType, objectData } = props
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const [states, setStates] = useState({
@@ -125,9 +122,9 @@ const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
     <Box py={1}>
       {states.isLoading && <CircularProgress color="primary"></CircularProgress>}
       {!isEmpty(states.schema) && states.schema && states.objectData && (
-        <div className={classes.detailComponents}>
+        <DetailComponents>
           {JSONSchemaParser.buildDetails(states.schema as FormObject, states.objectData as ObjectDetails)}
-        </div>
+        </DetailComponents>
       )}
     </Box>
   )

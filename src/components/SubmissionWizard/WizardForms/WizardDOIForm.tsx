@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 
-import { Theme } from "@mui/material"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import Ajv from "ajv"
 import { useForm, FormProvider } from "react-hook-form"
 
@@ -19,9 +18,7 @@ import schemaAPIService from "services/schemaAPI"
 import { DoiFormDetails, FormObject } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const useStyles = makeStyles((theme: Theme) => ({
-  form: { ...theme.form },
-}))
+const Form = styled("form")(({ theme }) => ({ ...theme.form }))
 
 const DOIForm = ({ formId }: { formId: string }) => {
   const [dataciteSchema, setDataciteSchema] = useState({})
@@ -70,7 +67,6 @@ const DOIForm = ({ formId }: { formId: string }) => {
   const methods = useForm({ mode: "onBlur", resolver })
 
   const dispatch = useAppDispatch()
-  const classes = useStyles()
 
   // Set form default values
   useEffect(() => {
@@ -102,15 +98,11 @@ const DOIForm = ({ formId }: { formId: string }) => {
   }
   return (
     <FormProvider {...methods}>
-      <form
-        className={classes.form}
-        id={formId}
-        onSubmit={methods.handleSubmit(async data => onSubmit(data as DoiFormDetails))}
-      >
+      <Form id={formId} onSubmit={methods.handleSubmit(async data => onSubmit(data as DoiFormDetails))}>
         <div>
           {Object.keys(dataciteSchema)?.length > 0 ? JSONSchemaParser.buildFields(dataciteSchema as FormObject) : null}
         </div>
-      </form>
+      </Form>
     </FormProvider>
   )
 }

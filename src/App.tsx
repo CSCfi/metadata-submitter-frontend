@@ -1,9 +1,7 @@
 import React, { useEffect } from "react"
 
-import Container, { ContainerProps } from "@mui/material/Container"
+import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
-import { styled } from "@mui/material/styles"
-import { makeStyles } from "@mui/styles"
 import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
@@ -24,25 +22,6 @@ import Home from "views/Home"
 import Login from "views/Login"
 import SubmissionWizard from "views/Submission"
 
-const useStyles = makeStyles(() => ({
-  wizardContent: {
-    padding: 0,
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    height: "100%",
-  },
-}))
-
-const LoginContent: React.FC<ContainerProps & { component: "main" }> = styled(Container)(() => ({
-  padding: 0,
-  margin: 0,
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-}))
-
 // paths that don't show navigation menu on top
 const pathsWithoutNav = ["/error400", "/error401", "/error403", "/error500"]
 
@@ -59,7 +38,6 @@ const NavigationMenu = () => {
  * Routes should be in order from specific to general, root "/" and catcher "*" being the last ones.
  */
 const App: React.FC = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const locale = useAppSelector(state => state.locale)
@@ -128,7 +106,11 @@ const App: React.FC = () => {
   }
 
   const submissionElement = (
-    <Container component="main" maxWidth={false} className={classes.wizardContent}>
+    <Container
+      component="main"
+      maxWidth={false}
+      sx={{ padding: 0, width: "100%", display: "flex", flexDirection: "column", height: "100%" }}
+    >
       <SubmissionWizard />
     </Container>
   )
@@ -142,9 +124,14 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <LoginContent component="main" maxWidth={false} disableGutters>
+            <Container
+              component="main"
+              maxWidth={false}
+              disableGutters
+              sx={{ padding: 0, margin: 0, width: "100%", height: "100%", display: "flex", flexDirection: "column" }}
+            >
               <Login />
-            </LoginContent>
+            </Container>
           }
         />
         <Route

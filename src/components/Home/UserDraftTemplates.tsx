@@ -13,7 +13,6 @@ import FormLabel from "@mui/material/FormLabel"
 import Grid from "@mui/material/Grid"
 import ListItemText from "@mui/material/ListItemText"
 import Typography from "@mui/material/Typography"
-import { makeStyles } from "@mui/styles"
 
 import UserDraftTemplateActions from "./UserDraftTemplateActions"
 
@@ -23,49 +22,7 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import { ObjectInsideSubmissionWithTags } from "types"
 import { formatDisplayObjectType, getItemPrimaryText, getUserTemplates } from "utils"
 
-const useStyles = makeStyles(theme => ({
-  card: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    border: "none",
-    padding: 0,
-  },
-  cardTitle: {
-    fontSize: "0.5em",
-    padding: 0,
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  form: { display: "flex", flexDirection: "column" },
-  formControl: {
-    margin: 8,
-    borderBottom: `0.1rem solid ${theme.palette.secondary.main}`,
-    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-  },
-  formLabel: { display: "flex", justifyContent: "space-between", padding: 2 },
-  collapse: {
-    borderTop: `0.125rem solid ${theme.palette.secondary.main}`,
-    padding: 8,
-    borderRadius: "0.125rem",
-    display: "flex",
-    flexDirection: "column",
-  },
-  formControlLabel: {
-    display: "flex",
-    flex: "1 0 auto",
-    padding: 0,
-    margin: 8,
-    borderBottom: `solid 0.1rem ${theme.palette.secondary.main}`,
-    "&:last-child": {
-      border: "none",
-    },
-  },
-}))
-
 const UserDraftTemplates: React.FC = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const projectId = useAppSelector(state => state.projectId)
@@ -111,21 +68,49 @@ const UserDraftTemplates: React.FC = () => {
     const [open, setOpen] = useState(true)
 
     return (
-      <FormControl key={schema} className={classes.formControl} data-testid={`form-${schema}`}>
-        <FormLabel className={classes.formLabel} onClick={() => setOpen(!open)}>
+      <FormControl
+        key={schema}
+        sx={{
+          m: 8,
+          borderBottom: theme => `0.1rem solid ${theme.palette.secondary.main}`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+        }}
+        data-testid={`form-${schema}`}
+      >
+        <FormLabel sx={{ display: "flex", justifyContent: "space-between", p: 2 }} onClick={() => setOpen(!open)}>
           <Typography display="inline" variant="subtitle1" color="textPrimary">
             {formatDisplayObjectType(schema)}
           </Typography>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </FormLabel>
 
-        <Collapse className={classes.collapse} in={open} timeout={{ enter: 150, exit: 150 }} unmountOnExit>
+        <Collapse
+          sx={{
+            borderTop: theme => `0.125rem solid ${theme.palette.secondary.main}`,
+            p: 8,
+            borderRadius: "0.125rem",
+            display: "flex",
+            flexDirection: "column",
+          }}
+          in={open}
+          timeout={{ enter: 150, exit: 150 }}
+          unmountOnExit
+        >
           {draft[schema].map((item: ObjectInsideSubmissionWithTags) => {
             return (
               <Grid
+                sx={{
+                  display: "flex",
+                  flex: "1 0 auto",
+                  p: 0,
+                  m: 8,
+                  borderBottom: theme => `solid 0.1rem ${theme.palette.secondary.main}`,
+                  "&:last-child": {
+                    border: "none",
+                  },
+                }}
                 container
                 key={item.accessionId}
-                className={classes.formControlLabel}
                 data-testid={`${item.schema}-item`}
               >
                 <Grid item xs>
@@ -169,12 +154,27 @@ const UserDraftTemplates: React.FC = () => {
   )
 
   return (
-    <Card className={classes.card} variant="outlined">
+    <Card
+      variant="outlined"
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        b: "none",
+        p: 0,
+      }}
+    >
       <CardHeader
-        className={classes.cardTitle}
         title={"Your Draft Templates"}
         titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
         subheader="You could choose which draft(s) you would like to reuse when creating a new submission."
+        sx={{
+          fontSize: "0.5em",
+          p: 0,
+          mt: 8,
+          mb: 8,
+        }}
       />
       {templates?.length > 0 ? <DraftList /> : <EmptyList />}
     </Card>

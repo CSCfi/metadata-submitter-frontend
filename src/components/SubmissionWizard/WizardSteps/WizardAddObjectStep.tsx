@@ -2,53 +2,48 @@ import React from "react"
 
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
-import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
 import { useAppSelector } from "hooks"
 import type { FormRef } from "types"
 
-const useStyles = makeStyles(() => ({
-  gridContainer: {
-    margin: 0,
-    width: "100%",
-    "& > :first-child": {
-      paddingLeft: 0,
-    },
-    "& > :last-child": {
-      paddingRight: 0,
-    },
-    "& .MuiGrid-item": {
-      paddingTop: 0,
-    },
+const GridContainer = styled(Grid)({
+  margin: 0,
+  width: "100%",
+  "& > :first-of-type": {
+    paddingLeft: 0,
   },
-  objectList: {
-    width: "40%",
+  "& > :last-child": {
+    paddingRight: 0,
   },
-  objectInfo: {
-    margin: 2,
+  "& .MuiGrid-item": {
+    paddingTop: 0,
   },
-}))
+})
+
+const ObjectInfo = styled("div")({
+  margin: 2,
+})
 
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
 const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
-  const classes = useStyles()
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
   return (
     <>
-      <Grid container spacing={2} className={classes.gridContainer}>
+      <GridContainer container spacing={2}>
         <Grid item xs={12}>
           {objectType === "" ? (
-            <div className={classes.objectInfo}>
+            <ObjectInfo>
               <p>Add objects by clicking the name, then fill form or upload XML File.</p>
               <p>You can also add objects and edit them after saving your draft.</p>
-            </div>
+            </ObjectInfo>
           ) : (
             <WizardAddObjectCard formRef={formRef} />
           )}
@@ -61,7 +56,7 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
             </Grid>
           )}
         </Grid>
-      </Grid>
+      </GridContainer>
     </>
   )
 }

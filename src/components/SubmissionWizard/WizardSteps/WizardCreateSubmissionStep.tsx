@@ -1,4 +1,4 @@
-import React, { RefObject } from "react"
+import React, { RefObject, useEffect, useState } from "react"
 
 import Button from "@mui/material/Button"
 import FormControl from "@mui/material/FormControl"
@@ -21,7 +21,9 @@ import { setObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
+import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import workflowAPIService from "services/workflowAPI"
 import type { SubmissionDataFromForm, FormRef } from "types"
 import { pathWithLocale } from "utils"
 
@@ -53,6 +55,44 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
   const templates = useAppSelector(state => state.templates)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
+  const [workflows, setWorkflows] = useState([""])
+
+  useEffect(() => {
+    let isMounted = true
+    const getAllWorkflows = async () => {
+      if (isMounted) {
+        let cachedWorkflows = sessionStorage.getItem(`cached_workflows`)
+
+        if (!cachedWorkflows) {
+          try {
+            const response = await workflowAPIService.getAllWorkflows()
+            if (response.ok) {
+              cachedWorkflows = JSON.stringify(response.data)
+              sessionStorage.setItem(`cached_workflows`, cachedWorkflows)
+            }
+          } catch (error) {
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: error,
+                helperText: "Error getting all workflows",
+              })
+            )
+          }
+        }
+
+        const parsedWorkflows = JSON.parse(cachedWorkflows as string)
+
+        setWorkflows(Object.keys(parsedWorkflows))
+      }
+    }
+
+    getAllWorkflows()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const {
     handleSubmit,
     control,
@@ -68,6 +108,8 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         ? await transformTemplatesToDrafts(templateAccessionIds, templates, submission.submissionId, dispatch)
         : []
 
+    dispatch(setWorkflowType(data.workflowType))
+
     if (submission && submission?.submissionId) {
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
@@ -78,7 +120,6 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         })
     } else {
       // Create a new submission with selected templates as drafts
-
       dispatch(createSubmission(projectId, data, selectedDraftsArray))
         .then(response => {
           const submissionId = response.data.submissionId
@@ -93,6 +134,9 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         })
     }
   }
+
+  const workflowType = useAppSelector(state => state.workflowType)
+  const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
   return (
     <React.Fragment>
@@ -148,10 +192,30 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           </Grid>
           <Grid item xs={6}>
             <FormControl>
-              <RadioGroup name="submission-type-selection" aria-labelledby="submission-type-selection-label">
-                <FormControlLabel value="FEGA" control={<Radio checked={true} />} label="FEGA" />
-                <FormControlLabel value="BigPicture" control={<Radio disabled />} label="BigPicture (placeholder)" />
-              </RadioGroup>
+              <Controller
+                control={control}
+                name="workflowType"
+                defaultValue={selectedWorkflowType}
+                render={({ field }) => {
+                  const handleChangeWorkflow = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    field.onChange(e.target.value)
+                    setSelectedWorkflowType(e.target.value)
+                  }
+
+                  return (
+                    <RadioGroup
+                      {...field}
+                      name="submission-type-selection"
+                      aria-labelledby="submission-type-selection-label"
+                      onChange={handleChangeWorkflow}
+                    >
+                      {workflows.map(workflow => (
+                        <FormControlLabel key={workflow} value={workflow} control={<Radio />} label={workflow} />
+                      ))}
+                    </RadioGroup>
+                  )
+                }}
+              />
             </FormControl>
           </Grid>
         </Grid>

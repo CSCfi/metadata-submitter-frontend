@@ -26,6 +26,7 @@ const initialState: InitialState = {
   submissionId: "",
   name: "",
   description: "",
+  workflow: "",
   published: false,
   drafts: [],
   metadataObjects: [],
@@ -89,8 +90,11 @@ export default wizardSubmissionSlice.reducer
 export const createSubmission =
   (projectId: string, submissionDetails: SubmissionDataFromForm, drafts?: ObjectInsideSubmissionWithTags[]) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+    const { name, description, workflowType: workflow } = submissionDetails
     const submissionForBackend: SubmissionDetails & { projectId: string } = {
-      ...submissionDetails,
+      name,
+      description,
+      workflow,
       projectId,
       published: false,
       metadataObjects: [],

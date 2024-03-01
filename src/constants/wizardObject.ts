@@ -7,6 +7,11 @@ export const ObjectTypes = {
   dac: "dac",
   policy: "policy",
   dataset: "dataset",
+  bpimage: "bpimage",
+  bpdataset: "bpdataset",
+  bpsample: "bpsample",
+  bpobservation: "bpobservation",
+  bpstaining: "bpstaining",
 }
 
 export const DisplayObjectTypes = {

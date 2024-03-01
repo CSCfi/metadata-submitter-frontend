@@ -35,6 +35,7 @@ const ActionButton = (props: {
   formRef?: FormRef
 }) => {
   const { step, parent, buttonText, disabled, formRef } = props
+
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
   const formState = useAppSelector(state => state.submissionType)
@@ -59,13 +60,10 @@ const ActionButton = (props: {
     dispatch(resetCurrentObject())
     dispatch(updateStep({ step: step, objectType: parent }))
     dispatch(setFocus())
+
     const stepParam = `step=${step}`
     switch (parent) {
       case "submissionDetails": {
-        navigate({ pathname: pathname, search: stepParam })
-        break
-      }
-      case "datafolder": {
         navigate({ pathname: pathname, search: stepParam })
         break
       }
@@ -267,35 +265,34 @@ const ObjectWrapper = styled("div")(({ theme }) => {
 
 const WizardStep = (params: {
   step: number
-  stepItems: {
+  schemas: {
     objectType: string
-    label: string
+    name: string
+    required?: boolean
+    allowMultipleObjects?: boolean
     objects?: { ready?: stepItemObject[]; drafts?: stepItemObject[] }
   }[]
   actionButtonText: string
   formRef?: FormRef
 }) => {
-  const { step, stepItems, actionButtonText, formRef } = params
+  const { step, schemas, actionButtonText, formRef } = params
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
-  const singleObjectStepItems = [ObjectTypes.study]
 
   return (
     <React.Fragment>
-      {stepItems.map((item, index) => {
-        const objectType = item.objectType
-        const label = item.label
-        const objects = item.objects
+      {schemas.map((item, index) => {
+        const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
         const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>
-            <ListItem divider={index !== stepItems?.length - 1} disableGutters disablePadding>
+            <ListItem divider={index !== schemas?.length - 1} disableGutters disablePadding>
               <ObjectWrapper className={isActive ? "activeObject" : ""}>
                 <div className="stepItemHeader">
                   {isActive && <ChevronRightIcon fontSize="large" />}
-                  {label}
+                  {name}
                 </div>
 
                 {objects && (
@@ -329,7 +326,7 @@ const WizardStep = (params: {
                       ? `Add ${objectType === ObjectTypes.dac ? "DAC" : objectType}`
                       : actionButtonText
                   }
-                  disabled={hasObjects && singleObjectStepItems.indexOf(objectType) > -1}
+                  disabled={hasObjects && !allowMultipleObjects}
                   formRef={formRef}
                 />
               </ObjectWrapper>

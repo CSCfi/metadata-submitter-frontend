@@ -55,12 +55,13 @@ const App: React.FC = () => {
 
       if (isMounted) {
         if (response.ok) {
+          const exceptionalSchemas = ["Project", "Submission"]
           const schemas = response.data
-            .filter(
-              (schema: { title: string }) =>
-                schema.title !== "Project" && schema.title !== "Submission" && schema.title !== "Datacite DOI schema"
+            .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
+            .map((schema: { title: string }) =>
+              schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase()
             )
-            .map((schema: { title: string }) => schema.title.toLowerCase())
+
           dispatch(setObjectTypesArray(schemas))
         } else {
           dispatch(
@@ -73,6 +74,11 @@ const App: React.FC = () => {
               ObjectTypes.dac,
               ObjectTypes.policy,
               ObjectTypes.dataset,
+              ObjectTypes.bpsample,
+              ObjectTypes.bpimage,
+              ObjectTypes.bpdataset,
+              ObjectTypes.bpobservation,
+              ObjectTypes.bpstaining,
             ])
           )
         }

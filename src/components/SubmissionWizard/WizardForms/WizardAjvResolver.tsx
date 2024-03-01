@@ -1,4 +1,5 @@
-import Ajv, { ErrorObject, ValidateFunction } from "ajv"
+import { ErrorObject, ValidateFunction } from "ajv"
+import Ajv2020 from "ajv/dist/2020"
 import addFormats from "ajv-formats"
 import localize from "ajv-i18n"
 import { appendErrors, FieldError } from "react-hook-form"
@@ -61,7 +62,7 @@ export const WizardAjvResolver = (validationSchema: Record<string, unknown>, loc
   if (!validationSchema) {
     throw new Error("Undefined schema, not able to validate")
   }
-  const ajv = new Ajv({ allErrors: true, coerceTypes: true, strict: false })
+  const ajv = new Ajv2020({ allErrors: true, coerceTypes: true, strict: false })
   addFormats(ajv, { mode: "fast", formats: ["email", "uri", "date-time"], keywords: true })
   return async (values: Record<string, unknown>) => {
     const validate = ajv.compile(validationSchema)

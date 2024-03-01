@@ -15,7 +15,8 @@ import WizardStep from "./WizardStep"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { FormRef } from "types"
+import workflowAPIService from "services/workflowAPI"
+import type { FormRef, Workflow } from "types"
 
 // Top & bottom borders for first and last disabled elements
 const AccordionWrapper = styled("div")(({ theme }) => ({
@@ -77,10 +78,26 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
+  const workflowType = useAppSelector(state => state.workflowType)
+
   const dispatch = useAppDispatch()
+
   const location = useLocation()
 
-  const mappedSteps = WizardMapObjectsToStepHook(submission, objectTypesArray)
+  const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
+
+  // Fetch workflow based on workflowType
+  useEffect(() => {
+    const getWorkflow = async () => {
+      if (workflowType) {
+        const response = await workflowAPIService.getWorkflowByType(workflowType)
+        setCurrentWorkflow(response.data)
+      }
+    }
+    getWorkflow()
+  }, [workflowType])
+
+  const { mappedSteps } = WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow)
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
@@ -89,16 +106,16 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       const stepInUrl = Number(location.search.split("step=")[1].slice(0, 1))
       const currentStep = mappedSteps[stepInUrl - 1]
 
-      if (currentStep && currentStep.stepItems?.length) {
+      if (currentStep && currentStep.schemas?.length) {
         dispatch(
           updateStep({
             step: Number(stepInUrl),
-            objectType: currentStep.stepItems.length === 1 ? currentStep.stepItems[0].objectType : "",
+            objectType: currentStep.schemas.length > 0 ? currentStep.schemas[0].objectType : "",
           })
         )
       }
     }
-  }, [])
+  }, [mappedSteps.length])
 
   // Reset object type state on component destroy
   useEffect(
@@ -120,6 +137,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   // Open panel when navigating to next step and close others
   useEffect(() => {
     const change = [...expandedPanels.filter(i => i === currentStepObject.step), currentStepObject.step]
+
     setExpandedPanels(change)
   }, [currentStepObject.step])
 
@@ -137,14 +155,14 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>
-                {stepNumber}. {step.label}
+                {stepNumber}. {step.title}
               </Typography>
             </AccordionSummary>
-            {step.stepItems && step.actionButtonText && (
+            {step.schemas && step.actionButtonText && (
               <AccordionDetails>
                 <WizardStep
                   step={stepNumber}
-                  stepItems={step.stepItems}
+                  schemas={step.schemas}
                   actionButtonText={step.actionButtonText}
                   formRef={formRef}
                 />

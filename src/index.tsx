@@ -29,11 +29,11 @@ const MyApp = (
   </Provider>
 )
 
-const root = createRoot(document.getElementById("root"))
+const root = createRoot(document.getElementById("root") as HTMLElement)
 root.render(MyApp)
 /**
  * Reload app with after redux store has been reloaded, see: https://redux-toolkit.js.org/tutorials/advanced-tutorial#store-setup-and-hmr
  */
 if (process.env.NODE_ENV === "development" && module.hot) {
-  module.hot.accept("./App", root)
+  module.hot.accept("./App", () => root)
 }

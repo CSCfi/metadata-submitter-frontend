@@ -28,13 +28,45 @@ export type Schema = "study" | "dac" | "policy" | "sample" | "experiment" | "run
 
 export type StepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }
 
-export type StepObject = {
-  label: string
-  stepItems?: {
+export type Workflow = {
+  name: string
+  description: string
+  steps: WorkflowStep[]
+  publish: WorkflowPublish[]
+}
+
+export type WorkflowStep = {
+  required: boolean
+  title: string
+  schemas: WorkflowSchema[]
+}
+
+export type WorkflowSchema = {
+  name: string
+  required: boolean
+  allowMultipleObjects: boolean
+}
+
+export type WorkflowPublish = {
+  publish: {
+    name: string
+    endpoint: string
+    requiredSchemas?: string[]
+    required?: string[]
+  }
+}
+
+export type MappedSteps = {
+  title: string
+  schemas?: {
+    name: string
     objectType: string
-    label: string
+    title?: string
+    required?: boolean
+    allowMultipleObjects?: boolean
     objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
   }[]
+  required?: boolean
   actionButtonText?: string
   disabled?: boolean
 }
@@ -77,6 +109,7 @@ export type ObjectInsideSubmissionWithTagsBySchemaAndStatus = {
 export type SubmissionDetails = {
   name: string
   description: string
+  workflow: string
   dateCreated?: number
   published: boolean
   drafts: Array<ObjectInsideSubmissionWithTags>
@@ -96,6 +129,7 @@ export type SubmissionRow = {
 export type SubmissionDataFromForm = {
   name: string
   description: string
+  workflowType: string
 }
 
 export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails }

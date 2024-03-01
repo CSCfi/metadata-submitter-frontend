@@ -23,6 +23,7 @@ import stepObjectReducer from "features/wizardStepObjectSlice"
 import submissionReducer from "features/wizardSubmissionSlice"
 import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 import wizardXMLModalReducer from "features/wizardXMLModalSlice"
+import workflowTypeReducer from "features/workflowTypeSlice"
 
 const rootReducer = combineReducers({
   locale: localeReducer,
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   openedDoiForm: openedDoiFormReducer,
   projectId: projectReducer,
   openedXMLModal: wizardXMLModalReducer,
+  workflowType: workflowTypeReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

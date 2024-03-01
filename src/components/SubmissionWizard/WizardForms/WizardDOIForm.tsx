@@ -1,7 +1,10 @@
+/* Breaking change for JSON schema version draft-2020-12:
+ * https://ajv.js.org/json-schema.html#draft-2020-12
+ */
 import React, { useEffect, useState } from "react"
 
 import { styled } from "@mui/system"
-import Ajv from "ajv"
+import Ajv2020 from "ajv/dist/2020"
 import { useForm, FormProvider } from "react-hook-form"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
@@ -29,8 +32,9 @@ const DOIForm = ({ formId }: { formId: string }) => {
     const getDataciteSchema = async () => {
       let dataciteSchema = sessionStorage.getItem(`cached_datacite_schema`)
       let parsedDataciteSchema: FormObject | undefined = undefined
+      const ajv = new Ajv2020()
 
-      if (!dataciteSchema || !new Ajv().validateSchema(JSON.parse(dataciteSchema))) {
+      if (!dataciteSchema || !ajv.validateSchema(JSON.parse(dataciteSchema))) {
         try {
           const response = await schemaAPIService.getSchemaByObjectType("datacite")
           dataciteSchema = JSON.stringify(response.data)

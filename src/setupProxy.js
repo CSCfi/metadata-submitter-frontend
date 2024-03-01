@@ -26,6 +26,7 @@ module.exports = function (app) {
       "/logout",
       "/v1/users",
       "/v1/templates",
+      "/v1/workflows",
     ],
     createProxyMiddleware({
       target: `http://${proxy}`,

@@ -10,10 +10,11 @@ import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFoo
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
-import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
+//import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
+import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { FormRef } from "types"
@@ -30,9 +31,11 @@ const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, ob
     case 2:
     case 3:
     case 4:
-      return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
-      return <WizardShowSummaryStep />
+      return <WizardAddObjectStep formRef={objectFormRef} />
+    case 6:
+      //return <WizardShowSummaryStep />
+      break
     default:
       return <Page404 />
   }
@@ -62,7 +65,7 @@ const SubmissionWizard: React.FC = () => {
       if (isMounted) {
         if (response.ok) {
           dispatch(setSubmission(response.data))
-
+          dispatch(setWorkflowType(response.data.workflow))
           setFetchingSubmission(false)
         } else {
           navigate({ pathname: pathWithLocale("submission"), search: "step=1" })

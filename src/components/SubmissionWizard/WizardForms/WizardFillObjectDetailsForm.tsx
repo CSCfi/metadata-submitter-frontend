@@ -1,3 +1,6 @@
+/* Breaking change for JSON schema version draft-2020-12:
+ * https://ajv.js.org/json-schema.html#draft-2020-12
+ */
 import React, { useEffect, useState, useRef, RefObject } from "react"
 
 import Alert from "@mui/material/Alert"
@@ -6,7 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
 import { styled } from "@mui/system"
-import Ajv from "ajv"
+import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
@@ -495,8 +498,9 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
     const fetchSchema = async () => {
       const schema: string | null = sessionStorage.getItem(`cached_${objectType}_schema`)
       let parsedSchema: FormObject
+      const ajv = new Ajv2020()
 
-      if (!schema || !new Ajv().validateSchema(JSON.parse(schema))) {
+      if (!schema || !ajv.validateSchema(JSON.parse(schema))) {
         const response = await schemaAPIService.getSchemaByObjectType(objectType)
         if (response.ok) {
           parsedSchema = response.data

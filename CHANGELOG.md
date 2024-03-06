@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
 - Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
 - Update major and non-major depencies
+- Added new way for having Redux store and mock data to be used in Jest tests without using an external library #922
 
 ### Added
 
@@ -28,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New accordion stepper for submission #538
 - Update datacite's affiliation fields in cypress tests #770
 - Added changes for diffrent types of workflow when creating a submission #921
+
+### Removed
+
+- Removed `redux-mock-store` library which was used to mock Redux store and data for Jest tests #922
 
 ## [0.13.0] - 2021-04-7
 

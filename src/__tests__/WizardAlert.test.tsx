@@ -1,21 +1,14 @@
 import React from "react"
 
-import { render, screen } from "@testing-library/react"
-import { Provider } from "react-redux"
+import { screen } from "@testing-library/react"
 import { BrowserRouter } from "react-router-dom"
-import configureStore from "redux-mock-store"
 
 import WizardAlert from "../components/SubmissionWizard/WizardComponents/WizardAlert"
 
 import { ObjectSubmissionsArray } from "constants/wizardObject"
-
-const mockStore = configureStore([])
+import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardAlert", () => {
-  const store = mockStore({
-    submissionType: "",
-  })
-
   test("should render appropriate dialogs", () => {
     const alerts = [
       { location: "submission", types: ObjectSubmissionsArray },
@@ -24,12 +17,13 @@ describe("WizardAlert", () => {
     ]
     alerts.forEach((alert: { location: string; types: string[] }) => {
       alert.types.forEach((type: string) => {
-        render(
+        renderWithProviders(
           <BrowserRouter>
-            <Provider store={store}>
-              <WizardAlert alertType={type} parentLocation={Object.keys(alert)[0]} onAlert={() => ({})} />
-            </Provider>
-          </BrowserRouter>
+            <WizardAlert alertType={type} parentLocation={Object.keys(alert)[0]} onAlert={() => ({})} />
+          </BrowserRouter>,
+          {
+            preloadedState: { submissionType: "" },
+          }
         )
         expect(screen.getByRole("dialog")).toBeDefined()
       })

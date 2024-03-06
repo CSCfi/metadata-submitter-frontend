@@ -2,12 +2,10 @@
 
 import "@testing-library/jest-dom"
 //import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-//import { render, screen } from "@testing-library/react"
+//import { screen } from "@testing-library/react"
 //import { rest } from "msw"
 import { setupServer } from "msw/node"
-//import { Provider } from "react-redux"
 //import { MemoryRouter } from "react-router-dom"
-//import configureStore from "redux-mock-store"
 
 //import CSCtheme from "../theme"
 
@@ -15,11 +13,7 @@ import { setupServer } from "msw/node"
 
 //import SelectedSubmissionDetails from "components/Home/SelectedSubmissionDetails"
 //import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
-
-//const mockStore = configureStore([])
-//const store = mockStore({
-//  openedRows: [0],
-//})
+//import { renderWithProviders } from "utils/test-utils"
 
 const server = setupServer()
 
@@ -66,16 +60,19 @@ describe("Object details", () => {
     //    )
     //  })
     //)
-    //render(
+    //renderWithProviders(
     //  <MemoryRouter initialEntries={[{ pathname: "/en/home/published/testaccessionid" }]}>
-    //    <Provider store={store}>
     //      <StyledEngineProvider injectFirst>
     //        <ThemeProvider theme={CSCtheme}>
     //          <SelectedSubmissionDetails />
     //        </ThemeProvider>
     //      </StyledEngineProvider>
-    //    </Provider>
-    //  </MemoryRouter>
+    //  </MemoryRouter>,
+    //{
+    //  preloadedState: {
+    //    openedRows: [0],
+    //  }
+    //}
     //)
     //const toggleDetailsButton = await screen.findByTestId("toggle-details")
     //expect(toggleDetailsButton).toBeInTheDocument()
@@ -99,14 +96,15 @@ describe("Object details", () => {
     //  arrayFields: { checkboxArray: ["Checkbox item 1", "Checkbox item 2"], oneOfArray: [{ key2: "Test item" }] },
     //  oneOf: { oneOfField: { firstOption: "Test label" } },
     //}
-    //render(
-    //  <Provider store={store}>
+    //renderWithProviders(
     //    <StyledEngineProvider injectFirst>
     //      <ThemeProvider theme={CSCtheme}>
     //        <WizardObjectDetails objectType="study" objectData={objectData} />
     //      </ThemeProvider>
-    //    </StyledEngineProvider>
-    //  </Provider>
+    //    </StyledEngineProvider>,
+    //  preloadedState: {
+    //    openedRows: [0],
+    //
     //)
     // Sections
     // Note: Nested properties have at least 2 sections

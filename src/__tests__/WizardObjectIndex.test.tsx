@@ -2,20 +2,18 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen } from "@testing-library/react"
-import { Provider } from "react-redux"
-import configureStore from "redux-mock-store"
+import { screen } from "@testing-library/react"
 
 import WizardObjectIndex from "../components/SubmissionWizard/WizardComponents/WizardObjectIndex"
 import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"
-
-const mockStore = configureStore([])
+import { Schema } from "types"
+import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardObjectIndex", () => {
   it("should render badge with number correctly", async () => {
-    const store = mockStore({
+    const preloadedState = {
       objectTypesArray: [
         ObjectTypes.study,
         ObjectTypes.sample,
@@ -25,31 +23,38 @@ describe("WizardObjectIndex", () => {
         ObjectTypes.dac,
         ObjectTypes.policy,
         ObjectTypes.dataset,
-      ],
+      ] as Schema[],
       submission: {
+        name: "submission name",
+        description: "submission description",
+        published: false,
+        submissionId: "FOL12341234",
         drafts: [
-          { accessionId: "TESTID1234", schema: `draft-${ObjectTypes.study}` },
-          { accessionId: "TESTID5678", schema: `draft-${ObjectTypes.study}` },
-          { accessionId: "TESTID0101", schema: `draft-${ObjectTypes.analysis}` },
-          { accessionId: "TESTID0202", schema: `draft-${ObjectTypes.experiment}` },
+          { accessionId: "TESTID1234", schema: `draft-${ObjectTypes.study}`, tags: {} },
+          { accessionId: "TESTID5678", schema: `draft-${ObjectTypes.study}`, tags: {} },
+          { accessionId: "TESTID0101", schema: `draft-${ObjectTypes.analysis}`, tags: {} },
+          { accessionId: "TESTID0202", schema: `draft-${ObjectTypes.experiment}`, tags: {} },
         ],
         metadataObjects: [
-          { accessionId: "TESTID1234", schema: ObjectTypes.study },
-          { accessionId: "TESTID5678", schema: ObjectTypes.study },
-          { accessionId: "TESTID0101", schema: ObjectTypes.analysis },
-          { accessionId: "TESTID0202", schema: ObjectTypes.experiment },
+          { accessionId: "TESTID1234", schema: ObjectTypes.study, tags: {} },
+          { accessionId: "TESTID5678", schema: ObjectTypes.study, tags: {} },
+          { accessionId: "TESTID0101", schema: ObjectTypes.analysis, tags: {} },
+          { accessionId: "TESTID0202", schema: ObjectTypes.experiment, tags: {} },
         ],
+        workflow: "FEGA",
+        doiInfo: { creators: [], contributors: [], subjects: [] },
       },
-    })
+    }
 
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardObjectIndex />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardObjectIndex />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      {
+        preloadedState,
+      }
     )
 
     const badge = await screen.queryAllByTestId("badge")

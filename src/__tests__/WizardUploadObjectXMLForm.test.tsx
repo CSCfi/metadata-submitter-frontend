@@ -1,19 +1,16 @@
-// import React from "react"
+import React from "react"
 
 import "@testing-library/jest-dom"
-// import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-// import { render, screen } from "@testing-library/react"
-// import userEvent from "@testing-library/user-event"
-// import { Provider } from "react-redux"
-// import configureStore from "redux-mock-store"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
+import { screen } from "@testing-library/react"
+//import userEvent from "@testing-library/user-event"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
-// import WizardUploadObjectXMLForm from "../components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
-// import CSCtheme from "../theme"
+import WizardUploadObjectXMLForm from "../components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"
+import CSCtheme from "../theme"
 
-// import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-
-// const mockStore = configureStore([])
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
 
@@ -21,45 +18,47 @@ expect.extend({ toMatchDiffSnapshot })
  * The rest of the test will be modified according to the new design in another PR
  */
 describe("WizardStepper", () => {
-  // const store = mockStore({
-  //   submissionType: ObjectSubmissionTypes.form,
-  //   submission: {
-  //     description: "AWD",
-  //     id: "FOL90524783",
-  //     name: "Testname",
-  //     published: false,
-  //     drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.study }],
-  //   },
-  // })
+  const preloadedState = {
+    submissionType: ObjectSubmissionTypes.form,
+    submission: {
+      submissionId: "",
+      description: "AWD",
+      id: "FOL90524783",
+      name: "Testname",
+      published: false,
+      drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.study, tags: {} }],
+      metadataObjects: [],
+      workflow: "",
+      doiInfo: { creators: [], contributors: [], subjects: [] },
+    },
+  }
 
   it("should have send button disabled when there's no validated xml file", async () => {
-    //   render(
-    //     <Provider store={store}>
-    //       <StyledEngineProvider injectFirst>
-    //         <ThemeProvider theme={CSCtheme}>
-    //           <WizardUploadObjectXMLForm />
-    //         </ThemeProvider>
-    //       </StyledEngineProvider>
-    //     </Provider>
-    //   )
-    //   const button = await screen.getByText(/submit/i)
-    //   expect(button).toHaveAttribute("disabled")
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardUploadObjectXMLForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
+    )
+    const button = await screen.getByText(/submit/i)
+    expect(button).toHaveAttribute("disabled")
   })
 
   it("should have uploaded file in input", async () => {
-    // const file = new File(["test"], "test.xml", { type: "text/xml" })
-    // render(
-    //   <Provider store={store}>
-    //     <StyledEngineProvider injectFirst>
-    //       <ThemeProvider theme={CSCtheme}>
-    //         <WizardUploadObjectXMLForm />
-    //       </ThemeProvider>
-    //     </StyledEngineProvider>
-    //   </Provider>
-    // )
-    // const input = (await screen.findByTestId("xml-upload")) as HTMLInputElement
-    // await userEvent.upload(input, file)
-    // if (input.files) expect(input.files[0]).toStrictEqual(file)
-    // expect(input.files).toHaveLength(1)
+    //const file = new File(["test"], "test.xml", { type: "text/xml" })
+    //renderWithProviders(
+    //  <StyledEngineProvider injectFirst>
+    //    <ThemeProvider theme={CSCtheme}>
+    //      <WizardUploadObjectXMLForm />
+    //    </ThemeProvider>
+    //  </StyledEngineProvider>,
+    //  { preloadedState }
+    //)
+    //const input = (await screen.findByTestId("xml-upload")) as HTMLInputElement
+    //await userEvent.upload(input, file)
+    //if (input.files) expect(input.files[0]).toStrictEqual(file)
+    //expect(input.files).toHaveLength(1)
   })
 })

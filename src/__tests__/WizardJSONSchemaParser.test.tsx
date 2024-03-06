@@ -2,12 +2,10 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, waitFor } from "@testing-library/react"
+import { screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { get } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
-import { Provider } from "react-redux"
-import configureStore from "redux-mock-store"
 
 import CSCtheme from "../theme"
 
@@ -16,9 +14,7 @@ import CustomSchema from "./fixtures/custom_schema.json"
 import JSONSchemaParser from "components/SubmissionWizard/WizardForms/WizardJSONSchemaParser"
 import { FormObject } from "types"
 import { pathToName } from "utils/JSONSchemaUtils"
-
-const mockStore = configureStore([])
-const store = mockStore({})
+import { renderWithProviders } from "utils/test-utils"
 
 const schema = CustomSchema
 
@@ -28,21 +24,19 @@ describe("Test form render by custom schema", () => {
       const methods = useForm()
 
       return (
-        <Provider store={store}>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={CSCtheme}>
-              <FormProvider {...methods}>
-                <form id="hook-form">
-                  <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
-                </form>
-              </FormProvider>
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </Provider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <FormProvider {...methods}>
+              <form id="hook-form">
+                <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
+              </form>
+            </FormProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
       )
     }
 
-    render(<FormComponent />)
+    renderWithProviders(<FormComponent />)
   })
 
   const testLabels = (source: FormObject) => {

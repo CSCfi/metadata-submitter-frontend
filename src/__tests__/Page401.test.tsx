@@ -2,21 +2,18 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, act } from "@testing-library/react"
-import { Provider } from "react-redux"
+import { screen, act } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
-import configureStore from "redux-mock-store"
 
 import CSCtheme from "../theme"
 
 import App from "App"
+import { renderWithProviders } from "utils/test-utils"
 import Page401 from "views/ErrorPages/Page401"
-
-const mockStore = configureStore()
 
 describe("Page401", () => {
   test("renders Page401 component", () => {
-    render(
+    renderWithProviders(
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={CSCtheme}>
           <Page401 />
@@ -33,19 +30,27 @@ describe("Page401", () => {
 
   test("redirects to Main Page after 10s", () => {
     jest.useFakeTimers()
-    const store = mockStore({
-      user: { name: "test" },
-    })
-    const component = render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
-              <App />
-            </MemoryRouter>
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+
+    const component = renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
+            <App />
+          </MemoryRouter>
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      {
+        preloadedState: {
+          user: {
+            id: "001",
+            name: "Test User",
+            projects: [
+              { projectId: "PROJECT1", projectNumber: "Project 1" },
+              { projectId: "PROJECT2", projectNumber: "Project 2" },
+            ],
+          },
+        },
+      }
     )
 
     expect(component.getByText("401 Authorization Error")).toBeInTheDocument()

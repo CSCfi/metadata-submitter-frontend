@@ -10,13 +10,14 @@ import { BrowserRouter as Router } from "react-router-dom"
 import CSCtheme from "./theme"
 
 import App from "App"
-import store from "store"
+import { setupStore } from "store"
 
 import "./i18n"
 
 /**
  * Render app with redux store and custom theme.
  */
+const store = setupStore()
 const MyApp = (
   <Provider store={store}>
     <Router>

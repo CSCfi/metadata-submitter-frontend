@@ -231,7 +231,9 @@ const WizardUploadObjectXMLForm: React.FC = () => {
           {/* Errors */}
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
           {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
-          {errors.fileUpload?.type === "isValidXML" && <Alert severity="error">{errors?.fileUpload?.message}</Alert>}
+          {errors.fileUpload?.type === "isValidXML" && (
+            <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>
+          )}
           {/* Progress bar */}
           {isSubmitting && <LinearProgress />}
         </FormControl>

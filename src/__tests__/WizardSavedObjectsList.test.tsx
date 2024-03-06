@@ -2,18 +2,15 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen, within } from "@testing-library/react"
-import { Provider } from "react-redux"
+import { screen, within } from "@testing-library/react"
 import { MemoryRouter as Router } from "react-router-dom"
-import configureStore from "redux-mock-store"
 
 import WizardSavedObjectsList from "../components/SubmissionWizard/WizardComponents/WizardSavedObjectsList"
 import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { ObjectInsideSubmissionWithTags } from "types"
-
-const mockStore = configureStore([])
+import { renderWithProviders } from "utils/test-utils"
 
 const submissions: ObjectInsideSubmissionWithTags[] = [
   {
@@ -41,31 +38,32 @@ const drafts = [
   },
 ]
 
-const store = mockStore({
+const preloadedState = {
   objectType: ObjectTypes.sample,
-  wizardStep: 1,
   submission: {
+    submissionId: "",
     name: "submission name",
     description: "submission description",
     published: false,
     metadataObjects: [],
     id: "FOL12341234",
     drafts: drafts,
+    workflow: "FEGA",
+    doiInfo: { creators: [], contributors: [], subjects: [] },
   },
-})
+}
 
 describe("WizardSavedObjectsList with submitted objects", () => {
   beforeEach(() => {
-    render(
+    renderWithProviders(
       <Router>
-        <Provider store={store}>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={CSCtheme}>
-              <WizardSavedObjectsList objects={submissions} />
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </Provider>
-      </Router>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardSavedObjectsList objects={submissions} />
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </Router>,
+      { preloadedState }
     )
   })
 
@@ -119,16 +117,15 @@ describe("WizardSavedObjectsList with submitted objects", () => {
 
 describe("WizardSavedObjectsList with drafts", () => {
   beforeEach(() => {
-    render(
+    renderWithProviders(
       <Router>
-        <Provider store={store}>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={CSCtheme}>
-              <WizardSavedObjectsList objects={drafts} />
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </Provider>
-      </Router>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <WizardSavedObjectsList objects={drafts} />
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </Router>,
+      { preloadedState }
     )
   })
 

@@ -6,6 +6,10 @@ const store = configureStore({
   reducer: rootReducer,
 })
 
+export const setupStore = () => {
+  return store
+}
+
 if (process.env.NODE_ENV === "development" && module.hot) {
   module.hot.accept("./rootReducer", async () => {
     const newRootReducer = await (await import("./rootReducer")).default
@@ -13,6 +17,5 @@ if (process.env.NODE_ENV === "development" && module.hot) {
   })
 }
 
-export type AppDispatch = typeof store.dispatch
-
-export default store
+export type AppStore = ReturnType<typeof setupStore>
+export type AppDispatch = AppStore["dispatch"]

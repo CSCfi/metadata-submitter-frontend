@@ -2,15 +2,16 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 
 import CSCtheme from "../theme"
 
+import { renderWithProviders } from "utils/test-utils"
 import Page400 from "views/ErrorPages/Page400"
 
 describe("Page400", () => {
   test("renders Page400 component", () => {
-    render(
+    renderWithProviders(
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={CSCtheme}>
           <Page400 />

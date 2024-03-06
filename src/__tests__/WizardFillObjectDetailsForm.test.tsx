@@ -2,16 +2,13 @@ import React from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
-import { Provider } from "react-redux"
-import configureStore from "redux-mock-store"
+import { act, fireEvent, screen, waitFor } from "@testing-library/react"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-
-const mockStore = configureStore([])
+import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardFillObjectDetailsForm", () => {
   const schema = {
@@ -52,47 +49,48 @@ describe("WizardFillObjectDetailsForm", () => {
     },
   }
 
-  const store = mockStore({
+  const preloadedState = {
     objectType: ObjectTypes.study,
     submissionType: ObjectSubmissionTypes.form,
     submission: {
       description: "AWD",
-      id: "FOL90524783",
+      submissionId: "FOL90524783",
       name: "Testname",
       published: false,
       metadataObjects: [
-        { accessionId: "id1", schema: ObjectTypes.study },
-        { accessionId: "id2", schema: ObjectTypes.sample },
+        { accessionId: "id1", schema: ObjectTypes.study, tags: {} },
+        { accessionId: "id2", schema: ObjectTypes.sample, tags: {} },
       ],
+      drafts: [],
+      workflow: "",
+      doiInfo: { creators: [], contributors: [], subjects: [] },
     },
     openedXMLModal: false,
-  })
+  }
 
   sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
 
   it("should create study form from schema in sessionStorage", async () => {
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
     )
     await waitFor(() => screen.getByText("Study Details"))
     expect(screen.getByText("Study Details")).toBeDefined()
   })
 
   it("should validate without errors on blur", async () => {
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
     )
     await waitFor(() => {
       const input = screen.getByTestId("descriptor.studyTitle")
@@ -103,14 +101,13 @@ describe("WizardFillObjectDetailsForm", () => {
   })
 
   test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
     )
 
     // For description with length equal or less than 60, the tooltip should display all content
@@ -126,14 +123,13 @@ describe("WizardFillObjectDetailsForm", () => {
   })
 
   test("should show partly tooltip with Read more/Expand option on mouse over if the text length is > 60 chars", async () => {
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
     )
 
     // For description with length more than 60, the tooltip should display Read more/Expand
@@ -167,14 +163,13 @@ describe("WizardFillObjectDetailsForm", () => {
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
   test("should call sessionStorage", async () => {
     const spy = jest.spyOn(Storage.prototype, "getItem")
-    render(
-      <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      </Provider>
+    renderWithProviders(
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={CSCtheme}>
+          <WizardFillObjectDetailsForm />
+        </ThemeProvider>
+      </StyledEngineProvider>,
+      { preloadedState }
     )
     expect(spy).toBeCalledWith("cached_study_schema")
 

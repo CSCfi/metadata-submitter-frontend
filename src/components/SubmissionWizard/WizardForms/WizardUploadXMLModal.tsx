@@ -246,7 +246,9 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
         <Stack position="absolute" bottom="-30%" left="0" right="0">
           {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
           {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
-          {errors.fileUpload?.type === "isValidXML" && <Alert severity="error">{errors?.fileUpload?.message}</Alert>}
+          {errors.fileUpload?.type === "isValidXML" && (
+            <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>
+          )}
         </Stack>
         {loading && (
           <Stack

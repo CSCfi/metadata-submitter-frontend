@@ -3,7 +3,7 @@
   "version": "0.13.0",
   "private": true,
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^9.1.2",
+    "@apidevtools/json-schema-ref-parser": "^11.5.4",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/codemod": "^5.15.11",

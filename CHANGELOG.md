@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
 - Update major and non-major depencies
 - Added new way for having Redux store and mock data to be used in Jest tests without using an external library #922
+- Update json-schema-ref-parser to latest stable version 11.5.4
 
 ### Added
 

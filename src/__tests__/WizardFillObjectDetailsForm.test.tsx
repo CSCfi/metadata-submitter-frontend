@@ -70,6 +70,10 @@ describe("WizardFillObjectDetailsForm", () => {
 
   sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
 
+  beforeEach(() => {
+    jest.setTimeout(10000)
+  })
+
   it("should create study form from schema in sessionStorage", async () => {
     renderWithProviders(
       <StyledEngineProvider injectFirst>

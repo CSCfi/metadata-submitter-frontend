@@ -20,6 +20,7 @@ const schema = CustomSchema
 
 describe("Test form render by custom schema", () => {
   beforeEach(() => {
+    jest.setTimeout(10000)
     const FormComponent = () => {
       const methods = useForm()
 

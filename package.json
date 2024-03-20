@@ -20,7 +20,7 @@
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "ajv-i18n": "^4.2.0",
-    "apisauce": "3.0.0",
+    "apisauce": "3.0.1",
     "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "https-browserify": "^1.0.0",

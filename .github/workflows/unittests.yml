@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         node: ["16"]
-    name: Jest unit tests and coveralls push
+    name: Vitest unit tests and coveralls push
     steps:
       - uses: actions/checkout@v4
       - name: Setup node ${{ matrix.node }}
@@ -20,7 +20,7 @@ jobs:
           npm ci
           npm install coveralls
       - name: Run unit tests and save coverage
-        run: CI=true npm test -- --coverage
+        run: CI=true npm run test:coverage
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

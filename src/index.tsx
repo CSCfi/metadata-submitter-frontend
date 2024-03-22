@@ -35,6 +35,6 @@ root.render(MyApp)
 /**
  * Reload app with after redux store has been reloaded, see: https://redux-toolkit.js.org/tutorials/advanced-tutorial#store-setup-and-hmr
  */
-if (process.env.NODE_ENV === "development" && module.hot) {
-  module.hot.accept("./App", () => root)
+if (import.meta.env.NODE_ENV === "development" && import.meta.hot) {
+  import.meta.hot.accept("./App", () => root)
 }

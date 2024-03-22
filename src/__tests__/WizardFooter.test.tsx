@@ -1,6 +1,5 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, fireEvent } from "@testing-library/react"
 import { Routes, Route, MemoryRouter } from "react-router-dom"

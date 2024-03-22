@@ -70,7 +70,7 @@ const FooterItem = styled(Grid)(({ theme }) => ({
 
 const Login: React.FC = () => {
   let loginRoute = "/aai"
-  if (process.env.NODE_ENV === "development") {
+  if (import.meta.env.NODE_ENV === "development") {
     loginRoute = "http://localhost:5430/aai"
   }
 

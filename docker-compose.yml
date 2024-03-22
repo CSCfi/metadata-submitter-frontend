@@ -8,7 +8,7 @@ services:
     container_name: "metadata_submitter_frontend_dev"
     environment:
       # Change if using different name for backend container
-      - "REACT_APP_BACKEND_PROXY=metadata_submitter_backend_dev:5430"
+      - "VITE_APP_BACKEND_PROXY=metadata_submitter_backend_dev:5430"
     ports:
       - 3000:3000
     restart: on-failure

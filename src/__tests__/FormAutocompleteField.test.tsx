@@ -1,10 +1,9 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitFor, fireEvent } from "@testing-library/react"
-//import userEvent from "@testing-library/user-event"
-import { rest } from "msw"
+import { userEvent } from "@testing-library/user-event"
+import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { act } from "react-dom/test-utils"
 
@@ -16,14 +15,24 @@ import { renderWithProviders } from "utils/test-utils"
 
 const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
 
-const server = setupServer(
-  rest.get("https://api.ror.org/organizations", (req, res, ctx) => {
-    const searchTerm = req.url.searchParams.get("query") as string
-    return res(ctx.json({ items: mockOrganisations.filter(item => item.name.toLowerCase().includes(searchTerm)) }))
-  })
-)
+const restHandlers = [
+  http.get("https://api.ror.org/organizations", ({ request }) => {
+    const url = new URL(request.url)
+    const searchTerm = url.searchParams.get("query") as string
+
+    return HttpResponse.json({
+      items: mockOrganisations.filter(item => item.name.toLowerCase().includes(searchTerm)),
+    })
+  }),
+]
+
+const server = setupServer(...restHandlers)
 
 describe("Test autocomplete on organisation field", () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   const schema = {
     title: "DAC",
     type: "object",
@@ -34,7 +43,6 @@ describe("Test autocomplete on organisation field", () => {
       },
     },
   }
-
   const preloadedState = {
     objectType: ObjectTypes.dac,
     submissionType: ObjectSubmissionTypes.form,
@@ -51,14 +59,8 @@ describe("Test autocomplete on organisation field", () => {
     openedXMLModal: false,
   }
 
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   sessionStorage.setItem(`cached_dac_schema`, JSON.stringify(schema))
-
   test("should render autocomplete field if schema has 'organisation' property", async () => {
-    jest.setTimeout(30000)
     act(() => {
       renderWithProviders(
         <StyledEngineProvider injectFirst>
@@ -74,7 +76,6 @@ describe("Test autocomplete on organisation field", () => {
       expect(autocomplete).toBeDefined()
     })
   })
-
   test("should search for organisations", async () => {
     act(() => {
       renderWithProviders(
@@ -87,20 +88,19 @@ describe("Test autocomplete on organisation field", () => {
       )
     })
     const autocomplete = (await waitFor(() => screen.getByTestId("organisation-inputField"))) as HTMLInputElement
-
     act(() => {
       autocomplete.focus()
       // Assign value to autocomplete field
       // Note: userEvent doesn't work inside act(), which in this case is needed for MUI autocomplete field
       fireEvent.change(autocomplete, { target: { value: "test" } })
     })
-    // Find loading indicator
-    //await waitFor(() => screen.getByRole("progressbar"))
-    //// Find options wrapper
-    //await waitFor(() => screen.getByRole("presentation"))
-    //// Select first option
-    //await waitFor(() => userEvent.keyboard("[ArrowDown]"))
-    //await waitFor(() => userEvent.keyboard("[Enter]"))
-    //expect(autocomplete.value).toEqual(mockOrganisations[0].name)
+    //Find loading indicator
+    await waitFor(() => screen.getByRole("progressbar"))
+    // Find options wrapper
+    await waitFor(() => screen.getByRole("presentation"))
+    // Select first option
+    await waitFor(() => userEvent.keyboard("[ArrowDown]"))
+    await waitFor(() => userEvent.keyboard("[Enter]"))
+    expect(autocomplete.value).toEqual(mockOrganisations[0].name)
   })
 })

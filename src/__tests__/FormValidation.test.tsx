@@ -1,10 +1,10 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { useForm, FormProvider } from "react-hook-form"
+import { vi } from "vitest"
 
 import CSCtheme from "../theme"
 
@@ -26,7 +26,7 @@ const schema = {
 }
 
 describe("Test form render by custom schema", () => {
-  const onSubmit = jest.fn()
+  const onSubmit = vi.fn()
 
   const resolver = WizardAjvResolver(schema, "en")
 

@@ -52,5 +52,5 @@ unittest:
     - npm ci
     - npm install coveralls
   script:
-    - CI=true npm test -- --coverage
+    - CI=true npm run test:coverage
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/

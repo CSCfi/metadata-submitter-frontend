@@ -1,10 +1,12 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
 import { act } from "react-dom/test-utils"
 import { MemoryRouter } from "react-router-dom"
+import { vi } from "vitest"
 
 import CSCtheme from "../theme"
 
@@ -12,7 +14,26 @@ import App from "App"
 import { renderWithProviders } from "utils/test-utils"
 import Page403 from "views/ErrorPages/Page403"
 
+const restHandlers = [
+  http.get("/v1/users/current", () => {
+    return HttpResponse.json({
+      userId: "001",
+      name: "Test User",
+      projects: [
+        { projectId: "PROJECT1", projectNumber: "Project 1" },
+        { projectId: "PROJECT2", projectNumber: "Project 2" },
+      ],
+    })
+  }),
+]
+
+const server = setupServer(...restHandlers)
+
 describe("Page403", () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   test("renders Page403 component", () => {
     renderWithProviders(
       <StyledEngineProvider injectFirst>
@@ -30,8 +51,7 @@ describe("Page403", () => {
   })
 
   test("redirects to Home Page after 10s", () => {
-    jest.useFakeTimers()
-
+    vi.useFakeTimers()
     act(() => {
       renderWithProviders(
         <StyledEngineProvider injectFirst>
@@ -56,11 +76,10 @@ describe("Page403", () => {
       )
     })
     expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
-
     act(() => {
-      jest.advanceTimersByTime(10000)
+      vi.advanceTimersByTime(10000)
     })
     expect(screen.getByText("My submissions")).toBeInTheDocument()
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 })

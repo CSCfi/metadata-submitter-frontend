@@ -1,9 +1,9 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, act } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
+import { vi } from "vitest"
 
 import CSCtheme from "../theme"
 
@@ -29,7 +29,7 @@ describe("Page401", () => {
   })
 
   test("redirects to Main Page after 10s", () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
 
     const component = renderWithProviders(
       <StyledEngineProvider injectFirst>
@@ -56,11 +56,11 @@ describe("Page401", () => {
     expect(component.getByText("401 Authorization Error")).toBeInTheDocument()
 
     act(() => {
-      jest.advanceTimersByTime(10000)
+      vi.advanceTimersByTime(10000)
     })
 
     component.getByText("Login")
     expect(component.getByText("Login")).toBeInTheDocument()
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 })

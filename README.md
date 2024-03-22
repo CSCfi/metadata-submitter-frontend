@@ -30,7 +30,7 @@ After installing and running, frontend can be found from `http://localhost:3000`
 
 ## Tests
 
-Run Jest-based tests with `npm test`. Check code formatting, TypeScript types and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`.
+Run Vitest- and React Testing Library-based tests with `npm test`. Check code formatting, TypeScript types and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`.
 
 End-to-end tests can be run with `npx cypress open`.
 

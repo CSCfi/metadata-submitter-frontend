@@ -1,6 +1,5 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 import { MemoryRouter as Router } from "react-router-dom"

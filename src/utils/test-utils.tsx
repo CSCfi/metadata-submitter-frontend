@@ -24,7 +24,11 @@ export function renderWithProviders(
   {
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = configureStore({ reducer: rootReducer, preloadedState }),
+    store = configureStore({
+      reducer: rootReducer,
+      preloadedState,
+      middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
+    }),
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) {

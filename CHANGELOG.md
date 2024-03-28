@@ -21,8 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed "NewDraft" to "Submission" to all existing components and routes and related tests.
 - Refactor API urls to have "/v1" , to adapt backend change https://github.com/CSCfi/metadata-submitter/pull/476 fixes , #826
 - Update major and non-major depencies
-- Added new way for having Redux store and mock data to be used in Jest tests without using an external library #922
+- New way for having Redux store and mock data to be used in Jest tests without using an external library #922
 - Update json-schema-ref-parser to latest stable version 11.5.4
+- Use Vite as the new bundle tool to replace CRA and Webpack
+- Use Vitest for unit tests instead of Jest
 
 ### Added
 
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Removed `redux-mock-store` library which was used to mock Redux store and data for Jest tests #922
+- Remove the use CRA boilderplate and webpack from the codebase.
 
 ## [0.13.0] - 2021-04-7
 

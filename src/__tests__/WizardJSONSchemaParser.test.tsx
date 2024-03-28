@@ -1,6 +1,5 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
@@ -20,7 +19,6 @@ const schema = CustomSchema
 
 describe("Test form render by custom schema", () => {
   beforeEach(() => {
-    jest.setTimeout(10000)
     const FormComponent = () => {
       const methods = useForm()
 

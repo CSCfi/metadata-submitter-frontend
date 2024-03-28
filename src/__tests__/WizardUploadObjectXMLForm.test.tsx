@@ -1,9 +1,7 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
-//import userEvent from "@testing-library/user-event"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardUploadObjectXMLForm from "../components/SubmissionWizard/WizardForms/WizardUploadObjectXMLForm"

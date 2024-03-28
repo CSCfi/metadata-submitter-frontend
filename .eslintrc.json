@@ -2,8 +2,7 @@
   "env": {
     "browser": true,
     "node": true,
-    "es6": true,
-    "jest/globals": true
+    "es6": true
   },
   "extends": [
     "eslint:recommended",
@@ -21,7 +20,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "jest", "import", "@typescript-eslint", "react-hooks"],
+  "plugins": ["react", "import", "@typescript-eslint", "react-hooks"],
   "settings": {
     "react": {
       "version": "detect"

@@ -10,8 +10,8 @@ export const setupStore = () => {
   return store
 }
 
-if (process.env.NODE_ENV === "development" && module.hot) {
-  module.hot.accept("./rootReducer", async () => {
+if (import.meta.env.NODE_ENV === "development" && import.meta.hot) {
+  import.meta.hot.accept("./rootReducer", async () => {
     const newRootReducer = await (await import("./rootReducer")).default
     store.replaceReducer(newRootReducer)
   })

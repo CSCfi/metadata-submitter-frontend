@@ -1,8 +1,8 @@
 import React from "react"
 
-import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { act, fireEvent, screen, waitFor } from "@testing-library/react"
+import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 import CSCtheme from "../theme"
@@ -70,10 +70,6 @@ describe("WizardFillObjectDetailsForm", () => {
 
   sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
 
-  beforeEach(() => {
-    jest.setTimeout(10000)
-  })
-
   it("should create study form from schema in sessionStorage", async () => {
     renderWithProviders(
       <StyledEngineProvider injectFirst>
@@ -96,12 +92,13 @@ describe("WizardFillObjectDetailsForm", () => {
       </StyledEngineProvider>,
       { preloadedState }
     )
+
+    const input = await waitFor(() => screen.getByTestId("descriptor.studyTitle"))
     await waitFor(() => {
-      const input = screen.getByTestId("descriptor.studyTitle")
       fireEvent.change(input, { target: { value: "Title" } })
       fireEvent.blur(input)
-      expect(input).toBeVisible()
     })
+    await waitFor(() => expect(input).toBeVisible())
   })
 
   test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
@@ -152,8 +149,9 @@ describe("WizardFillObjectDetailsForm", () => {
     act(() => {
       fireEvent.click(showmoreLink)
     })
-
-    expect(tooltipBox).toHaveTextContent("Study Description should provide additional information about the study.")
+    await waitFor(() =>
+      expect(tooltipBox).toHaveTextContent("Study Description should provide additional information about the study.")
+    )
 
     const showlessLink = await waitFor(() => screen.getByText("Show less"))
 
@@ -166,7 +164,7 @@ describe("WizardFillObjectDetailsForm", () => {
 
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
   test("should call sessionStorage", async () => {
-    const spy = jest.spyOn(Storage.prototype, "getItem")
+    const spy = vi.spyOn(Storage.prototype, "getItem")
     renderWithProviders(
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={CSCtheme}>

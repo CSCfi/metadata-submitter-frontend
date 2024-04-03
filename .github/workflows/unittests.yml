@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["16"]
+        node: ["20"]
     name: Vitest unit tests and coveralls push
     steps:
       - uses: actions/checkout@v4

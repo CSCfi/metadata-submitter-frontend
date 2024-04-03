@@ -13,7 +13,7 @@
     "@mui/lab": "^5.0.0-alpha.169",
     "@mui/material": "^5.15.14",
     "@mui/system": "^5.15.9",
-    "@mui/x-data-grid": "^6.19.8",
+    "@mui/x-data-grid": "^7.0.0",
     "@reduxjs/toolkit": "^2.2.3",
     "@typescript-eslint/parser": "^7.4.0",
     "@vitejs/plugin-react": "^4.2.1",

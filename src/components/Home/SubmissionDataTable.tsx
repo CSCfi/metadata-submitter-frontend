@@ -7,9 +7,9 @@ import Stack from "@mui/material/Stack"
 import { styled } from "@mui/material/styles"
 import {
   DataGrid,
+  GridColDef,
+  GridColumnVisibilityModel,
   GridRowParams,
-  GridValueGetterParams,
-  GridValueFormatterParams,
   GridActionsCellItem,
   GridSortModel,
 } from "@mui/x-data-grid"
@@ -100,7 +100,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: "name",
       headerName: "Name",
@@ -110,13 +110,13 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       field: "dateCreated",
       headerName: "Date created",
       type: "date",
-      valueFormatter: (params: GridValueFormatterParams) => {
-        const { convertedDate } = params.value as Record<string, string>
+      valueFormatter: value => {
+        const { convertedDate } = value as Record<string, string>
         return convertedDate
       },
-      valueGetter: (params: GridValueGetterParams) => ({
-        convertedDate: getConvertedDate(params.value),
-        timestamp: params.value,
+      valueGetter: value => ({
+        convertedDate: getConvertedDate(value),
+        timestamp: value,
       }),
       sortComparator: (v1, v2) => v2.timestamp - v1.timestamp,
     },
@@ -128,7 +128,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     {
       field: "actions",
       type: "actions",
-      hide: submissionType === SubmissionStatus.published,
       getActions: (params: GridRowParams) => [
         <>
           <GridActionsCellItem
@@ -156,6 +155,9 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     },
   ]
 
+  const [columnVisibilityModel, setColumnVisibilityModel] = React.useState<GridColumnVisibilityModel>({
+    actions: submissionType !== SubmissionStatus.published,
+  })
   const [sortModel, setSortModel] = React.useState<GridSortModel>([
     {
       field: "dateCreated",
@@ -211,14 +213,16 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
           <DataTable
             rows={rows}
             columns={columns}
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={newModel => setColumnVisibilityModel(newModel)}
             disableRowSelectionOnClick
             disableColumnMenu
             disableColumnFilter
             disableColumnSelector
             hideFooterSelectedRowCount
-            components={{
-              Pagination: DataGridPagination,
-              NoRowsOverlay: NoRowsOverlay,
+            slots={{
+              pagination: DataGridPagination,
+              noRowsOverlay: NoRowsOverlay,
             }}
             sortModel={sortModel}
             onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}

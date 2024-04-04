@@ -7,7 +7,7 @@ updates:
       day: "monday"
     labels:
       - "npm dependencies"
-    target-branch: "develop"
+    target-branch: "main"
     open-pull-requests-limit: 10
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -16,5 +16,5 @@ updates:
       day: "monday"
     labels:
       - "github actions"
-    target-branch: "develop"
+    target-branch: "main"
     open-pull-requests-limit: 10

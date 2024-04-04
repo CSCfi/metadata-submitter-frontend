@@ -5,6 +5,9 @@ stages:
 variables:
   BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci
 
+before_script:
+  - pnpm install
+
 code-style:
   stage: verify
   tags:
@@ -12,10 +15,8 @@ code-style:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
-  before_script:
-    - npm ci
   script:
-    - npm run lint:check
+    - pnpm run lint:check
 
 format-style:
   stage: verify
@@ -24,10 +25,8 @@ format-style:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
-  before_script:
-    - npm ci
   script:
-    - npm run format:check
+    - pnpm run format:check
 
 type-check:
   stage: verify
@@ -36,10 +35,8 @@ type-check:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
-  before_script:
-    - npm ci
   script:
-    - npm run tsc
+    - pnpm run tsc
 
 unittest:
   stage: test
@@ -48,9 +45,5 @@ unittest:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
-  before_script:
-    - npm ci
-    - npm install coveralls
   script:
-    - CI=true npm run test:coverage
-  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+    - pnpm run test:coverage

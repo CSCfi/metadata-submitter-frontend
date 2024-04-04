@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use Vite as the new bundle tool to replace CRA and Webpack
 - Use Vitest for unit tests instead of Jest
 - github action updates as well as dependabot watched branch
+- Migrate from npm to pnpm
 
 ### Added
 

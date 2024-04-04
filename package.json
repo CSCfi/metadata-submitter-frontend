@@ -48,7 +48,8 @@
     "format:check": "prettier --check \"**/*.+(json|yml|yaml|css|md)\"",
     "concurrently": "concurrently",
     "postinstall": "husky install",
-    "tsc": "tsc --pretty"
+    "tsc": "tsc --pretty",
+    "preinstall": "npx only-allow pnpm"
   },
   "eslintConfig": {
     "env": {
@@ -103,7 +104,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^7.0.4",
     "jsdom": "^24.0.0",
-    "mongo": "^0.1.0",
+    "mongodb": "^6.5.0",
     "msw": "^2.2.13",
     "pinst": "^3.0.0",
     "prettier": "^2.8.8",
@@ -114,7 +115,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run concurrently -- \"npm:lint:check\" \"npm:format:check\" \"npm:tsc\" \"npm:test:no-watch\" "
+      "pre-commit": "pnpm run concurrently -- \"pnpm:lint:check\" \"pnpm:format:check\" \"pnpm:tsc\" \"pnpm:test:no-watch\" "
     }
   }
 }

@@ -37,7 +37,7 @@ const drafts = [
   },
 ]
 
-const preloadedState = {
+const state = {
   objectType: ObjectTypes.sample,
   submission: {
     submissionId: "",
@@ -62,7 +62,7 @@ describe("WizardSavedObjectsList with submitted objects", () => {
           </ThemeProvider>
         </StyledEngineProvider>
       </Router>,
-      { preloadedState }
+      { preloadedState: state }
     )
   })
 
@@ -124,7 +124,7 @@ describe("WizardSavedObjectsList with drafts", () => {
           </ThemeProvider>
         </StyledEngineProvider>
       </Router>,
-      { preloadedState }
+      { preloadedState: state }
     )
   })
 

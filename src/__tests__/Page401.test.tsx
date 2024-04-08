@@ -38,19 +38,7 @@ describe("Page401", () => {
             <App />
           </MemoryRouter>
         </ThemeProvider>
-      </StyledEngineProvider>,
-      {
-        preloadedState: {
-          user: {
-            id: "001",
-            name: "Test User",
-            projects: [
-              { projectId: "PROJECT1", projectNumber: "Project 1" },
-              { projectId: "PROJECT2", projectNumber: "Project 2" },
-            ],
-          },
-        },
-      }
+      </StyledEngineProvider>
     )
 
     expect(component.getByText("401 Authorization Error")).toBeInTheDocument()

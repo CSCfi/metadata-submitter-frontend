@@ -16,6 +16,8 @@ import { renderWithProviders } from "utils/test-utils"
 
 const schema = CustomSchema
 
+const state = { openedRows: [0] }
+
 const restHandlers = [
   http.get("/v1/schemas/:schema", () => {
     return HttpResponse.json(schema)
@@ -64,9 +66,7 @@ describe("Object details", () => {
         </StyledEngineProvider>
       </MemoryRouter>,
       {
-        preloadedState: {
-          openedRows: [0],
-        },
+        preloadedState: state,
       }
     )
     const toggleDetailsButton = await screen.findByTestId("toggle-details")
@@ -93,9 +93,7 @@ describe("Object details", () => {
         </ThemeProvider>
       </StyledEngineProvider>,
       {
-        preloadedState: {
-          openedRows: [0],
-        },
+        preloadedState: state,
       }
     )
     // Sections

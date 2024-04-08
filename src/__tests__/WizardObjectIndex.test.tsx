@@ -7,22 +7,12 @@ import WizardObjectIndex from "../components/SubmissionWizard/WizardComponents/W
 import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"
-import { Schema } from "types"
-import { renderWithProviders } from "utils/test-utils"
+import { mockState, renderWithProviders } from "utils/test-utils"
 
 describe("WizardObjectIndex", () => {
   it("should render badge with number correctly", async () => {
-    const preloadedState = {
-      objectTypesArray: [
-        ObjectTypes.study,
-        ObjectTypes.sample,
-        ObjectTypes.experiment,
-        ObjectTypes.run,
-        ObjectTypes.analysis,
-        ObjectTypes.dac,
-        ObjectTypes.policy,
-        ObjectTypes.dataset,
-      ] as Schema[],
+    const state = {
+      ...mockState,
       submission: {
         name: "submission name",
         description: "submission description",
@@ -40,8 +30,8 @@ describe("WizardObjectIndex", () => {
           { accessionId: "TESTID0101", schema: ObjectTypes.analysis, tags: {} },
           { accessionId: "TESTID0202", schema: ObjectTypes.experiment, tags: {} },
         ],
-        workflow: "FEGA",
         doiInfo: { creators: [], contributors: [], subjects: [] },
+        workflow: "FEGA",
       },
     }
 
@@ -52,7 +42,7 @@ describe("WizardObjectIndex", () => {
         </ThemeProvider>
       </StyledEngineProvider>,
       {
-        preloadedState,
+        preloadedState: state,
       }
     )
 

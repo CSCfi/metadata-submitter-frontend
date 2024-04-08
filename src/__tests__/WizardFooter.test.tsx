@@ -7,7 +7,6 @@ import { Routes, Route, MemoryRouter } from "react-router-dom"
 import WizardFooter from "../components/SubmissionWizard/WizardComponents/WizardFooter"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardFooter", () => {
@@ -30,9 +29,7 @@ describe("WizardFooter", () => {
         </Routes>
       </MemoryRouter>
     )
-    renderWithProviders(wrapper, {
-      preloadedState: { submissionType: ObjectSubmissionTypes.form },
-    })
+    renderWithProviders(wrapper)
     const button = screen.getByRole("button", { name: /Cancel/i })
     fireEvent.click(button)
     expect(screen.getByRole("dialog")).toBeDefined()
@@ -55,21 +52,7 @@ describe("WizardFooter", () => {
         </MemoryRouter>
       )
 
-      renderWithProviders(wrapper, {
-        preloadedState: {
-          submissionType: ObjectSubmissionTypes.form,
-          submission: {
-            submissionId: "FOL001",
-            name: "Test submission",
-            description: "Test submission",
-            published: false,
-            drafts: [],
-            metadataObjects: [],
-            workflow: "FEGA",
-            doiInfo: { creators: [], contributors: [], subjects: [] },
-          },
-        },
-      })
+      renderWithProviders(wrapper)
       const publishButton = screen.getByRole("button", { name: /Publish/i })
       expect(publishButton).toBeDisabled()
     })

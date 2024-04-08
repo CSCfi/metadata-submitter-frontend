@@ -10,7 +10,6 @@ import { act } from "react-dom/test-utils"
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
@@ -43,21 +42,6 @@ describe("Test autocomplete on organisation field", () => {
       },
     },
   }
-  const preloadedState = {
-    objectType: ObjectTypes.dac,
-    submissionType: ObjectSubmissionTypes.form,
-    submission: {
-      description: "Test desciption",
-      submissionId: "FOL90524783",
-      name: "Test name",
-      published: false,
-      workflow: "FEGA",
-      drafts: [],
-      metadataObjects: [],
-      doiInfo: { creators: [], contributors: [], subjects: [] },
-    },
-    openedXMLModal: false,
-  }
 
   sessionStorage.setItem(`cached_dac_schema`, JSON.stringify(schema))
   test("should render autocomplete field if schema has 'organisation' property", async () => {
@@ -67,8 +51,7 @@ describe("Test autocomplete on organisation field", () => {
           <ThemeProvider theme={CSCtheme}>
             <WizardFillObjectDetailsForm />
           </ThemeProvider>
-        </StyledEngineProvider>,
-        { preloadedState }
+        </StyledEngineProvider>
       )
     })
     await waitFor(() => {
@@ -83,8 +66,7 @@ describe("Test autocomplete on organisation field", () => {
           <ThemeProvider theme={CSCtheme}>
             <WizardFillObjectDetailsForm />
           </ThemeProvider>
-        </StyledEngineProvider>,
-        { preloadedState }
+        </StyledEngineProvider>
       )
     })
     const autocomplete = (await waitFor(() => screen.getByTestId("organisation-inputField"))) as HTMLInputElement

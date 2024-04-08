@@ -7,8 +7,6 @@ import { MemoryRouter, Routes, Route } from "react-router-dom"
 import WizardStepper from "../components/SubmissionWizard/WizardComponents/WizardStepper"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-import { Schema } from "types"
 import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardStepper", () => {
@@ -30,18 +28,6 @@ describe("WizardStepper", () => {
       </MemoryRouter>,
       {
         preloadedState: {
-          submissionType: "",
-          objectTypesArray: Object.keys(ObjectTypes) as Schema[],
-          submission: {
-            submissionId: "",
-            name: "",
-            description: "",
-            published: false,
-            drafts: [],
-            metadataObjects: [],
-            workflow: "",
-            doiInfo: { creators: [], contributors: [], subjects: [] },
-          },
           stepObject: { step: 1, stepObjectType: "submissionDetails" },
         },
       }
@@ -66,18 +52,6 @@ describe("WizardStepper", () => {
       </MemoryRouter>,
       {
         preloadedState: {
-          submissionType: ObjectSubmissionTypes.form,
-          objectTypesArray: Object.keys(ObjectTypes) as Schema[],
-          submission: {
-            submissionId: "FOLD1234",
-            name: "Test submission",
-            description: "Submission description",
-            published: false,
-            drafts: [],
-            metadataObjects: [],
-            workflow: "",
-            doiInfo: { creators: [], contributors: [], subjects: [] },
-          },
           stepObject: { step: 2, stepObjectType: "study" },
           draftStatus: "notSaved",
         },

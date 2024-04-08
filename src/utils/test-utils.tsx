@@ -12,17 +12,66 @@ import { Provider } from "react-redux"
 import type { RootState } from "../rootReducer"
 import type { AppStore } from "../store"
 
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import rootReducer from "rootReducer"
+import { Schema } from "types"
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>
   store?: AppStore
 }
 
+export const mockState = {
+  user: {
+    id: "001",
+    name: "Test User",
+    projects: [
+      { projectId: "PROJECT1", projectNumber: "Project 1" },
+      { projectId: "PROJECT2", projectNumber: "Project 2" },
+    ],
+  },
+  objectType: ObjectTypes.dac,
+  submissionType: ObjectSubmissionTypes.form,
+  objectTypesArray: Object.keys(ObjectTypes) as Schema[],
+  submission: {
+    description: "Test desciption",
+    submissionId: "FOL90524783",
+    name: "Test name",
+    published: false,
+    workflow: "FEGA",
+    drafts: [],
+    metadataObjects: [],
+    doiInfo: { creators: [], contributors: [], subjects: [] },
+  },
+  openedXMLModal: false,
+  currentObject: {
+    objectId: "",
+    tags: {
+      fileName: "Test XML file",
+      fileSize: "1",
+    },
+    accessionId: "TESTID0000",
+    lastModified: "",
+    objectType: "",
+    status: "",
+    title: "",
+    submissionType: "",
+    cleanedValues: {
+      accessionId: "TESTID0000",
+      lastModified: "",
+      objectType: "",
+      status: "",
+      title: "",
+      submissionType: "",
+    },
+    index: 1,
+  },
+}
+
 export function renderWithProviders(
   ui: React.ReactElement,
   {
-    preloadedState = {},
+    preloadedState = mockState,
     // Automatically create a store instance if no store was passed in
     store = configureStore({
       reducer: rootReducer,

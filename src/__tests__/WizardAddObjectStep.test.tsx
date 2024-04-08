@@ -9,8 +9,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 import WizardAddObjectStep from "../components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"
-import { Schema } from "types"
+import { ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
@@ -35,56 +34,6 @@ describe("WizardAddObjectStep", () => {
       {
         preloadedState: {
           objectType: "",
-          objectTypesArray: [
-            ObjectTypes.study,
-            ObjectTypes.sample,
-            ObjectTypes.experiment,
-            ObjectTypes.run,
-            ObjectTypes.analysis,
-            ObjectTypes.dac,
-            ObjectTypes.policy,
-            ObjectTypes.dataset,
-          ] as Schema[],
-          submissionType: ObjectSubmissionTypes.xml,
-          submission: {
-            name: "submission name",
-            description: "submission description",
-            published: false,
-            metadataObjects: [],
-            submissionId: "FOL12341234",
-            drafts: [
-              {
-                accessionId: "TESTID1234",
-                schema: ObjectTypes.study,
-                tags: {},
-              },
-            ],
-            workflow: "FEGA",
-            doiInfo: { creators: [], contributors: [], subjects: [] },
-          },
-          currentObject: {
-            objectId: "",
-            tags: {
-              fileName: "Test XML file",
-              fileSize: "1",
-            },
-            accessionId: "TESTID0000",
-            lastModified: "",
-            objectType: "",
-            status: "",
-            title: "",
-            submissionType: "",
-            cleanedValues: {
-              accessionId: "TESTID0000",
-              lastModified: "",
-              objectType: "",
-              status: "",
-              title: "",
-              submissionType: "",
-            },
-            index: 1,
-          },
-          openedXMLModal: false,
         },
       }
     )
@@ -112,50 +61,7 @@ describe("WizardAddObjectStep", () => {
           {
             preloadedState: {
               objectType: ObjectTypes.study,
-              objectTypesArray: [
-                ObjectTypes.study,
-                ObjectTypes.sample,
-                ObjectTypes.experiment,
-                ObjectTypes.run,
-                ObjectTypes.analysis,
-                ObjectTypes.dac,
-                ObjectTypes.policy,
-                ObjectTypes.dataset,
-              ] as Schema[],
               submissionType: typeName,
-              submission: {
-                submissionId: "FOL12341234",
-                name: "Testname",
-                description: "Test",
-                published: false,
-                metadataObjects: [],
-                drafts: [{ accessionId: "TESTID1234", schema: ObjectTypes.study, tags: {} }],
-                workflow: "",
-                doiInfo: { creators: [], contributors: [], subjects: [] },
-              },
-              currentObject: {
-                accessionId: "TESTID0000",
-                lastModified: "",
-                objectType: "",
-                status: "",
-                title: "",
-                submissionType: "",
-                objectId: "",
-                tags: {
-                  fileName: "Test XML file",
-                  fileSize: "1",
-                },
-                cleanedValues: {
-                  accessionId: "TESTID0000",
-                  lastModified: "",
-                  objectType: "",
-                  status: "",
-                  title: "",
-                  submissionType: "",
-                },
-                index: 1,
-              },
-              openedXMLModal: false,
             },
           }
         )

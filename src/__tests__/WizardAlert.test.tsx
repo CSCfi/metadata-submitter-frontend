@@ -20,10 +20,7 @@ describe("WizardAlert", () => {
         renderWithProviders(
           <BrowserRouter>
             <WizardAlert alertType={type} parentLocation={Object.keys(alert)[0]} onAlert={() => ({})} />
-          </BrowserRouter>,
-          {
-            preloadedState: { submissionType: "" },
-          }
+          </BrowserRouter>
         )
         expect(screen.getByRole("dialog")).toBeDefined()
       })

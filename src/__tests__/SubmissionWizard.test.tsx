@@ -8,13 +8,10 @@ import { MemoryRouter, Routes, Route } from "react-router-dom"
 
 import CSCtheme from "../theme"
 
-import { ObjectTypes } from "constants/wizardObject"
-import { Schema } from "types"
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
 
 const allWorkflows = { FEGA: "", BigPicture: "", SDSX: "" }
-const submissionId = "123456"
 const submissionName = "Submission name"
 const submissionDescription = "Submission description"
 
@@ -58,21 +55,6 @@ describe("SubmissionWizard", () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  const initialStore = {
-    submissionType: "",
-    objectTypesArray: Object.keys(ObjectTypes) as Schema[],
-    submission: {
-      name: "",
-      drafts: [],
-      metadataObjects: [],
-      submissionId: "",
-      description: "",
-      workflow: "",
-      published: false,
-      doiInfo: { creators: [], contributors: [], subjects: [] },
-    },
-  }
-
   sessionStorage.setItem(`cached_workflows`, JSON.stringify(allWorkflows))
 
   // TODO: Handle the case when "step" is undefined or wrong submissionId to return 404
@@ -88,7 +70,6 @@ describe("SubmissionWizard", () => {
       </MemoryRouter>,
       {
         preloadedState: {
-          ...initialStore,
           stepObject: { step: 1, stepObjectType: "submissionDetails" },
         },
       }
@@ -137,27 +118,11 @@ describe("SubmissionWizard", () => {
             }
           />
         </Routes>
-      </MemoryRouter>,
-      {
-        preloadedState: {
-          objectType: "",
-          submissionType: "",
-          submission: {
-            name: submissionName,
-            description: submissionDescription,
-            published: false,
-            metadataObjects: [],
-            drafts: [],
-            submissionId: submissionId,
-            workflow: "",
-            doiInfo: { creators: [], contributors: [], subjects: [] },
-          },
-          objectTypesArray: ["study"],
-        },
-      }
+      </MemoryRouter>
     )
-    // waifForElementToBeRemoved is needed to wait for
-    // the mock promises to all resolve
+    /* waifForElementToBeRemoved is needed to wait for
+      the mock promises to all resolve
+    */
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
 
     const submissionNameInput = screen.getByTestId("submissionName")

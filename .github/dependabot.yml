@@ -1,12 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "pnpm"
     directory: "/"
     schedule:
       interval: "monthly"
       day: "monday"
     labels:
-      - "npm dependencies"
+      - "pnpm dependencies"
     target-branch: "main"
     open-pull-requests-limit: 10
   - package-ecosystem: "github-actions"

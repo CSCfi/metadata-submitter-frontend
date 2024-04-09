@@ -23,14 +23,14 @@ Install and run frontend either with:
 - Docker by running `docker-compose --env-file .env.example up --build` (add `-d` flag to run container in the background).
   - By default, frontend tries to connect to docker-container running the backend. Feel free to modify `docker-compose.yml` if you want to use some other setup;
   - modify `.env.example` if there are other parameters that need to be set up.
-- Local node setup by running `npm install` followed with `npm start`.
-  - If `npm install` leaves corrupted package-lock.json, try to fix with `npm ci`
+- Local node setup by running `pnpm install` followed with `pnpm start`.
+  - If `pnpm install` leaves corrupted package-lock.json, try to fix with `pnpm install --frozen-lockfile`
 
 After installing and running, frontend can be found from `http://localhost:3000`.
 
 ## Tests
 
-Run Vitest- and React Testing Library-based tests with `npm test`. Check code formatting, TypeScript types and style errors with `npm run lint:check` and fix them with `npm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `npm run format:check` or `npm run format`.
+Run Vitest- and React Testing Library-based tests with `pnpm test`. Check code formatting, TypeScript types and style errors with `pnpm run lint:check` and fix them with `pnpm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `pnpm run format:check` or `pnpm run format`.
 
 End-to-end tests can be run with `npx cypress open`.
 
@@ -38,7 +38,7 @@ We're following recommended settings from eslint, react and prettier -packages w
 
 ## Building
 
-Running `npm run build` builds the app for production to the `build` folder.
+Running `pnpm run build` builds the app for production to the `build` folder.
 
 ## Architecture
 

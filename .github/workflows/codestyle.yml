@@ -11,13 +11,18 @@ jobs:
     name: ESLint check
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
       - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: |
-          npm ci
+          pnpm install
       - name: Run code style check with ESLint
         run: |
-          npm run lint:check
+          pnpm run lint:check

@@ -47,7 +47,7 @@ We do optimize for readability, and it would be awesome if you go through the co
 - Static type errors are should be checked with [flow](https://flow.org/en/docs/)
 - We encourage you to use javascript libraries if it makes code more readable and simplifies program logic
 - Tools to help you:
-  - Linting, formatting and type checking is configured to be run with `npm`, see `script` inside `package.json` for possible options
+  - Linting, formatting and type checking is configured to be run with `pnpm`, see `script` inside `package.json` for possible options
   - Repository has a pre-configured pre-commit hook for git, use that to handle checks before you commit to your branch.
 
 Thanks,

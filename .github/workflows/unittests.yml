@@ -11,16 +11,20 @@ jobs:
     name: Vitest unit tests and coveralls push
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
       - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies and coveralls
         run: |
-          npm ci
-          npm install coveralls
+          pnpm install coveralls
       - name: Run unit tests and save coverage
-        run: CI=true npm run test:coverage
+        run: CI=true pnpm run test:coverage
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

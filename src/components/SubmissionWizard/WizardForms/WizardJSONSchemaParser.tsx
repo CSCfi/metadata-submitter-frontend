@@ -48,10 +48,6 @@ const highlightStyle = theme => {
   }
 }
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  "data-testid": string
-}
-
 const BaselineDiv = styled("div")({
   display: "flex",
   alignItems: "baseline",
@@ -1487,7 +1483,7 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                         inputRef={ref}
                         color="primary"
                         checked={values || false}
-                        inputProps={{ "data-testid": name } as InputProps}
+                        inputProps={{ "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>}
                       />
                     }
                     label={
@@ -1552,7 +1548,7 @@ const FormCheckBoxArray = ({
                         checked={values && values?.includes(option) ? true : false}
                         color="primary"
                         defaultValue=""
-                        inputProps={{ "data-testid": name } as InputProps}
+                        inputProps={{ "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>}
                       />
                     }
                     label={option}

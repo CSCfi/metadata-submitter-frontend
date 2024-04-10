@@ -90,9 +90,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      {
-        preloadedState: state,
-      }
+      { preloadedState: state }
     )
 
     const input = await waitFor(() => screen.getByTestId("descriptor.studyTitle"))

@@ -41,9 +41,7 @@ describe("WizardObjectIndex", () => {
           <WizardObjectIndex />
         </ThemeProvider>
       </StyledEngineProvider>,
-      {
-        preloadedState: state,
-      }
+      { preloadedState: state }
     )
 
     const badge = await screen.queryAllByTestId("badge")

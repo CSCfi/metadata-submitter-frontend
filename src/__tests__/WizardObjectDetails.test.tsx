@@ -65,9 +65,7 @@ describe("Object details", () => {
           </ThemeProvider>
         </StyledEngineProvider>
       </MemoryRouter>,
-      {
-        preloadedState: state,
-      }
+      { preloadedState: state }
     )
     const toggleDetailsButton = await screen.findByTestId("toggle-details")
     expect(toggleDetailsButton).toBeInTheDocument()
@@ -92,9 +90,7 @@ describe("Object details", () => {
           <WizardObjectDetails objectType="study" objectData={objectData} />
         </ThemeProvider>
       </StyledEngineProvider>,
-      {
-        preloadedState: state,
-      }
+      { preloadedState: state }
     )
     // Sections
     // Note: Nested properties have at least 2 sections

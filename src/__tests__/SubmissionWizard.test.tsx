@@ -70,7 +70,10 @@ describe("SubmissionWizard", () => {
       </MemoryRouter>,
       {
         preloadedState: {
-          stepObject: { step: 1, stepObjectType: "submissionDetails" },
+          stepObject: {
+            step: 1,
+            stepObjectType: "submissionDetails",
+          },
         },
       }
     )

@@ -14,8 +14,6 @@ import { renderWithProviders } from "utils/test-utils"
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardShowSummaryStep", () => {
-  let wrapper
-
   const submittedObjects = [
     {
       accessionId: "a971460fc54340ae8b16a617cd7d46be",
@@ -99,7 +97,7 @@ describe("WizardShowSummaryStep", () => {
       },
     }
 
-    wrapper = (
+    renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=2" }]}>
         <Routes>
           <Route
@@ -113,9 +111,9 @@ describe("WizardShowSummaryStep", () => {
             }
           />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
+      { preloadedState: state }
     )
-    renderWithProviders(wrapper, { preloadedState: state })
   })
 
   it("should have all objects listed", async () => {

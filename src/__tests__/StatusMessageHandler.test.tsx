@@ -14,7 +14,11 @@ describe("StatusMessageHandler", () => {
 
     renderWithProviders(<StatusMessageHandler />, {
       preloadedState: {
-        statusDetails: { status: ResponseStatus.error, response: responseMock, helperText: helperTextMock },
+        statusDetails: {
+          status: ResponseStatus.error,
+          response: responseMock,
+          helperText: helperTextMock,
+        },
       },
     })
     expect(screen.getByRole("alert")).toBeDefined()
@@ -24,7 +28,9 @@ describe("StatusMessageHandler", () => {
   it("should render info message", () => {
     renderWithProviders(<StatusMessageHandler />, {
       preloadedState: {
-        statusDetails: { status: ResponseStatus.info },
+        statusDetails: {
+          status: ResponseStatus.info,
+        },
       },
     })
     expect(
@@ -37,7 +43,10 @@ describe("StatusMessageHandler", () => {
 
     renderWithProviders(<StatusMessageHandler />, {
       preloadedState: {
-        statusDetails: { status: ResponseStatus.success, response: responseMock },
+        statusDetails: {
+          status: ResponseStatus.success,
+          response: responseMock,
+        },
       },
     })
     expect(screen.getByText(/Draft saved with accessionid TESTID1234/i)).toBeDefined()

@@ -49,7 +49,7 @@ describe("WizardFillObjectDetailsForm", () => {
     },
   }
 
-  const preloadedState = {
+  const state = {
     objectType: ObjectTypes.study,
     submissionType: ObjectSubmissionTypes.form,
     submission: {
@@ -77,7 +77,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      { preloadedState }
+      { preloadedState: state }
     )
     await waitFor(() => screen.getByText("Study Details"))
     expect(screen.getByText("Study Details")).toBeDefined()
@@ -90,7 +90,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      { preloadedState }
+      { preloadedState: state }
     )
 
     const input = await waitFor(() => screen.getByTestId("descriptor.studyTitle"))
@@ -108,7 +108,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      { preloadedState }
+      { preloadedState: state }
     )
 
     // For description with length equal or less than 60, the tooltip should display all content
@@ -130,7 +130,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      { preloadedState }
+      { preloadedState: state }
     )
 
     // For description with length more than 60, the tooltip should display Read more/Expand
@@ -159,7 +159,9 @@ describe("WizardFillObjectDetailsForm", () => {
       fireEvent.click(showlessLink)
     })
 
-    expect(tooltipBox).toHaveTextContent("Read more/Expand")
+    expect(tooltipBox).toHaveTextContent(
+      "Study Description should provide additional information abou...Read more/Expand"
+    )
   })
 
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
@@ -171,7 +173,7 @@ describe("WizardFillObjectDetailsForm", () => {
           <WizardFillObjectDetailsForm />
         </ThemeProvider>
       </StyledEngineProvider>,
-      { preloadedState }
+      { preloadedState: state }
     )
     expect(spy).toBeCalledWith("cached_study_schema")
 

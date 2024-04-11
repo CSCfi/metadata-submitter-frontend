@@ -60,19 +60,7 @@ describe("Page403", () => {
               <App />
             </MemoryRouter>
           </ThemeProvider>
-        </StyledEngineProvider>,
-        {
-          preloadedState: {
-            user: {
-              id: "001",
-              name: "Test User",
-              projects: [
-                { projectId: "PROJECT1", projectNumber: "Project 1" },
-                { projectId: "PROJECT2", projectNumber: "Project 2" },
-              ],
-            },
-          },
-        }
+        </StyledEngineProvider>
       )
     })
     expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()

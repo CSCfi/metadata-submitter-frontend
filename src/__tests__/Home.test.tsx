@@ -44,19 +44,7 @@ describe("HomePage", () => {
             <App />
           </ThemeProvider>
         </StyledEngineProvider>
-      </MemoryRouter>,
-      {
-        preloadedState: {
-          user: {
-            id: "001",
-            name: "Test User",
-            projects: [
-              { projectId: "PROJECT1", projectNumber: "Project 1" },
-              { projectId: "PROJECT2", projectNumber: "Project 2" },
-            ],
-          },
-        },
-      }
+      </MemoryRouter>
     )
   })
 

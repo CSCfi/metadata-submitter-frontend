@@ -9,13 +9,11 @@ import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/Wi
 import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-import { Schema } from "types"
 import { renderWithProviders } from "utils/test-utils"
+
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardShowSummaryStep", () => {
-  let wrapper
-
   const submittedObjects = [
     {
       accessionId: "a971460fc54340ae8b16a617cd7d46be",
@@ -84,17 +82,7 @@ describe("WizardShowSummaryStep", () => {
   ]
 
   beforeEach(() => {
-    const preloadedState = {
-      objectTypesArray: [
-        ObjectTypes.study,
-        ObjectTypes.dac,
-        ObjectTypes.policy,
-        ObjectTypes.sample,
-        ObjectTypes.experiment,
-        ObjectTypes.run,
-        ObjectTypes.analysis,
-        ObjectTypes.dataset,
-      ] as Schema[],
+    const state = {
       submission: {
         submissionId: "FOL90524783",
         name: "Test folder",
@@ -109,7 +97,7 @@ describe("WizardShowSummaryStep", () => {
       },
     }
 
-    wrapper = (
+    renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=2" }]}>
         <Routes>
           <Route
@@ -123,9 +111,9 @@ describe("WizardShowSummaryStep", () => {
             }
           />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
+      { preloadedState: state }
     )
-    renderWithProviders(wrapper, { preloadedState })
   })
 
   it("should have all objects listed", async () => {

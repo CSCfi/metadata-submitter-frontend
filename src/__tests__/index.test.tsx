@@ -17,10 +17,7 @@ describe("App", () => {
             <App />
           </ThemeProvider>
         </StyledEngineProvider>
-      </Router>,
-      {
-        preloadedState: { objectType: "" },
-      }
+      </Router>
     )
   })
 })

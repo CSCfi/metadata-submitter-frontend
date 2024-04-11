@@ -16,6 +16,8 @@ import { renderWithProviders } from "utils/test-utils"
 
 const schema = CustomSchema
 
+const state = { openedRows: [0] }
+
 const restHandlers = [
   http.get("/v1/schemas/:schema", () => {
     return HttpResponse.json(schema)
@@ -63,11 +65,7 @@ describe("Object details", () => {
           </ThemeProvider>
         </StyledEngineProvider>
       </MemoryRouter>,
-      {
-        preloadedState: {
-          openedRows: [0],
-        },
-      }
+      { preloadedState: state }
     )
     const toggleDetailsButton = await screen.findByTestId("toggle-details")
     expect(toggleDetailsButton).toBeInTheDocument()
@@ -92,11 +90,7 @@ describe("Object details", () => {
           <WizardObjectDetails objectType="study" objectData={objectData} />
         </ThemeProvider>
       </StyledEngineProvider>,
-      {
-        preloadedState: {
-          openedRows: [0],
-        },
-      }
+      { preloadedState: state }
     )
     // Sections
     // Note: Nested properties have at least 2 sections

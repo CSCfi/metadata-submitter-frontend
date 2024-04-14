@@ -99,7 +99,7 @@ describe("Test form render by custom schema", () => {
     await userEvent.click(addNewItemButton)
 
     const items = schema.properties.arrayFields.properties.oneOfArray.items
-    const select = screen.getByLabelText(items.title)
+    const select = await waitFor(() => screen.getByLabelText(items.title))
     const selectedItem = items.oneOf[1]
     await userEvent.selectOptions(select, selectedItem.title)
 

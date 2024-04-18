@@ -88,7 +88,7 @@
     "@types/node": "^20.12.7",
     "@types/react-dom": "^18.2.25",
     "@types/react-router-dom": "^5.3.3",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@vitest/coverage-v8": "^1.5.0",
     "@vitest/ui": "^1.5.0",
     "chokidar": "^3.5.3",

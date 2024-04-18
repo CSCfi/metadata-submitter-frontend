@@ -107,7 +107,7 @@
     "mongodb": "^6.5.0",
     "msw": "^2.2.13",
     "pinst": "^3.0.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.2.5",
     "snapshot-diff": "^0.10.0",
     "typescript": "^4.9.5",
     "vite-plugin-node-polyfills": "^0.21.0",

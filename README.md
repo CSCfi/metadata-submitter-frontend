@@ -30,9 +30,45 @@ After installing and running, frontend can be found from `http://localhost:3000`
 
 ## Tests
 
+### Unit tests
+
 Run Vitest- and React Testing Library-based tests with `pnpm test`. Check code formatting, TypeScript types and style errors with `pnpm run lint:check` and fix them with `pnpm run lint`. Respectively for formatting errors in json/yaml/css/md -files, use `pnpm run format:check` or `pnpm run format`.
 
-End-to-end tests can be run with `npx cypress open`.
+### End-to-end tests
+
+1. Copy env variables from `.env.example` to your `.env` file, these variables are needed to run some of the tests.
+
+```bash
+  cp .env.example .env
+```
+
+2. Make sure we have latest browser binaries and their dependencies which match the current playwright version
+
+```bash
+pnpm dlx playwright install --with-deps
+```
+
+OR if you have issue with your PATH
+
+```bash
+pnpm exec playwright install --with-deps
+```
+
+3. Run the tests in CLI:
+
+```bash
+  pnpm test:e2e
+```
+
+OR you can run the tests in UI mode:
+
+```bash
+  pnpm test:e2e:ui
+```
+
+> **Note**
+>
+> e2e tests running in UI mode could have different result from the CLI. So if you are running the tests in UI mode, it may worth checking how they run in CLI as well, since the tests in Gitlab will be running in CLI.
 
 We're following recommended settings from eslint, react and prettier -packages with couple exceptions, which you can find in `.eslintrc` and `.prettierrc`. Linting, formatting and testing are also configured for you as a git pre-commit, which is recommended to use to avoid fails on CI pipeline.
 

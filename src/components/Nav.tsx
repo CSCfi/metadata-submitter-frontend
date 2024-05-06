@@ -106,7 +106,12 @@ const NavigationLinks = () => {
           }}
           href="/logout"
         >
-          <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+          <Typography
+            variant="subtitle2"
+            color="secondary"
+            sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}
+            data-testid="logout"
+          >
             Log out
           </Typography>
         </MenuItem>

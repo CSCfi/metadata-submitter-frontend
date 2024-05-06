@@ -97,6 +97,7 @@ const ActionButton = (props: {
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
         form="hook-form"
         type="reset"
+        data-testid={buttonText}
       >
         {buttonText}
       </Button>

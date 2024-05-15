@@ -95,6 +95,7 @@ Cypress.Commands.add("newSubmission", submissionName => {
   cy.intercept("/v1/submissions*").as("newSubmission")
   cy.get("[data-testid='submissionName']").type(submissionName ? submissionName : "Test name")
   cy.get("[data-testid='submissionDescription']").type("Test description")
+  cy.get("[data-testid='SDSX']").click()
   cy.get("button[type=submit]")
     .contains("Save")
     .should("be.visible")
@@ -230,6 +231,7 @@ Cypress.Commands.add("generateSubmissionAndObjects", (stopToObjectType = "") => 
         published: false,
         metadataObjects: [],
         drafts: [],
+        workflow: "SDSX",
       }).then(submissionResponse => {
         // Share context from generated submission
         cy.wrap(submissionResponse.body.submissionId).as("generatedSubmissionId")

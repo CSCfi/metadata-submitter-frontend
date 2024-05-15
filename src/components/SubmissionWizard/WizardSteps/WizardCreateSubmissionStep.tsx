@@ -210,7 +210,13 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
                       onChange={handleChangeWorkflow}
                     >
                       {workflows.map(workflow => (
-                        <FormControlLabel key={workflow} value={workflow} control={<Radio />} label={workflow} />
+                        <FormControlLabel
+                          key={workflow}
+                          value={workflow}
+                          control={<Radio />}
+                          label={workflow}
+                          data-testid={workflow}
+                        />
                       ))}
                     </RadioGroup>
                   )
@@ -226,6 +232,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           variant="contained"
           type="submit"
           aria-label="Save submission details"
+          data-testid="create-submission"
         >
           Save
         </Button>

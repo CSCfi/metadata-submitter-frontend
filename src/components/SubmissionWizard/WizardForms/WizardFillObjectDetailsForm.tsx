@@ -31,7 +31,7 @@ import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
-import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -130,7 +130,13 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const buttonGroup = (
     <ButtonGroup>
-      <Button variant="contained" aria-label="save form as draft" size="small" onClick={onClickSaveDraft}>
+      <Button
+        variant="contained"
+        aria-label="save form as draft"
+        size="small"
+        onClick={onClickSaveDraft}
+        data-testid="form-draft"
+      >
         {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as draft"}
       </Button>
       <Button
@@ -140,6 +146,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         type="submit"
         onClick={onClickSubmit}
         form={refForm}
+        data-testid="form-ready"
       >
         {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
       </Button>
@@ -541,7 +548,6 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
 
     // Reset current object in state on unmount
     return () => {
-      dispatch(resetCurrentObject())
       dispatch(resetDraftStatus())
     }
   }, [objectType])

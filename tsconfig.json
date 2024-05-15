@@ -22,6 +22,6 @@
     "types": ["vite/client", "vitest/globals"]
   },
 
-  "include": ["src", "src/types/**/*"],
+  "include": ["src", "src/types/**/*", "playwright"],
   "exclude": ["**/*.js", "node_modules", "**/node_modules"]
 }

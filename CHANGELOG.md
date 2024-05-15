@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use Vitest for unit tests instead of Jest
 - github action updates as well as dependabot watched branch
 - Migrate from npm to pnpm
+- Migrate e2e tests from Cypress to Playwright, modified relevant fixtures and tests
 
 ### Added
 

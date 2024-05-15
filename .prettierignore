@@ -2,3 +2,4 @@ coverage
 .github
 build/*
 pnpm-lock.yaml
+/playwright/playwright-report/

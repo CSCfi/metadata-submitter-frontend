@@ -69,6 +69,7 @@ export default defineConfig(({ mode }) => {
         reporter: ["text", "html"],
         exclude: ["node_modules/", "vitest-setup.ts"],
       },
+      exclude: ["**/node_modules/**", "**/playwright/**", "vitest-setup.ts"],
     },
   }
 })

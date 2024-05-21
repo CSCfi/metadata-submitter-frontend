@@ -67,7 +67,7 @@ describe("Page403", () => {
     act(() => {
       vi.advanceTimersByTime(10000)
     })
-    expect(screen.getByText("My submissions")).toBeInTheDocument()
+    expect(screen.getByTestId("all-tab")).toBeInTheDocument()
     vi.useRealTimers()
   })
 })

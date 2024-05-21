@@ -163,7 +163,12 @@ const App: React.FC = () => {
         <Route
           path={setPath("home")}
           element={
-            <Container component="main" maxWidth="xl" disableGutters>
+            <Container
+              component="main"
+              maxWidth={false}
+              disableGutters
+              sx={{ bgcolor: "common.white" }}
+            >
               <Home />
             </Container>
           }

@@ -126,7 +126,11 @@ let CSCtheme = createTheme({
     MuiDataGrid: {
       styleOverrides: {
         cell: { minWidth: "none !important", maxWidth: "none !important" },
-        columnHeader: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },
+        columnHeader: {
+          minWidth: "none !important",
+          maxWidth: "none !important",
+          fontSizeBreakpoints,
+        },
         row: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },
       },
     },
@@ -146,6 +150,7 @@ let CSCtheme = createTheme({
       styleOverrides: {
         root: fontSizeBreakpoints,
         menuItem: {
+          padding: "1rem 2rem 1rem 1rem",
           backgroundColor: "white",
           color: palette.secondary.main,
           "&:hover": {

@@ -44,9 +44,9 @@ describe("HomePage", () => {
   })
 
   test("should render its content correctly", () => {
-    expect(screen.getByText("My submissions")).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Drafts" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Published" })).toBeInTheDocument()
+    expect(screen.getByTestId("all-tab")).toBeInTheDocument()
+    expect(screen.getByTestId("draft-tab")).toBeInTheDocument()
+    expect(screen.getByTestId("published-tab")).toBeInTheDocument()
     expect(screen.getByTestId("link-create-submission")).toBeInTheDocument()
   })
 })

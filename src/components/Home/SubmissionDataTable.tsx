@@ -2,46 +2,40 @@ import React from "react"
 
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import MuiCard from "@mui/material/Card"
+import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
 import { styled } from "@mui/material/styles"
 import {
   DataGrid,
   GridColDef,
-  GridColumnVisibilityModel,
   GridRowParams,
   GridActionsCellItem,
   GridSortModel,
 } from "@mui/x-data-grid"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
-import { SubmissionStatus } from "constants/wizardSubmission"
 import { setSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
-const Card = styled(MuiCard)(() => ({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  border: "none",
-  padding: 0,
-}))
-
 const DataTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
-  "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus, &.MuiDataGrid-root .MuiDataGrid-cell:focus": {
-    outline: "none",
-    position: "relative",
-  },
-  "& .MuiDataGrid-columnSeparator": {
+  "& .MuiDataGrid-columnSeparator, & .MuiDataGrid-cell:last-of-type": {
     display: "none",
   },
-  "& .MuiDataGrid-cell:last-of-type:not(.MuiDataGrid-cell--withRenderer)": {
-    display: "none",
+  "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
+    backgroundColor: theme.palette.common.white,
+    "&:hover": {
+      color: theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.lighter,
+    },
+  },
+  "& .MuiDataGrid-columnHeaderTitle": {
+    fontWeight: 700,
   },
   "& .MuiDataGrid-columnHeadersInner, .MuiDataGrid-columnHeader, .MuiDataGrid-virtualScrollerRenderZone, .MuiDataGrid-cell, .MuiDataGrid-cell--withRenderer":
     {
@@ -49,20 +43,11 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
     },
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     padding: 0,
-    "& > *": { fontWeight: 700 },
     "& .MuiDataGrid-sortIcon": {
       color: theme.palette.secondary.main,
       fontSize: "2rem",
     },
   },
-  "& .MuiDataGrid-columnHeader:first-of-type, .MuiDataGrid-cell:first-of-type": {
-    paddingLeft: "2em",
-  },
-  "& .MuiDataGrid-row": {
-    border: `1px solid ${theme.palette.secondary.light}`,
-    width: "100% !important",
-  },
-
   "& .MuiDataGrid-actionsCell": {
     color: theme.palette.primary.main,
     alignItems: "flex-start",
@@ -73,6 +58,7 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
       "& .MuiMenuItem-root.MuiMenuItem-gutters.MuiButtonBase-root": { minHeight: "0 !important" },
     },
   },
+  "& .MuiDataGrid-overlayWrapper": { height: "10rem" },
 }))
 
 type SubmissionDataTableProps = {
@@ -82,7 +68,7 @@ type SubmissionDataTableProps = {
   itemsPerPage?: number
   totalItems?: number
   fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
-  fetchPageOnChange?: (page: number, submissionType: string) => Promise<void>
+  fetchPageOnChange?: (page: number) => Promise<void>
   onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
 
@@ -99,16 +85,17 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const columns: GridColDef[] = [
     {
       field: "name",
-      headerName: "Name",
-      sortable: false,
+      headerName: t("dataTable.name"),
+      sortable: true,
     },
     {
       field: "dateCreated",
-      headerName: "Date created",
+      headerName: t("dataTable.dateCreated"),
       type: "date",
       valueFormatter: value => {
         const { convertedDate } = value as Record<string, string>
@@ -122,8 +109,8 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     },
     {
       field: "lastModifiedBy",
-      headerName: "Last modified by",
-      sortable: false,
+      headerName: t("dataTable.lastModifiedBy"),
+      sortable: true,
     },
     {
       field: "actions",
@@ -134,7 +121,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
             key={params.id}
             icon={<EditIcon color="primary" fontSize="large" />}
             onClick={e => handleEditSubmission(e, params.id)}
-            label="Edit"
+            label={t("edit")}
             showInMenu
             data-testid="edit-draft-submission"
           />
@@ -143,9 +130,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
           <GridActionsCellItem
             key={params.id}
             icon={<DeleteIcon color="primary" fontSize="large" />}
-            onClick={e => {
-              handleDeleteSubmission(e, params.id)
-            }}
+            onClick={e => handleDeleteSubmission(e, params.id, params.row.submissionType)}
             label="Delete"
             data-testid="delete-draft-submission"
             showInMenu
@@ -155,13 +140,10 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     },
   ]
 
-  const [columnVisibilityModel, setColumnVisibilityModel] = React.useState<GridColumnVisibilityModel>({
-    actions: submissionType !== SubmissionStatus.published,
-  })
   const [sortModel, setSortModel] = React.useState<GridSortModel>([
     {
       field: "dateCreated",
-      sort: null,
+      sort: "asc",
     },
   ])
 
@@ -175,16 +157,18 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     })
   }
 
-  const handleDeleteSubmission = async (e, id) => {
+  const handleDeleteSubmission = async (e, id, submissionType) => {
     e.stopPropagation()
     onDeleteSubmission ? onDeleteSubmission(id, submissionType) : null
   }
 
   const handleChangePage = (_e: unknown, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page, submissionType) : null
+    fetchPageOnChange ? fetchPageOnChange(page) : null
   }
 
-  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), submissionType) : null
   }
 
@@ -201,41 +185,34 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   const NoRowsOverlay = () => (
     <Stack height="100%" alignItems="center" justifyContent="center">
-      No results found.
+      {t("dataTable.noResults")}
     </Stack>
   )
 
   // Renders when there is submission list
   const SubmissionList = () => (
-    <div style={{ height: "37.2rem", width: "100%" }}>
-      <div style={{ display: "flex", height: "100%" }}>
-        <div style={{ flexGrow: 1 }}>
-          <DataTable
-            rows={rows}
-            columns={columns}
-            columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={newModel => setColumnVisibilityModel(newModel)}
-            disableRowSelectionOnClick
-            disableColumnMenu
-            disableColumnFilter
-            disableColumnSelector
-            hideFooterSelectedRowCount
-            slots={{
-              pagination: DataGridPagination,
-              noRowsOverlay: NoRowsOverlay,
-            }}
-            sortModel={sortModel}
-            onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
-          />
-        </div>
-      </div>
-    </div>
+    <DataTable
+      autoHeight
+      rows={rows}
+      columns={columns}
+      disableRowSelectionOnClick
+      disableColumnMenu
+      disableColumnFilter
+      disableColumnSelector
+      hideFooterSelectedRowCount
+      slots={{
+        pagination: DataGridPagination,
+        noRowsOverlay: NoRowsOverlay,
+      }}
+      sortModel={sortModel}
+      onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
+    />
   )
 
   return (
-    <Card variant="outlined">
+    <Box>
       <SubmissionList />
-    </Card>
+    </Box>
   )
 }
 

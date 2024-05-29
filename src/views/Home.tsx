@@ -15,6 +15,7 @@ import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
 import { debounce } from "lodash"
+import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
@@ -87,6 +88,7 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(state => state.user)
   const projectId = useAppSelector(state => state.projectId)
+  const { t } = useTranslation()
   const [isFetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true)
 
   // Selected tab value
@@ -389,8 +391,7 @@ const Home: React.FC = () => {
   }
 
   const getFilter = (textValue: string, currentTab: string) => {
-    const allSubmissions =
-      currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
+    const allSubmissions = currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
 
     const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
@@ -433,7 +434,7 @@ const Home: React.FC = () => {
           <FrontPageTab label="Drafts" value={SubmissionStatus.unpublished} data-testid="drafts-tab" />
           <FrontPageTab label="Published" value={SubmissionStatus.published} data-testid="published-tab" />
         </FrontPageTabs>
-        <Link component={RouterLink} aria-label="Create submission" to={pathWithLocale("submission?step=1")}>
+        <Link component={RouterLink} aria-label={t("createSubmission")} to={pathWithLocale("submission?step=1")}>
           <CreateSubmissionButton
             color="primary"
             variant="contained"
@@ -442,7 +443,7 @@ const Home: React.FC = () => {
             }}
             data-testid="link-create-submission"
           >
-            Create submission
+            {t("createSubmission")}
           </CreateSubmissionButton>
         </Link>
       </Box>
@@ -460,14 +461,10 @@ const Home: React.FC = () => {
             <Grid item xs={12}>
               <SubmissionDataTable
                 submissionType={
-                  tabValue === SubmissionStatus.unpublished
-                    ? SubmissionStatus.unpublished
-                    : SubmissionStatus.published
+                  tabValue === SubmissionStatus.unpublished ? SubmissionStatus.unpublished : SubmissionStatus.published
                 }
                 page={tabValue === SubmissionStatus.unpublished ? draftPage : publishedPage}
-                itemsPerPage={
-                  tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage
-                }
+                itemsPerPage={tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
                 totalItems={getCurrentTotalItems()}
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}

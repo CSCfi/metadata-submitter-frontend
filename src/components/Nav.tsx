@@ -11,9 +11,10 @@ import MenuItem from "@mui/material/MenuItem"
 import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
-import * as i18n from "i18next"
+import { useTranslation } from "react-i18next"
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
 
+import i18n from "../i18n"
 import logo from "../images/csc_logo.svg"
 
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
@@ -59,6 +60,8 @@ const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
 
+  const { t } = useTranslation()
+
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
 
@@ -84,10 +87,18 @@ const NavigationLinks = () => {
         data-testid="user-setting-button"
       >
         <PersonIcon fontSize="large" />
-        <Typography variant="subtitle2" color="secondary" sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}>
+        <Typography
+          variant="subtitle2"
+          color="secondary"
+          sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}
+        >
           {user.name}
         </Typography>
-        {open ? <ExpandLess color="secondary" fontSize="large" /> : <ExpandMore color="secondary" fontSize="large" />}
+        {open ? (
+          <ExpandLess color="secondary" fontSize="large" />
+        ) : (
+          <ExpandMore color="secondary" fontSize="large" />
+        )}
       </Button>
       <Menu
         id="user-setting-menu"
@@ -112,7 +123,7 @@ const NavigationLinks = () => {
             sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}
             data-testid="logout"
           >
-            Log out
+            {t("logout")}
           </Typography>
         </MenuItem>
       </Menu>
@@ -191,9 +202,10 @@ const LanguageSelector = (props: MenuItemProps) => {
 const NavigationMenu = () => {
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
-
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
+  const { t } = useTranslation()
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -209,13 +221,15 @@ const NavigationMenu = () => {
       <NavLinks>
         {location.pathname.includes("/submission") && (
           <Button size="large" variant="outlined" onClick={() => setDialogOpen(true)}>
-            Save submission and exit
+            {t("saveSubmission")}
           </Button>
         )}
         {location.pathname !== "/" && <NavigationLinks />}
         <LanguageSelector currentLocale={currentLocale} />
       </NavLinks>
-      {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>}
+      {dialogOpen && (
+        <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>
+      )}
     </React.Fragment>
   )
 }

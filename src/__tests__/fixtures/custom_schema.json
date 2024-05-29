@@ -75,12 +75,16 @@
             {
               "title": "First option",
               "type": "object",
-              "properties": { "firstOption": { "type": "string", "title": "First oneOf option label" } }
+              "properties": {
+                "firstOption": { "type": "string", "title": "First oneOf option label" }
+              }
             },
             {
               "title": "Second option",
               "type": "object",
-              "properties": { "secondOption": { "type": "string", "title": "Second oneOf option label" } }
+              "properties": {
+                "secondOption": { "type": "string", "title": "Second oneOf option label" }
+              }
             }
           ]
         }

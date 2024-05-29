@@ -13,6 +13,7 @@ import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
@@ -32,7 +33,10 @@ import { setFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
-import { deleteObjectFromSubmission, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
+import {
+  deleteObjectFromSubmission,
+  replaceObjectInSubmission,
+} from "features/wizardSubmissionSlice"
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
@@ -106,6 +110,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   const focusTarget = useRef<HTMLButtonElement>(null)
   const shouldFocus = useAppSelector(state => state.focus)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
@@ -137,7 +142,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClick={onClickSaveDraft}
         data-testid="form-draft"
       >
-        {currentObject?.status === ObjectStatus.draft ? "Update draft" : " Save as draft"}
+        {currentObject?.status === ObjectStatus.draft
+          ? t("formActions.updateDraft")
+          : t("formActions.saveAsDraft")}
       </Button>
       <Button
         variant="contained"
@@ -148,7 +155,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         form={refForm}
         data-testid="form-ready"
       >
-        {currentObject?.status === ObjectStatus.submitted ? "Update" : "Mark as ready"}{" "}
+        {currentObject?.status === ObjectStatus.submitted
+          ? t("formActions.update")
+          : t("formActions.markAsReady")}
       </Button>
     </ButtonGroup>
   )
@@ -252,7 +261,11 @@ const FormContent = ({
   useEffect(() => {
     // Delete draft form ONLY if the form was successfully submitted
     if (isSubmitSuccessful) {
-      if (currentObject?.status === ObjectStatus.draft && currentObjectId && Object.keys(currentObject).length > 0)
+      if (
+        currentObject?.status === ObjectStatus.draft &&
+        currentObjectId &&
+        Object.keys(currentObject).length > 0
+      )
         handleDraftDelete(currentObjectId)
     }
   }, [isSubmitSuccessful])
@@ -287,7 +300,8 @@ const FormContent = ({
     }
   }
 
-  const getCleanedValues = () => JSONSchemaParser.cleanUpFormValues(methods.getValues()) as ObjectDetails
+  const getCleanedValues = () =>
+    JSONSchemaParser.cleanUpFormValues(methods.getValues()) as ObjectDetails
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
@@ -380,7 +394,9 @@ const FormContent = ({
 
     if (checkFormCleanedValuesEmpty(cleanedValues)) {
       const index =
-        templates?.findIndex((item: { accessionId: string }) => item.accessionId === currentObject.accessionId) || 0
+        templates?.findIndex(
+          (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
+        ) || 0
       const response = await templateAPI.patchTemplateFromJSON(
         objectType,
         currentObject.accessionId,
@@ -388,11 +404,19 @@ const FormContent = ({
         index
       )
 
-      const displayTitle = getObjectDisplayTitle(objectType, cleanedValues as unknown as ObjectDisplayValues)
+      const displayTitle = getObjectDisplayTitle(
+        objectType,
+        cleanedValues as unknown as ObjectDisplayValues
+      )
 
       if (response.ok) {
         closeDialog()
-        dispatch(updateTemplateDisplayTitle({ accessionId: currentObject.accessionId, displayTitle: displayTitle }))
+        dispatch(
+          updateTemplateDisplayTitle({
+            accessionId: currentObject.accessionId,
+            displayTitle: displayTitle,
+          })
+        )
 
         dispatch(
           updateStatus({
@@ -526,7 +550,9 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
       }
 
       // Dereference Schema and link AccessionIds to equivalent objects
-      let dereferencedSchema: Promise<FormObject> = await dereferenceSchema(parsedSchema as FormObject)
+      let dereferencedSchema: Promise<FormObject> = await dereferenceSchema(
+        parsedSchema as FormObject
+      )
 
       dereferencedSchema = getLinkedDereferencedSchema(
         currentObject,
@@ -581,12 +607,26 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
       const accessionId = data.accessionId as string
       const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
       try {
-        const response = await objectAPIService.patchFromJSON(objectType, accessionId, cleanedValues)
-        patchHandler(response, submission, currentObject.accessionId, objectType, cleanedValues, dispatch)
+        const response = await objectAPIService.patchFromJSON(
+          objectType,
+          accessionId,
+          cleanedValues
+        )
+        patchHandler(
+          response,
+          submission,
+          currentObject.accessionId,
+          objectType,
+          cleanedValues,
+          dispatch
+        )
 
         // Dispatch fileTypes if object is Run or Analysis
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-          const objectWithFileTypes = getNewUniqueFileTypes(accessionId, cleanedValues as FormDataFiles)
+          const objectWithFileTypes = getNewUniqueFileTypes(
+            accessionId,
+            cleanedValues as FormDataFiles
+          )
           objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
         }
       } catch (error) {

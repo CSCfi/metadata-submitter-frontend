@@ -10,6 +10,7 @@ import MuiTextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
@@ -48,12 +49,18 @@ const TypeOfSubmissionLabel = styled("div")(({ theme }) => ({
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => {
+const CreateSubmissionForm = ({
+  createSubmissionFormRef,
+}: {
+  createSubmissionFormRef: FormRef
+}) => {
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
   const templates = useAppSelector(state => state.templates)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
+
+  const { t } = useTranslation()
 
   const [workflows, setWorkflows] = useState([""])
 
@@ -105,7 +112,12 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
     // Transform the format of templates to drafts with proper values to be added to current submission or new submission
     const selectedDraftsArray =
       templates && submission?.submissionId
-        ? await transformTemplatesToDrafts(templateAccessionIds, templates, submission.submissionId, dispatch)
+        ? await transformTemplatesToDrafts(
+            templateAccessionIds,
+            templates,
+            submission.submissionId,
+            dispatch
+          )
         : []
 
     dispatch(setWorkflowType(data.workflowType))
@@ -113,7 +125,9 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
     if (submission && submission?.submissionId) {
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
-          dispatch(updateStatus({ status: ResponseStatus.success, helperText: "Submission updated" }))
+          dispatch(
+            updateStatus({ status: ResponseStatus.success, helperText: "Submission updated" })
+          )
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
@@ -145,7 +159,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
         ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
-          Name your submission
+          {t("nameSubmission")}
         </Typography>
         <Controller
           control={control}
@@ -154,7 +168,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           render={({ field, fieldState: { error } }) => (
             <MuiTextField
               {...field}
-              label="Submission Name *"
+              label={`${t("newSubmission.submissionName")} *`}
               variant="outlined"
               fullWidth
               error={!!error}
@@ -172,7 +186,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           render={({ field, fieldState: { error } }) => (
             <MuiTextField
               {...field}
-              label="Submission Description *"
+              label={`${t("newSubmission.submissionDescription")} *`}
               variant="outlined"
               fullWidth
               multiline
@@ -188,7 +202,9 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
 
         <Grid sx={{ mt: 2 }} container spacing={2}>
           <Grid item>
-            <TypeOfSubmissionLabel id="submission-type-selection-label">Type of submission</TypeOfSubmissionLabel>
+            <TypeOfSubmissionLabel id="submission-type-selection-label">
+              {t("typeOfSubmission")}
+            </TypeOfSubmissionLabel>
           </Grid>
           <Grid item xs={6}>
             <FormControl>
@@ -234,7 +250,7 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
           aria-label="Save submission details"
           data-testid="create-submission"
         >
-          Save
+          {t("save")}
         </Button>
       </Form>
     </React.Fragment>
@@ -245,7 +261,11 @@ const CreateSubmissionForm = ({ createSubmissionFormRef }: { createSubmissionFor
  * Show form to create submission as first step of new draft wizard
  */
 
-const WizardCreateSubmissionStep = ({ createSubmissionFormRef }: { createSubmissionFormRef: FormRef }) => (
+const WizardCreateSubmissionStep = ({
+  createSubmissionFormRef,
+}: {
+  createSubmissionFormRef: FormRef
+}) => (
   <>
     <CreateSubmissionForm createSubmissionFormRef={createSubmissionFormRef} />
   </>

@@ -8,6 +8,7 @@ import Link from "@mui/material/Link"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import { styled } from "@mui/material/styles"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 import { TransitionGroup } from "react-transition-group"
 
@@ -16,7 +17,7 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -44,7 +45,9 @@ const ActionButton = (props: {
   const [alert, setAlert] = useState(false)
 
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
-  const pathname = pathWithLocale(submission.submissionId ? `submission/${submission.submissionId}` : `submission`)
+  const pathname = pathWithLocale(
+    submission.submissionId ? `submission/${submission.submissionId}` : `submission`
+  )
 
   const handleClick = () => {
     if (unsavedSubmission) {
@@ -102,7 +105,11 @@ const ActionButton = (props: {
         {buttonText}
       </Button>
       {alert && (
-        <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType={ObjectSubmissionTypes.form} />
+        <WizardAlert
+          onAlert={handleAlert}
+          parentLocation="submission"
+          alertType={ObjectSubmissionTypes.form}
+        />
       )}
     </React.Fragment>
   )
@@ -114,7 +121,11 @@ const ActionButton = (props: {
  */
 const StepItems = (props: {
   step: number
-  objects: { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }[]
+  objects: {
+    id: string
+    displayTitle: string
+    objectData?: ObjectInsideSubmissionWithTags
+  }[]
   draft: boolean
   submissionId: string
   objectType: string
@@ -125,7 +136,9 @@ const StepItems = (props: {
   const draftStatus = useAppSelector(state => state.draftStatus)
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
-  const [clickedItem, setClickedItem] = useState({ objectData: { accessionId: "", schema: "", tags: {} } })
+  const [clickedItem, setClickedItem] = useState({
+    objectData: { accessionId: "", schema: "", tags: {} },
+  })
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
 
   const handleClick = item => {
@@ -143,7 +156,10 @@ const StepItems = (props: {
     switch (step) {
       case 1: {
         dispatch(resetObjectType())
-        navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=1" })
+        navigate({
+          pathname: pathWithLocale(`submission/${submissionId}`),
+          search: "step=1",
+        })
         break
       }
       default: {
@@ -212,13 +228,21 @@ const StepItems = (props: {
         })}
       </TransitionGroup>
       {alert && (
-        <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType={ObjectSubmissionTypes.form} />
+        <WizardAlert
+          onAlert={handleAlert}
+          parentLocation="submission"
+          alertType={ObjectSubmissionTypes.form}
+        />
       )}
     </React.Fragment>
   )
 }
 
-type stepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }
+type stepItemObject = {
+  id: string
+  displayTitle: string
+  objectData?: ObjectInsideSubmissionWithTags
+}
 
 const ObjectWrapper = styled("div")(({ theme }) => {
   const treeBorder = `1px solid ${theme.palette.primary.main}`
@@ -279,6 +303,7 @@ const WizardStep = (params: {
   const { step, schemas, actionButtonText, formRef } = params
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
+  const { t } = useTranslation()
 
   return (
     <React.Fragment>
@@ -322,11 +347,7 @@ const WizardStep = (params: {
                 <ActionButton
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
-                  buttonText={
-                    actionButtonText === "Add"
-                      ? `Add ${objectType === ObjectTypes.dac ? "DAC" : objectType}`
-                      : actionButtonText
-                  }
+                  buttonText={step > 1 ? t("addObject", { object: objectType }) : actionButtonText}
                   disabled={hasObjects && !allowMultipleObjects}
                   formRef={formRef}
                 />

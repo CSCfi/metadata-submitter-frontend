@@ -6,10 +6,18 @@ import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 
-const options = ["Upload XML", "Clear form"]
+const WizardOptions = ({
+  onClearForm,
+  onOpenXMLModal,
+}: {
+  onClearForm: () => void
+  onOpenXMLModal: () => void
+}) => {
+  const { t } = useTranslation()
 
-const WizardOptions = ({ onClearForm, onOpenXMLModal }: { onClearForm: () => void; onOpenXMLModal: () => void }) => {
+  const options = [t("formActions.uploadXML"), t("formActions.clearForm")]
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -22,10 +30,16 @@ const WizardOptions = ({ onClearForm, onOpenXMLModal }: { onClearForm: () => voi
     option === options[0] ? onOpenXMLModal() : null
     option === options[1] ? onClearForm() : null
   }
+
   return (
-    <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ mt: "4rem", pr: "6rem" }}>
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="flex-end"
+      sx={{ mt: "4rem", pr: "6rem" }}
+    >
       <Typography variant="subtitle2" color="primary" fontWeight={700}>
-        Options
+        {t("formActions.options")}
       </Typography>
       <IconButton
         aria-label="options-button"
@@ -50,10 +64,10 @@ const WizardOptions = ({ onClearForm, onOpenXMLModal }: { onClearForm: () => voi
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {options.map(option => (
+        {options.map((option, index) => (
           <MenuItem
             key={option}
-            selected={option === "Upload XML"}
+            selected={index === 0}
             onClick={e => handleClose(e, option)}
             sx={{
               p: "1.2rem",

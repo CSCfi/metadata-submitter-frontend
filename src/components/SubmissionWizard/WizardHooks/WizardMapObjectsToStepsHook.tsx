@@ -1,7 +1,14 @@
 import type { TFunction } from "i18next"
 import { startCase } from "lodash"
 
-import { Schema, SubmissionFolder, Workflow, WorkflowStep, MappedSteps, WorkflowSchema } from "types"
+import {
+  Schema,
+  SubmissionFolder,
+  Workflow,
+  WorkflowStep,
+  MappedSteps,
+  WorkflowSchema,
+} from "types"
 
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
@@ -13,15 +20,24 @@ const mapObjectsToStepsHook = (
   // Sort newest first by reversing array order
   const groupedObjects = objectTypesArray
     .map((schema: Schema) => {
-      const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
+      const mapItem = item => ({
+        id: item.accessionId,
+        displayTitle: item.tags.displayTitle,
+        objectData: { ...item },
+      })
       return {
         [schema]: {
           drafts: submission.drafts
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
+            .filter(
+              (object: { schema: string }) =>
+                object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`
+            )
             .map(item => mapItem(item))
             .reverse(),
           ready: submission.metadataObjects
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
+            .filter(
+              (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
+            )
             .map(item => mapItem(item))
             .reverse(),
         },
@@ -89,9 +105,11 @@ const mapObjectsToStepsHook = (
       schemas: [
         {
           objectType: "submissionDetails",
-          name: t("nameSubmission"),
+          name: t("newSubmission.nameSubmission"),
           objects: {
-            ready: submission.submissionId ? [{ id: submission.submissionId, displayTitle: submission.name }] : [],
+            ready: submission.submissionId
+              ? [{ id: submission.submissionId, displayTitle: submission.name }]
+              : [],
           },
           required: true,
         },

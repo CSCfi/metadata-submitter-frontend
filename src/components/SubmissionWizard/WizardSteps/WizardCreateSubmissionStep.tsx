@@ -159,7 +159,7 @@ const CreateSubmissionForm = ({
         ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
       >
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
-          {t("nameSubmission")}
+          {t("newSubmission.nameSubmission")}
         </Typography>
         <Controller
           control={control}
@@ -203,7 +203,7 @@ const CreateSubmissionForm = ({
         <Grid sx={{ mt: 2 }} container spacing={2}>
           <Grid item>
             <TypeOfSubmissionLabel id="submission-type-selection-label">
-              {t("typeOfSubmission")}
+              {t("newSubmission.typeOfSubmission")}
             </TypeOfSubmissionLabel>
           </Grid>
           <Grid item xs={6}>

@@ -1,8 +1,8 @@
 import * as i18n from "i18next"
 import { initReactI18next } from "react-i18next"
 
-import EnTranslation from "./translations/translation_en.json"
-import FiTranslation from "./translations/translation_fi.json"
+import EnTranslation from "./translations/en/translation_en.json"
+import FiTranslation from "./translations/fi/translation_fi.json"
 /*
  * Later we could add here different translation files for
   various objects and forms

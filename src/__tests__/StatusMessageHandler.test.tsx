@@ -3,6 +3,7 @@ import React from "react"
 import { screen } from "@testing-library/react"
 
 import StatusMessageHandler from "../components/StatusMessageHandler"
+import "../i18n"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { renderWithProviders } from "utils/test-utils"
@@ -22,7 +23,9 @@ describe("StatusMessageHandler", () => {
       },
     })
     expect(screen.getByRole("alert")).toBeDefined()
-    expect(screen.getByText(/Unfortunately an unexpected error happened on our servers/i)).toBeDefined()
+    expect(
+      screen.getByText(/Unfortunately an unexpected error happened on our servers/i)
+    ).toBeDefined()
   })
 
   it("should render info message", () => {
@@ -34,7 +37,9 @@ describe("StatusMessageHandler", () => {
       },
     })
     expect(
-      screen.getByText(/For some reason, your file is still being saved to our database, please wait./i)
+      screen.getByText(
+        /For some reason, your file is still being saved to our database, please wait./i
+      )
     ).toBeDefined()
   })
 

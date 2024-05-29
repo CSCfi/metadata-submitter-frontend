@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 
 test.describe("Draft operations", () => {
   test.beforeEach(async ({ page, login, generateSubmissionAndObjects, resetDB }) => {
@@ -27,7 +27,7 @@ test.describe("Draft operations", () => {
     await clickAccordionPanel("Study, DAC and Policy")
 
     // Create a new DAC form and submit
-    await clickAddObject(DisplayObjectTypes.dac)
+    await clickAddObject(ObjectTypes.dac)
     await page.getByTestId("title").fill("Test DAC title")
     await page.locator("div[data-testid='contacts'] > div > button").click()
     await page.getByTestId("contacts.0.name").fill("Test contact name")
@@ -48,7 +48,9 @@ test.describe("Draft operations", () => {
     // Save a draft
     await formActions("form-draft")
     await page.getByRole("alert").filter({ hasText: "Draft saved with" })
-    await expect(page.getByTestId("policy-objects-list").filter({ has: page.locator("li") })).toHaveCount(1)
+    await expect(
+      page.getByTestId("policy-objects-list").filter({ has: page.locator("li") })
+    ).toHaveCount(1)
     // Save another draft
     await clickAddObject("policy")
     await expect(page.getByTestId("title")).toHaveValue("")

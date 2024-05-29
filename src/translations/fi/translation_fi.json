@@ -1,0 +1,64 @@
+{
+  "Logged in as": "Kirjautuneena",
+  "serviceIntro": "Tool for submitting metadata.",
+  "createSubmission": "Create submission",
+  "allSubmissions": "All submissions",
+  "draftSubmissions": "Draft submissions",
+  "publishedSubmissions": "Published submissions",
+  "submissionDetails": "Submission details",
+  "save": "Save",
+  "add": "Add",
+  "edit": "Edit",
+  "addObject": "Add {{object}}",
+  "draft": "Draft",
+  "ready": "Ready",
+  "saveSubmission": "Save submission and exit",
+  "newSubmission": {
+    "nameSubmission": "Name your submission",
+    "typeOfSubmission": "Type of submission",
+    "submissionName": "Submission Name",
+    "submissionDescription": "Submission Description"
+  },
+  "formActions": {
+    "saveAsDraft": "Save as draft",
+    "updateDraft": "Update draft",
+    "markAsReady": "Mark as ready",
+    "update": "Update",
+    "options": "Options",
+    "uploadXML": "Upload XML",
+    "clearForm": "Clear form"
+  },
+  "login": "Kirjaudu",
+  "logout": "Kirjaudu ulos",
+  "snackbarMessages": {
+    "error": {
+      "default": "Unfortunately an unexpected error happened on our servers",
+      "504": "Unfortunately we couldn't connect to our server.",
+      "400": "{{helperText}} Details: {{responseDetail}}"
+    },
+    "info": {
+      "default": "For some reason, your file is still being saved to our database, please wait. If saving doesn't go through in two minutes, please try saving the file again."
+    },
+    "success": {
+      "drafts": {
+        "saved": "Draft saved with accessionid {{accessionId}}",
+        "updated": "Draft updated with accessionid {{accessionId}}"
+      },
+      "objects": {
+        "submitted": "Submitted with accessionid {{accessionId}}",
+        "replaced": "Object replaced with accessionid {{accessionId}}",
+        "updated": "Object updated with accessionid {{accessionId}}"
+      },
+      "templates": {
+        "updated": "Template updated with accessionid {{accessionId}}"
+      }
+    }
+  },
+  "errorPages": {
+    "page400": {},
+    "page401": {},
+    "page403": {},
+    "page404": {},
+    "page500": {}
+  }
+}

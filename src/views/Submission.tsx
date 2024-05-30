@@ -12,13 +12,14 @@ import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardA
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
 //import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
+import { ValidSteps } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { FormRef } from "types"
-import { useQuery, pathWithLocale } from "utils"
+import { useQuery } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
 /**
@@ -37,7 +38,8 @@ const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, ob
       //return <WizardShowSummaryStep />
       break
     default:
-      return <Page404 />
+      // An empty page
+      break
   }
 }
 
@@ -68,7 +70,7 @@ const SubmissionWizard: React.FC = () => {
           dispatch(setWorkflowType(response.data.workflow))
           setFetchingSubmission(false)
         } else {
-          navigate({ pathname: pathWithLocale("submission"), search: "step=1" })
+          navigate({ pathname: ""})
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
@@ -92,8 +94,8 @@ const SubmissionWizard: React.FC = () => {
 
   const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
-  return (
-    <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
+  return ValidSteps.includes(wizardStep) ? (
+     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
       <Grid
         sx={{
           mt: 7.7,
@@ -118,6 +120,9 @@ const SubmissionWizard: React.FC = () => {
 
       <WizardFooter />
     </Container>
+  ) :
+  (
+    <Page404 />
   )
 }
 

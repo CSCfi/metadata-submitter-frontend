@@ -27,9 +27,6 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandle
     case 504:
       message = `Unfortunately we couldn't connect to our server.`
       break
-    case 404:
-      message = `Unfortunately we couldn't connect to our server. Details: ${helperText}`
-      break
     case 400:
       message = `${helperText} Details: ${response.data.detail}`
       break
@@ -144,7 +141,9 @@ const Message = (props: StatusMessageProps) => {
     dispatch(resetStatusDetails())
   }
 
-  return (
+  return (typeof response !== "undefined" && response.status===404) ?
+  null
+  : (
     <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
       {messageTemplate(status)}
     </Snackbar>

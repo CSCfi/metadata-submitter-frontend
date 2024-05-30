@@ -26,18 +26,10 @@ const restHandlers = [
       ],
     })
   }),
-  //http.get("/v1/submissions/:submissionId", ({ params }) => {
-  //  const { submissionId } = params
-  //  return HttpResponse.json({
-  //    type: "about:blank",
-  //    title: "Not Found",
-  //    detail: `Submission with id ${submissionId} was not found.`,
-  //    instance: `/v1/submissions/${submissionId}`,
-  //  })
-  //}),
   http.get("/v1/submissions/:submissionId", ({ params }) => {
     const id = params.submissionId
-    return HttpResponse.json({
+
+    return id==="123456" ?  HttpResponse.json({
       name: submissionName,
       description: submissionDescription,
       submissionId: id,
@@ -45,6 +37,8 @@ const restHandlers = [
       drafts: [],
       metadataObjects: [],
     })
+    :
+    new HttpResponse("Not found", { status: 404 })
   }),
 ]
 
@@ -57,16 +51,22 @@ describe("SubmissionWizard", () => {
 
   sessionStorage.setItem(`cached_workflows`, JSON.stringify(allWorkflows))
 
-  // TODO: Handle the case when "step" is undefined or wrong submissionId to return 404
-  // then fix the test case below
+  // Test the case when "step" is undefined to return 404
   test("should navigate to 404 page on undefined step", () => {
     renderWithProviders(
-      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=undefined" }]}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <SubmissionWizard />
-          </ThemeProvider>
-        </StyledEngineProvider>
+      <MemoryRouter initialEntries={[{ pathname: "/submission/123456", search: "?step=undefined" }]}>
+        <Routes>
+          <Route
+            path="/submission/:submissionId"
+            element={
+              <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={CSCtheme}>
+                  <SubmissionWizard />
+                </ThemeProvider>
+              </StyledEngineProvider>
+            }
+          />
+        </Routes>
       </MemoryRouter>,
       {
         preloadedState: {
@@ -77,36 +77,31 @@ describe("SubmissionWizard", () => {
         },
       }
     )
-    screen.getByText("404 Not Found")
     expect(screen.getByText("404 Not Found")).toBeInTheDocument()
   })
-  /*
-   * The test needs to be reconsider the expected outcome when typing wrong submisisonId
-   */
-  test("should redirect back to draft wizard start on invalid submissionId", async () => {
-    //act(() => {
-    //  renderWithProviders(
-    //    <MemoryRouter initialEntries={[{ pathname: "/en/submission/123456", search: "?step=1" }]}>
-    //      <StyledEngineProvider injectFirst>
-    //        <ThemeProvider theme={CSCtheme}>
-    //          <App />
-    //        </ThemeProvider>
-    //      </StyledEngineProvider>
-    //    </MemoryRouter>,
-    //    {
-    //      preloadedState: {
-    //        ...initialStore,
-    //        user: { name: "test" },
-    //        stepObject: { step: 2, stepObjectType: "study" },
-    //      },
-    //    }
-    //  )
-    //})
-    //await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    //expect(screen.getByTestId("submissionName")).toBeInTheDocument()
+
+  test("should redirect to 404 page on invalid submissionId", async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={[{ pathname: `/submission/123`, search: "?step=1" }]}>
+        <Routes>
+          <Route
+            path="/submission/:submissionId"
+            element={
+              <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={CSCtheme}>
+                  <SubmissionWizard />
+                </ThemeProvider>
+              </StyledEngineProvider>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
+    expect(screen.getByText("404 Not Found")).toBeInTheDocument()
   })
 
-  it("should render submission by submissionId in URL parameters", async () => {
+  test("should render submission by submissionId in URL parameters", async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: `/submission/123456`, search: "?step=1" }]}>
         <Routes>
@@ -127,7 +122,6 @@ describe("SubmissionWizard", () => {
       the mock promises to all resolve
     */
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-
     const submissionNameInput = screen.getByTestId("submissionName")
     expect(submissionNameInput).toHaveValue(submissionName)
   })

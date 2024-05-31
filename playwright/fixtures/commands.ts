@@ -39,7 +39,7 @@ const test = base.extend<CommandFixtures>({
   familyName: process.env.FAMILY_NAME,
   givenName: process.env.GIVEN_NAME,
   submissionName: "",
-  // eslint-disable-next-line no-empty-pattern
+   
   resetDB: async ({}, use) => {
     const resetDB = async () => {
       const database = await MongoClient.connect("mongodb://admin:admin@localhost:27017")

@@ -1200,7 +1200,7 @@ const FormAutocompleteField = ({
 
   // Disable warning when using external function as callback
   // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   const debouncedSearch = useCallback(
     debounce((newInput: string) => {
       if (newInput.length > 0) fetchOrganisations(newInput)

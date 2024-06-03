@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 
 test.describe("Basic application flow", () => {
   test.beforeEach(async ({ resetDB }) => {
@@ -54,7 +54,7 @@ test.describe("Basic application flow", () => {
     await expect(page.getByTestId("study-objects-list")).toHaveCount(1)
 
     // DAC form
-    await clickAddObject(DisplayObjectTypes.dac)
+    await clickAddObject(ObjectTypes.dac)
 
     // Try to submit empty DAC form. This should be invalid
     await page.getByTestId("title").fill("Test title")
@@ -65,7 +65,9 @@ test.describe("Basic application flow", () => {
     await page.getByTestId("contacts.0.name").fill("Test contact name")
     // Test invalid email address (form array, default)
     await page.getByTestId("contacts.0.email").fill("email")
-    await expect(page.locator("p[id='contacts.0.email-helper-text']")).toHaveText('must match format "email"')
+    await expect(page.locator("p[id='contacts.0.email-helper-text']")).toHaveText(
+      'must match format "email"'
+    )
     await page.getByTestId("contacts.0.email").fill("email@test.com")
     await page.getByTestId("contacts.0.telephoneNumber").fill("123456789")
     await page.getByTestId("contacts.0.organisation-inputField").fill("Test organization")
@@ -83,7 +85,9 @@ test.describe("Basic application flow", () => {
     await formActions("form-ready")
 
     await page.getByRole("alert", { name: "Object updated" })
-    await expect(page.getByTestId("dac-objects-list").filter({ hasText: "Test title edited" })).toBeVisible()
+    await expect(
+      page.getByTestId("dac-objects-list").filter({ hasText: "Test title edited" })
+    ).toBeVisible()
 
     // Fill Policy form
     await clickAddObject(ObjectTypes.policy)

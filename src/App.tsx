@@ -2,8 +2,9 @@ import React, { useEffect } from "react"
 
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
-import * as i18n from "i18next"
 import { Routes, Route, useLocation, Navigate } from "react-router-dom"
+
+import i18n from "./i18n"
 
 import Nav from "components/Nav"
 import StatusMessageHandler from "components/StatusMessageHandler"
@@ -42,12 +43,28 @@ const App: React.FC = () => {
 
   const locale = useAppSelector(state => state.locale)
 
+  // Get locale from url and set application wide locale setting
+  const getLocale = () => {
+    let locale: string
+    const locales = ["en", "fi"]
+    const currentLocale = location.pathname.split("/")[1]
+
+    if (locales.indexOf(currentLocale) > -1) {
+      locale = currentLocale
+    } else locale = Locale.defaultLocale
+
+    i18n.changeLanguage(locale)
+
+    dispatch(setLocale(locale))
+  }
+
   // Fetch array of schemas from backend and store it in frontend
   // Fetch only if the initial array is empty
   // if there is any errors while fetching, it will return a manually created ObjectsArray instead
   // &&
   // Handle initial locale setting
   useEffect(() => {
+    getLocale()
     if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
     let isMounted = true
     const getSchemas = async () => {
@@ -85,23 +102,7 @@ const App: React.FC = () => {
       }
     }
 
-    // Get locale from url and set application wide locale setting
-    const getLocale = () => {
-      let locale: string
-      const locales = ["en", "fi"]
-      const currentLocale = location.pathname.split("/")[1]
-
-      if (locales.indexOf(currentLocale) > -1) {
-        locale = currentLocale
-      } else locale = Locale.defaultLocale
-
-      i18n.changeLanguage(locale)
-
-      dispatch(setLocale(locale))
-    }
-
     getSchemas()
-    getLocale()
     return () => {
       isMounted = false
     }
@@ -134,7 +135,14 @@ const App: React.FC = () => {
               component="main"
               maxWidth={false}
               disableGutters
-              sx={{ padding: 0, margin: 0, width: "100%", height: "100%", display: "flex", flexDirection: "column" }}
+              sx={{
+                padding: 0,
+                margin: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
               <Login />
             </Container>

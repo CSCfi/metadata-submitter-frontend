@@ -5,16 +5,11 @@ import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router-dom"
-import { vi } from "vitest"
 
 import CSCtheme from "../theme"
 
 import App from "App"
 import { renderWithProviders } from "utils/test-utils"
-
-vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}))
 
 const restHandlers = [
   http.get("/v1/users/current", () => {

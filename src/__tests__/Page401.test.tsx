@@ -47,8 +47,7 @@ describe("Page401", () => {
       vi.advanceTimersByTime(10000)
     })
 
-    component.getByText("Login")
-    expect(component.getByText("Login")).toBeInTheDocument()
+    expect(component.getByTestId("login-button")).toBeInTheDocument()
     vi.useRealTimers()
   })
 })

@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 
 import CSCBannerLogin from "../images/csc_banner_login.png"
 
@@ -69,6 +70,8 @@ const FooterItem = styled(Grid)(({ theme }) => ({
 }))
 
 const Login: React.FC = () => {
+  const { t } = useTranslation()
+
   let loginRoute = "/aai"
   if (import.meta.env.NODE_ENV === "development") {
     loginRoute = "http://localhost:5430/aai"
@@ -81,10 +84,15 @@ const Login: React.FC = () => {
           SD Submit
         </Typography>
         <Typography variant="subtitle1" sx={{ mt: "3.6rem", color: "secondary.main" }}>
-          Tool for submitting metadata.
+          {t("serviceIntro")}
         </Typography>
-        <LoginButton variant="contained" color="primary" href={loginRoute} data-testid="login-button">
-          Login
+        <LoginButton
+          variant="contained"
+          color="primary"
+          href={loginRoute}
+          data-testid="login-button"
+        >
+          {t("login")}
         </LoginButton>
       </LoginBanner>
       <Footer container justifyContent="center">

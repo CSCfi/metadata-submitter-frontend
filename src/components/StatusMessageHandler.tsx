@@ -2,6 +2,7 @@ import React, { useState } from "react"
 
 import Alert from "@mui/material/Alert"
 import Snackbar from "@mui/material/Snackbar"
+import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
@@ -14,24 +15,35 @@ type MessageHandlerProps = {
   handleClose: (status: boolean) => void
 }
 
-type HandlerRef = ((instance: HTMLDivElement | null) => void) | React.RefObject<HTMLDivElement> | null | undefined
+type HandlerRef =
+  | ((instance: HTMLDivElement | null) => void)
+  | React.RefObject<HTMLDivElement>
+  | null
+  | undefined
 
 /*
  * Error messages
  */
-const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
+const ErrorHandler = React.forwardRef(function ErrorHandler(
+  props: MessageHandlerProps,
+  ref: HandlerRef
+) {
+  const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   let message: string
 
   switch (response?.status) {
     case 504:
-      message = `Unfortunately we couldn't connect to our server.`
+      message = t("snackbarMessages.error.504")
       break
     case 400:
-      message = `${helperText} Details: ${response.data.detail}`
+      message = t("snackbarMessages.error.400", {
+        helperText,
+        responseDetail: response.data.detail,
+      })
       break
     default:
-      message = "Unfortunately an unexpected error happened on our servers"
+      message = t("snackbarMessages.error.default")
   }
   return (
     <Alert severity="error" onClose={() => handleClose(false)} ref={ref}>
@@ -41,11 +53,13 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(props: MessageHandle
 })
 
 // Info messages
-const InfoHandler = React.forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
+const InfoHandler = React.forwardRef(function InfoHandler(
+  props: MessageHandlerProps,
+  ref: HandlerRef
+) {
+  const { t } = useTranslation()
   const { helperText, handleClose } = props
-  const defaultMessage = `For some reason, your file is still being saved
-  to our database, please wait. If saving doesn't go through in two
-  minutes, please try saving the file again.`
+  const defaultMessage = t("snackbarMessages.info.default")
 
   const messageTemplate = (helperText?: string) => {
     return helperText?.length ? helperText : defaultMessage
@@ -59,7 +73,11 @@ const InfoHandler = React.forwardRef(function InfoHandler(props: MessageHandlerP
 })
 
 // Success messages
-const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHandlerProps, ref: HandlerRef) {
+const SuccessHandler = React.forwardRef(function SuccessHandler(
+  props: MessageHandlerProps,
+  ref: HandlerRef
+) {
+  const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   let message = ""
   if (response) {
@@ -67,11 +85,15 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
       case "/v1/drafts": {
         switch (response?.config.method) {
           case "patch": {
-            message = `Draft updated with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.drafts.updated", {
+              accessionId: response.data.accessionId,
+            })
             break
           }
           default: {
-            message = `Draft saved with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.drafts.saved", {
+              accessionId: response.data.accessionId,
+            })
           }
         }
         break
@@ -79,15 +101,21 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
       case "/v1/objects": {
         switch (response.config.method) {
           case "patch": {
-            message = `Object updated with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.objects.updated", {
+              accessionId: response.data.accessionId,
+            })
             break
           }
           case "put": {
-            message = `Object replaced with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.objects.replaced", {
+              accessionId: response.data.accessionId,
+            })
             break
           }
           default: {
-            message = `Submitted with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.objects.submitted", {
+              accessionId: response.data.accessionId,
+            })
           }
         }
         break
@@ -95,7 +123,9 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(props: MessageHa
       case "/v1/templates": {
         switch (response.config.method) {
           default: {
-            message = `Template updated with accessionid ${response.data.accessionId}`
+            message = t("snackbarMessages.success.templates.updated", {
+              accessionId: response.data.accessionId,
+            })
           }
         }
       }
@@ -126,11 +156,15 @@ const Message = (props: StatusMessageProps) => {
   const messageTemplate = (status: string) => {
     switch (status) {
       case ResponseStatus.success:
-        return <SuccessHandler handleClose={handleClose} response={response} helperText={helperText} />
+        return (
+          <SuccessHandler handleClose={handleClose} response={response} helperText={helperText} />
+        )
       case ResponseStatus.info:
         return <InfoHandler handleClose={handleClose} helperText={helperText} />
       case ResponseStatus.error:
-        return <ErrorHandler handleClose={handleClose} response={response} helperText={helperText} />
+        return (
+          <ErrorHandler handleClose={handleClose} response={response} helperText={helperText} />
+        )
       default:
         return
     }
@@ -141,9 +175,7 @@ const Message = (props: StatusMessageProps) => {
     dispatch(resetStatusDetails())
   }
 
-  return (typeof response !== "undefined" && response.status===404) ?
-  null
-  : (
+  return typeof response !== "undefined" && response.status === 404 ? null : (
     <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
       {messageTemplate(status)}
     </Snackbar>
@@ -159,7 +191,9 @@ const StatusMessageHandler: React.FC = () => {
         <Message
           status={statusDetails.status}
           response={
-            typeof statusDetails.response === "string" ? JSON.parse(statusDetails.response) : statusDetails.response
+            typeof statusDetails.response === "string"
+              ? JSON.parse(statusDetails.response)
+              : statusDetails.response
           }
           helperText={statusDetails.helperText}
         />

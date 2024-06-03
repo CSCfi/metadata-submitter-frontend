@@ -6,6 +6,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 
 import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
@@ -84,6 +85,8 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
 
   const location = useLocation()
 
+  const { t } = useTranslation()
+
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
 
   // Fetch workflow based on workflowType
@@ -97,7 +100,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
     getWorkflow()
   }, [workflowType])
 
-  const { mappedSteps } = WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow)
+  const { mappedSteps } = WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow, t)
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item

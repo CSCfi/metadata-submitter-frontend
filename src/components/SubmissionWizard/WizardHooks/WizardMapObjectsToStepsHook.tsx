@@ -1,25 +1,43 @@
+import type { TFunction } from "i18next"
 import { startCase } from "lodash"
 
-import { Schema, SubmissionFolder, Workflow, WorkflowStep, MappedSteps, WorkflowSchema } from "types"
+import {
+  Schema,
+  SubmissionFolder,
+  Workflow,
+  WorkflowStep,
+  MappedSteps,
+  WorkflowSchema,
+} from "types"
 
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
   objectTypesArray: Schema[],
-  currentWorkflow: Workflow | Record<string, unknown>
+  currentWorkflow: Workflow | Record<string, unknown>,
+  t: TFunction
 ): { mappedSteps: MappedSteps[] } => {
   // Group objects by schema and status of the object
   // Sort newest first by reversing array order
   const groupedObjects = objectTypesArray
     .map((schema: Schema) => {
-      const mapItem = item => ({ id: item.accessionId, displayTitle: item.tags.displayTitle, objectData: { ...item } })
+      const mapItem = item => ({
+        id: item.accessionId,
+        displayTitle: item.tags.displayTitle,
+        objectData: { ...item },
+      })
       return {
         [schema]: {
           drafts: submission.drafts
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`)
+            .filter(
+              (object: { schema: string }) =>
+                object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`
+            )
             .map(item => mapItem(item))
             .reverse(),
           ready: submission.metadataObjects
-            .filter((object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase())
+            .filter(
+              (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
+            )
             .map(item => mapItem(item))
             .reverse(),
         },
@@ -71,7 +89,7 @@ const mapObjectsToStepsHook = (
               objectType: schema.name,
               objects: groupedObjects[schema.name],
             })),
-            actionButtonText: "Add",
+            actionButtonText: t("add"),
             disabled: index > 0 && !checkSchemaReady(requiredSchemas),
           }
         })
@@ -83,18 +101,20 @@ const mapObjectsToStepsHook = (
    */
   const mappedSteps = [
     {
-      title: "Submission details",
+      title: t("submissionDetails"),
       schemas: [
         {
           objectType: "submissionDetails",
-          name: "Name your submission",
+          name: t("newSubmission.nameSubmission"),
           objects: {
-            ready: submission.submissionId ? [{ id: submission.submissionId, displayTitle: submission.name }] : [],
+            ready: submission.submissionId
+              ? [{ id: submission.submissionId, displayTitle: submission.name }]
+              : [],
           },
           required: true,
         },
       ],
-      actionButtonText: "Edit",
+      actionButtonText: t("edit"),
     },
   ].concat(schemaSteps)
 

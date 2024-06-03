@@ -150,7 +150,9 @@ describe("WizardFillObjectDetailsForm", () => {
       fireEvent.click(showmoreLink)
     })
     await waitFor(() =>
-      expect(tooltipBox).toHaveTextContent("Study Description should provide additional information about the study.")
+      expect(tooltipBox).toHaveTextContent(
+        "Study Description should provide additional information about the study."
+      )
     )
 
     const showlessLink = await waitFor(() => screen.getByText("Show less"))
@@ -159,8 +161,10 @@ describe("WizardFillObjectDetailsForm", () => {
       fireEvent.click(showlessLink)
     })
 
-    expect(tooltipBox).toHaveTextContent(
-      "Study Description should provide additional information abou...Read more/Expand"
+    await waitFor(() =>
+      expect(tooltipBox).toHaveTextContent(
+        "Study Description should provide additional information abou...Read more/Expand"
+      )
     )
   })
 

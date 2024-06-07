@@ -53,30 +53,38 @@ const FooterLink = styled("a")(({ theme }) => ({
 
 const Footer: React.FC = () => {
   return (
-    <FooterContainer container>
+    <FooterContainer container data-testid="footer">
       <FooterStart>
-        <Typography variant="subtitle2" fontWeight="700">
+        <Typography variant="subtitle2" fontWeight="700" data-testid="footer-name">
           SD Submit
         </Typography>
-        <Typography variant="subtitle2" fontWeight="400">
+        <Typography variant="subtitle2" fontWeight="400" data-testid="footer-name">
           CSC - IT Center for Science Ltd.
         </Typography>
-        <Typography variant="subtitle2" fontWeight="400">
+        <Typography variant="subtitle2" fontWeight="400" data-testid="footer-name">
           P.O. Box 405 FI-02101 Espoo, Finland
         </Typography>
       </FooterStart>
       <FooterEnd>
         <FooterItem>
-          <FooterLink href="https://www.csc.fi">Service description</FooterLink>
+          <FooterLink href="https://www.csc.fi" data-testid="footer-link">
+            Service description
+          </FooterLink>
         </FooterItem>
         <FooterItem>
-          <FooterLink href="https://www.csc.fi">Accessibility</FooterLink>
+          <FooterLink href="https://www.csc.fi" data-testid="footer-link">
+            Accessibility
+          </FooterLink>
         </FooterItem>
         <FooterItem>
-          <FooterLink href="https://www.csc.fi">Privacy</FooterLink>
+          <FooterLink href="https://www.csc.fi" data-testid="footer-link">
+            Privacy
+          </FooterLink>
         </FooterItem>
         <FooterItem>
-          <FooterLink href="https://www.csc.fi">About Sensitive Data services</FooterLink>
+          <FooterLink href="https://www.csc.fi" data-testid="footer-link">
+            About Sensitive Data services
+          </FooterLink>
         </FooterItem>
       </FooterEnd>
     </FooterContainer>

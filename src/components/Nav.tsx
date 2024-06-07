@@ -31,7 +31,10 @@ import { pathWithLocale } from "utils"
 const NavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
   boxShadow: "0 0.25em 0.25em 0 rgba(0, 0, 0,0.25)",
-  zIndex: 3,
+  zIndex: 1300,
+  top: 0,
+  left: 0,
+  right: 0,
 }))
 
 const Logo = styled("img")(() => ({

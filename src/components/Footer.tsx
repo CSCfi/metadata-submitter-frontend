@@ -1,98 +1,83 @@
 import React from "react"
 
+import Box from "@mui/material/Box"
+import Grid from "@mui/material/Grid"
 import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 
-const StyledFooter = styled("footer")({
-  padding: "40px 60px",
-  backgroundColor: "#dfe1e3", // $csc-lightest-grey
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-})
-
-const FooterContainer = styled("div")({
-  display: "flex",
+const FooterContainer = styled(Grid)(({ theme }) => ({
+  backgroundColor: theme.palette.secondary.light,
   width: "100%",
+  padding: "2.5rem 3.75rem",
+  display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-})
+}))
 
-const FooterStart = styled("div")({
+const FooterStart = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-start",
-})
+  justifyContent: "flex-start",
+  marginRight: "auto",
+  padding: "0.5rem 0.75rem",
+  color: theme.palette.text.secondary,
+}))
 
-const FooterEnd = styled("div")({
+const FooterEnd = styled(Box)({
   display: "flex",
   flexDirection: "row",
-  alignItems: "center",
   justifyContent: "space-around",
-  width: "60%",
+  marginLeft: "auto",
+  width: "50%",
 })
 
-const LargeText = styled("span")({
-  fontStyle: "normal",
-  fontWeight: 600,
-  fontSize: "16px",
-  lineHeight: "19px",
-  color: "#2E3438", // $csc-dark
-  marginBottom: "4px",
+const FooterItem = styled(Box)({
+  padding: "0.5rem 0.75rem",
+  display: "flex",
+  alignItems: "center",
 })
 
-const SmallText = styled("div")({
-  fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: "14px",
-  lineHeight: "18px",
-  color: "#595959", // $csc-grey
-})
-
-const LinkText = styled("a")({
-  color: "#595959", // $csc-grey
-  fontWeight: 400,
+const FooterLink = styled("a")(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  textDecoration: "none",
+  cursor: "pointer",
+  margin: "0.5rem 1rem",
+  fontSize: "1.2739rem",
   "&:hover": {
-    backgroundColor: "#ccf4f0",
+    backgroundColor: "#CCF4F0",
     textDecoration: "underline",
   },
-})
+}))
 
 const Footer: React.FC = () => {
   return (
-    <StyledFooter>
-      <FooterContainer>
-        <FooterStart>
-          <LargeText>SD Submit</LargeText>
-          <SmallText>
-            <LinkText href="#" target="_blank">
-              Service provider
-            </LinkText>
-          </SmallText>
-        </FooterStart>
-        <FooterEnd>
-          <SmallText>
-            <LinkText href="#" target="_blank">
-              Item 1
-            </LinkText>
-          </SmallText>
-          <SmallText>
-            <LinkText href="/accessibility" target="_blank">
-              Item 2
-            </LinkText>
-          </SmallText>
-          <SmallText>
-            <LinkText href="#" target="_blank">
-              Item 3
-            </LinkText>
-          </SmallText>
-          <SmallText>
-            <LinkText href="#" target="_blank">
-              Item 4
-            </LinkText>
-          </SmallText>
-        </FooterEnd>
-      </FooterContainer>
-    </StyledFooter>
+    <FooterContainer container>
+      <FooterStart>
+        <Typography variant="subtitle2" fontWeight="700">
+          SD Submit
+        </Typography>
+        <Typography variant="subtitle2" fontWeight="400">
+          CSC - IT Center for Science Ltd.
+        </Typography>
+        <Typography variant="subtitle2" fontWeight="400">
+          P.O. Box 405 FI-02101 Espoo, Finland
+        </Typography>
+      </FooterStart>
+      <FooterEnd>
+        <FooterItem>
+          <FooterLink href="https://www.csc.fi">Service description</FooterLink>
+        </FooterItem>
+        <FooterItem>
+          <FooterLink href="https://www.csc.fi">Accessibility</FooterLink>
+        </FooterItem>
+        <FooterItem>
+          <FooterLink href="https://www.csc.fi">Privacy</FooterLink>
+        </FooterItem>
+        <FooterItem>
+          <FooterLink href="https://www.csc.fi">About Sensitive Data services</FooterLink>
+        </FooterItem>
+      </FooterEnd>
+    </FooterContainer>
   )
 }
 

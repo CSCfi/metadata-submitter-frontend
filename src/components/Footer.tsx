@@ -12,6 +12,8 @@ const FooterContainer = styled(Grid)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  position: "sticky",
+  bottom: 0,
 }))
 
 const FooterStart = styled(Box)(({ theme }) => ({

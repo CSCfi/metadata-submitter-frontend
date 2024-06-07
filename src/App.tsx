@@ -7,6 +7,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 import i18n from "./i18n"
 
 import Nav from "components/Nav"
+import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
 import { ObjectTypes } from "constants/wizardObject"
@@ -31,7 +32,12 @@ const NavigationMenu = () => {
   if (pathsWithoutNav.indexOf(location.pathname) !== -1) {
     return null
   }
-  return <Nav />
+  return (
+    <>
+      <Nav />
+      {location.pathname.includes("/home") && <SecondaryNav />}
+    </>
+  )
 }
 
 /**
@@ -116,7 +122,13 @@ const App: React.FC = () => {
     <Container
       component="main"
       maxWidth={false}
-      sx={{ padding: 0, width: "100%", display: "flex", flexDirection: "column", height: "100%" }}
+      sx={{
+        padding: 0,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
     >
       <SubmissionWizard />
     </Container>

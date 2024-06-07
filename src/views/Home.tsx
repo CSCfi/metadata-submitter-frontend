@@ -1,22 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react"
 
 import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
-import FormControl from "@mui/material/FormControl"
 import Grid from "@mui/material/Grid"
-import Link from "@mui/material/Link"
-import MenuItem from "@mui/material/MenuItem"
 import Paper from "@mui/material/Paper"
-import Select, { SelectChangeEvent } from "@mui/material/Select"
 import { styled } from "@mui/material/styles"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Typography from "@mui/material/Typography"
 import { debounce } from "lodash"
-import { useTranslation } from "react-i18next"
-import { Link as RouterLink } from "react-router-dom"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
 import WizardSearchBox from "components/SubmissionWizard/WizardComponents/WizardSearchBox"
@@ -24,27 +17,10 @@ import { ResponseStatus } from "constants/responseStatus"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { setProjectId } from "features/projectIdSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { deleteSubmissionAndContent, resetSubmission } from "features/wizardSubmissionSlice"
+import { deleteSubmissionAndContent } from "features/wizardSubmissionSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { SubmissionDetailsWithId, SubmissionRow } from "types"
-import { pathWithLocale } from "utils"
-
-const ProjectDropdown = styled(FormControl)(({ theme }) => ({
-  marginTop: "1rem",
-  marginBottom: "2rem",
-  "& .MuiOutlinedInput-root": {
-    width: "40rem",
-    height: "4rem",
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.secondary.main,
-    border: `0.15rem solid ${theme.palette.secondary.main}`,
-    borderRadius: "0.375rem",
-  },
-  "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-  "& svg": { fontSize: "2rem" },
-}))
 
 const FrontPageContainer = styled(Container)(() => ({
   display: "flex",
@@ -67,14 +43,6 @@ const FrontPageTab = styled(Tab)(({ theme }) => ({
   },
 }))
 
-const CreateSubmissionButton = styled(Button)(() => ({
-  height: "5rem",
-  width: "18rem",
-  position: "absolute",
-  right: 0,
-  bottom: "2rem",
-}))
-
 const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
   return items.map(item => ({
     id: item.submissionId,
@@ -88,22 +56,29 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(state => state.user)
   const projectId = useAppSelector(state => state.projectId)
-  const { t } = useTranslation()
   const [isFetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true)
 
   // Selected tab value
   const [tabValue, setTabValue] = useState<string>(SubmissionStatus.unpublished)
 
   // Current submissions to be displayed in the data table
-  const [displaySubmissions, setDisplaySubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
+  const [displaySubmissions, setDisplaySubmissions] = useState<Array<SubmissionDetailsWithId> | []>(
+    []
+  )
 
   // List of all draft and published submissions depending on the selected tab
-  const [allDraftSubmissions, setAllDraftSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
-  const [allPublishedSubmissions, setAllPublishedSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
+  const [allDraftSubmissions, setAllDraftSubmissions] = useState<
+    Array<SubmissionDetailsWithId> | []
+  >([])
+  const [allPublishedSubmissions, setAllPublishedSubmissions] = useState<
+    Array<SubmissionDetailsWithId> | []
+  >([])
 
   // Filtered submission rows based on filtering text
   const [filteringText, setFilteringText] = useState<string>("")
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
+  const [filteredSubmissions, setFilteredSubmissions] = useState<
+    Array<SubmissionDetailsWithId> | []
+  >([])
 
   // Current page of draft submission table
   const [draftPage, setDraftPage] = useState<number>(0)
@@ -235,31 +210,6 @@ const Home: React.FC = () => {
     }
   }, [allDraftSubmissions, allPublishedSubmissions, tabValue])
 
-  const resetWizard = () => {
-    dispatch(resetObjectType())
-    dispatch(resetSubmission())
-  }
-
-  const handleProjectIdChange = (event: SelectChangeEvent) => {
-    dispatch(setProjectId(event.target.value))
-  }
-
-  const projectSelection = (
-    <ProjectDropdown color="secondary" data-testid="project-id-selection">
-      <Select
-        value={projectId ? projectId : ""}
-        onChange={handleProjectIdChange}
-        inputProps={{ "aria-label": "Select project id" }}
-      >
-        {user.projects.map(project => (
-          <MenuItem key={project.projectId} value={project.projectId} sx={{ color: "secondary.main", p: "1rem" }}>
-            {`Project_${project.projectNumber}`}
-          </MenuItem>
-        ))}
-      </Select>
-    </ProjectDropdown>
-  )
-
   const handleChangeTab = (event, newValue) => {
     setTabValue(newValue)
     if (filteringText) getFilter(filteringText, newValue)
@@ -271,7 +221,10 @@ const Home: React.FC = () => {
     // Show filteredRows based on tabValue
     const displayFilteredSubmissionRows =
       tabValue === SubmissionStatus.unpublished
-        ? filteredSubmissionRows.slice(draftPage * draftItemsPerPage, draftPage * draftItemsPerPage + draftItemsPerPage)
+        ? filteredSubmissionRows.slice(
+            draftPage * draftItemsPerPage,
+            draftPage * draftItemsPerPage + draftItemsPerPage
+          )
         : filteredSubmissionRows.slice(
             publishedPage * publishedItemsPerPage,
             publishedPage * publishedItemsPerPage + publishedItemsPerPage
@@ -282,7 +235,9 @@ const Home: React.FC = () => {
   const getCurrentTotalItems = () => {
     if (filteringText) return filteredSubmissions.length
     else {
-      return tabValue === SubmissionStatus.unpublished ? numberOfDraftSubmissions : numberOfPublishedSubmissions
+      return tabValue === SubmissionStatus.unpublished
+        ? numberOfDraftSubmissions
+        : numberOfPublishedSubmissions
     }
   }
 
@@ -325,13 +280,18 @@ const Home: React.FC = () => {
    * or selects previous/next arrows
    * or deletes a submission
    */
-  const handleFetchPageOnChange = async (page: number, submissionType: string, isDeletingSubmission?: boolean) => {
+  const handleFetchPageOnChange = async (
+    page: number,
+    submissionType: string,
+    isDeletingSubmission?: boolean
+  ) => {
     submissionType === SubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
 
     // Fetch new page
     const response = await submissionAPIService.getSubmissions({
       page: page + 1,
-      per_page: submissionType === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
+      per_page:
+        submissionType === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
       published: submissionType === SubmissionStatus.unpublished ? false : true,
       projectId,
     })
@@ -376,7 +336,9 @@ const Home: React.FC = () => {
         )
         // If there is a filtering text, get a new filtered list of submissions again
         if (filteringText) {
-          const newFilteredSubmissions = filteredSubmissions.filter(item => item.submissionId !== submissionId)
+          const newFilteredSubmissions = filteredSubmissions.filter(
+            item => item.submissionId !== submissionId
+          )
           setFilteredSubmissions(newFilteredSubmissions)
         }
       })
@@ -391,7 +353,8 @@ const Home: React.FC = () => {
   }
 
   const getFilter = (textValue: string, currentTab: string) => {
-    const allSubmissions = currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
+    const allSubmissions =
+      currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
 
     const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
@@ -422,7 +385,6 @@ const Home: React.FC = () => {
       <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
         My submissions
       </Typography>
-      {projectSelection}
       <Box sx={{ mt: 4, position: "relative" }}>
         <FrontPageTabs
           value={tabValue}
@@ -431,21 +393,17 @@ const Home: React.FC = () => {
           textColor="primary"
           indicatorColor="primary"
         >
-          <FrontPageTab label="Drafts" value={SubmissionStatus.unpublished} data-testid="drafts-tab" />
-          <FrontPageTab label="Published" value={SubmissionStatus.published} data-testid="published-tab" />
+          <FrontPageTab
+            label="Drafts"
+            value={SubmissionStatus.unpublished}
+            data-testid="drafts-tab"
+          />
+          <FrontPageTab
+            label="Published"
+            value={SubmissionStatus.published}
+            data-testid="published-tab"
+          />
         </FrontPageTabs>
-        <Link component={RouterLink} aria-label={t("createSubmission")} to={pathWithLocale("submission?step=1")}>
-          <CreateSubmissionButton
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              resetWizard()
-            }}
-            data-testid="link-create-submission"
-          >
-            {t("createSubmission")}
-          </CreateSubmissionButton>
-        </Link>
       </Box>
       <Paper square sx={{ padding: "2rem" }}>
         {displaySubmissions.length > 0 ? (
@@ -461,10 +419,16 @@ const Home: React.FC = () => {
             <Grid item xs={12}>
               <SubmissionDataTable
                 submissionType={
-                  tabValue === SubmissionStatus.unpublished ? SubmissionStatus.unpublished : SubmissionStatus.published
+                  tabValue === SubmissionStatus.unpublished
+                    ? SubmissionStatus.unpublished
+                    : SubmissionStatus.published
                 }
                 page={tabValue === SubmissionStatus.unpublished ? draftPage : publishedPage}
-                itemsPerPage={tabValue === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage}
+                itemsPerPage={
+                  tabValue === SubmissionStatus.unpublished
+                    ? draftItemsPerPage
+                    : publishedItemsPerPage
+                }
                 totalItems={getCurrentTotalItems()}
                 fetchItemsPerPage={handleFetchItemsPerPage}
                 fetchPageOnChange={handleFetchPageOnChange}
@@ -473,7 +437,9 @@ const Home: React.FC = () => {
               />
             </Grid>
 
-            {isFetchingSubmissions && <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />}
+            {isFetchingSubmissions && (
+              <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />
+            )}
           </Grid>
         ) : (
           <Grid container>

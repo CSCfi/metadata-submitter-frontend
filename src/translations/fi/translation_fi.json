@@ -55,11 +55,28 @@
     }
   },
   "errorPages": {
-    "page400": {},
-    "page401": {},
-    "page403": {},
-    "page404": {},
-    "page500": {}
+    "page400": {
+      "errorTitle": "400 – Virheellinen pyyntö",
+      "errorText": "Virhe sivupyynnössä. Tämä voi johtua esimerkiksi puuttuvasta salasanasta ja/tai käyttäjänimestä"
+    },
+    "page401": {
+      "errorTitle": "401 – Et ole kirjautunut sisään",
+      "errorText": "Näet tämän sivun, koska kirjautumistiedoissasi oli virhe, sessiosi umpeutui tai et ole kirjautunut sisään.",
+      "countDown": "Automaattinen uudellenohjaus {{countdownTime}}s."
+    },
+    "page403": {
+      "errorTitle": "403 – Kielletty toiminto",
+      "errorText": "Näet tämän sivun, koska yritit suorittaa kielletyn toiminnon.",
+      "countDown": "Automaattinen uudellenohjaus {{countdownTime}}s."
+    },
+    "page404": {
+      "errorTitle": "404 – Sivua ei löydy",
+      "errorText": "Etsimääsi sivua {{path}} ei löydy"
+    },
+    "page500": {
+      "errorTitle": "500 – Palvelu ei ole saatavilla",
+      "errorText": "Näet tämän sivun, koska palvelu ei ole tällä hetkellä saatavilla."
+    }
   },
   "searchItems": "Search items",
   "dataTable": {

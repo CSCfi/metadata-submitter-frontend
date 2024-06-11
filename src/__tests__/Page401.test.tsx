@@ -20,12 +20,8 @@ describe("Page401", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    screen.getByText("401 Authorization Error")
-    expect(screen.getByText("401 Authorization Error")).toBeInTheDocument()
-    screen.getByText("Main Page")
-    expect(screen.getByText("Main Page")).toBeInTheDocument()
-    expect(screen.getByRole("link")).toHaveTextContent("Main Page")
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/")
+    expect(screen.getByText("401 – Not Logged In")).toBeInTheDocument()
+    expect(screen.getByTestId("401text")).toBeInTheDocument()
   })
 
   test("redirects to Main Page after 10s", () => {
@@ -41,7 +37,7 @@ describe("Page401", () => {
       </StyledEngineProvider>
     )
 
-    expect(component.getByText("401 Authorization Error")).toBeInTheDocument()
+    expect(component.getByText("401 – Not Logged In")).toBeInTheDocument()
 
     act(() => {
       vi.advanceTimersByTime(10000)

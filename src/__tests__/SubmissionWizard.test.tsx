@@ -7,6 +7,7 @@ import { setupServer } from "msw/node"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 
 import CSCtheme from "../theme"
+import "../i18n"
 
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
@@ -77,7 +78,7 @@ describe("SubmissionWizard", () => {
         },
       }
     )
-    expect(screen.getByText("404 Not Found")).toBeInTheDocument()
+    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
   })
 
   test("should redirect to 404 page on invalid submissionId", async () => {
@@ -98,7 +99,7 @@ describe("SubmissionWizard", () => {
       </MemoryRouter>,
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    expect(screen.getByText("404 Not Found")).toBeInTheDocument()
+    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
   })
 
   test("should render submission by submissionId in URL parameters", async () => {

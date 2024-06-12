@@ -186,7 +186,7 @@ const App: React.FC = () => {
       </Routes>
       {/* Centralized status message handler */}
       <StatusMessageHandler />
-      {location.pathname.includes("/home") && <Footer />}
+      <Footer />
     </React.Fragment>
   )
 }

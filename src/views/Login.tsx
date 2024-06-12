@@ -1,11 +1,7 @@
 import React from "react"
 
-import MailOutlineIcon from "@mui/icons-material/MailOutline"
-import PhoneIcon from "@mui/icons-material/Phone"
-import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
-import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
@@ -55,20 +51,6 @@ const LoginButton = styled(Button)(() => ({
   width: "17rem",
 }))
 
-const Footer = styled(Grid)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.light,
-  width: "100%",
-}))
-
-const FooterItem = styled(Grid)(({ theme }) => ({
-  color: theme.palette.secondary.main,
-  paddingTop: "2vh",
-  paddingBottom: "2vh",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-}))
-
 const Login: React.FC = () => {
   const { t } = useTranslation()
 
@@ -95,38 +77,6 @@ const Login: React.FC = () => {
           {t("login")}
         </LoginButton>
       </LoginBanner>
-      <Footer container justifyContent="center">
-        <FooterItem item xs={12} md={4}>
-          <Typography variant="subtitle2" fontWeight="700">
-            CSC - IT Center for Science Ltd.
-          </Typography>
-          <Typography variant="body2">P.O. Box 405 FI-02101 Espoo, Finland</Typography>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <PhoneIcon color="secondary" fontSize="medium" />
-            <Typography variant="body2" component="span">
-              +358 9 457 2001
-            </Typography>
-          </Box>
-        </FooterItem>
-        <FooterItem item xs={12} md={4}>
-          <Typography variant="subtitle2" fontWeight="700">
-            Service Desk
-          </Typography>
-          <Typography variant="body2">Open Monday to Friday from 8.30 a.m. to 4 p.m.</Typography>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <PhoneIcon color="secondary" fontSize="small" />
-            <Typography variant="h6" component="span">
-              +358 9 457 2821
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <MailOutlineIcon fontSize="small" />
-            <Typography variant="body2" component="span">
-              servicedesk@csc.fi
-            </Typography>
-          </Box>
-        </FooterItem>
-      </Footer>
     </LoginContainer>
   )
 }

@@ -12,7 +12,6 @@ import FiTranslation from "../translations/fi/translation_fi.json"
 
 describe("Footer", () => {
   beforeEach(() => {
-    // Create a new instance of i18n
     const i18nTestInstance = createInstance()
 
     i18nTestInstance.use(initReactI18next).init({
@@ -46,15 +45,15 @@ describe("Footer", () => {
     const footerNames = screen.getAllByTestId("footer-name")
     const footerLinks = screen.getAllByTestId("footer-link")
 
-    expect(footerNames.length).toBe(3)
+    expect(footerNames.length).toBe(2)
     expect(footerNames[0]).toHaveTextContent("SD Submit")
-    expect(footerNames[1]).toHaveTextContent("Service Provider")
-    expect(footerNames[2]).toHaveTextContent("CSC - IT Center for Science Ltd.")
+    expect(footerNames[1]).toHaveTextContent("CSC - IT Center for Science Ltd.")
 
-    expect(footerLinks.length).toBe(4)
-    expect(footerLinks[0]).toHaveTextContent("Service description")
-    expect(footerLinks[1]).toHaveTextContent("Accessibility")
-    expect(footerLinks[2]).toHaveTextContent("Privacy")
-    expect(footerLinks[3]).toHaveTextContent("About Sensitive Data services")
+    expect(footerLinks.length).toBe(5)
+    expect(footerLinks[0]).toHaveTextContent("CSC - IT Center for Science Ltd.")
+    expect(footerLinks[1]).toHaveTextContent("Service description")
+    expect(footerLinks[2]).toHaveTextContent("Accessibility")
+    expect(footerLinks[3]).toHaveTextContent("Privacy")
+    expect(footerLinks[4]).toHaveTextContent("About Sensitive Data services")
   })
 })

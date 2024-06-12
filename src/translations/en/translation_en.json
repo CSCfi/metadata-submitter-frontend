@@ -72,8 +72,7 @@
     "noResults": "No results found"
   },
   "footer": {
-    "sdSubmit": "SD Submit",
-    "serviceProvider": "Service Provider",
+    "sdSubmit": "SD Submit – Services for Sensitive Data",
     "csc": "CSC - IT Center for Science Ltd.",
     "serviceDescription": "Service description",
     "accessibility": "Accessibility",

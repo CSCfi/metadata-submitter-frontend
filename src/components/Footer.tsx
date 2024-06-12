@@ -4,6 +4,7 @@ import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 
 const FooterContainer = styled(Grid)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.light,
@@ -12,8 +13,6 @@ const FooterContainer = styled(Grid)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  position: "sticky",
-  bottom: 0,
 }))
 
 const FooterStart = styled(Box)(({ theme }) => ({
@@ -52,38 +51,40 @@ const FooterLink = styled("a")(({ theme }) => ({
 }))
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
     <FooterContainer container data-testid="footer">
       <FooterStart>
         <Typography variant="subtitle2" fontWeight="700" data-testid="footer-name">
-          SD Submit
+          {t("footer.sdSubmit")}
         </Typography>
         <Typography variant="subtitle2" fontWeight="400" data-testid="footer-name">
-          CSC - IT Center for Science Ltd.
+          {t("footer.serviceProvider")}
         </Typography>
         <Typography variant="subtitle2" fontWeight="400" data-testid="footer-name">
-          P.O. Box 405 FI-02101 Espoo, Finland
+          {t("footer.csc")}
         </Typography>
       </FooterStart>
       <FooterEnd>
         <FooterItem>
           <FooterLink href="https://www.csc.fi" data-testid="footer-link">
-            Service description
+            {t("footer.serviceDescription")}
           </FooterLink>
         </FooterItem>
         <FooterItem>
           <FooterLink href="https://www.csc.fi" data-testid="footer-link">
-            Accessibility
+            {t("footer.accessibility")}
           </FooterLink>
         </FooterItem>
         <FooterItem>
           <FooterLink href="https://www.csc.fi" data-testid="footer-link">
-            Privacy
+            {t("footer.privacy")}
           </FooterLink>
         </FooterItem>
         <FooterItem>
           <FooterLink href="https://www.csc.fi" data-testid="footer-link">
-            About Sensitive Data services
+            {t("footer.aboutSensitiveDataServices")}
           </FooterLink>
         </FooterItem>
       </FooterEnd>

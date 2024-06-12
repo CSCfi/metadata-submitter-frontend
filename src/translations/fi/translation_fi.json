@@ -70,5 +70,14 @@
     "items": "tiedostot",
     "itemsPerPage": "Tiedostoja sivulla:",
     "noResults": "Ei valittuja tiedostoja"
+  },
+  "footer": {
+    "sdSubmit": "SD Submit",
+    "serviceProvider": "Service Provider",
+    "csc": "CSC - IT Center for Science Ltd.",
+    "serviceDescription": "Service description",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy",
+    "aboutSensitiveDataServices": "About Sensitive Data services"
   }
 }

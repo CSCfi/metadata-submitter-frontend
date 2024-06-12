@@ -1,5 +1,6 @@
 import React from "react"
 
+import { Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 
@@ -14,7 +15,9 @@ const Page404: React.FC = () => {
 
     return (
       <ErrorPageContainer title={t("errorPages.page404.errorTitle")} errorType="warning">
-        {t("errorPages.page404.errorText", {path: pathname})}
+        <Typography variant="body2" data-testid="404text">
+          {t("errorPages.page404.errorText", {path: pathname})}
+        </Typography>
       </ErrorPageContainer>
     )
 }

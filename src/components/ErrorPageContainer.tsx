@@ -12,7 +12,7 @@ import { styled } from "@mui/system"
 import logo from "../images/csc_logo.svg"
 
 type ErrorPageProps = {
-  children: (string | ReactElement)[]
+  children: (ReactElement[] | ReactElement)
   errorType: string
   title: string
 }

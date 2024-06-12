@@ -10,8 +10,8 @@ const Page500: React.FC = () => {
 
   return (
     <ErrorPageContainer title={t("errorPages.page500.errorTitle")} errorType="error">
-      <Typography variant="body2">
-      {t("errorPages.page500.errorText")}
+      <Typography variant="body2" data-testid="500text">
+        {t("errorPages.page500.errorText")}
       </Typography>
     </ErrorPageContainer>
   )

@@ -25,7 +25,9 @@ const Page401: React.FC = () => {
     <Navigate to="/" />
   ) : (
     <ErrorPageContainer title={t("errorPages.page401.errorTitle")} errorType="warning">
-      <Typography variant="body2" data-testid="401text">{t("errorPages.page401.errorText")}</Typography>
+      <Typography variant="body2" data-testid="401text">
+        {t("errorPages.page401.errorText")}
+      </Typography>
       <Typography variant="body2">{t("errorPages.page401.countDown", {countdownTime})}</Typography>
     </ErrorPageContainer>
   )

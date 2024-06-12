@@ -12,7 +12,7 @@
   "addObject": "Add {{object}}",
   "draft": "Draft",
   "ready": "Ready",
-  "saveSubmission": "Save submission and exit",
+  "saveSubmission": "Save progress and exit",
   "newSubmission": {
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",

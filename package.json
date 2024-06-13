@@ -16,7 +16,7 @@
     "@mui/x-data-grid": "^7.6.1",
     "@reduxjs/toolkit": "^2.2.5",
     "@typescript-eslint/parser": "^7.11.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "ajv": "^8.14.0",
     "ajv-formats": "^3.0.0",
     "ajv-i18n": "^4.2.0",

@@ -54,15 +54,16 @@ import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "u
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const ButtonGroup = styled("div")(({ theme }) => ({
-  display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
-  columnGap: "1.5rem",
-  marginRight: "6rem",
+  display: "flex",
+  gridTemplateColumns: "repeat(3, 1fr)",
+  columnGap: "2rem",
+  marginLeft: "2rem",
+  marginRight: "3rem",
   "& button": {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
-    height: "5rem",
-    width: "18rem",
+    height: "4.5rem",
+    width: "16rem",
   },
 }))
 
@@ -134,6 +135,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   const buttonGroup = (
+
+<div style={{ display: "flex" }}>
+    <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
     <ButtonGroup>
       <Button
         variant="contained"
@@ -160,6 +164,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           : t("formActions.markAsReady")}
       </Button>
     </ButtonGroup>
+  </div>
   )
 
   return (
@@ -167,7 +172,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <WizardStepContentHeader
         action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
       />
-      <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
     </>
   )
 }

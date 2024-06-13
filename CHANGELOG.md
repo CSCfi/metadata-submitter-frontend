@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Changed: The location of "options ..." selection
 - Modify Patch submission with only "name" and "description" #816
 - Modified Form layout, Tooltip and Upload XML according to new UI design #811
 - Change the way to add DOI form to submission with new endpoint "/doi"

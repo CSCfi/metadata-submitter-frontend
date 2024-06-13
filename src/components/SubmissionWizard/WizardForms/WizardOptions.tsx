@@ -36,7 +36,6 @@ const WizardOptions = ({
       direction="row"
       alignItems="center"
       justifyContent="flex-end"
-      sx={{ mt: "4rem", pr: "6rem" }}
     >
       <Typography variant="subtitle2" color="primary" fontWeight={700}>
         {t("formActions.options")}
@@ -50,7 +49,7 @@ const WizardOptions = ({
         onClick={handleClick}
         color="primary"
       >
-        <MoreHorizIcon fontSize="large" />
+        <MoreHorizIcon sx={{ fontSize: "2.5rem" }} />
       </IconButton>
       <Menu
         id="options"

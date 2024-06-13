@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use Vitest for unit tests instead of Jest
 - github action updates as well as dependabot watched branch
 - Migrate from npm to pnpm
-- Migrate e2e tests from Cypress to Playwright, modified relevant fixtures and tests
+- Migrate e2e tests from Cypress to Playwright, modified relevant fixtures and tests #936
+- Refactor Home view with new Tab, Search and SubmissionTable components #939
 
 ### Added
 
@@ -31,8 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New accordion stepper for submission #538
 - Update datacite's affiliation fields in cypress tests #770
 - Added changes for diffrent types of workflow when creating a submission #921
-- Added UI text to translation files for English and Finnish
-- Add secondary navigation bar
+- Added UI text to translation files for English and Finnish #942
+- Added secondary navigation bar #941
 
 ### Removed
 

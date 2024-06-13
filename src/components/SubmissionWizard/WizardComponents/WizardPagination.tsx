@@ -3,7 +3,6 @@ import React, { ReactElement } from "react"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft"
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight"
-import { Typography } from "@mui/material"
 import Divider from "@mui/material/Divider"
 import IconButton from "@mui/material/IconButton"
 import MuiPagination from "@mui/material/Pagination"
@@ -13,6 +12,7 @@ import TableFooter from "@mui/material/TableFooter"
 import MuiTablePagination from "@mui/material/TablePagination"
 import TableRow from "@mui/material/TableRow"
 import useMediaQuery from "@mui/material/useMediaQuery"
+import { useTranslation } from "react-i18next"
 
 const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   color: theme.palette.secondary.main,
@@ -23,56 +23,45 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   },
   "& .MuiTablePagination-toolbar": {
     display: "flex",
-    justifyContent: "flex-start",
     padding: 0,
-  },
-  "& .MuiInputBase-root": {
-    marginRight: "3.25rem",
   },
   "& .MuiTablePagination-selectLabel": {
     marginLeft: "1.375em",
-    marginRight: "3.25rem",
   },
   "& .MuiTablePagination-select": {
     padding: 0,
-    color: theme.palette.primary.main,
     fontWeight: 700,
     display: "grid",
     alignItems: "center",
   },
   "& .MuiTablePagination-selectIcon": {
-    color: theme.palette.primary.main,
     fontSize: "2rem",
   },
+  "& .MuiTablePagination-displayedRows": { marginLeft: "auto" },
 }))
 
 const TablePaginationActions = styled("div")(({ theme }) => ({
-  flexGrow: 1,
-  marginLeft: "3.25rem",
+  marginLeft: "auto",
   width: "auto",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  justifyContent: "flex-end",
+  justifyContent: "center",
   "& > span:first-of-type": {
     textAlign: "center",
   },
   "& nav": {
     marginLeft: "3.25rem",
-    border: `1px solid ${theme.palette.secondary.light}`,
     "& li": {
       margin: "0 0.5rem",
     },
     "& li:first-of-type, li:last-of-type": {
-      border: `1px solid ${theme.palette.secondary.light}`,
       margin: 0,
     },
   },
   "& .MuiPaginationItem-root": {
     fontWeight: 700,
     color: theme.palette.secondary.main,
-    height: "5.2rem",
-    width: "4rem",
     border: "none",
     display: "grid",
     alignItems: "center",
@@ -88,8 +77,8 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
     },
   },
   "& .MuiPaginationItem-root.Mui-selected": {
-    color: theme.palette.primary.main,
-    backgroundColor: "transparent",
+    color: theme.palette.common.white,
+    backgroundColor: theme.palette.primary.main,
   },
 }))
 
@@ -121,11 +110,9 @@ const WizardPaginationActions = ({
   const handleNextButtonClick = () => {
     onPageChange(null, page + 1)
   }
+
   return (
     <TablePaginationActions>
-      <Typography component="span" variant="body2" aria-label="current page" data-testid="page info">
-        {page + 1} of {totalPages} pages
-      </Typography>
       {matches ? (
         <>
           <IconButton
@@ -134,11 +121,18 @@ const WizardPaginationActions = ({
             aria-label="previous page"
             data-testid="previous page"
           >
-            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+            {theme.direction === "rtl" ? (
+              <KeyboardArrowRight
+                onClick={handleBackButtonClick}
+                aria-label="previous page"
+                data-testid="previous page"
+              />
+            ) : (
+              <KeyboardArrowLeft />
+            )}
           </IconButton>
           <IconButton
             onClick={handleNextButtonClick}
-            disabled={page >= totalPages - 1}
             aria-label="next page"
             data-testid="next page"
           >
@@ -146,18 +140,23 @@ const WizardPaginationActions = ({
           </IconButton>
         </>
       ) : (
-        <MuiPagination count={totalPages} page={page + 1} onChange={handleChange} shape="rounded" variant="outlined" />
+        <MuiPagination count={totalPages} page={page + 1} onChange={handleChange} />
       )}
     </TablePaginationActions>
   )
 }
 
-type WizardPagination = {
+type WizardPaginationProps = {
   totalNumberOfItems: number
   page: number
   itemsPerPage: number
-  handleChangePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void
-  handleItemsPerPageChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  handleChangePage: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    page: number
+  ) => void
+  handleItemsPerPageChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void
 }
 
 const DisplayRows = styled("span")(({ theme }) => ({
@@ -174,25 +173,26 @@ const DisplayRows = styled("span")(({ theme }) => ({
 }))
 
 // Pagination Component
-const WizardPagination: React.FC<WizardPagination> = props => {
-  const { totalNumberOfItems, page, itemsPerPage, handleChangePage, handleItemsPerPageChange } = props
+const WizardPagination: React.FC<WizardPaginationProps> = props => {
+  const { totalNumberOfItems, page, itemsPerPage, handleChangePage, handleItemsPerPageChange } =
+    props
+  const { t } = useTranslation()
 
   const labelDisplayedRows = ({ from, to, count }) => (
     <DisplayRows>
-      {totalNumberOfItems > 5 && <Divider component="span" orientation="vertical" variant="middle" />}
+      <Divider component="span" orientation="vertical" variant="middle" />
       <span>
-        {from}-{to} of {count} items
+        {from}-{to} / {count} {count > 1 ? t("dataTable.items") : t("dataTable.item")}
       </span>
     </DisplayRows>
   )
 
   // Get "rowsPerPageOptions" of TablePagination
-  const getRowsPerPageOptions = (totalItems?: number): Array<number | { value: number; label: string }> => {
+  const getRowsPerPageOptions = (
+    totalItems?: number
+  ): Array<number | { value: number; label: string }> => {
     if (totalItems) {
-      if (totalItems <= 5) return []
-      else if (totalItems > 5 && totalItems <= 15) return [5, 15]
-      else if (totalItems > 15 && totalItems <= 25) return [5, 15, 25]
-      else return [5, 15, 25, 50]
+      return [5, 10, 25, 50, 100]
     }
     return []
   }
@@ -204,7 +204,7 @@ const WizardPagination: React.FC<WizardPagination> = props => {
           <TablePagination
             ActionsComponent={WizardPaginationActions}
             count={totalNumberOfItems}
-            labelRowsPerPage="Items per page:"
+            labelRowsPerPage={t("dataTable.itemsPerPage")}
             labelDisplayedRows={labelDisplayedRows}
             page={page}
             rowsPerPage={itemsPerPage}

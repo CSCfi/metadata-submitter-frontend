@@ -24,9 +24,21 @@ export type User = {
   projects: Array<{ projectId: string; projectNumber: string }>
 }
 
-export type Schema = "study" | "dac" | "policy" | "sample" | "experiment" | "run" | "analysis" | "dataset"
+export type Schema =
+  | "study"
+  | "dac"
+  | "policy"
+  | "sample"
+  | "experiment"
+  | "run"
+  | "analysis"
+  | "dataset"
 
-export type StepItemObject = { id: string; displayTitle: string; objectData?: ObjectInsideSubmissionWithTags }
+export type StepItemObject = {
+  id: string
+  displayTitle: string
+  objectData?: ObjectInsideSubmissionWithTags
+}
 
 export type Workflow = {
   name: string
@@ -80,7 +92,10 @@ export type ObjectDetails = {
   submissionType: string
 }
 
-export type OldSubmissionRow = ObjectDetails & { objectData: Record<string, unknown>; submissionType?: string }
+export type OldSubmissionRow = ObjectDetails & {
+  objectData: Record<string, unknown>
+  submissionType?: string
+}
 
 export type ObjectInsideSubmission = {
   accessionId: string
@@ -96,14 +111,19 @@ export type ObjectTags = {
 
 export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: ObjectTags }
 
-export type ObjectInsideSubmissionWithTagsBySchema = { [schema: string]: ObjectInsideSubmissionWithTags[] }
+export type ObjectInsideSubmissionWithTagsBySchema = {
+  [schema: string]: ObjectInsideSubmissionWithTags[]
+}
 
 export type SubmissionId = {
   submissionId: string
 }
 
 export type ObjectInsideSubmissionWithTagsBySchemaAndStatus = {
-  [schema: string]: { drafts: ObjectInsideSubmissionWithTags[]; ready: ObjectInsideSubmissionWithTags[] }
+  [schema: string]: {
+    drafts: ObjectInsideSubmissionWithTags[]
+    ready: ObjectInsideSubmissionWithTags[]
+  }
 }
 
 export type SubmissionDetails = {
@@ -124,6 +144,7 @@ export type SubmissionRow = {
   name: string
   dateCreated?: number
   lastModifiedBy: string
+  submissionType: string
 }
 
 export type SubmissionDataFromForm = {
@@ -175,7 +196,9 @@ export type ConnectFormMethods = {
   errors?: FieldErrors
 }
 
-export type ConnectFormChildren = { children: (...args: ConnectFormMethods[]) => React.ReactElement }
+export type ConnectFormChildren = {
+  children: (...args: ConnectFormMethods[]) => React.ReactElement
+}
 
 export type NestedField = {
   id: string
@@ -195,13 +218,21 @@ export type ObjectDisplayValues = {
 // Used to get unique file types when patching or submitting Run or Analysis objects
 export type FormDataFiles = { files: { filetype: string }[] }
 
-export type DoiCreator = { givenName: string | undefined; familyName: string | undefined; name: string | undefined }
+export type DoiCreator = {
+  givenName: string | undefined
+  familyName: string | undefined
+  name: string | undefined
+}
 
 export type DoiContributor = DoiCreator & { contributorType: string }
 
 export type DoiSubject = { subject: string }
 
-export type DoiFormDetails = { creators: DoiCreator[]; contributors: DoiContributor[]; subjects: DoiSubject[] }
+export type DoiFormDetails = {
+  creators: DoiCreator[]
+  contributors: DoiContributor[]
+  subjects: DoiSubject[]
+}
 
 // Used in feature slices
 export type DispatchReducer = { payload: unknown; type: string }

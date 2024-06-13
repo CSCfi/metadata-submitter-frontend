@@ -6,12 +6,11 @@ import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
-import Tab from "@mui/material/Tab"
-import Tabs from "@mui/material/Tabs"
-import Typography from "@mui/material/Typography"
-import { debounce } from "lodash"
+import { debounce, shuffle } from "lodash"
+import { useTranslation } from "react-i18next"
 
 import SubmissionDataTable from "components/Home/SubmissionDataTable"
+import SubmissionTabs from "components/Home/SubmissionTabs"
 import WizardSearchBox from "components/SubmissionWizard/WizardComponents/WizardSearchBox"
 import { ResponseStatus } from "constants/responseStatus"
 import { SubmissionStatus } from "constants/wizardSubmission"
@@ -22,51 +21,29 @@ import { useAppDispatch, useAppSelector } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { SubmissionDetailsWithId, SubmissionRow } from "types"
 
-const FrontPageContainer = styled(Container)(() => ({
+const FrontPageContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   minHeight: "100vh",
   flexDirection: "column",
+  width: "90%",
+  backgroundColor: theme.palette.common.white,
+  paddingTop: "8rem !important",
+  paddingBottom: "10rem !important",
 }))
-
-const FrontPageTabs = styled(Tabs)(() => ({
-  ["& .MuiTabs-indicator"]: {
-    height: "0.6rem",
-    borderRadius: "0.375rem 0.375rem 0 0",
-  },
-}))
-
-const FrontPageTab = styled(Tab)(({ theme }) => ({
-  ["&.MuiButtonBase-root.MuiTab-root"]: {
-    color: theme.palette.primary.main,
-    fontWeight: 700,
-    fontSize: "1.6rem",
-  },
-}))
-
-const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
-  return items.map(item => ({
-    id: item.submissionId,
-    name: item.name,
-    dateCreated: item.dateCreated,
-    lastModifiedBy: "TBA",
-  }))
-}
 
 const Home: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(state => state.user)
   const projectId = useAppSelector(state => state.projectId)
+  const { t } = useTranslation()
+
   const [isFetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true)
 
   // Selected tab value
-  const [tabValue, setTabValue] = useState<string>(SubmissionStatus.unpublished)
-
-  // Current submissions to be displayed in the data table
-  const [displaySubmissions, setDisplaySubmissions] = useState<Array<SubmissionDetailsWithId> | []>(
-    []
-  )
+  const [tabValue, setTabValue] = useState<string>(SubmissionStatus.all)
 
   // List of all draft and published submissions depending on the selected tab
+  const [allSubmissions, setAllSubmissions] = useState<Array<SubmissionDetailsWithId> | []>([])
   const [allDraftSubmissions, setAllDraftSubmissions] = useState<
     Array<SubmissionDetailsWithId> | []
   >([])
@@ -80,6 +57,10 @@ const Home: React.FC = () => {
     Array<SubmissionDetailsWithId> | []
   >([])
 
+  // Current page of all submission table
+  const [allSubmissionsPage, setAllSubmissionsPage] = useState<number>(0)
+  const [allItemsPerPage, setAllItemsPerPage] = useState<number>(5)
+
   // Current page of draft submission table
   const [draftPage, setDraftPage] = useState<number>(0)
   const [draftItemsPerPage, setDraftItemsPerPage] = useState<number>(5)
@@ -89,9 +70,20 @@ const Home: React.FC = () => {
   const [publishedItemsPerPage, setPublishedItemsPerPage] = useState<number>(5)
 
   // Total number of draft and published submissions
+  const [numberOfAllSubmissions, setNumberOfAllSubmissions] = useState<number>(0)
   const [numberOfDraftSubmissions, setNumberOfDraftSubmissions] = useState<number>(0)
   const [numberOfPublishedSubmissions, setNumberOfPublishedSubmissions] = useState<number>(0)
 
+  // Array of tabs to be rendered
+  const frontpageTabs = [
+    { label: t("allSubmissions"), value: SubmissionStatus.all, testId: "all-tab" },
+    { label: t("draftSubmissions"), value: SubmissionStatus.unpublished, testId: "draft-tab" },
+    {
+      label: t("publishedSubmissions"),
+      value: SubmissionStatus.published,
+      testId: "published-tab",
+    },
+  ]
   /*
    *  Set the current projectId as the first one if no projectId has been selected
    */
@@ -102,7 +94,7 @@ const Home: React.FC = () => {
   }, [user])
 
   /*
-   *  Get draft and published submissions for the first page in data table
+   *  Get all (draft and published) submissions for the first page in data table
    */
   useEffect(() => {
     let isMounted = true
@@ -113,7 +105,6 @@ const Home: React.FC = () => {
         published: false,
         projectId: projectId,
       })
-
       const publishedResponse = await submissionAPIService.getSubmissions({
         page: 1,
         per_page: 5,
@@ -123,18 +114,14 @@ const Home: React.FC = () => {
 
       if (isMounted) {
         if (unpublishedResponse.ok && publishedResponse.ok) {
-          // Set submissions to be displayed based on tabValue
-          const displaySubmissions =
-            tabValue === SubmissionStatus.unpublished
-              ? unpublishedResponse.data?.submissions
-              : publishedResponse.data?.submissions
-
-          setDisplaySubmissions(displaySubmissions)
-
+          const unpublishedData = unpublishedResponse.data
+          const publishedData = publishedResponse.data
           // Set total number of submissions
-          setNumberOfDraftSubmissions(unpublishedResponse.data.page?.totalSubmissions)
-          setNumberOfPublishedSubmissions(publishedResponse.data.page?.totalSubmissions)
-
+          setNumberOfDraftSubmissions(unpublishedData.page.totalSubmissions)
+          setNumberOfPublishedSubmissions(publishedData.page.totalSubmissions)
+          setNumberOfAllSubmissions(
+            unpublishedData.page.totalSubmissions + publishedData.page.totalSubmissions
+          )
           setFetchingSubmissions(false)
         } else {
           dispatch(
@@ -202,40 +189,80 @@ const Home: React.FC = () => {
   }, [numberOfPublishedSubmissions])
 
   /*
+   *   Get the list of all (draft and published) submissions
+   */
+  useEffect(() => {
+    setAllSubmissions(shuffle(allDraftSubmissions.concat(allPublishedSubmissions)))
+  }, [allDraftSubmissions, allPublishedSubmissions])
+
+  /*
    * Cancel the debouncedChangeFilteringText function when the component unmounts
    */
   useEffect(() => {
     return () => {
       debouncedChangeFilteringText.cancel()
     }
-  }, [allDraftSubmissions, allPublishedSubmissions, tabValue])
+  }, [allSubmissions, allDraftSubmissions, allPublishedSubmissions, tabValue])
 
   const handleChangeTab = (event, newValue) => {
     setTabValue(newValue)
     if (filteringText) getFilter(filteringText, newValue)
   }
 
-  const getCurrentRows = (): Array<SubmissionRow> => {
-    const displaySubmissionRows = getDisplayRows(displaySubmissions)
-    const filteredSubmissionRows = getDisplayRows(filteredSubmissions)
-    // Show filteredRows based on tabValue
-    const displayFilteredSubmissionRows =
-      tabValue === SubmissionStatus.unpublished
-        ? filteredSubmissionRows.slice(
+  /*
+   *   Get current submissions based on selected "items per page"
+   */
+  const getSubmissionsPerPage = (
+    submissions: Array<SubmissionDetailsWithId>
+  ): Array<SubmissionDetailsWithId> => {
+    const currentSubmissions = filteringText ? filteredSubmissions : submissions
+    const submissionsPerPage =
+      tabValue === SubmissionStatus.all
+        ? currentSubmissions.slice(
+            allSubmissionsPage * allItemsPerPage,
+            allSubmissionsPage * allItemsPerPage + allItemsPerPage
+          )
+        : tabValue === SubmissionStatus.unpublished
+        ? currentSubmissions.slice(
             draftPage * draftItemsPerPage,
             draftPage * draftItemsPerPage + draftItemsPerPage
           )
-        : filteredSubmissionRows.slice(
+        : currentSubmissions.slice(
             publishedPage * publishedItemsPerPage,
             publishedPage * publishedItemsPerPage + publishedItemsPerPage
           )
-    return filteringText ? displayFilteredSubmissionRows : displaySubmissionRows
+    return submissionsPerPage
+  }
+
+  const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
+    return items.map(item => ({
+      id: item.submissionId,
+      name: item.name,
+      dateCreated: item.dateCreated,
+      lastModifiedBy: "TBA",
+      submissionType: item.published ? SubmissionStatus.published : SubmissionStatus.unpublished,
+    }))
+  }
+
+  const getCurrentRows = (): Array<SubmissionRow> => {
+    const submissions =
+      tabValue === SubmissionStatus.all
+        ? allSubmissions
+        : tabValue === SubmissionStatus.unpublished
+        ? allDraftSubmissions
+        : allPublishedSubmissions
+
+    const submissionsPerPage = getSubmissionsPerPage(submissions)
+    const currentRows = getDisplayRows(submissionsPerPage)
+    return currentRows
   }
 
   const getCurrentTotalItems = () => {
     if (filteringText) return filteredSubmissions.length
     else {
-      return tabValue === SubmissionStatus.unpublished
+      return tabValue === SubmissionStatus.all
+        ? numberOfAllSubmissions
+        : tabValue === SubmissionStatus.unpublished
         ? numberOfDraftSubmissions
         : numberOfPublishedSubmissions
     }
@@ -245,33 +272,19 @@ const Home: React.FC = () => {
    *  Fire when user selects an option from "Items per page"
    */
   const handleFetchItemsPerPage = async (numberOfItems: number, submissionType: string) => {
-    const response = await submissionAPIService.getSubmissions({
-      page: 1,
-      per_page: numberOfItems,
-      published: submissionType === SubmissionStatus.unpublished ? false : true,
-      projectId,
-    })
-
-    if (response.ok) {
-      // Set new display submissions
-      const displaySubmissions = response.data?.submissions
-      setDisplaySubmissions(displaySubmissions)
-
-      if (submissionType === SubmissionStatus.unpublished) {
+    switch (submissionType) {
+      case SubmissionStatus.all:
+        setAllSubmissionsPage(0)
+        setAllItemsPerPage(numberOfItems)
+        break
+      case SubmissionStatus.unpublished:
         setDraftPage(0)
         setDraftItemsPerPage(numberOfItems)
-      } else {
+        break
+      case SubmissionStatus.published:
         setPublishedPage(0)
         setPublishedItemsPerPage(numberOfItems)
-      }
-    } else {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.error,
-          response: response,
-          helperText: "Fetching submissions error.",
-        })
-      )
+        break
     }
   }
 
@@ -280,89 +293,80 @@ const Home: React.FC = () => {
    * or selects previous/next arrows
    * or deletes a submission
    */
-  const handleFetchPageOnChange = async (
-    page: number,
-    submissionType: string,
-    isDeletingSubmission?: boolean
-  ) => {
-    submissionType === SubmissionStatus.unpublished ? setDraftPage(page) : setPublishedPage(page)
+  const handleFetchPageOnChange = async (page: number) => {
+    tabValue === SubmissionStatus.all
+      ? setAllSubmissionsPage(page)
+      : tabValue === SubmissionStatus.unpublished
+      ? setDraftPage(page)
+      : setPublishedPage(page)
+  }
 
-    // Fetch new page
-    const response = await submissionAPIService.getSubmissions({
-      page: page + 1,
-      per_page:
-        submissionType === SubmissionStatus.unpublished ? draftItemsPerPage : publishedItemsPerPage,
-      published: submissionType === SubmissionStatus.unpublished ? false : true,
-      projectId,
-    })
+  const handleDeleteSubmission = async (submissionId: string, submissionType: string) => {
+    // Dispatch action to delete the submission
+    try {
+      await dispatch(deleteSubmissionAndContent(submissionId))
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.success,
+          helperText: "The submission has been deleted successfully!",
+        })
+      )
 
-    if (response.ok) {
-      // Set new display submissions
-      const displaySubmissions = response.data?.submissions
-      setDisplaySubmissions(displaySubmissions)
-
-      // Only set again a new total number of submissions if a submission is deleted
-      if (isDeletingSubmission) {
-        submissionType === SubmissionStatus.unpublished
-          ? setNumberOfDraftSubmissions(response.data.page?.totalSubmissions)
-          : setNumberOfPublishedSubmissions(response.data.page?.totalSubmissions)
+      if (filteringText) {
+        const newFilteredSubmissions = filteredSubmissions.filter(
+          item => item.submissionId !== submissionId
+        )
+        setFilteredSubmissions(newFilteredSubmissions)
       }
-    } else {
+    } catch (error) {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
-          response: response,
-          helperText: "Fetching submissions error.",
+          response: error,
         })
       )
     }
-  }
 
-  const handleDeleteSubmission = (submissionId: string, submissionType: string) => {
-    // Dispatch action to delete the submission
-    dispatch(deleteSubmissionAndContent(submissionId))
-      .then(() => {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            helperText: "The submission has been deleted successfully!",
-          })
-        )
-        // Then fetch current page again to get new list of display submissions and a new total number of submissions
-        handleFetchPageOnChange(
-          submissionType === SubmissionStatus.unpublished ? draftPage : publishedPage,
-          submissionType,
-          true
-        )
-        // If there is a filtering text, get a new filtered list of submissions again
-        if (filteringText) {
-          const newFilteredSubmissions = filteredSubmissions.filter(
-            item => item.submissionId !== submissionId
-          )
-          setFilteredSubmissions(newFilteredSubmissions)
-        }
-      })
-      .catch(error => {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-          })
-        )
-      })
+    // Fetch again the list of submissions based on submissionType
+    const response = await submissionAPIService.getSubmissions({
+      page: 1,
+      per_page: numberOfDraftSubmissions - 1,
+      published: submissionType === SubmissionStatus.unpublished ? false : true,
+      projectId,
+    })
+    const submissions = response.data.submissions
+
+    // Reset submissions and number of submissions
+    if (submissionType === SubmissionStatus.unpublished) {
+      setAllDraftSubmissions(submissions)
+      setNumberOfDraftSubmissions(numberOfDraftSubmissions - 1)
+    } else if (submissionType === SubmissionStatus.published) {
+      setAllPublishedSubmissions(submissions)
+      setNumberOfPublishedSubmissions(numberOfDraftSubmissions - 1)
+    }
+
+    setAllSubmissions(prevState => prevState.filter(item => item.submissionId !== submissionId))
+    setNumberOfAllSubmissions(numberOfAllSubmissions - 1)
   }
 
   const getFilter = (textValue: string, currentTab: string) => {
-    const allSubmissions =
-      currentTab === SubmissionStatus.unpublished ? allDraftSubmissions : allPublishedSubmissions
-
-    const filteredSubmissions = allSubmissions.filter(item => item && item.name.includes(textValue))
+    const submissions =
+      currentTab === SubmissionStatus.all
+        ? allSubmissions
+        : currentTab === SubmissionStatus.unpublished
+        ? allDraftSubmissions
+        : allPublishedSubmissions
+    const filteredSubmissions = submissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
   }
 
   const handleChangeFilteringText = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Set the current page in pagination to 0 when starting the filter
-    tabValue === SubmissionStatus.unpublished ? setDraftPage(0) : setPublishedPage(0)
+    tabValue === SubmissionStatus.all
+      ? setAllSubmissionsPage(0)
+      : tabValue === SubmissionStatus.unpublished
+      ? setDraftPage(0)
+      : setPublishedPage(0)
     const textValue = e.target.value
     setFilteringText(textValue)
     debouncedChangeFilteringText(textValue, tabValue)
@@ -370,7 +374,7 @@ const Home: React.FC = () => {
 
   const debouncedChangeFilteringText = useMemo(
     () => debounce(getFilter, 300),
-    [allDraftSubmissions, allPublishedSubmissions, tabValue]
+    [allSubmissions, allDraftSubmissions, allPublishedSubmissions, tabValue]
   )
 
   const handleClearFilteringText = () => {
@@ -381,73 +385,54 @@ const Home: React.FC = () => {
 
   // Render either unpublished or published submissions based on selected tab
   return (
-    <FrontPageContainer maxWidth={false}>
-      <Typography variant="h4" sx={{ color: "secondary.main", fontWeight: 700, mt: 12 }}>
-        My submissions
-      </Typography>
-      <Box sx={{ mt: 4, position: "relative" }}>
-        <FrontPageTabs
-          value={tabValue}
-          onChange={handleChangeTab}
-          aria-label="draft-and-published-submissions-tabs"
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          <FrontPageTab
-            label="Drafts"
-            value={SubmissionStatus.unpublished}
-            data-testid="drafts-tab"
-          />
-          <FrontPageTab
-            label="Published"
-            value={SubmissionStatus.published}
-            data-testid="published-tab"
-          />
-        </FrontPageTabs>
+    <FrontPageContainer maxWidth={false} disableGutters>
+      <Box sx={{ mt: 10 }}>
+        <SubmissionTabs
+          tabsAriaLabel="draft-and-published-submissions-tabs"
+          tabs={frontpageTabs}
+          tabValue={tabValue}
+          handleChangeTab={handleChangeTab}
+        />
       </Box>
-      <Paper square sx={{ padding: "2rem" }}>
-        {displaySubmissions.length > 0 ? (
-          <Grid container>
-            <Grid container item xs={12} justifyContent="flex-end">
-              <WizardSearchBox
-                placeholder={"Filter by Name"}
-                filteringText={filteringText}
-                handleChangeFilteringText={handleChangeFilteringText}
-                handleClearFilteringText={handleClearFilteringText}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <SubmissionDataTable
-                submissionType={
-                  tabValue === SubmissionStatus.unpublished
-                    ? SubmissionStatus.unpublished
-                    : SubmissionStatus.published
-                }
-                page={tabValue === SubmissionStatus.unpublished ? draftPage : publishedPage}
-                itemsPerPage={
-                  tabValue === SubmissionStatus.unpublished
-                    ? draftItemsPerPage
-                    : publishedItemsPerPage
-                }
-                totalItems={getCurrentTotalItems()}
-                fetchItemsPerPage={handleFetchItemsPerPage}
-                fetchPageOnChange={handleFetchPageOnChange}
-                rows={getCurrentRows()}
-                onDeleteSubmission={handleDeleteSubmission}
-              />
-            </Grid>
+      <Paper square elevation={0}>
+        <Grid container>
+          <Grid container item xs={12} justifyContent="flex-start" sx={{ m: "3rem 0" }}>
+            <WizardSearchBox
+              placeholder={t("searchItems")}
+              filteringText={filteringText}
+              handleChangeFilteringText={handleChangeFilteringText}
+              handleClearFilteringText={handleClearFilteringText}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <SubmissionDataTable
+              submissionType={tabValue}
+              page={
+                tabValue === SubmissionStatus.all
+                  ? allSubmissionsPage
+                  : tabValue === SubmissionStatus.unpublished
+                  ? draftPage
+                  : publishedPage
+              }
+              itemsPerPage={
+                tabValue === SubmissionStatus.all
+                  ? allItemsPerPage
+                  : tabValue === SubmissionStatus.unpublished
+                  ? draftItemsPerPage
+                  : publishedItemsPerPage
+              }
+              totalItems={getCurrentTotalItems()}
+              fetchItemsPerPage={handleFetchItemsPerPage}
+              fetchPageOnChange={handleFetchPageOnChange}
+              rows={getCurrentRows()}
+              onDeleteSubmission={handleDeleteSubmission}
+            />
+          </Grid>
 
-            {isFetchingSubmissions && (
-              <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />
-            )}
-          </Grid>
-        ) : (
-          <Grid container>
-            <Typography align="center" variant="body1">
-              Currently there are no submissions
-            </Typography>
-          </Grid>
-        )}
+          {isFetchingSubmissions && (
+            <CircularProgress sx={{ m: "10 auto" }} size={50} thickness={2.5} />
+          )}
+        </Grid>
       </Paper>
     </FrontPageContainer>
   )

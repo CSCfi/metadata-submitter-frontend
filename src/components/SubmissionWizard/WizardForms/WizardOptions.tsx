@@ -49,7 +49,7 @@ const WizardOptions = ({
         onClick={handleClick}
         color="primary"
       >
-        <MoreHorizIcon fontSize="large" sx={{ fontSize: "2.5rem" }} />
+        <MoreHorizIcon sx={{ fontSize: "2.5rem" }} />
       </IconButton>
       <Menu
         id="options"

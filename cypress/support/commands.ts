@@ -27,7 +27,7 @@
 export {} // this file needs to be a module
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+   
   namespace Cypress {
     interface Chainable {
       setMockUser(eppnUser: string, familyName: string, givenName: string): Chainable<Element>

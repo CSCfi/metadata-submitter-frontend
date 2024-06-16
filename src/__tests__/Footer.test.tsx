@@ -4,6 +4,7 @@ import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { render, screen } from "@testing-library/react"
 import { createInstance } from "i18next"
 import { I18nextProvider, initReactI18next } from "react-i18next"
+import { MemoryRouter } from "react-router-dom" // Import MemoryRouter
 
 import Footer from "../components/Footer"
 import CSCtheme from "../theme"
@@ -26,18 +27,22 @@ describe("Footer", () => {
       lng: "en",
       fallbackLng: ["en", "fi"],
       interpolation: {
-        escapeValue: false, 
+        escapeValue: false,
       },
     })
 
     render(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <I18nextProvider i18n={i18nTestInstance}>
-            <Footer />
-          </I18nextProvider>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <MemoryRouter initialEntries={["/"]}>
+        {" "}
+        {/* Wrap with MemoryRouter and set initialEntries */}
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}>
+            <I18nextProvider i18n={i18nTestInstance}>
+              <Footer />
+            </I18nextProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </MemoryRouter>
     )
   })
 

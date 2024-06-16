@@ -9,17 +9,17 @@ import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 
 type FooterContainerProps = GridProps & {
-  isFixed?: boolean
+  isfixed?: boolean
 }
 
-const FooterContainer = styled(Grid)<FooterContainerProps>(({ isFixed, theme }) => ({
+const FooterContainer = styled(Grid)<FooterContainerProps>(({ isfixed, theme }) => ({
   backgroundColor: theme.palette.secondary.lightest,
   width: "100%",
   padding: "2.5rem 3.75rem",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  ...(isFixed && {
+  ...(isfixed && {
     position: "fixed",
     bottom: 0,
   }),
@@ -75,10 +75,10 @@ const FooterLinkStart = styled(FooterLink)(({ theme }) => ({
 const Footer: React.FC = () => {
   const { t } = useTranslation()
   const location = useLocation()
-  const isFixed = location.pathname === "/"
+  const isfixed = location.pathname === "/"
 
   return (
-    <FooterContainer container data-testid="footer" isFixed={isFixed}>
+    <FooterContainer container data-testid="footer" isfixed={isfixed}>
       <FooterContent>
         <FooterStart>
           <Typography variant="subtitle2" fontWeight="700" data-testid="footer-name">

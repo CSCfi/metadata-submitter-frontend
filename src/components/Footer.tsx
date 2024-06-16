@@ -1,18 +1,28 @@
 import React from "react"
 
 import Box from "@mui/material/Box"
-import Grid from "@mui/material/Grid"
+import Grid, { GridProps } from "@mui/material/Grid"
+import Link from "@mui/material/Link"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
+import { useLocation } from "react-router-dom"
 
-const FooterContainer = styled(Grid)(() => ({
-  backgroundColor: "#dfe1e3",
+type FooterContainerProps = GridProps & {
+  isFixed?: boolean
+}
+
+const FooterContainer = styled(Grid)<FooterContainerProps>(({ isFixed, theme }) => ({
+  backgroundColor: theme.palette.secondary.lightest,
   width: "100%",
   padding: "2.5rem 3.75rem",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  ...(isFixed && {
+    position: "fixed",
+    bottom: 0,
+  }),
 }))
 
 const FooterContent = styled(Box)(() => ({
@@ -23,57 +33,52 @@ const FooterContent = styled(Box)(() => ({
   padding: "2.5rem 3.75rem",
 }))
 
-const FooterStart = styled(Box)(() => ({
+const FooterStart = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
-  color: "#2E3438",
+  color: theme.palette.text.primary,
   fontSize: "1.5714rem",
   "& > *:not(:last-child)": {
     marginBottom: "1rem",
   },
 }))
 
-const FooterEnd = styled(Box)({
+const FooterEnd = styled(Box)(() => ({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
   width: "50%",
-})
+}))
 
-const FooterItem = styled(Box)({
+const FooterItem = styled(Box)(() => ({
   padding: "0.5rem",
   display: "flex",
   alignItems: "center",
-})
+}))
 
-const FooterLink = styled("a")(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  textDecoration: "none",
-  cursor: "pointer",
-  margin: "0 1.5rem",
-  fontSize: "1.4331rem",
-  fontWeight: "400",
+const FooterLink = styled(Link)(({ theme }) => ({
   "&:hover": {
-    color: "#025B97",
-    backgroundColor: "#CCF4F0",
-    textDecoration: "underline",
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.action.hover, // Use action.hover for hover background color
   },
 }))
 
-const FooterLinkStart = styled(FooterLink)({
-  color: "#2E3438",
+const FooterLinkStart = styled(FooterLink)(({ theme }) => ({
+  color: theme.palette.text.primary,
   "&:hover": {
-    color: "#2E3438",
-    backgroundColor: "#CCF4F0",
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.action.hover, // Use action.hover for hover background color
   },
-})
+}))
 
 const Footer: React.FC = () => {
   const { t } = useTranslation()
+  const location = useLocation()
+  const isFixed = location.pathname === "/"
 
   return (
-    <FooterContainer container data-testid="footer">
+    <FooterContainer container data-testid="footer" isFixed={isFixed}>
       <FooterContent>
         <FooterStart>
           <Typography variant="subtitle2" fontWeight="700" data-testid="footer-name">
@@ -83,7 +88,9 @@ const Footer: React.FC = () => {
             <FooterLinkStart
               href="https://csc.fi"
               target="_blank"
-              className="linktext"
+              color="secondary"
+              underline="hover"
+              variant="subtitle2"
               data-testid="footer-link"
               style={{ margin: 0 }}
             >
@@ -93,25 +100,50 @@ const Footer: React.FC = () => {
         </FooterStart>
         <FooterEnd>
           <FooterItem>
-            <FooterLink href="https://research.csc.fi/sensitive-data" data-testid="footer-link">
+            <FooterLink
+              href="https://research.csc.fi/sensitive-data"
+              target="_blank"
+              color="secondary"
+              underline="hover"
+              variant="subtitle2"
+              data-testid="footer-link"
+            >
               {t("footer.serviceDescription")}
             </FooterLink>
           </FooterItem>
           <FooterItem>
-            <FooterLink href="https://sd-connect.sd.csc.fi/accessibility" data-testid="footer-link">
+            <FooterLink
+              href="https://sd-connect.sd.csc.fi/accessibility"
+              target="_blank"
+              color="secondary"
+              underline="hover"
+              variant="subtitle2"
+              data-testid="footer-link"
+            >
               {t("footer.accessibility")}
             </FooterLink>
           </FooterItem>
           <FooterItem>
             <FooterLink
               href="https://csc.fi/customer-register-privacy-policy"
+              target="_blank"
+              color="secondary"
+              underline="hover"
+              variant="subtitle2"
               data-testid="footer-link"
             >
               {t("footer.privacy")}
             </FooterLink>
           </FooterItem>
           <FooterItem>
-            <FooterLink href="https://research.csc.fi/sensitive-data" data-testid="footer-link">
+            <FooterLink
+              href="https://research.csc.fi/sensitive-data"
+              target="_blank"
+              color="secondary"
+              underline="hover"
+              variant="subtitle2"
+              data-testid="footer-link"
+            >
               {t("footer.aboutSensitiveDataServices")}
             </FooterLink>
           </FooterItem>

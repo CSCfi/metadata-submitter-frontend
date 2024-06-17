@@ -120,8 +120,6 @@ const CreateSubmissionForm = ({
           )
         : []
 
-    dispatch(setWorkflowType(data.workflowType))
-
     if (submission && submission?.submissionId) {
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
@@ -134,6 +132,7 @@ const CreateSubmissionForm = ({
         })
     } else {
       // Create a new submission with selected templates as drafts
+      dispatch(setWorkflowType(data.workflowType))
       dispatch(createSubmission(projectId, data, selectedDraftsArray))
         .then(response => {
           const submissionId = response.data.submissionId
@@ -232,6 +231,7 @@ const CreateSubmissionForm = ({
                           control={<Radio />}
                           label={workflow}
                           data-testid={workflow}
+                          disabled={submission.submissionId !== ""}
                         />
                       ))}
                     </RadioGroup>

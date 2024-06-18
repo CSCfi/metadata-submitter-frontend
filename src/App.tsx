@@ -135,8 +135,6 @@ const App: React.FC = () => {
     </Container>
   )
 
-  const isFooterFixed = location.pathname === "/"
-
   return (
     <React.Fragment>
       <CssBaseline />
@@ -188,7 +186,7 @@ const App: React.FC = () => {
       </Routes>
       {/* Centralized status message handler */}
       <StatusMessageHandler />
-      <Footer fixed={isFooterFixed} />
+      <Footer />
     </React.Fragment>
   )
 }

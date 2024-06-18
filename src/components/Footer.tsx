@@ -12,7 +12,9 @@ type FooterContainerProps = GridProps & {
   isfixed?: boolean
 }
 
-const FooterContainer = styled(Grid)<FooterContainerProps>(({ isfixed, theme }) => ({
+const FooterContainer = styled(Grid, {
+  shouldForwardProp: prop => prop !== "isfixed",
+})<FooterContainerProps>(({ isfixed, theme }) => ({
   backgroundColor: theme.palette.secondary.lightest,
   width: "100%",
   padding: "2.5rem 3.75rem",

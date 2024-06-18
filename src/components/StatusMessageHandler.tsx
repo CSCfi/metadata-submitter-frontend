@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-
 import Alert from "@mui/material/Alert"
 import Snackbar from "@mui/material/Snackbar"
+import IconButton from "@mui/material/IconButton"
+import CloseIcon from "@mui/icons-material/Close"
 import { useTranslation } from "react-i18next"
-
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
@@ -21,9 +21,6 @@ type HandlerRef =
   | null
   | undefined
 
-/*
- * Error messages
- */
 const ErrorHandler = React.forwardRef(function ErrorHandler(
   props: MessageHandlerProps,
   ref: HandlerRef
@@ -52,7 +49,6 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(
   )
 })
 
-// Info messages
 const InfoHandler = React.forwardRef(function InfoHandler(
   props: MessageHandlerProps,
   ref: HandlerRef
@@ -72,7 +68,6 @@ const InfoHandler = React.forwardRef(function InfoHandler(
   )
 })
 
-// Success messages
 const SuccessHandler = React.forwardRef(function SuccessHandler(
   props: MessageHandlerProps,
   ref: HandlerRef
@@ -135,7 +130,21 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(
   }
 
   return (
-    <Alert onClose={() => handleClose(false)} severity="success" ref={ref}>
+    <Alert
+      onClose={() => handleClose(false)}
+      severity="success"
+      ref={ref}
+      sx={{
+        backgroundColor: "#ffffff",
+        borderLeft: "5px solid #51a808",
+        borderTop: "1px solid #51a808", // Light green border top
+        borderRight: "1px solid #51a808", // Light green border right
+        borderBottom: "1px solid #51a808", // Light green border bottom
+        color: "black",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      }}
+      icon={false}
+    >
       {message}
     </Alert>
   )
@@ -166,7 +175,7 @@ const Message = (props: StatusMessageProps) => {
           <ErrorHandler handleClose={handleClose} response={response} helperText={helperText} />
         )
       default:
-        return
+        return null
     }
   }
 
@@ -175,11 +184,31 @@ const Message = (props: StatusMessageProps) => {
     dispatch(resetStatusDetails())
   }
 
-  return typeof response !== "undefined" && response.status === 404 ? null : (
-    <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
-      {messageTemplate(status)}
-    </Snackbar>
-  )
+  const messageElement = messageTemplate(status)
+
+  return typeof response !== "undefined" && response.status === 404
+    ? null
+    : messageElement && (
+        <Snackbar
+          autoHideDuration={autoHideDuration}
+          open={open}
+          onClose={() => handleClose()}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => handleClose(false)}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+          sx={{ bottom: "10vh" }}
+        >
+          {messageElement}
+        </Snackbar>
+      )
 }
 
 const StatusMessageHandler: React.FC = () => {

@@ -33,8 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New accordion stepper for submission #538
 - Update datacite's affiliation fields in cypress tests #770
 - Added changes for diffrent types of workflow when creating a submission #921
-- Added UI text to translation files for English and Finnish #942
-- Added secondary navigation bar #941
+- Added UI text to translation files for English and Finnish
+- Add secondary navigation bar
+- Add updated footer
 
 ### Removed
 

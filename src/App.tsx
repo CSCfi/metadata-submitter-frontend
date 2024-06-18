@@ -6,6 +6,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 
 import i18n from "./i18n"
 
+import Footer from "components/Footer"
 import Nav from "components/Nav"
 import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
@@ -185,6 +186,7 @@ const App: React.FC = () => {
       </Routes>
       {/* Centralized status message handler */}
       <StatusMessageHandler />
+      <Footer />
     </React.Fragment>
   )
 }

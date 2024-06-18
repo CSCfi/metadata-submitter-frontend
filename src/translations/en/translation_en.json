@@ -70,5 +70,13 @@
     "items": "items",
     "itemsPerPage": "Items per page:",
     "noResults": "No results found"
+  },
+  "footer": {
+    "sdSubmit": "SD Submit – Services for Sensitive Data",
+    "csc": "CSC - IT Center for Science Ltd.",
+    "serviceDescription": "Service description",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy",
+    "aboutSensitiveDataServices": "About Sensitive Data services"
   }
 }

@@ -44,6 +44,13 @@ const palette = {
     white: "#FFF",
     black: "#000",
   },
+  text: {
+    primary: "#2E3438",
+    secondary: "#025B97",
+  },
+  action: {
+    hover: "#CCF4F0",
+  },
 }
 
 export const fontSizeBreakpoints = {

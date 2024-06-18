@@ -136,12 +136,12 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(
       ref={ref}
       sx={{
         backgroundColor: "#ffffff",
-        borderLeft: "5px solid #51a808",
-        borderTop: "1px solid #51a808", // Light green border top
-        borderRight: "1px solid #51a808", // Light green border right
-        borderBottom: "1px solid #51a808", // Light green border bottom
+        borderLeft: "7px solid #51a808",
+        borderTop: "1px solid #51a808",
+        borderRight: "1px solid #51a808",
+        borderBottom: "1px solid #51a808",
         color: "black",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)",
       }}
       icon={false}
     >
@@ -204,7 +204,13 @@ const Message = (props: StatusMessageProps) => {
               <CloseIcon fontSize="small" />
             </IconButton>
           }
-          sx={{ bottom: "10vh" }}
+          sx={{
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "auto",
+            marginBottom: "50px",
+          }}
         >
           {messageElement}
         </Snackbar>

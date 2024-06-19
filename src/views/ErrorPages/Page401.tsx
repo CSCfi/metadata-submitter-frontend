@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 
 import { Button } from "@mui/material"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 import { Navigate } from "react-router-dom"
 
 import { GetCountdownTime } from "./ErrorPagesHelper"
@@ -10,6 +11,8 @@ import ErrorPageContainer from "components/ErrorPageContainer"
 
 const Page401: React.FC = () => {
   const [redirect, setRedirect] = useState(false)
+
+  const { t } = useTranslation()
 
   const countdownTime = GetCountdownTime(10, 1000)
 
@@ -28,10 +31,12 @@ const Page401: React.FC = () => {
   return redirect ? (
     <Navigate to="/" />
   ) : (
-    <ErrorPageContainer title="401 Authorization Error" errorType="warning">
-      <Typography variant="body2">You have attempted to access a page for which you are not authorized. </Typography>
-      <Typography variant="body2">You can go back to {ButtonToMainPage}</Typography>
-      <Typography variant="body2">Automatically redirect in {countdownTime}s.</Typography>
+    <ErrorPageContainer title={t("errorPages.page401.errorTitle")} errorType="warning">
+      <Typography variant="body2" paragraph={true} data-testid="401text">
+        {t("errorPages.page401.errorText")}
+      </Typography>
+      <Typography variant="body2">{t("errorPages.page401.countDown", {countdownTime})}</Typography>
+      {ButtonToMainPage}
     </ErrorPageContainer>
   )
 }

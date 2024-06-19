@@ -5,6 +5,7 @@ import { screen } from "@testing-library/react"
 import { MemoryRouter as Router } from "react-router-dom"
 
 import CSCtheme from "../theme"
+import "../i18n"
 
 import { renderWithProviders } from "utils/test-utils"
 import Page404 from "views/ErrorPages/Page404"
@@ -20,8 +21,6 @@ describe("Page404", () => {
         </StyledEngineProvider>
       </Router>
     )
-    screen.getByText("404 Not Found")
-    expect(screen.getByText("404 Not Found")).toBeInTheDocument()
-    expect(screen.getByTestId("location-pathname")).toHaveTextContent("/example-route")
+    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
   })
 })

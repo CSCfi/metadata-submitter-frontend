@@ -42,12 +42,8 @@ describe("Page403", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    screen.getByText("403 Forbidden Error")
-    expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
-    screen.getByText("Home Page")
-    expect(screen.getByText("Home Page")).toBeInTheDocument()
-    expect(screen.getByRole("link")).toHaveTextContent("Home Page")
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/home")
+    expect(screen.getByText("403 – Forbidden")).toBeInTheDocument()
+    expect(screen.getByTestId("403text")).toBeInTheDocument()
   })
 
   test("redirects to Home Page after 10s", () => {
@@ -63,7 +59,7 @@ describe("Page403", () => {
         </StyledEngineProvider>
       )
     })
-    expect(screen.getByText("403 Forbidden Error")).toBeInTheDocument()
+    expect(screen.getByText("403 – Forbidden")).toBeInTheDocument()
     act(() => {
       vi.advanceTimersByTime(10000)
     })

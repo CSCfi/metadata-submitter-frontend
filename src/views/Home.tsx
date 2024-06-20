@@ -192,7 +192,7 @@ const Home: React.FC = () => {
    *   Get the list of all (draft and published) submissions
    */
   useEffect(() => {
-    setAllSubmissions(shuffle(allDraftSubmissions.concat(allPublishedSubmissions)))
+    setAllSubmissions(shuffle((allDraftSubmissions as SubmissionDetailsWithId[]).concat(allPublishedSubmissions as SubmissionDetailsWithId[])))
   }, [allDraftSubmissions, allPublishedSubmissions])
 
   /*

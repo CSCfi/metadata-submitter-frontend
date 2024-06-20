@@ -110,5 +110,11 @@
     "hooks": {
       "pre-commit": "pnpm run concurrently -- \"pnpm:lint:check\" \"pnpm:format:check\" \"pnpm:tsc\" \"pnpm:test:no-watch\" "
     }
+  },
+  "pnpm": {
+    "overrides": {
+      "braces@<3.0.3": ">=3.0.3",
+      "ws@>=8.0.0 <8.17.1": ">=8.17.1"
+    }
   }
 }

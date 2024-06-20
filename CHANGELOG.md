@@ -38,6 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add secondary navigation bar
 - Add updated footer
 
+### Fixed
+
+- Fix for Typescript not working correctly in local machine and Gitlab pipeline #950
+
 ### Removed
 
 - Removed `redux-mock-store` library which was used to mock Redux store and data for Jest tests #922

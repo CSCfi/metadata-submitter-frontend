@@ -4,3 +4,4 @@ build/*
 pnpm-lock.yaml
 /playwright/playwright-report/
 /test-results/
+.vscode/settings.json

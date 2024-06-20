@@ -1,9 +1,13 @@
-import React, { useState } from "react"
-import Alert from "@mui/material/Alert"
-import Snackbar from "@mui/material/Snackbar"
-import IconButton from "@mui/material/IconButton"
+import React, { useState, forwardRef } from "react"
+
 import CloseIcon from "@mui/icons-material/Close"
+import Alert from "@mui/material/Alert"
+import IconButton from "@mui/material/IconButton"
+import Snackbar from "@mui/material/Snackbar"
 import { useTranslation } from "react-i18next"
+
+import CSCtheme from "../theme"
+
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
@@ -21,10 +25,7 @@ type HandlerRef =
   | null
   | undefined
 
-const ErrorHandler = React.forwardRef(function ErrorHandler(
-  props: MessageHandlerProps,
-  ref: HandlerRef
-) {
+const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   let message: string
@@ -49,10 +50,7 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(
   )
 })
 
-const InfoHandler = React.forwardRef(function InfoHandler(
-  props: MessageHandlerProps,
-  ref: HandlerRef
-) {
+const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { helperText, handleClose } = props
   const defaultMessage = t("snackbarMessages.info.default")
@@ -68,7 +66,7 @@ const InfoHandler = React.forwardRef(function InfoHandler(
   )
 })
 
-const SuccessHandler = React.forwardRef(function SuccessHandler(
+const SuccessHandler = forwardRef(function SuccessHandler(
   props: MessageHandlerProps,
   ref: HandlerRef
 ) {
@@ -135,13 +133,18 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(
       severity="success"
       ref={ref}
       sx={{
-        backgroundColor: "#ffffff",
-        borderLeft: "7px solid #51a808",
-        borderTop: "1px solid #51a808",
-        borderRight: "1px solid #51a808",
-        borderBottom: "1px solid #51a808",
-        color: "black",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.5)",
+        backgroundColor: CSCtheme.palette.background.paper,
+        borderLeft: `1.25rem solid ${CSCtheme.palette.success.light}`,
+        borderTop: `0.0625rem solid ${CSCtheme.palette.success.light}`,
+        borderRight: `0.0625rem solid ${CSCtheme.palette.success.light}`,
+        borderBottom: `0.0625rem solid ${CSCtheme.palette.success.light}`,
+        color: CSCtheme.palette.secondary.main,
+        fontSize: "1.4286rem",
+        fontWeight: "bold",
+        lineHeight: "1.75",
+        boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+        position: "relative",
+        paddingLeft: "1rem",
       }}
       icon={false}
     >
@@ -209,7 +212,7 @@ const Message = (props: StatusMessageProps) => {
             left: "50%",
             transform: "translateX(-50%)",
             width: "auto",
-            marginBottom: "50px",
+            marginBottom: "4.375rem",
           }}
         >
           {messageElement}

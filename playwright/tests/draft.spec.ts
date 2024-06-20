@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 test.describe("Draft operations", () => {
   test.beforeEach(async ({ page, login, generateSubmissionAndObjects, resetDB }) => {
@@ -20,7 +20,7 @@ test.describe("Draft operations", () => {
     clickAccordionPanel,
     clickAddObject,
     formActions,
-    continueLatestDraft,
+    continueLatestForm,
     optionsActions,
   }) => {
     test.slow()
@@ -61,7 +61,7 @@ test.describe("Draft operations", () => {
 
     // Update draft, save from dialog
     await page.getByTestId("title").fill("Test title 2 second save")
-    await continueLatestDraft(ObjectTypes.policy)
+    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
     await expect(
       page
         .locator("h2")
@@ -73,7 +73,7 @@ test.describe("Draft operations", () => {
     await expect(page.getByTestId("policy-objects-list").locator("li")).toHaveCount(2)
 
     // Continue first draft
-    await continueLatestDraft(ObjectTypes.policy)
+    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
 
     // Clear form
     await optionsActions("Clear form")
@@ -92,7 +92,7 @@ test.describe("Draft operations", () => {
     ).toBeVisible()
 
     // Submit first form draft
-    await continueLatestDraft(ObjectTypes.policy)
+    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
 
     await page.getByTestId("dacRef.accessionId").selectOption({ index: 1 })
     await page.getByTestId("policy").selectOption({ label: "Policy Text" })
@@ -106,7 +106,7 @@ test.describe("Draft operations", () => {
     ).toBeVisible()
 
     // Submit second form draft
-    await continueLatestDraft(ObjectTypes.policy)
+    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
     await expect(page.getByTestId("policy")).toBeVisible()
     await page.getByTestId("policy").selectOption({ label: "Policy Text" })
     await page.getByTestId("policy.policyText").fill("Test policy text")
@@ -116,4 +116,4 @@ test.describe("Draft operations", () => {
   })
 })
 
-export {}
+export { }

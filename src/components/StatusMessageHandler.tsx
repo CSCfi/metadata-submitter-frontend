@@ -43,7 +43,7 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(
       })
       break
     default:
-      message = t("snackbarMessages.error.default")
+      message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
   return (
     <Alert severity="error" onClose={() => handleClose(false)} ref={ref}>
@@ -131,7 +131,7 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(
       }
     }
   } else {
-    message = helperText as string
+    message = helperText ? (t(helperText) as string) : ""
   }
 
   return (

@@ -9,7 +9,7 @@ const Page400: React.FC = () => {
   const { t } = useTranslation()
 
   return (
-    <ErrorPageContainer title={t("errorPages.page400.errorTitle")} errorType="error">
+    <ErrorPageContainer title={t("errorPages.page400.errorTitle")}>
       <Typography variant="body2" data-testid="400text">
         {t("errorPages.page400.errorText")}
       </Typography>

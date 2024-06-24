@@ -14,7 +14,7 @@ const Page404: React.FC = () => {
   const { t } = useTranslation()
 
     return (
-      <ErrorPageContainer title={t("errorPages.page404.errorTitle")} errorType="warning">
+      <ErrorPageContainer title={t("errorPages.page404.errorTitle")}>
         <Typography variant="body2" data-testid="404text">
           {t("errorPages.page404.errorText", {path: pathname})}
         </Typography>

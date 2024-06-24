@@ -30,6 +30,7 @@ type CommandFixtures = {
   clickAccordionPanel: (label: string) => Promise<void>
   generateSubmissionAndObjects: (stopToObjectType: string) => Promise<void>
   continueLatestDraft: (objectType: string) => Promise<void>
+  checkWorkflowRadios: (checked: string) => Promise<void>
 }
 
 // Extend base test with our fixtures.
@@ -39,7 +40,7 @@ const test = base.extend<CommandFixtures>({
   familyName: process.env.FAMILY_NAME,
   givenName: process.env.GIVEN_NAME,
   submissionName: "",
-   
+
   resetDB: async ({}, use) => {
     const resetDB = async () => {
       const database = await MongoClient.connect("mongodb://admin:admin@localhost:27017")
@@ -71,7 +72,9 @@ const test = base.extend<CommandFixtures>({
   newSubmission: async ({ page, submissionName }, use) => {
     const newSubmission = async () => {
       const submissions = page.waitForResponse("/v1/submissions*")
-      await page.getByTestId("submissionName").fill(submissionName ? submissionName : "Test submission name")
+      await page
+        .getByTestId("submissionName")
+        .fill(submissionName ? submissionName : "Test submission name")
       await page.getByTestId("submissionDescription").fill("Test submission description")
       await page.getByTestId("SDSX").click()
       await page.getByTestId("create-submission").click()
@@ -126,7 +129,10 @@ const test = base.extend<CommandFixtures>({
 
         // Modify object type list if stop point is defined
         if (stopToObjectType.length > 0) {
-          objectTypesArray = objectTypesArray.slice(0, objectTypesArray.indexOf(stopToObjectType) + 1)
+          objectTypesArray = objectTypesArray.slice(
+            0,
+            objectTypesArray.indexOf(stopToObjectType) + 1
+          )
         }
 
         const userResponse = await page.request.get("/v1/users/current")
@@ -207,10 +213,24 @@ const test = base.extend<CommandFixtures>({
   ],
   continueLatestDraft: async ({ page }, use) => {
     const continueLatestDraft = async objectType => {
-      await page.getByTestId(`${objectType}-objects-list`).getByTestId(`draft-${objectType}-list-item`).first().click()
+      await page
+        .getByTestId(`${objectType}-objects-list`)
+        .getByTestId(`draft-${objectType}-list-item`)
+        .first()
+        .click()
       await expect(page.getByTestId("form-ready")).toBeVisible()
     }
     await use(objectType => continueLatestDraft(objectType))
+  },
+  checkWorkflowRadios: async ({ page }, use) => {
+    const checkWorkflowRadio = async checked => {
+      await expect(page.getByRole("radiogroup")).toBeVisible()
+      await expect(page.getByTestId("SDSX")).toBeDisabled()
+      await expect(page.getByTestId("BigPicture")).toBeDisabled()
+      await expect(page.getByTestId("FEGA")).toBeDisabled()
+      await expect(page.getByTestId(checked)).toBeChecked()
+    }
+    await use(checked => checkWorkflowRadio(checked))
   },
 })
 

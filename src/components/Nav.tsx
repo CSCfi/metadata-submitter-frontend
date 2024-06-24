@@ -223,7 +223,12 @@ const NavigationMenu = () => {
     <React.Fragment>
       <NavLinks>
         {location.pathname.includes("/submission") && (
-          <Button size="large" variant="outlined" onClick={() => setDialogOpen(true)}>
+          <Button
+            size="large"
+            variant="outlined"
+            onClick={() => setDialogOpen(true)}
+            data-testid="save-submission"
+          >
             {t("saveSubmission")}
           </Button>
         )}

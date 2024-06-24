@@ -12,7 +12,11 @@ import { ResponseStatus } from "constants/responseStatus"
 import { resetFileTypes } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishSubmissionContent, deleteSubmissionAndContent, resetSubmission } from "features/wizardSubmissionSlice"
+import {
+  publishSubmissionContent,
+  deleteSubmissionAndContent,
+  resetSubmission,
+} from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import type { ObjectInsideSubmissionWithTags } from "types"
 import { useQuery, pathWithLocale } from "utils"
@@ -63,7 +67,10 @@ const WizardFooter: React.FC = () => {
     dispatch(resetSubmission())
   }
 
-  const handleAlert = async (alertWizard: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
+  const handleAlert = async (
+    alertWizard: boolean,
+    formData?: Array<ObjectInsideSubmissionWithTags>
+  ) => {
     if (alertWizard && alertType === "cancel") {
       dispatch(deleteSubmissionAndContent(submission.submissionId))
         .then(() => resetDispatch())
@@ -119,7 +126,11 @@ const WizardFooter: React.FC = () => {
       <FooterRow>
         <div>
           {wizardStep < 0 && (
-            <Link component={RouterLink} aria-label="Cancel at the pre-step and move to frontpage" to="/home">
+            <Link
+              component={RouterLink}
+              aria-label="Cancel at the pre-step and move to frontpage"
+              to="/home"
+            >
               <Button variant="contained" color="secondary">
                 Cancel
               </Button>
@@ -165,7 +176,13 @@ const WizardFooter: React.FC = () => {
           </div>
         )}
       </FooterRow>
-      {dialogOpen && <WizardAlert onAlert={handleAlert} parentLocation="footer" alertType={alertType}></WizardAlert>}
+      {dialogOpen && (
+        <WizardAlert
+          onAlert={handleAlert}
+          parentLocation="footer"
+          alertType={alertType}
+        ></WizardAlert>
+      )}
     </div>
   )
 }

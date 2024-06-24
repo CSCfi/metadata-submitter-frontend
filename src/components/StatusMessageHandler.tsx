@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import Alert from "@mui/material/Alert"
 import IconButton from "@mui/material/IconButton"
 import Snackbar from "@mui/material/Snackbar"
+import { GlobalStyles } from "@mui/system"
 import { useTranslation } from "react-i18next"
 
 import CSCtheme from "../theme"
@@ -135,16 +136,17 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       sx={{
         backgroundColor: CSCtheme.palette.background.paper,
         borderLeft: `1.25rem solid ${CSCtheme.palette.success.light}`,
-        borderTop: `0.0625rem solid ${CSCtheme.palette.success.light}`,
-        borderRight: `0.0625rem solid ${CSCtheme.palette.success.light}`,
-        borderBottom: `0.0625rem solid ${CSCtheme.palette.success.light}`,
+        borderTop: `0.25rem solid ${CSCtheme.palette.success.light}`,
+        borderRight: `0.25rem solid ${CSCtheme.palette.success.light}`,
+        borderBottom: `0.25rem solid ${CSCtheme.palette.success.light}`,
         color: CSCtheme.palette.secondary.main,
         fontSize: "1.4286rem",
         fontWeight: "bold",
         lineHeight: "1.75",
         boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
         position: "relative",
-        paddingLeft: "1rem",
+        padding: "1rem",
+        width: "36.125rem",
       }}
       icon={false}
     >
@@ -240,4 +242,25 @@ const StatusMessageHandler: React.FC = () => {
   )
 }
 
-export default StatusMessageHandler
+const GlobalCss = () => (
+  <GlobalStyles
+    styles={{
+      ".css-ptiqhd-MuiSvgIcon-root": {
+        fontSize: "2.5rem !important",
+      },
+      ".css-1e0d89p-MuiButtonBase-root-MuiIconButton-root": {
+        color: `${CSCtheme.palette.primary.main} !important`,
+        padding: "none !important",
+      },
+    }}
+  />
+)
+
+const App = () => (
+  <>
+    <GlobalCss />
+    <StatusMessageHandler />
+  </>
+)
+
+export default App

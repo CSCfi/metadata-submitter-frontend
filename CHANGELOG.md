@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Disable workflow type changes after initial selection #923
+
 ### Changed
 
+- Reword button to `Save progress and exit` #940
 - Refactor error message to adhere SD style with i18n support #932
 - Changed: The location of "options ..." selection
 - Modify Patch submission with only "name" and "description" #816

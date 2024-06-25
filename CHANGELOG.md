@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added UI text to translation files for English and Finnish
 - Add secondary navigation bar
 - Add updated footer
+- Update status message toast design
 
 ### Fixed
 

@@ -79,7 +79,7 @@ const NavigationLinks = () => {
     setAnchorEl(null)
   }
 
-  return user.name ? (
+    return user.name ? (
     <React.Fragment>
       <Button
         id="user-setting-button"
@@ -203,6 +203,7 @@ const LanguageSelector = (props: MenuItemProps) => {
 }
 
 const NavigationMenu = () => {
+  const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error500"]
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()
@@ -234,7 +235,7 @@ const NavigationMenu = () => {
             {t("saveSubmission")}
           </Button>
         )}
-        {location.pathname !== "/" && <NavigationLinks />}
+        {pathsWithoutLogin.indexOf(location.pathname) === -1  && <NavigationLinks />}
         <LanguageSelector currentLocale={currentLocale} />
       </NavLinks>
       {dialogOpen && (

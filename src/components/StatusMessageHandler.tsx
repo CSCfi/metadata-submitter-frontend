@@ -2,7 +2,6 @@ import React, { useState, forwardRef } from "react"
 
 import CloseIcon from "@mui/icons-material/Close"
 import Alert from "@mui/material/Alert"
-import IconButton from "@mui/material/IconButton"
 import Snackbar from "@mui/material/Snackbar"
 import { GlobalStyles } from "@mui/system"
 import { useTranslation } from "react-i18next"
@@ -45,8 +44,31 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
       message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
   return (
-    <Alert severity="error" onClose={() => handleClose(false)} ref={ref}>
-      {message}
+    <Alert
+      severity="error"
+      ref={ref}
+      sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+    >
+      <span style={{ flex: 1 }}>{message}</span>
+      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+        <CloseIcon
+          fontSize="small"
+          style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}
+          onClick={() => handleClose(false)}
+        />
+        <span
+          style={{
+            cursor: "pointer",
+            color: CSCtheme.palette.primary.main,
+            marginLeft: "0.5rem",
+            fontSize: "1rem",
+            fontWeight: "bold",
+          }}
+          onClick={() => handleClose(false)}
+        >
+          Close
+        </span>
+      </div>
     </Alert>
   )
 })
@@ -61,8 +83,31 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   }
 
   return (
-    <Alert onClose={() => handleClose(false)} severity="info" ref={ref}>
-      {messageTemplate(helperText)}
+    <Alert
+      severity="info"
+      ref={ref}
+      sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+    >
+      <span style={{ flex: 1 }}>{messageTemplate(helperText)}</span>
+      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+        <CloseIcon
+          fontSize="small"
+          style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}
+          onClick={() => handleClose(false)}
+        />
+        <span
+          style={{
+            cursor: "pointer",
+            color: CSCtheme.palette.primary.main,
+            marginLeft: "0.5rem",
+            fontSize: "1rem",
+            fontWeight: "bold",
+          }}
+          onClick={() => handleClose(false)}
+        >
+          Close
+        </span>
+      </div>
     </Alert>
   )
 })
@@ -130,7 +175,6 @@ const SuccessHandler = forwardRef(function SuccessHandler(
 
   return (
     <Alert
-      onClose={() => handleClose(false)}
       severity="success"
       ref={ref}
       sx={{
@@ -146,11 +190,32 @@ const SuccessHandler = forwardRef(function SuccessHandler(
         boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
         position: "relative",
         padding: "1rem",
-        width: "36.125rem",
+        width: "40rem",
       }}
       icon={false}
     >
-      {message}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ flexBasis: "70%" }}>{message}</div>
+        <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+          <CloseIcon
+            fontSize="small"
+            style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}
+            onClick={() => handleClose(false)}
+          />
+          <span
+            style={{
+              cursor: "pointer",
+              color: CSCtheme.palette.primary.main,
+              marginLeft: "0.5rem",
+              fontSize: "1.4rem",
+              fontWeight: "bold",
+            }}
+            onClick={() => handleClose(false)}
+          >
+            Close
+          </span>
+        </div>
+      </div>
     </Alert>
   )
 })
@@ -199,16 +264,6 @@ const Message = (props: StatusMessageProps) => {
           open={open}
           onClose={() => handleClose()}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          action={
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={() => handleClose(false)}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          }
           sx={{
             position: "fixed",
             left: "50%",
@@ -222,7 +277,7 @@ const Message = (props: StatusMessageProps) => {
       )
 }
 
-const StatusMessageHandler: React.FC = () => {
+const StatusMessageHandlerMain: React.FC = () => {
   const statusDetails = useAppSelector(state => state.statusDetails)
 
   return (
@@ -256,11 +311,11 @@ const GlobalCss = () => (
   />
 )
 
-const App = () => (
+const StatusMessageHandler = () => (
   <>
     <GlobalCss />
-    <StatusMessageHandler />
+    <StatusMessageHandlerMain />
   </>
 )
 
-export default App
+export default StatusMessageHandler

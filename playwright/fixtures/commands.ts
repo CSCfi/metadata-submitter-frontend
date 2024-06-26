@@ -2,6 +2,13 @@ import { test as base, expect } from "@playwright/test"
 import { MongoClient } from "mongodb"
 
 import {
+  dratfResponse30,
+  dratfResponse5,
+  publishedResponse10,
+  publishedResponse5,
+} from "../fixtures/submission_response"
+
+import {
   TestStudyObject,
   TestDACObject,
   TestPolicyObject,
@@ -31,6 +38,8 @@ type CommandFixtures = {
   generateSubmissionAndObjects: (stopToObjectType: string) => Promise<void>
   checkWorkflowRadios: (checked: string) => Promise<void>
   continueLatestForm: (objectType: string, status: string) => Promise<void>
+  checkItemsPerPage: (perPage: number, numberOfItems: number) => Promise<void>
+  mockGetSubmissions: (itemsPerPage: number, isPublished: boolean) => Promise<void>
 }
 
 // Extend base test with our fixtures.
@@ -235,6 +244,41 @@ const test = base.extend<CommandFixtures>({
       await expect(page.getByTestId(checked)).toBeChecked()
     }
     await use(checked => checkWorkflowRadio(checked))
+  },
+  checkItemsPerPage: async ({ page }, use) => {
+    const checkItemsPerPage = async (perPage, numberOfItems) => {
+      await page.locator("div[aria-haspopup='listbox']").getByText(/5/).first().click()
+      await page.locator(`li[data-value='${perPage}']`).click()
+      // Assert that there are correct number of submissions on the table
+      await expect(page.getByText(`1-${numberOfItems} / ${numberOfItems} items`)).toBeVisible()
+      await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(numberOfItems)
+    }
+    await use((perPage, numberOfItems) => checkItemsPerPage(perPage, numberOfItems))
+  },
+  mockGetSubmissions: async ({ page }, use) => {
+    const mockGetSubmissions = async (itemsPerPage, isPublished) => {
+      let json = {}
+
+      switch (itemsPerPage) {
+        case 5:
+          json = isPublished ? publishedResponse5 : dratfResponse5
+          break
+        case 10:
+          json = isPublished ? publishedResponse10 : {}
+          break
+        case 30:
+          json = isPublished ? {} : dratfResponse30
+          break
+        default:
+          break
+      }
+
+      await page.route(
+        `/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
+        async route => await route.fulfill({ json })
+      )
+    }
+    await use((itemsPerPage, isPublished) => mockGetSubmissions(itemsPerPage, isPublished))
   },
 })
 

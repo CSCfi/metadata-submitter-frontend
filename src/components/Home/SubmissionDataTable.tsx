@@ -16,10 +16,11 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
+import { SubmissionStatus } from "constants/wizardSubmission"
 import { setSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
-import type { SubmissionRow } from "types"
+import { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
 const DataTable = styled(DataGrid)(({ theme }) => ({
@@ -46,6 +47,11 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
     "& .MuiDataGrid-sortIcon": {
       color: theme.palette.secondary.main,
       fontSize: "2rem",
+    },
+  },
+  "& .MuiDataGrid-columnHeader--last": {
+    "&:hover": {
+      backgroundColor: `${theme.palette.common.white} !important`,
     },
   },
   "& .MuiDataGrid-actionsCell": {
@@ -115,28 +121,31 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     {
       field: "actions",
       type: "actions",
-      getActions: (params: GridRowParams) => [
-        <>
-          <GridActionsCellItem
-            key={params.id}
-            icon={<EditIcon color="primary" fontSize="large" />}
-            onClick={e => handleEditSubmission(e, params.id)}
-            label={t("edit")}
-            showInMenu
-            data-testid="edit-draft-submission"
-          />
-        </>,
-        <>
-          <GridActionsCellItem
-            key={params.id}
-            icon={<DeleteIcon color="primary" fontSize="large" />}
-            onClick={e => handleDeleteSubmission(e, params.id, params.row.submissionType)}
-            label="Delete"
-            data-testid="delete-draft-submission"
-            showInMenu
-          />
-        </>,
-      ],
+      getActions: (params: GridRowParams) =>
+        params.row.submissionType === SubmissionStatus.unpublished
+          ? [
+              <>
+                <GridActionsCellItem
+                  key={params.id}
+                  icon={<EditIcon color="primary" fontSize="large" />}
+                  onClick={e => handleEditSubmission(e, params.id)}
+                  label={t("edit")}
+                  showInMenu
+                  data-testid="edit-draft-submission"
+                />
+              </>,
+              <>
+                <GridActionsCellItem
+                  key={params.id}
+                  icon={<DeleteIcon color="primary" fontSize="large" />}
+                  onClick={e => handleDeleteSubmission(e, params.id, params.row.submissionType)}
+                  label={t("delete")}
+                  data-testid="delete-draft-submission"
+                  showInMenu
+                />
+              </>,
+            ]
+          : [],
     },
   ]
 

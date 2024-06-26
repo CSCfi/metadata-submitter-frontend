@@ -192,7 +192,13 @@ const Home: React.FC = () => {
    *   Get the list of all (draft and published) submissions
    */
   useEffect(() => {
-    setAllSubmissions(shuffle((allDraftSubmissions as SubmissionDetailsWithId[]).concat(allPublishedSubmissions as SubmissionDetailsWithId[])))
+    setAllSubmissions(
+      shuffle(
+        (allDraftSubmissions as SubmissionDetailsWithId[]).concat(
+          allPublishedSubmissions as SubmissionDetailsWithId[]
+        )
+      )
+    )
   }, [allDraftSubmissions, allPublishedSubmissions])
 
   /*
@@ -308,7 +314,7 @@ const Home: React.FC = () => {
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
-          helperText: "The submission has been deleted successfully!",
+          helperText: "snackbarMessages.success.submissions.deleted",
         })
       )
 
@@ -327,24 +333,25 @@ const Home: React.FC = () => {
       )
     }
 
-    // Fetch again the list of submissions based on submissionType
-    const response = await submissionAPIService.getSubmissions({
-      page: 1,
-      per_page: numberOfDraftSubmissions - 1,
-      published: submissionType === SubmissionStatus.unpublished ? false : true,
-      projectId,
-    })
-    const submissions = response.data.submissions
+    if (numberOfAllSubmissions > 1) {
+      // Fetch again the list of submissions based on submissionType
+      const response = await submissionAPIService.getSubmissions({
+        page: 1,
+        per_page: numberOfDraftSubmissions - 1,
+        published: submissionType === SubmissionStatus.unpublished ? false : true,
+        projectId,
+      })
+      const submissions = response.data.submissions
 
-    // Reset submissions and number of submissions
-    if (submissionType === SubmissionStatus.unpublished) {
-      setAllDraftSubmissions(submissions)
-      setNumberOfDraftSubmissions(numberOfDraftSubmissions - 1)
-    } else if (submissionType === SubmissionStatus.published) {
-      setAllPublishedSubmissions(submissions)
-      setNumberOfPublishedSubmissions(numberOfDraftSubmissions - 1)
+      // Reset submissions and number of submissions
+      if (submissionType === SubmissionStatus.unpublished) {
+        setAllDraftSubmissions(submissions)
+        setNumberOfDraftSubmissions(numberOfDraftSubmissions - 1)
+      } else if (submissionType === SubmissionStatus.published) {
+        setAllPublishedSubmissions(submissions)
+        setNumberOfPublishedSubmissions(numberOfDraftSubmissions - 1)
+      }
     }
-
     setAllSubmissions(prevState => prevState.filter(item => item.submissionId !== submissionId))
     setNumberOfAllSubmissions(numberOfAllSubmissions - 1)
   }

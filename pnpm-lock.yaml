@@ -46,7 +46,7 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5(react-redux@9.1.2(@types/react@18.3.3)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       '@typescript-eslint/parser':
-        specifier: ^7.13.0
+        specifier: ^7.13.1
         version: 7.13.1(eslint@9.5.0)(typescript@4.9.5)
       '@vitejs/plugin-react':
         specifier: ^4.3.1
@@ -85,7 +85,7 @@ importers:
         specifier: ^12.1.0
         version: 12.1.0(react@18.3.1)
       react-hook-form:
-        specifier: ^7.51.5
+        specifier: ^7.52.0
         version: 7.52.0(react@18.3.1)
       react-i18next:
         specifier: ^14.1.2
@@ -137,7 +137,7 @@ importers:
         specifier: ^4.17.5
         version: 4.17.5
       '@types/node':
-        specifier: ^20.14.2
+        specifier: ^20.14.6
         version: 20.14.6
       '@types/react-dom':
         specifier: ^18.3.0
@@ -146,7 +146,7 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
       '@typescript-eslint/eslint-plugin':
-        specifier: ^7.13.0
+        specifier: ^7.13.1
         version: 7.13.1(@typescript-eslint/parser@7.13.1(eslint@9.5.0)(typescript@4.9.5))(eslint@9.5.0)(typescript@4.9.5)
       '@vitest/coverage-v8':
         specifier: ^1.5.3
@@ -161,7 +161,7 @@ importers:
         specifier: ^8.0.0
         version: 8.2.2
       cypress:
-        specifier: ^13.11.0
+        specifier: ^13.12.0
         version: 13.12.0
       cypress-file-upload:
         specifier: ^5.0.8
@@ -182,13 +182,13 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(eslint-config-prettier@8.10.0(eslint@9.5.0))(eslint@9.5.0)(prettier@2.8.8)
       eslint-plugin-react:
-        specifier: ^7.34.2
+        specifier: ^7.34.3
         version: 7.34.3(eslint@9.5.0)
       eslint-plugin-react-hooks:
         specifier: ^4.6.2
         version: 4.6.2(eslint@9.5.0)
       globals:
-        specifier: ^15.4.0
+        specifier: ^15.6.0
         version: 15.6.0
       husky:
         specifier: ^7.0.4

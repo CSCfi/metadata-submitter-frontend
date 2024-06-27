@@ -49,11 +49,18 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
       ref={ref}
       sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
     >
-      <span style={{ flex: 1 }}>{message}</span>
-      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+      <span style={{ flex: 7 }}>{message}</span>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flex: 3,
+          justifyContent: "flex-end",
+        }}
+      >
         <CloseIcon
           fontSize="small"
-          style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}
+          style={{ cursor: "pointer", color: CSCtheme.palette.primary.main, marginLeft: "20px" }}
           onClick={() => handleClose(false)}
         />
         <span
@@ -88,8 +95,8 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
       ref={ref}
       sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
     >
-      <span style={{ flex: 1 }}>{messageTemplate(helperText)}</span>
-      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+      <span style={{ flex: 7 }}>{messageTemplate(helperText)}</span>
+      <div style={{ display: "flex", alignItems: "center", flex: 3, justifyContent: "flex-end" }}>
         <CloseIcon
           fontSize="small"
           style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}
@@ -190,13 +197,12 @@ const SuccessHandler = forwardRef(function SuccessHandler(
         boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
         position: "relative",
         padding: "1rem",
-        width: "40rem",
       }}
       icon={false}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ flexBasis: "70%" }}>{message}</div>
-        <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+        <div style={{ flex: 7 }}>{message}</div>
+        <div style={{ display: "flex", alignItems: "center", flex: 3, justifyContent: "flex-end" }}>
           <CloseIcon
             fontSize="small"
             style={{ cursor: "pointer", color: CSCtheme.palette.primary.main }}

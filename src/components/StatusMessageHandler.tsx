@@ -201,7 +201,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       icon={false}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ flex: 7 }}>{message}</div>
+        <div style={{ marginRight: "1.5rem" }}>{message}</div>
         <div style={{ display: "flex", alignItems: "center", flex: 3, justifyContent: "flex-end" }}>
           <CloseIcon
             fontSize="small"

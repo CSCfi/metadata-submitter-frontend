@@ -29,8 +29,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { setFileTypes } from "features/fileTypesSlice"
-import { deleteFileType } from "features/fileTypesSlice"
+import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -476,15 +475,6 @@ const FormContent = ({
       try {
         await dispatch(
           deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
-        )
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            response: "",
-            helperText: currentObject.status
-              ? "snackbarMessages.success.objects.deleted"
-              : "snackbarMessages.success.drafts.deleted",
-          })
         )
 
         dispatch(resetCurrentObject())

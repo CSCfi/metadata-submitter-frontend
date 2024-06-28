@@ -60,6 +60,55 @@
       }
     }
   },
+  "alerts": {
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "noSave": "Do not save",
+      "saveDraft": "Save as draft",
+      "update": "Update",
+      "continueSubmission": "No, continue creating the submission",
+      "cancelSubmission": "Yes, cancel creating a submission",
+      "saveExit": "Yes, save and exit"
+    },
+    "submitted": {
+      "title": "Would you like to save the edited form data?",
+      "content": "Unsaved changes will be lost. If you save the form as a draft, you can continue filling it later."
+    },
+    "form": {
+      "title": "Would you like to save a draft version of this form?",
+      "content": "If you save this form as a draft, you can continue filling it later."
+    },
+    "xml": {
+      "title": "Would you like to save draft version of this xml upload?",
+      "content": "If you save the xml as a draft, you can upload it later."
+    },
+    "existing": {
+      "title": "Would you like to save draft version of this existing object upload?",
+      "content": "If you save the object as a draft, you can upload it later."
+    },
+    "cancel": {
+      "title": "Cancel creating a submission?",
+      "content": "If you cancel creating a submission, the submission and its content will not be saved anywhere."
+    },
+    "save": {
+      "title": "Save progress and exit?",
+      "content": "Submission progress will be saved, and you will return to the homepage."
+    },
+    "publish": {
+      "title": "Publishing objects",
+      "content": {
+        "objects": "Objects in this submission will be published. ",
+        "chooseDrafts": "Please choose the drafts you would like to save, unsaved drafts will be removed from this submission."
+      }
+    }
+  },
+  "errors": {
+    "connection": {
+      "saveDraft": "Connection error, cannot save draft.",
+      "updateObject": "Connection error, cannot update object."
+    }
+  },
   "errorPages": {
     "page400": {
       "errorTitle": "400 – Virheellinen pyyntö",

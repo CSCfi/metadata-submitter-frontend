@@ -138,7 +138,8 @@
     },
     "page404": {
       "errorTitle": "404 – Sivua ei löydy",
-      "errorText": "Etsimääsi sivua {{path}} ei löydy"
+      "errorText": "Etsimääsi sivua {{path}} ei löydy",
+      "erroGoBack": "Palaa edelliselle sivulle"
     },
     "page500": {
       "errorTitle": "500 – Palvelu ei ole saatavilla",

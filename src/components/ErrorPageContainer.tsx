@@ -13,17 +13,19 @@ type ErrorPageProps = {
 
 const MainContainer = styled(Container)({
   display: "flex",
-  minHeight: "100vh",
+  minHeight: "92vh",
+  minWidth: "97vh",
   justifyContent: "center",
   flexDirection: "column",
 })
 
 const ErrorCard = styled(Card)(({ theme }) => ({
- fontSize: "1.4rem",
- fontWeight: "bold",
- color: theme.palette.secondary.light,
- minHeight: 400,
- padding: "1.5rem"
+ fontSize: "1.6rem",
+ color: theme.palette.error.grey,
+ minHeight: "56rem",
+ minWidth: "88rem",
+ padding: "1.5rem",
+ textTransform: "uppercase"
 }))
 
 const ErrorCardDivider = styled(Divider)(({ theme }) => ({
@@ -35,6 +37,12 @@ const ErrorCardDivider = styled(Divider)(({ theme }) => ({
   marginBottom: "1rem"
  }))
 
+ const ErrorCardContent = styled(CardContent)(({theme}) => ({
+  padding: 0,
+  textTransform: "none",
+  color: theme.palette.error.darkgrey,
+ }))
+
 const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {
   const { children, title } = props
 
@@ -43,7 +51,7 @@ const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {
       <ErrorCard>
         {title}
         <ErrorCardDivider />
-        <CardContent sx={{ color: "black", px: 0 }}>{children}</CardContent>
+        <ErrorCardContent>{children}</ErrorCardContent>
       </ErrorCard>
     </MainContainer>
   )

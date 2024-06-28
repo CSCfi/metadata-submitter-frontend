@@ -13,7 +13,7 @@ import ErrorPageContainer from "components/ErrorPageContainer"
 const StyledButton = styled(Button)(() => ({
   marginTop: "3.6rem",
   height: "3.5rem",
-  width: "17rem",
+  width: "18rem",
 }))
 
 const Page401: React.FC = () => {
@@ -33,10 +33,10 @@ const Page401: React.FC = () => {
     <Navigate to="/" />
   ) : (
     <ErrorPageContainer title={t("errorPages.page401.errorTitle")} >
-      <Typography variant="body2" paragraph={true} data-testid="401text">
+      <Typography variant="body1" paragraph={true} data-testid="401text">
         {t("errorPages.page401.errorText")}
       </Typography>
-      <Typography variant="body2">{t("errorPages.page401.countDown", {countdownTime})}</Typography>
+      <Typography variant="body1">{t("errorPages.page401.countDown", {countdownTime})}</Typography>
       <StyledButton variant="contained" href="/" color="primary" size="large">
         {t("errorPages.page401.buttonText")}
       </StyledButton>

@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Removed unused library eslint-config-prettier, follow up of #974
 - Removed `redux-mock-store` library which was used to mock Redux store and data for Jest tests #922
 - Remove the use CRA boilderplate and webpack from the codebase.
 

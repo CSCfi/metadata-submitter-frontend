@@ -8,16 +8,17 @@ import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
-const WizardOptions = ({
-  onClearForm,
-  onOpenXMLModal,
-}: {
+type WizardOptionsProps = {
   onClearForm: () => void
   onOpenXMLModal: () => void
-}) => {
+  onDeleteForm: () => void
+}
+
+const WizardOptions: React.FC<WizardOptionsProps> = props => {
+  const { onClearForm, onOpenXMLModal, onDeleteForm } = props
   const { t } = useTranslation()
 
-  const options = [t("formActions.uploadXML"), t("formActions.clearForm")]
+  const options = [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -29,6 +30,7 @@ const WizardOptions = ({
     setAnchorEl(null)
     option === options[0] ? onOpenXMLModal() : null
     option === options[1] ? onClearForm() : null
+    option === options[2] ? onDeleteForm() : null
   }
 
   return (
@@ -74,6 +76,7 @@ const WizardOptions = ({
               color: "secondary.main",
               fontWeight: 700,
             }}
+            data-testid={option}
           >
             {option}
           </MenuItem>

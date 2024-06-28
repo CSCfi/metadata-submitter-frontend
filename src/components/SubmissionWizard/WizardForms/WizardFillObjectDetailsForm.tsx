@@ -29,10 +29,10 @@ import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { setFileTypes } from "features/fileTypesSlice"
+import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
-import { setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import {
   deleteObjectFromSubmission,
   replaceObjectInSubmission,
@@ -80,6 +80,7 @@ type CustomCardHeaderProps = {
   onClickSubmit: () => void
   onClickCloseDialog: () => void
   onOpenXMLModal: () => void
+  onDeleteForm: () => void
   refForm: string
 }
 
@@ -107,6 +108,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     onClickSubmit,
     onClickCloseDialog,
     onOpenXMLModal,
+    onDeleteForm,
   } = props
 
   const focusTarget = useRef<HTMLButtonElement>(null)
@@ -135,36 +137,39 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   const buttonGroup = (
-
-<div style={{ display: "flex" }}>
-    <WizardOptions onClearForm={onClickClearForm} onOpenXMLModal={onOpenXMLModal} />
-    <ButtonGroup>
-      <Button
-        variant="contained"
-        aria-label="save form as draft"
-        size="small"
-        onClick={onClickSaveDraft}
-        data-testid="form-draft"
-      >
-        {currentObject?.status === ObjectStatus.draft
-          ? t("formActions.updateDraft")
-          : t("formActions.saveAsDraft")}
-      </Button>
-      <Button
-        variant="contained"
-        aria-label="submit form"
-        size="small"
-        type="submit"
-        onClick={onClickSubmit}
-        form={refForm}
-        data-testid="form-ready"
-      >
-        {currentObject?.status === ObjectStatus.submitted
-          ? t("formActions.update")
-          : t("formActions.markAsReady")}
-      </Button>
-    </ButtonGroup>
-  </div>
+    <div style={{ display: "flex" }}>
+      <WizardOptions
+        onClearForm={onClickClearForm}
+        onOpenXMLModal={onOpenXMLModal}
+        onDeleteForm={onDeleteForm}
+      />
+      <ButtonGroup>
+        <Button
+          variant="contained"
+          aria-label="save form as draft"
+          size="small"
+          onClick={onClickSaveDraft}
+          data-testid="form-draft"
+        >
+          {currentObject?.status === ObjectStatus.draft
+            ? t("formActions.updateDraft")
+            : t("formActions.saveAsDraft")}
+        </Button>
+        <Button
+          variant="contained"
+          aria-label="submit form"
+          size="small"
+          type="submit"
+          onClick={onClickSubmit}
+          form={refForm}
+          data-testid="form-ready"
+        >
+          {currentObject?.status === ObjectStatus.submitted
+            ? t("formActions.update")
+            : t("formActions.markAsReady")}
+        </Button>
+      </ButtonGroup>
+    </div>
   )
 
   return (
@@ -270,7 +275,7 @@ const FormContent = ({
         currentObjectId &&
         Object.keys(currentObject).length > 0
       )
-        handleDraftDelete(currentObjectId)
+        handleDeleteForm()
     }
   }, [isSubmitSuccessful])
 
@@ -331,12 +336,6 @@ const FormContent = ({
       dispatch(resetDraftStatus())
       resetTimer()
     }
-  }
-
-  const handleDraftDelete = (draftId: string) => {
-    dispatch(deleteObjectFromSubmission(ObjectStatus.draft, draftId, objectType))
-    setCurrentObjectId(() => null)
-    handleChange()
   }
 
   /*
@@ -471,6 +470,33 @@ const FormContent = ({
     dispatch(setXMLModalOpen())
   }
 
+  const handleDeleteForm = async () => {
+    if (currentObjectId) {
+      try {
+        await dispatch(
+          deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
+        )
+
+        dispatch(resetCurrentObject())
+        handleReset()
+        handleChange()
+
+        // Delete fileType that is equivalent to deleted object (for Run and Analysis cases)
+        if (objectType === ObjectTypes.analysis || objectType === ObjectTypes.run) {
+          dispatch(deleteFileType(currentObjectId))
+        }
+      } catch (error) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "snackbarMessages.error.helperText.deleteObjectFromSubmission",
+          })
+        )
+      }
+    }
+  }
+
   const handleReset = () => {
     methods.reset({ undefined })
     setCurrentObjectId(null)
@@ -488,6 +514,7 @@ const FormContent = ({
         onClickSubmit={() => resetTimer()}
         onClickCloseDialog={() => closeDialog()}
         onOpenXMLModal={() => handleXMLModalOpen()}
+        onDeleteForm={() => handleDeleteForm()}
       />
 
       <Form

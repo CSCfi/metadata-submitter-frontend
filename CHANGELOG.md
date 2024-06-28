@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Adding Delete option for deleting form #812
 - New summary page layout #791
 - New accordion stepper for submission #538
 - Update datacite's affiliation fields in cypress tests #770

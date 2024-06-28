@@ -26,15 +26,19 @@
     "update": "Update",
     "options": "Options",
     "uploadXML": "Upload XML",
-    "clearForm": "Clear form"
+    "clearForm": "Clear form",
+    "deleteForm": "Delete form"
   },
   "login": "Log in",
   "logout": "Log out",
   "snackbarMessages": {
     "error": {
-      "default": "Unfortunately an unexpected error happened on our servers",
+      "default": "Unfortunately an unexpected error happened on our servers. {{helperText}}",
       "504": "Unfortunately we couldn't connect to our server.",
-      "400": "{{helperText}} Details: {{responseDetail}}"
+      "400": "{{helperText}} Details: {{responseDetail}}",
+      "helperText": {
+        "deleteObjectFromSubmission": "Can't delete object"
+      }
     },
     "info": {
       "default": "For some reason, your file is still being saved to our database, please wait. If saving doesn't go through in two minutes, please try saving the file again."
@@ -42,12 +46,14 @@
     "success": {
       "drafts": {
         "saved": "Draft saved with accessionid {{accessionId}}",
-        "updated": "Draft updated with accessionid {{accessionId}}"
+        "updated": "Draft updated with accessionid {{accessionId}}",
+        "deleted": "Draft deleted successfully"
       },
       "objects": {
         "submitted": "Submitted with accessionid {{accessionId}}",
         "replaced": "Object replaced with accessionid {{accessionId}}",
-        "updated": "Object updated with accessionid {{accessionId}}"
+        "updated": "Object updated with accessionid {{accessionId}}",
+        "deleted": "Object deleted successfully"
       },
       "templates": {
         "updated": "Template updated with accessionid {{accessionId}}"

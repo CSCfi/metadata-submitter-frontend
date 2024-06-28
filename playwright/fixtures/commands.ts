@@ -12,7 +12,7 @@ import {
   //TestDatasetObject,
 } from "./test-objects"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 type CommandFixtures = {
   mockAuthUrl: string
@@ -29,8 +29,8 @@ type CommandFixtures = {
   clickAddObject: (objectType: string) => Promise<void>
   clickAccordionPanel: (label: string) => Promise<void>
   generateSubmissionAndObjects: (stopToObjectType: string) => Promise<void>
-  continueLatestDraft: (objectType: string) => Promise<void>
   checkWorkflowRadios: (checked: string) => Promise<void>
+  continueLatestForm: (objectType: string, status: string) => Promise<void>
 }
 
 // Extend base test with our fixtures.
@@ -211,16 +211,20 @@ const test = base.extend<CommandFixtures>({
     },
     { timeout: 60000 },
   ],
-  continueLatestDraft: async ({ page }, use) => {
-    const continueLatestDraft = async objectType => {
+  continueLatestForm: async ({ page }, use) => {
+    const continueLatestForm = async (objectType, status) => {
       await page
         .getByTestId(`${objectType}-objects-list`)
-        .getByTestId(`draft-${objectType}-list-item`)
+        .getByTestId(
+          status === ObjectStatus.draft
+            ? `draft-${objectType}-list-item`
+            : `submitted-${objectType}-list-item`
+        )
         .first()
         .click()
       await expect(page.getByTestId("form-ready")).toBeVisible()
     }
-    await use(objectType => continueLatestDraft(objectType))
+    await use((objectType, status) => continueLatestForm(objectType, status))
   },
   checkWorkflowRadios: async ({ page }, use) => {
     const checkWorkflowRadio = async checked => {

@@ -219,15 +219,15 @@ const Home: React.FC = () => {
     const submissionsPerPage =
       tabValue === SubmissionStatus.all
         ? currentSubmissions.slice(
-            allSubmissionsPage * allItemsPerPage,
-            allSubmissionsPage * allItemsPerPage + allItemsPerPage
-          )
+          allSubmissionsPage * allItemsPerPage,
+          allSubmissionsPage * allItemsPerPage + allItemsPerPage
+        )
         : tabValue === SubmissionStatus.unpublished
-        ? currentSubmissions.slice(
+          ? currentSubmissions.slice(
             draftPage * draftItemsPerPage,
             draftPage * draftItemsPerPage + draftItemsPerPage
           )
-        : currentSubmissions.slice(
+          : currentSubmissions.slice(
             publishedPage * publishedItemsPerPage,
             publishedPage * publishedItemsPerPage + publishedItemsPerPage
           )
@@ -249,8 +249,8 @@ const Home: React.FC = () => {
       tabValue === SubmissionStatus.all
         ? allSubmissions
         : tabValue === SubmissionStatus.unpublished
-        ? allDraftSubmissions
-        : allPublishedSubmissions
+          ? allDraftSubmissions
+          : allPublishedSubmissions
 
     const submissionsPerPage = getSubmissionsPerPage(submissions)
     const currentRows = getDisplayRows(submissionsPerPage)
@@ -263,8 +263,8 @@ const Home: React.FC = () => {
       return tabValue === SubmissionStatus.all
         ? numberOfAllSubmissions
         : tabValue === SubmissionStatus.unpublished
-        ? numberOfDraftSubmissions
-        : numberOfPublishedSubmissions
+          ? numberOfDraftSubmissions
+          : numberOfPublishedSubmissions
     }
   }
 
@@ -297,8 +297,8 @@ const Home: React.FC = () => {
     tabValue === SubmissionStatus.all
       ? setAllSubmissionsPage(page)
       : tabValue === SubmissionStatus.unpublished
-      ? setDraftPage(page)
-      : setPublishedPage(page)
+        ? setDraftPage(page)
+        : setPublishedPage(page)
   }
 
   const handleDeleteSubmission = async (submissionId: string, submissionType: string) => {
@@ -354,8 +354,8 @@ const Home: React.FC = () => {
       currentTab === SubmissionStatus.all
         ? allSubmissions
         : currentTab === SubmissionStatus.unpublished
-        ? allDraftSubmissions
-        : allPublishedSubmissions
+          ? allDraftSubmissions
+          : allPublishedSubmissions
     const filteredSubmissions = submissions.filter(item => item && item.name.includes(textValue))
     setFilteredSubmissions(filteredSubmissions)
   }
@@ -365,8 +365,8 @@ const Home: React.FC = () => {
     tabValue === SubmissionStatus.all
       ? setAllSubmissionsPage(0)
       : tabValue === SubmissionStatus.unpublished
-      ? setDraftPage(0)
-      : setPublishedPage(0)
+        ? setDraftPage(0)
+        : setPublishedPage(0)
     const textValue = e.target.value
     setFilteringText(textValue)
     debouncedChangeFilteringText(textValue, tabValue)
@@ -411,15 +411,15 @@ const Home: React.FC = () => {
                 tabValue === SubmissionStatus.all
                   ? allSubmissionsPage
                   : tabValue === SubmissionStatus.unpublished
-                  ? draftPage
-                  : publishedPage
+                    ? draftPage
+                    : publishedPage
               }
               itemsPerPage={
                 tabValue === SubmissionStatus.all
                   ? allItemsPerPage
                   : tabValue === SubmissionStatus.unpublished
-                  ? draftItemsPerPage
-                  : publishedItemsPerPage
+                    ? draftItemsPerPage
+                    : publishedItemsPerPage
               }
               totalItems={getCurrentTotalItems()}
               fetchItemsPerPage={handleFetchItemsPerPage}

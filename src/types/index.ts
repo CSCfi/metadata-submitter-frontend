@@ -215,7 +215,10 @@ export type ObjectDisplayValues = {
   title: string
 }
 
-// Used to get unique file types when patching or submitting Run or Analysis objects
+/* 
+  Used to get unique file types when patching or submitting Run or Analysis objects.
+  These file types are needed for Datacite's form
+*/
 export type FormDataFiles = { files: { filetype: string }[] }
 
 export type DoiCreator = {

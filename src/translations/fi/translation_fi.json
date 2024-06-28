@@ -80,11 +80,11 @@
       "content": "If you save this form as a draft, you can continue filling it later."
     },
     "xml": {
-      "title": "Would you like to save draft version of this xml upload?",
+      "title": "Would you like to save a draft version of this xml upload?",
       "content": "If you save the xml as a draft, you can upload it later."
     },
     "existing": {
-      "title": "Would you like to save draft version of this existing object upload?",
+      "title": "Would you like to save a draft version of this existing object upload?",
       "content": "If you save the object as a draft, you can upload it later."
     },
     "cancel": {

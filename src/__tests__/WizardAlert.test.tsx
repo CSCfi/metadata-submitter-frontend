@@ -13,13 +13,16 @@ describe("WizardAlert", () => {
     const alerts = [
       { location: "submission", types: ObjectSubmissionsArray },
       { location: "footer", types: ["cancel", "save"] },
-      { location: "stepper", types: ObjectSubmissionsArray },
     ]
     alerts.forEach((alert: { location: string; types: string[] }) => {
       alert.types.forEach((type: string) => {
         renderWithProviders(
           <BrowserRouter>
-            <WizardAlert alertType={type} parentLocation={Object.keys(alert)[0]} onAlert={() => ({})} />
+            <WizardAlert
+              alertType={type}
+              parentLocation={Object.keys(alert)[0]}
+              onAlert={() => ({})}
+            />
           </BrowserRouter>
         )
         expect(screen.getByRole("dialog")).toBeDefined()

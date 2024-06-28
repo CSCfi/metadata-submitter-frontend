@@ -21,6 +21,6 @@ describe("Page404", () => {
         </StyledEngineProvider>
       </Router>
     )
-    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
+    expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
   })
 })

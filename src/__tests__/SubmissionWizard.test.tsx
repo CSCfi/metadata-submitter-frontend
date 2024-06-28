@@ -78,7 +78,7 @@ describe("SubmissionWizard", () => {
         },
       }
     )
-    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
+    expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
   })
 
   test("should redirect to 404 page on invalid submissionId", async () => {
@@ -99,7 +99,7 @@ describe("SubmissionWizard", () => {
       </MemoryRouter>,
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
-    expect(screen.getByText("404 – Page Not Found")).toBeInTheDocument()
+    expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
   })
 
   test("should render submission by submissionId in URL parameters", async () => {

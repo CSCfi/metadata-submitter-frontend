@@ -13,7 +13,7 @@ test.describe("catch error codes and display corresponding error page", function
     })
     await page.waitForLoadState("load", { timeout: 30000 })
     await expect(
-      page.locator(".MuiAlert-message", { hasText: /400 – Bad Request/ }).first()
+      page.locator(".MuiCard-root", { hasText: /400 – 400 – BAD REQUEST/ }).first()
     ).toBeVisible({
       timeout: 10000,
     })
@@ -23,7 +23,7 @@ test.describe("catch error codes and display corresponding error page", function
     await page.goto("/en/submission?step=1")
     await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
     await expect(
-      page.locator(".MuiAlert-message", { hasText: /401 – Not Logged In/ }).first()
+      page.locator(".MuiCard-root", { hasText: /401 – NOT LOGGED IN/ }).first()
     ).toBeVisible({
       timeout: 10000,
     })
@@ -39,7 +39,7 @@ test.describe("catch error codes and display corresponding error page", function
     })
     await page.waitForLoadState("load", { timeout: 30000 })
     await expect(
-      page.locator(".MuiAlert-message", { hasText: /403 – Forbidden/ }).first()
+      page.locator(".MuiCard-root", { hasText: /403 – FORBIDDEN/ }).first()
     ).toBeVisible({
       timeout: 10000,
     })
@@ -50,7 +50,7 @@ test.describe("catch error codes and display corresponding error page", function
     await page.goto("/home/unknownroute")
     await page.waitForLoadState("load", { timeout: 30000 })
     await expect(
-      page.locator(".MuiAlert-message", { hasText: /404 – Page Not Found/ }).first()
+      page.locator(".MuiCard-root", { hasText: /404 – PAGE NOT FOUND/ }).first()
     ).toBeVisible({
       timeout: 10000,
     })
@@ -66,7 +66,7 @@ test.describe("catch error codes and display corresponding error page", function
     })
     await page.waitForLoadState("load", { timeout: 30000 })
     await expect(
-      page.locator(".MuiAlert-message", { hasText: /500 – Service Unavailable/ }).first()
+      page.locator(".MuiCard-root", { hasText: /500 – SERVICE UNAVAILABLE/ }).first()
     ).toBeVisible({
       timeout: 10000,
     })

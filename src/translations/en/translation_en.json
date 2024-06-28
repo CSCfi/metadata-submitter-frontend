@@ -121,28 +121,28 @@
   },
   "errorPages": {
     "page400": {
-      "errorTitle": "400 – Bad Request",
+      "errorTitle": "400 – BAD REQUEST",
       "errorText": "Something was wrong with the request. This can be for example due to missing password and/or username."
     },
     "page401": {
-      "errorTitle": "401 – Not Logged In",
+      "errorTitle": "401 – NOT LOGGED IN",
       "errorText": "You are seeing this page because your login information was incorrect, your session expired or you haven’t logged in yet.",
       "countDown": "Automatically redirect in {{countdownTime}}s.",
       "buttonText": "Go to login"
     },
     "page403": {
-      "errorTitle": "403 – Forbidden",
+      "errorTitle": "403 – FORBIDDEN",
       "errorText": "You are seeing this page because you were trying to perform an action that you are not allowed to.",
       "countDown": "Automatically redirect in {{countdownTime}}s.",
       "buttonText": "Go to home page"
     },
     "page404": {
-      "errorTitle": "404 – Page Not Found",
+      "errorTitle": "404 – PAGE NOT FOUND",
       "errorText": "The page {{path}} you were looking for was not found.",
       "erroGoBack": "Go to previous page"
     },
     "page500": {
-      "errorTitle": "500 – Service Unavailable",
+      "errorTitle": "500 – SERVICE UNAVAILABLE",
       "errorText": "You are seeing this page because the service is currently unavailable. Please check back later.",
       "errorText2": "You can find more information about service breaks ",
       "errorLink": "here"

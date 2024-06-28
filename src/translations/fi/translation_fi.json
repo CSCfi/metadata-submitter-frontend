@@ -121,28 +121,28 @@
   },
   "errorPages": {
     "page400": {
-      "errorTitle": "400 – Virheellinen pyyntö",
+      "errorTitle": "400 – VIRHEELLINEN PYYNTÖ",
       "errorText": "Virhe sivupyynnössä. Tämä voi johtua esimerkiksi puuttuvasta salasanasta ja/tai käyttäjänimestä"
     },
     "page401": {
-      "errorTitle": "401 – Et ole kirjautunut sisään",
+      "errorTitle": "401 – ET OLE KIRJAUTUNUT SISÄÄN",
       "errorText": "Näet tämän sivun, koska kirjautumistiedoissasi oli virhe, sessiosi umpeutui tai et ole kirjautunut sisään.",
       "countDown": "Automaattinen uudellenohjaus {{countdownTime}}s.",
       "buttonText": "Siirry kirjautumissivulle"
     },
     "page403": {
-      "errorTitle": "403 – Kielletty toiminto",
+      "errorTitle": "403 – KIELLETTY TOIMINTO",
       "errorText": "Näet tämän sivun, koska yritit suorittaa kielletyn toiminnon.",
       "countDown": "Automaattinen uudellenohjaus {{countdownTime}}s.",
       "buttonText": "Siirry kotisivulle"
     },
     "page404": {
-      "errorTitle": "404 – Sivua ei löydy",
+      "errorTitle": "404 – SIVUA EI LÖYDY",
       "errorText": "Etsimääsi sivua {{path}} ei löydy",
       "erroGoBack": "Palaa edelliselle sivulle"
     },
     "page500": {
-      "errorTitle": "500 – Palvelu ei ole saatavilla",
+      "errorTitle": "500 – PALVELU EI OLE SAATAVILLA",
       "errorText": "Näet tämän sivun, koska palvelu ei ole tällä hetkellä saatavilla.",
       "errorText2": "Löydät tietoa huoltokatkoistamme",
       "errorLink": " täältä"

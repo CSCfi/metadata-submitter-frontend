@@ -18,6 +18,6 @@ describe("Page400", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    expect(screen.getByText("400 – Bad Request")).toBeInTheDocument()
+    expect(screen.getByText("400 – BAD REQUEST")).toBeInTheDocument()
   })
 })

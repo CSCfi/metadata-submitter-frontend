@@ -25,7 +25,6 @@ const ErrorCard = styled(Card)(({ theme }) => ({
  minHeight: "56rem",
  minWidth: "88rem",
  padding: "1.5rem",
- textTransform: "uppercase"
 }))
 
 const ErrorCardDivider = styled(Divider)(({ theme }) => ({

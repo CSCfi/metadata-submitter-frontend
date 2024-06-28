@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState, useRef, RefObject } from "react"
 
+import { GlobalStyles } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -52,6 +53,19 @@ import type {
 } from "types"
 import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
+
+const StickyContainer = styled(Container)(({ theme }) => ({
+  position: "sticky",
+  top: "0px",
+  zIndex: 1200,
+  backgroundColor: "white",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  width: "100%",
+  margin: 0,
+  paddingLeft: theme.spacing(3),
+  paddingRight: theme.spacing(3),
+  boxSizing: "border-box",
+}))
 
 const ButtonGroup = styled("div")(({ theme }) => ({
   display: "flex",
@@ -173,11 +187,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   return (
-    <>
+    <StickyContainer>
       <WizardStepContentHeader
         action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
       />
-    </>
+    </StickyContainer>
   )
 }
 
@@ -196,7 +210,6 @@ const patchHandler = (
     dispatch(
       replaceObjectInSubmission(
         accessionId,
-
         {
           submissionType: ObjectSubmissionTypes.form,
           displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
@@ -653,7 +666,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         )
 
         // Dispatch fileTypes if object is Run or Analysis
-        if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+        if (objectType === ObjectTypes.run || ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(
             accessionId,
             cleanedValues as FormDataFiles
@@ -689,8 +702,13 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
   // Schema validation error differs from response status handler
   if (states.error) return <Alert severity="error">{states.helperText}</Alert>
 
-  return (
-    <Container sx={{ m: 0, p: 0 }} maxWidth={false}>
+    return (<>
+      <GlobalStyles styles={{ ".MuiContainer-root": { maxWidth: "100% !important" } }} />
+        <Container
+          sx={{ m: 0, p: 0, width: "100%", boxSizing: "border-box" }}
+          maxWidth={false}
+        >
+    
       <FormContent
         formSchema={states.formSchema as FormObject}
         resolver={WizardAjvResolver(states.validationSchema, locale)}
@@ -699,7 +717,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         submission={submission}
         currentObject={currentObject}
         key={currentObject?.accessionId || submission.submissionId}
-        closeDialog={closeDialog || (() => ({}))}
+        closeDialog={closeDialog || (() => {})}
         formRef={formRef}
       />
       {submitting && <LinearProgress />}
@@ -709,7 +727,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           dispatch(resetXMLModalOpen())
         }}
       />
-    </Container>
+    </Container></>
   )
 }
 

@@ -37,6 +37,13 @@ const NavBar = styled(AppBar)(({ theme }) => ({
   right: 0,
 }))
 
+const NonStickyNavBar = styled(AppBar)(({ theme }) => ({
+  backgroundColor: theme.palette.common.white,
+  boxShadow: "0 0.25em 0.25em 0 rgba(0, 0, 0,0.25)",
+  zIndex: 1300,
+  position: "relative",
+}))
+
 const Logo = styled("img")(() => ({
   width: "6.4rem",
   height: "4rem",
@@ -62,10 +69,8 @@ type MenuItemProps = {
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
-
   const { t } = useTranslation()
-
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
   useEffect(() => {
@@ -75,12 +80,13 @@ const NavigationLinks = () => {
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
 
   return user.name ? (
-    <React.Fragment>
+    <>
       <Button
         id="user-setting-button"
         aria-controls={open ? "user-setting-menu" : undefined}
@@ -115,7 +121,7 @@ const NavigationLinks = () => {
         <MenuItem
           component="a"
           onClick={() => {
-            handleClose
+            handleClose()
             dispatch(resetUser())
           }}
           href="/logout"
@@ -130,30 +136,23 @@ const NavigationLinks = () => {
           </Typography>
         </MenuItem>
       </Menu>
-    </React.Fragment>
-  ) : (
-    <></>
-  )
+    </>
+  ) : null
 }
 
 const LanguageSelector = (props: MenuItemProps) => {
   const { currentLocale } = props
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
   const dispatch = useAppDispatch()
-
   const navigate = useNavigate()
 
   const changeLang = (locale: string) => {
     const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
-
     if (location.pathname !== "/") {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
-
     dispatch(setLocale(locale))
-
     i18n.changeLanguage(locale).then(t => {
       t("key")
       handleClose()
@@ -207,9 +206,7 @@ const NavigationMenu = () => {
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-
   const { t } = useTranslation()
-
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleAlert = (alertWizard: boolean) => {
@@ -222,7 +219,7 @@ const NavigationMenu = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <NavLinks>
         {location.pathname.includes("/submission") && (
           <Button
@@ -240,23 +237,39 @@ const NavigationMenu = () => {
       {dialogOpen && (
         <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>
       )}
-    </React.Fragment>
+    </>
   )
 }
 
-const Nav: React.FC = () => {
+const Nav: React.FC<{ sticky: boolean }> = ({ sticky }) => {
   return (
-    <NavBar position="fixed">
-      <Toolbar>
-        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
-          <Logo src={logo} alt="CSC_logo" />
-        </Link>
-        <ServiceTitle variant="h5" noWrap>
-          Sensitive Data Services - SD Submit
-        </ServiceTitle>
-        <NavigationMenu />
-      </Toolbar>
-    </NavBar>
+    <>
+      {sticky ? (
+        <NavBar position="fixed">
+          <Toolbar>
+            <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
+              <Logo src={logo} alt="CSC_logo" />
+            </Link>
+            <ServiceTitle variant="h5" noWrap>
+              Sensitive Data Services - SD Submit
+            </ServiceTitle>
+            <NavigationMenu />
+          </Toolbar>
+        </NavBar>
+      ) : (
+        <NonStickyNavBar position="relative">
+          <Toolbar>
+            <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
+              <Logo src={logo} alt="CSC_logo" />
+            </Link>
+            <ServiceTitle variant="h5" noWrap>
+              Sensitive Data Services - SD Submit
+            </ServiceTitle>
+            <NavigationMenu />
+          </Toolbar>
+        </NonStickyNavBar>
+      )}
+    </>
   )
 }
 

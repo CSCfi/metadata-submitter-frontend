@@ -30,12 +30,12 @@ const pathsWithoutNav = ["/error400", "/error401", "/error403", "/error500"]
 
 const NavigationMenu = () => {
   const location = useLocation()
-  if (pathsWithoutNav.indexOf(location.pathname) !== -1) {
+  if (pathsWithoutNav.includes(location.pathname)) {
     return null
   }
   return (
     <>
-      <Nav />
+      <Nav sticky={!location.pathname.includes("/submission")} />
       {location.pathname.includes("/home") && <SecondaryNav />}
     </>
   )
@@ -47,22 +47,16 @@ const NavigationMenu = () => {
  */
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-
   const locale = useAppSelector(state => state.locale)
+  const location = useLocation()
 
   // Get locale from url and set application wide locale setting
   const getLocale = () => {
-    let locale: string
     const locales = ["en", "fi"]
     const currentLocale = location.pathname.split("/")[1]
-
-    if (locales.indexOf(currentLocale) > -1) {
-      locale = currentLocale
-    } else locale = Locale.defaultLocale
-
-    i18n.changeLanguage(locale)
-
-    dispatch(setLocale(locale))
+    const newLocale = locales.includes(currentLocale) ? currentLocale : Locale.defaultLocale
+    i18n.changeLanguage(newLocale)
+    dispatch(setLocale(newLocale))
   }
 
   // Fetch array of schemas from backend and store it in frontend
@@ -72,20 +66,18 @@ const App: React.FC = () => {
   // Handle initial locale setting
   useEffect(() => {
     getLocale()
-    if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
+    if (location.pathname === "/" || pathsWithoutNav.includes(location.pathname)) return
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()
-
       if (isMounted) {
         if (response.ok) {
           const exceptionalSchemas = ["Project", "Submission"]
           const schemas = response.data
-            .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
-            .map((schema: { title: string }) =>
+            .filter(schema => !exceptionalSchemas.includes(schema.title))
+            .map(schema =>
               schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase()
             )
-
           dispatch(setObjectTypesArray(schemas))
         } else {
           dispatch(
@@ -108,7 +100,6 @@ const App: React.FC = () => {
         }
       }
     }
-
     getSchemas()
     return () => {
       isMounted = false
@@ -136,7 +127,7 @@ const App: React.FC = () => {
   )
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <NavigationMenu />
       <Routes>
@@ -184,10 +175,9 @@ const App: React.FC = () => {
         <Route path="/error400" element={<Page400 />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
-      {/* Centralized status message handler */}
       <StatusMessageHandler />
       <Footer />
-    </React.Fragment>
+    </>
   )
 }
 

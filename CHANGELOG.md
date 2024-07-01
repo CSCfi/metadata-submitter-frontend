@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added cancel function to `Save progress and exit` dialog #952
 - Adding Delete option for deleting form #812
 - New summary page layout #791
 - New accordion stepper for submission #538
@@ -50,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Removed WizardFooter #952
 - Removed unused library eslint-config-prettier, follow up of #974
 - Removed `redux-mock-store` library which was used to mock Redux store and data for Jest tests #922
 - Remove the use CRA boilderplate and webpack from the codebase.

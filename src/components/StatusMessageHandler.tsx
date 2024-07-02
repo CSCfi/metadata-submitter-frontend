@@ -2,11 +2,11 @@ import React, { useState, forwardRef } from "react"
 
 import CloseIcon from "@mui/icons-material/Close"
 import Alert from "@mui/material/Alert"
+import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
 import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
-
-import CSCtheme from "../theme"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
@@ -25,15 +25,13 @@ type HandlerRef =
   | null
   | undefined
 
-const CustomAlert = styled(Alert)(() => ({
-  backgroundColor: CSCtheme.palette.background.paper,
-  borderLeft: `1.25rem solid ${CSCtheme.palette.success.light}`,
-  borderTop: `0.25rem solid ${CSCtheme.palette.success.light}`,
-  borderRight: `0.25rem solid ${CSCtheme.palette.success.light}`,
-  borderBottom: `0.25rem solid ${CSCtheme.palette.success.light}`,
-  color: CSCtheme.palette.secondary.main,
-  fontSize: "1.4286rem",
-  fontWeight: "bold",
+const CustomAlert = styled(Alert)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  borderLeft: `1.25rem solid ${theme.palette.success.light}`,
+  borderTop: `0.25rem solid ${theme.palette.success.light}`,
+  borderRight: `0.25rem solid ${theme.palette.success.light}`,
+  borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+  color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
   position: "relative",
@@ -43,18 +41,34 @@ const CustomAlert = styled(Alert)(() => ({
   alignItems: "center",
 }))
 
-const CustomIconButton = styled("div")(() => ({
+const AlertWrap = styled(Box)(() => ({
   display: "flex",
+  justifyContent: "space-between",
   alignItems: "center",
-  cursor: "pointer",
-  color: CSCtheme.palette.primary.main,
-  fontSize: "1.4rem",
+}))
+
+const MessageContainer = styled(Typography)(() => ({
+  fontSize: "1.5rem !important",
   fontWeight: "bold",
 }))
 
-const CustomCloseIcon = styled(CloseIcon)(() => ({
-  color: CSCtheme.palette.primary.main,
-  fontSize: "3rem",
+const CustomIconButton = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  color: theme.palette.primary.main,
+}))
+
+const CustomCloseIcon = styled(CloseIcon)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  fontSize: "2.25rem",
+  marginLeft: "1rem",
+}))
+
+const ClosingLink = styled(Typography)(() => ({
+  marginLeft: "0.75rem",
+  fontSize: "1.5rem !important",
+  fontWeight: "bold",
 }))
 
 const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
@@ -76,16 +90,15 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
       message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
   return (
-    <CustomAlert
-      severity="error"
-      ref={ref}
-      sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-    >
-      <span style={{ flex: 7 }}>{message}</span>
-      <CustomIconButton onClick={() => handleClose(false)}>
-        <CustomCloseIcon />
-        <span style={{ marginLeft: "0.5rem" }}>Close</span>
-      </CustomIconButton>
+    <CustomAlert severity="error" ref={ref}>
+      {" "}
+      <AlertWrap>
+        <MessageContainer>{message}</MessageContainer>
+        <CustomIconButton onClick={() => handleClose(false)}>
+          <CustomCloseIcon />
+          <ClosingLink>Close</ClosingLink>
+        </CustomIconButton>
+      </AlertWrap>
     </CustomAlert>
   )
 })
@@ -101,13 +114,13 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
 
   return (
     <CustomAlert severity="info" ref={ref} icon={false}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ marginRight: "2.5rem" }}>{messageTemplate(helperText)}</div>
+      <AlertWrap>
+        <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
           <CustomCloseIcon />
-          <span style={{ marginLeft: "0.5rem" }}>Close</span>
+          <ClosingLink>Close</ClosingLink>
         </CustomIconButton>
-      </div>
+      </AlertWrap>
     </CustomAlert>
   )
 })
@@ -175,13 +188,13 @@ const SuccessHandler = forwardRef(function SuccessHandler(
 
   return (
     <CustomAlert severity="success" ref={ref} icon={false}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ marginRight: "2.5rem" }}>{message}</div>
+      <AlertWrap>
+        <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
           <CustomCloseIcon />
-          <span style={{ marginLeft: "0.5rem" }}>Close</span>
+          <ClosingLink>Close</ClosingLink>
         </CustomIconButton>
-      </div>
+      </AlertWrap>
     </CustomAlert>
   )
 })

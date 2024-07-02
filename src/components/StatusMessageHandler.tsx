@@ -89,6 +89,9 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
     default:
       message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
+
+  const closeMessage = t("snackbarMessages.close")
+
   return (
     <CustomAlert severity="error" ref={ref}>
       {" "}
@@ -96,7 +99,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
           <CustomCloseIcon />
-          <ClosingLink>Close</ClosingLink>
+          <ClosingLink>{closeMessage}</ClosingLink>
         </CustomIconButton>
       </AlertWrap>
     </CustomAlert>
@@ -107,6 +110,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   const { t } = useTranslation()
   const { helperText, handleClose } = props
   const defaultMessage = t("snackbarMessages.info.default")
+  const closeMessage = t("snackbarMessages.close")
 
   const messageTemplate = (helperText?: string) => {
     return helperText?.length ? helperText : defaultMessage
@@ -118,7 +122,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
         <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
           <CustomCloseIcon />
-          <ClosingLink>Close</ClosingLink>
+          <ClosingLink>{closeMessage}</ClosingLink>
         </CustomIconButton>
       </AlertWrap>
     </CustomAlert>
@@ -186,13 +190,15 @@ const SuccessHandler = forwardRef(function SuccessHandler(
     message = helperText ? (t(helperText) as string) : ""
   }
 
+  const closeMessage = t("snackbarMessages.close")
+
   return (
     <CustomAlert severity="success" ref={ref} icon={false}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
           <CustomCloseIcon />
-          <ClosingLink>Close</ClosingLink>
+          <ClosingLink>{closeMessage}</ClosingLink>
         </CustomIconButton>
       </AlertWrap>
     </CustomAlert>

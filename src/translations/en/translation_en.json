@@ -58,7 +58,8 @@
       "templates": {
         "updated": "Template updated with accessionid {{accessionId}}"
       }
-    }
+    },
+    "close": "Close"
   },
   "errorPages": {
     "page400": {

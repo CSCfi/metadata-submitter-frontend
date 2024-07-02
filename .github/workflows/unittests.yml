@@ -11,7 +11,7 @@ jobs:
     name: Vitest unit tests and coveralls push
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
           version: 8
       - name: Setup node ${{ matrix.node }}

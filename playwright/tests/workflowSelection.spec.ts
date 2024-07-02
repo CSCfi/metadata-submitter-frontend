@@ -32,7 +32,11 @@ test.describe("Test workflow selection", () => {
 
     // Save submission and return to homepage
     await page.getByTestId("save-submission").click()
-    await page.getByRole("dialog").getByRole("button").click()
+    await page
+      .getByRole("dialog")
+      .getByText(/Save and exit/i)
+      .click()
+    await expect(page.getByRole("dialog")).not.toBeVisible()
     await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
 
     // Re-open submission and check that workflow selection is disabled

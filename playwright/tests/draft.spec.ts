@@ -65,7 +65,7 @@ test.describe("Draft operations", () => {
     await expect(
       page
         .locator("h2")
-        .getByText(/Would you like to save draft version of this form/)
+        .getByText(/Would you like to save a draft version of this form/)
         .first()
     ).toBeVisible()
     await page.getByRole("dialog").getByText(/Save/).first().click()
@@ -116,4 +116,4 @@ test.describe("Draft operations", () => {
   })
 })
 
-export { }
+export {}

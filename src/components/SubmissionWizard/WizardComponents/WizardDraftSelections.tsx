@@ -12,7 +12,11 @@ import { useForm, FormProvider, useFormContext } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes, ObjectStatus, ObjectSubmissionStepsList } from "constants/wizardObject"
+import {
+  ObjectSubmissionTypes,
+  ObjectStatus,
+  ObjectSubmissionStepsList,
+} from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
@@ -165,7 +169,11 @@ const WizardDraftSelections = (props: WizardDraftSelectionsProps) => {
                                   data-schema={item.schema}
                                 />
                                 <Button
-                                  sx={{ color: theme => theme.palette.primary.main, m: 1, float: "right" }}
+                                  sx={{
+                                    color: theme => theme.palette.primary.main,
+                                    m: 1,
+                                    float: "right",
+                                  }}
                                   aria-label="View draft"
                                   variant="outlined"
                                   size="small"

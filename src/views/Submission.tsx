@@ -6,7 +6,6 @@ import LinearProgress from "@mui/material/LinearProgress"
 import Paper from "@mui/material/Paper"
 import { useNavigate, useParams } from "react-router-dom"
 
-import WizardFooter from "components/SubmissionWizard/WizardComponents/WizardFooter"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
@@ -25,7 +24,11 @@ import Page404 from "views/ErrorPages/Page404"
 /**
  * Return correct content for each step
  */
-const getStepContent = (wizardStep: number, createSubmissionFormRef: FormRef, objectFormRef: FormRef) => {
+const getStepContent = (
+  wizardStep: number,
+  createSubmissionFormRef: FormRef,
+  objectFormRef: FormRef
+) => {
   switch (wizardStep) {
     case 1:
       return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
@@ -70,7 +73,7 @@ const SubmissionWizard: React.FC = () => {
           dispatch(setWorkflowType(response.data.workflow))
           setFetchingSubmission(false)
         } else {
-          navigate({ pathname: ""})
+          navigate({ pathname: "" })
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
@@ -90,12 +93,14 @@ const SubmissionWizard: React.FC = () => {
 
   const wizardStep = step ? Number(step) : -1
 
-  const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
+  const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(
+    null
+  )
 
   const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
 
   return ValidSteps.includes(wizardStep) ? (
-     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
+    <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
       <Grid
         sx={{
           mt: 7.7,
@@ -117,11 +122,8 @@ const SubmissionWizard: React.FC = () => {
           )}
         </Grid>
       </Grid>
-
-      <WizardFooter />
     </Container>
-  ) :
-  (
+  ) : (
     <Page404 />
   )
 }

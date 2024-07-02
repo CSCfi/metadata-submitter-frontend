@@ -212,10 +212,12 @@ const NavigationMenu = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const handleAlert = () => {
-    navigate(pathWithLocale("home"))
-    dispatch(resetObjectType())
-    dispatch(resetSubmission())
+  const handleAlert = (alertWizard: boolean) => {
+    if (alertWizard) {
+      navigate(pathWithLocale("home"))
+      dispatch(resetObjectType())
+      dispatch(resetSubmission())
+    }
     setDialogOpen(false)
   }
 

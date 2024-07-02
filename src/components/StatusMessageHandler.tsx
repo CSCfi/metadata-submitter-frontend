@@ -1,7 +1,11 @@
-import React, { useState } from "react"
+import React, { useState, forwardRef } from "react"
 
+import CloseIcon from "@mui/icons-material/Close"
 import Alert from "@mui/material/Alert"
+import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
+import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
@@ -21,13 +25,53 @@ type HandlerRef =
   | null
   | undefined
 
-/*
- * Error messages
- */
-const ErrorHandler = React.forwardRef(function ErrorHandler(
-  props: MessageHandlerProps,
-  ref: HandlerRef
-) {
+const CustomAlert = styled(Alert)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  borderLeft: `1.25rem solid ${theme.palette.success.light}`,
+  borderTop: `0.25rem solid ${theme.palette.success.light}`,
+  borderRight: `0.25rem solid ${theme.palette.success.light}`,
+  borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+  color: theme.palette.secondary.main,
+  lineHeight: "1.75",
+  boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+  position: "relative",
+  padding: "1rem",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+}))
+
+const AlertWrap = styled(Box)(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+}))
+
+const MessageContainer = styled(Typography)(() => ({
+  fontSize: "1.5rem !important",
+  fontWeight: "bold",
+}))
+
+const CustomIconButton = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  color: theme.palette.primary.main,
+}))
+
+const CustomCloseIcon = styled(CloseIcon)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  fontSize: "2.25rem",
+  marginLeft: "1rem",
+}))
+
+const ClosingLink = styled(Typography)(() => ({
+  marginLeft: "0.75rem",
+  fontSize: "1.5rem !important",
+  fontWeight: "bold",
+}))
+
+const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   let message: string
@@ -45,35 +89,47 @@ const ErrorHandler = React.forwardRef(function ErrorHandler(
     default:
       message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
+
+  const closeMessage = t("snackbarMessages.close")
+
   return (
-    <Alert severity="error" onClose={() => handleClose(false)} ref={ref}>
-      {message}
-    </Alert>
+    <CustomAlert severity="error" ref={ref}>
+      {" "}
+      <AlertWrap>
+        <MessageContainer>{message}</MessageContainer>
+        <CustomIconButton onClick={() => handleClose(false)}>
+          <CustomCloseIcon />
+          <ClosingLink>{closeMessage}</ClosingLink>
+        </CustomIconButton>
+      </AlertWrap>
+    </CustomAlert>
   )
 })
 
-// Info messages
-const InfoHandler = React.forwardRef(function InfoHandler(
-  props: MessageHandlerProps,
-  ref: HandlerRef
-) {
+const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { helperText, handleClose } = props
   const defaultMessage = t("snackbarMessages.info.default")
+  const closeMessage = t("snackbarMessages.close")
 
   const messageTemplate = (helperText?: string) => {
     return helperText?.length ? helperText : defaultMessage
   }
 
   return (
-    <Alert onClose={() => handleClose(false)} severity="info" ref={ref}>
-      {messageTemplate(helperText)}
-    </Alert>
+    <CustomAlert severity="info" ref={ref} icon={false}>
+      <AlertWrap>
+        <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
+        <CustomIconButton onClick={() => handleClose(false)}>
+          <CustomCloseIcon />
+          <ClosingLink>{closeMessage}</ClosingLink>
+        </CustomIconButton>
+      </AlertWrap>
+    </CustomAlert>
   )
 })
 
-// Success messages
-const SuccessHandler = React.forwardRef(function SuccessHandler(
+const SuccessHandler = forwardRef(function SuccessHandler(
   props: MessageHandlerProps,
   ref: HandlerRef
 ) {
@@ -134,10 +190,18 @@ const SuccessHandler = React.forwardRef(function SuccessHandler(
     message = helperText ? (t(helperText) as string) : ""
   }
 
+  const closeMessage = t("snackbarMessages.close")
+
   return (
-    <Alert onClose={() => handleClose(false)} severity="success" ref={ref}>
-      {message}
-    </Alert>
+    <CustomAlert severity="success" ref={ref} icon={false}>
+      <AlertWrap>
+        <MessageContainer>{message}</MessageContainer>
+        <CustomIconButton onClick={() => handleClose(false)}>
+          <CustomCloseIcon />
+          <ClosingLink>{closeMessage}</ClosingLink>
+        </CustomIconButton>
+      </AlertWrap>
+    </CustomAlert>
   )
 })
 
@@ -150,7 +214,7 @@ type StatusMessageProps = {
 const Message = (props: StatusMessageProps) => {
   const { status, response, helperText } = props
   const [open, setOpen] = useState(true)
-  const autoHideDuration = 6000
+  const autoHideDuration = 20000
   const dispatch = useAppDispatch()
 
   const messageTemplate = (status: string) => {
@@ -166,7 +230,7 @@ const Message = (props: StatusMessageProps) => {
           <ErrorHandler handleClose={handleClose} response={response} helperText={helperText} />
         )
       default:
-        return
+        return null
     }
   }
 
@@ -175,11 +239,27 @@ const Message = (props: StatusMessageProps) => {
     dispatch(resetStatusDetails())
   }
 
-  return typeof response !== "undefined" && response.status === 404 ? null : (
-    <Snackbar autoHideDuration={autoHideDuration} open={open} onClose={() => handleClose()}>
-      {messageTemplate(status)}
-    </Snackbar>
-  )
+  const messageElement = messageTemplate(status)
+
+  return typeof response !== "undefined" && response.status === 404
+    ? null
+    : messageElement && (
+        <Snackbar
+          autoHideDuration={autoHideDuration}
+          open={open}
+          onClose={() => handleClose()}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          sx={{
+            position: "fixed",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "auto",
+            marginBottom: "4.375rem",
+          }}
+        >
+          {messageElement}
+        </Snackbar>
+      )
 }
 
 const StatusMessageHandler: React.FC = () => {

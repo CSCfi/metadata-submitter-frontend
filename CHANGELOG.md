@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update status message toast design #943
 - Reword button to `Save progress and exit` #940
 - Refactor error message to adhere SD style with i18n support #932
 - Changed: The location of "options ..." selection
@@ -42,8 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update datacite's affiliation fields in cypress tests #770
 - Added changes for diffrent types of workflow when creating a submission #921
 - Added UI text to translation files for English and Finnish
-- Add secondary navigation bar
-- Add updated footer
+- Add secondary navigation bar #946
+- Add updated footer #817
 
 ### Fixed
 

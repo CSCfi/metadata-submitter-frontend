@@ -252,7 +252,9 @@ const CreateSubmissionForm = ({
                 }}
               />
               {selectedWorkflowType === "" && isSubmitted && (
-                <FormHelperText error>{t("newSubmission.errors.missingWorkflow")}</FormHelperText>
+                <FormHelperText error data-testid="missing-workflow-error">
+                  {t("newSubmission.errors.missingWorkflow")}
+                </FormHelperText>
               )}
             </FormControl>
           </Grid>

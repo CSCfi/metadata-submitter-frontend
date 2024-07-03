@@ -75,7 +75,7 @@ const CreateSubmissionForm = ({
               updateStatus({
                 status: ResponseStatus.error,
                 response: error,
-                helperText: t("snackbarMessages.error.helperText.fetchWorkflowsError"),
+                helperText: "snackbarMessages.error.helperText.fetchWorkflowsError",
               })
             )
           }
@@ -122,7 +122,7 @@ const CreateSubmissionForm = ({
           dispatch(
             updateStatus({
               status: ResponseStatus.success,
-              helperText: t("snackbarMessages.success.submission.updated"),
+              helperText: "snackbarMessages.success.submission.updated",
             })
           )
         })

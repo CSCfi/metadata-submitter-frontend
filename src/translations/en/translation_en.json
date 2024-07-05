@@ -16,8 +16,13 @@
   "newSubmission": {
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",
-    "submissionName": "Submission Name",
-    "submissionDescription": "Submission Description"
+    "submissionName": "Submission name",
+    "submissionDescription": "Submission description",
+    "errors": {
+      "missingName": "Please give a name to the submission.",
+      "missingDescription": "Please give a description to the submission.",
+      "missingWorkflow": "Please select a submission type."
+    }
   },
   "formActions": {
     "saveAsDraft": "Save as draft",
@@ -37,13 +42,17 @@
       "504": "Unfortunately we couldn't connect to our server.",
       "400": "{{helperText}} Details: {{responseDetail}}",
       "helperText": {
-        "deleteObjectFromSubmission": "Can't delete object"
+        "deleteObjectFromSubmission": "Can't delete object",
+        "fetchWorkflowsError": "Error getting all workflows"
       }
     },
     "info": {
       "default": "For some reason, your file is still being saved to our database, please wait. If saving doesn't go through in two minutes, please try saving the file again."
     },
     "success": {
+      "submission": {
+        "updated": "Submission updated"
+      },
       "drafts": {
         "saved": "Draft saved with accessionid {{accessionId}}",
         "updated": "Draft updated with accessionid {{accessionId}}",

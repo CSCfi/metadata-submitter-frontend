@@ -6,6 +6,24 @@ test.describe("Test workflow selection", () => {
   test.beforeEach(async ({ resetDB }) => {
     await resetDB()
   })
+  test("submission cannot be created without selecting a workflow", async ({ page, login }) => {
+    test.slow()
+    await login()
+    await page.getByTestId("link-create-submission").click()
+    await page.getByTestId("submissionName").fill("Test name")
+    await page.getByTestId("submissionDescription").fill("Test description")
+
+    // Attempt to submit without workflow, should display error
+    await page.getByTestId("create-submission").click()
+    await expect(page.getByTestId("missing-workflow-error")).toBeVisible()
+
+    // Select a workflow and submit, should pass
+    await page.getByTestId("SDSX").click()
+    await expect(page.getByTestId("missing-workflow-error")).not.toBeVisible()
+    await page.getByTestId("create-submission").click()
+    await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
+    await expect(page.getByRole("radiogroup")).not.toBeVisible()
+  })
   test("checks that workflow selection is disabled after it's saved", async ({
     page,
     login,

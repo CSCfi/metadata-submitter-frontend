@@ -5,10 +5,6 @@ import test from "../fixtures/commands"
 test.describe("catch error codes and display corresponding error page", function () {
   test("should redirect to 400 page if response status code is 400 ", async ({ page, login }) => {
     await login()
-    await page.getByTestId("link-create-submission").click()
-    await page.getByTestId("submissionName").fill("Test name")
-    await page.getByTestId("submissionDescription").fill("Test description")
-    await page.getByTestId("create-submission").click()
     await page.route("/v1/submissions*", async route => {
       await route.fulfill({
         body: "Bad request!",
@@ -16,7 +12,9 @@ test.describe("catch error codes and display corresponding error page", function
       })
     })
     await page.waitForLoadState("load", { timeout: 30000 })
-    await expect(page.locator(".MuiAlert-message", { hasText: /400 – Bad Request/ }).first()).toBeVisible({
+    await expect(
+      page.locator(".MuiAlert-message", { hasText: /400 – Bad Request/ }).first()
+    ).toBeVisible({
       timeout: 10000,
     })
   })
@@ -24,7 +22,9 @@ test.describe("catch error codes and display corresponding error page", function
   test("should redirect to 401 page if no granted access", async ({ page }) => {
     await page.goto("/en/submission?step=1")
     await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
-    await expect(page.locator(".MuiAlert-message", { hasText: /401 – Not Logged In/ }).first()).toBeVisible({
+    await expect(
+      page.locator(".MuiAlert-message", { hasText: /401 – Not Logged In/ }).first()
+    ).toBeVisible({
       timeout: 10000,
     })
   })
@@ -38,7 +38,9 @@ test.describe("catch error codes and display corresponding error page", function
       })
     })
     await page.waitForLoadState("load", { timeout: 30000 })
-    await expect(page.locator(".MuiAlert-message", { hasText: /403 – Forbidden/ }).first()).toBeVisible({
+    await expect(
+      page.locator(".MuiAlert-message", { hasText: /403 – Forbidden/ }).first()
+    ).toBeVisible({
       timeout: 10000,
     })
   })
@@ -47,7 +49,9 @@ test.describe("catch error codes and display corresponding error page", function
     await login()
     await page.goto("/home/unknownroute")
     await page.waitForLoadState("load", { timeout: 30000 })
-    await expect(page.locator(".MuiAlert-message", { hasText: /404 – Page Not Found/ }).first()).toBeVisible({
+    await expect(
+      page.locator(".MuiAlert-message", { hasText: /404 – Page Not Found/ }).first()
+    ).toBeVisible({
       timeout: 10000,
     })
   })
@@ -61,7 +65,9 @@ test.describe("catch error codes and display corresponding error page", function
       })
     })
     await page.waitForLoadState("load", { timeout: 30000 })
-    await expect(page.locator(".MuiAlert-message", { hasText: /500 – Service Unavailable/ }).first()).toBeVisible({
+    await expect(
+      page.locator(".MuiAlert-message", { hasText: /500 – Service Unavailable/ }).first()
+    ).toBeVisible({
       timeout: 10000,
     })
   })

@@ -1,13 +1,17 @@
 import React, { RefObject, useEffect, useState } from "react"
 
-import Button from "@mui/material/Button"
-import FormControl from "@mui/material/FormControl"
-import FormControlLabel from "@mui/material/FormControlLabel"
-import Grid from "@mui/material/Grid"
-import Radio from "@mui/material/Radio"
-import RadioGroup from "@mui/material/RadioGroup"
-import MuiTextField from "@mui/material/TextField"
-import Typography from "@mui/material/Typography"
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  FormHelperText,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material"
 import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -34,17 +38,6 @@ const Form = styled("form")({
   },
   padding: "4rem",
 })
-
-const TypeOfSubmissionLabel = styled("div")(({ theme }) => ({
-  background: theme.palette.background.default,
-  borderRadius: theme.spacing(0.4),
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 3, 0, 1.5),
-  fontWeight: 600,
-  color: theme.palette.secondary.main,
-}))
 
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
@@ -82,7 +75,7 @@ const CreateSubmissionForm = ({
               updateStatus({
                 status: ResponseStatus.error,
                 response: error,
-                helperText: "Error getting all workflows",
+                helperText: "snackbarMessages.error.helperText.fetchWorkflowsError",
               })
             )
           }
@@ -103,12 +96,15 @@ const CreateSubmissionForm = ({
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isSubmitted },
   } = useForm()
 
   const navigate = useNavigate()
 
   const onSubmit = async (data: SubmissionDataFromForm) => {
+    if (selectedWorkflowType === "") {
+      return
+    }
     // Transform the format of templates to drafts with proper values to be added to current submission or new submission
     const selectedDraftsArray =
       templates && submission?.submissionId
@@ -124,7 +120,10 @@ const CreateSubmissionForm = ({
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
           dispatch(
-            updateStatus({ status: ResponseStatus.success, helperText: "Submission updated" })
+            updateStatus({
+              status: ResponseStatus.success,
+              helperText: "snackbarMessages.success.submission.updated",
+            })
           )
         })
         .catch((error: string) => {
@@ -165,13 +164,13 @@ const CreateSubmissionForm = ({
           name="name"
           defaultValue={submission ? submission.name : ""}
           render={({ field, fieldState: { error } }) => (
-            <MuiTextField
+            <TextField
               {...field}
               label={`${t("newSubmission.submissionName")} *`}
               variant="outlined"
               fullWidth
               error={!!error}
-              helperText={error ? "Please give a name for submission." : null}
+              helperText={error ? t("newSubmission.errors.missingName") : null}
               disabled={isSubmitting}
               inputProps={{ "data-testid": "submissionName" }}
             />
@@ -183,7 +182,7 @@ const CreateSubmissionForm = ({
           name="description"
           defaultValue={submission ? submission.description : ""}
           render={({ field, fieldState: { error } }) => (
-            <MuiTextField
+            <TextField
               {...field}
               label={`${t("newSubmission.submissionDescription")} *`}
               variant="outlined"
@@ -191,7 +190,7 @@ const CreateSubmissionForm = ({
               multiline
               rows={5}
               error={!!error}
-              helperText={error ? "Please give a description for submission." : null}
+              helperText={error ? t("newSubmission.errors.missingDescription") : null}
               disabled={isSubmitting}
               inputProps={{ "data-testid": "submissionDescription" }}
             />
@@ -201,9 +200,23 @@ const CreateSubmissionForm = ({
 
         <Grid sx={{ mt: 2 }} container spacing={2}>
           <Grid item>
-            <TypeOfSubmissionLabel id="submission-type-selection-label">
+            <FormLabel
+              id="submission-type-selection-label"
+              required
+              error={selectedWorkflowType === "" && isSubmitted}
+              sx={theme => ({
+                background: theme.palette.background.default,
+                borderRadius: theme.spacing(0.4),
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                padding: theme.spacing(0, 3, 0, 1.5),
+                fontWeight: 600,
+                color: theme.palette.secondary.main,
+              })}
+            >
               {t("newSubmission.typeOfSubmission")}
-            </TypeOfSubmissionLabel>
+            </FormLabel>
           </Grid>
           <Grid item xs={6}>
             <FormControl>
@@ -238,6 +251,11 @@ const CreateSubmissionForm = ({
                   )
                 }}
               />
+              {selectedWorkflowType === "" && isSubmitted && (
+                <FormHelperText error data-testid="missing-workflow-error">
+                  {t("newSubmission.errors.missingWorkflow")}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
         </Grid>

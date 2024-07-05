@@ -1,11 +1,8 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, act } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import { vi } from "vitest"
-
-import CSCtheme from "../theme"
 
 import App from "App"
 import { renderWithProviders } from "utils/test-utils"
@@ -13,13 +10,7 @@ import Page401 from "views/ErrorPages/Page401"
 
 describe("Page401", () => {
   test("renders Page401 component", () => {
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <Page401 />
-        </ThemeProvider>
-      </StyledEngineProvider>
-    )
+    renderWithProviders(<Page401 />)
     expect(screen.getByText("401 – NOT LOGGED IN")).toBeInTheDocument()
     expect(screen.getByTestId("401text")).toBeInTheDocument()
   })
@@ -28,13 +19,9 @@ describe("Page401", () => {
     vi.useFakeTimers()
 
     const component = renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
-            <App />
-          </MemoryRouter>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <MemoryRouter initialEntries={[{ pathname: "/error401" }]}>
+        <App />
+      </MemoryRouter>
     )
 
     expect(component.getByText("401 – NOT LOGGED IN")).toBeInTheDocument()

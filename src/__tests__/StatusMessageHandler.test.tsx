@@ -3,7 +3,6 @@ import React from "react"
 import { screen } from "@testing-library/react"
 
 import StatusMessageHandler from "../components/StatusMessageHandler"
-import "../i18n"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { renderWithProviders } from "utils/test-utils"

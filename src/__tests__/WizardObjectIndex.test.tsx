@@ -1,10 +1,8 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 
 import WizardObjectIndex from "../components/SubmissionWizard/WizardComponents/WizardObjectIndex"
-import CSCtheme from "../theme"
 
 import { ObjectTypes } from "constants/wizardObject"
 import { mockState, renderWithProviders } from "utils/test-utils"
@@ -35,14 +33,7 @@ describe("WizardObjectIndex", () => {
       },
     }
 
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardObjectIndex />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardObjectIndex />, { preloadedState: state })
 
     const badge = await screen.queryAllByTestId("badge")
     expect(badge).toHaveLength(3)

@@ -1,12 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { get } from "lodash"
 import { useForm, FormProvider } from "react-hook-form"
-
-import CSCtheme from "../theme"
 
 import CustomSchema from "./fixtures/custom_schema.json"
 
@@ -23,15 +20,11 @@ describe("Test form render by custom schema", () => {
       const methods = useForm()
 
       return (
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <FormProvider {...methods}>
-              <form id="hook-form">
-                <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
-              </form>
-            </FormProvider>
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <FormProvider {...methods}>
+          <form id="hook-form">
+            <div>{JSONSchemaParser.buildFields(schema as unknown as FormObject)}</div>
+          </form>
+        </FormProvider>
       )
     }
 
@@ -119,7 +112,9 @@ describe("Test form render by custom schema", () => {
     await userEvent.selectOptions(oneOfSelect, source.title)
 
     // OneOf option fields are rendered as required
-    const properties = options.oneOf[0].properties as unknown as { [key: string]: { type: string; title: string } }
+    const properties = options.oneOf[0].properties as unknown as {
+      [key: string]: { type: string; title: string }
+    }
 
     for (const key in properties) {
       if (properties[key].title) {

@@ -15,6 +15,7 @@ const MainContainer = styled(Container)({
   display: "flex",
   minHeight: "92vh",
   minWidth: "97vh",
+  maxWidth: "70rem",
   justifyContent: "center",
   flexDirection: "column",
 })
@@ -46,7 +47,7 @@ const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {
   const { children, title } = props
 
   return (
-    <MainContainer style={{ maxWidth: "70rem" }}>
+    <MainContainer>
       <ErrorCard>
         {title}
         <ErrorCardDivider />

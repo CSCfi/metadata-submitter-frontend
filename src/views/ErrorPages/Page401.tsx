@@ -12,7 +12,7 @@ import ErrorPageContainer from "components/ErrorPageContainer"
 
 const StyledButton = styled(Button)(() => ({
   marginTop: "3.6rem",
-  height: "3.5rem",
+  height: "5rem",
   width: "18rem",
 }))
 

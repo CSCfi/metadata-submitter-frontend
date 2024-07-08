@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react"
 
 import Alert from "@mui/material/Alert"
+import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
+import { styled } from "@mui/material/styles"
 import { useTranslation } from "react-i18next"
 
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
@@ -22,6 +24,41 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideSubmissionWithTags } from "types"
+
+const CustomDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialog-paper": {
+    backgroundColor: theme.palette.background.paper,
+    borderLeft: `1.25rem solid ${theme.palette.success.light}`,
+    borderTop: `0.25rem solid ${theme.palette.success.light}`,
+    borderRight: `0.25rem solid ${theme.palette.success.light}`,
+    borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+    color: theme.palette.secondary.main,
+    lineHeight: "1",
+    boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+    padding: "0.5rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+}))
+
+const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+}))
+
+const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  padding: "1rem",
+}))
+
+const CustomBox = styled(Box)(() => ({
+  width: "100%",
+  padding: "1rem",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}))
 
 // Simple template for error messages
 const ErrorMessage = (props: { message: string }) => {
@@ -141,7 +178,7 @@ const CancelFormDialog = ({
           dialogTitle = t("alerts.save.title")
           dialogContent = t("alerts.save.content")
           dialogActions = (
-            <DialogActions style={{ justifyContent: "center" }}>
+            <DialogActions style={{ justifyContent: "flex-start" }}>
               <Button
                 variant="outlined"
                 onClick={() => handleDialog(false)}
@@ -186,21 +223,25 @@ const CancelFormDialog = ({
   }
 
   return (
-    <Dialog
+    <CustomDialog
       open={true}
       onClose={() => handleDialog(false)}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
+      <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
-          {dialogContent}
-        </DialogContentText>
+        <CustomBox>
+          <CustomDialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
+            {dialogContent}
+          </CustomDialogContentText>
+          {error && <ErrorMessage message={errorMessage} />}
+          <DialogActions style={{ width: "100%", justifyContent: "flex-start", padding: "0" }}>
+            {dialogActions}
+          </DialogActions>
+        </CustomBox>
       </DialogContent>
-      {error && <ErrorMessage message={errorMessage} />}
-      {dialogActions}
-    </Dialog>
+    </CustomDialog>
   )
 }
 

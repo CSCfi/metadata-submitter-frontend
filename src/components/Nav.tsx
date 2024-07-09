@@ -59,6 +59,8 @@ type MenuItemProps = {
   currentLocale: string
 }
 
+const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error404", "/error500"]
+
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
@@ -79,7 +81,7 @@ const NavigationLinks = () => {
     setAnchorEl(null)
   }
 
-    return user.name ? (
+  return user.name ? (
     <React.Fragment>
       <Button
         id="user-setting-button"
@@ -146,9 +148,10 @@ const LanguageSelector = (props: MenuItemProps) => {
   const navigate = useNavigate()
 
   const changeLang = (locale: string) => {
-    const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
+    const pathWithoutLocale = location.pathname.includes(`${currentLocale}`) ?
+    location.pathname.split(`/${currentLocale}/`)[1] : location.pathname.replace("/", "")
 
-    if (location.pathname !== "/") {
+    if (pathsWithoutLogin.indexOf(location.pathname) === -1) {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
 
@@ -203,7 +206,6 @@ const LanguageSelector = (props: MenuItemProps) => {
 }
 
 const NavigationMenu = () => {
-  const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error500"]
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()

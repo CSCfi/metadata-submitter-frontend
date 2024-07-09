@@ -12,13 +12,9 @@ test.describe("catch error codes and display corresponding error page", function
       })
     })
     await page.waitForLoadState("load", { timeout: 30000 })
-<<<<<<< HEAD
     await expect(
-      page.locator(".MuiCard-root", { hasText: /400 – 400 – BAD REQUEST/ }).first()
+      page.locator(".MuiCard-root", { hasText: /400 – BAD REQUEST/ }).first()
     ).toBeVisible({
-=======
-    await expect(page.locator(".MuiCard-root", { hasText: /400 – BAD REQUEST/ }).first()).toBeVisible({
->>>>>>> 06711f6 (refactor playwright errorPages test to use MuiCard class name)
       timeout: 10000,
     })
   })
@@ -26,13 +22,9 @@ test.describe("catch error codes and display corresponding error page", function
   test("should redirect to 401 page if no granted access", async ({ page }) => {
     await page.goto("/en/submission?step=1")
     await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
-<<<<<<< HEAD
     await expect(
       page.locator(".MuiCard-root", { hasText: /401 – NOT LOGGED IN/ }).first()
     ).toBeVisible({
-=======
-    await expect(page.locator(".MuiCard-root", { hasText: /401 – NOT LOGGED IN/ }).first()).toBeVisible({
->>>>>>> 06711f6 (refactor playwright errorPages test to use MuiCard class name)
       timeout: 10000,
     })
   })

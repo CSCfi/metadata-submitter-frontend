@@ -37,13 +37,6 @@ const NavBar = styled(AppBar)(({ theme }) => ({
   right: 0,
 }))
 
-const NonStickyNavBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.common.white,
-  boxShadow: "0 0.25em 0.25em 0 rgba(0, 0, 0,0.25)",
-  zIndex: 1300,
-  position: "relative",
-}))
-
 const Logo = styled("img")(() => ({
   width: "6.4rem",
   height: "4rem",
@@ -121,7 +114,7 @@ const NavigationLinks = () => {
         <MenuItem
           component="a"
           onClick={() => {
-            handleClose()
+            handleClose
             dispatch(resetUser())
           }}
           href="/logout"
@@ -137,7 +130,9 @@ const NavigationLinks = () => {
         </MenuItem>
       </Menu>
     </>
-  ) : null
+  ) : (
+    <></>
+  )
 }
 
 const LanguageSelector = (props: MenuItemProps) => {
@@ -241,33 +236,28 @@ const NavigationMenu = () => {
   )
 }
 
-const Nav: React.FC<{ sticky: boolean }> = ({ sticky }) => {
+const NavToolBar = () => (
+  <Toolbar>
+    <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
+      <Logo src={logo} alt="CSC_logo" />
+    </Link>
+    <ServiceTitle variant="h5" noWrap>
+      Sensitive Data Services - SD Submit
+    </ServiceTitle>
+    <NavigationMenu />
+  </Toolbar>
+)
+const Nav: React.FC<{ isFixed: boolean }> = ({ isFixed }) => {
   return (
     <>
-      {sticky ? (
+      {isFixed ? (
         <NavBar position="fixed">
-          <Toolbar>
-            <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
-              <Logo src={logo} alt="CSC_logo" />
-            </Link>
-            <ServiceTitle variant="h5" noWrap>
-              Sensitive Data Services - SD Submit
-            </ServiceTitle>
-            <NavigationMenu />
-          </Toolbar>
+          <NavToolBar />
         </NavBar>
       ) : (
-        <NonStickyNavBar position="relative">
-          <Toolbar>
-            <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
-              <Logo src={logo} alt="CSC_logo" />
-            </Link>
-            <ServiceTitle variant="h5" noWrap>
-              Sensitive Data Services - SD Submit
-            </ServiceTitle>
-            <NavigationMenu />
-          </Toolbar>
-        </NonStickyNavBar>
+        <NavBar position="relative">
+          <NavToolBar />
+        </NavBar>
       )}
     </>
   )

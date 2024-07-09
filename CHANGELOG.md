@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Make secondary nav bar in Form view sticky #946
 - Update status message toast design #943
 - Reword button to `Save progress and exit` #940
 - Refactor error message to adhere SD style with i18n support #932

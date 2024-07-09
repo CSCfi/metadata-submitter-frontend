@@ -30,12 +30,12 @@ const pathsWithoutNav = ["/error400", "/error401", "/error403", "/error500"]
 
 const NavigationMenu = () => {
   const location = useLocation()
-  if (pathsWithoutNav.includes(location.pathname)) {
+  if (pathsWithoutNav.indexOf(location.pathname) !== -1) {
     return null
   }
   return (
     <>
-      <Nav sticky={!location.pathname.includes("/submission")} />
+      <Nav isFixed={!location.pathname.includes("/submission")} />
       {location.pathname.includes("/home") && <SecondaryNav />}
     </>
   )
@@ -48,15 +48,19 @@ const NavigationMenu = () => {
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
   const locale = useAppSelector(state => state.locale)
-  const location = useLocation()
 
   // Get locale from url and set application wide locale setting
   const getLocale = () => {
+    let locale: string
     const locales = ["en", "fi"]
     const currentLocale = location.pathname.split("/")[1]
-    const newLocale = locales.includes(currentLocale) ? currentLocale : Locale.defaultLocale
-    i18n.changeLanguage(newLocale)
-    dispatch(setLocale(newLocale))
+    if (locales.indexOf(currentLocale) > -1) {
+      locale = currentLocale
+    } else locale = Locale.defaultLocale
+
+    i18n.changeLanguage(locale)
+
+    dispatch(setLocale(locale))
   }
 
   // Fetch array of schemas from backend and store it in frontend
@@ -66,7 +70,7 @@ const App: React.FC = () => {
   // Handle initial locale setting
   useEffect(() => {
     getLocale()
-    if (location.pathname === "/" || pathsWithoutNav.includes(location.pathname)) return
+    if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()
@@ -74,8 +78,8 @@ const App: React.FC = () => {
         if (response.ok) {
           const exceptionalSchemas = ["Project", "Submission"]
           const schemas = response.data
-            .filter(schema => !exceptionalSchemas.includes(schema.title))
-            .map(schema =>
+            .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
+            .map((schema: { title: string }) =>
               schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase()
             )
           dispatch(setObjectTypesArray(schemas))

@@ -666,7 +666,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         )
 
         // Dispatch fileTypes if object is Run or Analysis
-        if (objectType === ObjectTypes.run || ObjectTypes.analysis) {
+        if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(
             accessionId,
             cleanedValues as FormDataFiles
@@ -702,32 +702,30 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
   // Schema validation error differs from response status handler
   if (states.error) return <Alert severity="error">{states.helperText}</Alert>
 
-    return (<>
+  return (
+    <>
       <GlobalStyles styles={{ ".MuiContainer-root": { maxWidth: "100% !important" } }} />
-        <Container
-          sx={{ m: 0, p: 0, width: "100%", boxSizing: "border-box" }}
-          maxWidth={false}
-        >
-    
-      <FormContent
-        formSchema={states.formSchema as FormObject}
-        resolver={WizardAjvResolver(states.validationSchema, locale)}
-        onSubmit={onSubmit as SubmitHandler<FieldValues>}
-        objectType={objectType}
-        submission={submission}
-        currentObject={currentObject}
-        key={currentObject?.accessionId || submission.submissionId}
-        closeDialog={closeDialog || (() => {})}
-        formRef={formRef}
-      />
-      {submitting && <LinearProgress />}
-      <WizardUploadXMLModal
-        open={openedXMLModal}
-        handleClose={() => {
-          dispatch(resetXMLModalOpen())
-        }}
-      />
-    </Container></>
+      <Container sx={{ m: 0, p: 0, width: "100%", boxSizing: "border-box" }} maxWidth={false}>
+        <FormContent
+          formSchema={states.formSchema as FormObject}
+          resolver={WizardAjvResolver(states.validationSchema, locale)}
+          onSubmit={onSubmit as SubmitHandler<FieldValues>}
+          objectType={objectType}
+          submission={submission}
+          currentObject={currentObject}
+          key={currentObject?.accessionId || submission.submissionId}
+          closeDialog={closeDialog || (() => {})}
+          formRef={formRef}
+        />
+        {submitting && <LinearProgress />}
+        <WizardUploadXMLModal
+          open={openedXMLModal}
+          handleClose={() => {
+            dispatch(resetXMLModalOpen())
+          }}
+        />
+      </Container>
+    </>
   )
 }
 

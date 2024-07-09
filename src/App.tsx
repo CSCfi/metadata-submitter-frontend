@@ -25,14 +25,11 @@ import Home from "views/Home"
 import Login from "views/Login"
 import SubmissionWizard from "views/Submission"
 
-// paths that don't show navigation menu on top
-const pathsWithoutNav = ["/error400", "/error401", "/error403", "/error500"]
+// Error pages do not use schemas
+const pathsErrorPages = ["/error400", "/error401", "/error403", "/erro404", "/error500"]
 
 const NavigationMenu = () => {
   const location = useLocation()
-  if (pathsWithoutNav.indexOf(location.pathname) !== -1) {
-    return null
-  }
   return (
     <>
       <Nav isFixed={!location.pathname.includes("/submission")} />
@@ -70,7 +67,7 @@ const App: React.FC = () => {
   // Handle initial locale setting
   useEffect(() => {
     getLocale()
-    if (location.pathname === "/" || pathsWithoutNav.indexOf(location.pathname) !== -1) return
+    if (location.pathname === "/" || pathsErrorPages.indexOf(location.pathname) !== -1) return
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()

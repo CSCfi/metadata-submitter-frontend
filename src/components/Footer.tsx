@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router-dom"
 
+const withFixedFooter = ["/", "/error400", "/error404", "/error401", "/error403", "/error500"]
+
 type FooterContainerProps = GridProps & {
   isfixed?: boolean
 }
@@ -77,7 +79,7 @@ const FooterLinkStart = styled(FooterLink)(({ theme }) => ({
 const Footer: React.FC = () => {
   const { t } = useTranslation()
   const location = useLocation()
-  const isfixed = location.pathname === "/"
+  const isfixed = withFixedFooter.includes(location.pathname)
 
   return (
     <FooterContainer container data-testid="footer" isfixed={isfixed}>

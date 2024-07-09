@@ -18,6 +18,6 @@ describe("Page500", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    expect(screen.getByText("500 – Service Unavailable")).toBeInTheDocument()
+    expect(screen.getByText("500 – SERVICE UNAVAILABLE")).toBeInTheDocument()
   })
 })

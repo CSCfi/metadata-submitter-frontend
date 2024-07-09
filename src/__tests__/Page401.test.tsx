@@ -20,7 +20,7 @@ describe("Page401", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    expect(screen.getByText("401 – Not Logged In")).toBeInTheDocument()
+    expect(screen.getByText("401 – NOT LOGGED IN")).toBeInTheDocument()
     expect(screen.getByTestId("401text")).toBeInTheDocument()
   })
 
@@ -37,7 +37,7 @@ describe("Page401", () => {
       </StyledEngineProvider>
     )
 
-    expect(component.getByText("401 – Not Logged In")).toBeInTheDocument()
+    expect(component.getByText("401 – NOT LOGGED IN")).toBeInTheDocument()
 
     act(() => {
       vi.advanceTimersByTime(10000)

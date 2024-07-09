@@ -35,6 +35,9 @@ const palette = {
     main: "#b90729",
     light: "#c74600",
     lightest: "#fff7e3",
+    // grey text
+    grey: "#757575",
+    darkgrey: "#070707",
   },
   info: {
     main: "#006778",

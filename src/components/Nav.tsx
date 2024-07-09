@@ -59,6 +59,8 @@ type MenuItemProps = {
   currentLocale: string
 }
 
+const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error404", "/error500"]
+
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
@@ -143,8 +145,10 @@ const LanguageSelector = (props: MenuItemProps) => {
   const navigate = useNavigate()
 
   const changeLang = (locale: string) => {
-    const pathWithoutLocale = location.pathname.split(`/${currentLocale}/`)[1]
-    if (location.pathname !== "/") {
+    const pathWithoutLocale = location.pathname.includes(`${currentLocale}`) ?
+    location.pathname.split(`/${currentLocale}/`)[1] : location.pathname.replace("/", "")
+
+    if (pathsWithoutLogin.indexOf(location.pathname) === -1) {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
     dispatch(setLocale(locale))
@@ -226,7 +230,7 @@ const NavigationMenu = () => {
             {t("saveSubmission")}
           </Button>
         )}
-        {location.pathname !== "/" && <NavigationLinks />}
+        {pathsWithoutLogin.indexOf(location.pathname) === -1  && <NavigationLinks />}
         <LanguageSelector currentLocale={currentLocale} />
       </NavLinks>
       {dialogOpen && (

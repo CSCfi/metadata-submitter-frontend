@@ -42,7 +42,7 @@ describe("Page403", () => {
         </ThemeProvider>
       </StyledEngineProvider>
     )
-    expect(screen.getByText("403 – Forbidden")).toBeInTheDocument()
+    expect(screen.getByText("403 – FORBIDDEN")).toBeInTheDocument()
     expect(screen.getByTestId("403text")).toBeInTheDocument()
   })
 
@@ -59,7 +59,7 @@ describe("Page403", () => {
         </StyledEngineProvider>
       )
     })
-    expect(screen.getByText("403 – Forbidden")).toBeInTheDocument()
+    expect(screen.getByText("403 – FORBIDDEN")).toBeInTheDocument()
     act(() => {
       vi.advanceTimersByTime(10000)
     })

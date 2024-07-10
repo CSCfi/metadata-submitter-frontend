@@ -1,11 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 
 import WizardStepper from "../components/SubmissionWizard/WizardComponents/WizardStepper"
-import CSCtheme from "../theme"
 
 import { renderWithProviders } from "utils/test-utils"
 
@@ -14,16 +12,7 @@ describe("WizardStepper", () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=1" }]}>
         <Routes>
-          <Route
-            path="/submission"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <WizardStepper />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission" element={<WizardStepper />} />
         </Routes>
       </MemoryRouter>,
       {
@@ -41,16 +30,7 @@ describe("WizardStepper", () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "?step=2" }]}>
         <Routes>
-          <Route
-            path="/submission"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <WizardStepper />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission" element={<WizardStepper />} />
         </Routes>
       </MemoryRouter>,
       {

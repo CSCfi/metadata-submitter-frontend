@@ -4,6 +4,7 @@
 import React, { PropsWithChildren } from "react"
 
 import "@testing-library/jest-dom"
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { configureStore } from "@reduxjs/toolkit"
 import { render } from "@testing-library/react"
 import type { RenderOptions } from "@testing-library/react"
@@ -11,10 +12,13 @@ import { Provider } from "react-redux"
 
 import type { RootState } from "../rootReducer"
 import type { AppStore } from "../store"
+import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import rootReducer from "rootReducer"
 import { Schema } from "types"
+
+import "../i18n"
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>
@@ -82,7 +86,13 @@ export function renderWithProviders(
   }: ExtendedRenderOptions = {}
 ) {
   function Wrapper({ children }: PropsWithChildren<object>): JSX.Element {
-    return <Provider store={store}>{children}</Provider>
+    return (
+      <Provider store={store}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={CSCtheme}> {children}</ThemeProvider>
+        </StyledEngineProvider>
+      </Provider>
+    )
   }
 
   // Return an object with the store and all of RTL's query functions

@@ -1,13 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitForElementToBeRemoved } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
-
-import CSCtheme from "../theme"
-import "../i18n"
 
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
@@ -30,16 +26,16 @@ const restHandlers = [
   http.get("/v1/submissions/:submissionId", ({ params }) => {
     const id = params.submissionId
 
-    return id==="123456" ?  HttpResponse.json({
-      name: submissionName,
-      description: submissionDescription,
-      submissionId: id,
-      workflow: "FEGA",
-      drafts: [],
-      metadataObjects: [],
-    })
-    :
-    new HttpResponse("Not found", { status: 404 })
+    return id === "123456"
+      ? HttpResponse.json({
+          name: submissionName,
+          description: submissionDescription,
+          submissionId: id,
+          workflow: "FEGA",
+          drafts: [],
+          metadataObjects: [],
+        })
+      : new HttpResponse("Not found", { status: 404 })
   }),
 ]
 
@@ -55,18 +51,11 @@ describe("SubmissionWizard", () => {
   // Test the case when "step" is undefined to return 404
   test("should navigate to 404 page on undefined step", () => {
     renderWithProviders(
-      <MemoryRouter initialEntries={[{ pathname: "/submission/123456", search: "?step=undefined" }]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: "/submission/123456", search: "?step=undefined" }]}
+      >
         <Routes>
-          <Route
-            path="/submission/:submissionId"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <SubmissionWizard />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
       </MemoryRouter>,
       {
@@ -85,18 +74,9 @@ describe("SubmissionWizard", () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: `/submission/123`, search: "?step=1" }]}>
         <Routes>
-          <Route
-            path="/submission/:submissionId"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <SubmissionWizard />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
     expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
@@ -106,16 +86,7 @@ describe("SubmissionWizard", () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: `/submission/123456`, search: "?step=1" }]}>
         <Routes>
-          <Route
-            path="/submission/:submissionId"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <SubmissionWizard />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
       </MemoryRouter>
     )

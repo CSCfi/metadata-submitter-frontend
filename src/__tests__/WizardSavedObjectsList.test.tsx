@@ -1,11 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, within } from "@testing-library/react"
 import { MemoryRouter as Router } from "react-router-dom"
 
 import WizardSavedObjectsList from "../components/SubmissionWizard/WizardComponents/WizardSavedObjectsList"
-import CSCtheme from "../theme"
 
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { ObjectInsideSubmissionWithTags } from "types"
@@ -56,11 +54,7 @@ describe("WizardSavedObjectsList with submitted objects", () => {
   beforeEach(() => {
     renderWithProviders(
       <Router>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardSavedObjectsList objects={submissions} />
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <WizardSavedObjectsList objects={submissions} />
       </Router>,
       { preloadedState: state }
     )
@@ -118,11 +112,7 @@ describe("WizardSavedObjectsList with drafts", () => {
   beforeEach(() => {
     renderWithProviders(
       <Router>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardSavedObjectsList objects={drafts} />
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <WizardSavedObjectsList objects={drafts} />
       </Router>,
       { preloadedState: state }
     )

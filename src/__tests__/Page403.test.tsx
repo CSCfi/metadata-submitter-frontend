@@ -1,14 +1,11 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { act } from "react-dom/test-utils"
 import { MemoryRouter } from "react-router-dom"
 import { vi } from "vitest"
-
-import CSCtheme from "../theme"
 
 import App from "App"
 import { renderWithProviders } from "utils/test-utils"
@@ -35,13 +32,7 @@ describe("Page403", () => {
   afterAll(() => server.close())
 
   test("renders Page403 component", () => {
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <Page403 />
-        </ThemeProvider>
-      </StyledEngineProvider>
-    )
+    renderWithProviders(<Page403 />)
     expect(screen.getByText("403 – FORBIDDEN")).toBeInTheDocument()
     expect(screen.getByTestId("403text")).toBeInTheDocument()
   })
@@ -50,13 +41,9 @@ describe("Page403", () => {
     vi.useFakeTimers()
     act(() => {
       renderWithProviders(
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
-              <App />
-            </MemoryRouter>
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <MemoryRouter initialEntries={[{ pathname: "/error403" }]}>
+          <App />
+        </MemoryRouter>
       )
     })
     expect(screen.getByText("403 – FORBIDDEN")).toBeInTheDocument()

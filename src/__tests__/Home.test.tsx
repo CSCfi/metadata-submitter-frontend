@@ -1,12 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router-dom"
-
-import CSCtheme from "../theme"
 
 import App from "App"
 import { renderWithProviders } from "utils/test-utils"
@@ -34,11 +31,7 @@ describe("HomePage", () => {
   beforeEach(() => {
     renderWithProviders(
       <MemoryRouter initialEntries={["/en/home"]}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <App />
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <App />
       </MemoryRouter>
     )
   })

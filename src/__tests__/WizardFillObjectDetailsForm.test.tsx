@@ -1,11 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { act, fireEvent, screen, waitFor } from "@testing-library/react"
 import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
-import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
@@ -72,11 +70,8 @@ describe("WizardFillObjectDetailsForm", () => {
 
   it("should create study form from schema in sessionStorage", async () => {
     renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
-      </StyledEngineProvider>,
+      <WizardFillObjectDetailsForm />,
+
       { preloadedState: state }
     )
     await waitFor(() => screen.getByText("Study Details"))
@@ -84,14 +79,7 @@ describe("WizardFillObjectDetailsForm", () => {
   })
 
   it("should validate without errors on blur", async () => {
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
 
     const input = await waitFor(() => screen.getByTestId("descriptor.studyTitle"))
     await waitFor(() => {
@@ -102,14 +90,7 @@ describe("WizardFillObjectDetailsForm", () => {
   })
 
   test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
 
     // For description with length equal or less than 60, the tooltip should display all content
     const TooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[0])
@@ -124,14 +105,7 @@ describe("WizardFillObjectDetailsForm", () => {
   })
 
   test("should show partly tooltip with Read more/Expand option on mouse over if the text length is > 60 chars", async () => {
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
 
     // For description with length more than 60, the tooltip should display Read more/Expand
     const tooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[1])
@@ -171,14 +145,7 @@ describe("WizardFillObjectDetailsForm", () => {
   // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
   test("should call sessionStorage", async () => {
     const spy = vi.spyOn(Storage.prototype, "getItem")
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardFillObjectDetailsForm />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
     expect(spy).toBeCalledWith("cached_study_schema")
 
     await waitFor(() => {

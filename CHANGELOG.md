@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Centralize CSCtheme and translation configuration for Vitest test files
 - Refactor error message layout to adhere CSC Design #944
 - Update status message toast design #943
 - Reword button to `Save progress and exit` #940

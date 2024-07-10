@@ -1,12 +1,10 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 //import { screen, within } from "@testing-library/react"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
-import CSCtheme from "../theme"
 
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
@@ -100,16 +98,7 @@ describe("WizardShowSummaryStep", () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=2" }]}>
         <Routes>
-          <Route
-            path="/submission"
-            element={
-              <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={CSCtheme}>
-                  <WizardShowSummaryStep />
-                </ThemeProvider>
-              </StyledEngineProvider>
-            }
-          />
+          <Route path="/submission" element={<WizardShowSummaryStep />} />
         </Routes>
       </MemoryRouter>,
       { preloadedState: state }

@@ -1,47 +1,17 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
-import { render, screen } from "@testing-library/react"
-import { createInstance } from "i18next"
-import { I18nextProvider, initReactI18next } from "react-i18next"
+import { screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom" // Import MemoryRouter
 
 import Footer from "../components/Footer"
-import CSCtheme from "../theme"
-import EnTranslation from "../translations/en/translation_en.json"
-import FiTranslation from "../translations/fi/translation_fi.json"
+
+import { renderWithProviders } from "utils/test-utils"
 
 describe("Footer", () => {
   beforeEach(() => {
-    const i18nTestInstance = createInstance()
-
-    i18nTestInstance.use(initReactI18next).init({
-      resources: {
-        en: {
-          translation: EnTranslation,
-        },
-        fi: {
-          translation: FiTranslation,
-        },
-      },
-      lng: "en",
-      fallbackLng: ["en", "fi"],
-      interpolation: {
-        escapeValue: false,
-      },
-    })
-
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={["/"]}>
-        {" "}
-        {/* Wrap with MemoryRouter and set initialEntries */}
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <I18nextProvider i18n={i18nTestInstance}>
-              <Footer />
-            </I18nextProvider>
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <Footer />
       </MemoryRouter>
     )
   })

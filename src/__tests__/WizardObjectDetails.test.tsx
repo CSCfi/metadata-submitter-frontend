@@ -1,12 +1,9 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router-dom"
-
-import CSCtheme from "../theme"
 
 import CustomSchema from "./fixtures/custom_schema.json"
 
@@ -59,11 +56,7 @@ describe("Object details", () => {
   it("should render object details when row has been opened", async () => {
     renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: "/en/home/published/testaccessionid" }]}>
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <SelectedSubmissionDetails />
-          </ThemeProvider>
-        </StyledEngineProvider>
+        <SelectedSubmissionDetails />
       </MemoryRouter>,
       { preloadedState: state }
     )
@@ -81,17 +74,15 @@ describe("Object details", () => {
         numberField: "Number label",
         booleanField: "Boolean label",
       },
-      arrayFields: { checkboxArray: ["Checkbox item 1", "Checkbox item 2"], oneOfArray: [{ key2: "Test item" }] },
+      arrayFields: {
+        checkboxArray: ["Checkbox item 1", "Checkbox item 2"],
+        oneOfArray: [{ key2: "Test item" }],
+      },
       oneOf: { oneOfField: { firstOption: "Test label" } },
     }
-    renderWithProviders(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={CSCtheme}>
-          <WizardObjectDetails objectType="study" objectData={objectData} />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      { preloadedState: state }
-    )
+    renderWithProviders(<WizardObjectDetails objectType="study" objectData={objectData} />, {
+      preloadedState: state,
+    })
     // Sections
     // Note: Nested properties have at least 2 sections
     await screen.findAllByTestId("section")

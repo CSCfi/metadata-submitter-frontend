@@ -1,6 +1,5 @@
 import React from "react"
 
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { screen, waitFor, fireEvent } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { http, HttpResponse } from "msw"
@@ -8,7 +7,6 @@ import { setupServer } from "msw/node"
 import { act } from "react-dom/test-utils"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
-import CSCtheme from "../theme"
 
 import { renderWithProviders } from "utils/test-utils"
 
@@ -46,13 +44,7 @@ describe("Test autocomplete on organisation field", () => {
   sessionStorage.setItem(`cached_dac_schema`, JSON.stringify(schema))
   test("should render autocomplete field if schema has 'organisation' property", async () => {
     act(() => {
-      renderWithProviders(
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      )
+      renderWithProviders(<WizardFillObjectDetailsForm />)
     })
     await waitFor(() => {
       const autocomplete = screen.getByTestId("organisation-inputField")
@@ -61,15 +53,11 @@ describe("Test autocomplete on organisation field", () => {
   })
   test("should search for organisations", async () => {
     act(() => {
-      renderWithProviders(
-        <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={CSCtheme}>
-            <WizardFillObjectDetailsForm />
-          </ThemeProvider>
-        </StyledEngineProvider>
-      )
+      renderWithProviders(<WizardFillObjectDetailsForm />)
     })
-    const autocomplete = (await waitFor(() => screen.getByTestId("organisation-inputField"))) as HTMLInputElement
+    const autocomplete = (await waitFor(() =>
+      screen.getByTestId("organisation-inputField")
+    )) as HTMLInputElement
     act(() => {
       autocomplete.focus()
       // Assign value to autocomplete field

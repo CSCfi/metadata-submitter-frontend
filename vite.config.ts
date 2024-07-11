@@ -66,7 +66,7 @@ export default defineConfig(({ mode }) => {
       environment: "jsdom",
       setupFiles: "vitest-setup.ts",
       coverage: {
-        reporter: ["text", "html"],
+        reporter: ["text", "html", "lcov"],
         exclude: ["node_modules/", "vitest-setup.ts"],
       },
       exclude: ["**/node_modules/**", "**/playwright/**", "vitest-setup.ts"],

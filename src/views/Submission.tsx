@@ -103,8 +103,8 @@ const SubmissionWizard: React.FC = () => {
     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
       <Grid
         sx={{
-          mt: 7.7,
-          minHeight: "calc(100vh - 137px)",
+          mt: 0,
+          minHeight: "calc(100vh - 64px)",
           bgcolor: "background.default",
           "&.MuiGrid-item": { pt: 0 },
         }}

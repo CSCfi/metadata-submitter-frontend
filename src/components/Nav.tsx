@@ -64,10 +64,8 @@ const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error40
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
-
   const { t } = useTranslation()
-
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
   useEffect(() => {
@@ -77,12 +75,13 @@ const NavigationLinks = () => {
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
 
   return user.name ? (
-    <React.Fragment>
+    <>
       <Button
         id="user-setting-button"
         aria-controls={open ? "user-setting-menu" : undefined}
@@ -132,7 +131,7 @@ const NavigationLinks = () => {
           </Typography>
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   ) : (
     <></>
   )
@@ -140,11 +139,9 @@ const NavigationLinks = () => {
 
 const LanguageSelector = (props: MenuItemProps) => {
   const { currentLocale } = props
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
   const dispatch = useAppDispatch()
-
   const navigate = useNavigate()
 
   const changeLang = (locale: string) => {
@@ -154,9 +151,7 @@ const LanguageSelector = (props: MenuItemProps) => {
     if (pathsWithoutLogin.indexOf(location.pathname) === -1) {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
-
     dispatch(setLocale(locale))
-
     i18n.changeLanguage(locale).then(t => {
       t("key")
       handleClose()
@@ -210,9 +205,7 @@ const NavigationMenu = () => {
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-
   const { t } = useTranslation()
-
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleAlert = (alertWizard: boolean) => {
@@ -225,7 +218,7 @@ const NavigationMenu = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <NavLinks>
         {location.pathname.includes("/submission") && (
           <Button
@@ -243,23 +236,34 @@ const NavigationMenu = () => {
       {dialogOpen && (
         <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>
       )}
-    </React.Fragment>
+    </>
   )
 }
 
-const Nav: React.FC = () => {
+const NavToolBar = () => (
+  <Toolbar>
+    <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
+      <Logo src={logo} alt="CSC_logo" />
+    </Link>
+    <ServiceTitle variant="h5" noWrap>
+      Sensitive Data Services - SD Submit
+    </ServiceTitle>
+    <NavigationMenu />
+  </Toolbar>
+)
+const Nav: React.FC<{ isFixed: boolean }> = ({ isFixed }) => {
   return (
-    <NavBar position="fixed">
-      <Toolbar>
-        <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
-          <Logo src={logo} alt="CSC_logo" />
-        </Link>
-        <ServiceTitle variant="h5" noWrap>
-          Sensitive Data Services - SD Submit
-        </ServiceTitle>
-        <NavigationMenu />
-      </Toolbar>
-    </NavBar>
+    <>
+      {isFixed ? (
+        <NavBar position="fixed">
+          <NavToolBar />
+        </NavBar>
+      ) : (
+        <NavBar position="relative">
+          <NavToolBar />
+        </NavBar>
+      )}
+    </>
   )
 }
 

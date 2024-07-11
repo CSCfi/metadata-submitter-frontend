@@ -32,7 +32,7 @@ const NavigationMenu = () => {
   const location = useLocation()
   return (
     <>
-      <Nav />
+      <Nav isFixed={!location.pathname.includes("/submission")} />
       {location.pathname.includes("/home") && <SecondaryNav />}
     </>
   )
@@ -44,7 +44,6 @@ const NavigationMenu = () => {
  */
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
-
   const locale = useAppSelector(state => state.locale)
 
   // Get locale from url and set application wide locale setting
@@ -52,7 +51,6 @@ const App: React.FC = () => {
     let locale: string
     const locales = ["en", "fi"]
     const currentLocale = location.pathname.split("/")[1]
-
     if (locales.indexOf(currentLocale) > -1) {
       locale = currentLocale
     } else locale = Locale.defaultLocale
@@ -73,7 +71,6 @@ const App: React.FC = () => {
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()
-
       if (isMounted) {
         if (response.ok) {
           const exceptionalSchemas = ["Project", "Submission"]
@@ -82,7 +79,6 @@ const App: React.FC = () => {
             .map((schema: { title: string }) =>
               schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase()
             )
-
           dispatch(setObjectTypesArray(schemas))
         } else {
           dispatch(
@@ -105,7 +101,6 @@ const App: React.FC = () => {
         }
       }
     }
-
     getSchemas()
     return () => {
       isMounted = false
@@ -133,7 +128,7 @@ const App: React.FC = () => {
   )
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <NavigationMenu />
       <Routes>
@@ -181,10 +176,9 @@ const App: React.FC = () => {
         <Route path="/error400" element={<Page400 />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
-      {/* Centralized status message handler */}
       <StatusMessageHandler />
       <Footer />
-    </React.Fragment>
+    </>
   )
 }
 

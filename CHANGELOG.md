@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Coveralls' failure in Github
 - Fix creating a submission without workflow type leading to page 400 by making it required #955
 - Disable workflow type changes after initial selection #923
 

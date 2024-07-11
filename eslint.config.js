@@ -23,7 +23,13 @@ const compat = new FlatCompat({
 export default [
   { files: ["**/*.tsx", "**/*.ts"] },
   {
-    ignores: ["**/build/*", ".github/*", "**/*.d.ts", "**/playwright/playwright-report/*" ],
+    ignores: [
+      "**/build/*",
+      ".github/*",
+      "**/*.d.ts",
+      "**/playwright/playwright-report/*",
+      "**/coverage/**",
+    ],
   },
   ...fixupConfigRules(compat.extends("")),
   {

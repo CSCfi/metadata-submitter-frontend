@@ -9,6 +9,7 @@ import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
+import Typography from "@mui/material/Typography"
 import { styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
@@ -66,6 +67,53 @@ const StickyContainer = styled(Container)(({ theme }) => ({
   paddingRight: theme.spacing(3),
   boxSizing: "border-box",
 }))
+
+const CustomAlert = styled(Alert)(({ theme, severity }) => ({
+  backgroundColor: theme.palette.background.paper,
+  borderLeft: `1.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderTop: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderRight: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderBottom: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  color: theme.palette.secondary.main,
+  lineHeight: "1.75",
+  boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+  position: "absolute",
+  //experiment
+  padding: "1rem",
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  width: "40%",
+  margin: "6.25rem auto 0 auto",
+}))
+
+const AlertMessage = styled(Typography)({
+  fontWeight: "bold",
+})
 
 const ButtonGroup = styled("div")(({ theme }) => ({
   display: "flex",
@@ -700,7 +748,12 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
 
   if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
-  if (states.error) return <Alert severity="error">{states.helperText}</Alert>
+  if (states.error)
+    return (
+      <CustomAlert severity="error">
+        <AlertMessage>{states.helperText}</AlertMessage>
+      </CustomAlert>
+    )
 
   return (
     <>

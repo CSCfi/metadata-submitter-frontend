@@ -25,12 +25,36 @@ type HandlerRef =
   | null
   | undefined
 
-const CustomAlert = styled(Alert)(({ theme }) => ({
+const CustomAlert = styled(Alert)(({ theme, severity }) => ({
   backgroundColor: theme.palette.background.paper,
-  borderLeft: `1.25rem solid ${theme.palette.success.light}`,
-  borderTop: `0.25rem solid ${theme.palette.success.light}`,
-  borderRight: `0.25rem solid ${theme.palette.success.light}`,
-  borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+  borderLeft: `1.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.info.main
+      : theme.palette.success.light
+  }`,
+  borderTop: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.info.main
+      : theme.palette.success.light
+  }`,
+  borderRight: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.info.main
+      : theme.palette.success.light
+  }`,
+  borderBottom: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "info"
+      ? theme.palette.info.main
+      : theme.palette.success.light
+  }`,
   color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
@@ -94,7 +118,6 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
 
   return (
     <CustomAlert severity="error" ref={ref}>
-      {" "}
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>

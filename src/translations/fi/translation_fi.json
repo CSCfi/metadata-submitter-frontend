@@ -66,6 +66,9 @@
       },
       "templates": {
         "updated": "Template updated with accessionid {{accessionId}}"
+      },
+      "submissions": {
+        "deleted": "The submission has been deleted successfully!"
       }
     },
     "close": "Close"

@@ -1,9 +1,15 @@
 stages:
   - verify
   - test
+  - release
 
 variables:
   BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci
+
+include:
+  - project: "sds-dev/releases"
+    ref: main
+    file: "releases.yml"
 
 before_script:
   - pnpm install
@@ -47,3 +53,8 @@ unittest:
   image: $BUILD_IMAGE
   script:
     - pnpm run test:coverage
+
+release-job:
+  extends: .automated-release
+  release:
+    description: $(cat release_changes.md)

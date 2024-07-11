@@ -11,9 +11,6 @@ include:
     ref: main
     file: "releases.yml"
 
-before_script:
-  - pnpm install
-
 code-style:
   stage: verify
   tags:
@@ -21,6 +18,8 @@ code-style:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
+  before_script:
+    - pnpm install
   script:
     - pnpm run lint:check
 
@@ -31,6 +30,8 @@ format-style:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
+  before_script:
+    - pnpm install
   script:
     - pnpm run format:check
 
@@ -41,6 +42,8 @@ type-check:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
+  before_script:
+    - pnpm install
   script:
     - pnpm run tsc
 
@@ -51,6 +54,8 @@ unittest:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
+  before_script:
+    - pnpm install
   script:
     - pnpm run test:coverage
 

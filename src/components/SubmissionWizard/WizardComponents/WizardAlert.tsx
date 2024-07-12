@@ -7,8 +7,8 @@ import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
-import DialogTitle from "@mui/material/DialogTitle"
 import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
@@ -28,23 +28,26 @@ import type { ObjectInsideSubmissionWithTags } from "types"
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
     backgroundColor: theme.palette.background.paper,
-    borderLeft: `1.25rem solid ${theme.palette.success.light}`,
-    borderTop: `0.25rem solid ${theme.palette.success.light}`,
-    borderRight: `0.25rem solid ${theme.palette.success.light}`,
-    borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+    borderLeft: `1.25rem solid ${theme.palette.error.light}`,
+    borderTop: `0.25rem solid ${theme.palette.error.light}`,
+    borderRight: `0.25rem solid ${theme.palette.error.light}`,
+    borderBottom: `0.25rem solid ${theme.palette.error.light}`,
     color: theme.palette.secondary.main,
     lineHeight: "1",
     boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
     padding: "0.5rem",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
 }))
 
-const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
+const CustomDialogTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  marginTop: "2rem",
 }))
 
 const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
@@ -55,6 +58,7 @@ const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
 const CustomBox = styled(Box)(() => ({
   width: "100%",
   padding: "1rem",
+  paddingTop: "0",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -178,7 +182,7 @@ const CancelFormDialog = ({
           dialogTitle = t("alerts.save.title")
           dialogContent = t("alerts.save.content")
           dialogActions = (
-            <DialogActions style={{ justifyContent: "flex-start" }}>
+            <DialogActions sx={{ justifyContent: "flex-start" }}>
               <Button
                 variant="outlined"
                 onClick={() => handleDialog(false)}
@@ -236,7 +240,7 @@ const CancelFormDialog = ({
             {dialogContent}
           </CustomDialogContentText>
           {error && <ErrorMessage message={errorMessage} />}
-          <DialogActions style={{ width: "100%", justifyContent: "flex-start", padding: "0" }}>
+          <DialogActions sx={{ width: "100%", justifyContent: "flex-start", padding: "0" }}>
             {dialogActions}
           </DialogActions>
         </CustomBox>

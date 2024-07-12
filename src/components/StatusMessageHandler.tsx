@@ -25,7 +25,9 @@ type HandlerRef =
   | null
   | undefined
 
-const CustomAlert = styled(Alert)(({ theme, severity }) => ({
+const CustomAlert = styled(Alert, {
+  shouldForwardProp: prop => prop !== "severity",
+})(({ theme, severity }) => ({
   backgroundColor: theme.palette.background.paper,
   borderLeft: `1.25rem solid ${
     severity === "error"

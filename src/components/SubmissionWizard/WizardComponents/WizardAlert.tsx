@@ -45,9 +45,10 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
 
 const CustomDialogTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.secondary.main,
-  fontSize: "1.2rem",
+  fontSize: "2rem !important",
   fontWeight: "bold",
-  marginTop: "2rem",
+  alignSelf: "flex-start",
+  paddingLeft: "1rem",
 }))
 
 const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
@@ -233,9 +234,9 @@ const CancelFormDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
       <DialogContent>
         <CustomBox>
+          <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
           <CustomDialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
             {dialogContent}
           </CustomDialogContentText>

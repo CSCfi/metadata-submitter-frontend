@@ -183,7 +183,7 @@ const CancelFormDialog = ({
           dialogTitle = t("alerts.save.title")
           dialogContent = t("alerts.save.content")
           dialogActions = (
-            <DialogActions sx={{ justifyContent: "flex-start" }}>
+            <DialogActions sx={{ justifyContent: "flex-end" }}>
               <Button
                 variant="outlined"
                 onClick={() => handleDialog(false)}
@@ -241,7 +241,7 @@ const CancelFormDialog = ({
             {dialogContent}
           </CustomDialogContentText>
           {error && <ErrorMessage message={errorMessage} />}
-          <DialogActions sx={{ width: "100%", justifyContent: "flex-start", padding: "0" }}>
+          <DialogActions sx={{ width: "100%", justifyContent: "flex-end", padding: "0" }}>
             {dialogActions}
           </DialogActions>
         </CustomBox>

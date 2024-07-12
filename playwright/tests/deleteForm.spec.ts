@@ -5,10 +5,9 @@ import test from "../fixtures/commands"
 import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 test.describe("Deleting Form", () => {
-  test.beforeEach(async ({ page, login, resetDB, newSubmission }) => {
+  test.beforeEach(async ({ login, resetDB, newSubmission }) => {
     await resetDB()
     await login()
-    await page.getByTestId("link-create-submission").click()
 
     // Add submission name & description
     await newSubmission()

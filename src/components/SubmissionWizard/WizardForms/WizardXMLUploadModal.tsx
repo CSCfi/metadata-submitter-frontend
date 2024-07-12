@@ -27,7 +27,7 @@ import objectAPIService from "services/objectAPI"
 import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
 import { ObjectDetails, ObjectTags } from "types"
 
-type WizardUploadXMLModalProps = {
+type WizardXMLUploadModalProps = {
   open: boolean
   currentObject?: ObjectDetails & ObjectTags
   handleClose: () => void
@@ -46,7 +46,9 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   boxShadow: "0 4px 4px 0 rgba(0,0,0,0.25)",
 }))
 
-const StyledFormControl = styled(FormControl, { shouldForwardProp: prop => prop !== "isDragActive" })<{
+const StyledFormControl = styled(FormControl, {
+  shouldForwardProp: prop => prop !== "isDragActive",
+})<{
   isDragActive: boolean
 }>(({ theme, isDragActive }) => ({
   width: "100%",
@@ -56,7 +58,9 @@ const StyledFormControl = styled(FormControl, { shouldForwardProp: prop => prop 
   alignItems: "center",
   padding: "4rem",
   marginBottom: "2.5rem",
-  border: isDragActive ? `2px dashed ${theme.palette.primary.main}` : `2px dashed ${theme.palette.secondary.lightest}`,
+  border: isDragActive
+    ? `2px dashed ${theme.palette.primary.main}`
+    : `2px dashed ${theme.palette.secondary.lightest}`,
 }))
 
 const StyledButton = styled(Button)(() => ({
@@ -64,7 +68,7 @@ const StyledButton = styled(Button)(() => ({
   height: "5rem",
 }))
 
-const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUploadXMLModalProps) => {
+const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUploadModalProps) => {
   const dispatch = useAppDispatch()
   const objectType = useAppSelector(state => state.objectType)
   const { submissionId } = useAppSelector(state => state.submission)
@@ -97,7 +101,11 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
       const file = data.fileUpload[0] || {}
 
       if (currentObject?.accessionId) {
-        const response = await objectAPIService.replaceXML(objectType, currentObject.accessionId, file)
+        const response = await objectAPIService.replaceXML(
+          objectType,
+          currentObject.accessionId,
+          file
+        )
 
         if (response.ok) {
           dispatch(
@@ -194,7 +202,12 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
   return (
     <Modal open={open} onClose={handleClose} aria-labelledby="xml-modal" {...getRootProps()}>
       <StyledContainer>
-        <Typography variant="h4" role="heading" color="secondary" sx={{ pb: "2.5rem", fontWeight: 700 }}>
+        <Typography
+          variant="h4"
+          role="heading"
+          color="secondary"
+          sx={{ pb: "2.5rem", fontWeight: 700 }}
+        >
           Upload XML File
         </Typography>
         <form>
@@ -209,6 +222,7 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
               onClick={() => handleButton()}
               onBlur={() => dispatch(resetFocus())}
               sx={{ ml: "1rem" }}
+              data-testid="select-xml-file"
             >
               Select file
             </StyledButton>
@@ -222,7 +236,10 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
                   isFile: value => value?.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
-                    const response = await xmlSubmissionAPIService.validateXMLFile(objectType, value[0])
+                    const response = await xmlSubmissionAPIService.validateXMLFile(
+                      objectType,
+                      value[0]
+                    )
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
                       our server reported following error:
@@ -244,8 +261,12 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
           Cancel
         </StyledButton>
         <Stack position="absolute" bottom="-30%" left="0" right="0">
-          {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
-          {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
+          {errors.fileUpload?.type === "isFile" && (
+            <Alert severity="error">Please attach a file.</Alert>
+          )}
+          {errors.fileUpload?.type === "isXML" && (
+            <Alert severity="error">Please attach an XML file.</Alert>
+          )}
           {errors.fileUpload?.type === "isValidXML" && (
             <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>
           )}
@@ -269,4 +290,4 @@ const WizardUploadXMLModal = ({ open, handleClose, currentObject }: WizardUpload
   )
 }
 
-export default WizardUploadXMLModal
+export default WizardXMLUploadModal

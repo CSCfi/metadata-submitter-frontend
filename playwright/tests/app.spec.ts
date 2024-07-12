@@ -19,7 +19,6 @@ test.describe("Basic application flow", () => {
   }) => {
     test.slow()
     await login()
-    await page.getByTestId("link-create-submission").click()
 
     /*
      * 1st step, Submission details

@@ -9,10 +9,18 @@ import { APIResponse } from "types"
 const api = create({ baseURL: "/v1/objects" })
 api.addMonitor(errorMonitor)
 
-const createFromXML = async (objectType: string, submissionId: string, XMLFile: File): Promise<APIResponse> => {
+const createFromXML = async (
+  objectType: string,
+  submissionId: string,
+  XMLFile: File
+): Promise<APIResponse> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return await api.post(`/${objectType}?submission=${submissionId}`, formData)
+  return await api.post(`/${objectType}?submission=${submissionId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
 }
 
 const createFromJSON = async (
@@ -23,7 +31,10 @@ const createFromJSON = async (
   return await api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
 }
 
-const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const getObjectByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
@@ -39,13 +50,20 @@ const patchFromJSON = async (
   return await api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
 }
 
-const replaceXML = async (objectType: string, accessionId: string, XMLFile: File): Promise<APIResponse> => {
+const replaceXML = async (
+  objectType: string,
+  accessionId: string,
+  XMLFile: File
+): Promise<APIResponse> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
   return await api.put(`/${objectType}/${accessionId}`, formData)
 }
 
-const deleteObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const deleteObjectByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.delete(`/${objectType}/${accessionId}`)
 }
 

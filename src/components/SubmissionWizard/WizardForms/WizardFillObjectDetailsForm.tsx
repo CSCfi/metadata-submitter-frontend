@@ -24,7 +24,7 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardOptions from "./WizardOptions"
-import WizardUploadXMLModal from "./WizardUploadXMLModal"
+import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
@@ -718,7 +718,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           formRef={formRef}
         />
         {submitting && <LinearProgress />}
-        <WizardUploadXMLModal
+        <WizardXMLUploadModal
           open={openedXMLModal}
           handleClose={() => {
             dispatch(resetXMLModalOpen())

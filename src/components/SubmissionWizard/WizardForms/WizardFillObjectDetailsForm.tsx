@@ -101,8 +101,7 @@ const CustomAlert = styled(Alert)(({ theme, severity }) => ({
   color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
-  position: "absolute",
-  //experiment
+  position: "relative",
   padding: "1rem",
   display: "flex",
   justifyContent: "flex-start",

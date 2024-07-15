@@ -119,7 +119,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
   const closeMessage = t("snackbarMessages.close")
 
   return (
-    <CustomAlert severity="error" ref={ref}>
+    <CustomAlert severity="error" ref={ref} icon={false}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>

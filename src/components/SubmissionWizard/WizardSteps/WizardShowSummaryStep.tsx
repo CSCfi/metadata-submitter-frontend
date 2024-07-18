@@ -40,7 +40,6 @@ import { pathWithLocale } from "utils"
 
 const SummaryBar = styled(AppBar)(({ theme }) => ({
   background: theme.palette.common.white,
-  borderTop: `1rem solid ${theme.palette.primary.lightest}`,
   borderBottom: `0.5rem solid ${theme.palette.primary.lightest}`,
   marginBottom: "2rem",
 }))
@@ -220,7 +219,10 @@ const WizardShowSummaryStep: React.FC = () => {
     <Container sx={theme => ({ pt: theme.spacing(1) })}>
       <SummaryBar  position="sticky" elevation={0}>
         <Toolbar sx={{ ml: "auto" }}>
-          <Button color="inherit" sx={{ bgcolor: theme => theme.palette.primary.main }}>
+          <Button color="inherit" sx={ theme => ({
+            bgcolor: theme.palette.primary.main,
+            "&:hover": { bgcolor: theme.palette.primary.dark }
+            })}>
             <Typography>
               { workflowType === "SDSX" ? t("summaryPage.publish") : t("summaryPage.setReleaseDate")}
             </Typography>

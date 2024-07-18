@@ -164,7 +164,8 @@
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",
-    "title": "Summary"
+    "title": "Summary",
+    "noAddedItems": "No added items."
   },
   "footer": {
     "sdSubmit": "SD Submit – Services for Sensitive Data",

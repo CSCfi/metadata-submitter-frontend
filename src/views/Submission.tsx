@@ -10,6 +10,7 @@ import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardSt
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
 //import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
+import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ValidSteps } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
@@ -38,7 +39,7 @@ const getStepContent = (
     case 5:
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 6:
-      //return <WizardShowSummaryStep />
+      return <WizardShowSummaryStep />
       break
     default:
       // An empty page

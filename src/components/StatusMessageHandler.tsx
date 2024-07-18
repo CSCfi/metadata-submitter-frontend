@@ -7,8 +7,7 @@ import WarningIcon from "@mui/icons-material/Warning"
 import Alert from "@mui/material/Alert"
 import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
-import { styled } from "@mui/material/styles"
-import { useTheme } from "@mui/material/styles"
+import { styled, useTheme } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
@@ -36,28 +35,28 @@ const CustomAlert = styled(Alert, {
   borderLeft: `1.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
-      : severity === "info"
+      : severity === "warning"
       ? theme.palette.error.light
       : theme.palette.success.light
   }`,
   borderTop: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
-      : severity === "info"
+      : severity === "warning"
       ? theme.palette.error.light
       : theme.palette.success.light
   }`,
   borderRight: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
-      : severity === "info"
+      : severity === "warning"
       ? theme.palette.error.light
       : theme.palette.success.light
   }`,
   borderBottom: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
-      : severity === "info"
+      : severity === "warning"
       ? theme.palette.error.light
       : theme.palette.success.light
   }`,
@@ -107,7 +106,7 @@ const getSeverityIcon = (severity, theme) => {
     color:
       severity === "error"
         ? theme.palette.error.main
-        : severity === "info"
+        : severity === "warning"
         ? theme.palette.warning.main
         : theme.palette.success.light,
   }
@@ -115,7 +114,7 @@ const getSeverityIcon = (severity, theme) => {
   switch (severity) {
     case "error":
       return <CancelIcon style={iconStyle} />
-    case "info":
+    case "warning":
       return <WarningIcon style={iconStyle} />
     case "success":
       return <CheckCircleIcon style={iconStyle} />
@@ -171,7 +170,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   }
 
   return (
-    <CustomAlert severity="info" ref={ref} icon={getSeverityIcon("info", theme)}>
+    <CustomAlert severity="warning" ref={ref} icon={getSeverityIcon("warning", theme)}>
       <AlertWrap>
         <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>

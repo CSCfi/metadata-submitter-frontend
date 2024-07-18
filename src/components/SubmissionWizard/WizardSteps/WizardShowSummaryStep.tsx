@@ -216,15 +216,10 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
 
-  // THIS IS A WRAPPER for monitoring scrolling to hide borderTop of publish/release bar
-  // const HideAtScroll = (props: props) => {
-  //   const  scrollTrigger = useScrollTrigger({ target: scrollTarget })
-  // }
-
   return (
     <Container sx={theme => ({ pt: theme.spacing(1) })}>
       <SummaryBar  position="sticky" elevation={0}>
-        <Toolbar sx={{ ml: "auto", border: "1px solid red" }}>
+        <Toolbar sx={{ ml: "auto" }}>
           <Button color="inherit" sx={{ bgcolor: theme => theme.palette.primary.main }}>
             <Typography>
               { workflowType === "SDSX" ? t("summaryPage.publish") : t("summaryPage.setReleaseDate")}

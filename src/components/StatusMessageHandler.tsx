@@ -1,10 +1,13 @@
 import React, { useState, forwardRef } from "react"
 
+import CancelIcon from "@mui/icons-material/Cancel"
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import CloseIcon from "@mui/icons-material/Close"
+import WarningIcon from "@mui/icons-material/Warning"
 import Alert from "@mui/material/Alert"
 import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
-import { styled } from "@mui/material/styles"
+import { styled, useTheme } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
@@ -25,12 +28,38 @@ type HandlerRef =
   | null
   | undefined
 
-const CustomAlert = styled(Alert)(({ theme }) => ({
+const CustomAlert = styled(Alert, {
+  shouldForwardProp: prop => prop !== "severity",
+})(({ theme, severity }) => ({
   backgroundColor: theme.palette.background.paper,
-  borderLeft: `1.25rem solid ${theme.palette.success.light}`,
-  borderTop: `0.25rem solid ${theme.palette.success.light}`,
-  borderRight: `0.25rem solid ${theme.palette.success.light}`,
-  borderBottom: `0.25rem solid ${theme.palette.success.light}`,
+  borderLeft: `1.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "warning"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderTop: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "warning"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderRight: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "warning"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
+  borderBottom: `0.25rem solid ${
+    severity === "error"
+      ? theme.palette.error.main
+      : severity === "warning"
+      ? theme.palette.error.light
+      : theme.palette.success.light
+  }`,
   color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
@@ -71,9 +100,33 @@ const ClosingLink = styled(Typography)(() => ({
   fontWeight: "bold",
 }))
 
+const getSeverityIcon = (severity, theme) => {
+  const iconStyle = {
+    fontSize: "2rem",
+    color:
+      severity === "error"
+        ? theme.palette.error.main
+        : severity === "warning"
+        ? theme.palette.warning.main
+        : theme.palette.success.light,
+  }
+
+  switch (severity) {
+    case "error":
+      return <CancelIcon style={iconStyle} />
+    case "warning":
+      return <WarningIcon style={iconStyle} />
+    case "success":
+      return <CheckCircleIcon style={iconStyle} />
+    default:
+      return null
+  }
+}
+
 const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
+  const theme = useTheme()
   let message: string
 
   switch (response?.status) {
@@ -93,8 +146,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
   const closeMessage = t("snackbarMessages.close")
 
   return (
-    <CustomAlert severity="error" ref={ref}>
-      {" "}
+    <CustomAlert severity="error" ref={ref} icon={getSeverityIcon("error", theme)}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -109,6 +161,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
 const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
   const { t } = useTranslation()
   const { helperText, handleClose } = props
+  const theme = useTheme()
   const defaultMessage = t("snackbarMessages.info.default")
   const closeMessage = t("snackbarMessages.close")
 
@@ -117,7 +170,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   }
 
   return (
-    <CustomAlert severity="info" ref={ref} icon={false}>
+    <CustomAlert severity="warning" ref={ref} icon={getSeverityIcon("warning", theme)}>
       <AlertWrap>
         <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -135,6 +188,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
 ) {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
+  const theme = useTheme()
   let message = ""
   if (response) {
     switch (response?.config?.baseURL) {
@@ -193,7 +247,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
   const closeMessage = t("snackbarMessages.close")
 
   return (
-    <CustomAlert severity="success" ref={ref} icon={false}>
+    <CustomAlert severity="success" ref={ref} icon={getSeverityIcon("success", theme)}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>

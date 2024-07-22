@@ -161,6 +161,12 @@
     "itemsPerPage": "Tiedostoja sivulla:",
     "noResults": "Ei valittuja tiedostoja"
   },
+  "summaryPage": {
+    "publish": "Publish",
+    "setReleaseDate": "Set release date",
+    "title": "Summary",
+    "noAddedItems": "No added items."
+  },
   "footer": {
     "sdSubmit": "SD Submit – Services for Sensitive Data",
     "csc": "CSC - IT Center for Science Ltd.",

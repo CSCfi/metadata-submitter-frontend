@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Reintroduced summary page with new bar and publish(set release date) button at top with localization.
 - Add e2e test for Home view and SubmissionTable #948
 - Added cancel function to `Save progress and exit` dialog #952
 - Adding Delete option for deleting form #812

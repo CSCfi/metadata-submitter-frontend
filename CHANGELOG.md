@@ -19,9 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Redesign file upload error ( #959)
 - message toast design for info and error alerts in StatusMessageHandler ( #957)
-- Modify UI design for Wizard Alert #954
-=======
->>>>>>> a7e8a06 (Update design details)
+- # Modify UI design for Wizard Alert #954
+  > > > > > > > a7e8a06 (Update design details)
 - Centralize CSCtheme and translation configuration for Vitest test files
 - Refactor error message layout to adhere CSC Design #944
 - Update status message toast design #943

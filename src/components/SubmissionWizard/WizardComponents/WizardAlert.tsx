@@ -147,7 +147,7 @@ const CancelFormDialog = ({
       dialogContent = t(`${"alerts." + textType + ".content"}`)
       dialogActions = (
         <DialogActions>
-          <Button variant="contained" onClick={() => handleDialog(false)} color="secondary">
+          <Button variant="outlined" onClick={() => handleDialog(false)} color="primary">
             {t("alerts.actions.cancel")}
           </Button>
           <Button variant="contained" onClick={() => handleDialog(true)} color="primary">

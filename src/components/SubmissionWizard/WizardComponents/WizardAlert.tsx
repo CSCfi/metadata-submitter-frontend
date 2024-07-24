@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 
+import WarningIcon from "@mui/icons-material/Warning"
 import Alert from "@mui/material/Alert"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -43,19 +44,6 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
   },
 }))
 
-const CustomDialogTitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.secondary.main,
-  fontSize: "2rem !important",
-  fontWeight: "bold",
-  alignSelf: "flex-start",
-  paddingLeft: "1rem",
-}))
-
-const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
-  color: theme.palette.secondary.main,
-  padding: "1rem",
-}))
-
 const CustomBox = styled(Box)(() => ({
   width: "100%",
   padding: "1rem",
@@ -63,6 +51,33 @@ const CustomBox = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+}))
+
+const CustomDialogTitleContainer = styled(Box)(() => ({
+  display: "flex",
+  alignItems: "center",
+  padding: "1rem",
+  paddingBottom: "0",
+  width: "100%",
+}))
+
+const CustomDialogTitle = styled(Typography)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  fontSize: "1.5rem",
+  fontWeight: "bold",
+  marginLeft: "0.5rem",
+}))
+
+const StyledWarningIcon = styled(WarningIcon)(({ theme }) => ({
+  color: theme.palette.error.light,
+  fontSize: "2rem",
+  marginRight: "0.5rem",
+}))
+
+const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  padding: "1rem",
+  paddingTop: "0.5rem",
 }))
 
 // Simple template for error messages
@@ -236,12 +251,15 @@ const CancelFormDialog = ({
     >
       <DialogContent>
         <CustomBox>
-          <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
+          <CustomDialogTitleContainer>
+            <StyledWarningIcon />
+            <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
+          </CustomDialogTitleContainer>
           <CustomDialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
             {dialogContent}
           </CustomDialogContentText>
           {error && <ErrorMessage message={errorMessage} />}
-          <DialogActions sx={{ width: "100%", justifyContent: "flex-end", padding: "0" }}>
+          <DialogActions sx={{ width: "100%", justifyContent: "flex-end", padding: "1rem" }}>
             {dialogActions}
           </DialogActions>
         </CustomBox>

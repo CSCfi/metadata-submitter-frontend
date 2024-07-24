@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState, useRef, RefObject } from "react"
 
+import CancelIcon from "@mui/icons-material/Cancel"
 import { GlobalStyles } from "@mui/material"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
@@ -98,6 +99,12 @@ const CustomAlert = styled(Alert)(({ theme, severity }) => ({
       ? theme.palette.error.light
       : theme.palette.success.light
   }`,
+  "& .MuiAlert-icon": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 0.5rem",
+  },
   color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
@@ -749,7 +756,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
   // Schema validation error differs from response status handler
   if (states.error)
     return (
-      <CustomAlert severity="error">
+      <CustomAlert severity="error" icon={<CancelIcon sx={{ fontSize: '2rem' }} />}>
         <AlertMessage>{states.helperText}</AlertMessage>
       </CustomAlert>
     )

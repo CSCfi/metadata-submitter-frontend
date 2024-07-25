@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Redesign file upload error ( #959)
 - message toast design for info and error alerts in StatusMessageHandler ( #957)
 - Centralize CSCtheme and translation configuration for Vitest test files
 - Refactor error message layout to adhere CSC Design #944

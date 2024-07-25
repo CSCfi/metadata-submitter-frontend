@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2024.7.0] - 2024-07-25
+
 ### Fixed
 
 - Coveralls' failure in Github
@@ -519,7 +521,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[unreleased]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.13.0...HEAD
+[unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2024.7.0...HEAD
+[2024.7.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.13.0...2024.7.0
 [0.13.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.11.0...v0.13.0
 [0.11.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.9.2...v0.10.0

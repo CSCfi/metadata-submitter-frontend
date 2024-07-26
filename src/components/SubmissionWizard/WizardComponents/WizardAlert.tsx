@@ -41,6 +41,7 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
+    minWidth:"65rem"
   },
 }))
 

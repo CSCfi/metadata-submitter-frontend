@@ -9,14 +9,14 @@ import { useNavigate, useParams } from "react-router-dom"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
-//import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ValidSteps } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
-import { useAppDispatch } from "hooks"
+import { useAppDispatch, useAppSelector } from "hooks"
+import { RootState } from "rootReducer"
 import submissionAPIService from "services/submissionAPI"
 import type { FormRef } from "types"
 import { useQuery } from "utils"
@@ -28,7 +28,8 @@ import Page404 from "views/ErrorPages/Page404"
 const getStepContent = (
   wizardStep: number,
   createSubmissionFormRef: FormRef,
-  objectFormRef: FormRef
+  objectFormRef: FormRef,
+  currentWorkflow: string
 ) => {
   switch (wizardStep) {
     case 1:
@@ -37,10 +38,14 @@ const getStepContent = (
     case 3:
     case 4:
     case 5:
-      return <WizardAddObjectStep formRef={objectFormRef} />
-    case 6:
-      return <WizardShowSummaryStep />
+      return currentWorkflow==="SDSX" ?
+        <WizardShowSummaryStep /> :
+        <WizardAddObjectStep formRef={objectFormRef} />
       break
+    case 6:
+      return currentWorkflow==="FEGA" || currentWorkflow==="BigPicture" ?
+        <WizardShowSummaryStep />  :
+        null
     default:
       // An empty page
       break
@@ -92,6 +97,8 @@ const SubmissionWizard: React.FC = () => {
     }
   }, [dispatch, submissionId, navigate])
 
+  const currentWorkflow = useAppSelector((state: RootState) => state.workflowType)
+
   const wizardStep = step ? Number(step) : -1
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(
@@ -118,7 +125,7 @@ const SubmissionWizard: React.FC = () => {
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper sx={{ p: 0, height: "100%" }} elevation={2}>
-              {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef)}
+              {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef, currentWorkflow)}
             </Paper>
           )}
         </Grid>

@@ -101,7 +101,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   }, [workflowType])
 
   const { mappedSteps } = WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow, t)
-
+console.log("MAPPED STEPS: ", mappedSteps)
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
   useEffect(() => {

@@ -230,7 +230,7 @@ const WizardShowSummaryStep: React.FC = () => {
         </Toolbar>
       </SummaryBar>
       <Typography component="h1" variant="h4" color="secondary">
-        {t("summaryPage.title")}
+        {t("summary")}
       </Typography>
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1

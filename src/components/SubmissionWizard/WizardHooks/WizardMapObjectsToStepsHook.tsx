@@ -118,6 +118,21 @@ const mapObjectsToStepsHook = (
     },
   ].concat(schemaSteps)
 
+  const summaryStep = {
+    title: t("setIdentifierPublish"),
+    schemas: [{
+      objectType: t("summary"), // REPLACE "Add" by "view" with objectype as text to the button (Add summary) inside accordion
+      name : t("summary"), // Text inside accordion by isActive ChevronRightIcon
+      objects: {
+        ready: [],
+      },
+      required: true,
+    }],
+    actionButtonText: t("summaryButtonText"), // This does place the text in the button
+    disabled:  submission.name==="",
+  }
+  if (submission.name!=="") mappedSteps.push(summaryStep)
+
   return { mappedSteps }
 }
 

@@ -49,35 +49,41 @@ const CustomBox = styled(Box)(() => ({
   padding: "1rem",
   paddingTop: "0",
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
+  alignItems: "flex-start",
+}))
+
+const IconBox = styled(Box)(() => ({
+  width: "10%",
+  display: "flex",
+  justifyContent: "center",
   alignItems: "center",
 }))
 
-const CustomDialogTitleContainer = styled(Box)(() => ({
+const ContentBox = styled(Box)(() => ({
+  width: "90%",
   display: "flex",
-  alignItems: "center",
+  flexDirection: "column",
   padding: "1rem",
-  paddingBottom: "0",
-  width: "100%",
+  paddingTop: 0,
 }))
 
 const CustomDialogTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.secondary.main,
   fontSize: "1.5rem",
   fontWeight: "bold",
-  marginLeft: "0.5rem",
 }))
 
 const StyledWarningIcon = styled(WarningIcon)(({ theme }) => ({
   color: theme.palette.error.light,
-  fontSize: "2rem",
-  marginRight: "0.5rem",
+  fontSize: "3rem",
 }))
 
 const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
   color: theme.palette.secondary.main,
   padding: "1rem",
   paddingTop: "0.5rem",
+  paddingLeft: 0,
 }))
 
 // Simple template for error messages
@@ -198,7 +204,7 @@ const CancelFormDialog = ({
           dialogTitle = t("alerts.save.title")
           dialogContent = t("alerts.save.content")
           dialogActions = (
-            <DialogActions sx={{ justifyContent: "flex-end" }}>
+            <DialogActions style={{ justifyContent: "flex-end" }}>
               <Button
                 variant="outlined"
                 onClick={() => handleDialog(false)}
@@ -249,19 +255,24 @@ const CancelFormDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogContent>
+      <DialogContent style={{ paddingLeft: 0 }}>
         <CustomBox>
-          <CustomDialogTitleContainer>
+          <IconBox>
             <StyledWarningIcon />
+          </IconBox>
+          <ContentBox>
             <CustomDialogTitle id="alert-dialog-title">{dialogTitle}</CustomDialogTitle>
-          </CustomDialogTitleContainer>
-          <CustomDialogContentText id="alert-dialog-description" data-testid="alert-dialog-content">
-            {dialogContent}
-          </CustomDialogContentText>
-          {error && <ErrorMessage message={errorMessage} />}
-          <DialogActions sx={{ width: "100%", justifyContent: "flex-end", padding: "1rem" }}>
-            {dialogActions}
-          </DialogActions>
+            <CustomDialogContentText
+              id="alert-dialog-description"
+              data-testid="alert-dialog-content"
+            >
+              {dialogContent}
+            </CustomDialogContentText>
+            {error && <ErrorMessage message={errorMessage} />}
+            <DialogActions style={{ width: "100%", justifyContent: "flex-end", padding: "1rem" }}>
+              {dialogActions}
+            </DialogActions>
+          </ContentBox>
         </CustomBox>
       </DialogContent>
     </CustomDialog>

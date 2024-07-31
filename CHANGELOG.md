@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update UI design for Wizard Alert ( #954)
 
+### Fixed
+
+- XML File should be validated and uploaded properly
+
 ## [2024.7.0] - 2024-07-25
 
 ### Fixed

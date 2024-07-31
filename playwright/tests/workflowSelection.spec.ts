@@ -32,7 +32,6 @@ test.describe("Test workflow selection", () => {
   }) => {
     test.slow()
     await login()
-    await page.getByTestId("link-create-submission").click()
 
     // Add submission name, description, select workflow, save
     await newSubmission()

@@ -19,8 +19,6 @@ test.describe("render objects' links and attributes", () => {
     test.slow()
     await login()
 
-    await page.getByTestId("link-create-submission").click()
-
     // Add submission name & description, navigate to submissions
     await newSubmission()
 
@@ -121,4 +119,4 @@ test.describe("render objects' links and attributes", () => {
   })
 })
 
-export { }
+export {}

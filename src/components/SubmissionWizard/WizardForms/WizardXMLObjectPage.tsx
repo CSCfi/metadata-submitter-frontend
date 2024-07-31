@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 
-import WizardUploadXMLModal from "./WizardUploadXMLModal"
+import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
@@ -43,7 +43,12 @@ const WizardXMLObjectPage = () => {
     <>
       <WizardStepContentHeader />
       <StyledContainer disableGutters>
-        <Typography variant="h4" role="heading" color="secondary" sx={{ pb: "2.5rem", fontWeight: 700 }}>
+        <Typography
+          variant="h4"
+          role="heading"
+          color="secondary"
+          sx={{ pb: "2.5rem", fontWeight: 700 }}
+        >
           {xmlObject.tags?.fileName}
         </Typography>
         <TableContainer component={Box}>
@@ -71,7 +76,7 @@ const WizardXMLObjectPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <WizardUploadXMLModal
+        <WizardXMLUploadModal
           open={openedXMLModal}
           handleClose={() => {
             dispatch(resetXMLModalOpen())

@@ -80,6 +80,7 @@ const test = base.extend<CommandFixtures>({
   },
   newSubmission: async ({ page, submissionName }, use) => {
     const newSubmission = async () => {
+      await page.getByTestId("link-create-submission").click()
       const submissions = page.waitForResponse("/v1/submissions*")
       await page
         .getByTestId("submissionName")

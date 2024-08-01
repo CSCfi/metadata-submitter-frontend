@@ -29,18 +29,20 @@ const AccordionWrapper = styled("div")(({ theme }) => ({
   },
 }))
 
-const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(
-  () => ({
-    "&:not(:last-child)": {
-      borderBottom: 0,
-    },
-    "&:before": {
-      display: "none",
-    },
-  })
-)
+const Accordion = styled((props: AccordionProps) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(() => ({
+  "&:not(:last-child)": {
+    borderBottom: 0,
+  },
+  "&:before": {
+    display: "none",
+  },
+}))
 
-const AccordionSummary = styled((props: AccordionSummaryProps) => <MuiAccordionSummary {...props} />)(({ theme }) => ({
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary {...props} />
+))(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   borderBottom: `1px solid ${theme.palette.primary.light}`,
@@ -100,7 +102,12 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
     getWorkflow()
   }, [workflowType])
 
-  const { mappedSteps } = WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow, t)
+  const { mappedSteps } = WizardMapObjectsToStepHook(
+    submission,
+    objectTypesArray,
+    currentWorkflow,
+    t
+  )
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
@@ -133,13 +140,18 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
 
   const handlePanelChange = (stepIndex: number) => {
     setExpandedPanels(
-      expandedPanels.includes(stepIndex) ? expandedPanels.filter(i => i !== stepIndex) : [...expandedPanels, stepIndex]
+      expandedPanels.includes(stepIndex)
+        ? expandedPanels.filter(i => i !== stepIndex)
+        : [...expandedPanels, stepIndex]
     )
   }
 
   // Open panel when navigating to next step and close others
   useEffect(() => {
-    const change = [...expandedPanels.filter(i => i === currentStepObject.step), currentStepObject.step]
+    const change = [
+      ...expandedPanels.filter(i => i === currentStepObject.step),
+      currentStepObject.step,
+    ]
 
     setExpandedPanels(change)
   }, [currentStepObject.step])
@@ -161,14 +173,9 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
                 {stepNumber}. {step.title}
               </Typography>
             </AccordionSummary>
-            {step.schemas && step.actionButtonText && (
+            {step.schemas && (
               <AccordionDetails>
-                <WizardStep
-                  step={stepNumber}
-                  schemas={step.schemas}
-                  actionButtonText={step.actionButtonText}
-                  formRef={formRef}
-                />
+                <WizardStep step={stepNumber} schemas={step.schemas} formRef={formRef} />
               </AccordionDetails>
             )}
           </Accordion>

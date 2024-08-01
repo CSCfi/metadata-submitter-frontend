@@ -99,12 +99,12 @@ test.describe("Basic application flow", () => {
     await formActions("form-ready")
 
     /*
-     * 3rd step, Files
+     * 3rd step, Datafolder
      */
 
-    await clickAccordionPanel("Files")
+    await clickAccordionPanel("Datafolder")
     await expect(page.getByTestId("file-details")).toBeVisible()
-    await page.getByRole("button", { name: "Add file" }).click()
+    await page.getByRole("button", { name: "View datafolder" }).click()
 
     /*
      * 4th step, Describe

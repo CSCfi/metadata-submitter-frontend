@@ -237,5 +237,20 @@ export type DoiFormDetails = {
   subjects: DoiSubject[]
 }
 
+export type DataFolderRow = {
+  id: string
+  name: string
+  size: number
+  items: number
+  tags?: string
+}
+
+export type File = {
+  id: string
+  path: string
+  name: string
+  bytes: number
+}
+
 // Used in feature slices
 export type DispatchReducer = { payload: unknown; type: string }

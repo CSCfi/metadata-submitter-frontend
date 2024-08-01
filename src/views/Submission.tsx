@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
+import WizardDataFolderStep from "components/SubmissionWizard/WizardSteps/WizardDataFolderStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ValidSteps } from "constants/wizardObject"
@@ -34,7 +35,9 @@ const getStepContent = (
     case 1:
       return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
     case 2:
+      return <WizardAddObjectStep formRef={objectFormRef} />
     case 3:
+      return <WizardDataFolderStep />
     case 4:
     case 5:
       return <WizardAddObjectStep formRef={objectFormRef} />

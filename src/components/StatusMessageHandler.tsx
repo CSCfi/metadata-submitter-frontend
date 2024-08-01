@@ -143,7 +143,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
       message = t("snackbarMessages.error.default", { helperText: helperText ? t(helperText) : "" })
   }
 
-  const closeMessage = t("snackbarMessages.close")
+  const closeMessage = t("close")
 
   return (
     <CustomAlert severity="error" ref={ref} icon={getSeverityIcon("error", theme)}>
@@ -163,7 +163,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   const { helperText, handleClose } = props
   const theme = useTheme()
   const defaultMessage = t("snackbarMessages.info.default")
-  const closeMessage = t("snackbarMessages.close")
+  const closeMessage = t("close")
 
   const messageTemplate = (helperText?: string) => {
     return helperText?.length ? helperText : defaultMessage
@@ -244,7 +244,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
     message = helperText ? (t(helperText) as string) : ""
   }
 
-  const closeMessage = t("snackbarMessages.close")
+  const closeMessage = t("close")
 
   return (
     <CustomAlert severity="success" ref={ref} icon={getSeverityIcon("success", theme)}>

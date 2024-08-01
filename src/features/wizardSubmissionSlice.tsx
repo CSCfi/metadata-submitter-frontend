@@ -20,7 +20,9 @@ import type {
   DispatchReducer,
 } from "types"
 
-type InitialState = SubmissionDetailsWithId & { doiInfo: Record<string, unknown> & DoiFormDetails }
+type InitialState = SubmissionDetailsWithId & {
+  doiInfo: Record<string, unknown> & DoiFormDetails
+} & { linkedFolder?: string }
 
 const initialState: InitialState = {
   submissionId: "",
@@ -31,9 +33,14 @@ const initialState: InitialState = {
   drafts: [],
   metadataObjects: [],
   doiInfo: { creators: [], contributors: [], subjects: [] },
+  linkedFolder: "",
 }
 
-const setTags = (objects: ObjectInsideSubmissionWithTags[], accessionId: string, tags: ObjectTags) => {
+const setTags = (
+  objects: ObjectInsideSubmissionWithTags[],
+  accessionId: string,
+  tags: ObjectTags
+) => {
   const item = objects.find((item: { accessionId: string }) => item.accessionId === accessionId)
   if (item) item.tags = tags
 }
@@ -54,9 +61,12 @@ const wizardSubmissionSlice = createSlice({
     },
     deleteObject: (state: InitialState, action) => {
       if (state)
-        state.metadataObjects = reject(state.metadataObjects, function (o: { accessionId: string }) {
-          return o.accessionId === action.payload
-        })
+        state.metadataObjects = reject(
+          state.metadataObjects,
+          function (o: { accessionId: string }) {
+            return o.accessionId === action.payload
+          }
+        )
     },
     deleteDraftObject: (state, action) => {
       if (state)
@@ -69,6 +79,9 @@ const wizardSubmissionSlice = createSlice({
     },
     modifyDraftObjectTags: (state, action) => {
       setTags(state.drafts, action.payload.accessionId, action.payload.tags)
+    },
+    addLinkedFolder: (state, action) => {
+      state.linkedFolder = action.payload
     },
     resetSubmission: () => initialState,
   },
@@ -83,12 +96,17 @@ export const {
   deleteDraftObject,
   modifyObjectTags,
   modifyDraftObjectTags,
+  addLinkedFolder,
   resetSubmission,
 } = wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
 
 export const createSubmission =
-  (projectId: string, submissionDetails: SubmissionDataFromForm, drafts?: ObjectInsideSubmissionWithTags[]) =>
+  (
+    projectId: string,
+    submissionDetails: SubmissionDataFromForm,
+    drafts?: ObjectInsideSubmissionWithTags[]
+  ) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const { name, description, workflowType: workflow } = submissionDetails
     const submissionForBackend: SubmissionDetails & { projectId: string } = {
@@ -117,7 +135,10 @@ export const createSubmission =
   }
 
 export const updateSubmission =
-  (submissionId: string, submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }) =>
+  (
+    submissionId: string,
+    submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }
+  ) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await submissionAPIService.patchSubmissionById(submissionId, {
       name: submissionDetails.name,
@@ -163,7 +184,9 @@ export const deleteObjectFromSubmission =
     const response = await service.deleteObjectByAccessionId(objectType, objectId)
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        savedType === ObjectStatus.submitted ? dispatch(deleteObject(objectId)) : dispatch(deleteDraftObject(objectId))
+        savedType === ObjectStatus.submitted
+          ? dispatch(deleteObject(objectId))
+          : dispatch(deleteDraftObject(objectId))
         resolve(response)
       } else {
         reject(JSON.stringify(response))
@@ -207,10 +230,12 @@ export const addDoiInfoToSubmission =
       ...nameType,
     }))
 
-    const modifiedContributors = doiFormDetails.contributors?.map((contributor: DoiContributor) => ({
-      ...contributor,
-      ...nameType,
-    }))
+    const modifiedContributors = doiFormDetails.contributors?.map(
+      (contributor: DoiContributor) => ({
+        ...contributor,
+        ...nameType,
+      })
+    )
 
     const subjectSchema = { subjectScheme: "Fields of Science and Technology (FOS)" }
     // Add fixed subject schema as we are using FOS by default

@@ -2,20 +2,11 @@ import React from "react"
 
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import Box from "@mui/material/Box"
-import Stack from "@mui/material/Stack"
-import { styled } from "@mui/material/styles"
-import {
-  DataGrid,
-  GridColDef,
-  GridRowParams,
-  GridActionsCellItem,
-  GridSortModel,
-} from "@mui/x-data-grid"
+import { GridColDef, GridRowParams, GridActionsCellItem, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
-import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
+import DataTable from "components/DataTable"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { setSubmission } from "features/wizardSubmissionSlice"
 import { useAppDispatch } from "hooks"
@@ -23,61 +14,13 @@ import submissionAPIService from "services/submissionAPI"
 import { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
-const DataTable = styled(DataGrid)(({ theme }) => ({
-  color: theme.palette.secondary.main,
-  "& .MuiDataGrid-columnSeparator, & .MuiDataGrid-cell:last-of-type": {
-    display: "none",
-  },
-  "& .MuiDataGrid-columnHeaders": {
-    backgroundColor: theme.palette.common.white,
-  },
-
-  "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
-    backgroundColor: theme.palette.common.white,
-  },
-
-  "& .MuiDataGrid-cell:hover": {
-    backgroundColor: "inherit",
-  },
-  "& .MuiDataGrid-columnHeaderTitle": {
-    fontWeight: 700,
-  },
-  "& .MuiDataGrid-columnHeadersInner, .MuiDataGrid-columnHeader, .MuiDataGrid-virtualScrollerRenderZone, .MuiDataGrid-cell, .MuiDataGrid-cell--withRenderer":
-    {
-      width: "100% !important",
-    },
-  "& .MuiDataGrid-columnHeaderTitleContainer": {
-    padding: 0,
-    "& .MuiDataGrid-sortIcon": {
-      color: theme.palette.secondary.main,
-      fontSize: "2rem",
-    },
-  },
-  "& .MuiDataGrid-columnHeader--last": {
-    "&:hover": {
-      backgroundColor: `${theme.palette.common.white} !important`,
-    },
-  },
-  "& .MuiDataGrid-actionsCell": {
-    color: theme.palette.primary.main,
-    alignItems: "flex-start",
-    [theme.breakpoints.down("sm")]: {
-      display: "flex",
-      flexDirection: "column",
-      gridGap: 0,
-      "& .MuiMenuItem-root.MuiMenuItem-gutters.MuiButtonBase-root": { minHeight: "0 !important" },
-    },
-  },
-  "& .MuiDataGrid-overlayWrapper": { height: "10rem" },
-}))
-
 type SubmissionDataTableProps = {
   submissionType: string
   rows: Array<SubmissionRow>
   page?: number
   itemsPerPage?: number
   totalItems?: number
-  fetchItemsPerPage?: (items: number, submissionType: string) => Promise<void>
+  fetchItemsPerPage?: (items: number, submissionType: string) => void
   fetchPageOnChange?: (page: number) => Promise<void>
   onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
@@ -153,12 +96,12 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     },
   ]
 
-  const [sortModel, setSortModel] = React.useState<GridSortModel>([
+  const sortingModel = [
     {
       field: "dateCreated",
-      sort: "asc",
+      sort: "asc" as GridSortDirection,
     },
-  ])
+  ]
 
   const handleEditSubmission = async (e, id) => {
     e.stopPropagation()
@@ -175,57 +118,21 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     onDeleteSubmission ? onDeleteSubmission(id, submissionType) : null
   }
 
-  const handleChangePage = (_e: unknown, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page) : null
+  const handleItemsPerPageChange = (items: number) => {
+    fetchItemsPerPage ? fetchItemsPerPage(items, submissionType) : null
   }
-
-  const handleItemsPerPageChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10), submissionType) : null
-  }
-
-  const DataGridPagination = () =>
-    totalItems && page !== undefined && itemsPerPage ? (
-      <WizardPagination
-        totalNumberOfItems={totalItems}
-        page={page}
-        itemsPerPage={itemsPerPage}
-        handleChangePage={handleChangePage}
-        handleItemsPerPageChange={handleItemsPerPageChange}
-      />
-    ) : null
-
-  const NoRowsOverlay = () => (
-    <Stack height="100%" alignItems="center" justifyContent="center">
-      {t("dataTable.noResults")}
-    </Stack>
-  )
-
-  // Renders when there is submission list
-  const SubmissionList = () => (
-    <DataTable
-      autoHeight
-      rows={rows}
-      columns={columns}
-      disableRowSelectionOnClick
-      disableColumnMenu
-      disableColumnFilter
-      disableColumnSelector
-      hideFooterSelectedRowCount
-      slots={{
-        pagination: DataGridPagination,
-        noRowsOverlay: NoRowsOverlay,
-      }}
-      sortModel={sortModel}
-      onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
-    />
-  )
 
   return (
-    <Box>
-      <SubmissionList />
-    </Box>
+    <DataTable
+      rows={rows}
+      columns={columns}
+      page={page}
+      sortingModel={sortingModel}
+      itemsPerPage={itemsPerPage}
+      totalItems={totalItems}
+      fetchPageOnChange={fetchPageOnChange}
+      fetchItemsPerPage={handleItemsPerPageChange}
+    />
   )
 }
 

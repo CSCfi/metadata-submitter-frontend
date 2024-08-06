@@ -36,6 +36,7 @@ const getStepContent = (
     case 2:
     case 3:
     case 4:
+      return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 6:
@@ -83,7 +84,11 @@ const SubmissionWizard: React.FC = () => {
           )
           dispatch(resetSubmission())
         }
-      }
+      }git checkout main  
+      git fetch --prune  
+      git pull  
+      git checkout feature/summary-table-design 
+      git rebase main 
     }
     if (submissionId) getSubmission()
     return () => {

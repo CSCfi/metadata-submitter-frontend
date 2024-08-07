@@ -18,7 +18,6 @@ import {
   GridColDef,
   GridActionsCellItem,
   GridRenderCellParams,
-  GridPaginationModel,
   GridSortModel,
 } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
@@ -120,10 +119,6 @@ const WizardShowSummaryStep: React.FC = () => {
   const { t } = useTranslation()
 
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    pageSize: 5,
-    page: 0,
-  })
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: "name", sort: "asc" as "asc" | "desc" },
@@ -360,16 +355,14 @@ const WizardShowSummaryStep: React.FC = () => {
             >
               {step}. {summaryItem.title}
             </Typography>
-            <div style={{ height: stepRows.length ? 400 : "auto", width: "100%" }}>
+            <div style={{ height: "auto", width: "100%" }}>
               <StyledDataGrid
                 rows={stepRows}
                 columns={columns}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                pageSizeOptions={[5, 10, 20]}
                 sortModel={sortModel}
                 onSortModelChange={model => setSortModel(model)}
+                hideFooter
+                hideFooterPagination
                 hideFooterSelectedRowCount
                 slots={{
                   noRowsOverlay: () => null,

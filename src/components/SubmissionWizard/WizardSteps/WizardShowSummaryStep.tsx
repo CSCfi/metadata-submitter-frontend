@@ -142,6 +142,8 @@ const WizardShowSummaryStep: React.FC = () => {
     }))
   }
 
+  const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
+
   // Fetch workflow based on workflowType
   useEffect(() => {
     const getWorkflow = async () => {
@@ -357,6 +359,7 @@ const WizardShowSummaryStep: React.FC = () => {
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = rows.filter(row => row.step === step)
+        const isDescribeStep = step === 4
         return (
           <Container
             key={summaryItem.title}
@@ -379,12 +382,18 @@ const WizardShowSummaryStep: React.FC = () => {
                 sortModel={sortModels[step] || []}
                 onSortModelChange={model => handleSortModelChange(step, model)}
                 disableColumnMenu
-                hideFooter
-                hideFooterPagination
-                hideFooterSelectedRowCount
                 slots={{
                   noRowsOverlay: () => null,
                 }}
+                hideFooter={!isDescribeStep}
+                hideFooterPagination={!isDescribeStep}
+                hideFooterSelectedRowCount={!isDescribeStep}
+                paginationModel={isDescribeStep ? paginationModel : undefined}
+                onPaginationModelChange={
+                  isDescribeStep ? newModel => setPaginationModel(newModel) : undefined
+                }
+                pagination={isDescribeStep ? true : undefined}
+                pageSizeOptions={isDescribeStep ? [5, 10, 20, 50, 100] : undefined}
               />
             </Box>
           </Container>

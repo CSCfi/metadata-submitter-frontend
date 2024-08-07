@@ -19,6 +19,7 @@ import {
   GridActionsCellItem,
   GridRenderCellParams,
   GridPaginationModel,
+  GridSortModel,
 } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
@@ -124,7 +125,9 @@ const WizardShowSummaryStep: React.FC = () => {
     page: 0,
   })
 
-  const [sortModel, setSortModel] = useState([{ field: "name", sort: "asc" }])
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    { field: "name", sort: "asc" as "asc" | "desc" },
+  ])
 
   // Fetch workflow based on workflowType
   useEffect(() => {

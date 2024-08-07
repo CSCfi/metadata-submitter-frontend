@@ -22,10 +22,11 @@ type DataFolderTableProps = {
   selectedFolder: string
   linkedFolder: string
   handleFolderChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleFilesView: (folderName: string) => void
 }
 
-const DataFolderTable: React.FC<DataFolderTableProps> = props => {
-  const { selectedFolder, linkedFolder, handleFolderChange } = props
+const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
+  const { selectedFolder, linkedFolder, handleFolderChange, handleFilesView } = props
   const projectId = useAppSelector(state => state.projectId)
   const dispatch = useAppDispatch()
 
@@ -48,8 +49,13 @@ const DataFolderTable: React.FC<DataFolderTableProps> = props => {
                 inputProps={{ "aria-label": params.row.name }}
               />
             )}
-            <FolderIcon color="primary" fontSize="large" sx={{ ml: "1rem", mr: "0.5rem" }} />
-            <Typography component="span" onClick={handleFilesView}>
+            <FolderIcon
+              color="primary"
+              fontSize="medium"
+              sx={{ ml: "1rem", mr: "0.5rem" }}
+              onClick={() => handleFilesView(params.row.name)}
+            />
+            <Typography component="span" onClick={() => handleFilesView(params.row.name)}>
               {upperFirst(params.row.name)}
             </Typography>
           </Box>
@@ -102,6 +108,7 @@ const DataFolderTable: React.FC<DataFolderTableProps> = props => {
     const folderNames = getFolderNames()
     return folderNames
       .filter(folderName => (!!linkedFolder ? folderName === linkedFolder : folderName))
+      .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
       .map(folderName => {
         const currentFiles = files.filter(file => file.path.includes(`/${folderName}/`))
         const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
@@ -127,10 +134,6 @@ const DataFolderTable: React.FC<DataFolderTableProps> = props => {
   const [totalItems, setTotalItems] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(5)
 
-  const handleFilesView = () => {
-    // TODO: show files inside each folder
-  }
-
   const fetchPageOnChange = (page: number) => {
     setPage(page)
   }
@@ -154,4 +157,4 @@ const DataFolderTable: React.FC<DataFolderTableProps> = props => {
   )
 }
 
-export default DataFolderTable
+export default WizardDataFolderTable

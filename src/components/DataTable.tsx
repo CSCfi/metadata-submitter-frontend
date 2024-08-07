@@ -7,7 +7,7 @@ import { DataGrid, GridColDef, GridSortModel } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 
 import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
-import type { SubmissionRow, DataFolderRow } from "types"
+import type { SubmissionRow, DataFolderRow, DataFileRow } from "types"
 
 const Table = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
@@ -46,11 +46,14 @@ const Table = styled(DataGrid)(({ theme }) => ({
     },
   },
   "& .MuiDataGrid-overlayWrapper": { height: "10rem" },
+  "& .MuiDataGrid-row:hover": {
+    cursor: "pointer",
+  },
 }))
 
 type DataTableProps = {
   columns: GridColDef[]
-  rows: Array<SubmissionRow | DataFolderRow>
+  rows: Array<SubmissionRow | DataFolderRow | DataFileRow>
   page?: number
   itemsPerPage?: number
   totalItems?: number

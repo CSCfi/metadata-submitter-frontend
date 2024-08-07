@@ -1,31 +1,31 @@
 ﻿export const files = [
   {
     id: "A01",
-    path: "s3:/folderA/fileA1",
+    path: "s3:/folderA/subfolder1/fileA1",
     name: "fileA1",
     bytes: 100,
   },
   {
     id: "A02",
-    path: "s3:/folderA/fileA2",
+    path: "s3:/folderA/subfolder1/fileA2",
     name: "fileA2",
     bytes: 200,
   },
   {
     id: "A03",
-    path: "s3:/folderA/fileA3",
+    path: "s3:/folderA/subfolder2/fileA3",
     name: "fileA3",
     bytes: 300,
   },
   {
     id: "A04",
-    path: "s3:/folderA/fileA4",
+    path: "s3:/folderA/subfolder3/subfolder3A/fileA4",
     name: "fileA4",
     bytes: 400,
   },
   {
     id: "A05",
-    path: "s3:/folderA/fileA5",
+    path: "s3:/folderA/subfolder3/subfolder3A/subfolder3B/fileA5",
     name: "fileA5",
     bytes: 500,
   },

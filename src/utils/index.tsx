@@ -4,9 +4,17 @@ import { useLocation } from "react-router-dom"
 
 import { Locale } from "constants/locale"
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
-import type { FormDataFiles, ObjectDisplayValues, ObjectInsideSubmissionWithTags } from "types"
+import type {
+  File,
+  FormDataFiles,
+  ObjectDisplayValues,
+  ObjectInsideSubmissionWithTags,
+} from "types"
 
-export const getObjectDisplayTitle = (objectType: string, cleanedValues: ObjectDisplayValues): string => {
+export const getObjectDisplayTitle = (
+  objectType: string,
+  cleanedValues: ObjectDisplayValues
+): string => {
   switch (objectType) {
     case ObjectTypes.study:
       return cleanedValues.descriptor?.studyTitle || ""
@@ -47,7 +55,9 @@ export const getDraftObjects = (
 ): { [draftObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
   const draftObjects = objectTypesArray.flatMap((schema: string) => {
     const draftSchema = `draft-${schema}`
-    const draftArray = drafts.filter(draft => draft.schema.toLowerCase() === draftSchema.toLowerCase())
+    const draftArray = drafts.filter(
+      draft => draft.schema.toLowerCase() === draftSchema.toLowerCase()
+    )
     return draftArray.length > 0 ? [{ [draftSchema]: draftArray }] : []
   })
 
@@ -60,7 +70,9 @@ export const getUserTemplates = (
 ): { [templateObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
   const userTemplates = objectTypesArray.flatMap((schema: string) => {
     const templateSchema = `template-${schema}`
-    const templatesArray = templates.filter(template => template.schema.toLowerCase() === templateSchema.toLowerCase())
+    const templatesArray = templates.filter(
+      template => template.schema.toLowerCase() === templateSchema.toLowerCase()
+    )
     return templatesArray.length > 0 ? [{ [templateSchema]: templatesArray }] : []
   })
 
@@ -121,3 +133,7 @@ export const getConvertedDate = (timestamp: number): string => {
   const convertedDate = !isNaN(timestamp) ? moment.unix(timestamp).format("DD MMM, YYYY") : ""
   return convertedDate
 }
+
+// Check if it's a file or a subfolder (current path equals original file path)
+export const isFile = (files: File[], path: string) =>
+  files.findIndex(file => file.path === path) > -1

@@ -71,6 +71,9 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     display: "flex",
     alignItems: "center",
   },
+  "& .MuiDataGrid-overlay": {
+    display: "none",
+  },
 }))
 
 // const StepContainer = styled(Container)(({ theme }) => {
@@ -328,21 +331,71 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography component="h1" variant="h4" color="secondary">
+      <Typography
+        component="h1"
+        variant="h4"
+        color="secondary"
+        style={{ marginTop: "2rem", marginBottom: "2rem" }}
+      >
         {t("summary")}
       </Typography>
-      <div style={{ height: 400, width: "100%" }}>
-        <StyledDataGrid
-          rows={rows}
-          columns={columns}
-          pagination
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          pageSizeOptions={[5, 10, 20]}
-          sortModel={sortModel}
-          onSortModelChange={model => setSortModel(model)}
-        />
-      </div>
+      {summarySteps.map((summaryItem, index) => {
+        const step = index + 1
+        const stepRows = rows.filter(row => row.step === step)
+        return (
+          <Container
+            key={summaryItem.title}
+            disableGutters
+            data-testid={`summary-step-${step}`}
+            style={{ padding: "1rem 0", marginBottom: "2rem" }}
+          >
+            <Typography
+              component="h2"
+              variant="h5"
+              color="secondary"
+              style={{ marginTop: "2rem", marginBottom: "2rem" }}
+            >
+              {step}. {summaryItem.title}
+            </Typography>
+            <div style={{ height: stepRows.length ? 400 : "auto", width: "100%" }}>
+              <StyledDataGrid
+                rows={stepRows}
+                columns={columns}
+                pagination
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                pageSizeOptions={[5, 10, 20]}
+                sortModel={sortModel}
+                onSortModelChange={model => setSortModel(model)}
+                hideFooterSelectedRowCount
+                slots={{
+                  noRowsOverlay: () => null,
+                }}
+              />
+            </div>
+          </Container>
+        )
+      })}
+      {/* <ButtonContainer>
+        <Button variant="contained" color="secondary" onClick={handleOpenDoiDialog}>
+          Add DOI information (optional)
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => setDialogOpen(true)}
+          data-testid="summary-publish"
+        >
+          Publish
+        </Button>
+      </ButtonContainer>
+      {openedDoiForm && <DOIDialog />}
+      {dialogOpen && (
+        <WizardAlert
+          onAlert={handlePublishDialog}
+          parentLocation="footer"
+          alertType={"publish"}
+        ></WizardAlert>
+      )} */}
     </Container>
   )
 }

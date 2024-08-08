@@ -240,10 +240,14 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
                       objectType,
                       value[0]
                     )
-                    if (!response.data.isValid) {
+                    if (!response.ok) {
+                      const errors = response.data.errors.map(
+                        error =>
+                          ` ${error.reason} Position: ${error.position}, pointner: ${error.pointer}`
+                      )
                       return `The file you attached is not valid ${objectType},
-                      our server reported following error:
-                      ${response.data.detail.reason}.`
+                      our server reported following error: ${response.data.detail} Detail: ${errors}`
+                      // TODO: replace this MUI Alert with StatusMessageHanlder
                     }
                   },
                 },

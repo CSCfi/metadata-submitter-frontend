@@ -285,10 +285,9 @@ const WizardShowSummaryStep: React.FC = () => {
         <WizardObjectStatusBadge draft={params.row.draft} />
       ),
       flex: 0.5,
-      disableColumnMenu: true,
     },
-    { field: "name", headerName: t("Name"), flex: 1, disableColumnMenu: true },
-    { field: "action", headerName: t("Required Action"), flex: 1, disableColumnMenu: true },
+    { field: "name", headerName: t("Name"), flex: 1 },
+    { field: "action", headerName: t("Required Action"), flex: 1 },
     {
       field: "edit",
       headerName: "",
@@ -308,7 +307,6 @@ const WizardShowSummaryStep: React.FC = () => {
         />
       ),
       flex: 0.5,
-      disableColumnMenu: true,
     },
   ]
 
@@ -361,6 +359,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 columns={columns}
                 sortModel={sortModel}
                 onSortModelChange={model => setSortModel(model)}
+                disableColumnMenu
                 hideFooter
                 hideFooterPagination
                 hideFooterSelectedRowCount

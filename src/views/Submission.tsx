@@ -36,7 +36,6 @@ const getStepContent = (
     case 2:
     case 3:
     case 4:
-      return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 6:

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import { AppBar, Toolbar } from "@mui/material"
+import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
 //import Dialog from "@mui/material/Dialog"
@@ -331,7 +332,7 @@ const WizardShowSummaryStep: React.FC = () => {
         component="h1"
         variant="h4"
         color="secondary"
-        style={{ marginTop: "2rem", marginBottom: "2rem" }}
+        sx={{ marginTop: 2, marginBottom: 2 }}
       >
         {t("summary")}
       </Typography>
@@ -343,17 +344,17 @@ const WizardShowSummaryStep: React.FC = () => {
             key={summaryItem.title}
             disableGutters
             data-testid={`summary-step-${step}`}
-            style={{ padding: "1rem 0", marginBottom: "2rem" }}
+            sx={{ padding: "1rem 0", marginBottom: "2rem" }}
           >
             <Typography
               component="h2"
               variant="h5"
               color="secondary"
-              style={{ marginTop: "2rem", marginBottom: "2rem" }}
+              sx={{ marginTop: 2, marginBottom: 2 }}
             >
               {step}. {summaryItem.title}
             </Typography>
-            <div style={{ height: "auto", width: "100%" }}>
+            <Box sx={{ height: "auto", width: "100%" }}>
               <StyledDataGrid
                 rows={stepRows}
                 columns={columns}
@@ -367,7 +368,7 @@ const WizardShowSummaryStep: React.FC = () => {
                   noRowsOverlay: () => null,
                 }}
               />
-            </div>
+            </Box>
           </Container>
         )
       })}

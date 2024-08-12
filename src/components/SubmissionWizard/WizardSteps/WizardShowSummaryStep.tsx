@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import { AppBar, Toolbar } from "@mui/material"
+import { TablePagination } from "@mui/material"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
@@ -330,6 +331,11 @@ const WizardShowSummaryStep: React.FC = () => {
     },
   ]
 
+  function CustomPagination(props) {
+    const { t } = useTranslation()
+    return <TablePagination {...props} labelRowsPerPage={t("dataTable.itemsPerPage")} />
+  }
+
   return (
     <>
       <SummaryBar position="sticky" elevation={0}>
@@ -384,6 +390,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 disableColumnMenu
                 slots={{
                   noRowsOverlay: () => null,
+                  pagination: CustomPagination,
                 }}
                 hideFooter={!isDescribeStep}
                 hideFooterPagination={!isDescribeStep}

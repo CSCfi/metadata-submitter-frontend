@@ -28,12 +28,16 @@ const DataTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnSeparator, & .MuiDataGrid-cell:last-of-type": {
     display: "none",
   },
+  "& .MuiDataGrid-columnHeaders": {
+    backgroundColor: theme.palette.common.white,
+  },
+
   "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
     backgroundColor: theme.palette.common.white,
-    "&:hover": {
-      color: theme.palette.primary.main,
-      backgroundColor: theme.palette.primary.lighter,
-    },
+  },
+
+  "& .MuiDataGrid-cell:hover": {
+    backgroundColor: "inherit",
   },
   "& .MuiDataGrid-columnHeaderTitle": {
     fontWeight: 700,

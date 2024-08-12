@@ -53,16 +53,28 @@ const SummaryBar = styled(AppBar)(({ theme }) => ({
   marginBottom: "2rem",
 }))
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+const SummaryTable = styled(DataGrid)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  "& .MuiDataGrid-columnSeparator": {
+    display: "none",
+  },
+
   "& .MuiDataGrid-columnHeaders": {
     backgroundColor: theme.palette.common.white,
   },
+
+  "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
+    backgroundColor: theme.palette.common.white,
+  },
+
   "& .MuiDataGrid-cell:hover": {
     backgroundColor: "inherit",
   },
   "& .MuiDataGrid-columnHeaderTitleContainer": {
+    padding: 0,
     "& .MuiDataGrid-sortIcon": {
-      fontSize: "2.5rem",
+      color: theme.palette.secondary.main,
+      fontSize: "2rem",
     },
   },
   "& .MuiSvgIcon-root": {
@@ -121,9 +133,14 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
 
-  const [sortModel, setSortModel] = useState<GridSortModel>([
-    { field: "name", sort: "asc" as "asc" | "desc" },
-  ])
+  const [sortModels, setSortModels] = useState<{ [key: number]: GridSortModel }>({})
+
+  const handleSortModelChange = (step: number, model: GridSortModel) => {
+    setSortModels(prevSortModels => ({
+      ...prevSortModels,
+      [step]: model,
+    }))
+  }
 
   // Fetch workflow based on workflowType
   useEffect(() => {
@@ -355,11 +372,11 @@ const WizardShowSummaryStep: React.FC = () => {
               {step}. {summaryItem.title}
             </Typography>
             <Box sx={{ height: "auto", width: "100%" }}>
-              <StyledDataGrid
+              <SummaryTable
                 rows={stepRows}
                 columns={columns}
-                sortModel={sortModel}
-                onSortModelChange={model => setSortModel(model)}
+                sortModel={sortModels[step] || []}
+                onSortModelChange={model => handleSortModelChange(step, model)}
                 disableColumnMenu
                 hideFooter
                 hideFooterPagination

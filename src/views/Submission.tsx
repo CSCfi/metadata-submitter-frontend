@@ -83,11 +83,7 @@ const SubmissionWizard: React.FC = () => {
           )
           dispatch(resetSubmission())
         }
-      }git checkout main  
-      git fetch --prune  
-      git pull  
-      git checkout feature/summary-table-design 
-      git rebase main 
+      }
     }
     if (submissionId) getSubmission()
     return () => {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 
-import { AppBar, Toolbar } from '@mui/material'
+import EditIcon from "@mui/icons-material/Edit"
+import { AppBar, Toolbar } from "@mui/material"
+import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
 //import Dialog from "@mui/material/Dialog"
@@ -8,10 +10,17 @@ import Container from "@mui/material/Container"
 //import DialogContent from "@mui/material/DialogContent"
 //import DialogContentText from "@mui/material/DialogContentText"
 //import DialogTitle from "@mui/material/DialogTitle"
-import Grid from "@mui/material/Grid"
-import Link from "@mui/material/Link"
+// import Grid from "@mui/material/Grid"
+// import Link from "@mui/material/Link"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
+import {
+  DataGrid,
+  GridColDef,
+  GridActionsCellItem,
+  GridRenderCellParams,
+  GridSortModel,
+} from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
@@ -23,7 +32,7 @@ import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHo
 // import saveDraftsAsTemplates from "../WizardHooks/WizardSaveTemplatesHook"
 
 // import { ResponseStatus } from "constants/responseStatus"
-import { DisplayObjectTypes } from "constants/wizardObject"
+// import { DisplayObjectTypes } from "constants/wizardObject"
 // import { resetAutocompleteField } from "features/autocompleteSlice"
 // import { resetFileTypes } from "features/fileTypesSlice"
 // import { setOpenedDoiForm } from "features/openedDoiFormSlice"
@@ -44,25 +53,61 @@ const SummaryBar = styled(AppBar)(({ theme }) => ({
   marginBottom: "2rem",
 }))
 
-const StepContainer = styled(Container)(({ theme }) => {
-  const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
-  return {
-    "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
-    "& .MuiGrid-container:last-child": { borderBottom: itemBorder },
-    "& ul:first-of-type p:first-of-type": { paddingTop: "0 !important" },
-  }
-})
-
-const SummaryItem = styled(Grid)(({ theme }) => ({
-  margin: 0,
-  padding: theme.spacing(1.5, 2),
-  "& .MuiGrid-item": { padding: theme.spacing(0, 1), alignSelf: "center" },
-}))
-
-const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
-  flexGrow: "2 !important",
+const SummaryTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  "& .MuiDataGrid-columnSeparator": {
+    display: "none",
+  },
+
+  "& .MuiDataGrid-columnHeaders": {
+    backgroundColor: theme.palette.common.white,
+  },
+
+  "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
+    backgroundColor: theme.palette.common.white,
+  },
+
+  "& .MuiDataGrid-cell:hover": {
+    backgroundColor: "inherit",
+  },
+  "& .MuiDataGrid-columnHeaderTitleContainer": {
+    padding: 0,
+    "& .MuiDataGrid-sortIcon": {
+      color: theme.palette.secondary.main,
+      fontSize: "2rem",
+    },
+  },
+  "& .MuiSvgIcon-root": {
+    fontSize: "2.5rem",
+  },
+  "& .MuiDataGrid-cell": {
+    display: "flex",
+    alignItems: "center",
+  },
+  "& .MuiDataGrid-overlay": {
+    display: "none",
+  },
 }))
+
+// const StepContainer = styled(Container)(({ theme }) => {
+//   const itemBorder = `1px solid ${theme.palette.secondary.lightest}`
+//   return {
+//     "& .MuiGrid-container": { border: itemBorder, borderBottom: 0 },
+//     "& .MuiGrid-container:last-child": { borderBottom: itemBorder },
+//     "& ul:first-of-type p:first-of-type": { paddingTop: "0 !important" },
+//   }
+// })
+
+// const SummaryItem = styled(Grid)(({ theme }) => ({
+//   margin: 0,
+//   padding: theme.spacing(1.5, 2),
+//   "& .MuiGrid-item": { padding: theme.spacing(0, 1), alignSelf: "center" },
+// }))
+
+// const DraftHelperGridItem = styled(Grid)(({ theme }) => ({
+//   flexGrow: "2 !important",
+//   color: theme.palette.secondary.main,
+// }))
 
 // const ButtonContainer = styled("div")(({ theme }) => ({
 //   marginTop: theme.spacing(3),
@@ -87,6 +132,15 @@ const WizardShowSummaryStep: React.FC = () => {
   const { t } = useTranslation()
 
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
+
+  const [sortModels, setSortModels] = useState<{ [key: number]: GridSortModel }>({})
+
+  const handleSortModelChange = (step: number, model: GridSortModel) => {
+    setSortModels(prevSortModels => ({
+      ...prevSortModels,
+      [step]: model,
+    }))
+  }
 
   // Fetch workflow based on workflowType
   useEffect(() => {
@@ -214,100 +268,125 @@ const WizardShowSummaryStep: React.FC = () => {
   )
 
   const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
+  const rows = summarySteps.flatMap((summaryItem, index) => {
+    const step = index + 1
+    return (
+      summaryItem.schemas?.flatMap(stepItem => {
+        const objects = stepItem.objects
+        if (objects) {
+          const objectsList = Object.values(objects).flat()
+          return objectsList.map(item => {
+            const draft = item.objectData?.schema.includes("draft-")
+            return {
+              id: item.id,
+              status: draft ? "Draft" : "Ready",
+              name: item.displayTitle,
+              action: draft ? t("Please mark as ready") : "",
+              step,
+              draft,
+              objectType: stepItem.objectType,
+              objectData: item.objectData,
+              objectsList,
+            }
+          })
+        }
+        return []
+      }) || []
+    )
+  })
+
+  const columns: GridColDef[] = [
+    {
+      field: "status",
+      headerName: t("Status"),
+      renderCell: (params: GridRenderCellParams) => (
+        <WizardObjectStatusBadge draft={params.row.draft} />
+      ),
+      flex: 0.5,
+    },
+    { field: "name", headerName: t("Name"), flex: 1 },
+    { field: "action", headerName: t("Required Action"), flex: 1 },
+    {
+      field: "edit",
+      headerName: "",
+      renderCell: (params: GridRenderCellParams) => (
+        <GridActionsCellItem
+          icon={<EditIcon color="primary" />}
+          label={t("edit")}
+          onClick={() =>
+            handleEdit(
+              params.row.draft,
+              params.row.objectType,
+              params.row.objectData,
+              params.row.step,
+              params.row.objectsList
+            )
+          }
+        />
+      ),
+      flex: 0.5,
+    },
+  ]
 
   return (
     <Container sx={theme => ({ pt: theme.spacing(1) })}>
-      <SummaryBar  position="sticky" elevation={0}>
+      <SummaryBar position="sticky" elevation={0}>
         <Toolbar sx={{ ml: "auto" }}>
-          <Button color="inherit" sx={ theme => ({
-            bgcolor: theme.palette.primary.main,
-            "&:hover": { bgcolor: theme.palette.primary.dark }
-            })}>
+          <Button
+            color="inherit"
+            sx={theme => ({
+              bgcolor: theme.palette.primary.main,
+              "&:hover": { bgcolor: theme.palette.primary.dark },
+            })}
+          >
             <Typography>
-              { workflowType === "SDSX" ? t("summaryPage.publish") : t("summaryPage.setReleaseDate")}
+              {workflowType === "SDSX" ? t("summaryPage.publish") : t("summaryPage.setReleaseDate")}
             </Typography>
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography component="h1" variant="h4" color="secondary">
+      <Typography
+        component="h1"
+        variant="h4"
+        color="secondary"
+        sx={{ marginTop: 2, marginBottom: 2 }}
+      >
         {t("summary")}
       </Typography>
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
+        const stepRows = rows.filter(row => row.step === step)
         return (
-          <StepContainer
+          <Container
             key={summaryItem.title}
             disableGutters
             data-testid={`summary-step-${step}`}
-            sx={theme => ({ p: theme.spacing(1, 0) })}
+            sx={{ padding: "1rem 0", marginBottom: "2rem" }}
           >
             <Typography
               component="h2"
               variant="h5"
               color="secondary"
+              sx={{ marginTop: 2, marginBottom: 2 }}
             >
               {step}. {summaryItem.title}
             </Typography>
-            {summaryItem.schemas?.map(stepItem => {
-              const objects = stepItem.objects
-              if (objects) {
-                const objectsList = Object.values(objects).flat()
-                return (
-                  <ul key={stepItem.objectType}>
-                    {DisplayObjectTypes[stepItem.objectType] && (
-                      <Typography
-                        component="h3"
-                        color="secondary"
-                        sx={theme => ({ p: theme.spacing(1, 0), fontWeight: "bold" })}
-                      >
-                        {DisplayObjectTypes[stepItem.objectType]}
-                      </Typography>
-                    )}
-                    {objectsList.map(item => {
-                      const draft = item.objectData?.schema.includes("draft-")
-                      return (
-                        <SummaryItem key={item.id} container spacing={2} data-testid="summary-item">
-                          <Grid item xs={3} md sx={{ flexGrow: "0 !important", paddingRight: 0 }}>
-                            <WizardObjectStatusBadge draft={draft || false} />
-                          </Grid>
-                          <Grid item md>
-                            <Typography color="secondary">{item.displayTitle}</Typography>
-                          </Grid>
-                          {draft && (
-                            <DraftHelperGridItem item md>
-                              Please mark {stepItem.objectType} as ready.
-                            </DraftHelperGridItem>
-                          )}
-                          <Grid item xs={2} md sx={{ textAlign: "right" }}>
-                            <Link
-                              href="#"
-                              onClick={() =>
-                                handleEdit(
-                                  draft,
-                                  stepItem.objectType,
-                                  item.objectData,
-                                  step,
-                                  objectsList
-                                )
-                              }
-                            >
-                              {t("edit")}
-                            </Link>
-                          </Grid>
-                        </SummaryItem>
-                      )
-                    })}
-                  </ul>
-                )
-              } else {
-                return (
-                  <span key={stepItem.objectType}>
-                   {t("summaryPage.noAddedItems")} {step === 3 && "Datafolder feature not implemented."}
-                  </span>
-                )
-              }
-            })}
-          </StepContainer>
+            <Box sx={{ height: "auto", width: "100%" }}>
+              <SummaryTable
+                rows={stepRows}
+                columns={columns}
+                sortModel={sortModels[step] || []}
+                onSortModelChange={model => handleSortModelChange(step, model)}
+                disableColumnMenu
+                hideFooter
+                hideFooterPagination
+                hideFooterSelectedRowCount
+                slots={{
+                  noRowsOverlay: () => null,
+                }}
+              />
+            </Box>
+          </Container>
         )
       })}
       {/* <ButtonContainer>

@@ -9,7 +9,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
-//import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ValidSteps } from "constants/wizardObject"
@@ -17,6 +16,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch } from "hooks"
+// import { RootState } from "rootReducer"
 import submissionAPIService from "services/submissionAPI"
 import type { FormRef } from "types"
 import { useQuery } from "utils"
@@ -40,7 +40,6 @@ const getStepContent = (
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 6:
       return <WizardShowSummaryStep />
-      break
     default:
       // An empty page
       break
@@ -91,6 +90,8 @@ const SubmissionWizard: React.FC = () => {
       isMounted = false
     }
   }, [dispatch, submissionId, navigate])
+
+  // const currentWorkflow = useAppSelector((state: RootState) => state.workflowType)
 
   const wizardStep = step ? Number(step) : -1
 

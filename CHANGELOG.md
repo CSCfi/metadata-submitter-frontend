@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - XML File should be validated and uploaded properly
 
+### Added
+
+- summary table
+
 ## [2024.7.0] - 2024-07-25
 
 ### Fixed

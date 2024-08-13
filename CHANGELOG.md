@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Catching error 400 when validating XML file
 - Update UI design for Wizard Alert ( #954)
 
 ### Fixed

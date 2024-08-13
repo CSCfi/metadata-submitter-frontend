@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import { AppBar, Toolbar } from "@mui/material"
-import { TablePagination } from "@mui/material"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
@@ -27,6 +26,7 @@ import { useNavigate } from "react-router-dom"
 
 //import WizardAlert from "../WizardComponents/WizardAlert"
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
+import WizardPagination from "../WizardComponents/WizardPagination"
 // import WizardDOIForm from "../WizardForms/WizardDOIForm"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
@@ -56,6 +56,9 @@ const SummaryBar = styled(AppBar)(({ theme }) => ({
 
 const SummaryTable = styled(DataGrid)(({ theme }) => ({
   color: theme.palette.secondary.main,
+  "& .MuiDataGrid-filler": {
+    display: "none",
+  },
   "& .MuiDataGrid-columnSeparator": {
     display: "none",
   },
@@ -142,8 +145,6 @@ const WizardShowSummaryStep: React.FC = () => {
       [step]: model,
     }))
   }
-
-  const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
 
   // Fetch workflow based on workflowType
   useEffect(() => {
@@ -331,9 +332,20 @@ const WizardShowSummaryStep: React.FC = () => {
     },
   ]
 
-  function CustomPagination(props) {
-    const { t } = useTranslation()
-    return <TablePagination {...props} labelRowsPerPage={t("dataTable.itemsPerPage")} />
+  const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
+
+  const handleChangePage = (_e: unknown, newPage: number) => {
+    setPaginationModel(prev => ({ ...prev, page: newPage }))
+  }
+
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPaginationModel(prev => ({
+      ...prev,
+      pageSize: parseInt(e.target.value, 10),
+      page: 0,
+    }))
   }
 
   return (
@@ -366,6 +378,18 @@ const WizardShowSummaryStep: React.FC = () => {
         const step = index + 1
         const stepRows = rows.filter(row => row.step === step)
         const isDescribeStep = step === 4
+
+        const DataGridPagination = () =>
+          isDescribeStep ? (
+            <WizardPagination
+              totalNumberOfItems={stepRows.length}
+              page={paginationModel.page}
+              itemsPerPage={paginationModel.pageSize}
+              handleChangePage={handleChangePage}
+              handleItemsPerPageChange={handleItemsPerPageChange}
+            />
+          ) : null
+
         return (
           <Container
             key={summaryItem.title}
@@ -388,24 +412,22 @@ const WizardShowSummaryStep: React.FC = () => {
                 sortModel={sortModels[step] || []}
                 onSortModelChange={model => handleSortModelChange(step, model)}
                 disableColumnMenu
+                pagination
+                paginationMode="client"
+                paginationModel={paginationModel}
+                onPaginationModelChange={newModel => setPaginationModel(newModel)}
                 slots={{
-                  noRowsOverlay: () => null,
-                  pagination: CustomPagination,
+                  pagination: DataGridPagination,
                 }}
                 hideFooter={!isDescribeStep}
                 hideFooterPagination={!isDescribeStep}
                 hideFooterSelectedRowCount={!isDescribeStep}
-                paginationModel={isDescribeStep ? paginationModel : undefined}
-                onPaginationModelChange={
-                  isDescribeStep ? newModel => setPaginationModel(newModel) : undefined
-                }
-                pagination={isDescribeStep ? true : undefined}
-                pageSizeOptions={isDescribeStep ? [5, 10, 20, 50, 100] : undefined}
               />
             </Box>
           </Container>
         )
       })}
+
       {/* <ButtonContainer>
         <Button variant="contained" color="secondary" onClick={handleOpenDoiDialog}>
           Add DOI information (optional)

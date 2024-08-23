@@ -17,7 +17,7 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -31,7 +31,7 @@ import { pathWithLocale } from "utils"
 const ActionButton = (props: {
   step: number
   parent: string
-  buttonText: string
+  buttonText?: string
   disabled: boolean
   formRef?: FormRef
 }) => {
@@ -297,10 +297,9 @@ const WizardStep = (params: {
     allowMultipleObjects?: boolean
     objects?: { ready?: stepItemObject[]; drafts?: stepItemObject[] }
   }[]
-  actionButtonText: string
   formRef?: FormRef
 }) => {
-  const { step, schemas, actionButtonText, formRef } = params
+  const { step, schemas, formRef } = params
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const { t } = useTranslation()
@@ -311,6 +310,12 @@ const WizardStep = (params: {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
         const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
+        const buttonText =
+          step === 1
+            ? t("edit")
+            : objectType === ObjectTypes.file
+            ? t("viewObject", { object: t("datafolder.datafolder").toLowerCase() })
+            : t("addObject", { object: objectType })
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>
@@ -347,7 +352,7 @@ const WizardStep = (params: {
                 <ActionButton
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
-                  buttonText={step > 1 ? t("addObject", { object: objectType }) : actionButtonText}
+                  buttonText={buttonText}
                   disabled={hasObjects && !allowMultipleObjects}
                   formRef={formRef}
                 />

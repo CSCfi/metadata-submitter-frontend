@@ -1,6 +1,7 @@
 import type { TFunction } from "i18next"
 import { startCase } from "lodash"
 
+import { ObjectTypes } from "constants/wizardObject"
 import {
   Schema,
   SubmissionFolder,
@@ -83,13 +84,17 @@ const mapObjectsToStepsHook = (
 
           return {
             ...step,
+            title: step.title.toLowerCase().includes(ObjectTypes.file)
+              ? t("datafolder.datafolder")
+              : step.title,
             ["schemas"]: step.schemas.map(schema => ({
               ...schema,
-              name: startCase(schema.name),
+              name: schema.name.toLowerCase().includes(ObjectTypes.file)
+                ? t("datafolder.datafolder")
+                : startCase(schema.name),
               objectType: schema.name,
               objects: groupedObjects[schema.name],
             })),
-            actionButtonText: t("add"),
             disabled: index > 0 && !checkSchemaReady(requiredSchemas),
           }
         })
@@ -114,7 +119,6 @@ const mapObjectsToStepsHook = (
           required: true,
         },
       ],
-      actionButtonText: t("edit"),
     },
   ].concat(schemaSteps)
 

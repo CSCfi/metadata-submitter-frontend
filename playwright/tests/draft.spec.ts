@@ -64,7 +64,7 @@ test.describe("Draft operations", () => {
     await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
     await expect(
       page
-        .locator("h2")
+        .locator("p")
         .getByText(/Would you like to save a draft version of this form/)
         .first()
     ).toBeVisible()

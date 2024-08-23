@@ -9,6 +9,8 @@
   "add": "Add",
   "edit": "Edit",
   "delete": "Delete",
+  "close": "Close",
+  "viewObject": "View {{object}}",
   "addObject": "Add {{object}}",
   "draft": "Draft",
   "ready": "Ready",
@@ -70,8 +72,7 @@
       "submissions": {
         "deleted": "The submission has been deleted successfully!"
       }
-    },
-    "close": "Close"
+    }
   },
   "alerts": {
     "actions": {
@@ -159,7 +160,10 @@
     "item": "item",
     "items": "items",
     "itemsPerPage": "Items per page:",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "size": "Size",
+    "tags": "Tags",
+    "totalItems": "Items"
   },
   "setIdentifierPublish": "Identifier and publish",
   "summary": "Summary",
@@ -176,5 +180,11 @@
     "accessibility": "Accessibility",
     "privacy": "Privacy",
     "aboutSensitiveDataServices": "About Sensitive Data services"
+  },
+  "datafolder": {
+    "datafolder": "Datafolder",
+    "linkFolder": "Link folder",
+    "linkFromSDConnect": "Link folder from SD Connect",
+    "linkedFolder": "Linked folder"
   }
 }

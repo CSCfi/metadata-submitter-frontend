@@ -7,6 +7,7 @@ export const ObjectTypes = {
   dac: "dac",
   policy: "policy",
   dataset: "dataset",
+  file: "file",
   bpimage: "bpimage",
   bpdataset: "bpdataset",
   bpsample: "bpsample",
@@ -23,6 +24,7 @@ export const DisplayObjectTypes = {
   dac: "DAC",
   policy: "Policy",
   dataset: "Dataset",
+  file: "Datafolder",
 }
 
 export const ObjectStatus = {
@@ -37,7 +39,7 @@ export const ObjectSubmissionTypes = {
   existing: "Existing",
 }
 
-export const ValidSteps = [1,2,3,4,5,6]
+export const ValidSteps = [1, 2, 3, 4, 5, 6]
 
 export const ObjectSubmissionStepsList = [
   {
@@ -58,4 +60,11 @@ export const ObjectSubmissionStepsList = [
 
 export const ObjectSubmissionsArray = [ObjectSubmissionTypes.form, ObjectSubmissionTypes.xml]
 
-export const OmitObjectValues = ["accessionId", "dateCreated", "dateModified", "publishDate", "metaxIdentifier", "doi"]
+export const OmitObjectValues = [
+  "accessionId",
+  "dateCreated",
+  "dateModified",
+  "publishDate",
+  "metaxIdentifier",
+  "doi",
+]

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Datafolder view and Folder table view inside Datafolder step
 - summary table
 
 ## [2024.7.0] - 2024-07-25

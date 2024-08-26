@@ -62,15 +62,12 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnSeparator": {
     display: "none",
   },
-
   "& .MuiDataGrid-columnHeaders": {
     backgroundColor: theme.palette.common.white,
   },
-
   "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader": {
     backgroundColor: theme.palette.common.white,
   },
-
   "& .MuiDataGrid-cell:hover": {
     backgroundColor: "inherit",
   },
@@ -89,6 +86,9 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
     alignItems: "center",
   },
   "& .MuiDataGrid-overlay": {
+    display: "none",
+  },
+  "& .MuiDataGrid-footerContainer": {
     display: "none",
   },
 }))

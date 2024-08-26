@@ -334,20 +334,6 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
 
-  const handleChangePage = (_e: unknown, newPage: number) => {
-    setPaginationModel(prev => ({ ...prev, page: newPage }))
-  }
-
-  const handleItemsPerPageChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setPaginationModel(prev => ({
-      ...prev,
-      pageSize: parseInt(e.target.value, 10),
-      page: 0,
-    }))
-  }
-
   return (
     <>
       <SummaryBar position="sticky" elevation={0}>
@@ -379,17 +365,6 @@ const WizardShowSummaryStep: React.FC = () => {
         const stepRows = rows.filter(row => row.step === step)
         const isDescribeStep = step === 4
 
-        const DataGridPagination = () =>
-          isDescribeStep ? (
-            <WizardPagination
-              totalNumberOfItems={stepRows.length}
-              page={paginationModel.page}
-              itemsPerPage={paginationModel.pageSize}
-              handleChangePage={handleChangePage}
-              handleItemsPerPageChange={handleItemsPerPageChange}
-            />
-          ) : null
-
         return (
           <Container
             key={summaryItem.title}
@@ -415,14 +390,27 @@ const WizardShowSummaryStep: React.FC = () => {
                 pagination
                 paginationMode="client"
                 paginationModel={paginationModel}
-                onPaginationModelChange={newModel => setPaginationModel(newModel)}
-                slots={{
-                  pagination: DataGridPagination,
-                }}
                 hideFooter={!isDescribeStep}
                 hideFooterPagination={!isDescribeStep}
                 hideFooterSelectedRowCount={!isDescribeStep}
               />
+              {isDescribeStep && (
+                <WizardPagination
+                  totalNumberOfItems={stepRows.length}
+                  page={paginationModel.page}
+                  itemsPerPage={paginationModel.pageSize}
+                  handleChangePage={(_e, newPage) =>
+                    setPaginationModel(prev => ({ ...prev, page: newPage }))
+                  }
+                  handleItemsPerPageChange={e =>
+                    setPaginationModel(prev => ({
+                      ...prev,
+                      pageSize: parseInt(e.target.value, 10),
+                      page: 0,
+                    }))
+                  }
+                />
+              )}
             </Box>
           </Container>
         )

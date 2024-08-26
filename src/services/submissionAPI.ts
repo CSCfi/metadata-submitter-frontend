@@ -36,8 +36,15 @@ const getSubmissions = async (params: {
   return await api.get("", params)
 }
 
-const putDOIInfo = async (submissionId: string, doiFormDetails: Record<string, unknown>[]): Promise<APIResponse> => {
+const putDOIInfo = async (
+  submissionId: string,
+  doiFormDetails: Record<string, unknown>[]
+): Promise<APIResponse> => {
   return await api.put(`${submissionId}/doi`, doiFormDetails)
+}
+
+const putLinkedFolder = async (submissionId: string, folderName: string): Promise<APIResponse> => {
+  return await api.put(`${submissionId}/folder`, { linkedFolder: folderName })
 }
 
 export default {
@@ -47,4 +54,5 @@ export default {
   deleteSubmissionById,
   getSubmissions,
   putDOIInfo,
+  putLinkedFolder,
 }

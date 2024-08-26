@@ -15,7 +15,7 @@ import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader
 
 import WizardDataFolderTable from "components/SubmissionWizard/WizardComponents/WizardDataFolderTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
-import { addLinkedFolder } from "features/wizardSubmissionSlice"
+import { addLinkedFolderToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { isFile } from "utils"
 
@@ -30,9 +30,8 @@ const WizardDataFolderStep = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
 
-  const handleLinkFolder = () => {
-    dispatch(addLinkedFolder(selectedFolder))
-    // TODO: Send request to backend to save linked folder name
+  const handleLinkFolder = async () => {
+    dispatch(addLinkedFolderToSubmission(submission.submissionId, selectedFolder))
   }
 
   const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {

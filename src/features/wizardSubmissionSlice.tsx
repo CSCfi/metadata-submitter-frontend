@@ -262,3 +262,18 @@ export const addDoiInfoToSubmission =
       }
     })
   }
+
+export const addLinkedFolderToSubmission =
+  (submissionId: string, linkedFolderName: string) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+    const response = await submissionAPIService.putLinkedFolder(submissionId, linkedFolderName)
+
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        dispatch(addLinkedFolder(linkedFolderName))
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }

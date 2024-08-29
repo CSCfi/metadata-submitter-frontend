@@ -163,7 +163,8 @@
     "noResults": "No results found",
     "size": "Size",
     "tags": "Tags",
-    "totalItems": "Items"
+    "totalItems": "Items",
+    "lastModified": "Last modified"
   },
   "setIdentifierPublish": "Identifier and publish",
   "summary": "Summary",
@@ -185,6 +186,7 @@
     "datafolder": "Datafolder",
     "linkFolder": "Link folder",
     "linkFromSDConnect": "Link folder from SD Connect",
-    "linkedFolder": "Linked folder"
+    "linkedFolder": "Linked folder",
+    "allFolders": "All folders"
   }
 }

@@ -250,6 +250,15 @@ export type File = {
   path: string
   name: string
   bytes: number
+  lastModified?: string
+}
+
+export type DataFileRow = {
+  id: string
+  name: string
+  size: number
+  lastModified: string
+  tags?: string
 }
 
 // Used in feature slices

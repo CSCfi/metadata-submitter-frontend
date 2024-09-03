@@ -332,6 +332,7 @@ const WizardShowSummaryStep: React.FC = () => {
     },
   ]
 
+  const pageSizeOptions = [5, 10, 25, 50, 100]
   const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
 
   return (
@@ -390,6 +391,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 pagination
                 paginationMode="client"
                 paginationModel={paginationModel}
+                pageSizeOptions={pageSizeOptions}
                 hideFooter={!isDescribeStep}
                 hideFooterPagination={!isDescribeStep}
                 hideFooterSelectedRowCount={!isDescribeStep}

@@ -24,7 +24,7 @@ test.describe("DataFolder view", () => {
     }
   )
 
-  test("should be able show correct Folder table", async ({ page }) => {
+  test("should be able show correct Folder table", async ({ page, clickAccordionPanel }) => {
     test.slow()
 
     await expect(page.getByTestId("link-datafolder")).toBeDisabled()
@@ -45,6 +45,25 @@ test.describe("DataFolder view", () => {
     // Assert linked folder's items and size are correct
     await expect(page.getByRole("gridcell", { name: "3" })).toBeVisible()
     await expect(page.getByRole("gridcell", { name: "600" })).toBeVisible()
+
+    // Save current submission and exit to home page
+    await page.getByTestId("save-submission").click()
+    await page
+      .getByRole("dialog")
+      .getByText(/Save and exit/i)
+      .click()
+    await page.waitForLoadState("domcontentloaded", { timeout: 30000 })
+    // Re-open submission and check that linked folder has been saved to the submission
+    await page
+      .locator("[role='row']")
+      .nth(1)
+      .locator("[data-testid='edit-draft-submission']")
+      .click()
+    await clickAccordionPanel("Datafolder")
+    await page.getByTestId("View datafolder").click()
+    await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(1)
+    await expect(page.locator("[data-id='folderB']")).toBeVisible()
+    await expect(page.getByTestId("link-datafolder")).toBeDisabled()
   })
 
   test("should be able show correct File table with subfolders and files", async ({ page }) => {

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Save the linked folder for a submission to backend service
 - File table and table's breadcrumbs in Datafolder step
 - Datafolder view and Folder table view inside Datafolder step
 - summary table

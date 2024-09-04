@@ -329,7 +329,7 @@ const WizardShowSummaryStep: React.FC = () => {
   ]
 
   return (
-    <Container sx={theme => ({ pt: theme.spacing(1) })}>
+    <>
       <SummaryBar position="sticky" elevation={0}>
         <Toolbar sx={{ ml: "auto" }}>
           <Button
@@ -345,14 +345,15 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography
-        component="h1"
-        variant="h4"
-        color="secondary"
-        sx={{ marginTop: 2, marginBottom: 2 }}
-      >
-        {t("summary")}
-      </Typography>
+      <Container>
+        <Typography
+          component="h1"
+          variant="h4"
+          color="secondary"
+        >
+          {t("summary")}
+        </Typography>
+      </Container>
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = rows.filter(row => row.step === step)
@@ -371,7 +372,7 @@ const WizardShowSummaryStep: React.FC = () => {
             >
               {step}. {summaryItem.title}
             </Typography>
-            <Box sx={{ height: "auto", width: "100%" }}>
+            <Box sx={{ height: "auto" }}>
               <SummaryTable
                 rows={stepRows}
                 columns={columns}
@@ -409,7 +410,7 @@ const WizardShowSummaryStep: React.FC = () => {
           alertType={"publish"}
         ></WizardAlert>
       )} */}
-    </Container>
+    </>
   )
 }
 

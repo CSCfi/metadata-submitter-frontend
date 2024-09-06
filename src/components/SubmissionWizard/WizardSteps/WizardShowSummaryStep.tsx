@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import { AppBar, Toolbar } from "@mui/material"
@@ -19,8 +19,10 @@ import { useNavigate } from "react-router-dom"
 
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardPagination from "../WizardComponents/WizardPagination"
+import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
+
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
@@ -74,9 +76,9 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
-/**
- * Show summary of objects added to submission
- */
+///**
+// * Show summary of objects added to submission
+// */
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
   const workflowType = useAppSelector(state => state.workflowType)
@@ -135,6 +137,7 @@ const WizardShowSummaryStep: React.FC = () => {
     }
   }
 
+
   // Display other steps than last (summary)
   const { mappedSteps } = WizardMapObjectsToStepHook(
     submission,
@@ -170,6 +173,12 @@ const WizardShowSummaryStep: React.FC = () => {
       }) || []
     )
   })
+
+  const [filteringText, setFilteringText] = useState<string>("")
+  const filteredRows = useMemo(
+    () => rows.filter(row => row.name.toLowerCase().includes(filteringText.toLowerCase())),
+    [rows, filteringText]
+  )
 
   const columns: GridColDef[] = [
     {
@@ -224,12 +233,24 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography component="h1" variant="h4" color="secondary" sx={{ p: 2 }}>
+      <Typography
+        component="h1"
+        variant="h4"
+        color="secondary"
+        sx={{ marginTop: 2, marginBottom: 2 }}
+      >
         {t("summary")}
       </Typography>
+      <WizardSearchBox
+        placeholder={t("searchItems")}
+        filteringText={filteringText}
+        handleChangeFilteringText={e => setFilteringText(e.target.value)}
+        handleClearFilteringText={() => setFilteringText("")}
+      />
+
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
-        const stepRows = rows.filter(row => row.step === step)
+        const stepRows = filteredRows.filter(row => row.step === step)
         const isDescribeStep = step === 4
 
         return (
@@ -278,7 +299,7 @@ const WizardShowSummaryStep: React.FC = () => {
           </Container>
         )
       })}
-    </Container>
+    </>
   )
 }
 

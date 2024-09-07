@@ -74,9 +74,9 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
-///**
-// * Show summary of objects added to submission
-// */
+/**
+ * Show summary of objects added to submission
+ */
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
   const workflowType = useAppSelector(state => state.workflowType)
@@ -87,7 +87,6 @@ const WizardShowSummaryStep: React.FC = () => {
   const { t } = useTranslation()
 
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
-
   const [sortModels, setSortModels] = useState<{ [key: number]: GridSortModel }>({})
 
   const handleSortModelChange = (step: number, model: GridSortModel) => {
@@ -135,19 +134,8 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
+
   // Display other steps than last (summary)
-
-  // Fetch workflow based on workflowType
-  useEffect(() => {
-    const getWorkflow = async () => {
-      if (workflowType) {
-        const response = await workflowAPIService.getWorkflowByType(workflowType)
-        setCurrentWorkflow(response.data)
-      }
-    }
-    getWorkflow()
-  }, [workflowType])
-
   const { mappedSteps } = WizardMapObjectsToStepHook(
     submission,
     objectTypesArray,
@@ -220,7 +208,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
 
   return (
-    <>
+    <Container sx={theme => ({ pt: theme.spacing(1) })}>
       <SummaryBar position="sticky" elevation={0}>
         <Toolbar sx={{ ml: "auto" }}>
           <Button
@@ -236,11 +224,14 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Container>
-        <Typography component="h1" variant="h4" color="secondary">
-          {t("summary")}
-        </Typography>
-      </Container>
+      <Typography
+        component="h1"
+        variant="h4"
+        color="secondary"
+        sx={{ marginTop: 2, marginBottom: 2 }}
+      >
+        {t("summary")}
+      </Typography>
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = rows.filter(row => row.step === step)
@@ -261,7 +252,7 @@ const WizardShowSummaryStep: React.FC = () => {
             >
               {step}. {summaryItem.title}
             </Typography>
-            <Box sx={{ height: "auto" }}>
+            <Box sx={{ height: "auto", width: "100%" }}>
               <SummaryTable
                 rows={stepRows}
                 columns={columns}
@@ -297,7 +288,7 @@ const WizardShowSummaryStep: React.FC = () => {
           </Container>
         )
       })}
-    </>
+    </Container>
   )
 }
 

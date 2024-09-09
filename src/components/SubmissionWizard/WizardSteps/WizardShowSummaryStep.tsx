@@ -233,21 +233,17 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography
-        component="h1"
-        variant="h4"
-        color="secondary"
-        sx={{ marginTop: 2, marginBottom: 2 }}
-      >
+      <Typography component="h1" variant="h4" color="secondary" sx={{ p: 2 }}>
         {t("summary")}
       </Typography>
-      <WizardSearchBox
-        placeholder={t("searchItems")}
-        filteringText={filteringText}
-        handleChangeFilteringText={e => setFilteringText(e.target.value)}
-        handleClearFilteringText={() => setFilteringText("")}
-      />
-
+      <Box sx={{ p: 2 }}>
+        <WizardSearchBox
+          placeholder={t("searchItems")}
+          filteringText={filteringText}
+          handleChangeFilteringText={e => setFilteringText(e.target.value)}
+          handleClearFilteringText={() => setFilteringText("")}
+        />
+      </Box>
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = filteredRows.filter(row => row.step === step)

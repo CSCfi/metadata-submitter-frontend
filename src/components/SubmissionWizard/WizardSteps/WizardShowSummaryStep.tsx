@@ -224,12 +224,7 @@ const WizardShowSummaryStep: React.FC = () => {
           </Button>
         </Toolbar>
       </SummaryBar>
-      <Typography
-        component="h1"
-        variant="h4"
-        color="secondary"
-        sx={{ marginTop: 2, marginBottom: 2 }}
-      >
+      <Typography component="h1" variant="h4" color="secondary" sx={{ p: 2 }}>
         {t("summary")}
       </Typography>
       {summarySteps.map((summaryItem, index) => {
@@ -242,17 +237,12 @@ const WizardShowSummaryStep: React.FC = () => {
             key={summaryItem.title}
             disableGutters
             data-testid={`summary-step-${step}`}
-            sx={{ padding: "1rem 0", marginBottom: "2rem" }}
+            sx={{ padding: "1rem 0", mb: "2rem" }}
           >
-            <Typography
-              component="h2"
-              variant="h5"
-              color="secondary"
-              sx={{ marginTop: 2, marginBottom: 2 }}
-            >
+            <Typography component="h2" variant="h5" color="secondary" sx={{ p: 2 }}>
               {step}. {summaryItem.title}
             </Typography>
-            <Box sx={{ height: "auto", width: "100%" }}>
+            <Box sx={{ height: "auto", width: "100%", p: 2 }}>
               <SummaryTable
                 rows={stepRows}
                 columns={columns}

@@ -138,11 +138,12 @@ const ButtonGroup = styled(Box)(({ theme }) => ({
   },
 }))
 
-const Form = styled("form")(({ theme }) => ({
+const Form = styled("form")<{ submittedStudy: boolean }>(({ theme }) => ({
   ...theme.form,
 }))
 
 type CustomCardHeaderProps = {
+  submittedStudy: boolean,
   objectType: string
   currentObject: ObjectDetails
   onClickSaveDraft: () => Promise<void>
@@ -172,6 +173,7 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
+    submittedStudy,
     objectType,
     currentObject,
     refForm,
@@ -238,8 +240,12 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           onClick={onClickSubmit}
           form={refForm}
           data-testid="form-ready"
+          disabled={currentObject?.status === ObjectStatus.draft
+            && objectType === ObjectTypes.study
+            && submittedStudy}
         >
-          {currentObject?.status === ObjectStatus.submitted
+          {(currentObject?.status === ObjectStatus.submitted )
+          || (objectType === ObjectTypes.study && submittedStudy)
             ? t("formActions.update")
             : t("formActions.markAsReady")}
         </Button>
@@ -345,6 +351,9 @@ const FormContent = ({
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
+
+  const submittedStudy: boolean = submission.metadataObjects
+  .filter(object => object.schema === ObjectTypes.study).length > 0
 
   const autoSaveTimer: { current: NodeJS.Timeout | null } = useRef(null)
   let timer = 0
@@ -627,6 +636,7 @@ const FormContent = ({
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
+        submittedStudy={submittedStudy}
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
@@ -642,6 +652,7 @@ const FormContent = ({
 
       <Form
         id="hook-form"
+        submittedStudy={submittedStudy}
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={formRef as RefObject<HTMLFormElement>}
@@ -799,13 +810,15 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
     // Either patch object or submit a new object
     if (data.status === ObjectStatus.submitted) {
       patchObject()
-    } else {
+    } else if ((objectType !== ObjectTypes.study)
+      || (objectType === ObjectTypes.study
+        && submission.metadataObjects.filter(object => object.schema === ObjectTypes.study).length === 0)) {
       submitObjectHook(data, submission.submissionId, objectType, dispatch)
         .then(() => {
           setSubmitting(false)
         })
         .catch(err => console.error(err))
-    }
+    } else setSubmitting(false)
   }
 
   if (states.isLoading) return <CircularProgress />

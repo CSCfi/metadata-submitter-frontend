@@ -9,16 +9,20 @@ import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 type WizardOptionsProps = {
+  objectType: string,
   onClearForm: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { onClearForm, onOpenXMLModal, onDeleteForm } = props
+  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm } = props
   const { t } = useTranslation()
 
-  const options = [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+  const options = objectType !== "datacite"
+  ?  [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+  : [t("formActions.clearForm")]
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 

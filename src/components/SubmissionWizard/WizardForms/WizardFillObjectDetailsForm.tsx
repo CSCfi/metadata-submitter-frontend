@@ -19,6 +19,7 @@ import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "rea
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
+// import DOIForm from "../WizardForms/WizardDOIForm"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
@@ -30,15 +31,18 @@ import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
+import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
+import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import {
   deleteObjectFromSubmission,
   replaceObjectInSubmission,
+  addDoiInfoToSubmission,
 } from "features/wizardSubmissionSlice"
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -46,6 +50,7 @@ import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
 import type {
+  DoiFormDetails,
   SubmissionDetailsWithId,
   FormDataFiles,
   FormObject,
@@ -146,6 +151,7 @@ type CustomCardHeaderProps = {
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
+  onClickSaveDOI: () => Promise<void>
   onClickCloseDialog: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
@@ -168,12 +174,14 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
+    objectType,
     currentObject,
     refForm,
     onClickClearForm,
     onClickSaveDraft,
     onClickUpdateTemplate,
     onClickSubmit,
+    onClickSaveDOI,
     onClickCloseDialog,
     onOpenXMLModal,
     onDeleteForm,
@@ -207,6 +215,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const buttonGroup = (
     <div style={{ display: "flex" }}>
       <WizardOptions
+        objectType={objectType}
         onClearForm={onClickClearForm}
         onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
@@ -240,10 +249,36 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     </div>
   )
 
+  const DoiButtonGroup = (
+    <div style={{ display: "flex" }}>
+      <WizardOptions
+        objectType={objectType}
+        onClearForm={onClickClearForm}
+        onOpenXMLModal={onOpenXMLModal}
+        onDeleteForm={onDeleteForm}
+      />
+      <ButtonGroup>
+        <Button
+          variant="contained"
+          aria-label="save Datacite"
+          size="small"
+          onClick={onClickSaveDOI}
+          data-testid="form-datacite"
+        >
+        { t("save")}
+        </Button>
+      </ButtonGroup>
+    </div>
+  )
+
   return (
     <StickyContainer>
       <WizardStepContentHeader
-        action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
+        action={currentObject?.status === ObjectStatus.template
+          ?  templateButtonGroup
+          : (objectType === "datacite")
+          ?  DoiButtonGroup
+          : buttonGroup}
       />
     </StickyContainer>
   )
@@ -403,6 +438,30 @@ const FormContent = ({
       dispatch(resetDraftStatus())
       resetTimer()
     }
+  }
+
+  const handleDOISubmit = async (data: DoiFormDetails) => {
+    dispatch(addDoiInfoToSubmission(submission.submissionId, data))
+      .then(() => {
+        dispatch(resetAutocompleteField())
+        dispatch(setOpenedDoiForm(false))
+        dispatch(resetCurrentObject())
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "DOI form has been saved successfully",
+          })
+        )
+      })
+      .catch(error =>
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "Can't submit information for DOI.",
+          })
+        )
+      )
   }
 
   /*
@@ -579,6 +638,7 @@ const FormContent = ({
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
+        onClickSaveDOI={methods.handleSubmit(async data => handleDOISubmit(data as DoiFormDetails))}
         onClickCloseDialog={() => closeDialog()}
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
@@ -760,7 +820,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         <AlertMessage>{states.helperText}</AlertMessage>
       </CustomAlert>
     )
-
+console.log(states.formSchema)
   return (
     <>
       <GlobalStyles styles={{ ".MuiContainer-root": { maxWidth: "100% !important" } }} />

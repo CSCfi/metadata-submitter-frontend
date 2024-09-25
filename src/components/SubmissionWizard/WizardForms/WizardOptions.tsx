@@ -20,7 +20,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   const { t } = useTranslation()
 
   const options = objectType !== "datacite"
-  ?  [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+  ?  [t("formActions.clearForm"), t("formActions.uploadXML"), t("formActions.deleteForm")]
   : [t("formActions.clearForm")]
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -32,8 +32,8 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
 
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
-    option === options[0] ? onOpenXMLModal() : null
-    option === options[1] ? onClearForm() : null
+    option === options[0] ? onClearForm() : null
+    option === options[1] ? onOpenXMLModal() : null
     option === options[2] ? onDeleteForm() : null
   }
 

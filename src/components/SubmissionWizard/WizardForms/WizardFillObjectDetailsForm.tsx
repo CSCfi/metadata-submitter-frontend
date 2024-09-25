@@ -11,7 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
 import Typography from "@mui/material/Typography"
-import { styled } from "@mui/system"
+import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
@@ -126,7 +126,7 @@ const AlertMessage = styled(Typography)({
   fontWeight: "bold",
 })
 
-const ButtonGroup = styled("div")(({ theme }) => ({
+const ButtonGroup = styled(Box)(({ theme }) => ({
   display: "flex",
   gridTemplateColumns: "repeat(3, 1fr)",
   columnGap: "2rem",
@@ -147,12 +147,12 @@ const Form = styled("form")(({ theme }) => ({
 type CustomCardHeaderProps = {
   objectType: string
   currentObject: ObjectDetails
-  onClickClearForm: () => void
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
   onClickSaveDOI: () => Promise<void>
   onClickCloseDialog: () => void
+  onClickClearForm: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
   refForm: string
@@ -177,12 +177,12 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     objectType,
     currentObject,
     refForm,
-    onClickClearForm,
     onClickSaveDraft,
     onClickUpdateTemplate,
     onClickSubmit,
     onClickSaveDOI,
     onClickCloseDialog,
+    onClickClearForm,
     onOpenXMLModal,
     onDeleteForm,
   } = props
@@ -213,7 +213,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   const buttonGroup = (
-    <div style={{ display: "flex" }}>
+    <Box display="flex">
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
@@ -246,11 +246,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
             : t("formActions.markAsReady")}
         </Button>
       </ButtonGroup>
-    </div>
+    </Box>
   )
 
-  const DoiButtonGroup = (
-    <div style={{ display: "flex" }}>
+  const doiButtonGroup = (
+    <Box display="flex">
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
@@ -265,10 +265,10 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           onClick={onClickSaveDOI}
           data-testid="form-datacite"
         >
-        { t("save")}
+          {t("save")}
         </Button>
       </ButtonGroup>
-    </div>
+    </Box>
   )
 
   return (
@@ -277,7 +277,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         action={currentObject?.status === ObjectStatus.template
           ?  templateButtonGroup
           : (objectType === "datacite")
-          ?  DoiButtonGroup
+          ?  doiButtonGroup
           : buttonGroup}
       />
     </StickyContainer>
@@ -634,12 +634,12 @@ const FormContent = ({
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
         onClickSaveDOI={methods.handleSubmit(async data => handleDOISubmit(data as DoiFormDetails))}
         onClickCloseDialog={() => closeDialog()}
+        onClickClearForm={() => handleClearForm()}
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
       />
@@ -651,7 +651,7 @@ const FormContent = ({
         ref={formRef as RefObject<HTMLFormElement>}
         onReset={handleReset}
       >
-        <div>{JSONSchemaParser.buildFields(formSchema)}</div>
+        <Box>{JSONSchemaParser.buildFields(formSchema)}</Box>
       </Form>
     </FormProvider>
   )
@@ -820,7 +820,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         <AlertMessage>{states.helperText}</AlertMessage>
       </CustomAlert>
     )
-console.log(states.formSchema)
+
   return (
     <>
       <GlobalStyles styles={{ ".MuiContainer-root": { maxWidth: "100% !important" } }} />

@@ -317,9 +317,11 @@ const Message = (props: StatusMessageProps) => {
 }
 
 const StatusMessageHandler: React.FC = () => {
+  const objectType = useAppSelector(state => state.objectType)
   const statusDetails = useAppSelector(state => state.statusDetails)
 
-  return (
+  return objectType === "datacite" ? null
+  : (
     <React.Fragment>
       {statusDetails?.status && !Array.isArray(statusDetails.response) && (
         <Message

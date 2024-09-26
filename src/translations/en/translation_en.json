@@ -45,7 +45,8 @@
       "400": "{{helperText}} Details: {{responseDetail}}",
       "helperText": {
         "deleteObjectFromSubmission": "Can't delete object",
-        "fetchWorkflowsError": "Error getting all workflows"
+        "fetchWorkflowsError": "Error getting all workflows",
+        "submitDoiError": "Can't submit information for DOI."
       }
     },
     "info": {
@@ -65,6 +66,9 @@
         "replaced": "Object replaced with accessionid {{accessionId}}",
         "updated": "Object updated with accessionid {{accessionId}}",
         "deleted": "Object deleted successfully"
+      },
+      "doi": {
+        "saved": "DOI form has been saved successfully"
       },
       "templates": {
         "updated": "Template updated with accessionid {{accessionId}}"

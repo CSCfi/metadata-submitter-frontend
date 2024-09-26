@@ -19,7 +19,6 @@ import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "rea
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
-// import DOIForm from "../WizardForms/WizardDOIForm"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
@@ -449,7 +448,7 @@ const FormContent = ({
         dispatch(
           updateStatus({
             status: ResponseStatus.success,
-            helperText: "DOI form has been saved successfully",
+            helperText: "snackbarMessages.success.doi.saved",
           })
         )
       })
@@ -458,7 +457,7 @@ const FormContent = ({
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "Can't submit information for DOI.",
+            helperText: "snackbarMessages.error.helperText.submitDoiError",
           })
         )
       )
@@ -497,8 +496,8 @@ const FormContent = ({
   const keyHandler = () => {
     resetTimer()
 
-    // Prevent auto save from template dialog
-    if (currentObject?.status !== ObjectStatus.template) startTimer()
+    // Prevent auto save from DOI and template dialog
+    if (!(currentObject?.status === ObjectStatus.template && objectType === "datacite")) startTimer()
   }
 
   useEffect(() => {

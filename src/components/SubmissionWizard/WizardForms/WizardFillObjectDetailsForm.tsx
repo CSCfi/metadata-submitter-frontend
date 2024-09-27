@@ -494,8 +494,9 @@ const FormContent = ({
   const keyHandler = () => {
     resetTimer()
 
-    // Prevent auto save from DOI and template dialog
-    if (!(currentObject?.status === ObjectStatus.template && objectType === "datacite")) startTimer()
+    // Prevent auto save from DOI form and template dialog
+    if (currentObject?.status !== ObjectStatus.template )
+      if (objectType !== "datacite") startTimer()
   }
 
   useEffect(() => {

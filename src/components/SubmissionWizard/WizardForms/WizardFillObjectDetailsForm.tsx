@@ -253,8 +253,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
-        onOpenXMLModal={onOpenXMLModal}
-        onDeleteForm={onDeleteForm}
       />
       <ButtonGroup>
         <Button

@@ -11,8 +11,8 @@ import { useTranslation } from "react-i18next"
 type WizardOptionsProps = {
   objectType: string,
   onClearForm: () => void
-  onOpenXMLModal: () => void
-  onDeleteForm: () => void
+  onOpenXMLModal?: () => void
+  onDeleteForm?: () => void
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
@@ -20,7 +20,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   const { t } = useTranslation()
 
   const options = objectType !== "datacite"
-  ?  [t("formActions.clearForm"), t("formActions.uploadXML"), t("formActions.deleteForm")]
+  ?  [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
   : [t("formActions.clearForm")]
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -32,9 +32,10 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
 
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
-    option === options[0] ? onClearForm() : null
-    option === options[1] ? onOpenXMLModal() : null
-    option === options[2] ? onDeleteForm() : null
+    option === options[0] && objectType === "datacite" ? onClearForm() : null
+    option === options[0] && onOpenXMLModal ? onOpenXMLModal() : null
+    option === options[1] ? onClearForm() : null
+    option === options[2] && onDeleteForm ? onDeleteForm() : null
   }
 
   return (

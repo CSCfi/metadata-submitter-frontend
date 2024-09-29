@@ -300,7 +300,7 @@ const WizardShowSummaryStep: React.FC = () => {
           </Container>
         )
       })}
-    </>
+    </Container>
   )
 }
 

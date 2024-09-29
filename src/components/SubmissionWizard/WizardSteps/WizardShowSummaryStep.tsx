@@ -175,10 +175,15 @@ const WizardShowSummaryStep: React.FC = () => {
   })
 
   const [filteringText, setFilteringText] = useState<string>("")
-  const filteredRows = useMemo(
-    () => rows.filter(row => row.name.toLowerCase().includes(filteringText.toLowerCase())),
-    [rows, filteringText]
-  )
+  const filteredRows = useMemo(() => {
+    return rows.filter(row => {
+      const statusText = row.draft ? "Draft" : "Ready"
+      return (
+        row.name.toLowerCase().includes(filteringText.toLowerCase()) ||
+        statusText.toLowerCase().includes(filteringText.toLowerCase())
+      )
+    })
+  }, [rows, filteringText])
 
   const columns: GridColDef[] = [
     {

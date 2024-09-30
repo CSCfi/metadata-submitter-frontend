@@ -23,7 +23,6 @@ import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
 
-
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -77,8 +76,8 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
 }))
 
 /**
-* Show summary of objects added to submission
-*/
+ * Show summary of objects added to submission
+ */
 
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
@@ -137,7 +136,6 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
-
 
   // Display other steps than last (summary)
   const { mappedSteps } = WizardMapObjectsToStepHook(
@@ -223,7 +221,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
 
   return (
-    <Container sx={theme => ({ pt: theme.spacing(1) })}>
+    <>
       <SummaryBar position="sticky" elevation={0}>
         <Toolbar sx={{ ml: "auto" }}>
           <Button
@@ -301,7 +299,7 @@ const WizardShowSummaryStep: React.FC = () => {
           </Container>
         )
       })}
-    </Container>
+    </>
   )
 }
 

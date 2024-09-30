@@ -76,9 +76,10 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
-///**
-// * Show summary of objects added to submission
-// */
+/**
+* Show summary of objects added to submission
+*/
+
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
   const workflowType = useAppSelector(state => state.workflowType)

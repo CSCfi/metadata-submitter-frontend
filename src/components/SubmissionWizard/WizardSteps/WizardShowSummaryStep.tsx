@@ -157,7 +157,7 @@ const WizardShowSummaryStep: React.FC = () => {
             const draft = item.objectData?.schema.includes("draft-")
             return {
               id: item.id,
-              status: draft ? "Draft" : "Ready",
+              status: draft ? t("draft") : t("draft"),
               name: item.displayTitle,
               action: draft ? t("Please mark as ready") : "",
               step,
@@ -176,7 +176,7 @@ const WizardShowSummaryStep: React.FC = () => {
   const [filteringText, setFilteringText] = useState<string>("")
   const filteredRows = useMemo(() => {
     return rows.filter(row => {
-      const statusText = row.draft ? "Draft" : "Ready"
+      const statusText = row.draft ? t("draft") : t("ready")
       return (
         row.name.toLowerCase().includes(filteringText.toLowerCase()) ||
         statusText.toLowerCase().includes(filteringText.toLowerCase())

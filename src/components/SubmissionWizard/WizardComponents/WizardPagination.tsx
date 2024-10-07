@@ -24,6 +24,8 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   "& .MuiTablePagination-toolbar": {
     display: "flex",
     padding: 0,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   "& .MuiTablePagination-selectLabel": {
     marginLeft: "1.375em",
@@ -37,7 +39,14 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   "& .MuiTablePagination-selectIcon": {
     fontSize: "2rem",
   },
-  "& .MuiTablePagination-displayedRows": { marginLeft: "auto" },
+  "& .MuiTablePagination-displayedRows": {
+    marginLeft: "auto",
+    "@media (max-width: 600px)": {
+      marginLeft: 0,
+      width: "100%", 
+      textAlign: "center", 
+    },
+  },
 }))
 
 const TablePaginationActions = styled("div")(({ theme }) => ({
@@ -168,7 +177,7 @@ const DisplayRows = styled("span")(({ theme }) => ({
   "& span:last-of-type": {
     color: theme.palette.secondary.main,
     fontSize: "1.4rem",
-    marginLeft: "3.25rem",
+    marginLeft: 0,
   },
 }))
 

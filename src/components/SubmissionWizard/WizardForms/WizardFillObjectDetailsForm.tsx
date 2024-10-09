@@ -34,7 +34,6 @@ import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
-import { setOpenedDoiForm } from "features/openedDoiFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -441,7 +440,6 @@ const FormContent = ({
     dispatch(addDoiInfoToSubmission(submission.submissionId, data))
       .then(() => {
         dispatch(resetAutocompleteField())
-        dispatch(setOpenedDoiForm(false))
         dispatch(resetCurrentObject())
         dispatch(
           updateStatus({

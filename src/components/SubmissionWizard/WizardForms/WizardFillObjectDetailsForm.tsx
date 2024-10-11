@@ -219,6 +219,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClearForm={onClickClearForm}
         onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
+        existStudy={submittedStudy && objectType === ObjectTypes.study}
       />
       <ButtonGroup>
         <Button
@@ -349,7 +350,6 @@ const FormContent = ({
 
   const templates = useAppSelector(state => state.templates)
   const methods = useForm({ mode: "onBlur", resolver })
-  console.log(methods)
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)

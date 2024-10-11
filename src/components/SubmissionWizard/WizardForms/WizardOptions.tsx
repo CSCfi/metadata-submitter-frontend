@@ -11,12 +11,13 @@ import { useTranslation } from "react-i18next"
 type WizardOptionsProps = {
   objectType: string,
   onClearForm: () => void
-  onOpenXMLModal?: () => void
-  onDeleteForm?: () => void
+  onOpenXMLModal: () => void
+  onDeleteForm: () => void
+  existStudy: boolean
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm } = props
+  const { onClearForm, onOpenXMLModal, onDeleteForm } = props
   const { t } = useTranslation()
 
   const options = objectType !== "datacite"
@@ -74,6 +75,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
           <MenuItem
             key={option}
             selected={index === 0}
+            disabled={existStudy && index === 0}
             onClick={e => handleClose(e, option)}
             sx={{
               p: "1.2rem",

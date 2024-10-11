@@ -227,6 +227,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           size="small"
           onClick={onClickSaveDraft}
           data-testid="form-draft"
+          disabled={submittedStudy && objectType === ObjectTypes.study}
         >
           {currentObject?.status === ObjectStatus.draft
             ? t("formActions.updateDraft")
@@ -348,6 +349,7 @@ const FormContent = ({
 
   const templates = useAppSelector(state => state.templates)
   const methods = useForm({ mode: "onBlur", resolver })
+  console.log(methods)
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)

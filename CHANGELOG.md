@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Own condition for datacite to enable only "Clear form" option for Datacite
+- Moved saving of DOI from WizardDoiForm.tsx component to WizardFillObjectDetailsForm component
 - Catching error 400 when validating XML file
 - Update UI design for Wizard Alert ( #954)
 
@@ -18,10 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A new button group for DOI
 - Save the linked folder for a submission to backend service
 - File table and table's breadcrumbs in Datafolder step
 - Datafolder view and Folder table view inside Datafolder step
 - summary table
+
+### Removed
+
+- (users) At Datacite step "Delete form" and "Upload XML file" from the "Options ..."
 
 ## [2024.7.0] - 2024-07-25
 

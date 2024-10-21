@@ -251,7 +251,6 @@ const WizardShowSummaryStep: React.FC = () => {
       {summarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = filteredRows.filter(row => row.step === step)
-        const isDescribeStep = step === 4
 
         return (
           <Container
@@ -274,27 +273,23 @@ const WizardShowSummaryStep: React.FC = () => {
                 paginationMode="client"
                 paginationModel={paginationModel}
                 pageSizeOptions={pageSizeOptions}
-                hideFooter={!isDescribeStep}
-                hideFooterPagination={!isDescribeStep}
-                hideFooterSelectedRowCount={!isDescribeStep}
+                hideFooter={false}
               />
-              {isDescribeStep && (
-                <WizardPagination
-                  totalNumberOfItems={stepRows.length}
-                  page={paginationModel.page}
-                  itemsPerPage={paginationModel.pageSize}
-                  handleChangePage={(_e, newPage) =>
-                    setPaginationModel(prev => ({ ...prev, page: newPage }))
-                  }
-                  handleItemsPerPageChange={e =>
-                    setPaginationModel(prev => ({
-                      ...prev,
-                      pageSize: parseInt(e.target.value, 10),
-                      page: 0,
-                    }))
-                  }
-                />
-              )}
+              <WizardPagination
+                totalNumberOfItems={stepRows.length}
+                page={paginationModel.page}
+                itemsPerPage={paginationModel.pageSize}
+                handleChangePage={(_e, newPage) =>
+                  setPaginationModel(prev => ({ ...prev, page: newPage }))
+                }
+                handleItemsPerPageChange={e =>
+                  setPaginationModel(prev => ({
+                    ...prev,
+                    pageSize: parseInt(e.target.value, 10),
+                    page: 0,
+                  }))
+                }
+              />
             </Box>
           </Container>
         )

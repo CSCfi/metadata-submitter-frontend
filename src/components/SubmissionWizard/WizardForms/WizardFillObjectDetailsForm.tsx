@@ -11,7 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
 import Typography from "@mui/material/Typography"
-import { styled } from "@mui/system"
+import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
@@ -30,6 +30,7 @@ import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
+import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
@@ -39,6 +40,7 @@ import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObje
 import {
   deleteObjectFromSubmission,
   replaceObjectInSubmission,
+  addDoiInfoToSubmission,
 } from "features/wizardSubmissionSlice"
 import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -46,6 +48,7 @@ import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import templateAPI from "services/templateAPI"
 import type {
+  DoiFormDetails,
   SubmissionDetailsWithId,
   FormDataFiles,
   FormObject,
@@ -121,7 +124,7 @@ const AlertMessage = styled(Typography)({
   fontWeight: "bold",
 })
 
-const ButtonGroup = styled("div")(({ theme }) => ({
+const ButtonGroup = styled(Box)(({ theme }) => ({
   display: "flex",
   gridTemplateColumns: "repeat(3, 1fr)",
   columnGap: "2rem",
@@ -142,11 +145,12 @@ const Form = styled("form")(({ theme }) => ({
 type CustomCardHeaderProps = {
   objectType: string
   currentObject: ObjectDetails
-  onClickClearForm: () => void
   onClickSaveDraft: () => Promise<void>
   onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
+  onClickSaveDOI: () => Promise<void>
   onClickCloseDialog: () => void
+  onClickClearForm: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
   refForm: string
@@ -168,13 +172,15 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
+    objectType,
     currentObject,
     refForm,
-    onClickClearForm,
     onClickSaveDraft,
     onClickUpdateTemplate,
     onClickSubmit,
+    onClickSaveDOI,
     onClickCloseDialog,
+    onClickClearForm,
     onOpenXMLModal,
     onDeleteForm,
   } = props
@@ -205,8 +211,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   const buttonGroup = (
-    <div style={{ display: "flex" }}>
+    <Box display="flex">
       <WizardOptions
+        objectType={objectType}
         onClearForm={onClickClearForm}
         onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
@@ -237,13 +244,37 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
             : t("formActions.markAsReady")}
         </Button>
       </ButtonGroup>
-    </div>
+    </Box>
+  )
+
+  const doiButtonGroup = (
+    <Box display="flex">
+      <WizardOptions
+        objectType={objectType}
+        onClearForm={onClickClearForm}
+      />
+      <ButtonGroup>
+        <Button
+          variant="contained"
+          aria-label="save Datacite"
+          size="small"
+          onClick={onClickSaveDOI}
+          data-testid="form-datacite"
+        >
+          {t("save")}
+        </Button>
+      </ButtonGroup>
+    </Box>
   )
 
   return (
     <StickyContainer>
       <WizardStepContentHeader
-        action={currentObject?.status === ObjectStatus.template ? templateButtonGroup : buttonGroup}
+        action={currentObject?.status === ObjectStatus.template
+          ?  templateButtonGroup
+          : (objectType === "datacite")
+          ?  doiButtonGroup
+          : buttonGroup}
       />
     </StickyContainer>
   )
@@ -405,6 +436,29 @@ const FormContent = ({
     }
   }
 
+  const handleDOISubmit = async (data: DoiFormDetails) => {
+    dispatch(addDoiInfoToSubmission(submission.submissionId, data))
+      .then(() => {
+        dispatch(resetAutocompleteField())
+        dispatch(resetCurrentObject())
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "snackbarMessages.success.doi.saved",
+          })
+        )
+      })
+      .catch(error =>
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "snackbarMessages.error.helperText.submitDoiError",
+          })
+        )
+      )
+  }
+
   /*
    * Logic for auto-save feature.
    * We use setDraftAutoSaveAllowed state change to render form before save.
@@ -438,8 +492,9 @@ const FormContent = ({
   const keyHandler = () => {
     resetTimer()
 
-    // Prevent auto save from template dialog
-    if (currentObject?.status !== ObjectStatus.template) startTimer()
+    // Prevent auto save from DOI form and template dialog
+    if (currentObject?.status !== ObjectStatus.template )
+      if (objectType !== "datacite") startTimer()
   }
 
   useEffect(() => {
@@ -575,11 +630,12 @@ const FormContent = ({
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
-        onClickClearForm={() => handleClearForm()}
         onClickSaveDraft={() => handleSaveDraft()}
         onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
+        onClickSaveDOI={methods.handleSubmit(async data => handleDOISubmit(data as DoiFormDetails))}
         onClickCloseDialog={() => closeDialog()}
+        onClickClearForm={() => handleClearForm()}
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
       />
@@ -591,7 +647,7 @@ const FormContent = ({
         ref={formRef as RefObject<HTMLFormElement>}
         onReset={handleReset}
       >
-        <div>{JSONSchemaParser.buildFields(formSchema)}</div>
+        <Box>{JSONSchemaParser.buildFields(formSchema)}</Box>
       </Form>
     </FormProvider>
   )

@@ -17,7 +17,7 @@ import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import WizardDraftSelections from "./WizardDraftSelections"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus } from "constants/wizardObject"
+import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
@@ -112,6 +112,9 @@ const CancelFormDialog = ({
   const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useAppDispatch()
 
+  const submittedStudy: boolean = submission.metadataObjects
+  .filter(object => object.schema === ObjectTypes.study).length > 0
+
   // Draft save logic
   const saveDraft = async () => {
     setError(false)
@@ -181,6 +184,7 @@ const CancelFormDialog = ({
               saveDraft()
             }}
             color="primary"
+            disabled={submittedStudy && objectType === ObjectTypes.study}
           >
             {t("alerts.actions.saveDraft")}
           </Button>

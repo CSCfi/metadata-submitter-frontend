@@ -498,7 +498,7 @@ const FormContent = ({
     if (alert) resetTimer()
 
     if (draftAutoSaveAllowed) {
-      handleSaveDraft()
+      if (!(submittedStudy && objectType === ObjectTypes.study)) handleSaveDraft()
       resetTimer()
     }
   }, [draftAutoSaveAllowed, alert])

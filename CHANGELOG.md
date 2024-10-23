@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Fixed narrow page summary table pagination
 - Own condition for datacite to enable only "Clear form" option for Datacite
 - Moved saving of DOI from WizardDoiForm.tsx component to WizardFillObjectDetailsForm component
 - Catching error 400 when validating XML file

@@ -24,6 +24,8 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   "& .MuiTablePagination-toolbar": {
     display: "flex",
     padding: 0,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   "& .MuiTablePagination-selectLabel": {
     marginLeft: "1.375em",
@@ -37,7 +39,14 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   "& .MuiTablePagination-selectIcon": {
     fontSize: "2rem",
   },
-  "& .MuiTablePagination-displayedRows": { marginLeft: "auto" },
+  "& .MuiTablePagination-displayedRows": {
+    marginLeft: "auto",
+    "@media (max-width: 600px)": {
+      marginLeft: 0,
+      width: "100%",
+      textAlign: "center",
+    },
+  },
 }))
 
 const TablePaginationActions = styled("div")(({ theme }) => ({
@@ -100,15 +109,14 @@ const WizardPaginationActions = ({
 
   const matches = useMediaQuery(theme.breakpoints.down("md"))
 
-  const handleChange = (e: React.ChangeEvent<unknown>, val: number) => {
-    onPageChange(null, val - 1)
-  }
-
   const handleBackButtonClick = () => {
     onPageChange(null, page - 1)
   }
   const handleNextButtonClick = () => {
     onPageChange(null, page + 1)
+  }
+  const handleChange = (e: React.ChangeEvent<unknown>, val: number) => {
+    onPageChange(null, val - 1)
   }
 
   return (
@@ -121,18 +129,11 @@ const WizardPaginationActions = ({
             aria-label="previous page"
             data-testid="previous page"
           >
-            {theme.direction === "rtl" ? (
-              <KeyboardArrowRight
-                onClick={handleBackButtonClick}
-                aria-label="previous page"
-                data-testid="previous page"
-              />
-            ) : (
-              <KeyboardArrowLeft />
-            )}
+            {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
           </IconButton>
           <IconButton
             onClick={handleNextButtonClick}
+            disabled={page + 1 === totalPages} // Disable when on the last page
             aria-label="next page"
             data-testid="next page"
           >
@@ -168,7 +169,7 @@ const DisplayRows = styled("span")(({ theme }) => ({
   "& span:last-of-type": {
     color: theme.palette.secondary.main,
     fontSize: "1.4rem",
-    marginLeft: "3.25rem",
+    marginLeft: 0,
   },
 }))
 
@@ -178,14 +179,19 @@ const WizardPagination: React.FC<WizardPaginationProps> = props => {
     props
   const { t } = useTranslation()
 
-  const labelDisplayedRows = ({ from, to, count }) => (
-    <DisplayRows>
-      <Divider component="span" orientation="vertical" variant="middle" />
-      <span>
-        {from}-{to} / {count} {count > 1 ? t("dataTable.items") : t("dataTable.item")}
-      </span>
-    </DisplayRows>
-  )
+  const labelDisplayedRows = ({ from, to, count }: { from: number; to: number; count: number }) => {
+    const narrowFrom = from
+    const narrowTo = to > count ? count : to
+
+    return (
+      <DisplayRows>
+        <Divider component="span" orientation="vertical" variant="middle" />
+        <span>
+          {narrowFrom}-{narrowTo} / {count} {count > 1 ? t("dataTable.items") : t("dataTable.item")}
+        </span>
+      </DisplayRows>
+    )
+  }
 
   // Get "rowsPerPageOptions" of TablePagination
   const getRowsPerPageOptions = (

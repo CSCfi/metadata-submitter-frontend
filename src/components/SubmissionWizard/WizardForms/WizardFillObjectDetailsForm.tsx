@@ -260,6 +260,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
+        onOpenXMLModal={onOpenXMLModal}
+        onDeleteForm={onDeleteForm}
+        existStudy={submittedStudy && objectType === ObjectTypes.study}
       />
       <ButtonGroup>
         <Button

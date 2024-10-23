@@ -17,7 +17,7 @@ type WizardOptionsProps = {
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { onClearForm, onOpenXMLModal, onDeleteForm } = props
+  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, existStudy } = props
   const { t } = useTranslation()
 
   const options = objectType !== "datacite"

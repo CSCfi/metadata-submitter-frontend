@@ -32,6 +32,7 @@ import { get, flatten, uniq, debounce } from "lodash"
 import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 
+import { DisplayObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
@@ -219,16 +220,30 @@ const traverseFields = (
 
   switch (object.type) {
     case "object": {
-      const properties = object.properties
+      const properties =
+        label === DisplayObjectTypes.dataset && path.length === 0
+          ? { title: object.properties["title"], description: object.properties["description"] }
+          : object.properties
 
       return (
-        <FormSection key={name} name={name} label={label} level={path.length} description={description} isTitleShown>
+        <FormSection
+          key={name}
+          name={name}
+          label={label}
+          level={path.length}
+          description={description}
+          isTitleShown
+        >
           {Object.keys(properties).map(propertyKey => {
             const property = properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
             let requireFirstItem = false
 
-            if (path.length === 0 && propertyKey === "title" && !object.title.includes("DAC - Data Access Committee")) {
+            if (
+              path.length === 0 &&
+              propertyKey === "title" &&
+              !object.title.includes("DAC - Data Access Committee")
+            ) {
               requireFirstItem = true
             }
             // Require first field of section if parent section is a required property
@@ -241,7 +256,13 @@ const traverseFields = (
               requireFirstItem = parentProperty.title === property.title ? true : false
             }
 
-            return traverseFields(property, [...path, propertyKey], required, requireFirstItem, nestedField)
+            return traverseFields(
+              property,
+              [...path, propertyKey],
+              required,
+              requireFirstItem,
+              nestedField
+            )
           })}
         </FormSection>
       )
@@ -259,12 +280,30 @@ const traverseFields = (
           />
         </FormSection>
       ) : object.title === "Date" ? (
-        <FormDatePicker key={name} name={name} label={label} required={required} description={description} />
+        <FormDatePicker
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          description={description}
+        />
       ) : autoCompleteIdentifiers.some(value => label.toLowerCase().includes(value)) ? (
-        <FormAutocompleteField key={name} name={name} label={label} required={required} description={description} />
+        <FormAutocompleteField
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          description={description}
+        />
       ) : name.includes("keywords") ? (
         <FormSection key={name} name={name} label={label} level={path.length}>
-          <FormTagField key={name} name={name} label={label} required={required} description={description} />
+          <FormTagField
+            key={name}
+            name={name}
+            label={label}
+            required={required}
+            description={description}
+          />
         </FormSection>
       ) : (
         <FormSection key={name} name={name} label={label} level={path.length}>
@@ -286,7 +325,13 @@ const traverseFields = (
 
       return (
         <FormSection key={name} name={name} label={label} level={path.length}>
-          <FormTextField key={name} name={name} label={label} required={required} description={description} />
+          <FormTextField
+            key={name}
+            name={name}
+            label={label}
+            required={required}
+            description={description}
+          />
         </FormSection>
       )
     }
@@ -303,7 +348,15 @@ const traverseFields = (
       )
     }
     case "boolean": {
-      return <FormBooleanField key={name} name={name} label={label} required={required} description={description} />
+      return (
+        <FormBooleanField
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          description={description}
+        />
+      )
     }
     case "array": {
       return object.items.enum ? (
@@ -318,7 +371,13 @@ const traverseFields = (
           />
         </FormSection>
       ) : (
-        <FormArray key={name} object={object} path={path} required={required} description={description} />
+        <FormArray
+          key={name}
+          object={object}
+          path={path}
+          required={required}
+          description={description}
+        />
       )
     }
     case "null": {
@@ -336,7 +395,13 @@ const traverseFields = (
   }
 }
 
-const DisplayDescription = ({ description, children }: { description: string; children?: React.ReactElement }) => {
+const DisplayDescription = ({
+  description,
+  children,
+}: {
+  description: string
+  children?: React.ReactElement
+}) => {
   const [isReadMore, setIsReadMore] = useState(description.length > 60)
 
   const toggleReadMore = () => {
@@ -357,7 +422,9 @@ const DisplayDescription = ({ description, children }: { description: string; ch
       {isReadMore ? `${description.slice(0, 60)}...` : description}
       {!isReadMore && children}
       {description?.length >= 60 && (
-        <ReadmoreText onClick={toggleReadMore}>{isReadMore ? "Read more/Expand" : " Show less"}</ReadmoreText>
+        <ReadmoreText onClick={toggleReadMore}>
+          {isReadMore ? "Read more/Expand" : " Show less"}
+        </ReadmoreText>
       )}
     </p>
   )
@@ -371,19 +438,19 @@ type FormSectionProps = {
   children?: React.ReactNode
 }
 
-const FormSectionTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{ level: number }>(
-  ({ theme, level }) => ({
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "start",
-    alignItems: "start",
-    backgroundColor: level === 1 ? theme.palette.primary.lighter : theme.palette.common.white,
-    height: "100%",
-    marginLeft: level <= 1 ? "5rem" : 0,
-    marginRight: "3rem",
-    padding: level === 0 ? "4rem 0 3rem 0" : level === 1 ? "2rem" : 0,
-  })
-)
+const FormSectionTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{
+  level: number
+}>(({ theme, level }) => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "start",
+  alignItems: "start",
+  backgroundColor: level === 1 ? theme.palette.primary.lighter : theme.palette.common.white,
+  height: "100%",
+  marginLeft: level <= 1 ? "5rem" : 0,
+  marginRight: "3rem",
+  padding: level === 0 ? "4rem 0 3rem 0" : level === 1 ? "2rem" : 0,
+}))
 
 /*
  * FormSection is rendered for properties with type object
@@ -431,7 +498,11 @@ const FormSection = ({
         const error = get(errors, name)
         return (
           <>
-            <Grid container key={`${name}-section`} sx={{ mb: level <= 1 && splittedPath.length <= 1 ? "3rem" : 0 }}>
+            <Grid
+              container
+              key={`${name}-section`}
+              sx={{ mb: level <= 1 && splittedPath.length <= 1 ? "3rem" : 0 }}
+            >
               {heading}
               <Grid item xs={12} md={level === 1 && label ? 8 : 12}>
                 {children}
@@ -508,7 +579,10 @@ const FormOneOfField = ({
                 options.find(option => option.properties[parentPath])
               : // Eg. Run > Run Type > Reference Alignment
                 options.find(
-                  option => option.properties[Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]]
+                  option =>
+                    option.properties[
+                      Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]
+                    ]
                 )
           )?.title as string
         } else {
@@ -530,7 +604,8 @@ const FormOneOfField = ({
   if (nestedField) {
     for (const option of options) {
       option.required.every(
-        (val: string) => nestedField.fieldValues && Object.keys(nestedField.fieldValues).includes(val)
+        (val: string) =>
+          nestedField.fieldValues && Object.keys(nestedField.fieldValues).includes(val)
       )
         ? (fieldValue = option.title)
         : ""
@@ -601,22 +676,32 @@ const FormOneOfField = ({
           if (val === "Complex Processing") unregister(name)
           if (val === "Null value") setValue(name, null)
           // Remove previous values of the same path
-          if (val !== "Complex Processing" && val !== "Null value" && currentFieldValues !== undefined) {
+          if (
+            val !== "Complex Processing" &&
+            val !== "Null value" &&
+            currentFieldValues !== undefined
+          ) {
             reset({ ...getValues(), [name]: "" })
           }
         }
 
         // Selected option
         const selectedOption =
-          options?.filter((option: { title: string }) => option.title === field)[0]?.properties || {}
+          options?.filter((option: { title: string }) => option.title === field)[0]?.properties ||
+          {}
         const selectedOptionValues = Object.values(selectedOption)
 
         let childObject
         let requiredProp: string
 
         // If selectedOption has many nested "properties"
-        if (selectedOptionValues.length > 0 && Object.hasOwnProperty.call(selectedOptionValues[0], "properties")) {
-          const { obj, firstProp } = getChildObjects(Object.values(selectedOption)[0] as ChildObject)
+        if (
+          selectedOptionValues.length > 0 &&
+          Object.hasOwnProperty.call(selectedOptionValues[0], "properties")
+        ) {
+          const { obj, firstProp } = getChildObjects(
+            Object.values(selectedOption)[0] as ChildObject
+          )
           childObject = obj
           requiredProp = firstProp || ""
         }
@@ -628,7 +713,9 @@ const FormOneOfField = ({
 
         let child
         if (field) {
-          const fieldObject = options?.filter((option: { title: string }) => option.title === field)[0]
+          const fieldObject = options?.filter(
+            (option: { title: string }) => option.title === field
+          )[0]
           child = traverseFields(
             { ...fieldObject, title: "" },
             path,
@@ -720,7 +807,8 @@ const FormTextField = ({
   let prefilledValue: null | undefined = null
 
   // Case: DOI form - Check if it's <creators>'s and <contributors>'s FullName field in DOI form
-  const isFullNameField = (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
+  const isFullNameField =
+    (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
   let fullNameValue = "" // Case: DOI form - Creators and Contributors' FullName
 
   let disabled = false // boolean if inputValue is disabled
@@ -730,17 +818,22 @@ const FormTextField = ({
 
   if (openedDoiForm) {
     watchAutocompleteFieldName =
-      name.includes("affiliation") && prefilledFields.includes(lastPathItem) ? getPathName(path, "name") : ""
+      name.includes("affiliation") && prefilledFields.includes(lastPathItem)
+        ? getPathName(path, "name")
+        : ""
 
     // check changes of value of autocompleteField from watchValues
-    prefilledValue = watchAutocompleteFieldName ? get(watchValues, watchAutocompleteFieldName) : null
+    prefilledValue = watchAutocompleteFieldName
+      ? get(watchValues, watchAutocompleteFieldName)
+      : null
 
     // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and FamilyName
     if (isFullNameField) {
       const givenName = getPathName(path, "givenName")
       const givenNameValue = get(watchValues, givenName) || ""
       const familyName = getPathName(path, "familyName")
-      const familyNameValue = get(watchValues, familyName)?.length > 0 ? get(watchValues, familyName).concat(",") : ""
+      const familyNameValue =
+        get(watchValues, familyName)?.length > 0 ? get(watchValues, familyName).concat(",") : ""
       // Return value for FullName field
       fullNameValue = `${familyNameValue}${givenNameValue}`
     }
@@ -771,7 +864,8 @@ const FormTextField = ({
 
   // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
   useEffect(() => {
-    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm) setValue(name, "")
+    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm)
+      setValue(name, "")
   }, [prefilledValue])
 
   useEffect(() => {
@@ -795,7 +889,8 @@ const FormTextField = ({
 
               const handleChange = (e: { target: { value: string | number } }) => {
                 const { value } = e.target
-                const parsedValue = type === "string" && typeof value === "number" ? value.toString() : value
+                const parsedValue =
+                  type === "string" && typeof value === "number" ? value.toString() : value
                 field.onChange(parsedValue) // Helps with Cypress change detection
                 setValue(name, parsedValue) // Enables update of nested fields, eg. DAC contact
               }
@@ -812,7 +907,9 @@ const FormTextField = ({
                     helperText={error?.message}
                     required={required}
                     type={type}
-                    multiline={multiLineRowIdentifiers.some(value => label.toLowerCase().includes(value))}
+                    multiline={multiLineRowIdentifiers.some(value =>
+                      label.toLowerCase().includes(value)
+                    )}
                     rows={5}
                     value={inputValue}
                     onChange={handleChange}
@@ -915,7 +1012,12 @@ const FormSelectField = ({
  * FormDatePicker used for selecting date or date rage in DOI form
  */
 
-const FormDatePicker = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
+const FormDatePicker = ({
+  name,
+  label,
+  required,
+  description,
+}: FormFieldBaseProps & { description: string }) => {
   const dateCheckboxStyles = {
     padding: 0,
     margin: 0,
@@ -930,7 +1032,10 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
 
-  const [unknownDates, setUnknownDates] = useState({ checkedStartDate: false, checkedEndDate: false })
+  const [unknownDates, setUnknownDates] = useState({
+    checkedStartDate: false,
+    checkedEndDate: false,
+  })
   // Control calendar dialog opened
   const [openStartCalendar, setOpenStartCalendar] = useState(false)
   const [openEndCalendar, setOpenEndCalendar] = useState(false)
@@ -994,7 +1099,13 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
 
         type InputPropsType = {
           InputProps: {
-            endAdornment: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined
+            endAdornment:
+              | boolean
+              | React.ReactChild
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined
           }
         }
 
@@ -1003,7 +1114,11 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
         const DateSelection = (props: DateSelectionPropsWithInput) => {
           return (
             <Box sx={{ display: "flex", alignItems: "center" }} data-testid={props.label}>
-              <input ref={props.inputRef} {...props.inputProps} style={{ border: "none", width: 0 }} />
+              <input
+                ref={props.inputRef}
+                {...props.inputProps}
+                style={{ border: "none", width: 0 }}
+              />
               {props.InputProps?.endAdornment}
             </Box>
           )
@@ -1033,7 +1148,10 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                   defaultValue={dateInputValues}
                   InputProps={{
                     endAdornment: (
-                      <IconButton onClick={handleClearDates} sx={{ position: "absolute", right: "-1", padding: 0 }}>
+                      <IconButton
+                        onClick={handleClearDates}
+                        sx={{ position: "absolute", right: "-1", padding: 0 }}
+                      >
                         <ClearIcon fontSize="small" />
                       </IconButton>
                     ),
@@ -1076,7 +1194,10 @@ const FormDatePicker = ({ name, label, required, description }: FormFieldBasePro
                         InputProps={{
                           ...params.InputProps,
                           endAdornment: (
-                            <InputAdornment position="end" onClick={() => setOpenStartCalendar(true)}>
+                            <InputAdornment
+                              position="end"
+                              onClick={() => setOpenStartCalendar(true)}
+                            >
                               <IconButton disabled={unknownDates.checkedStartDate}>
                                 <EventIcon color="primary" />
                               </IconButton>
@@ -1185,7 +1306,8 @@ const FormAutocompleteField = ({
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
     const isContainingNonWordChar = searchTerm.match(/\W/g)
-    const response = isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
+    const response =
+      isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
 
     if (response) setLoading(false)
 
@@ -1200,7 +1322,7 @@ const FormAutocompleteField = ({
 
   // Disable warning when using external function as callback
   // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
-   
+
   const debouncedSearch = useCallback(
     debounce((newInput: string) => {
       if (newInput.length > 0) fetchOrganisations(newInput)
@@ -1338,10 +1460,16 @@ const ValidationTagField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root.MuiInputBase-root": { flexWrap: "wrap" },
   "& input": { flex: 1, minWidth: "2rem" },
   "& label": { color: theme.palette.primary.main },
-  "& .MuiOutlinedInput-notchedOutline, div:hover .MuiOutlinedInput-notchedOutline": highlightStyle(theme),
+  "& .MuiOutlinedInput-notchedOutline, div:hover .MuiOutlinedInput-notchedOutline":
+    highlightStyle(theme),
 }))
 
-const FormTagField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
+const FormTagField = ({
+  name,
+  label,
+  required,
+  description,
+}: FormFieldBaseProps & { description: string }) => {
   // Check initialValues of the tag field and define the initialTags for rendering
   const initialValues = useWatch({ name })
   const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
@@ -1459,7 +1587,12 @@ const ValidationFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
   },
 }))
 
-const FormBooleanField = ({ name, label, required, description }: FormFieldBaseProps & { description: string }) => {
+const FormBooleanField = ({
+  name,
+  label,
+  required,
+  description,
+}: FormFieldBaseProps & { description: string }) => {
   return (
     <ConnectForm>
       {({ register, errors, getValues }: ConnectFormMethods) => {
@@ -1483,7 +1616,9 @@ const FormBooleanField = ({ name, label, required, description }: FormFieldBaseP
                         inputRef={ref}
                         color="primary"
                         checked={values || false}
-                        inputProps={{ "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>}
+                        inputProps={
+                          { "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>
+                        }
                       />
                     }
                     label={
@@ -1548,7 +1683,9 @@ const FormCheckBoxArray = ({
                         checked={values && values?.includes(option) ? true : false}
                         color="primary"
                         defaultValue=""
-                        inputProps={{ "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>}
+                        inputProps={
+                          { "data-testid": name } as React.InputHTMLAttributes<HTMLInputElement>
+                        }
                       />
                     }
                     label={option}
@@ -1580,19 +1717,19 @@ type FormArrayProps = {
   required: boolean
 }
 
-const FormArrayTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{ level: number }>(
-  ({ theme, level }) => ({
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "start",
-    alignItems: "start",
-    backgroundColor: level < 2 ? theme.palette.primary.lighter : theme.palette.common.white,
-    height: "100%",
-    marginLeft: level < 2 ? "5rem" : 0,
-    marginRight: "3rem",
-    padding: level === 1 ? "2rem" : 0,
-  })
-)
+const FormArrayTitle = styled(Paper, { shouldForwardProp: prop => prop !== "level" })<{
+  level: number
+}>(({ theme, level }) => ({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "start",
+  alignItems: "start",
+  backgroundColor: level < 2 ? theme.palette.primary.lighter : theme.palette.common.white,
+  height: "100%",
+  marginLeft: level < 2 ? "5rem" : 0,
+  marginRight: "3rem",
+  padding: level === 1 ? "2rem" : 0,
+}))
 
 const FormArrayChildrenTitle = styled(Paper)(() => ({
   width: "70%",
@@ -1605,7 +1742,12 @@ const FormArrayChildrenTitle = styled(Paper)(() => ({
 /*
  * FormArray is rendered for arrays of objects. User is given option to choose how many objects to add to array.
  */
-const FormArray = ({ object, path, required, description }: FormArrayProps & { description: string }) => {
+const FormArray = ({
+  object,
+  path,
+  required,
+  description,
+}: FormArrayProps & { description: string }) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const level = path.length
@@ -1639,7 +1781,12 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   // E.g. Study > StudyLinks or Experiment > Expected Base Call Table
   // Append only once when form is populated
   useEffect(() => {
-    if (fieldValues?.length > 0 && fields?.length === 0 && typeof fieldValues === "object" && !formFields) {
+    if (
+      fieldValues?.length > 0 &&
+      fields?.length === 0 &&
+      typeof fieldValues === "object" &&
+      !formFields
+    ) {
       const fieldsArray: Record<string, unknown>[] = []
       for (let i = 0; i < fieldValues.length; i += 1) {
         fieldsArray.push({ fieldValues: fieldValues[i] })
@@ -1651,7 +1798,9 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
   }, [fields])
 
   // Get unique fileTypes from submitted fileTypes
-  const uniqueFileTypes = uniq(flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes)))
+  const uniqueFileTypes = uniq(
+    flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes))
+  )
 
   useEffect(() => {
     // Append fileType to formats' field
@@ -1692,7 +1841,9 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
       <Grid item xs={12} md={4}>
         {
           <FormArrayTitle square={true} elevation={0} level={level}>
-            {required && !isValid && <input hidden={true} value="form-array-required" {...register(name)} />}
+            {required && !isValid && (
+              <input hidden={true} value="form-array-required" {...register(name)} />
+            )}
             <Typography
               key={`${name}-header`}
               variant={"subtitle1"}
@@ -1733,7 +1884,12 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
             const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex]
 
             return (
-              <Box key={field.id || index} data-testid={`${name}[${index}]`} display="flex" alignItems="center">
+              <Box
+                key={field.id || index}
+                data-testid={`${name}[${index}]`}
+                display="flex"
+                alignItems="center"
+              >
                 <FormArrayChildrenTitle elevation={2} square>
                   <FormOneOfField
                     key={field.id}
@@ -1764,7 +1920,11 @@ const FormArray = ({ object, path, required, description }: FormArrayProps & { d
                 {
                   items
                     ? Object.keys(items).map(item => {
-                        const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
+                        const pathForThisIndex = [
+                          ...pathWithoutLastItem,
+                          lastPathItemWithIndex,
+                          item,
+                        ]
                         const requiredField = requiredProperties
                           ? requiredProperties.filter((prop: string) => prop === item)
                           : []

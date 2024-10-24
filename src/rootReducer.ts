@@ -18,6 +18,7 @@ import templatesReducer from "features/templateSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
+import wizardMappedStepsReducer from "features/wizardMappedStepsSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
 import stepObjectReducer from "features/wizardStepObjectSlice"
 import submissionReducer from "features/wizardSubmissionSlice"
@@ -50,6 +51,7 @@ const rootReducer = combineReducers({
   projectId: projectReducer,
   openedXMLModal: wizardXMLModalReducer,
   workflowType: workflowTypeReducer,
+  wizardMappedSteps: wizardMappedStepsReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

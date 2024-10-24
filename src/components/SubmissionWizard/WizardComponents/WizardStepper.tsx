@@ -13,8 +13,11 @@ import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHo
 
 import WizardStep from "./WizardStep"
 
-import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { setWizardMappedSteps } from "features/wizardMappedStepsSlice"
+import { resetWizardMappedSteps } from "features/wizardMappedStepsSlice"
+import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
+import { resetWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import workflowAPIService from "services/workflowAPI"
 import type { FormRef, Workflow } from "types"
@@ -82,6 +85,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const workflowType = useAppSelector(state => state.workflowType)
+  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
 
   const dispatch = useAppDispatch()
 
@@ -102,12 +106,15 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
     getWorkflow()
   }, [workflowType])
 
-  const { mappedSteps } = WizardMapObjectsToStepHook(
-    submission,
-    objectTypesArray,
-    currentWorkflow,
-    t
-  )
+  useEffect(() => {
+    const { mappedSteps } = WizardMapObjectsToStepHook(
+      submission,
+      objectTypesArray,
+      currentWorkflow,
+      t
+    )
+    dispatch(setWizardMappedSteps(mappedSteps))
+  }, [submission, objectTypesArray, currentWorkflow, t])
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
@@ -120,18 +127,24 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
         dispatch(
           updateStep({
             step: Number(stepInUrl),
-            objectType: currentStep.schemas.length > 0 ? currentStep.schemas[0].objectType : "",
+            objectType: currentStep.schemas[0]?.objectType,
           })
         )
+        // Only set correct objectType after creating a new submission (stepInUrl === 1)
+        if (currentStep && stepInUrl > 1) {
+          dispatch(setObjectType(currentStep.schemas[0]?.objectType))
+        }
       }
     }
   }, [mappedSteps.length])
 
-  // Reset object type state on component destroy
+  // Reset object type, workflow, and mappedSteps' states on component destroy
   useEffect(
     () => () => {
       dispatch(resetStepObject())
       dispatch(resetObjectType())
+      dispatch(resetWorkflowType())
+      dispatch(resetWizardMappedSteps())
     },
     []
   )

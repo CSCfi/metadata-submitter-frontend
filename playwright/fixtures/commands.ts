@@ -49,16 +49,18 @@ const test = base.extend<CommandFixtures>({
   familyName: process.env.FAMILY_NAME,
   givenName: process.env.GIVEN_NAME,
   submissionName: "",
-
-  resetDB: async ({}, use) => {
+  /* Playwright "use" has the name overlapped with React Hooks "use" and
+   * eslint-plugin-react-hooks v5 complains, hence we change to the alias "baseUse" instead.
+   */
+  resetDB: async ({}, baseUse) => {
     const resetDB = async () => {
       const database = await MongoClient.connect("mongodb://admin:admin@localhost:27017")
       const db = database.db("default")
       db.dropDatabase()
     }
-    await use(resetDB)
+    await baseUse(resetDB)
   },
-  setMockUser: async ({ request, mockAuthUrl, subUser, familyName, givenName }, use) => {
+  setMockUser: async ({ request, mockAuthUrl, subUser, familyName, givenName }, baseUse) => {
     const setMockUser = async () => {
       await request.get(mockAuthUrl, {
         params: {
@@ -68,17 +70,17 @@ const test = base.extend<CommandFixtures>({
         },
       })
     }
-    await use(setMockUser)
+    await baseUse(setMockUser)
   },
-  login: async ({ page }, use) => {
+  login: async ({ page }, baseUse) => {
     const login = async () => {
       await page.goto("/")
       await page.getByTestId("login-button").click()
       await page.waitForLoadState("load", { timeout: 30000 })
     }
-    await use(login)
+    await baseUse(login)
   },
-  newSubmission: async ({ page, submissionName }, use) => {
+  newSubmission: async ({ page, submissionName }, baseUse) => {
     const newSubmission = async () => {
       await page.getByTestId("link-create-submission").click()
       const submissions = page.waitForResponse("/v1/submissions*")
@@ -90,39 +92,39 @@ const test = base.extend<CommandFixtures>({
       await page.getByTestId("create-submission").click()
       await submissions
     }
-    await use(newSubmission)
+    await baseUse(newSubmission)
   },
-  formActions: async ({ page }, use) => {
+  formActions: async ({ page }, baseUse) => {
     const formActions = async buttonName => {
       await page.getByTestId(buttonName).click()
       await page.waitForLoadState("load", { timeout: 30000 })
     }
-    await use(buttonName => formActions(buttonName))
+    await baseUse(buttonName => formActions(buttonName))
   },
-  optionsActions: async ({ page }, use) => {
+  optionsActions: async ({ page }, baseUse) => {
     const optionsActions = async optionName => {
       await page.getByTestId("MoreHorizIcon").click()
       await page.getByText(optionName).click()
       await page.waitForLoadState()
     }
-    await use(optionName => optionsActions(optionName))
+    await baseUse(optionName => optionsActions(optionName))
   },
-  clickAddObject: async ({ page }, use) => {
+  clickAddObject: async ({ page }, baseUse) => {
     const clickAddObject = async objectType => {
       await page.getByTestId(`Add ${objectType}`).click()
       await page.waitForLoadState()
     }
-    await use(objectType => clickAddObject(objectType))
+    await baseUse(objectType => clickAddObject(objectType))
   },
-  clickAccordionPanel: async ({ page }, use) => {
+  clickAccordionPanel: async ({ page }, baseUse) => {
     const clickAccordionPanel = async label => {
       await page.getByRole("button", { name: label }).click()
       await page.waitForLoadState()
     }
-    await use(label => clickAccordionPanel(label))
+    await baseUse(label => clickAccordionPanel(label))
   },
   generateSubmissionAndObjects: [
-    async ({ page, login }, use) => {
+    async ({ page, login }, baseUse) => {
       const generateSubmissionAndObjects = async stopToObjectType => {
         // List of object types in particular order
         // This list is used to choose into what point of object generation is stopped
@@ -217,11 +219,11 @@ const test = base.extend<CommandFixtures>({
           })
         }
       }
-      await use(stopToObjectType => generateSubmissionAndObjects(stopToObjectType))
+      await baseUse(stopToObjectType => generateSubmissionAndObjects(stopToObjectType))
     },
     { timeout: 60000 },
   ],
-  continueLatestForm: async ({ page }, use) => {
+  continueLatestForm: async ({ page }, baseUse) => {
     const continueLatestForm = async (objectType, status) => {
       await page
         .getByTestId(`${objectType}-objects-list`)
@@ -234,9 +236,9 @@ const test = base.extend<CommandFixtures>({
         .click()
       await expect(page.getByTestId("form-ready")).toBeVisible()
     }
-    await use((objectType, status) => continueLatestForm(objectType, status))
+    await baseUse((objectType, status) => continueLatestForm(objectType, status))
   },
-  checkWorkflowRadios: async ({ page }, use) => {
+  checkWorkflowRadios: async ({ page }, baseUse) => {
     const checkWorkflowRadio = async checked => {
       await expect(page.getByRole("radiogroup")).toBeVisible()
       await expect(page.getByTestId("SDSX")).toBeDisabled()
@@ -244,9 +246,9 @@ const test = base.extend<CommandFixtures>({
       await expect(page.getByTestId("FEGA")).toBeDisabled()
       await expect(page.getByTestId(checked)).toBeChecked()
     }
-    await use(checked => checkWorkflowRadio(checked))
+    await baseUse(checked => checkWorkflowRadio(checked))
   },
-  checkItemsPerPage: async ({ page }, use) => {
+  checkItemsPerPage: async ({ page }, baseUse) => {
     const checkItemsPerPage = async (perPage, numberOfItems) => {
       await page.locator("div[aria-haspopup='listbox']").getByText(/5/).first().click()
       await page.locator(`li[data-value='${perPage}']`).click()
@@ -254,9 +256,9 @@ const test = base.extend<CommandFixtures>({
       await expect(page.getByText(`1-${numberOfItems} / ${numberOfItems} items`)).toBeVisible()
       await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(numberOfItems)
     }
-    await use((perPage, numberOfItems) => checkItemsPerPage(perPage, numberOfItems))
+    await baseUse((perPage, numberOfItems) => checkItemsPerPage(perPage, numberOfItems))
   },
-  mockGetSubmissions: async ({ page }, use) => {
+  mockGetSubmissions: async ({ page }, baseUse) => {
     const mockGetSubmissions = async (itemsPerPage, isPublished) => {
       let json = {}
 
@@ -279,7 +281,7 @@ const test = base.extend<CommandFixtures>({
         async route => await route.fulfill({ json })
       )
     }
-    await use((itemsPerPage, isPublished) => mockGetSubmissions(itemsPerPage, isPublished))
+    await baseUse((itemsPerPage, isPublished) => mockGetSubmissions(itemsPerPage, isPublished))
   },
 })
 

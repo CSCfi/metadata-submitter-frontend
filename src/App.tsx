@@ -25,9 +25,6 @@ import Home from "views/Home"
 import Login from "views/Login"
 import SubmissionWizard from "views/Submission"
 
-// Error pages do not use schemas
-const pathsErrorPages = ["/error400", "/error401", "/error403", "/erro404", "/error500"]
-
 const NavigationMenu = () => {
   const location = useLocation()
   return (
@@ -67,7 +64,7 @@ const App: React.FC = () => {
   // Handle initial locale setting
   useEffect(() => {
     getLocale()
-    if (location.pathname === "/" || pathsErrorPages.indexOf(location.pathname) !== -1) return
+    if (location.pathname === "/") return
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()

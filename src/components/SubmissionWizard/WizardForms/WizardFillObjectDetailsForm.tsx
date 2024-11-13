@@ -138,7 +138,7 @@ const ButtonGroup = styled(Box)(({ theme }) => ({
   },
 }))
 
-const Form = styled("form")<{ submittedStudy: boolean }>(({ theme }) => ({
+const Form = styled("form")(({ theme }) => ({
   ...theme.form,
 }))
 
@@ -657,7 +657,6 @@ const FormContent = ({
 
       <Form
         id="hook-form"
-        submittedStudy={submittedStudy}
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={formRef as RefObject<HTMLFormElement>}

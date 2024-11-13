@@ -143,7 +143,8 @@ const Form = styled("form")(({ theme }) => ({
 }))
 
 type CustomCardHeaderProps = {
-  submittedStudy: boolean,
+  submittedStudy: boolean
+  draftStatus: string
   objectType: string
   currentObject: ObjectDetails
   onClickSaveDraft: () => Promise<void>
@@ -174,6 +175,7 @@ type FormContentProps = {
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
     submittedStudy,
+    draftStatus,
     objectType,
     currentObject,
     refForm,
@@ -246,7 +248,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
             && objectType === ObjectTypes.study
             && submittedStudy}
         >
-          {(currentObject?.status === ObjectStatus.submitted )
+          {(currentObject?.status === ObjectStatus.submitted || draftStatus === "saved")
           || (objectType === ObjectTypes.study && submittedStudy)
             ? t("formActions.update")
             : t("formActions.markAsReady")}
@@ -596,6 +598,7 @@ const FormContent = ({
       })
       if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
         setCurrentObjectId(handleSave.data.accessionId)
+        dispatch(setDraftStatus("saved"))
       }
     } else {
       emptyFormError()
@@ -642,6 +645,7 @@ const FormContent = ({
     <FormProvider {...methods}>
       <CustomCardHeader
         submittedStudy={submittedStudy}
+        draftStatus={draftStatus}
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"

@@ -9,6 +9,7 @@ import type {
   FormDataFiles,
   ObjectDisplayValues,
   ObjectInsideSubmissionWithTags,
+  ObjectInsideSubmission,
 } from "types"
 
 export const getObjectDisplayTitle = (
@@ -137,3 +138,10 @@ export const getConvertedDate = (timestamp: number): string => {
 // Check if it's a file or a subfolder (current path equals original file path)
 export const isFile = (files: File[], path: string) =>
   files.findIndex(file => file.path === path) > -1
+
+// Check if submission contains studies
+export const getStudyStatus = (submissionObjects: ObjectInsideSubmission[], typeDraft?: string) => {
+  if (typeDraft === "draft") {
+   return submissionObjects.filter(object => object.schema === "draft-study").length > 0
+  } else return submissionObjects.filter(object => object.schema === ObjectTypes.study).length > 0
+}

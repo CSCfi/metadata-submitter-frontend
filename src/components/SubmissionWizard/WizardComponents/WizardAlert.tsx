@@ -25,6 +25,7 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideSubmissionWithTags } from "types"
+import { getStudyStatus } from "utils"
 
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -112,8 +113,7 @@ const CancelFormDialog = ({
   const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useAppDispatch()
 
-  const submittedStudy: boolean = submission.metadataObjects
-  .filter(object => object.schema === ObjectTypes.study).length > 0
+  const submittedStudy: boolean = getStudyStatus(submission.metadataObjects)
 
   // Draft save logic
   const saveDraft = async () => {

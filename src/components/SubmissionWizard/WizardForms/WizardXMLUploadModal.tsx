@@ -243,7 +243,7 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
                     if (!response.ok) {
                       const errors = response.data.errors.map(
                         error =>
-                          ` ${error.reason} Position: ${error.position}, pointner: ${error.pointer}`
+                          ` ${error.reason} Position: ${error.position}, pointer: ${error.pointer}`
                       )
                       return `The file you attached is not valid ${objectType},
                       our server reported following error: ${response.data.detail} Detail: ${errors}`

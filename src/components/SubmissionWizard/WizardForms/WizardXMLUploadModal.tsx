@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react"
 
+import CancelIcon from "@mui/icons-material/Cancel"
 import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -66,6 +67,23 @@ const StyledFormControl = styled(FormControl, {
 const StyledButton = styled(Button)(() => ({
   width: "12rem",
   height: "5rem",
+}))
+
+const CustomAlert = styled(Alert)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  borderLeft: `1.25rem solid ${theme.palette.error.main}`,
+  borderTop: `0.25rem solid ${theme.palette.error.main}`,
+  borderRight: `0.25rem solid ${theme.palette.error.main}`,
+  borderBottom: `0.25rem solid ${theme.palette.error.main}`,
+  color: theme.palette.secondary.main,
+  lineHeight: "1.75",
+  boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+  position: "relative",
+  padding: "1rem",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  fontSize: "1.75rem !important",
 }))
 
 const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUploadModalProps) => {
@@ -264,17 +282,37 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
         >
           Cancel
         </StyledButton>
-        <Stack position="absolute" bottom="-30%" left="0" right="0">
+        <Stack position="absolute" bottom="-45%" left="0" right="0">
           {errors.fileUpload?.type === "isFile" && (
-            <Alert severity="error">Please attach a file.</Alert>
+            <CustomAlert
+              severity="error"
+              icon={
+                <CancelIcon sx={{ fontSize: "2rem", marginRight: "1rem", marginTop: "2rem" }} />
+              }
+            >
+              <Typography sx={{ margin: "0.75rem" }}>Please attach a file.</Typography>
+            </CustomAlert>
           )}
           {errors.fileUpload?.type === "isXML" && (
-            <Alert severity="error">Please attach an XML file.</Alert>
+            <CustomAlert
+              severity="error"
+              icon={<CancelIcon sx={{ fontSize: "2rem", marginRight: "1rem" }} />}
+            >
+              <Typography sx={{ margin: "0.75rem" }}>Please attach an XML file.</Typography>
+            </CustomAlert>
           )}
           {errors.fileUpload?.type === "isValidXML" && (
-            <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>
+            <CustomAlert
+              severity="error"
+              icon={<CancelIcon sx={{ fontSize: "2rem", marginRight: "1rem" }} />}
+            >
+              <Typography sx={{ margin: "0.75rem" }}>
+                {errors?.fileUpload?.message?.toString()}
+              </Typography>
+            </CustomAlert>
           )}
         </Stack>
+
         {loading && (
           <Stack
             width="100%"

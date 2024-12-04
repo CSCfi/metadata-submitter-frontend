@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Directing to the correct step in WizardSteps for different workflows.
+- get `objectTypesArray` even for error pages.
 - XML File should be validated and uploaded properly
 
 ### Added
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) all fields in Dataset form except Title and Description
 - (users) At Datacite step "Delete form" and "Upload XML file" from the "Options ..."
 
 ## [2024.7.0] - 2024-07-25

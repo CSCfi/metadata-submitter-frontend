@@ -19,11 +19,9 @@ import { useNavigate } from "react-router-dom"
 
 import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
-import { setObjectType } from "features/wizardObjectTypeSlice"
-import { updateStep } from "features/wizardStepObjectSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
@@ -136,9 +134,7 @@ const CreateSubmissionForm = ({
         .then(response => {
           const submissionId = response.data.submissionId
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
-          dispatch(setObjectType(ObjectTypes.study))
           dispatch(setSubmissionType(ObjectSubmissionTypes.form))
-          dispatch(updateStep({ step: 2, objectType: ObjectTypes.study }))
           dispatch(resetTemplateAccessionIds())
         })
         .catch((error: string) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import { AppBar, Toolbar } from "@mui/material"
@@ -21,13 +21,10 @@ import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge
 import WizardPagination from "../WizardComponents/WizardPagination"
 import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
-import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
 
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import workflowAPIService from "services/workflowAPI"
-import type { Workflow } from "types"
 import { pathWithLocale } from "utils"
 
 const SummaryBar = styled(AppBar)(({ theme }) => ({
@@ -82,13 +79,13 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
   const workflowType = useAppSelector(state => state.workflowType)
-  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
+  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
+
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const { t } = useTranslation()
 
-  const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
   const [sortModels, setSortModels] = useState<{ [key: number]: GridSortModel }>({})
 
   const handleSortModelChange = (step: number, model: GridSortModel) => {
@@ -97,21 +94,6 @@ const WizardShowSummaryStep: React.FC = () => {
       [step]: model,
     }))
   }
-
-  // Fetch workflow based on workflowType
-  useEffect(() => {
-    const getWorkflow = async () => {
-      if (workflowType) {
-        const response = await workflowAPIService.getWorkflowByType(workflowType)
-        setCurrentWorkflow(response.data)
-      }
-    }
-    getWorkflow()
-  }, [workflowType])
-
-  useEffect(() => {
-    WizardMapObjectsToStepHook(submission, objectTypesArray, currentWorkflow, t)
-  })
 
   const handleEdit = (draft, objectType, item, step, objects) => {
     dispatch(updateStep({ step: step, objectType: objectType }))
@@ -136,14 +118,6 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
-
-  // Display other steps than last (summary)
-  const { mappedSteps } = WizardMapObjectsToStepHook(
-    submission,
-    objectTypesArray,
-    currentWorkflow,
-    t
-  )
 
   const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
   const rows = summarySteps.flatMap((summaryItem, index) => {

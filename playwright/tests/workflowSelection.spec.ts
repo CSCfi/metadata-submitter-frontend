@@ -45,7 +45,7 @@ test.describe("Test workflow selection", () => {
       .getByRole("button", { name: "Submission details" })
       .click()
     await page.getByTestId("submitted-submissionDetails-list-item").click()
-    await checkWorkflowRadios("SDSX")
+    await checkWorkflowRadios("FEGA")
 
     // Save submission and return to homepage
     await page.getByTestId("save-submission").click()
@@ -63,7 +63,7 @@ test.describe("Test workflow selection", () => {
       })
       .locator("[data-testid='edit-draft-submission']")
       .click()
-    await checkWorkflowRadios("SDSX")
+    await checkWorkflowRadios("FEGA")
   })
 })
 

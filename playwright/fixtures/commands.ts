@@ -88,7 +88,7 @@ const test = base.extend<CommandFixtures>({
         .getByTestId("submissionName")
         .fill(submissionName ? submissionName : "Test submission name")
       await page.getByTestId("submissionDescription").fill("Test submission description")
-      await page.getByTestId("SDSX").click()
+      await page.getByTestId("FEGA").click()
       await page.getByTestId("create-submission").click()
       await submissions
     }
@@ -162,7 +162,7 @@ const test = base.extend<CommandFixtures>({
               published: false,
               metadataObjects: [],
               drafts: [],
-              workflow: "SDSX",
+              workflow: "FEGA",
             },
           })
           const submissionResponseData = await submissionResponse.json()

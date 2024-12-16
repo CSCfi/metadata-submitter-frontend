@@ -110,7 +110,40 @@ test.describe("Basic application flow", () => {
      * 4th step, Describe
      */
     await clickAccordionPanel("Describe")
+
+    // Step 6: Summary (Identifier and Publish step)
+
+    await clickAccordionPanel("Identifier and publish")
+
+    // Click the "Add Summary" button
+    await page.getByRole("button", { name: "Add Summary" }).click()
+
+    // Verify that all summary steps are present
+    const stepTestIds = [
+      "summary-step-1",
+      "summary-step-2",
+      "summary-step-3",
+      "summary-step-4",
+      "summary-step-5",
+    ]
+
+    for (const stepTestId of stepTestIds) {
+      const stepLocator = page.locator(`[data-testid='${stepTestId}']`)
+      await expect(stepLocator).toBeVisible()
+    }
+
+    // Get all items and ensure each item is visible
+    const summaryItems = await page.locator("[data-testid='summary-item']")
+    const itemCount = await summaryItems.count()
+
+    for (let i = 0; i < itemCount; i++) {
+      const item = summaryItems.nth(i)
+      await expect(item).toBeVisible()
+      const itemText = await item.textContent()
+      console.log(`Summary item ${i + 1}: ${itemText?.trim()}`)
+    }
   })
+
   // TODO: The rest of the workflows until Publish should be tested
 })
 

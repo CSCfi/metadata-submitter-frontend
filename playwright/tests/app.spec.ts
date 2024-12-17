@@ -142,6 +142,17 @@ test.describe("Basic application flow", () => {
       const itemText = await item.textContent()
       console.log(`Summary item ${i + 1}: ${itemText?.trim()}`)
     }
+
+    // Fill the search box
+    await page.getByTestId("wizard-search-box").fill("Test title edited")
+
+    // Locate filtered summary items
+    const filteredItems = page
+      .locator("[data-field='name']")
+      .filter({ hasText: "Test title edited" })
+
+    // Assert that one item is visible
+    await expect(filteredItems.first()).toBeVisible()
   })
 
   // TODO: The rest of the workflows until Publish should be tested

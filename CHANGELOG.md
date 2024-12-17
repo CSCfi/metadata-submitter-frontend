@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) change text inside save success toast
 - (users) Added pagination to the tables of all summary steps
 - (users) Fixed narrow page summary table pagination
 - Own condition for datacite to enable only "Clear form" option for Datacite

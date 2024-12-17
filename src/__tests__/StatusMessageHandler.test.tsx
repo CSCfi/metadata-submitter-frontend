@@ -53,6 +53,6 @@ describe("StatusMessageHandler", () => {
         },
       },
     })
-    expect(screen.getByText(/Draft saved with accessionid TESTID1234/i)).toBeDefined()
+    expect(screen.getByText(/Draft saved successfully/i)).toBeDefined()
   })
 })

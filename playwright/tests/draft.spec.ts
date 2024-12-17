@@ -47,7 +47,7 @@ test.describe("Draft operations", () => {
 
     // Save a draft
     await formActions("form-draft")
-    await page.getByRole("alert").filter({ hasText: "Draft saved with" })
+    await page.getByRole("alert").filter({ hasText: "Draft saved" })
     await expect(
       page.getByTestId("policy-objects-list").filter({ has: page.locator("li") })
     ).toHaveCount(1)
@@ -56,7 +56,7 @@ test.describe("Draft operations", () => {
     await expect(page.getByTestId("title")).toHaveValue("")
     await page.getByTestId("title").fill("Test title 2")
     await formActions("form-draft")
-    await page.getByRole("alert").filter({ hasText: "Draft saved with" })
+    await page.getByRole("alert").filter({ hasText: "Draft saved" })
     await expect(page.getByTestId("policy-objects-list").locator("li")).toHaveCount(2)
 
     // Update draft, save from dialog
@@ -87,7 +87,7 @@ test.describe("Draft operations", () => {
     await expect(
       page
         .getByRole("alert")
-        .getByText(/Draft updated with/)
+        .getByText(/Draft updated/)
         .first()
     ).toBeVisible()
 
@@ -101,7 +101,7 @@ test.describe("Draft operations", () => {
     await expect(
       page
         .getByRole("alert")
-        .getByText(/Submitted with/)
+        .getByText(/Submitted/)
         .first()
     ).toBeVisible()
 

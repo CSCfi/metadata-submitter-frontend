@@ -8,7 +8,6 @@ import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
 import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
-import openedDoiFormReducer from "features/openedDoiFormSlice"
 import openedRowsReducer from "features/openedRowsSlice"
 import projectReducer from "features/projectIdSlice"
 import selectedSubmissionReducer from "features/selectedSubmissionSlice"
@@ -47,7 +46,6 @@ const rootReducer = combineReducers({
   templateAccessionIds: templateAccessionIdsReducer,
   autocompleteField: autocompleteReducer,
   fileTypes: fileTypesReducer,
-  openedDoiForm: openedDoiFormReducer,
   projectId: projectReducer,
   openedXMLModal: wizardXMLModalReducer,
   workflowType: workflowTypeReducer,

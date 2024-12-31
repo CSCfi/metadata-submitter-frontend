@@ -793,7 +793,8 @@ const FormTextField = ({
   type = "string",
   nestedField,
 }: FormFieldBaseProps & { description: string; type?: string; nestedField?: NestedField }) => {
-  const openedDoiForm = useAppSelector(state => state.openedDoiForm)
+  const objectType = useAppSelector(state => state.objectType)
+  const isDOIForm = (objectType === "datacite")
   const autocompleteField = useAppSelector(state => state.autocompleteField)
   const path = name.split(".")
   const [lastPathItem] = path.slice(-1)
@@ -816,7 +817,7 @@ const FormTextField = ({
   // useWatch to watch any changes in form's fields
   const watchValues = useWatch()
 
-  if (openedDoiForm) {
+  if (isDOIForm) {
     watchAutocompleteFieldName =
       name.includes("affiliation") && prefilledFields.includes(lastPathItem)
         ? getPathName(path, "name")
@@ -855,7 +856,7 @@ const FormTextField = ({
 
   // Set values for Affiliations' fields if autocompleteField exists
   useEffect(() => {
-    if (prefilledValue && !val && openedDoiForm) {
+    if (prefilledValue && !val && isDOIForm) {
       lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
       lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
       lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
@@ -864,7 +865,7 @@ const FormTextField = ({
 
   // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
   useEffect(() => {
-    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && openedDoiForm)
+    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && isDOIForm)
       setValue(name, "")
   }, [prefilledValue])
 

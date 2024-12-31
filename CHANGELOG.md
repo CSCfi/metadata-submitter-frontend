@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- removed `openedDoiFormSlice`from Redux root reducer.
+- in `WizardJSONSchemaParser.tsx` replaced the Redux state variable `openedDoiForm` with a variable `isDOIForm`, that uses `objectType` from Redux state.
 - (users) change text inside save success toast
 - (users) Added pagination to the tables of all summary steps
 - (users) Fixed narrow page summary table pagination
@@ -33,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- files `WizardDOIForm.tsx` and `openedDoiFormSlice.tsx`
 - (users) all fields in Dataset form except Title and Description
 - (users) At Datacite step "Delete form" and "Upload XML file" from the "Options ..."
 

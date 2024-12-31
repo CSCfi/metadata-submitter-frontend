@@ -17,7 +17,7 @@ import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import WizardDraftSelections from "./WizardDraftSelections"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus } from "constants/wizardObject"
+import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
@@ -25,6 +25,7 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideSubmissionWithTags } from "types"
+import { getStudyStatus } from "utils"
 
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -112,6 +113,8 @@ const CancelFormDialog = ({
   const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useAppDispatch()
 
+  const submittedStudy: boolean = getStudyStatus(submission.metadataObjects)
+
   // Draft save logic
   const saveDraft = async () => {
     setError(false)
@@ -181,6 +184,7 @@ const CancelFormDialog = ({
               saveDraft()
             }}
             color="primary"
+            disabled={submittedStudy && objectType === ObjectTypes.study}
           >
             {t("alerts.actions.saveDraft")}
           </Button>

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Removed possibility to "Mark as ready" multiple studies
 - removed `openedDoiFormSlice`from Redux root reducer.
 - in `WizardJSONSchemaParser.tsx` replaced the Redux state variable `openedDoiForm` with a variable `isDOIForm`, that uses `objectType` from Redux state.
 - (users) change text inside save success toast
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Condition to disable "Mark as ready" when there already exist a study.
 - A new button group for DOI
 - Save the linked folder for a submission to backend service
 - File table and table's breadcrumbs in Datafolder step

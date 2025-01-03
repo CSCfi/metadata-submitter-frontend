@@ -106,7 +106,7 @@ test.describe("Draft operations", () => {
     ).toBeVisible()
 
     // Submit second form draft
-    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
+    await page.getByTestId("draft-policy-list-item").filter({ hasText: "Test title" }).click()
     await expect(page.getByTestId("policy")).toBeVisible()
     await page.getByTestId("policy").selectOption({ label: "Policy Text" })
     await page.getByTestId("policy.policyText").fill("Test policy text")

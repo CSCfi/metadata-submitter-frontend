@@ -57,21 +57,21 @@
         "updated": "Submission updated"
       },
       "drafts": {
-        "saved": "Draft saved with accessionid {{accessionId}}",
-        "updated": "Draft updated with accessionid {{accessionId}}",
+        "saved": "Draft saved successfully",
+        "updated": "Draft updated successfully",
         "deleted": "Draft deleted successfully"
       },
       "objects": {
-        "submitted": "Submitted with accessionid {{accessionId}}",
-        "replaced": "Object replaced with accessionid {{accessionId}}",
-        "updated": "Object updated with accessionid {{accessionId}}",
+        "submitted": "Submitted successfully",
+        "replaced": "Object replaced successfully",
+        "updated": "Object updated successfully",
         "deleted": "Object deleted successfully"
       },
       "doi": {
         "saved": "DOI form has been saved successfully"
       },
       "templates": {
-        "updated": "Template updated with accessionid {{accessionId}}"
+        "updated": "Template updated successfully"
       },
       "submissions": {
         "deleted": "The submission has been deleted successfully!"

@@ -20,16 +20,14 @@ const Table = styled(DataGrid)(({ theme }) => ({
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.primary.lighter,
     },
+    flex: "1 1 auto",
   },
   "& .MuiDataGrid-columnHeaderTitle": {
     fontWeight: 700,
   },
-  "& .MuiDataGrid-columnHeadersInner, .MuiDataGrid-columnHeader, .MuiDataGrid-virtualScrollerRenderZone, .MuiDataGrid-cell, .MuiDataGrid-cell--withRenderer":
-    {
-      width: "100% !important",
-    },
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     padding: 0,
+    justifyContent: "left",
     "& .MuiDataGrid-sortIcon": {
       color: theme.palette.secondary.main,
       fontSize: "2rem",

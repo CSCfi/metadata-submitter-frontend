@@ -15,7 +15,8 @@ import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
-import { useForm, FormProvider, FieldValues, Resolver, SubmitHandler } from "react-hook-form"
+import { useForm, FormProvider, FieldValues, SubmitHandler } from "react-hook-form"
+import type { UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
@@ -56,7 +57,12 @@ import type {
   ObjectDisplayValues,
   FormRef,
 } from "types"
-import { getObjectDisplayTitle, getAccessionIds, getNewUniqueFileTypes, getStudyStatus } from "utils"
+import {
+  getObjectDisplayTitle,
+  getAccessionIds,
+  getNewUniqueFileTypes,
+  checkObjectStatus,
+} from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const StickyContainer = styled(Container)(({ theme }) => ({
@@ -143,8 +149,8 @@ const Form = styled("form")(({ theme }) => ({
 }))
 
 type CustomCardHeaderProps = {
-  updateStudy: boolean
-  updateStudyDraft: boolean
+  hasSubmittedObject: boolean
+  hasDraftObject: boolean
   objectType: string
   currentObject: ObjectDetails
   onClickSaveDraft: () => Promise<void>
@@ -159,13 +165,13 @@ type CustomCardHeaderProps = {
 }
 
 type FormContentProps = {
-  resolver: Resolver<FieldValues, Record<string, unknown>>
+  methods: UseFormReturn
   formSchema: FormObject
   onSubmit: SubmitHandler<FieldValues>
   objectType: string
   submission: SubmissionDetailsWithId
-  updateStudy: boolean
-  updateStudyDraft: boolean
+  hasDraftObject: boolean
+  hasSubmittedObject: boolean
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
   closeDialog: () => void
   formRef?: FormRef
@@ -176,8 +182,8 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
-    updateStudy,
-    updateStudyDraft,
+    hasSubmittedObject,
+    hasDraftObject,
     objectType,
     currentObject,
     refForm,
@@ -223,7 +229,9 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClearForm={onClickClearForm}
         onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
-        existStudy={updateStudy}
+        disableUploadXML={
+          objectType === ObjectTypes.study && (hasDraftObject || hasSubmittedObject)
+        }
       />
       <ButtonGroup>
         <Button
@@ -232,9 +240,10 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           size="small"
           onClick={onClickSaveDraft}
           data-testid="form-draft"
-          disabled={updateStudy}
+          disabled={objectType === ObjectTypes.study && hasSubmittedObject}
         >
-          {updateStudyDraft || currentObject?.status === ObjectStatus.draft
+          {(objectType === ObjectTypes.study && hasDraftObject) ||
+          currentObject?.status === ObjectStatus.draft
             ? t("formActions.updateDraft")
             : t("formActions.saveAsDraft")}
         </Button>
@@ -246,10 +255,12 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
           onClick={onClickSubmit}
           form={refForm}
           data-testid="form-ready"
-          disabled={currentObject?.status === ObjectStatus.draft
-            && updateStudy}
+          disabled={
+            objectType === ObjectTypes.study && hasSubmittedObject && !currentObject.accessionId
+          }
         >
-          {(updateStudy)
+          {(objectType === ObjectTypes.study && hasSubmittedObject) ||
+          currentObject?.status === ObjectStatus.submitted
             ? t("formActions.update")
             : t("formActions.markAsReady")}
         </Button>
@@ -264,7 +275,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         onClearForm={onClickClearForm}
         onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
-        existStudy={updateStudy}
       />
       <ButtonGroup>
         <Button
@@ -283,11 +293,13 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   return (
     <StickyContainer>
       <WizardStepContentHeader
-        action={currentObject?.status === ObjectStatus.template
-          ?  templateButtonGroup
-          : (objectType === "datacite")
-          ?  doiButtonGroup
-          : buttonGroup}
+        action={
+          currentObject?.status === ObjectStatus.template
+            ? templateButtonGroup
+            : objectType === "datacite"
+            ? doiButtonGroup
+            : buttonGroup
+        }
       />
     </StickyContainer>
   )
@@ -338,12 +350,12 @@ const patchHandler = (
  * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
  */
 const FormContent = ({
-  resolver,
+  methods,
   formSchema,
   onSubmit,
   objectType,
-  updateStudy,
-  updateStudyDraft,
+  hasDraftObject,
+  hasSubmittedObject,
   submission,
   currentObject,
   closeDialog,
@@ -351,12 +363,10 @@ const FormContent = ({
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
 
-  const draftStatus = useAppSelector(state => state.draftStatus)
   const alert = useAppSelector(state => state.alert)
   const clearForm = useAppSelector(state => state.clearForm)
 
   const templates = useAppSelector(state => state.templates)
-  const methods = useForm({ mode: "onBlur", resolver })
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
@@ -387,8 +397,9 @@ const FormContent = ({
         currentObject?.status === ObjectStatus.draft &&
         currentObjectId &&
         Object.keys(currentObject).length > 0
-      )
+      ) {
         handleDeleteForm()
+      }
     }
   }, [isSubmitSuccessful])
 
@@ -396,10 +407,16 @@ const FormContent = ({
     resetTimer()
     methods.reset({ undefined })
     dispatch(setClearForm(true))
+    dispatch(
+      setCurrentObject({
+        objectId: currentObjectId,
+        status: currentObject.status,
+      })
+    )
   }
 
   // Check if the form is empty
-  const checkFormCleanedValuesEmpty = (cleanedValues: {
+  const isFormCleanedValuesEmpty = (cleanedValues: {
     [x: string]: unknown
     [x: number]: unknown
     accessionId?: string
@@ -409,16 +426,17 @@ const FormContent = ({
     title?: string
     submissionType?: string
   }) => {
-    return Object.keys(cleanedValues).length > 0
+    return Object.keys(cleanedValues).filter(val => val !== "index").length === 0
   }
 
   const checkDirty = () => {
     const isFormTouched = () => {
       return Object.keys(methods.formState.dirtyFields).length > 0
     }
-    if (isFormTouched() && draftStatus === "" && checkFormCleanedValuesEmpty(getCleanedValues())) {
+
+    if (isFormTouched()) {
       dispatch(setDraftStatus("notSaved"))
-    }
+    } else dispatch(resetDraftStatus())
   }
 
   const getCleanedValues = () =>
@@ -428,9 +446,9 @@ const FormContent = ({
   const handleChange = () => {
     clearForm ? dispatch(setClearForm(false)) : null
     const clone = cloneDeep(currentObject)
-    const values = JSONSchemaParser.cleanUpFormValues(methods.getValues())
+    const values = getCleanedValues()
 
-    if (clone && checkFormCleanedValuesEmpty(values)) {
+    if (clone && !isFormCleanedValuesEmpty(values)) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
       !currentObject.accessionId && currentObjectId
@@ -481,7 +499,6 @@ const FormContent = ({
   const startTimer = () => {
     autoSaveTimer.current = setInterval(() => {
       timer = timer + 1
-
       if (timer >= 60) {
         setDraftAutoSaveAllowed(true)
       }
@@ -498,7 +515,7 @@ const FormContent = ({
     if (alert) resetTimer()
 
     if (draftAutoSaveAllowed) {
-      if (!updateStudy) handleSaveDraft()
+      handleSaveDraft()
       resetTimer()
     }
   }, [draftAutoSaveAllowed, alert])
@@ -507,8 +524,11 @@ const FormContent = ({
     resetTimer()
 
     // Prevent auto save from DOI form and template dialog
-    if (currentObject?.status !== ObjectStatus.template )
-      if (objectType !== "datacite") startTimer()
+    if (
+      currentObject?.status !== ObjectStatus.template &&
+      objectType !== (ObjectTypes.study || "datacite")
+    )
+      startTimer()
   }
 
   useEffect(() => {
@@ -531,7 +551,7 @@ const FormContent = ({
   const handleSaveTemplate = async () => {
     const cleanedValues = getCleanedValues()
 
-    if (checkFormCleanedValuesEmpty(cleanedValues)) {
+    if (!isFormCleanedValuesEmpty(cleanedValues)) {
       const index =
         templates?.findIndex(
           (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
@@ -585,7 +605,7 @@ const FormContent = ({
     resetTimer()
     const cleanedValues = getCleanedValues()
 
-    if ( !updateStudy && checkFormCleanedValuesEmpty(cleanedValues)) {
+    if (!isFormCleanedValuesEmpty(cleanedValues)) {
       const handleSave = await saveDraftHook({
         accessionId: currentObject.accessionId || currentObject.objectId,
         objectType: objectType,
@@ -594,8 +614,18 @@ const FormContent = ({
         values: cleanedValues,
         dispatch: dispatch,
       })
+
       if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
         setCurrentObjectId(handleSave.data.accessionId)
+        const clone = cloneDeep(currentObject)
+        dispatch(
+          setCurrentObject({
+            ...clone,
+            status: currentObject.status || ObjectStatus.draft,
+            accessionId: handleSave.data.accessionId,
+          })
+        )
+        dispatch(resetDraftStatus())
       }
     } else {
       emptyFormError()
@@ -612,10 +642,9 @@ const FormContent = ({
         await dispatch(
           deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
         )
-
-        dispatch(resetCurrentObject())
         handleReset()
         handleChange()
+        dispatch(resetCurrentObject())
 
         // Delete fileType that is equivalent to deleted object (for Run and Analysis cases)
         if (objectType === ObjectTypes.analysis || objectType === ObjectTypes.run) {
@@ -641,8 +670,8 @@ const FormContent = ({
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
-        updateStudy={updateStudy}
-        updateStudyDraft={updateStudyDraft}
+        hasSubmittedObject={hasSubmittedObject}
+        hasDraftObject={hasDraftObject}
         objectType={objectType}
         currentObject={currentObject}
         refForm="hook-form"
@@ -682,11 +711,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
   const locale = useAppSelector(state => state.locale)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
-  const submittedStudy: boolean = getStudyStatus(submission.metadataObjects)
-  const submittedStudyDrafts: boolean = getStudyStatus(submission.drafts, "draft")
-
-  const updateStudy = submittedStudy && (objectType === ObjectTypes.study)
-  const updateStudyDraft = submittedStudyDrafts && (objectType === ObjectTypes.study)
+  const { hasDraftObject, hasSubmittedObject } = checkObjectStatus(submission, objectType)
 
   // States that will update in useEffect()
   const [states, setStates] = useState({
@@ -696,6 +721,9 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
     validationSchema: {} as FormObject,
     isLoading: true,
   })
+  const resolver = WizardAjvResolver(states.validationSchema, locale)
+  const methods = useForm({ mode: "onBlur", resolver })
+
   const [submitting, setSubmitting] = useState(false)
 
   /*
@@ -788,6 +816,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           accessionId,
           cleanedValues
         )
+
         patchHandler(
           response,
           submission,
@@ -796,7 +825,8 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           cleanedValues,
           dispatch
         )
-
+        dispatch(resetCurrentObject())
+        methods.reset({ undefined })
         // Dispatch fileTypes if object is Run or Analysis
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(
@@ -819,24 +849,23 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
     }
 
     // Either patch object or submit a new object
-    if (data.status === ObjectStatus.submitted || updateStudy) {
+    if (data.status === ObjectStatus.submitted) {
       patchObject()
-    } else if (!updateStudy) {
+    } else {
       submitObjectHook(data, submission.submissionId, objectType, dispatch)
         .then(() => {
           setSubmitting(false)
+          methods.reset({ undefined })
         })
         .catch(err => console.error(err))
-      } else {
-        setSubmitting(false)
-      }
+    }
   }
 
   if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
   if (states.error)
     return (
-      <CustomAlert severity="error" icon={<CancelIcon sx={{ fontSize: '2rem' }} />}>
+      <CustomAlert severity="error" icon={<CancelIcon sx={{ fontSize: "2rem" }} />}>
         <AlertMessage>{states.helperText}</AlertMessage>
       </CustomAlert>
     )
@@ -847,11 +876,11 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
       <Container sx={{ m: 0, p: 0, width: "100%", boxSizing: "border-box" }} maxWidth={false}>
         <FormContent
           formSchema={states.formSchema as FormObject}
-          resolver={WizardAjvResolver(states.validationSchema, locale)}
+          methods={methods}
           onSubmit={onSubmit as SubmitHandler<FieldValues>}
           objectType={objectType}
-          updateStudy={updateStudy}
-          updateStudyDraft={updateStudyDraft}
+          hasDraftObject={hasDraftObject}
+          hasSubmittedObject={hasSubmittedObject}
           submission={submission}
           currentObject={currentObject}
           key={currentObject?.accessionId || submission.submissionId}

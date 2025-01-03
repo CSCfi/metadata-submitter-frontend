@@ -135,10 +135,11 @@ let CSCtheme = createTheme({
     },
     MuiDataGrid: {
       styleOverrides: {
-        cell: { minWidth: "none !important", maxWidth: "none !important" },
+        cell: { flex: "1 1 auto", textAlign: "left" },
         columnHeader: {
           minWidth: "none !important",
           maxWidth: "none !important",
+          width: "100% !important",
           fontSizeBreakpoints,
         },
         row: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },

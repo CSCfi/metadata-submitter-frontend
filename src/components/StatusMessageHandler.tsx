@@ -195,15 +195,11 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       case "/v1/drafts": {
         switch (response?.config.method) {
           case "patch": {
-            message = t("snackbarMessages.success.drafts.updated", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.drafts.updated")
             break
           }
           default: {
-            message = t("snackbarMessages.success.drafts.saved", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.drafts.saved")
           }
         }
         break
@@ -211,21 +207,15 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       case "/v1/objects": {
         switch (response.config.method) {
           case "patch": {
-            message = t("snackbarMessages.success.objects.updated", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.objects.updated")
             break
           }
           case "put": {
-            message = t("snackbarMessages.success.objects.replaced", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.objects.replaced")
             break
           }
           default: {
-            message = t("snackbarMessages.success.objects.submitted", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.objects.submitted")
           }
         }
         break
@@ -233,9 +223,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       case "/v1/templates": {
         switch (response.config.method) {
           default: {
-            message = t("snackbarMessages.success.templates.updated", {
-              accessionId: response.data.accessionId,
-            })
+            message = t("snackbarMessages.success.templates.updated")
           }
         }
       }
@@ -318,7 +306,6 @@ const Message = (props: StatusMessageProps) => {
 
 const StatusMessageHandler: React.FC = () => {
   const statusDetails = useAppSelector(state => state.statusDetails)
-
   return (
     <React.Fragment>
       {statusDetails?.status && !Array.isArray(statusDetails.response) && (

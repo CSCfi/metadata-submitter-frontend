@@ -31,10 +31,16 @@ const submitObjectHook = async (
   const response = await objectAPIService.createFromJSON(objectType, submissionId, cleanedValues)
 
   if (response.ok) {
-    const objectDisplayTitle = getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues)
+    const objectDisplayTitle = getObjectDisplayTitle(
+      objectType,
+      cleanedValues as ObjectDisplayValues
+    )
     // Dispatch fileTypes if object is Run or Analysis
     if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-      const objectWithFileTypes = getNewUniqueFileTypes(response.data.accessionId, formData as FormDataFiles)
+      const objectWithFileTypes = getNewUniqueFileTypes(
+        response.data.accessionId,
+        formData as FormDataFiles
+      )
       objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
     }
 

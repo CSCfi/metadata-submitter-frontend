@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Data table in Home view not showing all the columns
+- Schemas that allow multiple objects can have multiple drafts and ready objects
+- Schemas that allow only one object can only have one draft or ready object at a time.
 - (users) Directing to the correct step in WizardSteps for different workflows.
 - get `objectTypesArray` even for error pages.
 - XML File should be validated and uploaded properly

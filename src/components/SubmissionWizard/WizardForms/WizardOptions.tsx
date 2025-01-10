@@ -9,20 +9,21 @@ import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 type WizardOptionsProps = {
-  objectType: string,
+  objectType: string
   onClearForm: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
-  existStudy: boolean
+  disableUploadXML?: boolean
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, existStudy } = props
+  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
   const { t } = useTranslation()
 
-  const options = objectType !== "datacite"
-  ?  [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
-  : [t("formActions.clearForm")]
+  const options =
+    objectType !== "datacite"
+      ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+      : [t("formActions.clearForm")]
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -40,11 +41,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   }
 
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="flex-end"
-    >
+    <Stack direction="row" alignItems="center" justifyContent="flex-end">
       <Typography variant="subtitle2" color="primary" fontWeight={700}>
         {t("formActions.options")}
       </Typography>
@@ -75,7 +72,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
           <MenuItem
             key={option}
             selected={index === 0}
-            disabled={existStudy && index === 0}
+            disabled={index === 0 && disableUploadXML}
             onClick={e => handleClose(e, option)}
             sx={{
               p: "1.2rem",

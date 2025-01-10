@@ -3,7 +3,6 @@ import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addDraftObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import draftAPIService from "services/draftAPI"
 import type { SubmissionDetailsWithId, ObjectDisplayValues } from "types"
@@ -43,7 +42,6 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
           helperText: "",
         })
       )
-      dispatch(resetCurrentObject())
     } else {
       dispatch(
         updateStatus({
@@ -56,7 +54,11 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
     dispatch(resetLoading())
     return response
   } else {
-    const response = await draftAPIService.createFromJSON(objectType, submission.submissionId, values)
+    const response = await draftAPIService.createFromJSON(
+      objectType,
+      submission.submissionId,
+      values
+    )
     if (response.ok) {
       dispatch(
         updateStatus({
@@ -73,7 +75,6 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
           tags: { displayTitle: draftDisplayTitle, submissionType: ObjectSubmissionTypes.form },
         })
       )
-      dispatch(resetCurrentObject())
     } else {
       dispatch(
         updateStatus({

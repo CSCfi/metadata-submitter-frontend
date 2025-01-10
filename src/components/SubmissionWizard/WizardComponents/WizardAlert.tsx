@@ -25,7 +25,7 @@ import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import type { ObjectInsideSubmissionWithTags } from "types"
-import { getStudyStatus } from "utils"
+import { checkObjectStatus } from "utils"
 
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -42,7 +42,7 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    minWidth:"65rem"
+    minWidth: "65rem",
   },
 }))
 
@@ -113,7 +113,7 @@ const CancelFormDialog = ({
   const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useAppDispatch()
 
-  const submittedStudy: boolean = getStudyStatus(submission.metadataObjects)
+  const { hasSubmittedObject } = checkObjectStatus(submission, ObjectTypes.study)
 
   // Draft save logic
   const saveDraft = async () => {
@@ -184,7 +184,7 @@ const CancelFormDialog = ({
               saveDraft()
             }}
             color="primary"
-            disabled={submittedStudy && objectType === ObjectTypes.study}
+            disabled={hasSubmittedObject && objectType === ObjectTypes.study}
           >
             {t("alerts.actions.saveDraft")}
           </Button>

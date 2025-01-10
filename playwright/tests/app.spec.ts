@@ -77,8 +77,8 @@ test.describe("Basic application flow", () => {
     await formActions("form-ready")
 
     // Test DAC form update
-    await page.getByTestId("dac-objects-list").filter({ hasText: "Test title" }).click()
-    await expect(page.getByTestId("title")).toBeVisible()
+    await page.getByTestId("submitted-dac-list-item").filter({ hasText: "Test title" }).click()
+    await expect(page.getByTestId("title")).toHaveValue("Test title")
     await page.getByTestId("title").fill("Test title edited")
     await expect(page.getByTestId("title")).toHaveValue("Test title edited")
     await formActions("form-ready")

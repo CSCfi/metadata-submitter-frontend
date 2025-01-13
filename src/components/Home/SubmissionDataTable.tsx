@@ -29,7 +29,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const {
     submissionType,
     page,
-    itemsPerPage,
     totalItems,
     fetchPageOnChange,
     fetchItemsPerPage,
@@ -128,7 +127,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       columns={columns}
       page={page}
       sortingModel={sortingModel}
-      itemsPerPage={itemsPerPage}
       totalItems={totalItems}
       fetchPageOnChange={fetchPageOnChange}
       fetchItemsPerPage={handleItemsPerPageChange}

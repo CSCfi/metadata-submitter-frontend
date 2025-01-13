@@ -215,31 +215,6 @@ const Home: React.FC = () => {
     if (filteringText) getFilter(filteringText, newValue)
   }
 
-  /*
-   *   Get current submissions based on selected "items per page"
-   */
-  const getSubmissionsPerPage = (
-    submissions: Array<SubmissionDetailsWithId>
-  ): Array<SubmissionDetailsWithId> => {
-    const currentSubmissions = filteringText ? filteredSubmissions : submissions
-    const submissionsPerPage =
-      tabValue === SubmissionStatus.all
-        ? currentSubmissions.slice(
-          allSubmissionsPage * allItemsPerPage,
-          allSubmissionsPage * allItemsPerPage + allItemsPerPage
-        )
-        : tabValue === SubmissionStatus.unpublished
-          ? currentSubmissions.slice(
-            draftPage * draftItemsPerPage,
-            draftPage * draftItemsPerPage + draftItemsPerPage
-          )
-          : currentSubmissions.slice(
-            publishedPage * publishedItemsPerPage,
-            publishedPage * publishedItemsPerPage + publishedItemsPerPage
-          )
-    return submissionsPerPage
-  }
-
   const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
     return items.map(item => ({
       id: item.submissionId,
@@ -257,9 +232,8 @@ const Home: React.FC = () => {
         : tabValue === SubmissionStatus.unpublished
           ? allDraftSubmissions
           : allPublishedSubmissions
-
-    const submissionsPerPage = getSubmissionsPerPage(submissions)
-    const currentRows = getDisplayRows(submissionsPerPage)
+    const currentSubmissions = filteringText ? filteredSubmissions : submissions
+    const currentRows = getDisplayRows(currentSubmissions )
     return currentRows
   }
 

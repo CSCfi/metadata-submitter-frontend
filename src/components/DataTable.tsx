@@ -53,7 +53,6 @@ type DataTableProps = {
   columns: GridColDef[]
   rows: Array<SubmissionRow | DataFolderRow | DataFileRow>
   page?: number
-  itemsPerPage?: number
   totalItems?: number
   sortingModel: GridSortModel
   fetchItemsPerPage?: (items: number) => void
@@ -64,35 +63,36 @@ const DataTable: React.FC<DataTableProps> = props => {
   const {
     columns,
     rows,
-    page,
-    itemsPerPage,
     totalItems,
     sortingModel,
-    fetchPageOnChange,
-    fetchItemsPerPage,
+     fetchPageOnChange,
   } = props
   const { t } = useTranslation()
 
+  const [paginationModel, setPaginationModel] = React.useState({ pageSize: 5, page: 0 })
   const [sortModel, setSortModel] = React.useState<GridSortModel>(sortingModel)
 
-  const handleChangePage = (_e: unknown, page: number) => {
-    fetchPageOnChange ? fetchPageOnChange(page) : null
-  }
+  const pageSizeOptions = [5, 10, 25, 50, 100]
 
-  const handleItemsPerPageChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    fetchItemsPerPage ? fetchItemsPerPage(parseInt(e.target.value, 10)) : null
+  const handleChangePage = (_e: unknown, newPage: number) => {
+    fetchPageOnChange ? fetchPageOnChange(newPage) : null
+    setPaginationModel(prev => ( { ...prev, page: newPage } ))
   }
 
   const DataGridPagination = () =>
-    totalItems && page !== undefined && itemsPerPage ? (
+    totalItems && paginationModel.page !== undefined && paginationModel.pageSize? (
       <WizardPagination
         totalNumberOfItems={totalItems}
-        page={page}
-        itemsPerPage={itemsPerPage}
+        page={paginationModel.page}
+        itemsPerPage={paginationModel.pageSize}
         handleChangePage={handleChangePage}
-        handleItemsPerPageChange={handleItemsPerPageChange}
+        handleItemsPerPageChange={e =>
+          setPaginationModel(prev => ({
+            ...prev,
+            pageSize: parseInt(e.target.value, 10),
+            page: 0,
+          }))
+        }
       />
     ) : null
 
@@ -103,9 +103,8 @@ const DataTable: React.FC<DataTableProps> = props => {
   )
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex' }}>
       <Table
-        autoHeight
         rows={rows}
         columns={columns}
         disableRowSelectionOnClick
@@ -117,6 +116,9 @@ const DataTable: React.FC<DataTableProps> = props => {
           pagination: DataGridPagination,
           noRowsOverlay: NoRowsOverlay,
         }}
+        pageSizeOptions={pageSizeOptions}
+        paginationModel={paginationModel}
+        onPaginationModelChange={(newPaginationModel) => setPaginationModel(newPaginationModel)}
         sortModel={sortModel}
         onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
       />

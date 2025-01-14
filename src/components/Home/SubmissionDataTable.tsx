@@ -20,18 +20,15 @@ type SubmissionDataTableProps = {
   page?: number
   itemsPerPage?: number
   totalItems?: number
-  fetchItemsPerPage?: (items: number, submissionType: string) => void
   fetchPageOnChange?: (page: number) => Promise<void>
   onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const {
-    submissionType,
     page,
     totalItems,
     fetchPageOnChange,
-    fetchItemsPerPage,
     rows,
     onDeleteSubmission,
   } = props
@@ -117,10 +114,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     onDeleteSubmission ? onDeleteSubmission(id, submissionType) : null
   }
 
-  const handleItemsPerPageChange = (items: number) => {
-    fetchItemsPerPage ? fetchItemsPerPage(items, submissionType) : null
-  }
-
   return (
     <DataTable
       rows={rows}
@@ -129,7 +122,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       sortingModel={sortingModel}
       totalItems={totalItems}
       fetchPageOnChange={fetchPageOnChange}
-      fetchItemsPerPage={handleItemsPerPageChange}
     />
   )
 }

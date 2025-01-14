@@ -55,7 +55,6 @@ type DataTableProps = {
   page?: number
   totalItems?: number
   sortingModel: GridSortModel
-  fetchItemsPerPage?: (items: number) => void
   fetchPageOnChange?: (page: number) => void
 }
 

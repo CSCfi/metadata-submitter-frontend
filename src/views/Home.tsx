@@ -59,15 +59,12 @@ const Home: React.FC = () => {
 
   // Current page of all submission table
   const [allSubmissionsPage, setAllSubmissionsPage] = useState<number>(0)
-  const [allItemsPerPage, setAllItemsPerPage] = useState<number>(5)
 
   // Current page of draft submission table
   const [draftPage, setDraftPage] = useState<number>(0)
-  const [draftItemsPerPage, setDraftItemsPerPage] = useState<number>(5)
 
   // Current page of published submission table
   const [publishedPage, setPublishedPage] = useState<number>(0)
-  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState<number>(5)
 
   // Total number of draft and published submissions
   const [numberOfAllSubmissions, setNumberOfAllSubmissions] = useState<number>(0)
@@ -249,26 +246,6 @@ const Home: React.FC = () => {
   }
 
   /*
-   *  Fire when user selects an option from "Items per page"
-   */
-  const handleFetchItemsPerPage = async (numberOfItems: number, submissionType: string) => {
-    switch (submissionType) {
-      case SubmissionStatus.all:
-        setAllSubmissionsPage(0)
-        setAllItemsPerPage(numberOfItems)
-        break
-      case SubmissionStatus.unpublished:
-        setDraftPage(0)
-        setDraftItemsPerPage(numberOfItems)
-        break
-      case SubmissionStatus.published:
-        setPublishedPage(0)
-        setPublishedItemsPerPage(numberOfItems)
-        break
-    }
-  }
-
-  /*
    * Fire when user selects a page
    * or selects previous/next arrows
    * or deletes a submission
@@ -395,15 +372,7 @@ const Home: React.FC = () => {
                     ? draftPage
                     : publishedPage
               }
-              itemsPerPage={
-                tabValue === SubmissionStatus.all
-                  ? allItemsPerPage
-                  : tabValue === SubmissionStatus.unpublished
-                    ? draftItemsPerPage
-                    : publishedItemsPerPage
-              }
               totalItems={getCurrentTotalItems()}
-              fetchItemsPerPage={handleFetchItemsPerPage}
               fetchPageOnChange={handleFetchPageOnChange}
               rows={getCurrentRows()}
               onDeleteSubmission={handleDeleteSubmission}

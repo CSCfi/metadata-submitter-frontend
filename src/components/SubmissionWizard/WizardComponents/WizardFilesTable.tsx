@@ -23,7 +23,6 @@ const FilesTable: React.FC<FilesTableProps> = props => {
   const { t } = useTranslation()
 
   const [page, setPage] = useState<number>(0)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(5)
 
   const sortingModel = [
     {
@@ -89,7 +88,6 @@ const FilesTable: React.FC<FilesTableProps> = props => {
   const getRows = (): DataFileRow[] => {
     const displayingFiles = getDisplayingFiles()
     return displayingFiles
-      .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
       .map(file => {
         return {
           id: file.path,
@@ -104,21 +102,14 @@ const FilesTable: React.FC<FilesTableProps> = props => {
     setPage(page)
   }
 
-  const fetchItemsPerPage = (numberOfItems: number) => {
-    setItemsPerPage(numberOfItems)
-    setPage(0)
-  }
-
   return (
     <DataTable
       rows={getRows()}
       columns={columns}
       page={page}
       sortingModel={sortingModel}
-      itemsPerPage={itemsPerPage}
       totalItems={getDisplayingFiles().length}
       fetchPageOnChange={fetchPageOnChange}
-      fetchItemsPerPage={fetchItemsPerPage}
     />
   )
 }

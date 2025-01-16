@@ -5,7 +5,7 @@ import { ThemeProvider } from "@mui/system"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import "style.css"
-import { BrowserRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router } from "react-router"
 
 import CSCtheme from "./theme"
 

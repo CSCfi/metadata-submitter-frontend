@@ -4,7 +4,7 @@ import { Button } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
-import { Navigate } from "react-router-dom"
+import { Navigate } from "react-router"
 
 import { GetCountdownTime } from "./ErrorPagesHelper"
 

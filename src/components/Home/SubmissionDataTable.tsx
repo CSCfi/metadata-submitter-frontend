@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import { GridColDef, GridRowParams, GridActionsCellItem, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 
 import DataTable from "components/DataTable"
 import { SubmissionStatus } from "constants/wizardSubmission"

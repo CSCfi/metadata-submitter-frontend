@@ -15,7 +15,7 @@ import {
   GridSortModel,
 } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardPagination from "../WizardComponents/WizardPagination"

@@ -9,7 +9,7 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import { styled } from "@mui/material/styles"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 import { TransitionGroup } from "react-transition-group"
 
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"

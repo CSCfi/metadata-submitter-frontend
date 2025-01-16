@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
-import { Routes, Route, useLocation, Navigate } from "react-router-dom"
+import { Routes, Route, useLocation, Navigate } from "react-router"
 
 import i18n from "./i18n"
 

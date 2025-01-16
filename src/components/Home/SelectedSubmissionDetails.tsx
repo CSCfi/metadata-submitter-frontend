@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom"
+import { useNavigate, useLocation, Link as RouterLink } from "react-router"
 
 import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
 

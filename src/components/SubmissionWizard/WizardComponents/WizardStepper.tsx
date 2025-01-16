@@ -7,7 +7,7 @@ import MuiAccordionSummary, { AccordionSummaryProps } from "@mui/material/Accord
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
-import { useLocation } from "react-router-dom"
+import { useLocation } from "react-router"
 
 import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
 

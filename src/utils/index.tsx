@@ -1,6 +1,6 @@
 import { uniq } from "lodash"
 import moment from "moment"
-import { useLocation } from "react-router-dom"
+import { useLocation } from "react-router"
 
 import { Locale } from "constants/locale"
 import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"

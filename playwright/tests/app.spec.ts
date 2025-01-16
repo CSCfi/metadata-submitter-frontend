@@ -133,15 +133,8 @@ test.describe("Basic application flow", () => {
     }
 
     // Get all items and ensure each item is visible
-    const summaryItems = await page.locator("[data-testid='summary-item']")
+    const summaryItems = await page.locator("[data-testid='EditIcon']")
     const itemCount = await summaryItems.count()
-
-    for (let i = 0; i < itemCount; i++) {
-      const item = summaryItems.nth(i)
-      await expect(item).toBeVisible()
-      const itemText = await item.textContent()
-      console.log(`Summary item ${i + 1}: ${itemText?.trim()}`)
-    }
 
     // Fill the search box
     await page.getByTestId("wizard-search-box").fill("Test title edited")
@@ -153,6 +146,39 @@ test.describe("Basic application flow", () => {
 
     // Assert that one item is visible
     await expect(filteredItems.first()).toBeVisible()
+
+    // Clear the search field
+    await page.getByTestId("wizard-search-box").fill("")
+
+    // Verify all summary items are visible again
+    const allItems = page.locator("[data-testid='EditIcon']")
+    await expect(allItems).toHaveCount(itemCount)
+
+    //Editing functionality test in the Summary step
+
+    // Locate and click the first "Edit" icon
+    const editIcon = page.locator("[data-testid='EditIcon']").nth(0)
+    await editIcon.click()
+
+    // Verify that the URL updates to indicate the editing step (step=1)
+    await expect(page).toHaveURL(/step=1/)
+
+    // Locate the submission name input, type a new name, and save
+    const submissionNameInput = page.locator("[data-testid='submissionName']")
+    const newSubmissionName = "Updated Submission Name"
+    await submissionNameInput.fill(newSubmissionName)
+    const saveButton = page.getByTestId("create-submission")
+    await saveButton.click()
+
+    // Verify that a sucess toast is shown
+    await expect(page.getByText("Submission updated")).toBeVisible()
+
+    // Verify that the updated name is displayed
+    await page.goBack()
+    const updatedNameLocator = page
+      .locator("[data-field='name']")
+      .filter({ hasText: newSubmissionName })
+    await expect(updatedNameLocator).toBeVisible()
   })
 
   // TODO: The rest of the workflows until Publish should be tested

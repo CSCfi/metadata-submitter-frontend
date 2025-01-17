@@ -110,7 +110,77 @@ test.describe("Basic application flow", () => {
      * 4th step, Describe
      */
     await clickAccordionPanel("Describe")
+
+    // Step 6: Summary (Identifier and Publish step)
+
+    await clickAccordionPanel("Identifier and publish")
+
+    // Click the "Add Summary" button
+    await page.getByRole("button", { name: "Add Summary" }).click()
+
+    // Verify that all summary steps are present
+    const stepTestIds = [
+      "summary-step-1",
+      "summary-step-2",
+      "summary-step-3",
+      "summary-step-4",
+      "summary-step-5",
+    ]
+
+    for (const stepTestId of stepTestIds) {
+      const stepLocator = page.locator(`[data-testid='${stepTestId}']`)
+      await expect(stepLocator).toBeVisible()
+    }
+
+    // Get all items and ensure each item is visible
+    const summaryItems = await page.locator("[data-testid='EditIcon']")
+    const itemCount = await summaryItems.count()
+
+    // Fill the search box
+    await page.getByTestId("wizard-search-box").fill("Test title edited")
+
+    // Locate filtered summary items
+    const filteredItems = page
+      .locator("[data-field='name']")
+      .filter({ hasText: "Test title edited" })
+
+    // Assert that one item is visible
+    await expect(filteredItems.first()).toBeVisible()
+
+    // Clear the search field
+    await page.getByTestId("wizard-search-box").fill("")
+
+    // Verify all summary items are visible again
+    const allItems = page.locator("[data-testid='EditIcon']")
+    await expect(allItems).toHaveCount(itemCount)
+
+    //Editing functionality test in the Summary step
+
+    // Locate and click the first "Edit" icon
+    const editIcon = page.locator("[data-testid='EditIcon']").nth(0)
+    await editIcon.click()
+
+    // Verify that the URL updates to indicate the editing step (step=1)
+    await expect(page).toHaveURL(/step=1/)
+
+    // Locate the submission name input, type a new name, and save
+    const submissionNameInput = page.locator("[data-testid='submissionName']")
+    const newSubmissionName = "Updated Submission Name"
+    await submissionNameInput.fill(newSubmissionName)
+    const saveButton = page.getByTestId("create-submission")
+    await saveButton.click()
+
+    // Verify that a sucess toast is shown
+    await expect(page.getByText("Submission updated")).toBeVisible()
+
+    // Verify that the updated name is displayed
+    await page.goBack()
+    const updatedNameLocator = page
+      .locator("[data-field='name']")
+      .filter({ hasText: newSubmissionName })
+    await expect(updatedNameLocator).toBeVisible()
   })
+
   // TODO: The rest of the workflows until Publish should be tested
 })
 

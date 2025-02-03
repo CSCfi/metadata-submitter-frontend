@@ -316,7 +316,11 @@ const WizardStep = (props: WizardStepProps) => {
         const isActive = currentStepObject.stepObjectType === objectType
         const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
         const buttonText =
-          step === 1 ? t("edit") : objectType === ObjectTypes.file ? t("view") : t("add")
+          step === 1
+            ? t("edit")
+            : objectType === ObjectTypes.file || objectType === "Summary"
+            ? t("view")
+            : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>

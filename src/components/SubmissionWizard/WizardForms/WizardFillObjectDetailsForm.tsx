@@ -656,8 +656,8 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
       })
     }
 
-    // In case of there is object type, and Summary does not have schema
-    if (objectType.length && objectType !== "file" && objectType !== "Summary") fetchSchema()
+    // In case of there is object type, and Summary amd Publish do not have schema
+    if (objectType.length && objectType !== "file" && objectType !== "Summary" && objectType!=="Publish") fetchSchema()
 
     // Reset current object in state on unmount
     return () => {

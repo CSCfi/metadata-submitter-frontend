@@ -103,6 +103,31 @@ const mapObjectsToStepsHook = (
           }
         })
       : []
+
+  /*
+  * Add to the "Identifier and publish" step of accordion the summary and publish substeps
+  */
+  const summarySubStep = {
+    name: t("summary"),
+    objectType: t("summary"),
+    objects: { drafts: [], ready: [] },
+    required: true,
+    allowMultipleObjects: false,
+  }
+  const publishSubStep = {
+    name: t("summaryPage.publish"),
+    objectType: t("summaryPage.publish"),
+    objects: { drafts: [], ready: [] },
+    required: true,
+    allowMultipleObjects: false,
+  }
+
+  // Condition prevents error when a first empty page is rendered without schemaSteps
+  if (schemaSteps.length > 0) {
+    schemaSteps[schemaSteps.length -1].schemas.push(summarySubStep)
+    schemaSteps[schemaSteps.length -1].schemas.push(publishSubStep)
+  }
+
   /*
    * List of accordion steps and configurations.
    * Steps are disabled by checking if previous step has been filled.

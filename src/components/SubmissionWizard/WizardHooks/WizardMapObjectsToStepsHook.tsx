@@ -93,6 +93,8 @@ const mapObjectsToStepsHook = (
               ...schema,
               name: schema.name.toLowerCase().includes(ObjectTypes.file)
                 ? t("datafolder.datafolder")
+                : schema.name === ObjectTypes.datacite
+                ? "Identifier"
                 : schema.name === ObjectTypes.dac
                   ? schema.name.toUpperCase()
                   : startCase(schema.name),
@@ -115,7 +117,7 @@ const mapObjectsToStepsHook = (
     allowMultipleObjects: false,
   }
   const publishSubStep = {
-    name: t("summaryPage.publish"),
+    name: t("submission"),
     objectType: t("summaryPage.publish"),
     objects: { drafts: [], ready: [] },
     required: true,

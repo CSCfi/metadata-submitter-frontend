@@ -12,6 +12,7 @@
   "delete": "Poista",
   "close": "Sulje",
   "view": "View",
+  "publish": "Julkaise",
   "draft": "Draft",
   "ready": "Ready",
   "saveSubmission": "Save progress and exit",
@@ -185,7 +186,7 @@
     "lastModified": "Muokattu viimeksi"
   },
   "summary": "Summary",
-  "summaryButtonText": "View",
+  "summaryButtonText": "View summary",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",

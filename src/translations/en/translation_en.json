@@ -12,6 +12,7 @@
   "delete": "Delete",
   "close": "Close",
   "view": "View",
+  "publish": "Publish",
   "draft": "Draft",
   "ready": "Ready",
   "saveSubmission": "Save progress and exit",
@@ -184,8 +185,9 @@
     "totalItems": "Items",
     "lastModified": "Last modified"
   },
+  "identifier": "Identifier",
   "summary": "Summary",
-  "summaryButtonText": "View",
+  "summaryButtonText": "View summary",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- updated react router to version 7
 - (users) Removed possibility to "Mark as ready" multiple studies
 - removed `openedDoiFormSlice`from Redux root reducer.
 - in `WizardJSONSchemaParser.tsx` replaced the Redux state variable `openedDoiForm` with a variable `isDOIForm`, that uses `objectType` from Redux state.
@@ -41,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- deprecated react-router-dom and @types/react-router-dom
 - files `WizardDOIForm.tsx` and `openedDoiFormSlice.tsx`
 - (users) all fields in Dataset form except Title and Description
 - (users) At Datacite step "Delete form" and "Upload XML file" from the "Options ..."

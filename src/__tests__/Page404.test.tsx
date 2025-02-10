@@ -1,7 +1,7 @@
 import React from "react"
 
 import { screen } from "@testing-library/react"
-import { MemoryRouter as Router } from "react-router-dom"
+import { MemoryRouter as Router } from "react-router"
 
 import { renderWithProviders } from "utils/test-utils"
 import Page404 from "views/ErrorPages/Page404"

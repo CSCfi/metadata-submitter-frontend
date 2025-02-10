@@ -2,7 +2,7 @@ import React from "react"
 
 import { screen } from "@testing-library/react"
 import { act } from "react-dom/test-utils"
-import { MemoryRouter, Routes, Route } from "react-router-dom"
+import { MemoryRouter, Routes, Route } from "react-router"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/SubmissionWizard/WizardSteps/WizardAddObjectStep"

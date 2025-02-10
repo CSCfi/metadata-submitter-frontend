@@ -1,7 +1,7 @@
 import React from "react"
 
 //import { screen, within } from "@testing-library/react"
-import { MemoryRouter, Routes, Route } from "react-router-dom"
+import { MemoryRouter, Routes, Route } from "react-router"
 import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"

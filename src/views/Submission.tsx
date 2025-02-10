@@ -4,7 +4,7 @@ import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import LinearProgress from "@mui/material/LinearProgress"
 import Paper from "@mui/material/Paper"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router"
 
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"

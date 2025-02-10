@@ -4,7 +4,7 @@ import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { act } from "react-dom/test-utils"
-import { MemoryRouter } from "react-router-dom"
+import { MemoryRouter } from "react-router"
 import { vi } from "vitest"
 
 import App from "App"

@@ -774,7 +774,8 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
       })
     }
 
-    if (objectType.length) fetchSchema()
+    // In case of there is object type, and Summary does not have schema
+    if (objectType.length && objectType!=="Summary") fetchSchema()
 
     // Reset current object in state on unmount
     return () => {

@@ -3,7 +3,7 @@ import React from "react"
 import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
-import { MemoryRouter } from "react-router-dom"
+import { MemoryRouter } from "react-router"
 
 import App from "App"
 import { renderWithProviders } from "utils/test-utils"

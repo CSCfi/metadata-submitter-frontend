@@ -1,7 +1,7 @@
 import React from "react"
 
 import { screen } from "@testing-library/react"
-import { BrowserRouter } from "react-router-dom"
+import { BrowserRouter } from "react-router"
 
 import WizardAlert from "../components/SubmissionWizard/WizardComponents/WizardAlert"
 

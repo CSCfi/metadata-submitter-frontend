@@ -3,7 +3,7 @@ import React from "react"
 import { screen, waitForElementToBeRemoved } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
-import { MemoryRouter, Routes, Route } from "react-router-dom"
+import { MemoryRouter, Routes, Route } from "react-router"
 
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"

@@ -12,7 +12,7 @@ import { styled } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom"
+import { Link as RouterLink, useLocation, useNavigate } from "react-router"
 
 import i18n from "../i18n"
 import logo from "../images/csc_logo.svg"

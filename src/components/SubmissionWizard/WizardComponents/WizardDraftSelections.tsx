@@ -9,7 +9,7 @@ import FormLabel from "@mui/material/FormLabel"
 import ListItemText from "@mui/material/ListItemText"
 import { styled } from "@mui/system"
 import { useForm, FormProvider, useFormContext } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 
 import { ResponseStatus } from "constants/responseStatus"
 import {

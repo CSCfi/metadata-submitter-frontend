@@ -40,8 +40,9 @@ export const ObjectSubmissionTypes = {
   existing: "Existing",
 }
 
-export const ValidSteps = [1, 2, 3, 4, 5, 6]
+export const ValidSteps = [1, 2, 3, 4, 5]
 
+// Used only in WizardDraftSelections.tsx, not affected by workflows?
 export const ObjectSubmissionStepsList = [
   {
     stepNumber: 2,

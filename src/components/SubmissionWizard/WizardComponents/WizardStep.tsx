@@ -321,7 +321,7 @@ const WizardStep = (props: WizardStepProps) => {
             : objectType === ObjectTypes.file || objectType === "Summary"
             ? t("view")
             : objectType === t("summaryPage.publish")
-            ? t("publish")
+            ? t("edit")
             : t("add")
 
         return (

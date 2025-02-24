@@ -185,8 +185,10 @@
     "totalItems": "Tiedostot",
     "lastModified": "Muokattu viimeksi"
   },
-  "summary": "Summary",
-  "summaryButtonText": "View summary",
+  "identifierPublish": "Identifier and publish",
+  "identifier": "Tunniste",
+  "summary": "Yhteenveto",
+  "publishSubmission": "Publish submission",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",

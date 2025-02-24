@@ -88,6 +88,8 @@ const mapObjectsToStepsHook = (
             ...step,
             title: step.title.toLowerCase().includes(ObjectTypes.file)
               ? t("datafolder.datafolder")
+              : step.title === "Datacite"
+              ? t("identifierPublish")
               : step.title,
             ["schemas"]: step.schemas.map(schema => ({
               ...schema,
@@ -117,7 +119,7 @@ const mapObjectsToStepsHook = (
     allowMultipleObjects: false,
   }
   const publishSubStep = {
-    name: t("submission"),
+    name: t("publishSubmission"),
     objectType: t("summaryPage.publish"),
     objects: { drafts: [], ready: [] },
     required: true,
@@ -202,23 +204,6 @@ const mapObjectsToStepsHook = (
       ? [createSubmissionStep, dacPoliciesStep]
       : [createSubmissionStep]
   ).concat(schemaSteps)
-
-  const summaryStep = {
-    title: t("setIdentifierPublish"),
-    schemas: [
-      {
-        objectType: t("summary"), // REPLACE "Add" by "view" with objectype as text to the button (Add summary) inside accordion
-        name: t("summary"), // Text inside accordion by isActive ChevronRightIcon
-        objects: {
-          ready: [],
-        },
-        required: true,
-      },
-    ],
-    actionButtonText: t("summaryButtonText"), // This does place the text in the button
-    disabled: submission.name === "",
-  }
-  if (submission.name !== "") mappedSteps.push(summaryStep)
 
   return { mappedSteps }
 }

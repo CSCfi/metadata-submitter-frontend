@@ -26,6 +26,7 @@ type SubmissionDataTableProps = {
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const {
+    submissionType,
     page,
     totalItems,
     fetchPageOnChange,
@@ -116,6 +117,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   return (
     <DataTable
+      key={submissionType}
       rows={rows}
       columns={columns}
       page={page}

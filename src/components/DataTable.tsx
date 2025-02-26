@@ -64,7 +64,7 @@ const DataTable: React.FC<DataTableProps> = props => {
     rows,
     totalItems,
     sortingModel,
-     fetchPageOnChange,
+    fetchPageOnChange,
   } = props
   const { t } = useTranslation()
 

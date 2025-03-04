@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (admins) dependency packet versions update
+- dependency packet versions update
 - updated react router to version 7
 - (users) Removed possibility to "Mark as ready" multiple studies
 - removed `openedDoiFormSlice`from Redux root reducer.

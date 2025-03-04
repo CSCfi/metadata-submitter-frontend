@@ -26,7 +26,7 @@ import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import type { HandlerRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
-import { pathWithLocale } from "utils"
+import { checkObjectStatus, pathWithLocale } from "utils"
 
 const ActionButton = (props: {
   step: number
@@ -308,6 +308,7 @@ const WizardStep = (props: WizardStepProps) => {
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const { t } = useTranslation()
+  const hasDatacite = checkObjectStatus(submission, "datacite")
 
   return (
     <React.Fragment>
@@ -320,7 +321,7 @@ const WizardStep = (props: WizardStepProps) => {
             ? t("edit")
             : objectType === ObjectTypes.file || objectType === "Summary"
             ? t("view")
-            : objectType === t("summaryPage.publish")
+            : objectType === t("summaryPage.publish") || hasDatacite.hasDraftObject || hasDatacite.hasSubmittedObject
             ? t("edit")
             : t("add")
 

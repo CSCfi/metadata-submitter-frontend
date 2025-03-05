@@ -108,8 +108,7 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
     const folderNames = getFolderNames()
     return folderNames
       .filter(folderName => (!!linkedFolder ? folderName === linkedFolder : folderName))
-      .slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage)
-      .map(folderName => {
+        .map(folderName => {
         const currentFiles = files.filter(file => file.path.includes(`/${folderName}/`))
         const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
         return {
@@ -132,15 +131,9 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
 
   const [page, setPage] = useState<number>(0)
   const [totalItems, setTotalItems] = useState<number>(0)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(5)
 
   const fetchPageOnChange = (page: number) => {
     setPage(page)
-  }
-
-  const fetchItemsPerPage = (numberOfItems: number) => {
-    setItemsPerPage(numberOfItems)
-    setPage(0)
   }
 
   return (
@@ -149,10 +142,8 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
       columns={columns}
       page={page}
       sortingModel={sortingModel}
-      itemsPerPage={itemsPerPage}
       totalItems={totalItems}
       fetchPageOnChange={fetchPageOnChange}
-      fetchItemsPerPage={fetchItemsPerPage}
     />
   )
 }

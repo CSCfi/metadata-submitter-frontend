@@ -59,15 +59,12 @@ const Home: React.FC = () => {
 
   // Current page of all submission table
   const [allSubmissionsPage, setAllSubmissionsPage] = useState<number>(0)
-  const [allItemsPerPage, setAllItemsPerPage] = useState<number>(5)
 
   // Current page of draft submission table
   const [draftPage, setDraftPage] = useState<number>(0)
-  const [draftItemsPerPage, setDraftItemsPerPage] = useState<number>(5)
 
   // Current page of published submission table
   const [publishedPage, setPublishedPage] = useState<number>(0)
-  const [publishedItemsPerPage, setPublishedItemsPerPage] = useState<number>(5)
 
   // Total number of draft and published submissions
   const [numberOfAllSubmissions, setNumberOfAllSubmissions] = useState<number>(0)
@@ -215,31 +212,6 @@ const Home: React.FC = () => {
     if (filteringText) getFilter(filteringText, newValue)
   }
 
-  /*
-   *   Get current submissions based on selected "items per page"
-   */
-  const getSubmissionsPerPage = (
-    submissions: Array<SubmissionDetailsWithId>
-  ): Array<SubmissionDetailsWithId> => {
-    const currentSubmissions = filteringText ? filteredSubmissions : submissions
-    const submissionsPerPage =
-      tabValue === SubmissionStatus.all
-        ? currentSubmissions.slice(
-          allSubmissionsPage * allItemsPerPage,
-          allSubmissionsPage * allItemsPerPage + allItemsPerPage
-        )
-        : tabValue === SubmissionStatus.unpublished
-          ? currentSubmissions.slice(
-            draftPage * draftItemsPerPage,
-            draftPage * draftItemsPerPage + draftItemsPerPage
-          )
-          : currentSubmissions.slice(
-            publishedPage * publishedItemsPerPage,
-            publishedPage * publishedItemsPerPage + publishedItemsPerPage
-          )
-    return submissionsPerPage
-  }
-
   const getDisplayRows = (items: Array<SubmissionDetailsWithId>): Array<SubmissionRow> => {
     return items.map(item => ({
       id: item.submissionId,
@@ -257,9 +229,8 @@ const Home: React.FC = () => {
         : tabValue === SubmissionStatus.unpublished
           ? allDraftSubmissions
           : allPublishedSubmissions
-
-    const submissionsPerPage = getSubmissionsPerPage(submissions)
-    const currentRows = getDisplayRows(submissionsPerPage)
+    const currentSubmissions = filteringText ? filteredSubmissions : submissions
+    const currentRows = getDisplayRows(currentSubmissions )
     return currentRows
   }
 
@@ -271,26 +242,6 @@ const Home: React.FC = () => {
         : tabValue === SubmissionStatus.unpublished
           ? numberOfDraftSubmissions
           : numberOfPublishedSubmissions
-    }
-  }
-
-  /*
-   *  Fire when user selects an option from "Items per page"
-   */
-  const handleFetchItemsPerPage = async (numberOfItems: number, submissionType: string) => {
-    switch (submissionType) {
-      case SubmissionStatus.all:
-        setAllSubmissionsPage(0)
-        setAllItemsPerPage(numberOfItems)
-        break
-      case SubmissionStatus.unpublished:
-        setDraftPage(0)
-        setDraftItemsPerPage(numberOfItems)
-        break
-      case SubmissionStatus.published:
-        setPublishedPage(0)
-        setPublishedItemsPerPage(numberOfItems)
-        break
     }
   }
 
@@ -421,15 +372,7 @@ const Home: React.FC = () => {
                     ? draftPage
                     : publishedPage
               }
-              itemsPerPage={
-                tabValue === SubmissionStatus.all
-                  ? allItemsPerPage
-                  : tabValue === SubmissionStatus.unpublished
-                    ? draftItemsPerPage
-                    : publishedItemsPerPage
-              }
               totalItems={getCurrentTotalItems()}
-              fetchItemsPerPage={handleFetchItemsPerPage}
               fetchPageOnChange={handleFetchPageOnChange}
               rows={getCurrentRows()}
               onDeleteSubmission={handleDeleteSubmission}

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- pagination of DataTable.tsx
 - (admins) dependency packet versions update
 - dependency packet versions update
 - updated react router to version 7
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Sorting with pagination to happen through all the rows, not only inside a page.
 - (users) Data table in Home view not showing all the columns
 - Schemas that allow multiple objects can have multiple drafts and ready objects
 - Schemas that allow only one object can only have one draft or ready object at a time.

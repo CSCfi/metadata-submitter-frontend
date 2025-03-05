@@ -71,8 +71,6 @@ const DataTable: React.FC<DataTableProps> = props => {
   const [paginationModel, setPaginationModel] = React.useState({ pageSize: 5, page: 0 })
   const [sortModel, setSortModel] = React.useState<GridSortModel>(sortingModel)
 
-  const pageSizeOptions = [5, 10, 25, 50, 100]
-
   const handleChangePage = (_e: unknown, newPage: number) => {
     fetchPageOnChange ? fetchPageOnChange(newPage) : null
     setPaginationModel(prev => ( { ...prev, page: newPage } ))
@@ -115,7 +113,6 @@ const DataTable: React.FC<DataTableProps> = props => {
           pagination: DataGridPagination,
           noRowsOverlay: NoRowsOverlay,
         }}
-        pageSizeOptions={pageSizeOptions}
         paginationModel={paginationModel}
         onPaginationModelChange={(newPaginationModel) => setPaginationModel(newPaginationModel)}
         sortModel={sortModel}

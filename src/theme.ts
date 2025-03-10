@@ -198,10 +198,10 @@ let CSCtheme = createTheme({
     cardHeader: {
       backgroundColor: palette.common.white,
       position: "sticky",
-      zIndex: 2,
-      top: defaultTheme.spacing(7.7),
+      zIndex: 1200,
       height: "8rem",
       borderBottom: `0.1rem solid ${palette.primary.light}`,
+      top: 0,
     },
     objectListItem: {
       border: "none",

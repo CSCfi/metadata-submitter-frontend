@@ -65,19 +65,6 @@ import {
 } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
-const StickyContainer = styled(Container)(({ theme }) => ({
-  position: "sticky",
-  top: "0px",
-  zIndex: 1200,
-  backgroundColor: "white",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-  width: "100%",
-  margin: 0,
-  paddingLeft: theme.spacing(3),
-  paddingRight: theme.spacing(3),
-  boxSizing: "border-box",
-}))
-
 const CustomAlert = styled(Alert)(({ theme, severity }) => ({
   backgroundColor: theme.palette.background.paper,
   borderLeft: `1.25rem solid ${
@@ -291,17 +278,15 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   )
 
   return (
-    <StickyContainer>
-      <WizardStepContentHeader
-        action={
-          currentObject?.status === ObjectStatus.template
-            ? templateButtonGroup
-            : objectType === "datacite"
-            ? doiButtonGroup
-            : buttonGroup
-        }
-      />
-    </StickyContainer>
+    <WizardStepContentHeader
+      action={
+        currentObject?.status === ObjectStatus.template
+          ? templateButtonGroup
+          : objectType === "datacite"
+          ? doiButtonGroup
+          : buttonGroup
+      }
+    />
   )
 }
 
@@ -775,7 +760,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
     }
 
     // In case of there is object type, and Summary does not have schema
-    if (objectType.length && objectType!=="Summary") fetchSchema()
+    if (objectType.length && objectType !== "file" && objectType !== "Summary") fetchSchema()
 
     // Reset current object in state on unmount
     return () => {

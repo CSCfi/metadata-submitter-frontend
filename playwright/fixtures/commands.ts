@@ -30,7 +30,7 @@ type CommandFixtures = {
   resetDB: () => Promise<void>
   setMockUser: () => Promise<void>
   login: () => Promise<void>
-  newSubmission: () => Promise<void>
+  newSubmission: (workflowType?: string) => Promise<void>
   formActions: (buttonName: string) => Promise<void>
   optionsActions: (optionName: string) => Promise<void>
   clickAddObject: (objectType: string) => Promise<void>
@@ -81,18 +81,18 @@ const test = base.extend<CommandFixtures>({
     await baseUse(login)
   },
   newSubmission: async ({ page, submissionName }, baseUse) => {
-    const newSubmission = async () => {
+    const newSubmission = async workflowType => {
       await page.getByTestId("link-create-submission").click()
       const submissions = page.waitForResponse("/v1/submissions*")
       await page
         .getByTestId("submissionName")
         .fill(submissionName ? submissionName : "Test submission name")
       await page.getByTestId("submissionDescription").fill("Test submission description")
-      await page.getByTestId("FEGA").click()
+      await page.getByTestId(workflowType ? workflowType : "FEGA").click()
       await page.getByTestId("create-submission").click()
       await submissions
     }
-    await baseUse(newSubmission)
+    await baseUse(workflowType => newSubmission(workflowType))
   },
   formActions: async ({ page }, baseUse) => {
     const formActions = async buttonName => {
@@ -143,7 +143,7 @@ const test = base.extend<CommandFixtures>({
         if (stopToObjectType.length > 0) {
           objectTypesArray = objectTypesArray.slice(
             0,
-            objectTypesArray.indexOf(stopToObjectType) + 1
+            objectTypesArray.indexOf(stopToObjectType) + 1,
           )
         }
 
@@ -230,7 +230,7 @@ const test = base.extend<CommandFixtures>({
         .getByTestId(
           status === ObjectStatus.draft
             ? `draft-${objectType}-list-item`
-            : `submitted-${objectType}-list-item`
+            : `submitted-${objectType}-list-item`,
         )
         .first()
         .click()
@@ -278,7 +278,7 @@ const test = base.extend<CommandFixtures>({
 
       await page.route(
         `/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
-        async route => await route.fulfill({ json })
+        async route => await route.fulfill({ json }),
       )
     }
     await baseUse((itemsPerPage, isPublished) => mockGetSubmissions(itemsPerPage, isPublished))

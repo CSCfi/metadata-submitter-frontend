@@ -74,7 +74,7 @@ const CreateSubmissionForm = ({
                 status: ResponseStatus.error,
                 response: error,
                 helperText: "snackbarMessages.error.helperText.fetchWorkflowsError",
-              })
+              }),
             )
           }
         }
@@ -110,7 +110,7 @@ const CreateSubmissionForm = ({
             templateAccessionIds,
             templates,
             submission.submissionId,
-            dispatch
+            dispatch,
           )
         : []
 
@@ -121,7 +121,7 @@ const CreateSubmissionForm = ({
             updateStatus({
               status: ResponseStatus.success,
               helperText: "snackbarMessages.success.submission.updated",
-            })
+            }),
           )
         })
         .catch((error: string) => {
@@ -147,127 +147,125 @@ const CreateSubmissionForm = ({
   const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
   return (
-    <React.Fragment>
-      <Form
-        onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
-        ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
-      >
-        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
-          {t("newSubmission.nameSubmission")}
-        </Typography>
-        <Controller
-          control={control}
-          name="name"
-          defaultValue={submission ? submission.name : ""}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label={`${t("newSubmission.submissionName")} *`}
-              variant="outlined"
-              fullWidth
-              error={!!error}
-              helperText={error ? t("newSubmission.errors.missingName") : null}
-              disabled={isSubmitting}
-              inputProps={{ "data-testid": "submissionName" }}
-            />
-          )}
-          rules={{ required: true, validate: { name: value => value.length > 0 } }}
-        />
-        <Controller
-          control={control}
-          name="description"
-          defaultValue={submission ? submission.description : ""}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label={`${t("newSubmission.submissionDescription")} *`}
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={5}
-              error={!!error}
-              helperText={error ? t("newSubmission.errors.missingDescription") : null}
-              disabled={isSubmitting}
-              inputProps={{ "data-testid": "submissionDescription" }}
-            />
-          )}
-          rules={{ required: true, validate: { description: value => value.length > 0 } }}
-        />
+    <Form
+      onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
+      ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
+    >
+      <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
+        {t("newSubmission.nameSubmission")}
+      </Typography>
+      <Controller
+        control={control}
+        name="name"
+        defaultValue={submission ? submission.name : ""}
+        render={({ field, fieldState: { error } }) => (
+          <TextField
+            {...field}
+            label={`${t("newSubmission.submissionName")} *`}
+            variant="outlined"
+            fullWidth
+            error={!!error}
+            helperText={error ? t("newSubmission.errors.missingName") : null}
+            disabled={isSubmitting}
+            inputProps={{ "data-testid": "submissionName" }}
+          />
+        )}
+        rules={{ required: true, validate: { name: value => value.length > 0 } }}
+      />
+      <Controller
+        control={control}
+        name="description"
+        defaultValue={submission ? submission.description : ""}
+        render={({ field, fieldState: { error } }) => (
+          <TextField
+            {...field}
+            label={`${t("newSubmission.submissionDescription")} *`}
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={5}
+            error={!!error}
+            helperText={error ? t("newSubmission.errors.missingDescription") : null}
+            disabled={isSubmitting}
+            inputProps={{ "data-testid": "submissionDescription" }}
+          />
+        )}
+        rules={{ required: true, validate: { description: value => value.length > 0 } }}
+      />
 
-        <Grid sx={{ mt: 2 }} container spacing={2}>
-          <Grid item>
-            <FormLabel
-              id="submission-type-selection-label"
-              required
-              error={selectedWorkflowType === "" && isSubmitted}
-              sx={theme => ({
-                background: theme.palette.background.default,
-                borderRadius: theme.spacing(0.4),
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                padding: theme.spacing(0, 3, 0, 1.5),
-                fontWeight: 600,
-                color: theme.palette.secondary.main,
-              })}
-            >
-              {t("newSubmission.typeOfSubmission")}
-            </FormLabel>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl>
-              <Controller
-                control={control}
-                name="workflowType"
-                defaultValue={selectedWorkflowType}
-                render={({ field }) => {
-                  const handleChangeWorkflow = (e: React.ChangeEvent<HTMLInputElement>) => {
-                    field.onChange(e.target.value)
-                    setSelectedWorkflowType(e.target.value)
-                  }
-
-                  return (
-                    <RadioGroup
-                      {...field}
-                      name="submission-type-selection"
-                      aria-labelledby="submission-type-selection-label"
-                      onChange={handleChangeWorkflow}
-                    >
-                      {workflows.map(workflow => (
-                        <FormControlLabel
-                          key={workflow}
-                          value={workflow}
-                          control={<Radio />}
-                          label={workflow}
-                          data-testid={workflow}
-                          disabled={submission.submissionId !== ""}
-                        />
-                      ))}
-                    </RadioGroup>
-                  )
-                }}
-              />
-              {selectedWorkflowType === "" && isSubmitted && (
-                <FormHelperText error data-testid="missing-workflow-error">
-                  {t("newSubmission.errors.missingWorkflow")}
-                </FormHelperText>
-              )}
-            </FormControl>
-          </Grid>
+      <Grid sx={{ mt: 2 }} container spacing={2}>
+        <Grid item>
+          <FormLabel
+            id="submission-type-selection-label"
+            required
+            error={selectedWorkflowType === "" && isSubmitted}
+            sx={theme => ({
+              background: theme.palette.background.default,
+              borderRadius: theme.spacing(0.4),
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              padding: theme.spacing(0, 3, 0, 1.5),
+              fontWeight: 600,
+              color: theme.palette.secondary.main,
+            })}
+          >
+            {t("newSubmission.typeOfSubmission")}
+          </FormLabel>
         </Grid>
+        <Grid item xs={6}>
+          <FormControl>
+            <Controller
+              control={control}
+              name="workflowType"
+              defaultValue={selectedWorkflowType}
+              render={({ field }) => {
+                const handleChangeWorkflow = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  field.onChange(e.target.value)
+                  setSelectedWorkflowType(e.target.value)
+                }
 
-        <Button
-          sx={{ mt: "2rem", p: "1rem 5rem" }}
-          size="large"
-          variant="contained"
-          type="submit"
-          aria-label="Save submission details"
-          data-testid="create-submission"
-        >
-          {t("save")}
-        </Button>
-      </Form>
-    </React.Fragment>
+                return (
+                  <RadioGroup
+                    {...field}
+                    name="submission-type-selection"
+                    aria-labelledby="submission-type-selection-label"
+                    onChange={handleChangeWorkflow}
+                  >
+                    {workflows.map(workflow => (
+                      <FormControlLabel
+                        key={workflow}
+                        value={workflow}
+                        control={<Radio />}
+                        label={workflow}
+                        data-testid={workflow}
+                        disabled={submission.submissionId !== ""}
+                      />
+                    ))}
+                  </RadioGroup>
+                )
+              }}
+            />
+            {selectedWorkflowType === "" && isSubmitted && (
+              <FormHelperText error data-testid="missing-workflow-error">
+                {t("newSubmission.errors.missingWorkflow")}
+              </FormHelperText>
+            )}
+          </FormControl>
+        </Grid>
+      </Grid>
+
+      <Button
+        sx={{ mt: "2rem", p: "1rem 5rem" }}
+        size="large"
+        variant="contained"
+        type="submit"
+        aria-label="Save submission details"
+        data-testid="create-submission"
+      >
+        {t("save")}
+      </Button>
+    </Form>
   )
 }
 

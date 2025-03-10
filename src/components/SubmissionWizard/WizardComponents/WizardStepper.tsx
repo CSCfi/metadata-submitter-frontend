@@ -85,6 +85,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const workflowType = useAppSelector(state => state.workflowType)
+  const remsInfo = useAppSelector(state => state.remsInfo)
   const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
 
   const dispatch = useAppDispatch()
@@ -111,7 +112,8 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       submission,
       objectTypesArray,
       currentWorkflow,
-      t
+      t,
+      remsInfo
     )
     dispatch(setWizardMappedSteps(mappedSteps))
   }, [submission, objectTypesArray, currentWorkflow, t])
@@ -136,7 +138,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
         }
       }
     }
-  }, [mappedSteps.length])
+  }, [mappedSteps.length, location.search])
 
   // Reset object type, workflow, and mappedSteps' states on component destroy
   useEffect(

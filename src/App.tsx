@@ -11,10 +11,14 @@ import Nav from "components/Nav"
 import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
+import { ResponseStatus } from "constants/responseStatus"
 import { ObjectTypes } from "constants/wizardObject"
 import { setLocale } from "features/localeSlice"
 import { setObjectTypesArray } from "features/objectTypesArraySlice"
+import { setRemsInfo } from "features/remsInfoSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import remsAPIService from "services/remsAPI"
 import schemaAPIService from "services/schemaAPI"
 import Page400 from "views/ErrorPages/Page400"
 import Page401 from "views/ErrorPages/Page401"
@@ -74,7 +78,7 @@ const App: React.FC = () => {
           const schemas = response.data
             .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
             .map((schema: { title: string }) =>
-              schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase()
+              schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase(),
             )
           dispatch(setObjectTypesArray(schemas))
         } else {
@@ -93,12 +97,31 @@ const App: React.FC = () => {
               ObjectTypes.bpdataset,
               ObjectTypes.bpobservation,
               ObjectTypes.bpstaining,
-            ])
+            ]),
           )
         }
       }
     }
+
+    const getRemsInfo = async () => {
+      if (isMounted) {
+        try {
+          const response = await remsAPIService.getRemsInfo()
+          dispatch(setRemsInfo(response.data))
+        } catch (error) {
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: error,
+              helperText: "snackbarMessages.error.helperText.fetchRemsInfoError",
+            }),
+          )
+        }
+      }
+    }
+
     getSchemas()
+    getRemsInfo()
     return () => {
       isMounted = false
     }

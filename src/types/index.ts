@@ -35,7 +35,7 @@ export type Schema =
   | "dataset"
 
 export type StepItemObject = {
-  id: string
+  id: string | number
   displayTitle: string
   objectData?: ObjectInsideSubmissionWithTags
 }
@@ -153,7 +153,9 @@ export type SubmissionDataFromForm = {
   workflowType: string
 }
 
-export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails }
+export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails } & {
+  rems?: RemsDetails
+}
 export type FormRef = { current: HTMLElement | null } | undefined
 
 export type StatusDetails = {
@@ -237,11 +239,17 @@ export type DoiFormDetails = {
   subjects: DoiSubject[]
 }
 
+export type RemsDetails = {
+  organizationId: string
+  workflowId: number
+  licenses: number[]
+}
+
 export type DataFolderRow = {
-  id: string
-  name: string
-  size: number
-  items: number
+  id: string | number
+  name?: string
+  size?: number
+  items?: number
   tags?: string
 }
 
@@ -261,5 +269,17 @@ export type DataFileRow = {
   tags?: string
 }
 
+export type DacPoliciesData = {
+  organizationId: string
+  workflowId: number
+  licences: number[]
+}
+
 // Used in feature slices
 export type DispatchReducer = { payload: unknown; type: string }
+
+export type HandlerRef =
+  | ((instance: HTMLDivElement | null) => void)
+  | React.RefObject<HTMLDivElement>
+  | null
+  | undefined

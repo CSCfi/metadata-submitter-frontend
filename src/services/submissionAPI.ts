@@ -47,6 +47,13 @@ const putLinkedFolder = async (submissionId: string, folderName: string): Promis
   return await api.put(`${submissionId}/folder`, { linkedFolder: folderName })
 }
 
+const putRemsData = async (
+  submissionId: string,
+  remsData: Record<string, unknown>
+): Promise<APIResponse> => {
+  return await api.put(`${submissionId}/rems`, remsData)
+}
+
 export default {
   createNewSubmission,
   getSubmissionById,
@@ -55,4 +62,5 @@ export default {
   getSubmissions,
   putDOIInfo,
   putLinkedFolder,
+  putRemsData,
 }

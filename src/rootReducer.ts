@@ -10,6 +10,7 @@ import localeReducer from "features/localeSlice"
 import objectTypesArrayReducer from "features/objectTypesArraySlice"
 import openedRowsReducer from "features/openedRowsSlice"
 import projectReducer from "features/projectIdSlice"
+import remsInfoReducer from "features/remsInfoSlice"
 import selectedSubmissionReducer from "features/selectedSubmissionSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import templateAccessionIdsReducer from "features/templateAccessionIdsSlice"
@@ -50,6 +51,7 @@ const rootReducer = combineReducers({
   openedXMLModal: wizardXMLModalReducer,
   workflowType: workflowTypeReducer,
   wizardMappedSteps: wizardMappedStepsReducer,
+  remsInfo: remsInfoReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

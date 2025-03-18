@@ -25,7 +25,7 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { FormRef, ObjectInsideSubmissionWithTags } from "types"
+import type { FormRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
 import { pathWithLocale } from "utils"
 
 const ActionButton = (props: {
@@ -46,7 +46,7 @@ const ActionButton = (props: {
 
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
   const pathname = pathWithLocale(
-    submission.submissionId ? `submission/${submission.submissionId}` : `submission`
+    submission.submissionId ? `submission/${submission.submissionId}` : `submission`,
   )
 
   const handleClick = () => {
@@ -100,7 +100,7 @@ const ActionButton = (props: {
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
         form="hook-form"
         type="reset"
-        data-testid={buttonText}
+        data-testid={`${buttonText} ${parent}`}
       >
         {buttonText}
       </Button>
@@ -122,7 +122,7 @@ const ActionButton = (props: {
 const StepItems = (props: {
   step: number
   objects: {
-    id: string
+    id: string | number
     displayTitle: string
     objectData?: ObjectInsideSubmissionWithTags
   }[]
@@ -162,6 +162,15 @@ const StepItems = (props: {
         })
         break
       }
+      case 2: {
+        if (objectType === ObjectTypes.dacPolicies) {
+          dispatch(resetCurrentObject())
+          navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
+          dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+          dispatch(setObjectType(objectType))
+        }
+        break
+      }
       default: {
         const item = formObject.objectData
         editObjectHook(
@@ -172,7 +181,7 @@ const StepItems = (props: {
           submissionId,
           dispatch,
           navigate,
-          objects.findIndex(object => object.id === item.accessionId)
+          objects.findIndex(object => object.id === item.accessionId),
         )
       }
     }
@@ -214,8 +223,8 @@ const StepItems = (props: {
                       {item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
                         ? item.objectData.tags.fileName
                         : item.displayTitle !== ""
-                        ? item.displayTitle
-                        : item.id}
+                          ? item.displayTitle
+                          : item.id}
                     </Link>
                   </Grid>
                   <Grid item>
@@ -236,12 +245,6 @@ const StepItems = (props: {
       )}
     </React.Fragment>
   )
-}
-
-type stepItemObject = {
-  id: string
-  displayTitle: string
-  objectData?: ObjectInsideSubmissionWithTags
 }
 
 const ObjectWrapper = styled("div")(({ theme }) => {
@@ -295,7 +298,7 @@ const WizardStep = (params: {
     name: string
     required?: boolean
     allowMultipleObjects?: boolean
-    objects?: { ready?: stepItemObject[]; drafts?: stepItemObject[] }
+    objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
   }[]
   formRef?: FormRef
 }) => {
@@ -311,11 +314,7 @@ const WizardStep = (params: {
         const isActive = currentStepObject.stepObjectType === objectType
         const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
         const buttonText =
-          step === 1
-            ? t("edit")
-            : objectType === ObjectTypes.file
-            ? t("viewObject", { object: t("datafolder.datafolder").toLowerCase() })
-            : t("addObject", { object: objectType })
+          step === 1 ? t("edit") : objectType === ObjectTypes.file ? t("view") : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>

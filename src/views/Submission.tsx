@@ -94,8 +94,6 @@ const SubmissionWizard: React.FC = () => {
     }
   }, [dispatch, submissionId, navigate])
 
-  // const currentWorkflow = useAppSelector((state: RootState) => state.workflowType)
-
   const wizardStep = step ? Number(step) : -1
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(

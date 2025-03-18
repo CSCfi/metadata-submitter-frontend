@@ -17,11 +17,11 @@ test.describe("DataFolder view", () => {
       await page.waitForLoadState()
 
       await clickAccordionPanel("Datafolder")
-      await page.getByTestId("View datafolder").click()
+      await page.getByTestId("View").click()
 
       // Mock files response
       await page.route(`/v1/files`, async route => await route.fulfill({ json: files }))
-    }
+    },
   )
 
   test("should be able show correct Folder table", async ({ page, clickAccordionPanel }) => {
@@ -60,7 +60,7 @@ test.describe("DataFolder view", () => {
       .locator("[data-testid='edit-draft-submission']")
       .click()
     await clickAccordionPanel("Datafolder")
-    await page.getByTestId("View datafolder").click()
+    await page.getByTestId("View").click()
     await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(1)
     await expect(page.locator("[data-id='folderB']")).toBeVisible()
     await expect(page.getByTestId("link-datafolder")).toBeDisabled()

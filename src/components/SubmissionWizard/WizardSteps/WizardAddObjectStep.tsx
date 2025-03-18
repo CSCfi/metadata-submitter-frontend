@@ -6,6 +6,8 @@ import { styled } from "@mui/system"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
+import WizardDacPoliciesStep from "components/SubmissionWizard/WizardSteps/WizardDacPoliciesStep"
+import { ObjectTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
 import type { FormRef } from "types"
 
@@ -44,6 +46,8 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
               <p>Add objects by clicking the name, then fill form or upload XML File.</p>
               <p>You can also add objects and edit them after saving your draft.</p>
             </ObjectInfo>
+          ) : objectType === ObjectTypes.dacPolicies ? (
+            <WizardDacPoliciesStep dacPoliciesFormRef={formRef} />
           ) : (
             <WizardAddObjectCard formRef={formRef} />
           )}

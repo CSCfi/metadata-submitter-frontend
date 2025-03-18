@@ -14,19 +14,13 @@ import { useTranslation } from "react-i18next"
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import { APIResponse } from "types"
+import { APIResponse, HandlerRef } from "types"
 
 type MessageHandlerProps = {
   response?: APIResponse
   helperText?: string
   handleClose: (status: boolean) => void
 }
-
-type HandlerRef =
-  | ((instance: HTMLDivElement | null) => void)
-  | React.RefObject<HTMLDivElement>
-  | null
-  | undefined
 
 const CustomAlert = styled(Alert, {
   shouldForwardProp: prop => prop !== "severity",

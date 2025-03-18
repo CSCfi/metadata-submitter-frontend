@@ -65,7 +65,7 @@ test.describe("Basic application flow", () => {
     // Test invalid email address (form array, default)
     await page.getByTestId("contacts.0.email").fill("email")
     await expect(page.locator("p[id='contacts.0.email-helper-text']")).toHaveText(
-      'must match format "email"'
+      'must match format "email"',
     )
     await page.getByTestId("contacts.0.email").fill("email@test.com")
     await page.getByTestId("contacts.0.telephoneNumber").fill("123456789")
@@ -85,7 +85,7 @@ test.describe("Basic application flow", () => {
 
     await page.getByRole("alert", { name: "Object updated" })
     await expect(
-      page.getByTestId("dac-objects-list").filter({ hasText: "Test title edited" })
+      page.getByTestId("dac-objects-list").filter({ hasText: "Test title edited" }),
     ).toBeVisible()
 
     // Fill Policy form
@@ -104,7 +104,7 @@ test.describe("Basic application flow", () => {
 
     await clickAccordionPanel("Datafolder")
     await expect(page.getByTestId("file-details")).toBeVisible()
-    await page.getByRole("button", { name: "View datafolder" }).click()
+    await page.getByRole("button", { name: "View" }).click()
 
     /*
      * 4th step, Describe

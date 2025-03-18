@@ -18,11 +18,12 @@ import type {
   DoiContributor,
   DoiSubject,
   DispatchReducer,
+  RemsDetails
 } from "types"
 
 type InitialState = SubmissionDetailsWithId & {
   doiInfo: Record<string, unknown> & DoiFormDetails
-} & { linkedFolder?: string }
+} & { linkedFolder?: string } & { rems?: RemsDetails}
 
 const initialState: InitialState = {
   submissionId: "",
@@ -83,6 +84,9 @@ const wizardSubmissionSlice = createSlice({
     addLinkedFolder: (state, action) => {
       state.linkedFolder = action.payload
     },
+    addRemsData: (state, action) => {
+      state.rems = action.payload
+    },
     resetSubmission: () => initialState,
   },
 })
@@ -97,6 +101,7 @@ export const {
   modifyObjectTags,
   modifyDraftObjectTags,
   addLinkedFolder,
+  addRemsData,
   resetSubmission,
 } = wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
@@ -271,6 +276,21 @@ export const addLinkedFolderToSubmission =
     return new Promise((resolve, reject) => {
       if (response.ok) {
         dispatch(addLinkedFolder(linkedFolderName))
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }
+
+export const addRemsToSubmission =
+  (submissionId: string, remsData: Record<string, unknown>) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+    const response = await submissionAPIService.putRemsData(submissionId, remsData)
+
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        dispatch(addRemsData(remsData))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

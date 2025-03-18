@@ -10,8 +10,7 @@
   "edit": "Edit",
   "delete": "Poista",
   "close": "Sulje",
-  "viewObject": "View {{object}}",
-  "addObject": "Add {{object}}",
+  "view": "View",
   "draft": "Draft",
   "ready": "Ready",
   "saveSubmission": "Save progress and exit",
@@ -25,6 +24,15 @@
       "missingDescription": "Please give a description to the submission.",
       "missingWorkflow": "Please select a submission type."
     }
+  },
+  "dacPolicies": {
+    "title": "DAC and policies",
+    "selectOrganization": "Select organization",
+    "selectDAC": "Select DAC",
+    "selectAdditionalPolicies": "Select additional policies (optional)",
+    "dacTitle": "DAC title",
+    "linkedPolicies": "Policies linked to DAC",
+    "policyTitle": "Policy title"
   },
   "formActions": {
     "saveAsDraft": "Save as draft",
@@ -46,7 +54,10 @@
       "helperText": {
         "deleteObjectFromSubmission": "Can't delete object",
         "fetchWorkflowsError": "Error getting all workflows",
-        "submitDoiError": "Can't submit information for DOI."
+        "submitDoiError": "Can't submit information for DOI.",
+        "fetchRemsInfoError": "Error getting REMS information.",
+        "fetchSubmissionError": "Error fetching submission.",
+        "submitRemsError": "Can't save information for REMS."
       }
     },
     "info": {
@@ -75,6 +86,9 @@
       },
       "submissions": {
         "deleted": "The submission has been deleted successfully!"
+      },
+      "rems": {
+        "saved": "REMS information has been saved successfully"
       }
     }
   },
@@ -172,7 +186,7 @@
   },
   "setIdentifierPublish": "Identifier and publish",
   "summary": "Summary",
-  "summaryButtonText": "View summary",
+  "summaryButtonText": "View",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",

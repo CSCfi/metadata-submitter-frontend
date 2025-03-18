@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) New form for selecting and saving DAC and Policies from REMS/SD Apply to submission
 - add summary step test
 - Condition to disable "Mark as ready" when there already exist a study.
 - A new button group for DOI

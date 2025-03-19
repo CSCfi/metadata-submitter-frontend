@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) moved asterisk to the left column
 - pagination of DataTable.tsx
 - (admins) dependency packet versions update
 - dependency packet versions update

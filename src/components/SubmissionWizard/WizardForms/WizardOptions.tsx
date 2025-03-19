@@ -19,7 +19,7 @@ type WizardOptionsProps = {
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
+  const { objectType, onClearForm, onDeleteForm, disableUploadXML } = props
   const { t } = useTranslation()
 
   const options =

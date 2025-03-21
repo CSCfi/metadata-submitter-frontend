@@ -16,6 +16,8 @@ export const ObjectTypes = {
   dacPolicies: "dacPolicies",
 }
 
+export const DoiTypes = { datacite: "datacite" }
+
 export const DisplayObjectTypes = {
   study: "Study",
   sample: "Sample",

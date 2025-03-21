@@ -19,7 +19,7 @@ type WizardOptionsProps = {
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { objectType, onClearForm, onDeleteForm, disableUploadXML } = props
+  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
   const { t } = useTranslation()
 
   const options =
@@ -36,10 +36,24 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
 
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
-    option === options[0] && objectType === ObjectTypes.datacite ? onClearForm() : null
-    option === options[0] && onOpenXMLModal ? onOpenXMLModal() : null
-    option === options[1] ? onClearForm() : null
-    option === options[2] && onDeleteForm ? onDeleteForm() : null
+
+    const shouldDisableXMLModal = ["datacite", "dac", "policies", "datafolder"].includes(objectType)
+
+    if (option === options[0]) {
+      if (shouldDisableXMLModal) {
+        onClearForm()
+      } else {
+        onOpenXMLModal()
+      }
+    }
+
+    if (option === options[1]) {
+      onClearForm()
+    }
+
+    if (option === options[2]) {
+      onDeleteForm()
+    }
   }
 
   return (

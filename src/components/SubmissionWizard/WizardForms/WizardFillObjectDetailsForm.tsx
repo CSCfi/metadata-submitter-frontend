@@ -30,7 +30,7 @@ import WizardOptions from "./WizardOptions"
 import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes, DoiTypes } from "constants/wizardObject"
+import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
@@ -282,7 +282,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       action={
         currentObject?.status === ObjectStatus.template
           ? templateButtonGroup
-          : objectType === DoiTypes.datacite
+          : objectType === ObjectTypes.datacite
           ? doiButtonGroup
           : buttonGroup
       }
@@ -511,7 +511,7 @@ const FormContent = ({
     // Prevent auto save from DOI form and template dialog
     if (
       currentObject?.status !== ObjectStatus.template &&
-      objectType !== (ObjectTypes.study || DoiTypes.datacite)
+      objectType !== (ObjectTypes.study || ObjectTypes.datacite)
     )
       startTimer()
   }

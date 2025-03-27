@@ -12,7 +12,7 @@ import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
 import { ResponseStatus } from "constants/responseStatus"
-import { DoiTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import { setLocale } from "features/localeSlice"
 import { setObjectTypesArray } from "features/objectTypesArraySlice"
 import { setRemsInfo } from "features/remsInfoSlice"
@@ -78,8 +78,8 @@ const App: React.FC = () => {
           const schemas = response.data
             .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
             .map((schema: { title: string }) =>
-              schema.title.toLowerCase().includes(DoiTypes.datacite)
-              ? DoiTypes.datacite
+              schema.title.toLowerCase().includes(ObjectTypes.datacite)
+              ? ObjectTypes.datacite
               : schema.title.toLowerCase(),
             )
           dispatch(setObjectTypesArray(schemas))

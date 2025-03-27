@@ -32,7 +32,7 @@ import { get, flatten, uniq, debounce } from "lodash"
 import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 
-import { DisplayObjectTypes, DoiTypes } from "constants/wizardObject"
+import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
@@ -797,7 +797,7 @@ const FormTextField = ({
   nestedField,
 }: FormFieldBaseProps & { description: string; type?: string; nestedField?: NestedField }) => {
   const objectType = useAppSelector(state => state.objectType)
-  const isDOIForm = objectType === DoiTypes.datacite
+  const isDOIForm = objectType === ObjectTypes.datacite
   const autocompleteField = useAppSelector(state => state.autocompleteField)
   const path = name.split(".")
   const [lastPathItem] = path.slice(-1)

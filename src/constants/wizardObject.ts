@@ -5,6 +5,7 @@ export const ObjectTypes = {
   run: "run",
   analysis: "analysis",
   dac: "dac",
+  datacite: "datacite",
   policy: "policy",
   dataset: "dataset",
   file: "file",
@@ -15,8 +16,6 @@ export const ObjectTypes = {
   bpstaining: "bpstaining",
   dacPolicies: "dacPolicies",
 }
-
-export const DoiTypes = { datacite: "datacite" }
 
 export const DisplayObjectTypes = {
   study: "Study",

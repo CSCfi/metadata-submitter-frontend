@@ -5,6 +5,7 @@ export const ObjectTypes = {
   run: "run",
   analysis: "analysis",
   dac: "dac",
+  datacite: "datacite",
   policy: "policy",
   dataset: "dataset",
   file: "file",

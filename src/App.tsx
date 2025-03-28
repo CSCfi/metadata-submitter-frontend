@@ -78,7 +78,9 @@ const App: React.FC = () => {
           const schemas = response.data
             .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
             .map((schema: { title: string }) =>
-              schema.title.includes("datacite") ? "datacite" : schema.title.toLowerCase(),
+              schema.title.toLowerCase().includes(ObjectTypes.datacite)
+              ? ObjectTypes.datacite
+              : schema.title.toLowerCase(),
             )
           dispatch(setObjectTypesArray(schemas))
         } else {

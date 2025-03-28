@@ -282,7 +282,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       action={
         currentObject?.status === ObjectStatus.template
           ? templateButtonGroup
-          : objectType === "datacite"
+          : objectType === ObjectTypes.datacite
           ? doiButtonGroup
           : buttonGroup
       }
@@ -511,7 +511,7 @@ const FormContent = ({
     // Prevent auto save from DOI form and template dialog
     if (
       currentObject?.status !== ObjectStatus.template &&
-      objectType !== (ObjectTypes.study || "datacite")
+      objectType !== (ObjectTypes.study || ObjectTypes.datacite)
     )
       startTimer()
   }

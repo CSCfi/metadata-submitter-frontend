@@ -116,7 +116,7 @@ test.describe("Basic application flow", () => {
     await clickAccordionPanel("Identifier and publish")
 
     // Click the "Add Summary" button
-    await page.getByRole("button", { name: "Add Summary" }).click()
+    await page.getByTestId("Add Summary").click()
 
     // Verify that all summary steps are present
     const stepTestIds = [

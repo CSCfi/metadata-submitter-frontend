@@ -162,27 +162,26 @@ const StepItems = (props: {
         })
         break
       }
-      case 2: {
+      default: {
         if (objectType === ObjectTypes.dacPolicies) {
           dispatch(resetCurrentObject())
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
           dispatch(setSubmissionType(ObjectSubmissionTypes.form))
           dispatch(setObjectType(objectType))
+        } else {
+          const item = formObject.objectData
+          editObjectHook(
+            draft,
+            objectType,
+            item,
+            step,
+            submissionId,
+            dispatch,
+            navigate,
+            objects.findIndex(object => object.id === item.accessionId),
+          )
         }
         break
-      }
-      default: {
-        const item = formObject.objectData
-        editObjectHook(
-          draft,
-          objectType,
-          item,
-          step,
-          submissionId,
-          dispatch,
-          navigate,
-          objects.findIndex(object => object.id === item.accessionId),
-        )
       }
     }
   }

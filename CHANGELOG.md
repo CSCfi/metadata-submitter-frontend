@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- a condition
 - (users) Sorting with pagination to happen through all the rows, not only inside a page.
 - (users) Data table in Home view not showing all the columns
 - Schemas that allow multiple objects can have multiple drafts and ready objects
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- a constant for datacite
 - (users) New form for selecting and saving DAC and Policies from REMS/SD Apply to submission
 - add summary step test
 - Condition to disable "Mark as ready" when there already exist a study.

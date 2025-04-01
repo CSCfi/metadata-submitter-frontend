@@ -14,6 +14,8 @@
   "draft": "Draft",
   "ready": "Ready",
   "saveSubmission": "Save progress and exit",
+  "showMore": "Show more",
+  "showLess": "Show less",
   "newSubmission": {
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",

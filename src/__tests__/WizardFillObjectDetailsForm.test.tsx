@@ -116,9 +116,9 @@ describe("WizardFillObjectDetailsForm", () => {
 
     const tooltipBox = await waitFor(() => screen.getByRole("tooltip"))
     expect(tooltipBox).toBeVisible()
-    expect(tooltipBox).toHaveTextContent("Read more/Expand")
+    expect(tooltipBox).toHaveTextContent("Show more")
 
-    const showmoreLink = await waitFor(() => screen.getByText("Read more/Expand"))
+    const showmoreLink = await waitFor(() => screen.getByText("Show more"))
 
     act(() => {
       fireEvent.click(showmoreLink)
@@ -137,7 +137,7 @@ describe("WizardFillObjectDetailsForm", () => {
 
     await waitFor(() =>
       expect(tooltipBox).toHaveTextContent(
-        "Study Description should provide additional information abou...Read more/Expand"
+        "Study Description should provide additional information abou...Show more"
       )
     )
   })

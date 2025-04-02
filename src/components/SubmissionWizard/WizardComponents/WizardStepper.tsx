@@ -82,6 +82,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
+  const objectType = useAppSelector(state => state.objectType)
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const workflowType = useAppSelector(state => state.workflowType)
@@ -113,7 +114,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       objectTypesArray,
       currentWorkflow,
       t,
-      remsInfo
+      remsInfo,
     )
     dispatch(setWizardMappedSteps(mappedSteps))
   }, [submission, objectTypesArray, currentWorkflow, t])
@@ -125,16 +126,16 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       const stepInUrl = Number(location.search.split("step=")[1].slice(0, 1))
       const currentStep = mappedSteps[stepInUrl - 1]
 
-      if (currentStep && currentStep.schemas?.length) {
+      if (currentStep?.schemas?.length) {
         dispatch(
           updateStep({
             step: Number(stepInUrl),
-            objectType: currentStep.schemas[0]?.objectType,
-          })
+            objectType: objectType ? objectType : currentStep.schemas[0]?.objectType,
+          }),
         )
         // Only set correct objectType after creating a new submission (stepInUrl === 1)
-        if (currentStep && stepInUrl > 1) {
-          dispatch(setObjectType(currentStep.schemas[0]?.objectType))
+        if (stepInUrl > 1) {
+          dispatch(setObjectType(objectType ? objectType : currentStep.schemas[0]?.objectType))
         }
       }
     }
@@ -148,7 +149,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       dispatch(resetWorkflowType())
       dispatch(resetWizardMappedSteps())
     },
-    []
+    [],
   )
 
   const [expandedPanels, setExpandedPanels] = useState<number[]>([0]) // Open first panel on init
@@ -157,7 +158,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
     setExpandedPanels(
       expandedPanels.includes(stepIndex)
         ? expandedPanels.filter(i => i !== stepIndex)
-        : [...expandedPanels, stepIndex]
+        : [...expandedPanels, stepIndex],
     )
   }
 

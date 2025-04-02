@@ -1,4 +1,5 @@
 {
+  "serviceTitle": "SD Submit",
   "serviceIntro": "Tool for submitting metadata.",
   "createSubmission": "Create submission",
   "allSubmissions": "All submissions",
@@ -16,6 +17,13 @@
   "saveSubmission": "Save progress and exit",
   "showMore": "Show more",
   "showLess": "Show less",
+  "visibleLanguage": {
+    "en": "In English",
+    "fi": "Suomeksi"
+  },
+  "inEnglish": "In English",
+  "inFinnish": "In Finnish",
+  "userGuide": "User guide",
   "newSubmission": {
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",

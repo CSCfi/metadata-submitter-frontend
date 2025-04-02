@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Fix Wizard Steps to direct to correct steps and objects
 - a condition
 - (users) Sorting with pagination to happen through all the rows, not only inside a page.
 - (users) Data table in Home view not showing all the columns

@@ -32,7 +32,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
 
   const shouldDisableXMLModal =
     [ObjectTypes.datacite, ObjectTypes.dacPolicies, ObjectTypes.file].includes(objectType) &&
-    workflowType == WorkflowTypes.sdsx
+    workflowType === WorkflowTypes.sdsx
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)

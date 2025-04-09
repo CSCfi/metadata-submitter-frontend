@@ -22,6 +22,8 @@ Install pnpm that suits your machine from [pnpm installation](https://pnpm.io/in
 
 Install and run backend from [SD Submit API repository](https://github.com/CSCfi/metadata-submitter/).
 
+> **Note:** If you run the backend with `docker compose`, you will then also need to set the `REDIRECT_URL` environment variable to the UI address (e.g. add `REDIRECT_URL=http://localhost:3000` into the `.env` file).
+
 ### Running
 
 After the backend is up and running, install and run frontend with:
@@ -54,21 +56,25 @@ If you are not part of CSC and our development team, your help is nevertheless v
 
 ### Code format check
 
-You can find the rules for checking in `eslint.config.js` and `.prettierrc`. Linting, formatting and unit testing are also configured for you as a git pre-commit, which is recommended to use to avoid fails on CI pipeline.
+You can find the rules for checking in `eslint.config.js` and `.prettierrc`. Linting, formatting and unit testing are also configured for you as a git pre-commit with Husky, which is recommended to use to avoid fails on CI pipeline. Please see [pre-commit hook](.husky/pre-commit).
 
 - For checking code quality and fixing potential bugs:
 
-```
+```bash
+# Only check code quality
 pnpm run lint:check
 
+# OR check and fix potential bugs
 pnpm run lint
 ```
 
-- For checking code formats and fixing formatting errors in json/yaml/css/md -files:
+- For checking code format and fixing formatting errors in json/yaml/css/md -files:
 
-```
+```bash
+# Ony check code format
 pnpm run format:check
 
+# OR check and fix formatting errors
 pnpm run format
 ```
 
@@ -76,22 +82,18 @@ pnpm run format
 
 Unit tests and components are run by Vitest and React Testing Library using these commands:
 
-- For watching real-time code changes:
-
 ```bash
+# For watching real-time code changes
 pnpm test
-```
 
-- Without watching the code changes:
-
-```bash
+# Without watching the code changes
 pnpm test:no-watch
-```
 
-- For a summary of test coverage:
-
-```bash
+# For a summary of test coverage
 pnpm test:coverage
+
+# For running a single test file
+pnpm test /relativePath/to/test/file
 ```
 
 ### End-to-end tests
@@ -106,11 +108,8 @@ cp .env.example .env
 
 ```bash
 pnpm dlx playwright install --with-deps
-```
 
-OR if you have issue with your PATH
-
-```bash
+# OR if you have issue with your PATH
 pnpm exec playwright install --with-deps
 ```
 
@@ -118,11 +117,11 @@ pnpm exec playwright install --with-deps
 
 ```bash
 pnpm test:e2e
-```
 
-OR you can run the tests in UI mode:
+# For running a single test file
+pnpm test:e2e /relativePath/to/test/file
 
-```bash
+# OR you can run the tests in UI mode
 pnpm test:e2e:ui
 ```
 

@@ -6,7 +6,7 @@ If you're reading this, it means you saw something that is not right, you want t
 
 We have a handful of unit tests and integration tests. In our Git workflow unit tests are run on every Push and Pull Request, while integration tests run on every Pull Request.
 
-We use [Playwright](https://playwright.dev/) for e2e testing, which are run against the develop branch of [metadata-submitter backend](https://github.com/CSCfi/metadata-submitter).
+We use [Playwright](https://playwright.dev/) for e2e testing, which are run against the `main` branch of [SD Submit API](https://github.com/CSCfi/metadata-submitter).
 
 ### Submitting Issues
 
@@ -14,7 +14,7 @@ We have templates for submitting new issues, that you can fill out. For example 
 
 ### Submitting changes
 
-When you made some changes you are happy with please send a [GitHub Pull Request to metadata-submitter](https://github.com/CSCfi/metadata-submitter-frontend/pull/new/dev) to `main` branch with a clear list of what you've done (read more about [pull requests](https://help.github.com/en/articles/about-pull-requests)). When you create that Pull Request, we will forever be in your debt if you include unit tests. For extra bonus points you can always use add some more integration tests.
+When you made some changes you are happy with please send a [GitHub Pull Request to metadata-submitter-frontend](https://github.com/CSCfi/metadata-submitter-frontend/pull/new/dev) to `main` branch with a clear list of what you've done (read more about [pull requests](https://help.github.com/en/articles/about-pull-requests)). When you create that Pull Request, we will forever be in your debt if you include unit tests. For extra bonus points you can always use add some more integration tests.
 
 Please follow our Git branches model and coding conventions (both below), and make sure all of your commits are atomic (preferably one feature per commit) and it is recommended a Pull Request addresses one functionality or fixes one bug.
 
@@ -24,8 +24,7 @@ Once submitted, the Pull Request will go through a review process, meaning we wi
 
 #### Git Branches
 
-We use `main` branch as the main developopment branch.
-All Pull Requests related to features should be done against `develop` branch, releases Pull Requests should be done against `master` branch.
+We use `main` branch as the main development branch.
 
 Give your branch a short descriptive name (like the names between the `<>` below) and prefix the name with something representative for that branch:
 

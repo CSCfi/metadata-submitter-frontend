@@ -9,8 +9,6 @@ import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 import { ObjectTypes } from "constants/wizardObject"
-import { WorkflowTypes } from "constants/wizardWorkflow"
-import { useAppSelector } from "hooks"
 
 type WizardOptionsProps = {
   objectType: string
@@ -23,16 +21,17 @@ type WizardOptionsProps = {
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
   const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
   const { t } = useTranslation()
-  const workflowType = useAppSelector(state => state.workflowType)
 
   const options =
     objectType !== ObjectTypes.datacite
       ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
       : [t("formActions.clearForm")]
 
-  const shouldDisableXMLModal =
-    [ObjectTypes.datacite, ObjectTypes.dacPolicies, ObjectTypes.file].includes(objectType) &&
-    workflowType === WorkflowTypes.sdsx
+  const shouldDisableXMLModal = [
+    ObjectTypes.datacite,
+    ObjectTypes.dacPolicies,
+    ObjectTypes.file,
+  ].includes(objectType)
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)

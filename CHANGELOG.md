@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) removed unnecessary toast
 - tsc from package build script
 - deprecated react-router-dom and @types/react-router-dom
 - files `WizardDOIForm.tsx` and `openedDoiFormSlice.tsx`

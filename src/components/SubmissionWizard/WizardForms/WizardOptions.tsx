@@ -27,6 +27,12 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
       ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
       : [t("formActions.clearForm")]
 
+  const shouldDisableXMLModal = [
+    ObjectTypes.datacite,
+    ObjectTypes.dacPolicies,
+    ObjectTypes.file,
+  ].includes(objectType)
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -36,10 +42,22 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
 
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
-    option === options[0] && objectType === ObjectTypes.datacite ? onClearForm() : null
-    option === options[0] && onOpenXMLModal ? onOpenXMLModal() : null
-    option === options[1] ? onClearForm() : null
-    option === options[2] && onDeleteForm ? onDeleteForm() : null
+
+    if (option === options[0]) {
+      if (shouldDisableXMLModal) {
+        onClearForm()
+      } else {
+        onOpenXMLModal()
+      }
+    }
+
+    if (option === options[1]) {
+      onClearForm()
+    }
+
+    if (option === options[2]) {
+      onDeleteForm()
+    }
   }
 
   return (

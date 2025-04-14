@@ -56,7 +56,7 @@ describe("Test autocomplete on organisation field", () => {
       renderWithProviders(<WizardFillObjectDetailsForm />)
     })
     const autocomplete = (await waitFor(() =>
-      screen.getByTestId("organisation-inputField")
+      screen.getByTestId("organisation-inputField"),
     )) as HTMLInputElement
     act(() => {
       autocomplete.focus()
@@ -64,13 +64,16 @@ describe("Test autocomplete on organisation field", () => {
       // Note: userEvent doesn't work inside act(), which in this case is needed for MUI autocomplete field
       fireEvent.change(autocomplete, { target: { value: "test" } })
     })
+    expect(autocomplete.value).toEqual("test")
     //Find loading indicator
     await waitFor(() => screen.getByRole("progressbar"))
     // Find options wrapper
     await waitFor(() => screen.getByRole("presentation"))
+    // Wait for dropdown result to appear
+    await screen.findByText(mockOrganisations[0].name)
     // Select first option
-    await waitFor(() => userEvent.keyboard("[ArrowDown]"))
-    await waitFor(() => userEvent.keyboard("[Enter]"))
+    await userEvent.keyboard("{arrowdown}")
+    await userEvent.keyboard("{enter}")
     expect(autocomplete.value).toEqual(mockOrganisations[0].name)
   })
 })

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Modify `pnpm test` script to run the unit tests sequentially
 - (users) moved asterisk to the left column
 - pagination of DataTable.tsx
 - (admins) dependency packet versions update
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix for unit test failure in FormAutocompleteField
 - (users) Fix Wizard Steps to direct to correct steps and objects
 - a condition
 - (users) Sorting with pagination to happen through all the rows, not only inside a page.

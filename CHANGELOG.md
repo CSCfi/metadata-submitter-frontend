@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Modified ARCHITECTURE.md to STRUCTURE.md
+- Updated instructions in the README, CONTRIBUTING, LICENSE files
 - Modify `pnpm test` script to run the unit tests sequentially
 - (users) moved asterisk to the left column
 - pagination of DataTable.tsx

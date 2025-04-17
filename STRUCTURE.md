@@ -13,7 +13,7 @@ Form components are crucial part of the application:
 
 ### Constants
 
-Folder `src/constants` holds all the constants used in the application. The constants are uniquely defined and separated into different files according to its related context. For example, the file `constants/wizardObject.js` contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
+Folder `src/constants` holds all the constants used in the application. The constants are uniquely defined and separated into different files according to its related context. For example, the file `constants/wizardObject.ts` contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
 
 The purposes of using these `constants` are:
 
@@ -23,7 +23,7 @@ The purposes of using these `constants` are:
 
 Example of defining and using a constant:
 
-- First, define the constant object `ObjectSubmissionTypes` in `constants/wizardObject.js`
+- First, define the constant object `ObjectSubmissionTypes` in `constants/wizardObject.ts`
 
 ```
 export const ObjectSubmissionTypes = {
@@ -33,37 +33,33 @@ export const ObjectSubmissionTypes = {
 }
 ```
 
-- Then, use this constant in `WizardComponents/WizardObjectIndex`:
+- Then, use this constant in `WizardComponents/WizardAddObjectCard`:
 
 ```
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 
-  switch (currentSubmissionType) {
-    case ObjectSubmissionTypes.form: {
-      target = "form"
-      break
-    }
-    case ObjectSubmissionTypes.xml: {
-      target = "XML upload"
-      break
-    }
-    case ObjectSubmissionTypes.existing: {
-      target = "drafts"
-      break
-    }
+  const content = {
+    [ObjectSubmissionTypes.form]: {
+      component: <WizardFillObjectDetailsForm key={objectType + submissionType} formRef={formRef} />,
+      testId: ObjectSubmissionTypes.form,
+    },
+    [ObjectSubmissionTypes.xml]: {
+      component: <WizardXMLObjectPage key={objectType + submissionType} />,
+      testId: ObjectSubmissionTypes.xml,
+    },
   }
 ```
 
 ### Commonly used data types
 
-All commonly used data types of variables are defined in the file `index.js` in folder `src/types`. The purposes are:
+All commonly used data types of variables are defined in the file `index.ts` in folder `src/types`. The purposes are:
 
 - to avoid hard coding the same data types frequently in different files
 - to keep track and consistency of the data types across different files
 
 For example:
 
-- declare and export these data types in `src/types/index.js`
+- declare and export these data types in `src/types/index.ts`
 
 ```
 export type ObjectInsideSubmission = {
@@ -81,12 +77,12 @@ export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: Ob
 
 - import and reuse the data types in different files:
 
-  - Reuse type `ObjectInsideSubmissionWithTags` consequently in both `WizardComponents/WizardSavedObjectsList.js` and `WizardSteps/WizardShowSummaryStep.js`:
+  - Reuse type `ObjectInsideSubmissionWithTags` consequently in both `WizardComponents/WizardAlert` and `WizardSteps/WizardShowSummaryStep`:
 
   ```
   import type { ObjectInsideSubmissionWithTags } from "types"
 
-  type WizardSavedObjectsListProps = { submissions: Array<ObjectInsideSubmissionWithTags> }
+  const handleDialog = (action: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {}
   ```
 
   ```
@@ -99,8 +95,8 @@ export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: Ob
 
 Redux is handled with [Redux Toolkit](https://redux-toolkit.js.org/) and app is using following redux toolkit features:
 
-- Store, global app state, configured in `store.js`
-- Root reducer, combining all reducers to one, configured in `rootReducer.js`
+- Store, global app state, configured in `store.ts`
+- Root reducer, combining all reducers to one, configured in `rootReducer.ts`
 - Slices with `createSlice`-api, defining all reducer functions, state values and actions without extra boilerplate.
   - Slices are configured for different features in `features/` -folder.
   - Async reducer functions are also configured inside slices.
@@ -153,6 +149,6 @@ App uses [Material UI](https://material-ui.com/) components.
 
 Global styles are defined with `style.css` and Material UI theme, customized for CSC. Material UI theme is set in `theme.ts` file. Since we are using Typescript, we also need to make a declaration in `theme.d.ts` in order to use the theme. See [example](https://mui.com/customization/theming/#custom-variables).
 
-Material UI has been updated to [version 5](https://mui.com/guides/migration-v4/). `withStyles` or `makeStyles` may be deprecated sooner or later. To style the components, we can use [sx property](https://mui.com/system/the-sx-prop/#main-content) for defining custom style that has access to the theme, and [styled() utility](https://mui.com/system/styled/#how-can-i-use-the-sx-syntax-with-the-styled-utility) for creating styled components.
+We can use [sx property](https://mui.com/system/the-sx-prop/#main-content) for defining custom style that has access to the theme, and [styled() utility](https://mui.com/system/styled/#how-can-i-use-the-sx-syntax-with-the-styled-utility) for creating styled components.
 
 It is also worth to know about their [Performances](https://mui.com/system/basics/#performance-tradeoff) when using the two. See [customizing components](https://material-ui.com/customization/components/) for more info.

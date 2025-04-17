@@ -6,7 +6,7 @@
 [![End-to-end tests](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/e2etests.yml/badge.svg)](https://github.com/CSCfi/metadata-submitter-frontend/actions/workflows/e2etests.yml)
 [![Coverage Status](https://coveralls.io/repos/github/CSCfi/metadata-submitter-frontend/badge.svg?branch=master)](https://coveralls.io/github/CSCfi/metadata-submitter-frontend?branch=master)
 
-SD Submit UI, also known as metadata submission frontend provides graphical user interface (GUI) for filling in and submitting metadata. This frontend repository is tightly coupled with backend repository called [SD Submit API](https://github.com/CSCfi/metadata-submitter/).
+SD Submit UI, also known as metadata submission frontend provides graphical user interface (GUI) for filling in and submitting metadata. This frontend repository is tightly coupled with backend repository called SD Submit API - link to repository in [Gitlab](https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/) / [Github](https://github.com/CSCfi/metadata-submitter).
 
 ## 💻 Development
 
@@ -20,7 +20,7 @@ SD Submit UI, also known as metadata submission frontend provides graphical user
 
 Install pnpm that suits your machine from [pnpm installation](https://pnpm.io/installation).
 
-Install and run backend from [SD Submit API repository](https://github.com/CSCfi/metadata-submitter/).
+Install and run backend from SD Submit API repository [Gitlab](https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/) / [Github](https://github.com/CSCfi/metadata-submitter).
 
 > **Note:** If you run the backend with `docker compose`, you will then also need to set the `REDIRECT_URL` environment variable to the UI address (e.g. add `REDIRECT_URL=http://localhost:3000` into the `.env` file).
 

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Replaced "Read more/expand" with "Show more" in tooltips
+- Adjusted the test WizardFillObjectDetailsForm.test.tsx
 - Modified ARCHITECTURE.md to STRUCTURE.md
 - Updated instructions in the README, CONTRIBUTING, LICENSE files
 - Modify `pnpm test` script to run the unit tests sequentially
@@ -43,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Icons for support and language buttons
 - a constant for datacite
 - (users) New form for selecting and saving DAC and Policies from REMS/SD Apply to submission
 - add summary step test
@@ -55,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) "Sensitive Data Services" phrase from navigation bar.
 - (users) removed unnecessary toast
 - tsc from package build script
 - deprecated react-router-dom and @types/react-router-dom

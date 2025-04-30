@@ -93,6 +93,8 @@ const mapObjectsToStepsHook = (
               ...schema,
               name: schema.name.toLowerCase().includes(ObjectTypes.file)
                 ? t("datafolder.datafolder")
+                : schema.name === ObjectTypes.dac
+                ? schema.name.toUpperCase()
                 : startCase(schema.name),
               objectType: schema.name,
               objects: groupedObjects[schema.name],

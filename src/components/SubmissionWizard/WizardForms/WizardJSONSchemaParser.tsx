@@ -31,6 +31,7 @@ import Typography from "@mui/material/Typography"
 import { get, flatten, uniq, debounce } from "lodash"
 import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
@@ -402,6 +403,7 @@ const DisplayDescription = ({
   description: string
   children?: React.ReactElement
 }) => {
+  const { t } = useTranslation()
   const [isReadMore, setIsReadMore] = useState(description.length > 60)
 
   const toggleReadMore = () => {
@@ -423,7 +425,7 @@ const DisplayDescription = ({
       {!isReadMore && children}
       {description?.length >= 60 && (
         <ReadmoreText onClick={toggleReadMore}>
-          {isReadMore ? "Read more/Expand" : " Show less"}
+          {isReadMore ? t("showMore") : t("showLess")}
         </ReadmoreText>
       )}
     </p>

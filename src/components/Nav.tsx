@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react"
 
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import LanguageIcon from "@mui/icons-material/Language"
+import LogoutIcon from "@mui/icons-material/Logout"
+import OpenInNewIcon from "@mui/icons-material/OpenInNew"
 import PersonIcon from "@mui/icons-material/Person"
 import AppBar from "@mui/material/AppBar"
 import Button from "@mui/material/Button"
 import Link from "@mui/material/Link"
+import ListItemIcon from "@mui/material/ListItemIcon"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import { styled } from "@mui/material/styles"
@@ -44,6 +49,7 @@ const Logo = styled("img")(() => ({
 }))
 
 const ServiceTitle = styled(Typography)(({ theme }) => ({
+  whiteSpace: "nowrap", // prevent truncation
   flexGrow: 1,
   color: theme.palette.secondary.main,
   fontWeight: 700,
@@ -51,7 +57,11 @@ const ServiceTitle = styled(Typography)(({ theme }) => ({
 
 const NavLinks = styled("nav")(({ theme }) => ({
   "& button": {
-    margin: theme.spacing(0, 1),
+    color: theme.palette.primary.main,
+    margin: theme.spacing(0, 1.5),
+    padding: "0.4rem 1rem",
+    fontSize: "1.4rem",
+    "&:hover": { backgroundColor: theme.palette.primary.light },
   },
 }))
 
@@ -90,14 +100,14 @@ const NavigationLinks = () => {
         onClick={handleClick}
         data-testid="user-setting-button"
       >
-        <PersonIcon fontSize="large" />
-        <Typography
-          variant="subtitle2"
-          color="secondary"
-          sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}
-        >
-          {user.name}
-        </Typography>
+      <PersonIcon fontSize="large" />
+      <Typography
+        variant="subtitle2"
+        color="primary"
+        sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
+       >
+        {user.name}
+      </Typography>
         {open ? (
           <ExpandLess color="secondary" fontSize="large" />
         ) : (
@@ -124,11 +134,14 @@ const NavigationLinks = () => {
           <Typography
             variant="subtitle2"
             color="secondary"
-            sx={{ ml: "0.65em", mr: "1.9em", fontWeight: 700 }}
+            sx={{ mx: "1rem", fontWeight: 700 }}
             data-testid="logout"
           >
             {t("logout")}
           </Typography>
+          <ListItemIcon>
+              <LogoutIcon/>
+          </ListItemIcon>
         </MenuItem>
       </Menu>
     </>
@@ -139,14 +152,17 @@ const NavigationLinks = () => {
 
 const LanguageSelector = (props: MenuItemProps) => {
   const { currentLocale } = props
+  const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const chosenLanguage = t(`visibleLanguage.${currentLocale}`)
 
   const changeLang = (locale: string) => {
-    const pathWithoutLocale = location.pathname.includes(`${currentLocale}`) ?
-    location.pathname.split(`/${currentLocale}/`)[1] : location.pathname.replace("/", "")
+    const pathWithoutLocale = location.pathname.includes(`${currentLocale}`)
+      ? location.pathname.split(`/${currentLocale}/`)[1]
+      : location.pathname.replace("/", "")
 
     if (pathsWithoutLogin.indexOf(location.pathname) === -1) {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
@@ -174,26 +190,127 @@ const LanguageSelector = (props: MenuItemProps) => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ ml: 3, textTransform: "capitalize" }}
       >
-        <Typography variant="subtitle2" color="primary" fontWeight="700">
-          {currentLocale}
+        <LanguageIcon fontSize="large" />
+        <Typography
+          variant="subtitle2"
+          color="primary"
+          sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
+        >
+          {chosenLanguage}
         </Typography>
+        {open ? (
+          <ExpandLess color="secondary" fontSize="large" />
+        ) : (
+          <ExpandMore color="secondary" fontSize="large" />
+        )}
       </Button>
       <Menu
         id="lang-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
         MenuListProps={{
           "aria-labelledby": "lang-selector",
         }}
       >
         <MenuItem onClick={() => changeLang("en")} data-testid="en-lang">
-          En
+          <Typography
+            variant="subtitle2"
+            color="secondary"
+            sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
+          >
+            {t("inEnglish")}
+          </Typography>
         </MenuItem>
         <MenuItem onClick={() => changeLang("fi")} data-testid="fi-lang">
-          Fi
+        <Typography
+          variant="subtitle2"
+          color="secondary"
+          sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
+        >
+          {t("inFinnish")}
+        </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  )
+}
+
+const SupportSelector = () => {
+  const { t } = useTranslation()
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>()
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: { currentTarget: HTMLElement }) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(undefined)
+  }
+
+  return (
+    <>
+      <Button
+        data-testid="support-button"
+        aria-controls="support-menu"
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        sx={{ textTransform: "capitalize" }}
+      >
+        <HelpOutlineIcon fontSize="large" />
+        <Typography
+          variant="subtitle2"
+          color="primary"
+          sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
+       >
+          {t("support")}
+        </Typography>
+        {open ? (
+          <ExpandLess color="secondary" fontSize="large" />
+        ) : (
+          <ExpandMore color="secondary" fontSize="large" />
+        )}
+      </Button>
+      <Menu
+        id="support-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        MenuListProps={{ "aria-labelledby": "suport-selector" }}
+      >
+        <MenuItem sx={{ width: 1 }}>
+          <Link
+            href="https://docs.csc.fi/data/sensitive-data/"
+            target="_blank"
+            variant="subtitle2"
+            underline="none"
+          >
+            <Typography
+              variant="subtitle2"
+              color="secondary"
+              sx={{ mx: "1rem", fontWeight: 700 }}
+            >
+              {t("userGuide")}
+            </Typography>
+          </Link>
+          <ListItemIcon>
+              <OpenInNewIcon />
+          </ListItemIcon>
         </MenuItem>
       </Menu>
     </>
@@ -230,8 +347,9 @@ const NavigationMenu = () => {
             {t("saveSubmission")}
           </Button>
         )}
-        {pathsWithoutLogin.indexOf(location.pathname) === -1  && <NavigationLinks />}
         <LanguageSelector currentLocale={currentLocale} />
+        <SupportSelector />
+        {pathsWithoutLogin.indexOf(location.pathname) === -1 && <NavigationLinks />}
       </NavLinks>
       {dialogOpen && (
         <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>
@@ -240,17 +358,20 @@ const NavigationMenu = () => {
   )
 }
 
-const NavToolBar = () => (
-  <Toolbar>
-    <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 4rem" }}>
-      <Logo src={logo} alt="CSC_logo" />
-    </Link>
-    <ServiceTitle variant="h5" noWrap>
-      Sensitive Data Services - SD Submit
-    </ServiceTitle>
-    <NavigationMenu />
-  </Toolbar>
-)
+const NavToolBar = () => {
+  const { t } = useTranslation()
+  return (
+    <Toolbar disableGutters>
+      <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 2rem" }}>
+        <Logo src={logo} alt="CSC_logo" />
+      </Link>
+      <ServiceTitle variant="h5">
+        {t("serviceTitle")}
+      </ServiceTitle>
+      <NavigationMenu />
+    </Toolbar>
+  )
+}
 const Nav: React.FC<{ isFixed: boolean }> = ({ isFixed }) => {
   return (
     <>

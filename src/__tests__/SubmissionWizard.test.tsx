@@ -8,7 +8,7 @@ import { MemoryRouter, Routes, Route } from "react-router"
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
 
-const allWorkflows = { FEGA: "", BigPicture: "", SDSX: "" }
+const allWorkflows = { FEGA: "", Bigpicture: "", SDSX: "" }
 const submissionName = "Submission name"
 const submissionDescription = "Submission description"
 
@@ -65,7 +65,7 @@ describe("SubmissionWizard", () => {
             stepObjectType: "submissionDetails",
           },
         },
-      }
+      },
     )
     expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
   })
@@ -76,7 +76,7 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
     expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
@@ -88,7 +88,7 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     )
     /* waifForElementToBeRemoved is needed to wait for
       the mock promises to all resolve

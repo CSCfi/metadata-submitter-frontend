@@ -118,7 +118,7 @@ const test = base.extend<CommandFixtures>({
   },
   clickAccordionPanel: async ({ page }, baseUse) => {
     const clickAccordionPanel = async label => {
-      await page.getByRole("button", { name: label }).click()
+      await page.getByRole("button", { name: label }).click({ force: true })
       await page.waitForLoadState()
     }
     await baseUse(label => clickAccordionPanel(label))
@@ -242,7 +242,7 @@ const test = base.extend<CommandFixtures>({
     const checkWorkflowRadio = async checked => {
       await expect(page.getByRole("radiogroup")).toBeVisible()
       await expect(page.getByTestId("SDSX")).toBeDisabled()
-      await expect(page.getByTestId("BigPicture")).toBeDisabled()
+      await expect(page.getByTestId("Bigpicture")).toBeDisabled()
       await expect(page.getByTestId("FEGA")).toBeDisabled()
       await expect(page.getByTestId(checked)).toBeChecked()
     }

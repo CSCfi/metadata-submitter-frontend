@@ -17,7 +17,8 @@ test.describe("DataFolder view", () => {
       await page.waitForLoadState()
 
       await clickAccordionPanel("Datafolder")
-      await page.getByTestId("View file").click()
+      const viewfileButton = await page.getByTestId("View file")
+      await viewfileButton.dispatchEvent("click")
 
       // Mock files response
       await page.route(`/v1/files`, async route => await route.fulfill({ json: files }))

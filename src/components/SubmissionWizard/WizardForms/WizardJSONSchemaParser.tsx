@@ -1771,7 +1771,7 @@ const FormArray = ({
     register,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { isSubmitted },
     clearErrors,
   } = useFormContext()
 
@@ -1857,7 +1857,7 @@ const FormArray = ({
             >
               {label}
               {required ? "*" : null}
-              {required && !isValid && errors[name] && (
+              {required && !isValid && formFields?.length === 0 && isSubmitted && (
                 <span>
                   <FormControl error>
                     <FormHelperText>must have at least 1 item</FormHelperText>

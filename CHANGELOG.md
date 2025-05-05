@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated PUT request to PATCH request for /submissions endpoints as a reflection of backend's changes
+- Changed all Big picture related words to "Bigpicture"
 - (users) Replaced "Read more/expand" with "Show more" in tooltips
 - Adjusted the test WizardFillObjectDetailsForm.test.tsx
 - Modified ARCHITECTURE.md to STRUCTURE.md
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Modified the way we check for missing fields when submitting a form in relation to changes in react-hook-form v7.55.0
 - Fix for unit test failure in FormAutocompleteField
 - (users) Fix Wizard Steps to direct to correct steps and objects
 - a condition

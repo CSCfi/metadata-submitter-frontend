@@ -6,7 +6,7 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Paper from "@mui/material/Paper"
-import { Variant } from "@mui/material/styles/createTypography"
+import { TypographyVariant } from "@mui/material/styles/createTypography"
 import Typography from "@mui/material/Typography"
 import { styled } from "@mui/system"
 import { get } from "lodash"
@@ -36,7 +36,12 @@ const buildDetails = (schema: FormObject, objectValues: ObjectDetails) => {
 /*
  * Traverse fields recursively, return correct fields for given object or log error, if object type is not supported.
  */
-const traverseFields = (object: FormObject, path: string[], objectValues: ObjectDetails, nestedField?: NestedField) => {
+const traverseFields = (
+  object: FormObject,
+  path: string[],
+  objectValues: ObjectDetails,
+  nestedField?: NestedField,
+) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
   const label = object.title ?? lastPathItem
@@ -45,7 +50,8 @@ const traverseFields = (object: FormObject, path: string[], objectValues: Object
     return get(objectValues, name)
   }
 
-  if (object.oneOf) return <OneOfField key={name} path={path} object={object} objectValues={objectValues} />
+  if (object.oneOf)
+    return <OneOfField key={name} path={path} object={object} objectValues={objectValues} />
 
   // Enable initial traverse
   if (name.length === 0 || getValues()) {
@@ -66,13 +72,28 @@ const traverseFields = (object: FormObject, path: string[], objectValues: Object
       case "integer":
       case "number":
       case "boolean": {
-        return label ? <ObjectDetailsListItem key={name} name={name} label={object.title} value={getValues()} /> : <></>
+        return label ? (
+          <ObjectDetailsListItem key={name} name={name} label={object.title} value={getValues()} />
+        ) : (
+          <></>
+        )
       }
       case "array": {
         return object.items.enum ? (
-          <CheckboxArray key={name} name={name} label={object.title} values={getValues()}></CheckboxArray>
+          <CheckboxArray
+            key={name}
+            name={name}
+            label={object.title}
+            values={getValues()}
+          ></CheckboxArray>
         ) : (
-          <DetailsArray key={name} object={object} objectValues={objectValues} values={getValues()} path={path} />
+          <DetailsArray
+            key={name}
+            object={object}
+            objectValues={objectValues}
+            values={getValues()}
+            path={path}
+          />
         )
       }
       case "null": {
@@ -91,7 +112,15 @@ const traverseFields = (object: FormObject, path: string[], objectValues: Object
   }
 }
 
-const ObjectDetailsListItem = ({ name, label, value }: { name: string; label: string; value: string | number }) => {
+const ObjectDetailsListItem = ({
+  name,
+  label,
+  value,
+}: {
+  name: string
+  label: string
+  value: string | number
+}) => {
   return (
     <ListItem
       sx={{
@@ -116,7 +145,7 @@ type DetailsSectionProps = {
 
 const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) => (
   <div className="detailsSection" key={`${name}-section`} data-testid="section">
-    <SectionHeader key={`${name}-header`} variant={`h${level}` as Variant}>
+    <SectionHeader key={`${name}-header`} variant={`h${level}` as TypographyVariant}>
       {label}
     </SectionHeader>
     {children}
@@ -134,7 +163,9 @@ const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
 
   // Number & boolean field values are handled as string
   const stringTypes = ["number", "boolean"]
-  const optionValue = stringTypes.includes(typeof get(objectValues, name)) ? "string" : get(objectValues, name)
+  const optionValue = stringTypes.includes(typeof get(objectValues, name))
+    ? "string"
+    : get(objectValues, name)
   const optionType = Array.isArray(optionValue) ? "array" : typeof optionValue
   const options = object.oneOf
 
@@ -205,7 +236,11 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
   const items = traverseValues(object.items) as Record<string, unknown>
   return (
     <div className="array" key={`${name}-array`}>
-      <SectionHeader key={`${name}-header`} variant={`h${level}` as Variant} data-testid={name}>
+      <SectionHeader
+        key={`${name}-header`}
+        variant={`h${level}` as TypographyVariant}
+        data-testid={name}
+      >
         {label}
       </SectionHeader>
 
@@ -239,7 +274,11 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
               {Object.keys(items).map(item => {
                 const pathForThisIndex = [...pathWithoutLastItem, lastPathItemWithIndex, item]
 
-                return traverseFields(properties[item] as FormObject, pathForThisIndex, objectValues)
+                return traverseFields(
+                  properties[item] as FormObject,
+                  pathForThisIndex,
+                  objectValues,
+                )
               })}
             </Paper>
           </Box>

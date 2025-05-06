@@ -24,7 +24,7 @@ import Grid from "@mui/material/Grid"
 import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
-import { Variant } from "@mui/material/styles/createTypography"
+import { TypographyVariant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
 import Tooltip, { TooltipProps } from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
@@ -468,12 +468,12 @@ const FormSection = ({
   const splittedPath = name.split(".") // Have a fully splitted path for names such as "studyLinks.0", "dacLinks.0"
 
   const heading = (
-    <Grid item xs={12} md={level === 0 ? 12 : level > 1 ? 0 : 4}>
+    <Grid size={{ xs: 12, md: level === 0 ? 12 : level === 1 ? 4 : 8 }}>
       {(level <= 1 || ((level === 3 || level === 2) && isTitleShown)) && label && (
         <FormSectionTitle square={true} elevation={0} level={level}>
           <Typography
             key={`${name}-header`}
-            variant={level === 0 ? "h4" : ("subtitle1" as Variant)}
+            variant={level === 0 ? "h4" : ("subtitle1" as TypographyVariant)}
             role="heading"
             color="secondary"
           >
@@ -506,9 +506,7 @@ const FormSection = ({
               sx={{ mb: level <= 1 && splittedPath.length <= 1 ? "3rem" : 0 }}
             >
               {heading}
-              <Grid item xs={12} md={level === 1 && label ? 8 : 12}>
-                {children}
-              </Grid>
+              <Grid size={{ xs: 12, md: level === 1 && label ? 8 : 12 }}>{children}</Grid>
             </Grid>
             <div>
               {error ? (
@@ -1175,7 +1173,7 @@ const FormDatePicker = ({
                 )}
               </BaselineDiv>
               <Grid container direction="column">
-                <DatePickerWrapper item xs="auto">
+                <DatePickerWrapper>
                   <span>Start</span>
                   <FormControlLabel
                     control={
@@ -1222,7 +1220,7 @@ const FormDatePicker = ({
                     onClose={() => setOpenStartCalendar(false)}
                   />
                 </DatePickerWrapper>
-                <DatePickerWrapper item xs="auto">
+                <DatePickerWrapper>
                   <span>End</span>
                   <FormControlLabel
                     control={
@@ -1844,7 +1842,7 @@ const FormArray = ({
       direction={level < 2 ? "row" : "column"}
       sx={{ mb: level === 1 ? "3rem" : 0 }}
     >
-      <Grid item xs={12} md={4}>
+      <Grid size={{ xs: 12, md: 4 }}>
         {
           <FormArrayTitle square={true} elevation={0} level={level}>
             {required && !isValid && (
@@ -1881,7 +1879,7 @@ const FormArray = ({
         }
       </Grid>
 
-      <Grid item xs={12} md={8}>
+      <Grid size={{ xs: 12, md: 8 }}>
         {formFields?.map((field, index) => {
           const pathWithoutLastItem = path.slice(0, -1)
           const lastPathItemWithIndex = `${lastPathItem}.${index}`

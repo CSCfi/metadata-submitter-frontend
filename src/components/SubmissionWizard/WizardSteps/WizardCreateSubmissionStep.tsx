@@ -194,7 +194,7 @@ const CreateSubmissionForm = ({
       />
 
       <Grid sx={{ mt: 2 }} container spacing={2}>
-        <Grid item>
+        <Grid>
           <FormLabel
             id="submission-type-selection-label"
             required
@@ -213,7 +213,7 @@ const CreateSubmissionForm = ({
             {t("newSubmission.typeOfSubmission")}
           </FormLabel>
         </Grid>
-        <Grid item xs={6}>
+        <Grid size={{ xs: 6 }}>
           <FormControl>
             <Controller
               control={control}

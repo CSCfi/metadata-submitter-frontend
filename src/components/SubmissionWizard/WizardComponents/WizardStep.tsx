@@ -205,7 +205,7 @@ const StepItems = (props: {
             <Collapse component={"li"} key={item.id}>
               <ObjectItem>
                 <Grid container justifyContent="space-between">
-                  <Grid item xs={6} display="flex" alignItems="center">
+                  <Grid display="flex" alignItems="center" size={{ xs: 6 }}>
                     <Link
                       tabIndex={0} // "href with # target will cause Firefox to refresh the page"
                       onClick={() => handleClick(item)}
@@ -226,7 +226,7 @@ const StepItems = (props: {
                           : item.id}
                     </Link>
                   </Grid>
-                  <Grid item>
+                  <Grid>
                     <WizardObjectStatusBadge draft={draft} />
                   </Grid>
                 </Grid>

@@ -29,7 +29,7 @@ import Page404 from "views/ErrorPages/Page404"
 const getStepContent = (
   wizardStep: number,
   createSubmissionFormRef: FormRef,
-  objectFormRef: FormRef
+  objectFormRef: FormRef,
 ) => {
   switch (wizardStep) {
     case 1:
@@ -82,7 +82,7 @@ const SubmissionWizard: React.FC = () => {
               status: ResponseStatus.error,
               response: response,
               helperText: "Fetching submission error.",
-            })
+            }),
           )
           dispatch(resetSubmission())
         }
@@ -97,7 +97,7 @@ const SubmissionWizard: React.FC = () => {
   const wizardStep = step ? Number(step) : -1
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(
-    null
+    null,
   )
 
   const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
@@ -113,10 +113,10 @@ const SubmissionWizard: React.FC = () => {
         }}
         container
       >
-        <Grid item sx={{ pt: 0, bgcolor: "primary.main" }} xs={3}>
+        <Grid sx={{ pt: 0, bgcolor: "primary.main" }} size={{ xs: 3 }}>
           <WizardStepper formRef={objectFormRef} />
         </Grid>
-        <Grid item sx={{ pl: 5, pr: 5 }} xs={9}>
+        <Grid sx={{ pl: 5, pr: 5 }} size={{ xs: 9 }}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper sx={{ p: 0, height: "100%" }} elevation={2}>

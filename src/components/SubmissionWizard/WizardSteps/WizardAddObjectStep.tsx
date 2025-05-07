@@ -40,7 +40,7 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
   return (
     <>
       <GridContainer container spacing={2}>
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           {objectType === "" ? (
             <ObjectInfo>
               <p>Add objects by clicking the name, then fill form or upload XML File.</p>
@@ -53,7 +53,7 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
           )}
         </Grid>
 
-        <Grid item xs>
+        <Grid>
           {!openedXMLModal && loading && (
             <Grid container justifyContent="center">
               <CircularProgress />

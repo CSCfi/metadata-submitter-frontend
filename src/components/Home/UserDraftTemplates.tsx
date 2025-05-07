@@ -26,7 +26,9 @@ const UserDraftTemplates: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const projectId = useAppSelector(state => state.projectId)
-  const templates: Array<ObjectInsideSubmissionWithTags> | [] = useAppSelector(state => state.templates)
+  const templates: Array<ObjectInsideSubmissionWithTags> | [] = useAppSelector(
+    state => state.templates,
+  )
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
@@ -41,9 +43,11 @@ const UserDraftTemplates: React.FC = () => {
   const DraftList = () => {
     return (
       <React.Fragment>
-        {displayTemplates.map((draft: { [key: string]: ObjectInsideSubmissionWithTags[] }, index: number) => (
-          <TemplateGroup key={index} draft={draft} />
-        ))}
+        {displayTemplates.map(
+          (draft: { [key: string]: ObjectInsideSubmissionWithTags[] }, index: number) => (
+            <TemplateGroup key={index} draft={draft} />
+          ),
+        )}
       </React.Fragment>
     )
   }
@@ -77,7 +81,10 @@ const UserDraftTemplates: React.FC = () => {
         }}
         data-testid={`form-${schema}`}
       >
-        <FormLabel sx={{ display: "flex", justifyContent: "space-between", p: 2 }} onClick={() => setOpen(!open)}>
+        <FormLabel
+          sx={{ display: "flex", justifyContent: "space-between", p: 2 }}
+          onClick={() => setOpen(!open)}
+        >
           <Typography display="inline" variant="subtitle1" color="textPrimary">
             {formatDisplayObjectType(schema)}
           </Typography>
@@ -113,11 +120,14 @@ const UserDraftTemplates: React.FC = () => {
                 key={item.accessionId}
                 data-testid={`${item.schema}-item`}
               >
-                <Grid item xs>
+                <Grid>
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={checkedItems.find((element: string) => element === item.accessionId) !== undefined}
+                        checked={
+                          checkedItems.find((element: string) => element === item.accessionId) !==
+                          undefined
+                        }
                         onClick={() => handleChange(item.accessionId)}
                         color="primary"
                         name={item.accessionId}
@@ -133,7 +143,7 @@ const UserDraftTemplates: React.FC = () => {
                     }
                   />
                 </Grid>
-                <Grid item xs="auto">
+                <Grid>
                   <UserDraftTemplateActions item={item} />
                 </Grid>
               </Grid>

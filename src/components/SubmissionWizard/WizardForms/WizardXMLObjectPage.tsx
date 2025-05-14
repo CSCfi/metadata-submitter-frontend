@@ -25,10 +25,9 @@ const StyledContainer = styled(Container)(() => ({
 }))
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  border: `1px solid ${theme.palette.secondary.lightest}`,
+  border: `1px solid ${theme.palette.secondary.light}`,
   "& th, td": {
     padding: "1.6rem 3.2rem",
-    color: theme.palette.secondary.main,
   },
   "& th": { fontSize: "1.4rem" },
   "& td": { fontSize: "1.6rem" },

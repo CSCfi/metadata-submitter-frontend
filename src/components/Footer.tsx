@@ -17,7 +17,7 @@ type FooterContainerProps = GridProps & {
 const FooterContainer = styled(Grid, {
   shouldForwardProp: prop => prop !== "isfixed",
 })<FooterContainerProps>(({ isfixed, theme }) => ({
-  backgroundColor: theme.palette.secondary.lightest,
+  backgroundColor: theme.palette.secondary.light,
   width: "100%",
   padding: "2.5rem 3.75rem",
   display: "flex",
@@ -62,18 +62,14 @@ const FooterItem = styled(Box)(() => ({
 }))
 
 const FooterLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.secondary.main,
   "&:hover": {
-    color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.action.hover, // Use action.hover for hover background color
+    backgroundColor: theme.palette.accent.light,
   },
 }))
 
 const FooterLinkStart = styled(FooterLink)(({ theme }) => ({
   color: theme.palette.text.primary,
-  "&:hover": {
-    color: theme.palette.text.primary,
-    backgroundColor: theme.palette.action.hover, // Use action.hover for hover background color
-  },
 }))
 
 const Footer: React.FC = () => {

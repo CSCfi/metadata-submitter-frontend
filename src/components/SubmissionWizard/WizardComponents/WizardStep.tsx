@@ -252,7 +252,7 @@ const ObjectWrapper = styled("div")(({ theme }) => {
     padding: theme.spacing(2.4),
     width: "100%",
     "&.activeObject": {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.mediumLight,
     },
     "& .stepItemHeader": {
       display: "flex",

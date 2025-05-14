@@ -464,7 +464,7 @@ const FormContent = ({
     resetTimer()
 
     // Prevent auto save from DOI form
-    if (objectType !== (ObjectTypes.study || ObjectTypes.datacite)) startTimer()
+    if (![ObjectTypes.datacite, ObjectTypes.study].includes(objectType)) startTimer()
   }
 
   useEffect(() => {

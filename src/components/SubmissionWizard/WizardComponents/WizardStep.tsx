@@ -20,7 +20,7 @@ import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
@@ -160,6 +160,17 @@ const StepItems = (props: {
           pathname: pathWithLocale(`submission/${submissionId}`),
           search: "step=1",
         })
+        break
+      }
+      case 5: {
+        dispatch(resetCurrentObject())
+        dispatch(setCurrentObject(formObject))
+        navigate({
+          pathname: pathWithLocale(`submission/${submissionId}`),
+          search: "step=5",
+        })
+        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+        dispatch(setObjectType(objectType))
         break
       }
       default: {

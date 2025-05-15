@@ -64,7 +64,8 @@ const mapObjectsToStepsHook = (
     return foundObjects.length === objectTypes.length
   }
 
-  const workflowSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
+  const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
+  const workflowSteps =  allSteps ? allSteps.filter( step => step.title !== "Datacite") : allSteps
 
   const schemaSteps =
     workflowSteps?.length > 0
@@ -88,8 +89,6 @@ const mapObjectsToStepsHook = (
             ...step,
             title: step.title.toLowerCase().includes(ObjectTypes.file)
               ? t("datafolder.datafolder")
-              : step.title === "Datacite"
-              ? t("identifierPublish")
               : step.title,
             ["schemas"]: step.schemas.map(schema => ({
               ...schema,
@@ -107,30 +106,6 @@ const mapObjectsToStepsHook = (
           }
         })
       : []
-
-  /*
-  * Add to the "Identifier and publish" step of accordion the summary and publish substeps
-  */
-  const summarySubStep = {
-    name: t("summary"),
-    objectType: t("summary"),
-    objects: { drafts: [], ready: [] },
-    required: true,
-    allowMultipleObjects: false,
-  }
-  const publishSubStep = {
-    name: t("publishSubmission"),
-    objectType: t("summaryPage.publish"),
-    objects: { drafts: [], ready: [] },
-    required: true,
-    allowMultipleObjects: false,
-  }
-
-  // Condition prevents error when a first empty page is rendered without schemaSteps
-  if (schemaSteps.length > 0) {
-    schemaSteps[schemaSteps.length -1].schemas.push(summarySubStep)
-    schemaSteps[schemaSteps.length -1].schemas.push(publishSubStep)
-  }
 
   /*
    * List of accordion steps and configurations.
@@ -199,11 +174,57 @@ const mapObjectsToStepsHook = (
     ],
   }
 
+  /*
+  * Add to the "Identifier and publish" step of accordion the summary and publish substeps
+  */
+  const idPublishStep = {
+    title: t("identifierPublish"),
+    schemas: [
+      {
+      name: t("identifier"),
+      objectType: "datacite",
+
+      objects: {
+        ready: submission.doiInfo ?
+        [
+          {
+            id: submission.submissionId,
+            creators: submission.doiInfo.creators,
+            contributors: submission.doiInfo.contributors,
+            subjects: submission.doiInfo.subjects,
+            keywords: submission.doiInfo.keywords,
+            displayTitle: "DOI registration information",
+            tags: {submissionType: 'Form', displayTitle: "DOI registration information"}
+        }
+        ]
+        :
+        []
+      },
+      required: true,
+      allowMultipleObjects: false,
+    },
+    {
+      name: t("summary"),
+      objectType: t("summary"),
+      objects: { drafts: [], ready: [] },
+      required: true,
+      allowMultipleObjects: false,
+    },
+    {
+      name: t("publishSubmission"),
+      objectType: t("summaryPage.publish"),
+      objects: { drafts: [], ready: [] },
+      required: true,
+      allowMultipleObjects: false,
+    }
+    ],
+  }
+
   const mappedSteps = (
     currentWorkflow?.name === WorkflowTypes.sdsx
       ? [createSubmissionStep, dacPoliciesStep]
       : [createSubmissionStep]
-  ).concat(schemaSteps)
+  ).concat(schemaSteps, [idPublishStep])
 
   return { mappedSteps }
 }

@@ -216,7 +216,7 @@ export type ObjectDisplayValues = {
   title: string
 }
 
-/* 
+/*
   Used to get unique file types when patching or submitting Run or Analysis objects.
   These file types are needed for Datacite's form
 */
@@ -232,10 +232,13 @@ export type DoiContributor = DoiCreator & { contributorType: string }
 
 export type DoiSubject = { subject: string }
 
+export type DoiKeyword = { keyword: string }
+
 export type DoiFormDetails = {
   creators: DoiCreator[]
   contributors: DoiContributor[]
   subjects: DoiSubject[]
+  keywords?: DoiKeyword[]
 }
 
 export type RemsDetails = {

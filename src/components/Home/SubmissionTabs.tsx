@@ -27,7 +27,7 @@ const Tab = styled(MuiTab, { shouldForwardProp: prop => prop !== "index" })<{
 
 type SubmissionTabsProps = {
   tabsAriaLabel: string
-  tabs: Array<{ label: string; value: string, testId: string }>
+  tabs: Array<{ label: string; value: string; testId: string }>
   tabValue: string
   handleChangeTab: (e: React.SyntheticEvent, newTabValue: string) => void
 }
@@ -51,6 +51,7 @@ const SubmissionTabs: React.FC<SubmissionTabsProps> = props => {
           label={tab.label}
           value={tab.value}
           data-testid={tab.testId}
+          sx={{ textTransform: "none" }}
         />
       ))}
     </Tabs>

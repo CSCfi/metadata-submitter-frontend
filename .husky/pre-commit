@@ -1,4 +1,1 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 pnpm run concurrently -- "pnpm:lint:check" "pnpm:format:check" "pnpm:tsc" "pnpm:test:no-watch"

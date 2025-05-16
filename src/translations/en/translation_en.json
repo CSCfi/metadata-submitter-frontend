@@ -91,9 +91,6 @@
       "doi": {
         "saved": "DOI form has been saved successfully"
       },
-      "templates": {
-        "updated": "Template updated successfully"
-      },
       "submissions": {
         "deleted": "The submission has been deleted successfully!"
       },
@@ -136,13 +133,6 @@
     "save": {
       "title": "Save progress and exit?",
       "content": "Submission progress will be saved, and you will return to the homepage."
-    },
-    "publish": {
-      "title": "Publishing objects",
-      "content": {
-        "objects": "Objects in this submission will be published. ",
-        "chooseDrafts": "Please choose the drafts you would like to save, unsaved drafts will be removed from this submission."
-      }
     }
   },
   "errors": {

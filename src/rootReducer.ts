@@ -13,8 +13,6 @@ import projectReducer from "features/projectIdSlice"
 import remsInfoReducer from "features/remsInfoSlice"
 import selectedSubmissionReducer from "features/selectedSubmissionSlice"
 import statusMessageReducer from "features/statusMessageSlice"
-import templateAccessionIdsReducer from "features/templateAccessionIdsSlice"
-import templatesReducer from "features/templateSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
@@ -43,8 +41,6 @@ const rootReducer = combineReducers({
   objectTypesArray: objectTypesArrayReducer,
   openedRows: openedRowsReducer,
   clearForm: clearFormReducer,
-  templates: templatesReducer,
-  templateAccessionIds: templateAccessionIdsReducer,
   autocompleteField: autocompleteReducer,
   fileTypes: fileTypesReducer,
   projectId: projectReducer,

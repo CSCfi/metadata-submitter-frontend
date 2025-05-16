@@ -36,7 +36,6 @@ import { setClearForm } from "features/clearFormSlice"
 import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
 import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { updateTemplateDisplayTitle } from "features/templateSlice"
 import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import {
   deleteObjectFromSubmission,
@@ -47,7 +46,6 @@ import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
-import templateAPI from "services/templateAPI"
 import type {
   DoiFormDetails,
   SubmissionDetailsWithId,
@@ -141,10 +139,8 @@ type CustomCardHeaderProps = {
   objectType: string
   currentObject: ObjectDetails
   onClickSaveDraft: () => Promise<void>
-  onClickUpdateTemplate: () => Promise<void>
   onClickSubmit: () => void
   onClickSaveDOI: () => Promise<void>
-  onClickCloseDialog: () => void
   onClickClearForm: () => void
   onOpenXMLModal: () => void
   onDeleteForm: () => void
@@ -160,7 +156,6 @@ type FormContentProps = {
   hasDraftObject: boolean
   hasSubmittedObject: boolean
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
-  closeDialog: () => void
   formRef?: FormRef
 }
 
@@ -175,10 +170,8 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     currentObject,
     refForm,
     onClickSaveDraft,
-    onClickUpdateTemplate,
     onClickSubmit,
     onClickSaveDOI,
-    onClickCloseDialog,
     onClickClearForm,
     onOpenXMLModal,
     onDeleteForm,
@@ -191,23 +184,6 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
   }, [shouldFocus])
-
-  const templateButtonGroup = (
-    <ButtonGroup>
-      <Button
-        type="submit"
-        variant="contained"
-        aria-label="save form as draft"
-        size="small"
-        onClick={onClickUpdateTemplate}
-      >
-        Update template
-      </Button>
-      <Button variant="contained" aria-label="clear form" size="small" onClick={onClickCloseDialog}>
-        Close
-      </Button>
-    </ButtonGroup>
-  )
 
   const buttonGroup = (
     <Box display="flex">
@@ -279,13 +255,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
 
   return (
     <WizardStepContentHeader
-      action={
-        currentObject?.status === ObjectStatus.template
-          ? templateButtonGroup
-          : objectType === ObjectTypes.datacite
-            ? doiButtonGroup
-            : buttonGroup
-      }
+      action={objectType === ObjectTypes.datacite ? doiButtonGroup : buttonGroup}
     />
   )
 }
@@ -343,15 +313,12 @@ const FormContent = ({
   hasSubmittedObject,
   submission,
   currentObject,
-  closeDialog,
   formRef,
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
 
   const alert = useAppSelector(state => state.alert)
   const clearForm = useAppSelector(state => state.clearForm)
-
-  const templates = useAppSelector(state => state.templates)
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
   const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
@@ -513,12 +480,8 @@ const FormContent = ({
   const keyHandler = () => {
     resetTimer()
 
-    // Prevent auto save from DOI form and template dialog
-    if (
-      currentObject?.status !== ObjectStatus.template &&
-      objectType !== (ObjectTypes.study || ObjectTypes.datacite)
-    )
-      startTimer()
+    // Prevent auto save from DOI form
+    if (objectType !== (ObjectTypes.study || ObjectTypes.datacite)) startTimer()
   }
 
   useEffect(() => {
@@ -536,56 +499,6 @@ const FormContent = ({
         helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
       })
     )
-  }
-
-  const handleSaveTemplate = async () => {
-    const cleanedValues = getCleanedValues()
-
-    if (!isFormCleanedValuesEmpty(cleanedValues)) {
-      const index =
-        templates?.findIndex(
-          (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
-        ) || 0
-      const response = await templateAPI.patchTemplateFromJSON(
-        objectType,
-        currentObject.accessionId,
-        cleanedValues,
-        index
-      )
-
-      const displayTitle = getObjectDisplayTitle(
-        objectType,
-        cleanedValues as unknown as ObjectDisplayValues
-      )
-
-      if (response.ok) {
-        closeDialog()
-        dispatch(
-          updateTemplateDisplayTitle({
-            accessionId: currentObject.accessionId,
-            displayTitle: displayTitle,
-          })
-        )
-
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            response: response,
-            helperText: "",
-          })
-        )
-      } else {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: response,
-            helperText: "Cannot save template",
-          })
-        )
-      }
-    } else {
-      emptyFormError()
-    }
   }
 
   /*
@@ -666,10 +579,8 @@ const FormContent = ({
         currentObject={currentObject}
         refForm="hook-form"
         onClickSaveDraft={() => handleSaveDraft()}
-        onClickUpdateTemplate={() => handleSaveTemplate()}
         onClickSubmit={() => resetTimer()}
         onClickSaveDOI={methods.handleSubmit(async data => handleDOISubmit(data as DoiFormDetails))}
-        onClickCloseDialog={() => closeDialog()}
         onClickClearForm={() => handleClearForm()}
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
@@ -691,8 +602,8 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?: FormRef }) => {
-  const { closeDialog, formRef } = props
+const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
+  const { formRef } = props
   const dispatch = useAppDispatch()
 
   const objectType = useAppSelector(state => state.objectType)
@@ -877,7 +788,6 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           submission={submission}
           currentObject={currentObject}
           key={currentObject?.accessionId || submission.submissionId}
-          closeDialog={closeDialog || (() => {})}
           formRef={formRef}
         />
         {submitting && <LinearProgress />}

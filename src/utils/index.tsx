@@ -65,21 +65,6 @@ export const getDraftObjects = (
   return draftObjects
 }
 
-export const getUserTemplates = (
-  templates: Array<ObjectInsideSubmissionWithTags>,
-  objectTypesArray: Array<string>
-): { [templateObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
-  const userTemplates = objectTypesArray.flatMap((schema: string) => {
-    const templateSchema = `template-${schema}`
-    const templatesArray = templates.filter(
-      template => template.schema.toLowerCase() === templateSchema.toLowerCase()
-    )
-    return templatesArray.length > 0 ? [{ [templateSchema]: templatesArray }] : []
-  })
-
-  return userTemplates
-}
-
 export const getAccessionIds = (
   objectType: string,
   metadataObjects?: Array<ObjectInsideSubmissionWithTags>

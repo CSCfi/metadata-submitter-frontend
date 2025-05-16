@@ -17,11 +17,9 @@ import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
-import transformTemplatesToDrafts from "components/SubmissionWizard/WizardHooks/WizardTransformTemplatesToDrafts"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
-import { resetTemplateAccessionIds } from "features/templateAccessionIdsSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
@@ -48,8 +46,6 @@ const CreateSubmissionForm = ({
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
-  const templates = useAppSelector(state => state.templates)
-  const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
 
   const { t } = useTranslation()
 
@@ -103,16 +99,6 @@ const CreateSubmissionForm = ({
     if (selectedWorkflowType === "") {
       return
     }
-    // Transform the format of templates to drafts with proper values to be added to current submission or new submission
-    const selectedDraftsArray =
-      templates && submission?.submissionId
-        ? await transformTemplatesToDrafts(
-            templateAccessionIds,
-            templates,
-            submission.submissionId,
-            dispatch
-          )
-        : []
 
     if (submission && submission?.submissionId) {
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
@@ -128,14 +114,13 @@ const CreateSubmissionForm = ({
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
         })
     } else {
-      // Create a new submission with selected templates as drafts
+      // Create a new submission
       dispatch(setWorkflowType(data.workflowType))
-      dispatch(createSubmission(projectId, data, selectedDraftsArray))
+      dispatch(createSubmission(projectId, data))
         .then(response => {
           const submissionId = response.data.submissionId
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
           dispatch(setSubmissionType(ObjectSubmissionTypes.form))
-          dispatch(resetTemplateAccessionIds())
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))

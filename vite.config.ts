@@ -22,7 +22,6 @@ export default defineConfig(({ mode }) => {
     "/callback": proxyTo,
     "/logout": proxyTo,
     "/v1/users": proxyTo,
-    "/v1/templates": proxyTo,
     "/v1/workflows": proxyTo,
     "/v1/files": proxyTo,
     "/v1/rems": proxyTo,

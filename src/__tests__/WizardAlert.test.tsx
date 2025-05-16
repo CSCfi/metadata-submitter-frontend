@@ -12,7 +12,7 @@ describe("WizardAlert", () => {
   test("should render appropriate dialogs", () => {
     const alerts = [
       { location: "submission", types: ObjectSubmissionsArray },
-      { location: "header", types: ["save", "publish"] },
+      { location: "header", types: ["save"] },
     ]
     alerts.forEach((alert: { location: string; types: string[] }) => {
       alert.types.forEach((type: string) => {

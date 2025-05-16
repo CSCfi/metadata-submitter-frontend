@@ -14,7 +14,6 @@ import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { updateStatus } from "features/statusMessageSlice"
-import { addDraftsToUser } from "features/userSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import {
@@ -162,7 +161,7 @@ const SelectedSubmissionDetails: React.FC = () => {
     setDialogOpen(true)
   }
 
-  const handlePublish = (confirm: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
+  const handlePublish = (confirm: boolean) => {
     if (confirm) {
       dispatch(publishSubmissionContent(currentSubmission))
         .then(() => resetDispatch())
@@ -175,18 +174,6 @@ const SelectedSubmissionDetails: React.FC = () => {
             })
           )
         })
-
-      formData && formData?.length > 0
-        ? dispatch(addDraftsToUser("current", formData)).catch((error: string) => {
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.error,
-                response: JSON.parse(error),
-                helperText: "Can't save drafts for user",
-              })
-            )
-          })
-        : null
     } else {
       setDialogOpen(false)
     }

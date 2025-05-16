@@ -177,6 +177,14 @@ const mapObjectsToStepsHook = (
   /*
   * Add to the "Identifier and publish" step of accordion the summary and publish substeps
   */
+ console.log(submission.doiInfo)
+  // Check that doiInfo exist and that it contains data at least at one of the keys
+  const hasDoiInfo: boolean =  submission.doiInfo
+    ? Object.values(submission.doiInfo).filter(item => item.length > 0).length > 0
+    : false
+//  let hasDoiInfo: boolean =  false
+  console.log("DOI", hasDoiInfo)
+
   const idPublishStep = {
     title: t("identifierPublish"),
     schemas: [
@@ -185,7 +193,7 @@ const mapObjectsToStepsHook = (
       objectType: "datacite",
 
       objects: {
-        ready: submission.doiInfo ?
+        ready: hasDoiInfo ?
         [
           {
             id: submission.submissionId,

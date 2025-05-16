@@ -3,7 +3,6 @@ import React, { ReactElement } from "react"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft"
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight"
-import Divider from "@mui/material/Divider"
 import IconButton from "@mui/material/IconButton"
 import MuiPagination from "@mui/material/Pagination"
 import { styled, useTheme } from "@mui/material/styles"
@@ -29,12 +28,6 @@ const TablePagination = styled(MuiTablePagination)(({ theme }) => ({
   },
   "& .MuiTablePagination-selectLabel": {
     marginLeft: "1.375em",
-  },
-  "& .MuiTablePagination-select": {
-    padding: 0,
-    fontWeight: 700,
-    display: "grid",
-    alignItems: "center",
   },
   "& .MuiTablePagination-selectIcon": {
     fontSize: "2rem",
@@ -69,8 +62,7 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
     },
   },
   "& .MuiPaginationItem-root": {
-    fontWeight: 700,
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
     border: "none",
     display: "grid",
     alignItems: "center",
@@ -80,7 +72,7 @@ const TablePaginationActions = styled("div")(({ theme }) => ({
         fontSize: "x-large",
       },
       "&.Mui-disabled": {
-        color: theme.palette.secondary.main,
+        color: theme.palette.secondary.light,
         opacity: 1,
       },
     },
@@ -153,25 +145,12 @@ type WizardPaginationProps = {
   itemsPerPage: number
   handleChangePage: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    page: number
+    page: number,
   ) => void
   handleItemsPerPageChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
 }
-
-const DisplayRows = styled("span")(({ theme }) => ({
-  display: "flex",
-  "& span:first-of-type": {
-    height: "auto",
-    margin: 0,
-  },
-  "& span:last-of-type": {
-    color: theme.palette.secondary.main,
-    fontSize: "1.4rem",
-    marginLeft: 0,
-  },
-}))
 
 // Pagination Component
 const WizardPagination: React.FC<WizardPaginationProps> = props => {
@@ -184,18 +163,15 @@ const WizardPagination: React.FC<WizardPaginationProps> = props => {
     const narrowTo = to > count ? count : to
 
     return (
-      <DisplayRows>
-        <Divider component="span" orientation="vertical" variant="middle" />
-        <span>
-          {narrowFrom}-{narrowTo} / {count} {count > 1 ? t("dataTable.items") : t("dataTable.item")}
-        </span>
-      </DisplayRows>
+      <span>
+        {narrowFrom}-{narrowTo} / {count} {count > 1 ? t("dataTable.items") : t("dataTable.item")}
+      </span>
     )
   }
 
   // Get "rowsPerPageOptions" of TablePagination
   const getRowsPerPageOptions = (
-    totalItems?: number
+    totalItems?: number,
   ): Array<number | { value: number; label: string }> => {
     if (totalItems) {
       return [5, 10, 25, 50, 100]

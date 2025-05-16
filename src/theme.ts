@@ -147,7 +147,7 @@ let CSCtheme = createTheme({
     },
     MuiMenuItem: {
       styleOverrides: {
-        root: { padding: 0, fontSizeBreakpoints },
+        root: { paddingLeft: "0.5rem", fontSizeBreakpoints },
       },
     },
     MuiTab: {
@@ -157,21 +157,33 @@ let CSCtheme = createTheme({
         },
       },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+        },
+      },
+    },
     MuiTablePagination: {
       styleOverrides: {
         root: fontSizeBreakpoints,
         menuItem: {
-          padding: "1rem 2rem 1rem 1rem",
           backgroundColor: "white",
           color: palette.secondary.main,
           "&:hover": {
             backgroundColor: palette.primary.light,
             color: palette.primary.main,
           },
+          "&.MuiMenuItem-gutters": {
+            fontSize: "small",
+          },
           "&.MuiMenuItem-gutters.Mui-selected": {
-            backgroundColor: palette.common.white,
+            backgroundColor: palette.primary.light,
             color: palette.primary.main,
           },
+        },
+        select: {
+          fontSize: "small",
         },
       },
     },

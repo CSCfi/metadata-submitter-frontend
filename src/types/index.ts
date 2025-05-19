@@ -156,7 +156,6 @@ export type SubmissionDataFromForm = {
 export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails } & {
   rems?: RemsDetails
 }
-export type FormRef = { current: HTMLElement | null } | undefined
 
 export type StatusDetails = {
   status: string | null
@@ -199,7 +198,7 @@ export type ConnectFormMethods = {
 }
 
 export type ConnectFormChildren = {
-  children: (...args: ConnectFormMethods[]) => React.ReactElement
+  children: (...args: ConnectFormMethods[]) => React.ReactElement<unknown>
 }
 
 export type NestedField = {
@@ -279,7 +278,8 @@ export type DacPoliciesData = {
 export type DispatchReducer = { payload: unknown; type: string }
 
 export type HandlerRef =
-  | ((instance: HTMLDivElement | null) => void)
-  | React.RefObject<HTMLDivElement>
+  | { current: HTMLElement | null }
+  | React.RefObject<HTMLFormElement | null>
+  | React.RefObject<HTMLDivElement | null>
   | null
   | undefined

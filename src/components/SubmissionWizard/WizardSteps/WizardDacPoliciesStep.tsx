@@ -1,4 +1,4 @@
-﻿import React, { RefObject, useEffect, useState } from "react"
+﻿import React, { useEffect, useState } from "react"
 
 import { Box, Button, Typography } from "@mui/material"
 import { SelectChangeEvent } from "@mui/material/Select"
@@ -15,7 +15,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { addRemsToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
-import { DacPoliciesData, FormRef } from "types"
+import { DacPoliciesData } from "types"
 
 const Form = styled("form")({
   "& .MuiTextField-root": {
@@ -38,7 +38,7 @@ const SectionTitle = ({ children }: { children: string[] }) => (
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }) => {
+const DacPoliciesForm = () => {
   const dispatch = useAppDispatch()
   const { submissionId } = useAppSelector(state => state.submission)
   const remsInfo = useAppSelector(state => state.remsInfo)
@@ -154,10 +154,7 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
   )
 
   return (
-    <Form
-      onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}
-      ref={dacPoliciesFormRef as RefObject<HTMLFormElement>}
-    >
+    <Form onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}>
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
@@ -177,6 +174,7 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
                 licenses: [],
               })
             }
+
             return (
               <WizardRemsOrganization
                 {...field}
@@ -254,8 +252,6 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
   )
 }
 
-const WizardDacPoliciesStep = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }) => (
-  <DacPoliciesForm dacPoliciesFormRef={dacPoliciesFormRef} />
-)
+const WizardDacPoliciesStep = () => <DacPoliciesForm />
 
 export default WizardDacPoliciesStep

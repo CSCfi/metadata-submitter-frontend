@@ -1,7 +1,4 @@
-import React from "react"
-
-import { screen, waitFor } from "@testing-library/react"
-import { userEvent } from "@testing-library/user-event"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { useForm, FormProvider } from "react-hook-form"
 import { vi } from "vitest"
 
@@ -47,16 +44,15 @@ describe("Test form render by custom schema", () => {
   })
 
   test("should validate field on blur", async () => {
-    const props = schema.properties
-    const integerField = screen.getByLabelText(props.integerField.title + " *")
+    const integerField = (await waitFor(() =>
+      screen.getByTestId("integerField")
+    )) as HTMLInputElement
     expect(integerField).toBeInTheDocument()
 
-    await userEvent.type(integerField, "Test value")
-
     await waitFor(() => {
-      integerField.blur()
+      fireEvent.change(integerField, { target: { value: "Test value" } })
+      fireEvent.blur(integerField)
     })
-
-    expect(screen.getByText("must be integer")).toBeInTheDocument()
+    await waitFor(() => screen.getByText("must be integer"))
   })
 })

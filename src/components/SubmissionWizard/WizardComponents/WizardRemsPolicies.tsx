@@ -5,7 +5,7 @@ import { GridColDef, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import type { DataFolderRow, HandlerRef } from "types"
+import type { DataFolderRow } from "types"
 
 type WizardRemsPoliciesProps = {
   policies: { id: number; title: string }[]
@@ -14,10 +14,7 @@ type WizardRemsPoliciesProps = {
   handlePolicyChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const WizardRemsPolicies = React.forwardRef(function WizardRemsPolicies(
-  props: WizardRemsPoliciesProps,
-  ref: HandlerRef
-) {
+const WizardRemsPolicies = (props: WizardRemsPoliciesProps) => {
   const { t } = useTranslation()
   const { policies, selectedPolicies, linkedPolicies, handlePolicyChange } = props
 
@@ -72,7 +69,7 @@ const WizardRemsPolicies = React.forwardRef(function WizardRemsPolicies(
   }
 
   return (
-    <Box ref={ref}>
+    <Box>
       <DataTable
         rows={getRows()}
         columns={columns}
@@ -83,6 +80,6 @@ const WizardRemsPolicies = React.forwardRef(function WizardRemsPolicies(
       />
     </Box>
   )
-})
+}
 
 export default WizardRemsPolicies

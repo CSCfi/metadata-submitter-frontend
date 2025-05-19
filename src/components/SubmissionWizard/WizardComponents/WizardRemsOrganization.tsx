@@ -1,10 +1,6 @@
-﻿import React from "react"
-
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
+﻿import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import { SelectChangeEvent } from "@mui/material/Select"
 import { useTranslation } from "react-i18next"
-
-import { HandlerRef } from "types"
 
 type WizardRemsOrganizationProps = {
   organizations: { id: string; name: string }[]
@@ -12,15 +8,12 @@ type WizardRemsOrganizationProps = {
   handleOrgChange: (event: SelectChangeEvent) => void
 }
 
-const WizardRemsOrganization = React.forwardRef(function WizardRemsOrganization(
-  props: WizardRemsOrganizationProps,
-  ref: HandlerRef
-) {
+const WizardRemsOrganization = (props: WizardRemsOrganizationProps) => {
   const { t } = useTranslation()
   const { organizations, selectedOrgId, handleOrgChange } = props
 
   return (
-    <Box ref={ref}>
+    <Box>
       <FormControl fullWidth>
         <InputLabel id="select-organization">{t("dacPolicies.selectOrganization")}</InputLabel>
         <Select
@@ -40,6 +33,6 @@ const WizardRemsOrganization = React.forwardRef(function WizardRemsOrganization(
       </FormControl>
     </Box>
   )
-})
+}
 
 export default WizardRemsOrganization

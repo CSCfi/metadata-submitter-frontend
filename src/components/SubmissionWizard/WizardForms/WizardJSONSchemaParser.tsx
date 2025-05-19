@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useState, useEffect, useCallback } from "react"
 
 import AddIcon from "@mui/icons-material/Add"
 import ClearIcon from "@mui/icons-material/Clear"
@@ -401,10 +400,10 @@ const DisplayDescription = ({
   children,
 }: {
   description: string
-  children?: React.ReactElement
+  children?: React.ReactElement<unknown>
 }) => {
   const { t } = useTranslation()
-  const [isReadMore, setIsReadMore] = useState(description.length > 60)
+  const [isReadMore, setIsReadMore] = React.useState(description.length > 60)
 
   const toggleReadMore = () => {
     setIsReadMore(!isReadMore)
@@ -655,7 +654,7 @@ const FormOneOfField = ({
     return {}
   }
 
-  const [field, setField] = useState(fieldValue)
+  const [field, setField] = React.useState(fieldValue)
   const clearForm = useAppSelector(state => state.clearForm)
 
   return (
@@ -858,7 +857,7 @@ const FormTextField = ({
   const val = getValues(name)
 
   // Set values for Affiliations' fields if autocompleteField exists
-  useEffect(() => {
+  React.useEffect(() => {
     if (prefilledValue && !val && isDOIForm) {
       lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
       lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
@@ -867,12 +866,12 @@ const FormTextField = ({
   }, [autocompleteField, prefilledValue])
 
   // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
-  useEffect(() => {
+  React.useEffect(() => {
     if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && isDOIForm)
       setValue(name, "")
   }, [prefilledValue])
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Set value of <creators>'s and <contributors>'s FullName field with the fullNameValue from givenName and familyName
     if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
   }, [isFullNameField, fullNameValue])
@@ -1033,16 +1032,16 @@ const FormDatePicker = ({
     },
   }
 
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
+  const [startDate, setStartDate] = React.useState("")
+  const [endDate, setEndDate] = React.useState("")
 
-  const [unknownDates, setUnknownDates] = useState({
+  const [unknownDates, setUnknownDates] = React.useState({
     checkedStartDate: false,
     checkedEndDate: false,
   })
   // Control calendar dialog opened
-  const [openStartCalendar, setOpenStartCalendar] = useState(false)
-  const [openEndCalendar, setOpenEndCalendar] = useState(false)
+  const [openStartCalendar, setOpenStartCalendar] = React.useState(false)
+  const [openEndCalendar, setOpenEndCalendar] = React.useState(false)
 
   return (
     <ConnectForm>
@@ -1095,8 +1094,8 @@ const FormDatePicker = ({
 
         type DateSelectionProps = {
           label: string
-          inputRef: React.LegacyRef<HTMLInputElement> | undefined
-          inputProps: JSX.IntrinsicAttributes &
+          inputRef: React.Ref<HTMLInputElement> | undefined
+          inputProps: React.JSX.IntrinsicAttributes &
             React.ClassAttributes<HTMLInputElement> &
             React.InputHTMLAttributes<HTMLInputElement>
         }
@@ -1105,8 +1104,10 @@ const FormDatePicker = ({
           InputProps: {
             endAdornment:
               | boolean
-              | React.ReactChild
-              | React.ReactFragment
+              | React.ReactElement<unknown>
+              | number
+              | string
+              | Iterable<React.ReactNode>
               | React.ReactPortal
               | null
               | undefined
@@ -1301,11 +1302,11 @@ const FormAutocompleteField = ({
   const { setValue, getValues } = useFormContext()
 
   const defaultValue = getValues(name) || ""
-  const [selection, setSelection] = useState<RORItem | null>(null)
-  const [open, setOpen] = useState(false)
-  const [options, setOptions] = useState([])
-  const [inputValue, setInputValue] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [selection, setSelection] = React.useState<RORItem | null>(null)
+  const [open, setOpen] = React.useState(false)
+  const [options, setOptions] = React.useState([])
+  const [inputValue, setInputValue] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
   const clearForm = useAppSelector(state => state.clearForm)
 
   const fetchOrganisations = async (searchTerm: string) => {
@@ -1325,17 +1326,11 @@ const FormAutocompleteField = ({
     }
   }
 
-  // Disable warning when using external function as callback
-  // https://stackoverflow.com/questions/62834368/react-usecallback-linting-error-missing-dependency
+  const debouncedSearch = debounce((newInput: string) => {
+    if (newInput.length > 0) fetchOrganisations(newInput)
+  }, 150)
 
-  const debouncedSearch = useCallback(
-    debounce((newInput: string) => {
-      if (newInput.length > 0) fetchOrganisations(newInput)
-    }, 150),
-    []
-  )
-
-  useEffect(() => {
+  React.useEffect(() => {
     let active = true
 
     if (inputValue === "") {
@@ -1354,7 +1349,7 @@ const FormAutocompleteField = ({
     }
   }, [selection, inputValue])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (clearForm) {
       setSelection(null)
       setInputValue("")
@@ -1487,7 +1482,7 @@ const FormTagField = ({
   const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
 
   const [inputValue, setInputValue] = React.useState("")
-  const [tags, setTags] = useState<Array<string>>(initialTags)
+  const [tags, setTags] = React.useState<Array<string>>(initialTags)
 
   const handleInputChange = e => {
     setInputValue(e.target.value)
@@ -1495,7 +1490,7 @@ const FormTagField = ({
 
   const clearForm = useAppSelector(state => state.clearForm)
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (clearForm) {
       setTags([])
       setInputValue("")
@@ -1795,13 +1790,13 @@ const FormArray = ({
   const { fields, append, remove } = useFieldArray({ control, name })
 
   const [isValid, setValid] = React.useState(false)
-  const [formFields, setFormFields] = useState<Record<"id", string>[] | null>(null)
+  const [formFields, setFormFields] = React.useState<Record<"id", string>[] | null>(null)
 
   // Append the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
   // E.g. Study > StudyLinks or Experiment > Expected Base Call Table
   // Append only once when form is populated
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       fieldValues?.length > 0 &&
       fields?.length === 0 &&
@@ -1823,7 +1818,7 @@ const FormArray = ({
     flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes))
   )
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Append fileType to formats' field
     if (name === "formats") {
       for (let i = 0; i < uniqueFileTypes.length; i += 1) {

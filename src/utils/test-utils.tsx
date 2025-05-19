@@ -1,7 +1,7 @@
 /** The setting here is made following this instruction:
   https://redux.js.org/usage/writing-tests#setting-up-a-reusable-test-render-function
 */
-import React, { PropsWithChildren } from "react"
+import React, { PropsWithChildren, type JSX } from "react"
 
 import "@testing-library/jest-dom"
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
@@ -73,7 +73,7 @@ export const mockState = {
 }
 
 export function renderWithProviders(
-  ui: React.ReactElement,
+  ui: React.ReactElement<unknown>,
   {
     preloadedState = mockState,
     // Automatically create a store instance if no store was passed in

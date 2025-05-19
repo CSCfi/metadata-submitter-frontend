@@ -5,7 +5,7 @@ import { GridColDef, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import type { DataFolderRow, HandlerRef } from "types"
+import type { DataFolderRow } from "types"
 
 type WizardRemsDACProps = {
   dacs: { id: number; title: string; policies: { id: number; title: string }[] }[]
@@ -13,10 +13,7 @@ type WizardRemsDACProps = {
   handleDACChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const WizardRemsDAC = React.forwardRef(function WizardRemsDAC(
-  props: WizardRemsDACProps,
-  ref: HandlerRef
-) {
+const WizardRemsDAC = (props: WizardRemsDACProps) => {
   const { t } = useTranslation()
   const { dacs, selectedDAC, handleDACChange } = props
 
@@ -75,7 +72,7 @@ const WizardRemsDAC = React.forwardRef(function WizardRemsDAC(
   }
 
   return (
-    <Box ref={ref} data-testid="dacs">
+    <Box data-testid="dacs">
       <DataTable
         rows={getRows()}
         columns={columns}
@@ -86,6 +83,6 @@ const WizardRemsDAC = React.forwardRef(function WizardRemsDAC(
       />
     </Box>
   )
-})
+}
 
 export default WizardRemsDAC

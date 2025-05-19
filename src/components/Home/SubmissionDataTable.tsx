@@ -1,7 +1,6 @@
-import React from "react"
-
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
+import Button from "@mui/material/Button"
 import { GridColDef, GridRowParams, GridActionsCellItem, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
@@ -61,7 +60,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       getActions: (params: GridRowParams) =>
         params.row.submissionType === SubmissionStatus.unpublished
           ? [
-              <>
+              <Button>
                 <GridActionsCellItem
                   key={params.id}
                   icon={<EditIcon color="primary" fontSize="large" />}
@@ -70,8 +69,8 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
                   showInMenu
                   data-testid="edit-draft-submission"
                 />
-              </>,
-              <>
+              </Button>,
+              <Button>
                 <GridActionsCellItem
                   key={params.id}
                   icon={<DeleteIcon color="primary" fontSize="large" />}
@@ -80,7 +79,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
                   data-testid="delete-draft-submission"
                   showInMenu
                 />
-              </>,
+              </Button>,
             ]
           : [],
     },

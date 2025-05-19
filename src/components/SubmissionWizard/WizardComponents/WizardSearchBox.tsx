@@ -1,5 +1,3 @@
-import React from "react"
-
 import ClearIcon from "@mui/icons-material/Clear"
 import SearchIcon from "@mui/icons-material/Search"
 import IconButton from "@mui/material/IconButton"

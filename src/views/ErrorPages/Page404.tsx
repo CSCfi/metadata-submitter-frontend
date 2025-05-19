@@ -1,5 +1,3 @@
-import React from "react"
-
 import { Button, Typography, styled } from "@mui/material"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router"

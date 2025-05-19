@@ -1,5 +1,3 @@
-import React from "react"
-
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import { styled } from "@mui/system"
@@ -9,7 +7,7 @@ import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 import WizardDacPoliciesStep from "components/SubmissionWizard/WizardSteps/WizardDacPoliciesStep"
 import { ObjectTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
-import type { FormRef } from "types"
+import type { HandlerRef } from "types"
 
 const GridContainer = styled(Grid)({
   margin: 0,
@@ -32,7 +30,7 @@ const ObjectInfo = styled("div")({
 /**
  * Show selection for object and submission types and correct form based on users choice.
  */
-const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
+const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
@@ -47,7 +45,7 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: FormRef }) => {
               <p>You can also add objects and edit them after saving your draft.</p>
             </ObjectInfo>
           ) : objectType === ObjectTypes.dacPolicies ? (
-            <WizardDacPoliciesStep dacPoliciesFormRef={formRef} />
+            <WizardDacPoliciesStep />
           ) : (
             <WizardAddObjectCard formRef={formRef} />
           )}

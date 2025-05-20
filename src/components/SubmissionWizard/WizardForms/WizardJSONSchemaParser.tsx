@@ -1306,6 +1306,7 @@ const FormAutocompleteField = ({
   const [options, setOptions] = useState([])
   const [inputValue, setInputValue] = useState("")
   const [loading, setLoading] = useState(false)
+  const clearForm = useAppSelector(state => state.clearForm)
 
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
@@ -1352,6 +1353,13 @@ const FormAutocompleteField = ({
       setLoading(false)
     }
   }, [selection, inputValue])
+
+  useEffect(() => {
+    if (clearForm) {
+      setSelection(null)
+      setInputValue("")
+    }
+  }, [clearForm])
 
   return (
     <ConnectForm>
@@ -1484,6 +1492,15 @@ const FormTagField = ({
   const handleInputChange = e => {
     setInputValue(e.target.value)
   }
+
+  const clearForm = useAppSelector(state => state.clearForm)
+
+  useEffect(() => {
+    if (clearForm) {
+      setTags([])
+      setInputValue("")
+    }
+  }, [clearForm])
 
   return (
     <ConnectForm>

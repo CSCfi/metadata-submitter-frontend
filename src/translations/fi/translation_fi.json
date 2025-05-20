@@ -187,6 +187,7 @@
   },
   "identifierPublish": "Identifier and publish",
   "identifier": "Tunniste",
+  "doiRegistrationInfo": "DOI registration information",
   "summary": "Yhteenveto",
   "publishSubmission": "Publish submission",
   "summaryPage": {

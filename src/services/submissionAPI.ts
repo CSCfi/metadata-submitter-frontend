@@ -36,7 +36,7 @@ const getSubmissions = async (params: {
   return await api.get("", params)
 }
 
-const putDOIInfo = async (
+const patchDOIInfo = async (
   submissionId: string,
   doiFormDetails: Record<string, unknown>[]
 ): Promise<APIResponse> => {
@@ -60,7 +60,7 @@ export default {
   patchSubmissionById,
   deleteSubmissionById,
   getSubmissions,
-  putDOIInfo,
+  patchDOIInfo,
   putLinkedFolder,
   putRemsData,
 }

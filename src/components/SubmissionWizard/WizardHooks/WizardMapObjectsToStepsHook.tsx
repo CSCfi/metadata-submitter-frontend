@@ -180,7 +180,7 @@ const mapObjectsToStepsHook = (
 
   // Check that doiInfo exist and that it contains data at least at one of the keys
   const hasDoiInfo: boolean =  submission.doiInfo
-    ? Object.values(submission.doiInfo).filter(item => item.length > 0).length > 0
+    ? Object.values(submission.doiInfo).filter(item => Array.isArray(item) && item.length > 0).length > 0
     : false
 
   const idPublishStep = {
@@ -199,8 +199,7 @@ const mapObjectsToStepsHook = (
             contributors: submission.doiInfo.contributors,
             subjects: submission.doiInfo.subjects,
             keywords: submission.doiInfo.keywords,
-            displayTitle: "DOI registration information",
-            tags: {submissionType: 'Form', displayTitle: "DOI registration information"}
+            displayTitle: t("doiRegistrationInfo"),
         }
         ]
         :

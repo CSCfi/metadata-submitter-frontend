@@ -648,9 +648,15 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
         analysisAccessionIds
       )
 
+      // In local state also remove "Datacite" from string coming from schema submission.doiInfo.title
       setStates({
         ...states,
-        formSchema: dereferencedSchema,
+        formSchema: {
+          ...dereferencedSchema,
+          title: parsedSchema.title.toLowerCase().includes(ObjectTypes.datacite)
+            ? parsedSchema.title.slice(9)
+            :  parsedSchema.title
+        },
         validationSchema: parsedSchema,
         isLoading: false,
       })

@@ -238,7 +238,7 @@ export type DoiFormDetails = {
   creators: DoiCreator[]
   contributors: DoiContributor[]
   subjects: DoiSubject[]
-  keywords?: DoiKeyword[]
+  keywords: DoiKeyword[]
 }
 
 export type RemsDetails = {

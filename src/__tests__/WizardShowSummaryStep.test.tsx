@@ -89,7 +89,7 @@ describe("WizardShowSummaryStep", () => {
         drafts: [],
         openedXMLModal: true,
         workflow: "FEGA",
-        doiInfo: { creators: [], contributors: [], subjects: [] },
+        doiInfo: { creators: [], contributors: [], subjects: [], keywords: [] },
       },
     }
 

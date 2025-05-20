@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed formatting scripts and formatted files (#1033)
 - (users) Pagination menu overlap and style fixes (#1031)
 - Modified the way we check for missing fields when submitting a form in relation to changes in react-hook-form v7.55.0
 - Fix for unit test failure in FormAutocompleteField

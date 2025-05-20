@@ -40,11 +40,17 @@ const saveDraftsAsTemplates = async (
           draftsByObjectType[j].accessionId
         )
         // "tags" object to be added to JSONContent
-        const draftTags = { tags: { displayTitle: getObjectDisplayTitle(objectType, draftResponse.data) } }
+        const draftTags = {
+          tags: { displayTitle: getObjectDisplayTitle(objectType, draftResponse.data) },
+        }
 
         // Remove unnecessary values such as "date"
         // Add the object in the form of {template: draft's values, tags: {displayTitle}} to the array
-        draftsArr.push({ projectId, template: { ...omit(draftResponse.data, OmitObjectValues) }, ...draftTags })
+        draftsArr.push({
+          projectId,
+          template: { ...omit(draftResponse.data, OmitObjectValues) },
+          ...draftTags,
+        })
       } catch (err) {
         dispatch(
           updateStatus({

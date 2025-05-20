@@ -2,7 +2,10 @@ import { createSlice } from "@reduxjs/toolkit"
 
 import { DispatchReducer } from "types"
 
-const initialState: { step: number; stepObjectType: string } = { step: 1, stepObjectType: "submissionDetails" }
+const initialState: { step: number; stepObjectType: string } = {
+  step: 1,
+  stepObjectType: "submissionDetails",
+}
 
 const wizardStepObjectSlice = createSlice({
   name: "stepObject",

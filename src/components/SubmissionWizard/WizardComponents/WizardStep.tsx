@@ -46,7 +46,7 @@ const ActionButton = (props: {
 
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
   const pathname = pathWithLocale(
-    submission.submissionId ? `submission/${submission.submissionId}` : `submission`,
+    submission.submissionId ? `submission/${submission.submissionId}` : `submission`
   )
 
   const handleClick = () => {
@@ -178,7 +178,7 @@ const StepItems = (props: {
             submissionId,
             dispatch,
             navigate,
-            objects.findIndex(object => object.id === item.accessionId),
+            objects.findIndex(object => object.id === item.accessionId)
           )
         }
         break

@@ -105,7 +105,9 @@ const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
           parsedSchema = JSON.parse(schema)
         }
 
-        const dereferencedSchema: Promise<FormObject> = await dereferenceSchema(parsedSchema as FormObject)
+        const dereferencedSchema: Promise<FormObject> = await dereferenceSchema(
+          parsedSchema as FormObject
+        )
 
         setStates({
           ...states,
@@ -127,7 +129,10 @@ const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
       {states.isLoading && <CircularProgress color="primary"></CircularProgress>}
       {!isEmpty(states.schema) && states.schema && states.objectData && (
         <DetailComponents>
-          {JSONSchemaParser.buildDetails(states.schema as FormObject, states.objectData as ObjectDetails)}
+          {JSONSchemaParser.buildDetails(
+            states.schema as FormObject,
+            states.objectData as ObjectDetails
+          )}
         </DetailComponents>
       )}
     </Box>

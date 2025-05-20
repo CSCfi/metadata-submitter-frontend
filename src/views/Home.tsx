@@ -117,7 +117,7 @@ const Home: React.FC = () => {
           setNumberOfDraftSubmissions(unpublishedData.page.totalSubmissions)
           setNumberOfPublishedSubmissions(publishedData.page.totalSubmissions)
           setNumberOfAllSubmissions(
-            unpublishedData.page.totalSubmissions + publishedData.page.totalSubmissions,
+            unpublishedData.page.totalSubmissions + publishedData.page.totalSubmissions
           )
           setFetchingSubmissions(false)
         } else {
@@ -126,7 +126,7 @@ const Home: React.FC = () => {
               status: ResponseStatus.error,
               response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
               helperText: "Fetching submissions error.",
-            }),
+            })
           )
         }
       }
@@ -192,9 +192,9 @@ const Home: React.FC = () => {
     setAllSubmissions(
       shuffle(
         (allDraftSubmissions as SubmissionDetailsWithId[]).concat(
-          allPublishedSubmissions as SubmissionDetailsWithId[],
-        ),
-      ),
+          allPublishedSubmissions as SubmissionDetailsWithId[]
+        )
+      )
     )
   }, [allDraftSubmissions, allPublishedSubmissions])
 
@@ -266,12 +266,12 @@ const Home: React.FC = () => {
         updateStatus({
           status: ResponseStatus.success,
           helperText: "snackbarMessages.success.submissions.deleted",
-        }),
+        })
       )
 
       if (filteringText) {
         const newFilteredSubmissions = filteredSubmissions.filter(
-          item => item.submissionId !== submissionId,
+          item => item.submissionId !== submissionId
         )
         setFilteredSubmissions(newFilteredSubmissions)
       }
@@ -280,7 +280,7 @@ const Home: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: error,
-        }),
+        })
       )
     }
 
@@ -332,7 +332,7 @@ const Home: React.FC = () => {
 
   const debouncedChangeFilteringText = useMemo(
     () => debounce(getFilter, 300),
-    [allSubmissions, allDraftSubmissions, allPublishedSubmissions, tabValue],
+    [allSubmissions, allDraftSubmissions, allPublishedSubmissions, tabValue]
   )
 
   const handleClearFilteringText = () => {

@@ -14,7 +14,7 @@ type WizardRemsOrganizationProps = {
 
 const WizardRemsOrganization = React.forwardRef(function WizardRemsOrganization(
   props: WizardRemsOrganizationProps,
-  ref: HandlerRef,
+  ref: HandlerRef
 ) {
   const { t } = useTranslation()
   const { organizations, selectedOrgId, handleOrgChange } = props

@@ -94,8 +94,8 @@ export const getAccessionIds = (
       return obj.schema === ObjectTypes.dac
         ? `${accessionId} - Main Contact: ${displayTitle}`
         : obj.tags?.submissionType === ObjectSubmissionTypes.xml
-        ? `${accessionId} - File name: ${displayTitle}`
-        : `${accessionId} - Title: ${displayTitle}`
+          ? `${accessionId} - File name: ${displayTitle}`
+          : `${accessionId} - Title: ${displayTitle}`
     })
     return accessionIds
   }

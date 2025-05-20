@@ -145,10 +145,10 @@ type WizardPaginationProps = {
   itemsPerPage: number
   handleChangePage: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    page: number,
+    page: number
   ) => void
   handleItemsPerPageChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void
 }
 
@@ -171,7 +171,7 @@ const WizardPagination: React.FC<WizardPaginationProps> = props => {
 
   // Get "rowsPerPageOptions" of TablePagination
   const getRowsPerPageOptions = (
-    totalItems?: number,
+    totalItems?: number
   ): Array<number | { value: number; label: string }> => {
     if (totalItems) {
       return [5, 10, 25, 50, 100]

@@ -100,14 +100,14 @@ const NavigationLinks = () => {
         onClick={handleClick}
         data-testid="user-setting-button"
       >
-      <PersonIcon fontSize="large" />
-      <Typography
-        variant="subtitle2"
-        color="primary"
-        sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
-       >
-        {user.name}
-      </Typography>
+        <PersonIcon fontSize="large" />
+        <Typography
+          variant="subtitle2"
+          color="primary"
+          sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
+        >
+          {user.name}
+        </Typography>
         {open ? (
           <ExpandLess color="secondary" fontSize="large" />
         ) : (
@@ -140,7 +140,7 @@ const NavigationLinks = () => {
             {t("logout")}
           </Typography>
           <ListItemIcon>
-              <LogoutIcon/>
+            <LogoutIcon />
           </ListItemIcon>
         </MenuItem>
       </Menu>
@@ -228,13 +228,13 @@ const LanguageSelector = (props: MenuItemProps) => {
           </Typography>
         </MenuItem>
         <MenuItem onClick={() => changeLang("fi")} data-testid="fi-lang">
-        <Typography
-          variant="subtitle2"
-          color="secondary"
-          sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
-        >
-          {t("inFinnish")}
-        </Typography>
+          <Typography
+            variant="subtitle2"
+            color="secondary"
+            sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
+          >
+            {t("inFinnish")}
+          </Typography>
         </MenuItem>
       </Menu>
     </>
@@ -269,7 +269,7 @@ const SupportSelector = () => {
           variant="subtitle2"
           color="primary"
           sx={{ ml: "1rem", mr: "0.65rem", fontWeight: 600 }}
-       >
+        >
           {t("support")}
         </Typography>
         {open ? (
@@ -300,16 +300,12 @@ const SupportSelector = () => {
             variant="subtitle2"
             underline="none"
           >
-            <Typography
-              variant="subtitle2"
-              color="secondary"
-              sx={{ mx: "1rem", fontWeight: 700 }}
-            >
+            <Typography variant="subtitle2" color="secondary" sx={{ mx: "1rem", fontWeight: 700 }}>
               {t("userGuide")}
             </Typography>
           </Link>
           <ListItemIcon>
-              <OpenInNewIcon />
+            <OpenInNewIcon />
           </ListItemIcon>
         </MenuItem>
       </Menu>
@@ -365,9 +361,7 @@ const NavToolBar = () => {
       <Link to={pathWithLocale("home")} component={RouterLink} sx={{ m: "1.5rem 2rem" }}>
         <Logo src={logo} alt="CSC_logo" />
       </Link>
-      <ServiceTitle variant="h5">
-        {t("serviceTitle")}
-      </ServiceTitle>
+      <ServiceTitle variant="h5">{t("serviceTitle")}</ServiceTitle>
       <NavigationMenu />
     </Toolbar>
   )

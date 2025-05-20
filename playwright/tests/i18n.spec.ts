@@ -7,7 +7,10 @@ test.describe("i18n translation", () => {
     await resetDB()
   })
 
-  test("should login with finnish translation when finnish locale is chosen", async ({ page, login }) => {
+  test("should login with finnish translation when finnish locale is chosen", async ({
+    page,
+    login,
+  }) => {
     await page.goto("/")
 
     await page.getByTestId("lang-selector").click()

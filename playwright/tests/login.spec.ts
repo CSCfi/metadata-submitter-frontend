@@ -17,7 +17,9 @@ test.describe("Login e2e", () => {
 
   test("should contain the test user name", async ({ login, page }) => {
     await login()
-    await expect(page.locator("[data-testid='user-setting-button'] > h6")).toContainText("E2EUser FrontendTest")
+    await expect(page.locator("[data-testid='user-setting-button'] > h6")).toContainText(
+      "E2EUser FrontendTest"
+    )
   })
 
   test("should go to main page on logout", async ({ login, page }) => {

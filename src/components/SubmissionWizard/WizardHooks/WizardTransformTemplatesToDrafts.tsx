@@ -17,7 +17,9 @@ const transformTemplatesToDrafts = async (
     schema: getOrigObjectType(template.schema),
   }))
 
-  const templateDetails = userTemplates?.filter(item => templateAccessionIds.includes(item.accessionId))
+  const templateDetails = userTemplates?.filter(item =>
+    templateAccessionIds.includes(item.accessionId)
+  )
 
   const draftsArray: ObjectInsideSubmissionWithTags[] = []
   for (let i = 0; i < templateDetails.length; i += 1) {
@@ -38,7 +40,9 @@ const transformTemplatesToDrafts = async (
       const draftDetails = {
         accessionId: draftResponse.data.accessionId,
         schema: "draft-" + templateDetails[i].schema,
-        tags: { displayTitle: getObjectDisplayTitle(templateDetails[i].schema, templateResponse.data) },
+        tags: {
+          displayTitle: getObjectDisplayTitle(templateDetails[i].schema, templateResponse.data),
+        },
       }
       draftsArray.push(draftDetails)
     } catch (error) {

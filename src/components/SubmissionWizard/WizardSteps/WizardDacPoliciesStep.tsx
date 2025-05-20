@@ -71,7 +71,7 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
               title: wf.title,
               policies: policies,
             }
-          },
+          }
         )
     : []
 
@@ -100,7 +100,7 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
               status: ResponseStatus.error,
               response: error,
               helperText: "snackbarMessages.error.helperText.fetchSubmissionError",
-            }),
+            })
           )
         }
       }
@@ -126,7 +126,7 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
           updateStatus({
             status: ResponseStatus.success,
             helperText: "snackbarMessages.success.rems.saved",
-          }),
+          })
         )
       })
       .catch(error =>
@@ -135,8 +135,8 @@ const DacPoliciesForm = ({ dacPoliciesFormRef }: { dacPoliciesFormRef: FormRef }
             status: ResponseStatus.error,
             response: error,
             helperText: "snackbarMessages.error.helperText.submitRemsError",
-          }),
-        ),
+          })
+        )
       )
   }
 

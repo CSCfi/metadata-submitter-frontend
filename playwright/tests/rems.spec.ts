@@ -58,10 +58,10 @@ test.describe("Submitting REMS data", () => {
     // Assert the left side Accordion shows saved DAC title and number of Policies
     await expect(page.getByTestId("submitted-dacPolicies-list-item")).toHaveCount(2)
     await expect(
-      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "Test Workflow DAC" }),
+      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "Test Workflow DAC" })
     ).toBeVisible()
     await expect(
-      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "1 policy" }),
+      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "1 policy" })
     ).toBeVisible()
   })
 })

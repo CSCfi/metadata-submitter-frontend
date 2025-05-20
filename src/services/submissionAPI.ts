@@ -18,7 +18,7 @@ const getSubmissionById = async (submissionId: string): Promise<APIResponse> => 
 
 const patchSubmissionById = async (
   submissionId: string,
-  JSONContent: { name: string; description: string },
+  JSONContent: { name: string; description: string }
 ): Promise<APIResponse> => {
   return await api.patch(`/${submissionId}`, JSONContent)
 }
@@ -38,7 +38,7 @@ const getSubmissions = async (params: {
 
 const putDOIInfo = async (
   submissionId: string,
-  doiFormDetails: Record<string, unknown>[],
+  doiFormDetails: Record<string, unknown>[]
 ): Promise<APIResponse> => {
   return await api.patch(`${submissionId}/doi`, doiFormDetails)
 }
@@ -49,7 +49,7 @@ const putLinkedFolder = async (submissionId: string, folderName: string): Promis
 
 const putRemsData = async (
   submissionId: string,
-  remsData: Record<string, unknown>,
+  remsData: Record<string, unknown>
 ): Promise<APIResponse> => {
   return await api.patch(`${submissionId}/rems`, remsData)
 }

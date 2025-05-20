@@ -18,12 +18,12 @@ import type {
   DoiContributor,
   DoiSubject,
   DispatchReducer,
-  RemsDetails
+  RemsDetails,
 } from "types"
 
 type InitialState = SubmissionDetailsWithId & {
   doiInfo: Record<string, unknown> & DoiFormDetails
-} & { linkedFolder?: string } & { rems?: RemsDetails}
+} & { linkedFolder?: string } & { rems?: RemsDetails }
 
 const initialState: InitialState = {
   submissionId: "",

@@ -91,7 +91,9 @@ const getLinkedDereferencedSchema = (
             analysisRef: {
               items: {
                 properties: {
-                  accessionId: { enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds) },
+                  accessionId: {
+                    enum: analysisAccessionIds.filter(id => id !== currentAnalysisAccessionIds),
+                  },
                 },
               },
             },

@@ -40,7 +40,7 @@ const traverseFields = (
   object: FormObject,
   path: string[],
   objectValues: ObjectDetails,
-  nestedField?: NestedField,
+  nestedField?: NestedField
 ) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
@@ -277,7 +277,7 @@ const DetailsArray = ({ object, path, objectValues, values }: DetailsArrayProps)
                 return traverseFields(
                   properties[item] as FormObject,
                   pathForThisIndex,
-                  objectValues,
+                  objectValues
                 )
               })}
             </Paper>

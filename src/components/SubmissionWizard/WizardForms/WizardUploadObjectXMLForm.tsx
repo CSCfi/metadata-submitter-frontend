@@ -109,7 +109,11 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     }, 5000)
 
     if (currentObject.accessionId) {
-      const response = await objectAPIService.replaceXML(objectType, currentObject.accessionId, file)
+      const response = await objectAPIService.replaceXML(
+        objectType,
+        currentObject.accessionId,
+        file
+      )
 
       if (response.ok) {
         dispatch(
@@ -165,7 +169,13 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       sx={{ bgcolor: "#FFF", color: "primary.main" }}
       variant="contained"
       size="small"
-      disabled={isSubmitting || !watchFile || watchFile.length === 0 || errors.fileUpload != null || isValidating}
+      disabled={
+        isSubmitting ||
+        !watchFile ||
+        watchFile.length === 0 ||
+        errors.fileUpload != null ||
+        isValidating
+      }
       onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
     >
       {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
@@ -175,12 +185,18 @@ const WizardUploadObjectXMLForm: React.FC = () => {
   return (
     <Container
       sx={theme =>
-        isDragActive ? { flex: 1, bgcolor: theme.palette.primary.light, border: "2px dashed #51A808" } : { p: 0 }
+        isDragActive
+          ? { flex: 1, bgcolor: theme.palette.primary.light, border: "2px dashed #51A808" }
+          : { p: 0 }
       }
       maxWidth={false}
       {...getRootProps()}
     >
-      <CardHeader title="Upload XML File" titleTypographyProps={{ variant: "inherit" }} action={submitButton} />
+      <CardHeader
+        title="Upload XML File"
+        titleTypographyProps={{ variant: "inherit" }}
+        action={submitButton}
+      />
       {/* React Hook Form */}
       <form onSubmit={handleSubmit(async data => onSubmit(data as FileUpload))}>
         <FormControl>
@@ -210,7 +226,10 @@ const WizardUploadObjectXMLForm: React.FC = () => {
                   isFile: value => value.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
-                    const response = await xmlSubmissionAPIService.validateXMLFile(objectType, value[0])
+                    const response = await xmlSubmissionAPIService.validateXMLFile(
+                      objectType,
+                      value[0]
+                    )
 
                     if (!response.data.isValid) {
                       return `The file you attached is not valid ${objectType},
@@ -229,8 +248,12 @@ const WizardUploadObjectXMLForm: React.FC = () => {
             <p>Use Submit button to upload the file.</p>
           )}
           {/* Errors */}
-          {errors.fileUpload?.type === "isFile" && <Alert severity="error">Please attach a file.</Alert>}
-          {errors.fileUpload?.type === "isXML" && <Alert severity="error">Please attach an XML file.</Alert>}
+          {errors.fileUpload?.type === "isFile" && (
+            <Alert severity="error">Please attach a file.</Alert>
+          )}
+          {errors.fileUpload?.type === "isXML" && (
+            <Alert severity="error">Please attach an XML file.</Alert>
+          )}
           {errors.fileUpload?.type === "isValidXML" && (
             <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>
           )}

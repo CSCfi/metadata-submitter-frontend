@@ -74,7 +74,7 @@ const CreateSubmissionForm = ({
                 status: ResponseStatus.error,
                 response: error,
                 helperText: "snackbarMessages.error.helperText.fetchWorkflowsError",
-              }),
+              })
             )
           }
         }
@@ -110,7 +110,7 @@ const CreateSubmissionForm = ({
             templateAccessionIds,
             templates,
             submission.submissionId,
-            dispatch,
+            dispatch
           )
         : []
 
@@ -121,7 +121,7 @@ const CreateSubmissionForm = ({
             updateStatus({
               status: ResponseStatus.success,
               helperText: "snackbarMessages.success.submission.updated",
-            }),
+            })
           )
         })
         .catch((error: string) => {

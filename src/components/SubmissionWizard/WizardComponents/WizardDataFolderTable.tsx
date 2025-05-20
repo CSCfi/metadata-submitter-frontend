@@ -108,7 +108,7 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
     const folderNames = getFolderNames()
     return folderNames
       .filter(folderName => (!!linkedFolder ? folderName === linkedFolder : folderName))
-        .map(folderName => {
+      .map(folderName => {
         const currentFiles = files.filter(file => file.path.includes(`/${folderName}/`))
         const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
         return {

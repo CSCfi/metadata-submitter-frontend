@@ -27,7 +27,7 @@ const UserDraftTemplates: React.FC = () => {
 
   const projectId = useAppSelector(state => state.projectId)
   const templates: Array<ObjectInsideSubmissionWithTags> | [] = useAppSelector(
-    state => state.templates,
+    state => state.templates
   )
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const templateAccessionIds = useAppSelector(state => state.templateAccessionIds)
@@ -46,7 +46,7 @@ const UserDraftTemplates: React.FC = () => {
         {displayTemplates.map(
           (draft: { [key: string]: ObjectInsideSubmissionWithTags[] }, index: number) => (
             <TemplateGroup key={index} draft={draft} />
-          ),
+          )
         )}
       </React.Fragment>
     )

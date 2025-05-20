@@ -56,7 +56,7 @@ describe("Test autocomplete on organisation field", () => {
       renderWithProviders(<WizardFillObjectDetailsForm />)
     })
     const autocomplete = (await waitFor(() =>
-      screen.getByTestId("organisation-inputField"),
+      screen.getByTestId("organisation-inputField")
     )) as HTMLInputElement
     act(() => {
       autocomplete.focus()

@@ -17,7 +17,10 @@ const createFromJSON = async (
   return await api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
 }
 
-const getObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const getObjectByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
@@ -33,7 +36,10 @@ const getAllObjectsByObjectType = async (objectType: string): Promise<APIRespons
   return await api.get(`/${objectType}`)
 }
 
-const deleteObjectByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const deleteObjectByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.delete(`/${objectType}/${accessionId}`)
 }
 

@@ -299,7 +299,7 @@ const patchHandler = (
   accessionId: string,
   objectType: string,
   cleanedValues: Record<string, unknown>,
-  dispatch: (reducer: unknown) => void,
+  dispatch: (reducer: unknown) => void
 ) => {
   if (response.ok) {
     dispatch(
@@ -309,8 +309,8 @@ const patchHandler = (
           submissionType: ObjectSubmissionTypes.form,
           displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
         },
-        ObjectStatus.submitted,
-      ),
+        ObjectStatus.submitted
+      )
     )
     dispatch(resetDraftStatus())
     dispatch(
@@ -318,7 +318,7 @@ const patchHandler = (
         status: ResponseStatus.success,
         response: response,
         helperText: "",
-      }),
+      })
     )
   } else {
     dispatch(
@@ -326,7 +326,7 @@ const patchHandler = (
         status: ResponseStatus.error,
         response: response,
         helperText: "Unexpected error",
-      }),
+      })
     )
   }
 }
@@ -396,7 +396,7 @@ const FormContent = ({
       setCurrentObject({
         objectId: currentObjectId,
         status: currentObject.status,
-      }),
+      })
     )
   }
 
@@ -443,7 +443,7 @@ const FormContent = ({
               cleanedValues: values,
               status: currentObject.status || ObjectStatus.draft,
               objectId: currentObjectId,
-            }),
+            })
           )
         : dispatch(setCurrentObject({ ...clone, cleanedValues: values }))
       checkDirty()
@@ -462,7 +462,7 @@ const FormContent = ({
           updateStatus({
             status: ResponseStatus.success,
             helperText: "snackbarMessages.success.doi.saved",
-          }),
+          })
         )
       })
       .catch(error =>
@@ -471,8 +471,8 @@ const FormContent = ({
             status: ResponseStatus.error,
             response: error,
             helperText: "snackbarMessages.error.helperText.submitDoiError",
-          }),
-        ),
+          })
+        )
       )
   }
 
@@ -529,7 +529,7 @@ const FormContent = ({
       updateStatus({
         status: ResponseStatus.info,
         helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
-      }),
+      })
     )
   }
 
@@ -539,18 +539,18 @@ const FormContent = ({
     if (!isFormCleanedValuesEmpty(cleanedValues)) {
       const index =
         templates?.findIndex(
-          (item: { accessionId: string }) => item.accessionId === currentObject.accessionId,
+          (item: { accessionId: string }) => item.accessionId === currentObject.accessionId
         ) || 0
       const response = await templateAPI.patchTemplateFromJSON(
         objectType,
         currentObject.accessionId,
         cleanedValues,
-        index,
+        index
       )
 
       const displayTitle = getObjectDisplayTitle(
         objectType,
-        cleanedValues as unknown as ObjectDisplayValues,
+        cleanedValues as unknown as ObjectDisplayValues
       )
 
       if (response.ok) {
@@ -559,7 +559,7 @@ const FormContent = ({
           updateTemplateDisplayTitle({
             accessionId: currentObject.accessionId,
             displayTitle: displayTitle,
-          }),
+          })
         )
 
         dispatch(
@@ -567,7 +567,7 @@ const FormContent = ({
             status: ResponseStatus.success,
             response: response,
             helperText: "",
-          }),
+          })
         )
       } else {
         dispatch(
@@ -575,7 +575,7 @@ const FormContent = ({
             status: ResponseStatus.error,
             response: response,
             helperText: "Cannot save template",
-          }),
+          })
         )
       }
     } else {
@@ -608,7 +608,7 @@ const FormContent = ({
             ...clone,
             status: currentObject.status || ObjectStatus.draft,
             accessionId: handleSave.data.accessionId,
-          }),
+          })
         )
         dispatch(resetDraftStatus())
       }
@@ -625,7 +625,7 @@ const FormContent = ({
     if (currentObjectId) {
       try {
         await dispatch(
-          deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType),
+          deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
         )
         handleReset()
         handleChange()
@@ -641,7 +641,7 @@ const FormContent = ({
             status: ResponseStatus.error,
             response: error,
             helperText: "snackbarMessages.error.helperText.deleteObjectFromSubmission",
-          }),
+          })
         )
       }
     }
@@ -740,7 +740,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
 
       // Dereference Schema and link AccessionIds to equivalent objects
       let dereferencedSchema: Promise<FormObject> = await dereferenceSchema(
-        parsedSchema as FormObject,
+        parsedSchema as FormObject
       )
 
       dereferencedSchema = getLinkedDereferencedSchema(
@@ -748,7 +748,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         parsedSchema.title.toLowerCase(),
         dereferencedSchema,
         submission.metadataObjects,
-        analysisAccessionIds,
+        analysisAccessionIds
       )
 
       setStates({
@@ -779,7 +779,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           return set(
             prevState,
             `formSchema.properties.analysisRef.items.properties.accessionId.enum`,
-            analysisAccessionIds.filter(id => id !== currentObject?.accessionId),
+            analysisAccessionIds.filter(id => id !== currentObject?.accessionId)
           )
         })
       }
@@ -802,7 +802,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         const response = await objectAPIService.patchFromJSON(
           objectType,
           accessionId,
-          cleanedValues,
+          cleanedValues
         )
 
         patchHandler(
@@ -811,7 +811,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
           currentObject.accessionId,
           objectType,
           cleanedValues,
-          dispatch,
+          dispatch
         )
         dispatch(resetCurrentObject())
         methods.reset({ undefined })
@@ -819,7 +819,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(
             accessionId,
-            cleanedValues as FormDataFiles,
+            cleanedValues as FormDataFiles
           )
           objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
         }
@@ -829,7 +829,7 @@ const WizardFillObjectDetailsForm = (props: { closeDialog?: () => void; formRef?
             status: ResponseStatus.error,
             response: error,
             helperText: "Unexpected error when modifying object",
-          }),
+          })
         )
       }
 

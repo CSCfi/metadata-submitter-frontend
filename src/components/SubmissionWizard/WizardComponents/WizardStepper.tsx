@@ -114,7 +114,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       objectTypesArray,
       currentWorkflow,
       t,
-      remsInfo,
+      remsInfo
     )
     dispatch(setWizardMappedSteps(mappedSteps))
   }, [submission, objectTypesArray, currentWorkflow, t])
@@ -131,7 +131,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
           updateStep({
             step: Number(stepInUrl),
             objectType: objectType ? objectType : currentStep.schemas[0]?.objectType,
-          }),
+          })
         )
         // Only set correct objectType after creating a new submission (stepInUrl === 1)
         if (stepInUrl > 1) {
@@ -149,7 +149,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
       dispatch(resetWorkflowType())
       dispatch(resetWizardMappedSteps())
     },
-    [],
+    []
   )
 
   const [expandedPanels, setExpandedPanels] = useState<number[]>([0]) // Open first panel on init
@@ -158,7 +158,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
     setExpandedPanels(
       expandedPanels.includes(stepIndex)
         ? expandedPanels.filter(i => i !== stepIndex)
-        : [...expandedPanels, stepIndex],
+        : [...expandedPanels, stepIndex]
     )
   }
 

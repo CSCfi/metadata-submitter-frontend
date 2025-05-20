@@ -32,8 +32,13 @@ const selectedSubmissionSlice = createSlice({
   },
 })
 
-export const { setSelectedSubmission, resetSelectedSubmission, deleteFromAllObjects, deleteDraftObject, deleteMetadataObject } =
-  selectedSubmissionSlice.actions
+export const {
+  setSelectedSubmission,
+  resetSelectedSubmission,
+  deleteFromAllObjects,
+  deleteDraftObject,
+  deleteMetadataObject,
+} = selectedSubmissionSlice.actions
 export default selectedSubmissionSlice.reducer
 
 // Delete object from selectedSubmission only available for Unpublished submission atm

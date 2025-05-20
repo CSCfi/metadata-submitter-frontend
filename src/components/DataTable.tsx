@@ -43,6 +43,16 @@ const Table = styled(DataGrid)(({ theme }) => ({
       "& .MuiMenuItem-root.MuiMenuItem-gutters.MuiButtonBase-root": { minHeight: "0 !important" },
     },
   },
+  "& .MuiDataGrid-actionsCell > *": {
+    marginRight: theme.spacing(1),
+    "&:last-child": {
+      marginRight: 0,
+    },
+  },
+  "& .MuiMenuItem-root .MuiListItemIcon-root": {
+    minWidth: "unset",
+    marginRight: theme.spacing(0.5),
+  },
   "& .MuiDataGrid-overlayWrapper": { height: "10rem" },
   "& .MuiDataGrid-row:hover": {
     cursor: "pointer",
@@ -59,13 +69,7 @@ type DataTableProps = {
 }
 
 const DataTable: React.FC<DataTableProps> = props => {
-  const {
-    columns,
-    rows,
-    totalItems,
-    sortingModel,
-    fetchPageOnChange,
-  } = props
+  const { columns, rows, totalItems, sortingModel, fetchPageOnChange } = props
   const { t } = useTranslation()
 
   const [paginationModel, setPaginationModel] = React.useState({ pageSize: 5, page: 0 })
@@ -73,11 +77,11 @@ const DataTable: React.FC<DataTableProps> = props => {
 
   const handleChangePage = (_e: unknown, newPage: number) => {
     fetchPageOnChange ? fetchPageOnChange(newPage) : null
-    setPaginationModel(prev => ( { ...prev, page: newPage } ))
+    setPaginationModel(prev => ({ ...prev, page: newPage }))
   }
 
   const DataGridPagination = () =>
-    totalItems && paginationModel.page !== undefined && paginationModel.pageSize? (
+    totalItems && paginationModel.page !== undefined && paginationModel.pageSize ? (
       <WizardPagination
         totalNumberOfItems={totalItems}
         page={paginationModel.page}
@@ -100,7 +104,7 @@ const DataTable: React.FC<DataTableProps> = props => {
   )
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <Table
         rows={rows}
         columns={columns}
@@ -114,7 +118,7 @@ const DataTable: React.FC<DataTableProps> = props => {
           noRowsOverlay: NoRowsOverlay,
         }}
         paginationModel={paginationModel}
-        onPaginationModelChange={(newPaginationModel) => setPaginationModel(newPaginationModel)}
+        onPaginationModelChange={newPaginationModel => setPaginationModel(newPaginationModel)}
         sortModel={sortModel}
         onSortModelChange={(newSortModel: GridSortModel) => setSortModel(newSortModel)}
       />

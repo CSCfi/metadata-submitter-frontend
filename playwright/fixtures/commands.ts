@@ -143,7 +143,7 @@ const test = base.extend<CommandFixtures>({
         if (stopToObjectType.length > 0) {
           objectTypesArray = objectTypesArray.slice(
             0,
-            objectTypesArray.indexOf(stopToObjectType) + 1,
+            objectTypesArray.indexOf(stopToObjectType) + 1
           )
         }
 
@@ -230,7 +230,7 @@ const test = base.extend<CommandFixtures>({
         .getByTestId(
           status === ObjectStatus.draft
             ? `draft-${objectType}-list-item`
-            : `submitted-${objectType}-list-item`,
+            : `submitted-${objectType}-list-item`
         )
         .first()
         .click()
@@ -278,7 +278,7 @@ const test = base.extend<CommandFixtures>({
 
       await page.route(
         `/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
-        async route => await route.fulfill({ json }),
+        async route => await route.fulfill({ json })
       )
     }
     await baseUse((itemsPerPage, isPublished) => mockGetSubmissions(itemsPerPage, isPublished))

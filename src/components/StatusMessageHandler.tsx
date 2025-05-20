@@ -30,29 +30,29 @@ const CustomAlert = styled(Alert, {
     severity === "error"
       ? theme.palette.error.main
       : severity === "warning"
-      ? theme.palette.error.light
-      : theme.palette.success.light
+        ? theme.palette.error.light
+        : theme.palette.success.light
   }`,
   borderTop: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
       : severity === "warning"
-      ? theme.palette.error.light
-      : theme.palette.success.light
+        ? theme.palette.error.light
+        : theme.palette.success.light
   }`,
   borderRight: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
       : severity === "warning"
-      ? theme.palette.error.light
-      : theme.palette.success.light
+        ? theme.palette.error.light
+        : theme.palette.success.light
   }`,
   borderBottom: `0.25rem solid ${
     severity === "error"
       ? theme.palette.error.main
       : severity === "warning"
-      ? theme.palette.error.light
-      : theme.palette.success.light
+        ? theme.palette.error.light
+        : theme.palette.success.light
   }`,
   color: theme.palette.secondary.main,
   lineHeight: "1.75",
@@ -101,8 +101,8 @@ const getSeverityIcon = (severity, theme) => {
       severity === "error"
         ? theme.palette.error.main
         : severity === "warning"
-        ? theme.palette.warning.main
-        : theme.palette.success.light,
+          ? theme.palette.warning.main
+          : theme.palette.success.light,
   }
 
   switch (severity) {

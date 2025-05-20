@@ -17,7 +17,11 @@ import { updateStatus } from "features/statusMessageSlice"
 import { addDraftsToUser } from "features/userSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
-import { publishSubmissionContent, setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
+import {
+  publishSubmissionContent,
+  setSubmission,
+  resetSubmission,
+} from "features/wizardSubmissionSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
@@ -63,7 +67,10 @@ const SelectedSubmissionDetails: React.FC = () => {
       objectInSubmission: ObjectInsideSubmissionWithTags
     ) => {
       const service = draft ? draftAPIService : objectAPIService
-      const response = await service.getObjectByAccessionId(objectType, objectInSubmission.accessionId)
+      const response = await service.getObjectByAccessionId(
+        objectType,
+        objectInSubmission.accessionId
+      )
 
       if (response.ok) {
         const objectDetails: OldSubmissionRow = {
@@ -143,7 +150,9 @@ const SelectedSubmissionDetails: React.FC = () => {
   const handleEditSubmission = (step: number) => {
     dispatch(setSubmission(selectedSubmission.originalSubmissionData))
     navigate({
-      pathname: pathWithLocale(`submission/${selectedSubmission.originalSubmissionData.submissionId}`),
+      pathname: pathWithLocale(
+        `submission/${selectedSubmission.originalSubmissionData.submissionId}`
+      ),
       search: `step=${step}`,
     })
   }
@@ -238,7 +247,13 @@ const SelectedSubmissionDetails: React.FC = () => {
   }
 
   return (
-    <Grid container direction="column" justifyContent="space-between" alignItems="stretch" sx={{ m: 2 }}>
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+      sx={{ m: 2 }}
+    >
       {isFetchingSubmission && <CircularProgress size={50} thickness={2.5} sx={{ m: 10 }} />}
       {!isFetchingSubmission && (
         <>
@@ -258,7 +273,11 @@ const SelectedSubmissionDetails: React.FC = () => {
           <SubmissionDetailTable
             bodyRows={selectedSubmission.allObjects}
             submissionTitle={selectedSubmission.submissionTitle}
-            submissionType={selectedSubmission.published ? SubmissionStatus.published : SubmissionStatus.unpublished}
+            submissionType={
+              selectedSubmission.published
+                ? SubmissionStatus.published
+                : SubmissionStatus.unpublished
+            }
             location={selectedSubmission.published ? "published" : "drafts"}
             onEditSubmission={handleEditSubmission}
             onPublishSubmission={handlePublishSubmission}
@@ -267,7 +286,13 @@ const SelectedSubmissionDetails: React.FC = () => {
           />
         </>
       )}
-      {dialogOpen && <WizardAlert onAlert={handlePublish} parentLocation="footer" alertType={"publish"}></WizardAlert>}
+      {dialogOpen && (
+        <WizardAlert
+          onAlert={handlePublish}
+          parentLocation="footer"
+          alertType={"publish"}
+        ></WizardAlert>
+      )}
     </Grid>
   )
 }

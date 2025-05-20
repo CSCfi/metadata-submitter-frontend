@@ -1,6 +1,6 @@
 import React from "react"
 
-import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import OpenInNewIcon from "@mui/icons-material/OpenInNew"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
@@ -20,7 +20,11 @@ const Page500: React.FC = () => {
       </Typography>
       <Typography variant="body1" data-testid="500text2">
         {t("errorPages.page500.errorText2")}
-        <Link href={errorLink} target="_blank">{linkname}<OpenInNewIcon /></Link>.
+        <Link href={errorLink} target="_blank">
+          {linkname}
+          <OpenInNewIcon />
+        </Link>
+        .
       </Typography>
     </ErrorPageContainer>
   )

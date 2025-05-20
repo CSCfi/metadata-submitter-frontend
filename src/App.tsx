@@ -79,8 +79,8 @@ const App: React.FC = () => {
             .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
             .map((schema: { title: string }) =>
               schema.title.toLowerCase().includes(ObjectTypes.datacite)
-              ? ObjectTypes.datacite
-              : schema.title.toLowerCase(),
+                ? ObjectTypes.datacite
+                : schema.title.toLowerCase()
             )
           dispatch(setObjectTypesArray(schemas))
         } else {
@@ -99,7 +99,7 @@ const App: React.FC = () => {
               ObjectTypes.bpdataset,
               ObjectTypes.bpobservation,
               ObjectTypes.bpstaining,
-            ]),
+            ])
           )
         }
       }
@@ -116,7 +116,7 @@ const App: React.FC = () => {
               status: ResponseStatus.error,
               response: error,
               helperText: "snackbarMessages.error.helperText.fetchRemsInfoError",
-            }),
+            })
           )
         }
       }

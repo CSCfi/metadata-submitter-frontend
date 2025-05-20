@@ -65,7 +65,7 @@ describe("SubmissionWizard", () => {
             stepObjectType: "submissionDetails",
           },
         },
-      },
+      }
     )
     expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
   })
@@ -76,7 +76,7 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     )
     await waitForElementToBeRemoved(() => screen.getByRole("progressbar"))
     expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument()
@@ -88,7 +88,7 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     )
     /* waifForElementToBeRemoved is needed to wait for
       the mock promises to all resolve

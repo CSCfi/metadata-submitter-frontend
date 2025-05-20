@@ -25,8 +25,12 @@ const templateSlice = createSlice({
     resetTemplates: () => initialState,
   },
 })
-export const { setTemplates, updateTemplateDisplayTitle, deleteTemplateByAccessionId, resetTemplates } =
-  templateSlice.actions
+export const {
+  setTemplates,
+  updateTemplateDisplayTitle,
+  deleteTemplateByAccessionId,
+  resetTemplates,
+} = templateSlice.actions
 export default templateSlice.reducer
 
 export const getTemplates =

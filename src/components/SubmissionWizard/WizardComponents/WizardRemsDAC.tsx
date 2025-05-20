@@ -15,7 +15,7 @@ type WizardRemsDACProps = {
 
 const WizardRemsDAC = React.forwardRef(function WizardRemsDAC(
   props: WizardRemsDACProps,
-  ref: HandlerRef,
+  ref: HandlerRef
 ) {
   const { t } = useTranslation()
   const { dacs, selectedDAC, handleDACChange } = props

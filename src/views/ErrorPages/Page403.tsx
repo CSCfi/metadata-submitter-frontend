@@ -32,11 +32,13 @@ const Page403: React.FC = () => {
   return redirect ? (
     <Navigate to="/home" />
   ) : (
-    <ErrorPageContainer title= {t("errorPages.page403.errorTitle")}>
+    <ErrorPageContainer title={t("errorPages.page403.errorTitle")}>
       <Typography variant="body1" paragraph={true} data-testid="403text">
         {t("errorPages.page403.errorText")}
       </Typography>
-      <Typography variant="body1">{t("errorPages.page403.countDown", {countdownTime})}</Typography>
+      <Typography variant="body1">
+        {t("errorPages.page403.countDown", { countdownTime })}
+      </Typography>
       <StyledButton variant="contained" href="/home" color="primary" size="large">
         {t("errorPages.page403.buttonText")}
       </StyledButton>

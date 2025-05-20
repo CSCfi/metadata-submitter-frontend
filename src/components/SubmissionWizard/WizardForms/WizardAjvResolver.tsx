@@ -9,7 +9,10 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 /*
  * Parse through ajv validation errors and transform them to errors readable by react-hook-form
  */
-const parseErrorSchema = (validationError: ValidateFunction<unknown>, validateAllFieldCriteria: boolean) =>
+const parseErrorSchema = (
+  validationError: ValidateFunction<unknown>,
+  validateAllFieldCriteria: boolean
+) =>
   Array.isArray(validationError.errors)
     ? validationError.errors.reduce(
         (

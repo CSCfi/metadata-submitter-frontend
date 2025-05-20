@@ -25,14 +25,7 @@ type SubmissionDataTableProps = {
 }
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
-  const {
-    submissionType,
-    page,
-    totalItems,
-    fetchPageOnChange,
-    rows,
-    onDeleteSubmission,
-  } = props
+  const { submissionType, page, totalItems, fetchPageOnChange, rows, onDeleteSubmission } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()

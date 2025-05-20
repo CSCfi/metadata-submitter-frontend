@@ -87,15 +87,14 @@ const FilesTable: React.FC<FilesTableProps> = props => {
 
   const getRows = (): DataFileRow[] => {
     const displayingFiles = getDisplayingFiles()
-    return displayingFiles
-      .map(file => {
-        return {
-          id: file.path,
-          name: file.name,
-          size: file.bytes,
-          lastModified: "",
-        }
-      })
+    return displayingFiles.map(file => {
+      return {
+        id: file.path,
+        name: file.name,
+        size: file.bytes,
+        lastModified: "",
+      }
+    })
   }
 
   const fetchPageOnChange = (page: number) => {

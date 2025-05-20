@@ -38,11 +38,11 @@ test.describe("catch error codes and display corresponding error page", function
       })
     })
     await page.waitForLoadState("load", { timeout: 30000 })
-    await expect(
-      page.locator(".MuiCard-root", { hasText: /403 – FORBIDDEN/ }).first()
-    ).toBeVisible({
-      timeout: 10000,
-    })
+    await expect(page.locator(".MuiCard-root", { hasText: /403 – FORBIDDEN/ }).first()).toBeVisible(
+      {
+        timeout: 10000,
+      }
+    )
   })
 
   test("should redirect to 404 page on unknown route", async ({ page, login }) => {

@@ -10,6 +10,8 @@ const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
   },
 }))
 
-const WizardStepContentHeader = ({ action }: { action?: React.ReactNode }) => <StyledCardHeader action={action} />
+const WizardStepContentHeader = ({ action }: { action?: React.ReactNode }) => (
+  <StyledCardHeader action={action} />
+)
 
 export default WizardStepContentHeader

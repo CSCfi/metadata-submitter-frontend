@@ -22,7 +22,7 @@ test.describe("DataFolder view", () => {
 
       // Mock files response
       await page.route(`/v1/files`, async route => await route.fulfill({ json: files }))
-    },
+    }
   )
 
   test("should be able show correct Folder table", async ({ page, clickAccordionPanel }) => {

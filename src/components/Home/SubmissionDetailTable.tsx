@@ -43,7 +43,12 @@ type SubmissionDetailTableProps = {
   location: string
   onEditSubmission: (step: number) => void
   onPublishSubmission: () => void
-  onEditObject: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
+  onEditObject: (
+    objectId: string,
+    objectType: string,
+    objectStatus: string,
+    submissionType: string
+  ) => Promise<void>
   onDeleteObject: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
 
@@ -51,7 +56,12 @@ type RowProps = {
   index: number
   row: OldSubmissionRow
   publishedSubmission: boolean
-  onEdit: (objectId: string, objectType: string, objectStatus: string, submissionType: string) => Promise<void>
+  onEdit: (
+    objectId: string,
+    objectType: string,
+    objectStatus: string,
+    submissionType: string
+  ) => Promise<void>
   onDelete: (objectId: string, objectType: string, objectStatus: string) => Promise<void>
 }
 
@@ -74,7 +84,9 @@ const Row = (props: RowProps) => {
     !rowOpen ? dispatch(addRow(index)) : dispatch(removeRow(index))
   }
 
-  const displayObjectType = Object.keys(DisplayObjectTypes).find(objectType => objectType === row.objectType)
+  const displayObjectType = Object.keys(DisplayObjectTypes).find(
+    objectType => objectType === row.objectType
+  )
 
   return (
     <React.Fragment>
@@ -95,7 +107,9 @@ const Row = (props: RowProps) => {
                 disabled={row.submissionType === SubmissionStatus.published}
                 aria-label="Edit this object"
                 data-testid="edit-object"
-                onClick={() => onEdit(row.accessionId, row.objectType, row.status, row.submissionType)}
+                onClick={() =>
+                  onEdit(row.accessionId, row.objectType, row.status, row.submissionType)
+                }
               >
                 {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
               </Button>
@@ -114,7 +128,11 @@ const Row = (props: RowProps) => {
         )}
 
         <TableCell>
-          <Button aria-label="Show object details" data-testid="toggle-details" onClick={() => showObjectDetails()}>
+          <Button
+            aria-label="Show object details"
+            data-testid="toggle-details"
+            onClick={() => showObjectDetails()}
+          >
             {rowOpen ? "Hide details" : "Show details"}
           </Button>
         </TableCell>
@@ -123,7 +141,10 @@ const Row = (props: RowProps) => {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
             <Collapse in={rowOpen} timeout="auto" unmountOnExit>
-              <WizardObjectDetails objectType={row.objectType} objectData={row.objectData}></WizardObjectDetails>
+              <WizardObjectDetails
+                objectType={row.objectType}
+                objectData={row.objectData}
+              ></WizardObjectDetails>
             </Collapse>
           </TableCell>
         </TableRow>
@@ -212,7 +233,11 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                   )}
                   {!hasSubmittedObject && (
                     <Box pl={1} display="flex">
-                      <Tooltip title={"Publishing requires submitted object(s)."} placement="top" arrow>
+                      <Tooltip
+                        title={"Publishing requires submitted object(s)."}
+                        placement="top"
+                        arrow
+                      >
                         <HelpOutlineIcon></HelpOutlineIcon>
                       </Tooltip>
                     </Box>
@@ -268,7 +293,11 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
 
   return (
     <Card variant="outlined" sx={{ border: "none", padding: 0 }}>
-      <Link component={RouterLink} to={`${pathWithLocale("home")}/${location}`} sx={{ color: "common.black" }}>
+      <Link
+        component={RouterLink}
+        to={`${pathWithLocale("home")}/${location}`}
+        sx={{ color: "common.black" }}
+      >
         <CardHeader
           avatar={
             <KeyboardBackspaceIcon

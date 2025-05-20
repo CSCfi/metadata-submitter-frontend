@@ -203,7 +203,7 @@ const traverseFields = (
   path: string[],
   requiredProperties?: string[],
   requireFirst?: boolean,
-  nestedField?: NestedField,
+  nestedField?: NestedField
 ) => {
   const name = pathToName(path)
   const [lastPathItem] = path.slice(-1)
@@ -262,7 +262,7 @@ const traverseFields = (
               [...path, propertyKey],
               required,
               requireFirstItem,
-              nestedField,
+              nestedField
             )
           })}
         </FormSection>
@@ -565,7 +565,7 @@ const FormOneOfField = ({
         else acc[pre + k] = obj[k]
         return acc
       },
-      {} as Record<string, string>,
+      {} as Record<string, string>
     )
 
   if (Object.keys(values).length > 0 && lastPathItem !== "prevStepIndex") {
@@ -585,7 +585,7 @@ const FormOneOfField = ({
                   option =>
                     option.properties[
                       Object.keys(flattenObject(itemValues))[0].split(".").slice(-1)[0]
-                    ],
+                    ]
                 )
           )?.title as string
         } else {
@@ -608,7 +608,7 @@ const FormOneOfField = ({
     for (const option of options) {
       option.required.every(
         (val: string) =>
-          nestedField.fieldValues && Object.keys(nestedField.fieldValues).includes(val),
+          nestedField.fieldValues && Object.keys(nestedField.fieldValues).includes(val)
       )
         ? (fieldValue = option.title)
         : ""
@@ -703,7 +703,7 @@ const FormOneOfField = ({
           Object.hasOwnProperty.call(selectedOptionValues[0], "properties")
         ) {
           const { obj, firstProp } = getChildObjects(
-            Object.values(selectedOption)[0] as ChildObject,
+            Object.values(selectedOption)[0] as ChildObject
           )
           childObject = obj
           requiredProp = firstProp || ""
@@ -717,14 +717,14 @@ const FormOneOfField = ({
         let child
         if (field) {
           const fieldObject = options?.filter(
-            (option: { title: string }) => option.title === field,
+            (option: { title: string }) => option.title === field
           )[0]
           child = traverseFields(
             { ...fieldObject, title: "" },
             path,
             required && requiredProp ? requiredProp.split(",") : [],
             childObject?.required ? false : true,
-            nestedField,
+            nestedField
           )
         } else child = null
 
@@ -912,7 +912,7 @@ const FormTextField = ({
                     required={required}
                     type={type}
                     multiline={multiLineRowIdentifiers.some(value =>
-                      label.toLowerCase().includes(value),
+                      label.toLowerCase().includes(value)
                     )}
                     rows={5}
                     value={inputValue}
@@ -1331,7 +1331,7 @@ const FormAutocompleteField = ({
     debounce((newInput: string) => {
       if (newInput.length > 0) fetchOrganisations(newInput)
     }, 150),
-    [],
+    []
   )
 
   useEffect(() => {
@@ -1803,7 +1803,7 @@ const FormArray = ({
 
   // Get unique fileTypes from submitted fileTypes
   const uniqueFileTypes = uniq(
-    flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes)),
+    flatten(fileTypes?.map((obj: { fileTypes: string[] }) => obj.fileTypes))
   )
 
   useEffect(() => {
@@ -1937,7 +1937,7 @@ const FormArray = ({
                           pathForThisIndex,
                           requiredField,
                           false,
-                          field as NestedField,
+                          field as NestedField
                         )
                       })
                     : traverseFields(
@@ -1945,7 +1945,7 @@ const FormArray = ({
                         [...pathWithoutLastItem, lastPathItemWithIndex],
                         [],
                         false,
-                        field as NestedField,
+                        field as NestedField
                       ) // special case for doiSchema's "sizes" and "formats"
                 }
               </FormArrayChildrenTitle>

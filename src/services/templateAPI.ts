@@ -17,7 +17,10 @@ const createTemplatesFromJSON = async (
   return await api.post(`/${objectType}`, JSONContent)
 }
 
-const getTemplateByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const getTemplateByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
@@ -27,7 +30,9 @@ const patchTemplateFromJSON = async (
   JSONContent: Record<string, unknown>,
   index: number
 ): Promise<APIResponse> => {
-  const draftTags = { tags: { displayTitle: getObjectDisplayTitle(objectType, JSONContent as ObjectDisplayValues) } }
+  const draftTags = {
+    tags: { displayTitle: getObjectDisplayTitle(objectType, JSONContent as ObjectDisplayValues) },
+  }
   const draftIndex = { index }
   return await api.patch(`/${objectType}/${accessionId}`, {
     ...omit(JSONContent, OmitObjectValues),
@@ -36,7 +41,10 @@ const patchTemplateFromJSON = async (
   })
 }
 
-const deleteTemplateByAccessionId = async (objectType: string, accessionId: string): Promise<APIResponse> => {
+const deleteTemplateByAccessionId = async (
+  objectType: string,
+  accessionId: string
+): Promise<APIResponse> => {
   return await api.delete(`/${objectType}/${accessionId}`)
 }
 

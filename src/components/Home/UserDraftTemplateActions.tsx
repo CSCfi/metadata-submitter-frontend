@@ -82,7 +82,10 @@ const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: 
   }
 
   const deleteTemplate = async (schema: string, accessionId: string) => {
-    const response = await templateAPI.deleteTemplateByAccessionId(getObjectType(schema), accessionId)
+    const response = await templateAPI.deleteTemplateByAccessionId(
+      getObjectType(schema),
+      accessionId
+    )
 
     if (response.ok) {
       dispatch(deleteTemplateByAccessionId(accessionId))
@@ -120,10 +123,16 @@ const UserDraftTemplateActions = (props: { item: { schema: string; accessionId: 
         open={menuOpen}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={() => editTemplate(item.schema, item.accessionId)} data-testid="edit-template">
+        <MenuItem
+          onClick={() => editTemplate(item.schema, item.accessionId)}
+          data-testid="edit-template"
+        >
           Edit
         </MenuItem>
-        <MenuItem onClick={() => deleteTemplate(item.schema, item.accessionId)} data-testid="delete-template">
+        <MenuItem
+          onClick={() => deleteTemplate(item.schema, item.accessionId)}
+          data-testid="delete-template"
+        >
           Delete
         </MenuItem>
       </Menu>

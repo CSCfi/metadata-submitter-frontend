@@ -16,7 +16,7 @@ type WizardRemsPoliciesProps = {
 
 const WizardRemsPolicies = React.forwardRef(function WizardRemsPolicies(
   props: WizardRemsPoliciesProps,
-  ref: HandlerRef,
+  ref: HandlerRef
 ) {
   const { t } = useTranslation()
   const { policies, selectedPolicies, linkedPolicies, handlePolicyChange } = props

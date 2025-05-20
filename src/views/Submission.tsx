@@ -29,7 +29,7 @@ import Page404 from "views/ErrorPages/Page404"
 const getStepContent = (
   wizardStep: number,
   createSubmissionFormRef: FormRef,
-  objectFormRef: FormRef,
+  objectFormRef: FormRef
 ) => {
   switch (wizardStep) {
     case 1:
@@ -82,7 +82,7 @@ const SubmissionWizard: React.FC = () => {
               status: ResponseStatus.error,
               response: response,
               helperText: "Fetching submission error.",
-            }),
+            })
           )
           dispatch(resetSubmission())
         }
@@ -97,7 +97,7 @@ const SubmissionWizard: React.FC = () => {
   const wizardStep = step ? Number(step) : -1
 
   const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(
-    null,
+    null
   )
 
   const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)

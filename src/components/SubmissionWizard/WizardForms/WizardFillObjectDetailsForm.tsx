@@ -361,7 +361,12 @@ const FormContent = ({
 
   // Set form default values
   useEffect(() => {
-    methods.reset(currentObject)
+    try {
+      const mutable = cloneDeep(currentObject)
+      methods.reset(mutable)
+    } catch (e) {
+      console.error("Reset failed:", e)
+    }
   }, [currentObject?.accessionId])
 
   useEffect(() => {

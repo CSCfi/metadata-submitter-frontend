@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Removed template-related functionality (#1034)
 - (users) "Sensitive Data Services" phrase from navigation bar.
 - (users) removed unnecessary toast
 - tsc from package build script

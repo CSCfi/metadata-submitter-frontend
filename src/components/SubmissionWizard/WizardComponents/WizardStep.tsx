@@ -331,10 +331,12 @@ const WizardStep = (props: WizardStepProps) => {
           step === 1
             ? t("edit")
             : objectType === ObjectTypes.file || objectType === "Summary"
-            ? t("view")
-            : objectType === t("summaryPage.publish") || hasDatacite.hasDraftObject || hasDatacite.hasSubmittedObject
-            ? t("edit")
-            : t("add")
+              ? t("view")
+              : objectType === t("summaryPage.publish") ||
+                  hasDatacite.hasDraftObject ||
+                  hasDatacite.hasSubmittedObject
+                ? t("edit")
+                : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>

@@ -41,14 +41,18 @@ const getStepContent = (
     case 4:
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
-    // Datacite, Summary and Publish steps
-      switch(objectType) {
+      // Datacite, Summary and Publish steps
+      switch (objectType) {
         case "datacite":
           return <WizardAddObjectStep formRef={objectFormRef} />
         case "Summary":
           return <WizardShowSummaryStep />
         case "Publish":
-          return <div><h1>FIXME publish page here</h1></div>
+          return (
+            <div>
+              <h1>FIXME publish page here</h1>
+            </div>
+          )
       }
       break
     default:

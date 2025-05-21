@@ -65,7 +65,7 @@ const mapObjectsToStepsHook = (
   }
 
   const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
-  const workflowSteps =  allSteps ? allSteps.filter( step => step.title !== "Datacite") : allSteps
+  const workflowSteps = allSteps ? allSteps.filter(step => step.title !== "Datacite") : allSteps
 
   const schemaSteps =
     workflowSteps?.length > 0
@@ -95,10 +95,10 @@ const mapObjectsToStepsHook = (
               name: schema.name.toLowerCase().includes(ObjectTypes.file)
                 ? t("datafolder.datafolder")
                 : schema.name === ObjectTypes.datacite
-                ? "Identifier"
-                : schema.name === ObjectTypes.dac
-                  ? schema.name.toUpperCase()
-                  : startCase(schema.name),
+                  ? "Identifier"
+                  : schema.name === ObjectTypes.dac
+                    ? schema.name.toUpperCase()
+                    : startCase(schema.name),
               objectType: schema.name,
               objects: groupedObjects[schema.name],
             })),
@@ -175,53 +175,53 @@ const mapObjectsToStepsHook = (
   }
 
   /*
-  * Add to the "Identifier and publish" step of accordion the summary and publish substeps
-  */
+   * Add to the "Identifier and publish" step of accordion the summary and publish substeps
+   */
 
   // Check that doiInfo exist and that it contains data at least at one of the keys
-  const hasDoiInfo: boolean =  submission.doiInfo
-    ? Object.values(submission.doiInfo).filter(item => Array.isArray(item) && item.length > 0).length > 0
+  const hasDoiInfo: boolean = submission.doiInfo
+    ? Object.values(submission.doiInfo).filter(item => Array.isArray(item) && item.length > 0)
+        .length > 0
     : false
 
   const idPublishStep = {
     title: t("identifierPublish"),
     schemas: [
       {
-      name: t("identifier"),
-      objectType: "datacite",
+        name: t("identifier"),
+        objectType: "datacite",
 
-      objects: {
-        ready: hasDoiInfo ?
-        [
-          {
-            id: submission.submissionId,
-            creators: submission.doiInfo.creators,
-            contributors: submission.doiInfo.contributors,
-            subjects: submission.doiInfo.subjects,
-            keywords: submission.doiInfo.keywords,
-            displayTitle: t("doiRegistrationInfo"),
-        }
-        ]
-        :
-        []
+        objects: {
+          ready: hasDoiInfo
+            ? [
+                {
+                  id: submission.submissionId,
+                  creators: submission.doiInfo.creators,
+                  contributors: submission.doiInfo.contributors,
+                  subjects: submission.doiInfo.subjects,
+                  keywords: submission.doiInfo.keywords,
+                  displayTitle: t("doiRegistrationInfo"),
+                },
+              ]
+            : [],
+        },
+        required: true,
+        allowMultipleObjects: false,
       },
-      required: true,
-      allowMultipleObjects: false,
-    },
-    {
-      name: t("summary"),
-      objectType: t("summary"),
-      objects: { drafts: [], ready: [] },
-      required: true,
-      allowMultipleObjects: false,
-    },
-    {
-      name: t("publishSubmission"),
-      objectType: t("summaryPage.publish"),
-      objects: { drafts: [], ready: [] },
-      required: true,
-      allowMultipleObjects: false,
-    }
+      {
+        name: t("summary"),
+        objectType: t("summary"),
+        objects: { drafts: [], ready: [] },
+        required: true,
+        allowMultipleObjects: false,
+      },
+      {
+        name: t("publishSubmission"),
+        objectType: t("summaryPage.publish"),
+        objects: { drafts: [], ready: [] },
+        required: true,
+        allowMultipleObjects: false,
+      },
     ],
   }
 

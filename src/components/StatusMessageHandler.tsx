@@ -214,13 +214,6 @@ const SuccessHandler = forwardRef(function SuccessHandler(
         }
         break
       }
-      case "/v1/templates": {
-        switch (response.config.method) {
-          default: {
-            message = t("snackbarMessages.success.templates.updated")
-          }
-        }
-      }
     }
   } else {
     message = helperText ? (t(helperText) as string) : ""

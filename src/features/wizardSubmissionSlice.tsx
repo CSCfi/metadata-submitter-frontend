@@ -107,11 +107,7 @@ export const {
 export default wizardSubmissionSlice.reducer
 
 export const createSubmission =
-  (
-    projectId: string,
-    submissionDetails: SubmissionDataFromForm,
-    drafts?: ObjectInsideSubmissionWithTags[]
-  ) =>
+  (projectId: string, submissionDetails: SubmissionDataFromForm) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const { name, description, workflowType: workflow } = submissionDetails
     const submissionForBackend: SubmissionDetails & { projectId: string } = {
@@ -121,7 +117,7 @@ export const createSubmission =
       projectId,
       published: false,
       metadataObjects: [],
-      drafts: drafts ? drafts : [],
+      drafts: [],
     }
     const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 

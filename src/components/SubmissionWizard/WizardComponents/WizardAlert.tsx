@@ -14,8 +14,6 @@ import { useTranslation } from "react-i18next"
 
 import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 
-import WizardDraftSelections from "./WizardDraftSelections"
-
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
@@ -228,16 +226,6 @@ const CancelFormDialog = ({
               </Button>
             </DialogActions>
           )
-          break
-        }
-        case "publish": {
-          // publish alert might not originate from header, move later
-          dialogTitle = t("alerts.publish.title")
-          dialogContent =
-            submission?.drafts.length > 0
-              ? t("alerts.publish.content.objects") + t("alerts.publish.content.chooseDrafts")
-              : t("alerts.publish.content.objects")
-          dialogActions = <WizardDraftSelections onHandleDialog={handleDialog} />
           break
         }
         default: {

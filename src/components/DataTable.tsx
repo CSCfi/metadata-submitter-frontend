@@ -46,10 +46,15 @@ const Table = styled(DataGrid)(({ theme }) => ({
     },
   },
   "& .MuiDataGrid-actionsCell > *": {
+    padding: 0,
     marginRight: theme.spacing(1),
     "&:last-child": {
       marginRight: 0,
     },
+    "& .MuiButtonBase-root": {
+      backgroundColor: "transparent",
+    },
+    "&:hover": { backgroundColor: "theme.palette.action.hover" },
   },
   "& .MuiMenuItem-root .MuiListItemIcon-root": {
     minWidth: "unset",

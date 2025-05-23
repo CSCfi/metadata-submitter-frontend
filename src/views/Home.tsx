@@ -327,7 +327,7 @@ const Home: React.FC = () => {
         : setPublishedPage(0)
     const textValue = e.target.value
     setFilteringText(textValue)
-    debouncedChangeFilteringText()
+    debouncedChangeFilteringText(textValue, tabValue)
   }
 
   const debouncedChangeFilteringText = debounce(getFilter, 300)

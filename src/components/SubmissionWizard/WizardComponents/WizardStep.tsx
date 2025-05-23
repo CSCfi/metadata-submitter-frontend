@@ -58,7 +58,6 @@ const ActionButton = (props: {
   }
 
   const handleNavigation = () => {
-    console.log("handleNavigation")
     dispatch(resetDraftStatus())
     dispatch(resetObjectType())
     dispatch(resetCurrentObject())

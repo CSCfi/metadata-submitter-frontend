@@ -22,7 +22,7 @@ const MainContainer = styled(Container)({
 
 const ErrorCard = styled(Card)(({ theme }) => ({
   fontSize: "1.6rem",
-  color: theme.palette.error.grey,
+  color: theme.palette.secondary.main,
   minHeight: "56rem",
   minWidth: "88rem",
   padding: "1.5rem",
@@ -40,7 +40,7 @@ const ErrorCardDivider = styled(Divider)(({ theme }) => ({
 const ErrorCardContent = styled(CardContent)(({ theme }) => ({
   padding: 0,
   textTransform: "none",
-  color: theme.palette.error.darkgrey,
+  color: theme.palette.text.primary,
 }))
 
 const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {

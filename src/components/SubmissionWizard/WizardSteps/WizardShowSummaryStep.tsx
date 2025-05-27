@@ -34,7 +34,6 @@ const SummaryBar = styled(AppBar)(({ theme }) => ({
 }))
 
 const SummaryTable = styled(DataGrid)(({ theme }) => ({
-  color: theme.palette.secondary.main,
   "& .MuiDataGrid-filler": {
     display: "none",
   },
@@ -53,7 +52,6 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnHeaderTitleContainer": {
     padding: 0,
     "& .MuiDataGrid-sortIcon": {
-      color: theme.palette.secondary.main,
       fontSize: "2rem",
     },
   },

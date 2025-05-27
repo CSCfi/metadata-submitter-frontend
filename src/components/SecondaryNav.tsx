@@ -1,5 +1,6 @@
 import React from "react"
 
+import { ExpandMore } from "@mui/icons-material"
 import {
   Select,
   MenuItem,
@@ -46,12 +47,24 @@ const ProjectDropdown = styled(FormControl)(({ theme }) => ({
     width: "40rem",
     height: "4rem",
     backgroundColor: theme.palette.common.white,
-    color: theme.palette.secondary.main,
     border: `0.15rem solid ${theme.palette.secondary.main}`,
     borderRadius: "0.375rem",
+    color: theme.palette.primary.main,
   },
   "& .MuiOutlinedInput-notchedOutline": { border: "none" },
   "& svg": { fontSize: "2rem" },
+}))
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  padding: "1rem",
+  "&.Mui-selected, &.Mui-selected:hover": {
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
+  },
+  "&:hover": {
+    color: theme.palette.primary.main,
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: "0.375rem",
+  },
 }))
 
 const SecondaryNav: React.FC = () => {
@@ -69,20 +82,18 @@ const SecondaryNav: React.FC = () => {
   }
 
   const projectSelection = (
-    <ProjectDropdown color="secondary" data-testid="project-id-selection">
+    <ProjectDropdown data-testid="project-id-selection">
       <Select
         value={projectId ? projectId : ""}
         onChange={handleProjectIdChange}
         inputProps={{ "aria-label": "Select project id" }}
+        IconComponent={ExpandMore}
+        sx={{ ".MuiSelect-icon": { color: "primary.main" } }}
       >
         {user.projects.map(project => (
-          <MenuItem
-            key={project.projectId}
-            value={project.projectId}
-            sx={{ color: "secondary.main", p: "1rem" }}
-          >
+          <StyledMenuItem key={project.projectId} value={project.projectId}>
             {`Project_${project.projectNumber}`}
-          </MenuItem>
+          </StyledMenuItem>
         ))}
       </Select>
     </ProjectDropdown>

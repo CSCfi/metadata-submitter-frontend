@@ -108,11 +108,7 @@ const NavigationLinks = () => {
         >
           {user.name}
         </Typography>
-        {open ? (
-          <ExpandLess color="secondary" fontSize="large" />
-        ) : (
-          <ExpandMore color="secondary" fontSize="large" />
-        )}
+        {open ? <ExpandLess fontSize="large" /> : <ExpandMore fontSize="large" />}
       </Button>
       <Menu
         id="user-setting-menu"
@@ -133,14 +129,14 @@ const NavigationLinks = () => {
         >
           <Typography
             variant="subtitle2"
-            color="secondary"
+            color="text.primary"
             sx={{ mx: "1rem", fontWeight: 700 }}
             data-testid="logout"
           >
             {t("logout")}
           </Typography>
           <ListItemIcon>
-            <LogoutIcon />
+            <LogoutIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
       </Menu>
@@ -199,11 +195,7 @@ const LanguageSelector = (props: MenuItemProps) => {
         >
           {chosenLanguage}
         </Typography>
-        {open ? (
-          <ExpandLess color="secondary" fontSize="large" />
-        ) : (
-          <ExpandMore color="secondary" fontSize="large" />
-        )}
+        {open ? <ExpandLess fontSize="large" /> : <ExpandMore fontSize="large" />}
       </Button>
       <Menu
         id="lang-menu"
@@ -221,7 +213,7 @@ const LanguageSelector = (props: MenuItemProps) => {
         <MenuItem onClick={() => changeLang("en")} data-testid="en-lang">
           <Typography
             variant="subtitle2"
-            color="secondary"
+            color="text.primary"
             sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
           >
             {t("inEnglish")}
@@ -230,7 +222,7 @@ const LanguageSelector = (props: MenuItemProps) => {
         <MenuItem onClick={() => changeLang("fi")} data-testid="fi-lang">
           <Typography
             variant="subtitle2"
-            color="secondary"
+            color="text.primary"
             sx={{ ml: "1rem", mr: "6rem", fontWeight: 700 }}
           >
             {t("inFinnish")}
@@ -272,11 +264,7 @@ const SupportSelector = () => {
         >
           {t("support")}
         </Typography>
-        {open ? (
-          <ExpandLess color="secondary" fontSize="large" />
-        ) : (
-          <ExpandMore color="secondary" fontSize="large" />
-        )}
+        {open ? <ExpandLess fontSize="large" /> : <ExpandMore fontSize="large" />}
       </Button>
       <Menu
         id="support-menu"
@@ -300,12 +288,16 @@ const SupportSelector = () => {
             variant="subtitle2"
             underline="none"
           >
-            <Typography variant="subtitle2" color="secondary" sx={{ mx: "1rem", fontWeight: 700 }}>
+            <Typography
+              variant="subtitle2"
+              color="text.primary"
+              sx={{ mx: "1rem", fontWeight: 700 }}
+            >
               {t("userGuide")}
             </Typography>
           </Link>
           <ListItemIcon>
-            <OpenInNewIcon />
+            <OpenInNewIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
       </Menu>

@@ -18,8 +18,8 @@ const WizardObjectStatusBadge = (props: { draft: boolean }) => {
         borderRadius: theme.spacing(0.4),
         padding: theme.spacing(0.1, 0),
         width: theme.spacing(7.3),
-        backgroundColor: draft ? theme.palette.error.lightest : theme.palette.success.lightest,
-        color: draft ? theme.palette.error.light : theme.palette.success.main,
+        backgroundColor: draft ? theme.palette.warning.light : theme.palette.success.light,
+        color: draft ? theme.palette.warning.dark : theme.palette.success.dark,
       })}
     >
       {statusLabel}

@@ -7,52 +7,67 @@ import MuseoSans_700 from "./fonts/MuseoSans_700.otf"
 
 const defaultTheme = createTheme()
 
+/*
+  Colour reference https://design-system.csc.fi/design-tokens/color
+  lightest 100, light 200, main 600, dark 800, darkest 900
+*/
+
 const palette = {
   primary: {
     // green colors
+    lightest: "#e6f0f2", // active table row, unselected side nav item
+    light: "#cce1e4",
+    mediumLight: "#c2dbdf", // only for active side navigation
     main: "#006778",
-    light: "#c2dbdf",
-    lighter: "#d8e8ea",
-    lightest: "#e5eff1",
+    dark: "#003e48",
+    darkest: "#002930",
   },
   secondary: {
-    // grey colors
-    main: "#595959",
-    light: "#b1b2b2",
-    lightest: "#dfe1e3",
+    // grey colors (tertiary in csc-ui)
+    lightest: "#eff0f1",
+    light: "#dfe1e3",
+    main: "#5e6a71",
+    dark: "#384044",
   },
   background: {
-    default: "#d8e8ea",
+    default: "#cce1e4",
     paper: "#fff",
   },
   success: {
-    main: "#3A7A06",
-    light: "#51a808",
-    lightest: "#e5f2da",
+    light: "#dceece",
+    main: "#51a808",
+    dark: "#316505",
   },
   error: {
-    // red & orange
-    main: "#b90729",
-    light: "#c74600",
-    lightest: "#fff7e3",
-    // grey text
-    grey: "#757575",
-    darkgrey: "#070707",
+    light: "#f8cece",
+    main: "#dd0c0c",
+    dark: "#7e0707",
+  },
+  warning: {
+    light: "#ffdecc",
+    main: "#ff5800",
+    dark: "#993500",
   },
   info: {
-    main: "#006778",
+    light: "#cce6f1",
+    main: "#0082bb",
+    dark: "#004e70",
   },
-  warning: { main: "#ff5800" },
+  accent: {
+    light: "#CCF4F0", // link hover
+    main: "#00c7b2",
+    dark: "#00776b",
+  },
   common: {
     white: "#FFF",
     black: "#000",
   },
   text: {
-    primary: "#2E3438",
-    secondary: "#025B97",
+    primary: "#002930", // primary darkest
+    secondary: "#006778", // primary main
   },
   action: {
-    hover: "#CCF4F0",
+    hover: "#cce1e4",
   },
 }
 
@@ -234,7 +249,7 @@ let CSCtheme = createTheme({
     },
     "& .MuiTypography-h2": {
       width: "100%",
-      color: palette.secondary.main,
+      color: palette.primary.main,
       borderBottom: `2px solid ${palette.secondary.light}`,
     },
     "& .MuiTypography-h3": {

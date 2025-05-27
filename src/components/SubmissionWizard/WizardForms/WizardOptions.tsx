@@ -5,10 +5,23 @@ import IconButton from "@mui/material/IconButton"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import Stack from "@mui/material/Stack"
+import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
 import { ObjectTypes } from "constants/wizardObject"
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  padding: "1.2rem",
+  fontWeight: 700,
+  "&.Mui-selected, &.Mui-selected:hover": {
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
+  },
+  "&:hover": {
+    color: theme.palette.primary.main,
+  },
+}))
 
 type WizardOptionsProps = {
   objectType: string
@@ -89,21 +102,15 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {options.map((option, index) => (
-          <MenuItem
+          <StyledMenuItem
             key={option}
             selected={index === 0}
             disabled={index === 0 && disableUploadXML}
             onClick={e => handleClose(e, option)}
-            sx={{
-              p: "1.2rem",
-              "&.Mui-selected": { backgroundColor: "primary.lighter", color: "primary.main" },
-              color: "secondary.main",
-              fontWeight: 700,
-            }}
             data-testid={option}
           >
             {option}
-          </MenuItem>
+          </StyledMenuItem>
         ))}
       </Menu>
     </Stack>

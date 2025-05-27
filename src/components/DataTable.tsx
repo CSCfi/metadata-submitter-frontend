@@ -10,7 +10,6 @@ import WizardPagination from "components/SubmissionWizard/WizardComponents/Wizar
 import type { SubmissionRow, DataFolderRow, DataFileRow } from "types"
 
 const Table = styled(DataGrid)(({ theme }) => ({
-  color: theme.palette.secondary.main,
   "& .MuiDataGrid-columnSeparator, & .MuiDataGrid-cell:last-of-type": {
     display: "none",
   },
@@ -18,7 +17,10 @@ const Table = styled(DataGrid)(({ theme }) => ({
     backgroundColor: theme.palette.common.white,
     "&:hover": {
       color: theme.palette.primary.main,
-      backgroundColor: theme.palette.primary.lighter,
+      backgroundColor: theme.palette.primary.lightest,
+      "& .MuiDataGrid-sortIcon": {
+        color: theme.palette.primary.main,
+      },
     },
     flex: "1 1 auto",
   },
@@ -29,7 +31,7 @@ const Table = styled(DataGrid)(({ theme }) => ({
     padding: 0,
     justifyContent: "left",
     "& .MuiDataGrid-sortIcon": {
-      color: theme.palette.secondary.main,
+      color: theme.palette.text.primary,
       fontSize: "2rem",
     },
   },
@@ -56,6 +58,7 @@ const Table = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-overlayWrapper": { height: "10rem" },
   "& .MuiDataGrid-row:hover": {
     cursor: "pointer",
+    backgroundColor: theme.palette.primary.lightest,
   },
 }))
 

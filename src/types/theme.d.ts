@@ -53,6 +53,8 @@ declare module "@mui/material/styles/createPalette" {
       cardHeader?: Record<string, unknown>
       objectListItem?: Record<string, unknown>
     }
+    // add custom colour
+    accent: Palette["primary"]
   }
   interface PaletteOptions {
     third?: { main?: string }
@@ -61,11 +63,19 @@ declare module "@mui/material/styles/createPalette" {
       cardHeader?: Record<string, unknown>
       objectListItem?: Record<string, unknown>
     }
+    accent?: PaletteOptions["primary"]
   }
 
   interface PaletteColor {
-    lighter: string
-    lightest: string
+    lightest?: string
+    mediumLight?: string
+    darkest?: string
+  }
+
+  interface SimplePaletteColorOptions {
+    lightest?: string
+    mediumLight?: string
+    darkest?: string
   }
 }
 

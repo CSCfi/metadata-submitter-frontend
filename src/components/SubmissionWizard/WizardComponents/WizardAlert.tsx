@@ -28,11 +28,10 @@ import { checkObjectStatus } from "utils"
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
     backgroundColor: theme.palette.background.paper,
-    borderLeft: `1.25rem solid ${theme.palette.error.light}`,
-    borderTop: `0.25rem solid ${theme.palette.error.light}`,
-    borderRight: `0.25rem solid ${theme.palette.error.light}`,
-    borderBottom: `0.25rem solid ${theme.palette.error.light}`,
-    color: theme.palette.secondary.main,
+    borderLeft: `1.25rem solid ${theme.palette.warning.main}`,
+    borderTop: `0.25rem solid ${theme.palette.warning.main}`,
+    borderRight: `0.25rem solid ${theme.palette.warning.main}`,
+    borderBottom: `0.25rem solid ${theme.palette.warning.main}`,
     lineHeight: "1",
     boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
     padding: "0.5rem",
@@ -68,19 +67,18 @@ const ContentBox = styled(Box)(() => ({
   paddingTop: 0,
 }))
 
-const CustomDialogTitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.secondary.main,
+const CustomDialogTitle = styled(Typography)(() => ({
   fontSize: "1.5rem",
   fontWeight: "bold",
 }))
 
 const StyledWarningIcon = styled(WarningIcon)(({ theme }) => ({
-  color: theme.palette.error.light,
+  color: theme.palette.warning.main,
   fontSize: "3rem",
 }))
 
 const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
-  color: theme.palette.secondary.main,
+  color: theme.palette.text.primary,
   padding: "1rem",
   paddingTop: "0.5rem",
   paddingLeft: 0,

@@ -61,7 +61,7 @@ const StyledFormControl = styled(FormControl, {
   marginBottom: "2.5rem",
   border: isDragActive
     ? `2px dashed ${theme.palette.primary.main}`
-    : `2px dashed ${theme.palette.secondary.lightest}`,
+    : `2px dashed ${theme.palette.secondary.light}`,
 }))
 
 const StyledButton = styled(Button)(() => ({
@@ -75,7 +75,6 @@ const CustomAlert = styled(Alert)(({ theme }) => ({
   borderTop: `0.25rem solid ${theme.palette.error.main}`,
   borderRight: `0.25rem solid ${theme.palette.error.main}`,
   borderBottom: `0.25rem solid ${theme.palette.error.main}`,
-  color: theme.palette.secondary.main,
   lineHeight: "1.75",
   boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
   position: "relative",

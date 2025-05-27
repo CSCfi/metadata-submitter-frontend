@@ -60,12 +60,12 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     marginLeft: theme.spacing(1),
   },
   "&.Mui-disabled": {
-    backgroundColor: theme.palette.secondary.lightest,
+    backgroundColor: theme.palette.secondary.light,
     opacity: 1,
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
   },
   "&.Mui-disabled .MuiSvgIcon-root": {
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
   },
 }))
 

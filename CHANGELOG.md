@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Migrate React related packages and codes to version 19 (#1026)
 - Updated PUT request to PATCH request for /submissions endpoints as a reflection of backend's changes
 - Changed all Big picture related words to "Bigpicture"
 - (users) Replaced "Read more/expand" with "Show more" in tooltips

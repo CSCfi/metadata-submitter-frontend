@@ -25,7 +25,7 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { FormRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
+import type { HandlerRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
 import { pathWithLocale } from "utils"
 
 const ActionButton = (props: {
@@ -33,9 +33,9 @@ const ActionButton = (props: {
   parent: string
   buttonText?: string
   disabled: boolean
-  formRef?: FormRef
+  ref?: HandlerRef
 }) => {
-  const { step, parent, buttonText, disabled, formRef } = props
+  const { step, parent, buttonText, disabled, ref } = props
 
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
@@ -78,7 +78,7 @@ const ActionButton = (props: {
         navigate({ pathname: pathname, search: stepParam })
         dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         dispatch(setObjectType(parent))
-        if (formRef?.current) formRef.current?.dispatchEvent(new Event("reset", { bubbles: true }))
+        if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
     }
   }
@@ -290,7 +290,7 @@ const ObjectWrapper = styled("div")(({ theme }) => {
   }
 })
 
-const WizardStep = (params: {
+type WizardStepProps = {
   step: number
   schemas: {
     objectType: string
@@ -299,9 +299,12 @@ const WizardStep = (params: {
     allowMultipleObjects?: boolean
     objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
   }[]
-  formRef?: FormRef
-}) => {
-  const { step, schemas, formRef } = params
+  ref?: HandlerRef
+}
+
+const WizardStep = (props: WizardStepProps) => {
+  const { step, schemas, ref } = props
+
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const { t } = useTranslation()
@@ -352,7 +355,7 @@ const WizardStep = (params: {
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
                   disabled={hasObjects && !allowMultipleObjects}
-                  formRef={formRef}
+                  ref={ref}
                 />
               </ObjectWrapper>
             </ListItem>

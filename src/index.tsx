@@ -1,5 +1,3 @@
-import React from "react"
-
 import { StyledEngineProvider } from "@mui/material/styles"
 import { ThemeProvider } from "@mui/system"
 import { createRoot } from "react-dom/client"

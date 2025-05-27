@@ -1,5 +1,3 @@
-import React from "react"
-
 import { screen } from "@testing-library/react"
 import { BrowserRouter } from "react-router"
 
@@ -9,24 +7,22 @@ import { ObjectSubmissionsArray } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardAlert", () => {
-  test("should render appropriate dialogs", () => {
+  test("should render appropriate dialogs", async () => {
     const alerts = [
       { location: "submission", types: ObjectSubmissionsArray },
       { location: "header", types: ["save"] },
     ]
-    alerts.forEach((alert: { location: string; types: string[] }) => {
-      alert.types.forEach((type: string) => {
+
+    alerts.forEach(async (alert: { location: string; types: string[] }) => {
+      alert.types.forEach(async (type: string) => {
         renderWithProviders(
           <BrowserRouter>
-            <WizardAlert
-              alertType={type}
-              parentLocation={Object.values(alert)[0].toString()}
-              onAlert={() => ({})}
-            />
+            <WizardAlert alertType={type} parentLocation={alert.location} onAlert={() => ({})} />
           </BrowserRouter>
         )
-        expect(screen.getByRole("dialog")).toBeDefined()
-        expect(screen.getByRole("dialog")).not.toHaveTextContent("default")
+        const dialog = await screen.findByRole("dialog")
+        expect(dialog).toBeDefined()
+        expect(dialog).not.toHaveTextContent("default")
       })
     })
   })

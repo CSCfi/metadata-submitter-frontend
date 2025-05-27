@@ -7,7 +7,7 @@ import Container from "@mui/material/Container"
 import { styled } from "@mui/system"
 
 type ErrorPageProps = {
-  children: ReactElement[] | ReactElement
+  children: ReactElement<unknown>[] | ReactElement<unknown>
   title: string
 }
 

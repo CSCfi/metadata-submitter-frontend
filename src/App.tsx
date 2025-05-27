@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"

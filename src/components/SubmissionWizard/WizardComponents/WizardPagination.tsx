@@ -95,7 +95,7 @@ const WizardPaginationActions = ({
   page,
   rowsPerPage,
   onPageChange,
-}: WizardPaginationActionsType): ReactElement => {
+}: WizardPaginationActionsType): ReactElement<unknown> => {
   const theme = useTheme()
   const totalPages = Math.ceil(count / rowsPerPage)
 

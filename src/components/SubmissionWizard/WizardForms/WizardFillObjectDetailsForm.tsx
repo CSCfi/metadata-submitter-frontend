@@ -1,7 +1,7 @@
 /* Breaking change for JSON schema version draft-2020-12:
  * https://ajv.js.org/json-schema.html#draft-2020-12
  */
-import React, { useEffect, useState, useRef, RefObject } from "react"
+import React, { useEffect, useState, useRef, useTransition, RefObject } from "react"
 
 import CancelIcon from "@mui/icons-material/Cancel"
 import { GlobalStyles } from "@mui/material"
@@ -53,7 +53,7 @@ import type {
   FormObject,
   ObjectDetails,
   ObjectDisplayValues,
-  FormRef,
+  HandlerRef,
 } from "types"
 import {
   getObjectDisplayTitle,
@@ -139,7 +139,7 @@ type FormContentProps = {
   hasDraftObject: boolean
   hasSubmittedObject: boolean
   currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
-  formRef?: FormRef
+  ref: HandlerRef
 }
 
 /*
@@ -296,7 +296,7 @@ const FormContent = ({
   hasSubmittedObject,
   submission,
   currentObject,
-  formRef,
+  ref,
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
 
@@ -568,12 +568,11 @@ const FormContent = ({
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
       />
-
       <Form
         id="hook-form"
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
-        ref={formRef as RefObject<HTMLFormElement>}
+        ref={ref as RefObject<HTMLFormElement>}
         onReset={handleReset}
       >
         <Box>{JSONSchemaParser.buildFields(formSchema)}</Box>
@@ -585,8 +584,7 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
-  const { formRef } = props
+const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const dispatch = useAppDispatch()
 
   const objectType = useAppSelector(state => state.objectType)
@@ -608,7 +606,7 @@ const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
   const resolver = WizardAjvResolver(states.validationSchema, locale)
   const methods = useForm({ mode: "onBlur", resolver })
 
-  const [submitting, setSubmitting] = useState(false)
+  const [submitting, startTransition] = useTransition()
 
   /*
    * Fetch json schema from either session storage or API, set schema and dereferenced version to component state.
@@ -691,8 +689,6 @@ const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
   const onSubmit = (data: Record<string, unknown>) => {
     if (Object.keys(data).length === 0) return
 
-    setSubmitting(true)
-
     // Handle submitted object update
     const patchObject = async () => {
       const accessionId = data.accessionId as string
@@ -731,21 +727,17 @@ const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
           })
         )
       }
-
-      setSubmitting(false)
     }
 
-    // Either patch object or submit a new object
-    if (data.status === ObjectStatus.submitted) {
-      patchObject()
-    } else {
-      submitObjectHook(data, submission.submissionId, objectType, dispatch)
-        .then(() => {
-          setSubmitting(false)
-          methods.reset({ undefined })
-        })
-        .catch(err => console.error(err))
-    }
+    startTransition(async () => {
+      // Either patch object or submit a new object
+      if (data.status === ObjectStatus.submitted) {
+        await patchObject()
+      } else {
+        await submitObjectHook(data, submission.submissionId, objectType, dispatch)
+        methods.reset({ undefined })
+      }
+    })
   }
 
   if (states.isLoading) return <CircularProgress />
@@ -771,7 +763,7 @@ const WizardFillObjectDetailsForm = (props: { formRef?: FormRef }) => {
           submission={submission}
           currentObject={currentObject}
           key={currentObject?.accessionId || submission.submissionId}
-          formRef={formRef}
+          ref={ref}
         />
         {submitting && <LinearProgress />}
         <WizardXMLUploadModal

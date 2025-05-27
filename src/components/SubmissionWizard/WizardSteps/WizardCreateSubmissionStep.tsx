@@ -25,7 +25,7 @@ import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import workflowAPIService from "services/workflowAPI"
-import type { SubmissionDataFromForm, FormRef } from "types"
+import type { SubmissionDataFromForm, HandlerRef } from "types"
 import { pathWithLocale } from "utils"
 
 const Form = styled("form")({
@@ -38,11 +38,7 @@ const Form = styled("form")({
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateSubmissionForm = ({
-  createSubmissionFormRef,
-}: {
-  createSubmissionFormRef: FormRef
-}) => {
+const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
@@ -134,7 +130,7 @@ const CreateSubmissionForm = ({
   return (
     <Form
       onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
-      ref={createSubmissionFormRef as RefObject<HTMLFormElement>}
+      ref={ref as RefObject<HTMLFormElement>}
     >
       <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
         {t("newSubmission.nameSubmission")}
@@ -177,7 +173,6 @@ const CreateSubmissionForm = ({
         )}
         rules={{ required: true, validate: { description: value => value.length > 0 } }}
       />
-
       <Grid sx={{ mt: 2 }} container spacing={2}>
         <Grid>
           <FormLabel
@@ -239,7 +234,6 @@ const CreateSubmissionForm = ({
           </FormControl>
         </Grid>
       </Grid>
-
       <Button
         sx={{ mt: "2rem", p: "1rem 5rem" }}
         size="large"
@@ -258,14 +252,8 @@ const CreateSubmissionForm = ({
  * Show form to create submission as first step of new draft wizard
  */
 
-const WizardCreateSubmissionStep = ({
-  createSubmissionFormRef,
-}: {
-  createSubmissionFormRef: FormRef
-}) => (
-  <>
-    <CreateSubmissionForm createSubmissionFormRef={createSubmissionFormRef} />
-  </>
+const WizardCreateSubmissionStep = ({ ref }: { ref: HandlerRef }) => (
+  <CreateSubmissionForm ref={ref} />
 )
 
 export default WizardCreateSubmissionStep

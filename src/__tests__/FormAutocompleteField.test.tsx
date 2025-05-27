@@ -1,10 +1,9 @@
-import React from "react"
+import { act } from "react"
 
 import { screen, waitFor, fireEvent } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
-import { act } from "react-dom/test-utils"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 
@@ -61,7 +60,6 @@ describe("Test autocomplete on organisation field", () => {
     act(() => {
       autocomplete.focus()
       // Assign value to autocomplete field
-      // Note: userEvent doesn't work inside act(), which in this case is needed for MUI autocomplete field
       fireEvent.change(autocomplete, { target: { value: "test" } })
     })
     expect(autocomplete.value).toEqual("test")

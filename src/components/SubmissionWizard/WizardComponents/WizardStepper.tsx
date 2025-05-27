@@ -20,7 +20,7 @@ import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { resetWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import workflowAPIService from "services/workflowAPI"
-import type { FormRef, Workflow } from "types"
+import type { HandlerRef, Workflow } from "types"
 
 // Top & bottom borders for first and last disabled elements
 const AccordionWrapper = styled("div")(({ theme }) => ({
@@ -80,7 +80,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
  * If createSubmissionForm is passed as reference it is used to trigger correct form when clicking next.
  */
 
-const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
+const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const objectType = useAppSelector(state => state.objectType)
   const submission = useAppSelector(state => state.submission)
@@ -191,7 +191,7 @@ const WizardStepper = ({ formRef }: { formRef?: FormRef }) => {
             </AccordionSummary>
             {step.schemas && (
               <AccordionDetails>
-                <WizardStep step={stepNumber} schemas={step.schemas} formRef={formRef} />
+                <WizardStep step={stepNumber} schemas={step.schemas} ref={ref} />
               </AccordionDetails>
             )}
           </Accordion>

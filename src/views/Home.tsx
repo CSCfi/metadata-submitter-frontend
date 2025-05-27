@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react"
+import React, { useEffect, useState } from "react"
 
 import Box from "@mui/material/Box"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -330,10 +330,7 @@ const Home: React.FC = () => {
     debouncedChangeFilteringText(textValue, tabValue)
   }
 
-  const debouncedChangeFilteringText = useMemo(
-    () => debounce(getFilter, 300),
-    [allSubmissions, allDraftSubmissions, allPublishedSubmissions, tabValue]
-  )
+  const debouncedChangeFilteringText = debounce(getFilter, 300)
 
   const handleClearFilteringText = () => {
     // Set the current page in pagination to 0 when clearing the filter

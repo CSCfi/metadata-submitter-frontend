@@ -1,5 +1,3 @@
-import React from "react"
-
 import OpenInNewIcon from "@mui/icons-material/OpenInNew"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"

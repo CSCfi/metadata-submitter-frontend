@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react"
+import React, { useRef, useEffect, useState, RefObject } from "react"
 
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
@@ -17,9 +17,8 @@ import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch } from "hooks"
-// import { RootState } from "rootReducer"
 import submissionAPIService from "services/submissionAPI"
-import type { FormRef } from "types"
+import type { HandlerRef } from "types"
 import { useQuery } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
@@ -28,12 +27,12 @@ import Page404 from "views/ErrorPages/Page404"
  */
 const getStepContent = (
   wizardStep: number,
-  createSubmissionFormRef: FormRef,
-  objectFormRef: FormRef
+  createSubmissionFormRef: HandlerRef,
+  objectFormRef: HandlerRef
 ) => {
   switch (wizardStep) {
     case 1:
-      return <WizardCreateSubmissionStep createSubmissionFormRef={createSubmissionFormRef} />
+      return <WizardCreateSubmissionStep ref={createSubmissionFormRef} />
     case 2:
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 3:
@@ -59,10 +58,9 @@ const SubmissionWizard: React.FC = () => {
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
-  const [isFetchingSubmission, setFetchingSubmission] = useState(true)
 
+  const [isFetchingSubmission, setFetchingSubmission] = useState<boolean>(true)
   const step = queryParams.get("step")
-
   const submissionId = params.submissionId || ""
 
   // Get submission if URL parameters have submissionId. Redirect to home if invalid submissionId
@@ -96,11 +94,9 @@ const SubmissionWizard: React.FC = () => {
 
   const wizardStep = step ? Number(step) : -1
 
-  const createSubmissionFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(
-    null
-  )
+  const createSubmissionFormRef = useRef<HandlerRef>(null)
 
-  const objectFormRef = useRef<null | (HTMLFormElement & { changeCallback: () => void })>(null)
+  const objectFormRef = useRef<HandlerRef>(undefined)
 
   return ValidSteps.includes(wizardStep) ? (
     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
@@ -114,13 +110,17 @@ const SubmissionWizard: React.FC = () => {
         container
       >
         <Grid sx={{ pt: 0, bgcolor: "primary.main" }} size={{ xs: 3 }}>
-          <WizardStepper formRef={objectFormRef} />
+          <WizardStepper ref={objectFormRef as RefObject<HTMLDivElement | null>} />
         </Grid>
         <Grid sx={{ pl: 5, pr: 5 }} size={{ xs: 9 }}>
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper sx={{ p: 0, height: "100%" }} elevation={2}>
-              {getStepContent(wizardStep, createSubmissionFormRef, objectFormRef)}
+              {getStepContent(
+                wizardStep,
+                createSubmissionFormRef as RefObject<HTMLFormElement | null>,
+                objectFormRef as RefObject<HTMLDivElement | null>
+              )}
             </Paper>
           )}
         </Grid>

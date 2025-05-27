@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from "react"
+import React, { useState } from "react"
 
 import CancelIcon from "@mui/icons-material/Cancel"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next"
 import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import { APIResponse, HandlerRef } from "types"
+import { APIResponse } from "types"
 
 type MessageHandlerProps = {
   response?: APIResponse
@@ -116,7 +116,7 @@ const getSeverityIcon = (severity, theme) => {
   }
 }
 
-const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps, ref: HandlerRef) {
+const ErrorHandler = (props: MessageHandlerProps) => {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   const theme = useTheme()
@@ -139,7 +139,7 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
   const closeMessage = t("close")
 
   return (
-    <CustomAlert severity="error" ref={ref} icon={getSeverityIcon("error", theme)}>
+    <CustomAlert severity="error" icon={getSeverityIcon("error", theme)}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -149,9 +149,9 @@ const ErrorHandler = forwardRef(function ErrorHandler(props: MessageHandlerProps
       </AlertWrap>
     </CustomAlert>
   )
-})
+}
 
-const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, ref: HandlerRef) {
+const InfoHandler = (props: MessageHandlerProps) => {
   const { t } = useTranslation()
   const { helperText, handleClose } = props
   const theme = useTheme()
@@ -163,7 +163,7 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
   }
 
   return (
-    <CustomAlert severity="warning" ref={ref} icon={getSeverityIcon("warning", theme)}>
+    <CustomAlert severity="warning" icon={getSeverityIcon("warning", theme)}>
       <AlertWrap>
         <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -173,12 +173,9 @@ const InfoHandler = forwardRef(function InfoHandler(props: MessageHandlerProps, 
       </AlertWrap>
     </CustomAlert>
   )
-})
+}
 
-const SuccessHandler = forwardRef(function SuccessHandler(
-  props: MessageHandlerProps,
-  ref: HandlerRef
-) {
+const SuccessHandler = (props: MessageHandlerProps) => {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
   const theme = useTheme()
@@ -221,7 +218,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
   const closeMessage = t("close")
 
   return (
-    <CustomAlert severity="success" ref={ref} icon={getSeverityIcon("success", theme)}>
+    <CustomAlert severity="success" icon={getSeverityIcon("success", theme)}>
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -231,7 +228,7 @@ const SuccessHandler = forwardRef(function SuccessHandler(
       </AlertWrap>
     </CustomAlert>
   )
-})
+}
 
 type StatusMessageProps = {
   status: string
@@ -285,7 +282,7 @@ const Message = (props: StatusMessageProps) => {
             marginBottom: "4.375rem",
           }}
         >
-          {messageElement}
+          <Box>{messageElement}</Box>
         </Snackbar>
       )
 }

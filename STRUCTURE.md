@@ -40,7 +40,7 @@ import { ObjectSubmissionTypes } from "constants/wizardObject"
 
   const content = {
     [ObjectSubmissionTypes.form]: {
-      component: <WizardFillObjectDetailsForm key={objectType + submissionType} formRef={formRef} />,
+      component: <WizardFillObjectDetailsForm key={objectType + submissionType} ref={formRef} />,
       testId: ObjectSubmissionTypes.form,
     },
     [ObjectSubmissionTypes.xml]: {

@@ -1,9 +1,8 @@
-import React from "react"
+import { act } from "react"
 
 import { screen } from "@testing-library/react"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
-import { act } from "react-dom/test-utils"
 import { MemoryRouter } from "react-router"
 import { vi } from "vitest"
 

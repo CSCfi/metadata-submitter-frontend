@@ -1,5 +1,3 @@
-import React from "react"
-
 import Box from "@mui/material/Box"
 import Grid, { GridProps } from "@mui/material/Grid"
 import Link from "@mui/material/Link"

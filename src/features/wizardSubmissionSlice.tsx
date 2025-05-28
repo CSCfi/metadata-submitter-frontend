@@ -33,7 +33,7 @@ const initialState: InitialState = {
   published: false,
   drafts: [],
   metadataObjects: [],
-  doiInfo: { creators: [], contributors: [], subjects: [], keywords: [] },
+  doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   linkedFolder: "",
 }
 

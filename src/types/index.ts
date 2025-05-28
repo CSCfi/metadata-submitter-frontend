@@ -232,13 +232,11 @@ export type DoiContributor = DoiCreator & { contributorType: string }
 
 export type DoiSubject = { subject: string }
 
-export type DoiKeyword = { keyword: string }
-
 export type DoiFormDetails = {
   creators: DoiCreator[]
   contributors: DoiContributor[]
   subjects: DoiSubject[]
-  keywords: DoiKeyword[]
+  keywords: string
 }
 
 export type RemsDetails = {

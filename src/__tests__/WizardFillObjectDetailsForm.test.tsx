@@ -61,7 +61,7 @@ describe("WizardFillObjectDetailsForm", () => {
       ],
       drafts: [],
       workflow: "",
-      doiInfo: { creators: [], contributors: [], subjects: [], keywords: [] },
+      doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
     },
     openedXMLModal: false,
   }

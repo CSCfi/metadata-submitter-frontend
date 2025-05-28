@@ -10,6 +10,7 @@ import type {
   ObjectDisplayValues,
   ObjectInsideSubmissionWithTags,
   SubmissionDetailsWithId,
+  DoiFormDetails,
 } from "types"
 
 export const getObjectDisplayTitle = (
@@ -131,4 +132,12 @@ export const checkObjectStatus = (submission: SubmissionDetailsWithId, objectTyp
   const hasSubmittedObject: boolean =
     submission.metadataObjects.filter(object => object.schema === objectType).length > 0
   return { hasDraftObject, hasSubmittedObject }
+}
+
+// Check that doiInfo exist and that it contains data at least at one of the keys
+export const hasDoiInfo = (doi: DoiFormDetails): boolean => {
+  const retval = doi
+    ? Object.values(doi).filter(item => Array.isArray(item) && item.length > 0).length > 0
+    : false
+  return retval
 }

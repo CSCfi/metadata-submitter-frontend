@@ -12,7 +12,7 @@ import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/
 import WizardDataFolderStep from "components/SubmissionWizard/WizardSteps/WizardDataFolderStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
-import { ValidSteps } from "constants/wizardObject"
+import { ObjectTypes, ValidSteps } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
@@ -42,12 +42,12 @@ const getStepContent = (
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       // Datacite, Summary and Publish steps
-      switch (objectType) {
-        case "datacite":
+      switch (objectType.toLowerCase()) {
+        case ObjectTypes.datacite:
           return <WizardAddObjectStep formRef={objectFormRef} />
-        case "Summary":
+        case ObjectTypes.summary:
           return <WizardShowSummaryStep />
-        case "Publish":
+        case ObjectTypes.publish:
           return (
             <div>
               <h1>FIXME publish page here</h1>

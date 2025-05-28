@@ -65,7 +65,9 @@ const mapObjectsToStepsHook = (
   }
 
   const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
-  const workflowSteps = allSteps ? allSteps.filter(step => step.title !== "Datacite") : allSteps
+  const workflowSteps = allSteps
+    ? allSteps.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
+    : allSteps
 
   const schemaSteps =
     workflowSteps?.length > 0
@@ -94,11 +96,9 @@ const mapObjectsToStepsHook = (
               ...schema,
               name: schema.name.toLowerCase().includes(ObjectTypes.file)
                 ? t("datafolder.datafolder")
-                : schema.name === ObjectTypes.datacite
-                  ? "Identifier"
-                  : schema.name === ObjectTypes.dac
-                    ? schema.name.toUpperCase()
-                    : startCase(schema.name),
+                : schema.name === ObjectTypes.dac
+                  ? schema.name.toUpperCase()
+                  : startCase(schema.name),
               objectType: schema.name,
               objects: groupedObjects[schema.name],
             })),
@@ -189,38 +189,31 @@ const mapObjectsToStepsHook = (
     schemas: [
       {
         name: t("identifier"),
-        objectType: "datacite",
+        objectType: ObjectTypes.datacite,
 
         objects: {
           ready: hasDoiInfo
             ? [
                 {
                   id: submission.submissionId,
-                  creators: submission.doiInfo.creators,
-                  contributors: submission.doiInfo.contributors,
-                  subjects: submission.doiInfo.subjects,
-                  keywords: submission.doiInfo.keywords,
                   displayTitle: t("doiRegistrationInfo"),
                 },
               ]
             : [],
         },
         required: true,
-        allowMultipleObjects: false,
       },
       {
         name: t("summary"),
         objectType: t("summary"),
         objects: { drafts: [], ready: [] },
         required: true,
-        allowMultipleObjects: false,
       },
       {
         name: t("publishSubmission"),
         objectType: t("summaryPage.publish"),
         objects: { drafts: [], ready: [] },
         required: true,
-        allowMultipleObjects: false,
       },
     ],
   }
@@ -229,7 +222,9 @@ const mapObjectsToStepsHook = (
     currentWorkflow?.name === WorkflowTypes.sdsx
       ? [createSubmissionStep, dacPoliciesStep]
       : [createSubmissionStep]
-  ).concat(schemaSteps, [idPublishStep])
+  ).concat(schemaSteps)
+
+  if (submission.name !== "") mappedSteps.push(idPublishStep)
 
   return { mappedSteps }
 }

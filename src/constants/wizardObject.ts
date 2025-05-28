@@ -15,6 +15,8 @@ export const ObjectTypes = {
   bpobservation: "bpobservation",
   bpstaining: "bpstaining",
   dacPolicies: "dacPolicies",
+  summary: "summary",
+  publish: "publish",
 }
 
 export const DisplayObjectTypes = {

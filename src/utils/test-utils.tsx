@@ -45,7 +45,7 @@ export const mockState = {
     workflow: "FEGA",
     drafts: [],
     metadataObjects: [],
-    doiInfo: { creators: [], contributors: [], subjects: [], keywords: [] },
+    doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   },
   openedXMLModal: false,
   currentObject: {

@@ -133,8 +133,9 @@ const SubmissionWizard: React.FC = () => {
               {getStepContent(
                 wizardStep,
                 createSubmissionFormRef as RefObject<HTMLFormElement | null>,
-                objectFormRef as RefObject<HTMLDivElement | null>
-              , objectType)}
+                objectFormRef as RefObject<HTMLDivElement | null>,
+                objectType
+              )}
             </Paper>
           )}
         </Grid>

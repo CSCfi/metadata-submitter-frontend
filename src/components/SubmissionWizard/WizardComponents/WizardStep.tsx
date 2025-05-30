@@ -25,7 +25,12 @@ import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { HandlerRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
+import type {
+  DoiFormDetails,
+  HandlerRef,
+  ObjectInsideSubmissionWithTags,
+  StepItemObject,
+} from "types"
 import { hasDoiInfo, pathWithLocale } from "utils"
 
 const ActionButton = (props: {
@@ -128,9 +133,10 @@ const StepItems = (props: {
   }[]
   draft: boolean
   submissionId: string
+  doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
 }) => {
-  const { step, objects, draft, submissionId, objectType } = props
+  const { step, objects, draft, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
@@ -164,7 +170,7 @@ const StepItems = (props: {
       }
       case 5: {
         dispatch(resetCurrentObject())
-        dispatch(setCurrentObject(formObject))
+        dispatch(setCurrentObject(doiInfo))
         navigate({
           pathname: pathWithLocale(`submission/${submissionId}`),
           search: "step=5",
@@ -361,6 +367,7 @@ const WizardStep = (props: WizardStepProps) => {
                         objects={objects.ready}
                         draft={false}
                         submissionId={submission.submissionId}
+                        doiInfo={submission.doiInfo}
                         objectType={objectType}
                       />
                     )}

@@ -2,14 +2,10 @@ import * as React from "react"
 
 import AddIcon from "@mui/icons-material/Add"
 import ClearIcon from "@mui/icons-material/Clear"
-import EventIcon from "@mui/icons-material/Event"
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
 import LaunchIcon from "@mui/icons-material/Launch"
 import RemoveIcon from "@mui/icons-material/Remove"
-import DateAdapter from "@mui/lab/AdapterMoment"
-import DatePicker from "@mui/lab/DatePicker"
-import LocalizationProvider from "@mui/lab/LocalizationProvider"
-import { FormControl, InputAdornment } from "@mui/material"
+import { FormControl } from "@mui/material"
 import Autocomplete from "@mui/material/Autocomplete"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -27,6 +23,9 @@ import { TypographyVariant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
 import Tooltip, { TooltipProps } from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment"
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { get, flatten, uniq, debounce } from "lodash"
 import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
@@ -77,36 +76,6 @@ const FieldTooltip = styled(({ className, ...props }: TooltipProps) => (
 const TooltipIcon = styled(HelpOutlineIcon)(({ theme }) => ({
   color: theme.palette.primary.main,
   marginLeft: "1rem",
-}))
-
-const DatePickerWrapper = styled(Grid)(({ theme }) => ({
-  paddingLeft: 1,
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  "& > span:first-of-type": {
-    fontSize: "0.875rem",
-    color: theme.palette.primary.main,
-    fontWeight: "bold",
-    width: "3rem",
-  },
-  "& div": {
-    padding: 0,
-    margin: 0,
-    height: "auto",
-    "& input": {
-      padding: 0,
-      margin: 0,
-    },
-    "& > button": {
-      color: theme.palette.primary.light,
-    },
-  },
-}))
-
-const DateCheckboxLabel = styled("span")(({ theme }) => ({
-  fontSize: "0.8125rem",
-  color: theme.palette.secondary.dark,
 }))
 
 /*
@@ -1015,261 +984,146 @@ const FormSelectField = ({
  * FormDatePicker used for selecting date or date rage in DOI form
  */
 
+const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
+  "& .MuiIconButton-root": {
+    color: theme.palette.primary.main,
+    "&:hover": {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))
+
 const FormDatePicker = ({
   name,
-  label,
   required,
   description,
 }: FormFieldBaseProps & { description: string }) => {
-  const dateCheckboxStyles = {
-    padding: 0,
-    margin: 0,
-    "& span.MuiTypography-root.MuiFormControlLabel-label": {
-      margin: 0,
-    },
-    "& span.MuiCheckbox-root": {
-      padding: 0,
-    },
+  const { t } = useTranslation()
+  const { getValues } = useFormContext()
+  const defaultValue = getValues(name) || ""
+
+  const getStartEndDates = (date: string) => {
+    const [startInput, endInput] = date?.split("/")
+    if (startInput && endInput) return [moment(startInput), moment(endInput)]
+    else if (startInput) return [moment(startInput), null]
+    else if (endInput) return [null, moment(endInput)]
+    else return [null, null]
   }
 
-  const [startDate, setStartDate] = React.useState("")
-  const [endDate, setEndDate] = React.useState("")
+  const [startDate, setStartDate] = React.useState<moment.Moment | null>(
+    getStartEndDates(defaultValue)[0]
+  )
+  const [endDate, setEndDate] = React.useState<moment.Moment | null>(
+    getStartEndDates(defaultValue)[1]
+  )
+  const [startError, setStartError] = React.useState<string | null>(null)
+  const [endError, setEndError] = React.useState<string | null>(null)
+  const clearForm = useAppSelector(state => state.clearForm)
 
-  const [unknownDates, setUnknownDates] = React.useState({
-    checkedStartDate: false,
-    checkedEndDate: false,
-  })
-  // Control calendar dialog opened
-  const [openStartCalendar, setOpenStartCalendar] = React.useState(false)
-  const [openEndCalendar, setOpenEndCalendar] = React.useState(false)
+  React.useEffect(() => {
+    if (clearForm) {
+      setStartDate(null)
+      setEndDate(null)
+    }
+  }, [clearForm])
+
+  const format = "YYYY-MM-DD"
+  const formatDate = (date: moment.Moment) => moment(date).format(format)
+
+  const makeValidDateString = (start: moment.Moment | null, end: moment.Moment | null) => {
+    let dateStr = ""
+    if (start && start?.isValid()) {
+      dateStr = formatDate(start)
+      if (end && end?.isValid() && formatDate(end) !== dateStr) {
+        dateStr += `/${formatDate(end)}`
+      }
+    }
+    return dateStr
+  }
 
   return (
     <ConnectForm>
-      {({ errors, getValues, setValue }: ConnectFormMethods) => {
-        const dateInputValues = getValues(name)
-
-        const formatDate = (date: moment.MomentInput) => {
-          const format = "YYYY-MM-DD"
-          return moment(date).format(format)
+      {({ setValue }: ConnectFormMethods) => {
+        const handleChangeStartDate = (newValue: moment.Moment | null) => {
+          setStartDate(newValue)
+          setValue(name, makeValidDateString(newValue, endDate))
         }
 
-        const getDateValues = (start: string, end: string) => {
-          if (start === end) return start
-          if (start || end) return `${start}/${end}`
-          else return ""
+        const handleChangeEndDate = (newValue: moment.Moment | null) => {
+          setEndDate(newValue)
+          setValue(name, makeValidDateString(startDate, newValue))
         }
 
-        const handleChangeStartDate = (e: moment.MomentInput) => {
-          const start = formatDate(e)
-          setStartDate(start)
-          const dateValues = getDateValues(start, endDate)
-          setValue(name, dateValues)
-        }
-
-        const handleChangeEndDate = (e: moment.MomentInput) => {
-          const end = formatDate(e)
-          setEndDate(end)
-          const dateValues = getDateValues(startDate, end)
-          setValue(name, dateValues)
-        }
-
-        const handleChangeUnknownDates = (e: { target: { name: string; checked: boolean } }) => {
-          setUnknownDates({ ...unknownDates, [e.target.name]: e.target.checked })
-          if (e.target.name === "checkedStartDate") {
-            setStartDate("")
-            const dateValues = getDateValues("", endDate)
-            setValue(name, dateValues)
-          } else {
-            setEndDate("")
-            const dateValues = getDateValues(startDate, "")
-            setValue(name, dateValues)
-          }
-        }
-
-        const handleClearDates = () => {
-          setStartDate("")
-          setEndDate("")
-          setValue(name, "")
-        }
-
-        type DateSelectionProps = {
-          label: string
-          inputRef: React.Ref<HTMLInputElement> | undefined
-          inputProps: React.JSX.IntrinsicAttributes &
-            React.ClassAttributes<HTMLInputElement> &
-            React.InputHTMLAttributes<HTMLInputElement>
-        }
-
-        type InputPropsType = {
-          InputProps: {
-            endAdornment:
-              | boolean
-              | React.ReactElement<unknown>
-              | number
-              | string
-              | Iterable<React.ReactNode>
-              | React.ReactPortal
-              | null
-              | undefined
-          }
-        }
-
-        type DateSelectionPropsWithInput = DateSelectionProps & InputPropsType
-
-        const DateSelection = (props: DateSelectionPropsWithInput) => {
-          return (
-            <Box sx={{ display: "flex", alignItems: "center" }} data-testid={props.label}>
-              <input
-                ref={props.inputRef}
-                {...props.inputProps}
-                style={{ border: "none", width: 0 }}
-              />
-              {props.InputProps?.endAdornment}
-            </Box>
-          )
-        }
-
-        const DatePickerComponent = () => (
-          <LocalizationProvider dateAdapter={DateAdapter}>
+        return (
+          <LocalizationProvider dateAdapter={AdapterMoment}>
             <Box
               sx={{
                 width: "95%",
                 display: "flex",
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "baseline",
+                marginBottom: "1rem",
               }}
             >
-              <BaselineDiv>
-                <TextField
-                  inputProps={{ "data-testid": name }}
-                  label={label}
-                  id={name}
-                  role="textbox"
-                  error={!!errors}
-                  helperText={errors?.message?.toString()}
-                  placeholder="YYYY-MM-DD"
-                  required={required}
-                  type="text"
-                  defaultValue={dateInputValues}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        onClick={handleClearDates}
-                        sx={{ position: "absolute", right: "-1", padding: 0 }}
-                      >
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    ),
-                  }}
-                />
-                {description && (
-                  <FieldTooltip
-                    title={<DisplayDescription description={description} />}
-                    placement="right"
-                    arrow
-                    describeChild
-                  >
-                    <TooltipIcon />
-                  </FieldTooltip>
-                )}
-              </BaselineDiv>
-              <Grid container direction="column">
-                <DatePickerWrapper>
-                  <span>Start</span>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={unknownDates.checkedStartDate}
-                        onChange={handleChangeUnknownDates}
-                        name="checkedStartDate"
-                        value="UnknownStartDate"
-                        color="primary"
-                      />
-                    }
-                    label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
-                    sx={{ ...dateCheckboxStyles }}
-                    disabled={unknownDates.checkedEndDate}
-                    data-testid="startDateCheck"
-                  />
-                  <DatePicker
-                    label="Start"
-                    renderInput={params => (
-                      <DateSelection
-                        {...(params as DateSelectionProps)}
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <InputAdornment
-                              position="end"
-                              onClick={() => setOpenStartCalendar(true)}
-                            >
-                              <IconButton disabled={unknownDates.checkedStartDate}>
-                                <EventIcon color="primary" />
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                    value={startDate}
-                    onChange={handleChangeStartDate}
-                    minDate={moment("0001-01-01")}
-                    shouldDisableDate={day => moment(day).isAfter(endDate)}
-                    open={openStartCalendar}
-                    disableCloseOnSelect={false}
-                    onOpen={() => setOpenStartCalendar(true)}
-                    onClose={() => setOpenStartCalendar(false)}
-                  />
-                </DatePickerWrapper>
-                <DatePickerWrapper>
-                  <span>End</span>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={unknownDates.checkedEndDate}
-                        onChange={handleChangeUnknownDates}
-                        name="checkedEndDate"
-                        value="UnknownEndDate"
-                        color="primary"
-                      />
-                    }
-                    label={<DateCheckboxLabel>Unknown</DateCheckboxLabel>}
-                    sx={{ ...dateCheckboxStyles }}
-                    disabled={unknownDates.checkedStartDate}
-                    data-testid="endDateCheck"
-                  />
-                  <DatePicker
-                    label="End"
-                    renderInput={params => (
-                      <DateSelection
-                        {...(params as DateSelectionProps)}
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <InputAdornment position="end" onClick={() => setOpenEndCalendar(true)}>
-                              <IconButton disabled={unknownDates.checkedEndDate}>
-                                <EventIcon color="primary" />
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                    value={endDate}
-                    onChange={handleChangeEndDate}
-                    shouldDisableDate={day => moment(day).isBefore(startDate)}
-                    disableCloseOnSelect={false}
-                    open={openEndCalendar}
-                    onOpen={() => setOpenEndCalendar(true)}
-                    onClose={() => setOpenEndCalendar(false)}
-                  />
-                </DatePickerWrapper>
-              </Grid>
+              <StyledDatePicker
+                label={t("datacite.startDate")}
+                value={startDate}
+                format={format}
+                onChange={handleChangeStartDate}
+                onError={setStartError}
+                shouldDisableDate={day => !!endDate && moment(day).isAfter(endDate)}
+                slotProps={{
+                  field: { clearable: true },
+                  textField: {
+                    required,
+                    error: !!startError,
+                    helperText: startError
+                      ? startError === "shouldDisableDate"
+                        ? t("datacite.error.range")
+                        : t("datacite.error.date")
+                      : "",
+                  },
+                  nextIconButton: { color: "primary" },
+                  previousIconButton: { color: "primary" },
+                  switchViewIcon: { color: "primary" },
+                }}
+              />
+              <span>–</span>
+              <StyledDatePicker
+                label={t("datacite.endDate")}
+                value={endDate}
+                format={format}
+                onChange={handleChangeEndDate}
+                onError={setEndError}
+                shouldDisableDate={day => !!startDate && moment(day).isBefore(startDate)}
+                slotProps={{
+                  field: { clearable: true },
+                  textField: {
+                    error: !!endError,
+                    helperText: endError
+                      ? endError === "shouldDisableDate"
+                        ? t("datacite.error.range")
+                        : t("datacite.error.date")
+                      : "",
+                  },
+                  nextIconButton: { color: "primary" },
+                  previousIconButton: { color: "primary" },
+                  switchViewIcon: { color: "primary" },
+                }}
+              />
+              {description && (
+                <FieldTooltip
+                  title={<DisplayDescription description={description} />}
+                  placement="right"
+                  arrow
+                  describeChild
+                >
+                  <TooltipIcon />
+                </FieldTooltip>
+              )}
             </Box>
           </LocalizationProvider>
         )
-
-        return <DatePickerComponent />
       }}
     </ConnectForm>
   )

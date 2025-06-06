@@ -1331,12 +1331,15 @@ const FormTagField = ({
   required,
   description,
 }: FormFieldBaseProps & { description: string }) => {
-  // Check initialValues of the tag field and define the initialTags for rendering
-  const initialValues = useWatch({ name })
-  const initialTags: Array<string> = initialValues ? initialValues.split(",") : []
-
+  const savedValues = useWatch({ name })
   const [inputValue, setInputValue] = React.useState("")
-  const [tags, setTags] = React.useState<Array<string>>(initialTags)
+  const [tags, setTags] = React.useState<Array<string>>([])
+
+  React.useEffect(() => {
+    // update tags when value becomes available or changes
+    const updatedTags = savedValues ? savedValues.split(",") : []
+    setTags(updatedTags)
+  }, [savedValues])
 
   const handleInputChange = e => {
     setInputValue(e.target.value)
@@ -1354,17 +1357,15 @@ const FormTagField = ({
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
-        const defaultValue = initialValues || ""
         return (
           <Controller
             name={name}
             control={control}
-            defaultValue={defaultValue}
+            defaultValue={""}
             render={({ field }) => {
               const handleKeywordAsTag = (keyword: string) => {
                 // newTags with unique values
                 const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
-                setTags(newTags)
                 setInputValue("")
                 // Convert tags to string for hidden registered input's values
                 field.onChange(newTags.join(","))
@@ -1390,7 +1391,6 @@ const FormTagField = ({
 
               const handleTagDelete = item => () => {
                 const newTags = tags.filter(tag => tag !== item)
-                setTags(newTags)
                 field.onChange(newTags.join(","))
               }
 

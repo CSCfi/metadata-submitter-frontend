@@ -1361,7 +1361,7 @@ const FormTagField = ({
           <Controller
             name={name}
             control={control}
-            defaultValue={""}
+            defaultValue=""
             render={({ field }) => {
               const handleKeywordAsTag = (keyword: string) => {
                 // newTags with unique values
@@ -1402,24 +1402,26 @@ const FormTagField = ({
                     style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
                   />
                   <ValidationTagField
-                    InputProps={{
-                      startAdornment:
-                        tags.length > 0
-                          ? tags.map(item => (
-                              <Chip
-                                key={item}
-                                tabIndex={-1}
-                                label={item}
-                                onDelete={handleTagDelete(item)}
-                                color="primary"
-                                deleteIcon={<ClearIcon fontSize="small" />}
-                                data-testid={item}
-                                sx={{ fontSize: "1.4rem", m: "0.5rem" }}
-                              />
-                            ))
-                          : null,
+                    slotProps={{
+                      htmlInput: { "data-testid": name },
+                      input: {
+                        startAdornment:
+                          tags.length > 0
+                            ? tags.map(item => (
+                                <Chip
+                                  key={item}
+                                  tabIndex={-1}
+                                  label={item}
+                                  onDelete={handleTagDelete(item)}
+                                  color="primary"
+                                  deleteIcon={<ClearIcon fontSize="small" />}
+                                  data-testid={item}
+                                  sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                                />
+                              ))
+                            : null,
+                      },
                     }}
-                    inputProps={{ "data-testid": name }}
                     label={label}
                     id={name}
                     value={inputValue}

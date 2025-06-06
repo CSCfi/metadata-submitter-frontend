@@ -21,7 +21,7 @@ import {
 export type User = {
   id: string
   name: string
-  projects: Array<{ projectId: string; projectNumber: string }>
+  projects: { projectId: string }[]
 }
 
 export type Schema =

@@ -26,7 +26,7 @@ import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
 import { Locale } from "constants/locale"
 import { setLocale } from "features/localeSlice"
-import { fetchUserById, resetUser } from "features/userSlice"
+import { fetchUser, resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -79,7 +79,7 @@ const NavigationLinks = () => {
   const open = Boolean(anchorEl)
 
   useEffect(() => {
-    dispatch(fetchUserById("current"))
+    dispatch(fetchUser())
   }, [dispatch])
 
   const handleClick = event => {

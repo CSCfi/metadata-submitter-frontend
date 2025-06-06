@@ -11,14 +11,11 @@ import { renderWithProviders } from "utils/test-utils"
 import Page403 from "views/ErrorPages/Page403"
 
 const restHandlers = [
-  http.get("/v1/users/current", () => {
+  http.get("/v1/users", () => {
     return HttpResponse.json({
       userId: "001",
       name: "Test User",
-      projects: [
-        { projectId: "PROJECT1", projectNumber: "Project 1" },
-        { projectId: "PROJECT2", projectNumber: "Project 2" },
-      ],
+      projects: [{ projectId: "PROJECT1" }, { projectId: "PROJECT2" }],
     })
   }),
 ]

@@ -66,6 +66,11 @@ export default defineConfig(({ mode }) => {
       globals: true,
       environment: "jsdom",
       setupFiles: "vitest-setup.ts",
+      server: {
+        deps: {
+          inline: ["@mui/x-data-grid"],
+        },
+      },
       coverage: {
         reporter: ["text", "html", "lcov"],
         exclude: ["node_modules/", "vitest-setup.ts"],

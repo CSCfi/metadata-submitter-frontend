@@ -69,6 +69,9 @@ const palette = {
   action: {
     hover: "#cce1e4",
   },
+  DataGrid: {
+    bg: "none",
+  },
 }
 
 export const fontSizeBreakpoints = {
@@ -150,14 +153,14 @@ let CSCtheme = createTheme({
     },
     MuiDataGrid: {
       styleOverrides: {
+        root: fontSizeBreakpoints,
         cell: { flex: "1 1 auto", textAlign: "left" },
         columnHeader: {
           minWidth: "none !important",
           maxWidth: "none !important",
           width: "100% !important",
-          fontSizeBreakpoints,
         },
-        row: { minWidth: "none !important", maxWidth: "none !important", fontSizeBreakpoints },
+        row: { minWidth: "none !important", maxWidth: "none !important" },
       },
     },
     MuiMenuItem: {

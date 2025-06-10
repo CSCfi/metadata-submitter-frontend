@@ -11,6 +11,7 @@ import {
   MappedSteps,
   WorkflowSchema,
 } from "types"
+import { hasDoiInfo } from "utils"
 
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
@@ -65,9 +66,7 @@ const mapObjectsToStepsHook = (
   }
 
   const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
-  const workflowSteps = allSteps
-    ? allSteps.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
-    : allSteps
+  const workflowSteps = allSteps?.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
 
   const schemaSteps =
     workflowSteps?.length > 0
@@ -178,11 +177,7 @@ const mapObjectsToStepsHook = (
    * Add to the "Identifier and publish" step of accordion the summary and publish substeps
    */
 
-  // Check that doiInfo exist and that it contains data at least at one of the keys
-  const hasDoiInfo: boolean = submission.doiInfo
-    ? Object.values(submission.doiInfo).filter(item => Array.isArray(item) && item.length > 0)
-        .length > 0
-    : false
+  const hasDoi: boolean = hasDoiInfo(submission.doiInfo)
 
   const idPublishStep = {
     title: t("identifierPublish"),
@@ -192,7 +187,7 @@ const mapObjectsToStepsHook = (
         objectType: ObjectTypes.datacite,
 
         objects: {
-          ready: hasDoiInfo
+          ready: hasDoi
             ? [
                 {
                   id: submission.submissionId,

@@ -137,7 +137,7 @@ export const checkObjectStatus = (submission: SubmissionDetailsWithId, objectTyp
 // Check that doiInfo exist and that it contains data at least at one of the keys
 export const hasDoiInfo = (doi: DoiFormDetails): boolean => {
   const retval = doi
-    ? Object.values(doi).filter(item => Array.isArray(item) && item.length > 0).length > 0
+    ? Object.values(doi).some(item => Array.isArray(item) && item.length > 0)
     : false
   return retval
 }

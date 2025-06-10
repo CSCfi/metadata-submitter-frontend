@@ -11,6 +11,7 @@ import {
   MappedSteps,
   WorkflowSchema,
 } from "types"
+import { hasDoiInfo } from "utils"
 
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
@@ -64,7 +65,8 @@ const mapObjectsToStepsHook = (
     return foundObjects.length === objectTypes.length
   }
 
-  const workflowSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
+  const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
+  const workflowSteps = allSteps?.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
 
   const schemaSteps =
     workflowSteps?.length > 0
@@ -103,6 +105,7 @@ const mapObjectsToStepsHook = (
           }
         })
       : []
+
   /*
    * List of accordion steps and configurations.
    * Steps are disabled by checking if previous step has been filled.
@@ -170,28 +173,53 @@ const mapObjectsToStepsHook = (
     ],
   }
 
+  /*
+   * Add to the "Identifier and publish" step of accordion the summary and publish substeps
+   */
+
+  const hasDoi: boolean = hasDoiInfo(submission.doiInfo)
+
+  const idPublishStep = {
+    title: t("identifierPublish"),
+    schemas: [
+      {
+        name: t("identifier"),
+        objectType: ObjectTypes.datacite,
+
+        objects: {
+          ready: hasDoi
+            ? [
+                {
+                  id: submission.submissionId,
+                  displayTitle: t("doiRegistrationInfo"),
+                },
+              ]
+            : [],
+        },
+        required: true,
+      },
+      {
+        name: t("summary"),
+        objectType: t("summary"),
+        objects: { drafts: [], ready: [] },
+        required: true,
+      },
+      {
+        name: t("publishSubmission"),
+        objectType: t("summaryPage.publish"),
+        objects: { drafts: [], ready: [] },
+        required: true,
+      },
+    ],
+  }
+
   const mappedSteps = (
     currentWorkflow?.name === WorkflowTypes.sdsx
       ? [createSubmissionStep, dacPoliciesStep]
       : [createSubmissionStep]
   ).concat(schemaSteps)
 
-  const summaryStep = {
-    title: t("setIdentifierPublish"),
-    schemas: [
-      {
-        objectType: t("summary"), // REPLACE "Add" by "view" with objectype as text to the button (Add summary) inside accordion
-        name: t("summary"), // Text inside accordion by isActive ChevronRightIcon
-        objects: {
-          ready: [],
-        },
-        required: true,
-      },
-    ],
-    actionButtonText: t("summaryButtonText"), // This does place the text in the button
-    disabled: submission.name === "",
-  }
-  if (submission.name !== "") mappedSteps.push(summaryStep)
+  if (submission.name !== "") mappedSteps.push(idPublishStep)
 
   return { mappedSteps }
 }

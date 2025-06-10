@@ -33,7 +33,7 @@ const initialState: InitialState = {
   published: false,
   drafts: [],
   metadataObjects: [],
-  doiInfo: { creators: [], contributors: [], subjects: [] },
+  doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   linkedFolder: "",
 }
 
@@ -252,7 +252,7 @@ export const addDoiInfoToSubmission =
       subjects: modifiedSubjects,
     })
 
-    const response = await submissionAPIService.putDOIInfo(submissionId, modifiedDoiFormDetails)
+    const response = await submissionAPIService.patchDOIInfo(submissionId, modifiedDoiFormDetails)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {

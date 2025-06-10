@@ -12,11 +12,11 @@ import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/
 import WizardDataFolderStep from "components/SubmissionWizard/WizardSteps/WizardDataFolderStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
-import { ValidSteps } from "constants/wizardObject"
+import { ObjectTypes, ValidSteps } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
-import { useAppDispatch } from "hooks"
+import { useAppDispatch, useAppSelector } from "hooks"
 import submissionAPIService from "services/submissionAPI"
 import type { HandlerRef } from "types"
 import { useQuery } from "utils"
@@ -28,7 +28,8 @@ import Page404 from "views/ErrorPages/Page404"
 const getStepContent = (
   wizardStep: number,
   createSubmissionFormRef: HandlerRef,
-  objectFormRef: HandlerRef
+  objectFormRef: HandlerRef,
+  objectType: string
 ) => {
   switch (wizardStep) {
     case 1:
@@ -38,10 +39,22 @@ const getStepContent = (
     case 3:
       return <WizardDataFolderStep />
     case 4:
-    case 5:
       return <WizardAddObjectStep formRef={objectFormRef} />
-    case 6:
-      return <WizardShowSummaryStep />
+    case 5:
+      // Datacite, Summary and Publish steps
+      switch (objectType.toLowerCase()) {
+        case ObjectTypes.datacite:
+          return <WizardAddObjectStep formRef={objectFormRef} />
+        case ObjectTypes.summary:
+          return <WizardShowSummaryStep />
+        case ObjectTypes.publish:
+          return (
+            <div>
+              <h1>FIXME publish page here</h1>
+            </div>
+          )
+      }
+      break
     default:
       // An empty page
       break
@@ -55,6 +68,7 @@ const getStepContent = (
  */
 const SubmissionWizard: React.FC = () => {
   const dispatch = useAppDispatch()
+  const objectType = useAppSelector(state => state.objectType)
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
@@ -119,7 +133,8 @@ const SubmissionWizard: React.FC = () => {
               {getStepContent(
                 wizardStep,
                 createSubmissionFormRef as RefObject<HTMLFormElement | null>,
-                objectFormRef as RefObject<HTMLDivElement | null>
+                objectFormRef as RefObject<HTMLDivElement | null>,
+                objectType
               )}
             </Paper>
           )}

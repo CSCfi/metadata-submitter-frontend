@@ -20,13 +20,18 @@ import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { resetDraftStatus } from "features/draftStatusSlice"
 import { setFocus } from "features/focusSlice"
-import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { HandlerRef, ObjectInsideSubmissionWithTags, StepItemObject } from "types"
-import { pathWithLocale } from "utils"
+import type {
+  DoiFormDetails,
+  HandlerRef,
+  ObjectInsideSubmissionWithTags,
+  StepItemObject,
+} from "types"
+import { hasDoiInfo, pathWithLocale } from "utils"
 
 const ActionButton = (props: {
   step: number
@@ -128,9 +133,10 @@ const StepItems = (props: {
   }[]
   draft: boolean
   submissionId: string
+  doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
 }) => {
-  const { step, objects, draft, submissionId, objectType } = props
+  const { step, objects, draft, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
   const formState = useAppSelector(state => state.submissionType)
   const draftStatus = useAppSelector(state => state.draftStatus)
@@ -160,6 +166,17 @@ const StepItems = (props: {
           pathname: pathWithLocale(`submission/${submissionId}`),
           search: "step=1",
         })
+        break
+      }
+      case 5: {
+        dispatch(resetCurrentObject())
+        dispatch(setCurrentObject(doiInfo))
+        navigate({
+          pathname: pathWithLocale(`submission/${submissionId}`),
+          search: "step=5",
+        })
+        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+        dispatch(setObjectType(objectType))
         break
       }
       default: {
@@ -316,7 +333,13 @@ const WizardStep = (props: WizardStepProps) => {
         const isActive = currentStepObject.stepObjectType === objectType
         const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
         const buttonText =
-          step === 1 ? t("edit") : objectType === ObjectTypes.file ? t("view") : t("add")
+          step === 1
+            ? t("edit")
+            : objectType === ObjectTypes.file || objectType === "Summary"
+              ? t("view")
+              : objectType === t("summaryPage.publish") || hasDoiInfo(submission.doiInfo)
+                ? t("edit")
+                : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>
@@ -344,6 +367,7 @@ const WizardStep = (props: WizardStepProps) => {
                         objects={objects.ready}
                         draft={false}
                         submissionId={submission.submissionId}
+                        doiInfo={submission.doiInfo}
                         objectType={objectType}
                       />
                     )}

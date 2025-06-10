@@ -12,6 +12,7 @@
   "delete": "Poista",
   "close": "Sulje",
   "view": "View",
+  "publish": "Julkaise",
   "draft": "Draft",
   "ready": "Ready",
   "saveSubmission": "Save progress and exit",
@@ -184,9 +185,11 @@
     "totalItems": "Tiedostot",
     "lastModified": "Muokattu viimeksi"
   },
-  "setIdentifierPublish": "Identifier and publish",
-  "summary": "Summary",
-  "summaryButtonText": "View",
+  "identifierPublish": "Identifier and publish",
+  "identifier": "Tunniste",
+  "doiRegistrationInfo": "DOI registration information",
+  "summary": "Yhteenveto",
+  "publishSubmission": "Publish submission",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",

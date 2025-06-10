@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Placed the accordion steps "Identifier", "Summary" and "Publish" under the step 5 (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
+- Removed name of object from accordion buttons "view" and "add"
+- Moved Summary step along with datacite step to a schema substeps (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
+- Removed the text "Identifier and Publish" from translation files (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - Migrate React related packages and codes to version 19 (#1026)
 - Updated PUT request to PATCH request for /submissions endpoints as a reflection of backend's changes
 - Changed all Big picture related words to "Bigpicture"
@@ -35,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) The link to identifier form (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - Fixed formatting scripts and formatted files (#1033)
 - (users) Pagination menu overlap and style fixes (#1031)
 - Modified the way we check for missing fields when submitting a form in relation to changes in react-hook-form v7.55.0
@@ -51,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) The accordion to contain "5. Identifier and Publish" step instead of "Datacite" (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - (users) Icons for support and language buttons
 - a constant for datacite
 - (users) New form for selecting and saving DAC and Policies from REMS/SD Apply to submission

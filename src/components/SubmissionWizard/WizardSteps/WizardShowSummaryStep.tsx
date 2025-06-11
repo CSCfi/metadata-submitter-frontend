@@ -125,20 +125,27 @@ const WizardShowSummaryStep: React.FC = () => {
         const objects = stepItem.objects
         if (objects) {
           const objectsList = Object.values(objects).flat()
-          return objectsList.map(item => {
-            const draft = item.objectData?.schema.includes("draft-")
-            return {
-              id: item.id,
-              status: draft ? t("draft") : t("draft"),
-              name: item.displayTitle,
-              action: draft ? t("Please mark as ready") : "",
-              step,
-              draft,
-              objectType: stepItem.objectType,
-              objectData: item.objectData,
-              objectsList,
-            }
-          })
+          return objectsList
+            .filter(item => !!item && !!item.id)
+            .map(item => {
+              const draft = item.objectData?.schema?.includes("draft-")
+              const name =
+                item.displayTitle ||
+                item.objectData?.tags?.fileName ||
+                item.objectData?.accessionId ||
+                item.id
+              return {
+                id: item.id,
+                status: draft ? t("draft") : t("ready"),
+                name,
+                action: draft ? t("Please mark as ready") : "",
+                step,
+                draft,
+                objectType: stepItem.objectType,
+                objectData: item.objectData,
+                objectsList,
+              }
+            })
         }
         return []
       }) || []
@@ -150,7 +157,7 @@ const WizardShowSummaryStep: React.FC = () => {
     return rows.filter(row => {
       const statusText = row.draft ? t("draft") : t("ready")
       return (
-        row.name.toLowerCase().includes(filteringText.toLowerCase()) ||
+        String(row.name).toLowerCase().includes(filteringText.toLowerCase()) ||
         statusText.toLowerCase().includes(filteringText.toLowerCase())
       )
     })

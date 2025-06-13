@@ -24,7 +24,10 @@ const parseErrorSchema = (
             propertyName = "",
           }: ErrorObject<string, Record<string, unknown>, unknown>
         ) => {
-          const path = instancePath.replace(/\//g, ".").replace(/^\./, "") || propertyName
+          const path =
+            instancePath.replace(/\//g, ".").replace(/^\./, "") ||
+            propertyName ||
+            params?.missingProperty?.toString()
           return {
             ...previous,
             ...(path

@@ -1388,10 +1388,6 @@ packages:
       '@emotion/styled':
         optional: true
 
-<<<<<<< HEAD
-  '@mui/x-internals@8.5.0':
-    resolution: {integrity: sha512-Ef4KJij1pBGk6/xILyVZHf76tcuRpJIX30k4Ghklsd5QJujZ9ENCGAjvd7aWRAFAs5p3ffn0H8UDESoIcroj1Q==}
-=======
   '@mui/x-date-pickers@8.4.0':
     resolution: {integrity: sha512-x7jI7JnKK25xL3yjD2Z1r86gAWtabKj9ogI2WDKd/v9WwE1VxmDD/NTiXprEZFo9psPOoqr+juPGDz5Cb2v7jw==}
     engines: {node: '>=14.0.0'}
@@ -1429,9 +1425,8 @@ packages:
       moment-jalaali:
         optional: true
 
-  '@mui/x-internals@7.29.0':
-    resolution: {integrity: sha512-+Gk6VTZIFD70XreWvdXBwKd8GZ2FlSCuecQFzm6znwqXg1ZsndavrhG9tkxpxo2fM1Zf7Tk8+HcOO0hCbhTQFA==}
->>>>>>> b89e152 (Update MUI lab to x-date-pickers lib. Update date selection component in DOI form)
+  '@mui/x-internals@8.5.0':
+    resolution: {integrity: sha512-Ef4KJij1pBGk6/xILyVZHf76tcuRpJIX30k4Ghklsd5QJujZ9ENCGAjvd7aWRAFAs5p3ffn0H8UDESoIcroj1Q==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@mui/system': ^5.15.14 || ^6.0.0 || ^7.0.0
@@ -6208,9 +6203,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-<<<<<<< HEAD
-  '@mui/x-internals@8.5.0(@mui/system@7.1.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0)':
-=======
   '@mui/x-date-pickers@8.4.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@mui/material@7.1.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mui/system@7.1.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(moment@2.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@babel/runtime': 7.27.4
@@ -6231,8 +6223,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mui/x-internals@7.29.0(@types/react@19.1.6)(react@19.1.0)':
->>>>>>> b89e152 (Update MUI lab to x-date-pickers lib. Update date selection component in DOI form)
+  '@mui/x-internals@8.5.0(@mui/system@7.1.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0)':
     dependencies:
       '@babel/runtime': 7.27.4
       '@mui/system': 7.1.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0)

@@ -45,6 +45,14 @@
     "linkedPolicies": "Policies linked to DAC",
     "policyTitle": "Policy title"
   },
+  "datacite": {
+    "startDate": "Date or Start Date",
+    "endDate": "End Date",
+    "error": {
+      "date": "Invalid date",
+      "range": "Invalid range"
+    }
+  },
   "formActions": {
     "saveAsDraft": "Save as draft",
     "updateDraft": "Update draft",

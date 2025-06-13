@@ -80,7 +80,10 @@
       }
     },
     "info": {
-      "default": "For some reason, your file is still being saved to our database, please wait. If saving doesn't go through in two minutes, please try saving the file again."
+      "default": "For some reason, your file is still being saved to our database, please wait. If saving doesn't go through in two minutes, please try saving the file again.",
+      "emptyForm": "An empty form cannot be saved. Please fill in the form before saving it.",
+      "requiredFields": "Please fill in all the required fields.",
+      "invalidFields": "Form contains invalid data."
     },
     "success": {
       "submission": {

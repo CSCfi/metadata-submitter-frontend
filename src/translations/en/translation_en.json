@@ -151,6 +151,9 @@
     "connection": {
       "saveDraft": "Connection error, cannot save draft.",
       "updateObject": "Connection error, cannot update object."
+    },
+    "form": {
+      "empty": "must have at least 1 item"
     }
   },
   "errorPages": {

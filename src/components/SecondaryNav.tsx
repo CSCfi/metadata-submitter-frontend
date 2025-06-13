@@ -19,15 +19,6 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
 
-type Project = {
-  projectId: string
-  projectNumber: string
-}
-
-type User = {
-  projects: Project[]
-}
-
 const StyledSecondaryNavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   boxShadow: "none",
@@ -67,7 +58,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 
 const SecondaryNav: React.FC = () => {
   const dispatch = useAppDispatch()
-  const user = useAppSelector((state: RootState) => state.user as User)
+  const user = useAppSelector((state: RootState) => state.user)
   const projectId = useAppSelector((state: RootState) => state.projectId as string)
 
   const handleProjectIdChange = (event: SelectChangeEvent<string>) => {
@@ -90,7 +81,7 @@ const SecondaryNav: React.FC = () => {
       >
         {user.projects.map(project => (
           <StyledMenuItem key={project.projectId} value={project.projectId}>
-            {`Project_${project.projectNumber}`}
+            {`Project_${project.projectId}`}
           </StyledMenuItem>
         ))}
       </Select>

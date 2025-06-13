@@ -7,15 +7,10 @@ import { APIResponse } from "types"
 const api = create({ baseURL: "/v1/users" })
 api.addMonitor(errorMonitor)
 
-const getUserById = async (userID: string): Promise<APIResponse> => {
-  return await api.get(`/${userID}`)
-}
-
-const deleteUserById = async (userID: string): Promise<APIResponse> => {
-  return await api.delete(`/${userID}`)
+const getUser = async (): Promise<APIResponse> => {
+  return await api.get("")
 }
 
 export default {
-  getUserById,
-  deleteUserById,
+  getUser,
 }

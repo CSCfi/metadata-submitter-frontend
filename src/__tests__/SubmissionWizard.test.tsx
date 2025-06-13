@@ -11,14 +11,11 @@ const submissionName = "Submission name"
 const submissionDescription = "Submission description"
 
 const restHandlers = [
-  http.get("/v1/users/current", () => {
+  http.get("/v1/users", () => {
     return HttpResponse.json({
       userId: "001",
       name: "Test User",
-      projects: [
-        { projectId: "PROJECT1", projectNumber: "Project 1" },
-        { projectId: "PROJECT2", projectNumber: "Project 2" },
-      ],
+      projects: [{ projectId: "PROJECT1" }, { projectId: "PROJECT2" }],
     })
   }),
   http.get("/v1/submissions/:submissionId", ({ params }) => {

@@ -147,7 +147,7 @@ const test = base.extend<CommandFixtures>({
           )
         }
 
-        const userResponse = await page.request.get("/v1/users/current")
+        const userResponse = await page.request.get("/v1/users")
 
         if (userResponse.ok()) {
           const userResponseData = await userResponse.json()
@@ -158,7 +158,7 @@ const test = base.extend<CommandFixtures>({
             data: {
               name: "Test generated submission",
               description: "Description for generated submission",
-              projectId: selectedProject.projectId,
+              projectId: selectedProject["project_id"],
               published: false,
               metadataObjects: [],
               drafts: [],

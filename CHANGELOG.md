@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Adapt to backend changes to use JWT token in secure cookie (#1032)
+- Replace endpoint /users/userID with /users to GET the user_id, user_name, and projects (#1032)
 - (users) Placed the accordion steps "Identifier", "Summary" and "Publish" under the step 5 (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - Removed name of object from accordion buttons "view" and "add"
 - Moved Summary step along with datacite step to a schema substeps (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)

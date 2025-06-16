@@ -11,6 +11,7 @@ import Nav from "components/Nav"
 import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
+import { PathsWithoutLogin } from "constants/paths"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectTypes } from "constants/wizardObject"
 import { setLocale } from "features/localeSlice"
@@ -68,7 +69,7 @@ const App: React.FC = () => {
   // Handle initial locale setting
   useEffect(() => {
     getLocale()
-    if (location.pathname === "/") return
+    if (PathsWithoutLogin.includes(location.pathname)) return
     let isMounted = true
     const getSchemas = async () => {
       const response = await schemaAPIService.getAllSchemas()

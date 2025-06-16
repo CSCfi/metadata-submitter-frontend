@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Fixed keyword field value missing from DOI form (#1042)
 - (users) Fixed empty summary view due to undefined items (#1041)
 - (users) The link to identifier form (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - Fixed formatting scripts and formatted files (#1033)

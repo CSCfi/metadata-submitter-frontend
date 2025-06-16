@@ -9,9 +9,9 @@ import { renderWithProviders } from "utils/test-utils"
 const restHandlers = [
   http.get("/v1/users", () => {
     return HttpResponse.json({
-      userId: "001",
-      name: "Test User",
-      projects: [{ projectId: "PROJECT1" }, { projectId: "PROJECT2" }],
+      user_id: "001",
+      user_name: "Test User",
+      projects: [{ project_id: "PROJECT1" }],
     })
   }),
 ]

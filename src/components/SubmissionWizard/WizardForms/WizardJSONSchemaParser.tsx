@@ -778,10 +778,12 @@ const FormTextField = ({
   let watchAutocompleteFieldName = ""
   let prefilledValue: null | undefined = null
 
-  // Case: DOI form - Check if it's <creators>'s and <contributors>'s FullName field in DOI form
-  const isFullNameField =
-    (path[0] === "creators" || path[0] === "contributors") && path[2] === "name"
-  let fullNameValue = "" // Case: DOI form - Creators and Contributors' FullName
+  // Some prefilled fields may be hidden from UI
+  const hiddenTextFields = ["affiliationIdentifier"]
+
+  // Case: DOI form - Check if it's <contributors>'s FullName field in DOI form
+  const isFullNameField = path[0] === "contributors" && path[2] === "name"
+  let fullNameValue = "" // Case: DOI form - Contributors' FullName
 
   let disabled = false // boolean if inputValue is disabled
 
@@ -799,7 +801,7 @@ const FormTextField = ({
       ? get(watchValues, watchAutocompleteFieldName)
       : null
 
-    // If it's <creators>'s and <contributors>'s FullName field, watch the values of GivenName and FamilyName
+    // If it's <contributors>'s FullName field, watch the values of GivenName and FamilyName
     if (isFullNameField) {
       const givenName = getPathName(path, "givenName")
       const givenNameValue = get(watchValues, givenName) || ""
@@ -841,7 +843,7 @@ const FormTextField = ({
   }, [prefilledValue])
 
   React.useEffect(() => {
-    // Set value of <creators>'s and <contributors>'s FullName field with the fullNameValue from givenName and familyName
+    // Set value of <contributors>'s FullName field with the fullNameValue from givenName and familyName
     if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
   }, [isFullNameField, fullNameValue])
 
@@ -868,37 +870,40 @@ const FormTextField = ({
               }
 
               return (
-                <BaselineDiv>
-                  <TextField
-                    {...field}
-                    inputProps={{ "data-testid": name }}
-                    label={label}
-                    id={name}
-                    role="textbox"
-                    error={!!error}
-                    helperText={error?.message}
-                    required={required}
-                    type={type}
-                    multiline={multiLineRowIdentifiers.some(value =>
-                      label.toLowerCase().includes(value)
+                <div style={{ marginBottom: "1rem" }}>
+                  <BaselineDiv
+                    style={hiddenTextFields.includes(lastPathItem) ? { display: "none" } : {}}
+                  >
+                    <TextField
+                      {...field}
+                      slotProps={{ htmlInput: { "data-testid": name } }}
+                      label={label}
+                      id={name}
+                      role="textbox"
+                      error={!!error}
+                      helperText={error?.message}
+                      required={required}
+                      type={type}
+                      multiline={multiLineRowIdentifiers.some(value =>
+                        label.toLowerCase().includes(value)
+                      )}
+                      rows={5}
+                      value={inputValue}
+                      onChange={handleChange}
+                      disabled={disabled}
+                    />
+                    {description && (
+                      <FieldTooltip
+                        title={<DisplayDescription description={description} />}
+                        placement="right"
+                        arrow
+                        describeChild
+                      >
+                        <TooltipIcon />
+                      </FieldTooltip>
                     )}
-                    rows={5}
-                    value={inputValue}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    sx={{ mb: "1rem" }}
-                  />
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
-                </BaselineDiv>
+                  </BaselineDiv>
+                </div>
               )
             }}
             name={name}

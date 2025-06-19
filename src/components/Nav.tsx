@@ -25,6 +25,7 @@ import logo from "../images/csc_logo.svg"
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
 import { Locale } from "constants/locale"
+import { PathsWithoutLogin } from "constants/paths"
 import { setLocale } from "features/localeSlice"
 import { fetchUser, resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
@@ -68,8 +69,6 @@ const NavLinks = styled("nav")(({ theme }) => ({
 type MenuItemProps = {
   currentLocale: string
 }
-
-const pathsWithoutLogin = ["/", "/error400", "/error401", "/error403", "/error404", "/error500"]
 
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
@@ -160,7 +159,7 @@ const LanguageSelector = (props: MenuItemProps) => {
       ? location.pathname.split(`/${currentLocale}/`)[1]
       : location.pathname.replace("/", "")
 
-    if (pathsWithoutLogin.indexOf(location.pathname) === -1) {
+    if (!PathsWithoutLogin.includes(location.pathname)) {
       navigate({ pathname: `/${locale}/${pathWithoutLocale}`, search: location.search })
     }
     dispatch(setLocale(locale))
@@ -337,7 +336,7 @@ const NavigationMenu = () => {
         )}
         <LanguageSelector currentLocale={currentLocale} />
         <SupportSelector />
-        {pathsWithoutLogin.indexOf(location.pathname) === -1 && <NavigationLinks />}
+        {!PathsWithoutLogin.includes(location.pathname) && <NavigationLinks />}
       </NavLinks>
       {dialogOpen && (
         <WizardAlert onAlert={handleAlert} parentLocation="header" alertType={"save"}></WizardAlert>

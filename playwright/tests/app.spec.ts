@@ -120,14 +120,14 @@ test.describe("Basic application flow", () => {
     // Click the "View Summary" button
     await page.getByTestId("View Summary").click()
 
-    // Verify that all summary steps are present
-    const stepTestIds = [
-      "summary-step-1",
-      "summary-step-2",
-      "summary-step-3",
-      "summary-step-4",
-      "summary-step-5",
-    ]
+    /*
+      Verify that all summary steps are present. There are 4 steps in FEGA workflow: 
+      1. Submission details
+      2. Study, DAC and Policy
+      3. Datafolder
+      4. Describe
+    */
+    const stepTestIds = ["summary-step-1", "summary-step-2", "summary-step-3", "summary-step-4"]
 
     for (const stepTestId of stepTestIds) {
       const stepLocator = page.locator(`[data-testid='${stepTestId}']`)
@@ -176,7 +176,9 @@ test.describe("Basic application flow", () => {
     await expect(page.getByText("Submission updated")).toBeVisible()
 
     // Verify that the updated name is displayed
-    await page.goBack()
+    await clickAccordionPanel("Identifier and publish")
+    await page.getByTestId("View Summary").click()
+
     const updatedNameLocator = page
       .locator("[data-field='name']")
       .filter({ hasText: newSubmissionName })

@@ -23,12 +23,11 @@ import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 type CommandFixtures = {
   mockAuthUrl: string
-  subUser: string
-  familyName: string
-  givenName: string
+  mockUser: { sub: string; family: string; given: string }
+  adminUser: { sub: string; family: string; given: string }
   submissionName: string
   resetDB: () => Promise<void>
-  setMockUser: () => Promise<void>
+  setMockUser: (isAdmin: boolean) => Promise<void>
   login: () => Promise<void>
   newSubmission: (workflowType?: string) => Promise<void>
   formActions: (buttonName: string) => Promise<void>
@@ -45,9 +44,16 @@ type CommandFixtures = {
 // Extend base test with our fixtures.
 const test = base.extend<CommandFixtures>({
   mockAuthUrl: process.env.MOCK_AUTH_URL,
-  subUser: process.env.SUB_USER,
-  familyName: process.env.FAMILY_NAME,
-  givenName: process.env.GIVEN_NAME,
+  mockUser: {
+    sub: process.env.SUB_USER ?? "",
+    family: process.env.FAMILY_NAME ?? "",
+    given: process.env.GIVEN_NAME ?? "",
+  },
+  adminUser: {
+    sub: process.env.ADMIN_USER ?? "",
+    family: process.env.ADMIN_FAMILY ?? "",
+    given: process.env.ADMIN_GIVEN ?? "",
+  },
   submissionName: "",
   /* Playwright "use" has the name overlapped with React Hooks "use" and
    * eslint-plugin-react-hooks v5 complains, hence we change to the alias "baseUse" instead.
@@ -60,23 +66,24 @@ const test = base.extend<CommandFixtures>({
     }
     await baseUse(resetDB)
   },
-  setMockUser: async ({ request, mockAuthUrl, subUser, familyName, givenName }, baseUse) => {
-    const setMockUser = async () => {
+  setMockUser: async ({ request, mockAuthUrl, mockUser, adminUser }, baseUse) => {
+    const setMockUser = async isAdmin => {
+      const user = isAdmin ? adminUser : mockUser
       await request.get(mockAuthUrl, {
         params: {
-          sub: subUser,
-          family: familyName,
-          given: givenName,
+          sub: user.sub,
+          family: user.family,
+          given: user.given,
         },
       })
     }
-    await baseUse(setMockUser)
+    await baseUse(isAdmin => setMockUser(isAdmin))
   },
   login: async ({ page }, baseUse) => {
     const login = async () => {
       await page.goto("/")
       await page.getByTestId("login-button").click()
-      await page.waitForLoadState("load", { timeout: 30000 })
+      await page.waitForLoadState("load")
     }
     await baseUse(login)
   },
@@ -97,7 +104,7 @@ const test = base.extend<CommandFixtures>({
   formActions: async ({ page }, baseUse) => {
     const formActions = async buttonName => {
       await page.getByTestId(buttonName).click()
-      await page.waitForLoadState("load", { timeout: 30000 })
+      await page.waitForLoadState("load")
     }
     await baseUse(buttonName => formActions(buttonName))
   },

@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
     "/v1/workflows": proxyTo,
     "/v1/files": proxyTo,
     "/v1/rems": proxyTo,
+    "/v1/api/keys": proxyTo,
   }
 
   return {

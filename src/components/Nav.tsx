@@ -22,6 +22,7 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router"
 import i18n from "../i18n"
 import logo from "../images/csc_logo.svg"
 
+import APIKeysModal from "./APIKeysModal"
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
 import { Locale } from "constants/locale"
@@ -237,6 +238,10 @@ const SupportSelector = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
 
+  const [isOpenKeyModal, setIsOpenKeyModal] = useState(false)
+  const handleOpenKeyModal = () => setIsOpenKeyModal(true)
+  const handleKeyModalClose = () => setIsOpenKeyModal(false)
+
   const handleClick = (event: { currentTarget: HTMLElement }) => {
     setAnchorEl(event.currentTarget)
   }
@@ -299,6 +304,14 @@ const SupportSelector = () => {
             <OpenInNewIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
+        <MenuItem sx={{ width: 1 }}>
+          <Button onClick={handleOpenKeyModal}>
+            <Typography variant="subtitle2" color="secondary" sx={{ fontWeight: 700 }}>
+              {t("createAPIKeys")}
+            </Typography>
+          </Button>
+          <APIKeysModal open={isOpenKeyModal} onClose={handleKeyModalClose} />
+        </MenuItem>
       </Menu>
     </>
   )
@@ -335,7 +348,7 @@ const NavigationMenu = () => {
           </Button>
         )}
         <LanguageSelector currentLocale={currentLocale} />
-        <SupportSelector />
+        {pathsWithoutLogin.indexOf(location.pathname) === -1 && <SupportSelector />}
         {!PathsWithoutLogin.includes(location.pathname) && <NavigationLinks />}
       </NavLinks>
       {dialogOpen && (

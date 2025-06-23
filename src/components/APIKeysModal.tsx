@@ -57,7 +57,7 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
 const KeyTable = styled(Table)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   borderLeft: `0.10rem solid ${theme.palette.secondary.light}`,
-  borderTop: `0.25rem solid ${theme.palette.secondary.light}`,
+  borderTop: `0.35rem solid ${theme.palette.secondary.light}`,
   borderRight: `0.10rem solid ${theme.palette.secondary.light}`,
   borderBottom: `0.10rem solid ${theme.palette.secondary.light}`,
   color: theme.palette.secondary.main,
@@ -135,118 +135,122 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
     }
   }
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(newKey.keyValue)
+    setNewKey({ keyName: "", keyValue: "" })
+  }
+
   return (
     <Modal open={open} onClose={handleClose} aria-labelledby="API-key-modal">
       <StyledContainer>
-        <Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography
-              variant="h5"
-              role="heading"
-              color="secondary"
-              sx={{ mb: "2rem", fontWeight: 700 }}
-            >
-              {t("apiKeys.createAPIKeysTitle", { serviceTitle: t("serviceTitle") })}
-            </Typography>
-
-            <Button onClick={handleClose} startIcon={<CloseIcon />} sx={{ pt: 0, mt: 0 }}>
-              <Typography variant={"subtitle1"}>{t("close")}</Typography>
-            </Button>
-          </Box>
-          <Typography variant="subtitle1">{t("apiKeys.nameAPIKey")}</Typography>
-
-          <TextField
-            error={!isUnique || isEmptyName}
-            size="small"
-            placeholder={t("apiKeys.keyName")}
-            required={true}
-            margin="dense"
-            onChange={e => handleGetName(e)}
-            value={newKey.keyName}
-            helperText={!isUnique && t("apiKeys.keyMustBeUnique")}
-          />
-
-          <Button
-            sx={{ my: "1.5rem" }}
-            size="medium"
-            variant="contained"
-            type="submit"
-            aria-label="Create API key"
-            data-testid="apikey"
-            onClick={() => handleCreateKey()}
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography
+            variant="h5"
+            role="heading"
+            color="secondary"
+            sx={{ mb: "2rem", fontWeight: 700 }}
           >
-            {t("apiKeys.createKey")}
-          </Button>
-
-          {newKey.keyValue !== "" && (
-            <>
-              <Typography variant="subtitle2" sx={{ px: "2rem", my: "1rem" }}>
-                {t("apiKeys.latestKey")}
-              </Typography>
-              <KeyTable size="small">
-                <TableBody>
-                  <TableRow>
-                    <TableCell width="25%">{newKey.keyName}</TableCell>
-                    <TableCell width="60%" sx={{ wordWrap: "break-word" }}>
-                      {newKey.keyValue}
-                    </TableCell>
-                    <TableCell align="right" sx={{ p: 0 }}>
-                      <Button
-                        sx={{ m: 0 }}
-                        size="small"
-                        type="submit"
-                        aria-label="Create API key"
-                        data-testid="apikey"
-                        onClick={() => navigator.clipboard.writeText(newKey.keyValue)}
-                        startIcon={<ContentCopyIcon fontSize="large" />}
-                      >
-                        <Typography variant={"subtitle1"}>{t("copy")}</Typography>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </KeyTable>
-              <APIKeyAlert
-                icon={<WarningIcon fontSize="large" />}
-                variant="outlined"
-                severity="warning"
-                sx={{ my: "1.5rem", py: "0.5rem", pl: "2rem", pr: "4rem" }}
-              >
-                {t("apiKeys.keyStoreWarning")}
-              </APIKeyAlert>
-            </>
-          )}
-          <Typography variant="subtitle2" sx={{ px: "2rem", pt: "1.5rem", my: "1rem" }}>
-            {t("apiKeys.activeKeys")}
+            {t("apiKeys.createAPIKeysTitle", { serviceTitle: t("serviceTitle") })}
           </Typography>
-          {isLoading ? (
-            <CircularProgress color="primary" />
-          ) : apiKeys?.length > 0 ? (
-            <KeyTable size="small" aria-label="key table">
+
+          <Button onClick={handleClose} startIcon={<CloseIcon />} sx={{ pt: 0, mt: 0 }}>
+            <Typography variant={"subtitle1"}>{t("close")}</Typography>
+          </Button>
+        </Box>
+        <Typography variant="subtitle1">{t("apiKeys.nameAPIKey")}</Typography>
+
+        <TextField
+          error={!isUnique || isEmptyName}
+          size="small"
+          placeholder={t("apiKeys.keyName")}
+          required={true}
+          margin="dense"
+          onChange={e => handleGetName(e)}
+          onKeyDown={e => e.stopPropagation()}
+          value={newKey.keyName}
+          helperText={!isUnique && t("apiKeys.keyMustBeUnique")}
+        />
+
+        <Button
+          sx={{ my: "1.5rem" }}
+          size="medium"
+          variant="contained"
+          type="submit"
+          aria-label="Create API key"
+          data-testid="apikey"
+          onClick={() => handleCreateKey()}
+        >
+          {t("apiKeys.createKey")}
+        </Button>
+
+        {newKey.keyValue !== "" && (
+          <>
+            <Typography variant="subtitle2" sx={{ px: "2rem", my: "1rem" }}>
+              {t("apiKeys.latestKey")}
+            </Typography>
+            <KeyTable size="small">
               <TableBody>
-                {apiKeys.map(akey => (
-                  <TableRow key={akey}>
-                    <TableCell>{akey}</TableCell>
-                    <TableCell align="right">
-                      <Button onClick={() => handleDelete(akey)}>
-                        <DeleteOutlineIcon />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </KeyTable>
-          ) : (
-            <KeyTable>
-              <TableBody>
-                <TableRow sx={{ bgcolor: theme => theme.palette.primary.lightest }}>
-                  <TableCell>{t("apiKeys.noAPIKeys")}</TableCell>
+                <TableRow>
+                  <TableCell width="25%">{newKey.keyName}</TableCell>
+                  <TableCell width="60%" sx={{ wordWrap: "break-word" }}>
+                    {newKey.keyValue}
+                  </TableCell>
+                  <TableCell align="right" sx={{ p: 0 }}>
+                    <Button
+                      sx={{ m: 0 }}
+                      size="small"
+                      type="submit"
+                      aria-label="Create API key"
+                      data-testid="apikey"
+                      onClick={() => handleCopy()}
+                      startIcon={<ContentCopyIcon fontSize="large" />}
+                    >
+                      <Typography variant={"subtitle1"}>{t("copy")}</Typography>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </KeyTable>
-          )}
-          {/* } */}
-        </Box>
+            <APIKeyAlert
+              icon={<WarningIcon fontSize="large" />}
+              variant="outlined"
+              severity="warning"
+              sx={{ my: "1.5rem", py: "0.5rem", pl: "2rem", pr: "4rem" }}
+            >
+              {t("apiKeys.keyStoreWarning")}
+            </APIKeyAlert>
+          </>
+        )}
+        <Typography variant="subtitle2" sx={{ px: "2rem", pt: "1.5rem", my: "1rem" }}>
+          {t("apiKeys.activeKeys")}
+        </Typography>
+        {isLoading ? (
+          <CircularProgress color="primary" />
+        ) : apiKeys?.length > 0 ? (
+          <KeyTable size="small" aria-label="key table">
+            <TableBody>
+              {apiKeys.map(apikey => (
+                <TableRow key={apikey}>
+                  <TableCell>{apikey}</TableCell>
+                  <TableCell align="right">
+                    <Button sx={{ pt: 0, mt: 0 }} onClick={() => handleDelete(apikey)}>
+                      <DeleteOutlineIcon fontSize="large" sx={{ mr: "1rem" }} />
+                      <Typography variant={"subtitle1"}>{t("delete")}</Typography>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </KeyTable>
+        ) : (
+          <KeyTable>
+            <TableBody>
+              <TableRow sx={{ bgcolor: theme => theme.palette.primary.lightest }}>
+                <TableCell>{t("apiKeys.noAPIKeys")}</TableCell>
+              </TableRow>
+            </TableBody>
+          </KeyTable>
+        )}
       </StyledContainer>
     </Modal>
   )

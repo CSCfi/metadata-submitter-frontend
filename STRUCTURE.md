@@ -76,7 +76,6 @@ export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: Ob
 ```
 
 - import and reuse the data types in different files:
-
   - Reuse type `ObjectInsideSubmissionWithTags` consequently in both `WizardComponents/WizardAlert` and `WizardSteps/WizardShowSummaryStep`:
 
   ```

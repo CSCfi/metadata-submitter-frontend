@@ -55,4 +55,20 @@ describe("Test form render by custom schema", () => {
     })
     await waitFor(() => screen.getByText("must be integer"))
   })
+
+  test("should detect empty required field and not submit", async () => {
+    const integerField = (await waitFor(() =>
+      screen.getByTestId("integerField")
+    )) as HTMLInputElement
+    expect(integerField).toBeInTheDocument()
+
+    const submitButton = screen.getByRole("button", { name: "submit" })
+
+    await waitFor(() => {
+      fireEvent.blur(integerField)
+      fireEvent.click(submitButton)
+    })
+    expect(onSubmit).not.toHaveBeenCalled()
+    await waitFor(() => screen.getByText("must have required property integerField"))
+  })
 })

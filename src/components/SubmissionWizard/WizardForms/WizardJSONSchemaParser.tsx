@@ -1636,7 +1636,7 @@ const FormArray = ({
   const { control } = useForm()
 
   const {
-    register,
+    unregister,
     getValues,
     setValue,
     formState: { isSubmitted },
@@ -1645,8 +1645,8 @@ const FormArray = ({
 
   const { fields, append, remove } = useFieldArray({ control, name })
 
-  const [isValid, setValid] = React.useState(false)
   const [formFields, setFormFields] = React.useState<Record<"id", string>[] | null>(null)
+  const { t } = useTranslation()
 
   // Append the correct values to the equivalent fields when editing form
   // This applies for the case: "fields" does not get the correct data (empty array) although there are values in the fields
@@ -1685,14 +1685,17 @@ const FormArray = ({
 
   // Clear required field array error and append
   const handleAppend = () => {
-    setValid(true)
     clearErrors([name])
     append({})
   }
 
   const handleRemove = (index: number) => {
-    // Re-register hidden input if all field arrays are removed
-    if (index === 0) setValid(false)
+    // Unregister field if removing last item: empty array isn't flagged as missing or invalid
+    if (index === 0 && getValues(name)?.length <= 1) {
+      remove()
+      unregister(name)
+      return
+    }
     // Set the correct values according to the name path when removing a field
     const values = getValues(name)
     const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
@@ -1713,9 +1716,6 @@ const FormArray = ({
       <Grid size={{ xs: 12, md: 4 }}>
         {
           <FormArrayTitle square={true} elevation={0} level={level}>
-            {required && !isValid && (
-              <input hidden={true} value="form-array-required" {...register(name)} />
-            )}
             <Typography
               key={`${name}-header`}
               variant={"subtitle1"}
@@ -1725,10 +1725,10 @@ const FormArray = ({
             >
               {label}
               {required ? "*" : null}
-              {required && !isValid && formFields?.length === 0 && isSubmitted && (
+              {required && formFields?.length === 0 && isSubmitted && (
                 <span>
                   <FormControl error>
-                    <FormHelperText>must have at least 1 item</FormHelperText>
+                    <FormHelperText>{t("errors.form.empty")}</FormHelperText>
                   </FormControl>
                 </span>
               )}

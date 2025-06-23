@@ -24,7 +24,10 @@ const parseErrorSchema = (
             propertyName = "",
           }: ErrorObject<string, Record<string, unknown>, unknown>
         ) => {
-          const path = instancePath.replace(/\//g, ".").replace(/^\./, "") || propertyName
+          const path =
+            instancePath.replace(/\//g, ".").replace(/^\./, "") ||
+            propertyName ||
+            params?.missingProperty?.toString()
           return {
             ...previous,
             ...(path
@@ -67,6 +70,19 @@ export const WizardAjvResolver = (validationSchema: Record<string, unknown>, loc
   }
   const ajv = new Ajv2020({ allErrors: true, coerceTypes: true, strict: false })
   addFormats(ajv, { mode: "fast", formats: ["email", "uri", "date-time"], keywords: true })
+  // Datacite date format check doesn't exist out of the box
+  ajv.addFormat("rkms-iso8601-date", {
+    type: "string",
+    validate: dateStr => {
+      const validate = (date: string) => {
+        // We only accept YYYY-MM-DD
+        const regex = /^\d{4}-\d{2}-\d{2}$/
+        return !!(regex.test(date) && new Date(date))
+      }
+      const [start, end] = dateStr.split("/")
+      return validate(start) && (!end || (validate(end) && new Date(end) > new Date(start)))
+    },
+  })
   return async (values: Record<string, unknown>) => {
     const validate = ajv.compile(validationSchema)
     const cleanedValues = JSONSchemaParser.cleanUpFormValues(values)

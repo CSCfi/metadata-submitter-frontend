@@ -16,7 +16,7 @@ import Ajv2020 from "ajv/dist/2020"
 import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, SubmitHandler } from "react-hook-form"
-import type { UseFormReturn } from "react-hook-form"
+import type { FieldErrors, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
@@ -299,6 +299,7 @@ const FormContent = ({
   ref,
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const alert = useAppSelector(state => state.alert)
   const clearForm = useAppSelector(state => state.clearForm)
@@ -431,11 +432,27 @@ const FormContent = ({
       )
   }
 
+  const handleValidationErrors = (errors: FieldErrors) => {
+    const missingRequired = Object.values(errors).some(err =>
+      err?.message?.toString().includes("required")
+    )
+    const message = missingRequired
+      ? t("snackbarMessages.info.requiredFields")
+      : t("snackbarMessages.info.invalidFields")
+    dispatch(
+      updateStatus({
+        status: ResponseStatus.info,
+        helperText: message,
+      })
+    )
+  }
+
   /*
    * Logic for auto-save feature.
    * We use setDraftAutoSaveAllowed state change to render form before save.
    * This helps with getting current accession ID and form data without rendering on every timer increment.
    */
+
   const startTimer = () => {
     autoSaveTimer.current = setInterval(() => {
       timer = timer + 1
@@ -479,7 +496,7 @@ const FormContent = ({
     dispatch(
       updateStatus({
         status: ResponseStatus.info,
-        helperText: "An empty form cannot be saved. Please fill in the form before saving it.",
+        helperText: t("snackbarMessages.info.emptyForm"),
       })
     )
   }
@@ -563,7 +580,10 @@ const FormContent = ({
         refForm="hook-form"
         onClickSaveDraft={() => handleSaveDraft()}
         onClickSubmit={() => resetTimer()}
-        onClickSaveDOI={methods.handleSubmit(async data => handleDOISubmit(data as DoiFormDetails))}
+        onClickSaveDOI={methods.handleSubmit(
+          async data => handleDOISubmit(data as DoiFormDetails),
+          handleValidationErrors
+        )}
         onClickClearForm={() => handleClearForm()}
         onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}

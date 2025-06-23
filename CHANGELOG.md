@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Fixed required field validation in DOI form not working (#1055)
 - Fix a number of failing e2e tests
 - Fix error page 401 loop when entering protected routes (#1059)
 - (users) Fixed keyword field value missing from DOI form (#1042)
@@ -63,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Added date validation for DOI form (#1058)
+- (users) Added a warning alert when not DOI form has validation errors (#1045)
 - (users) The accordion to contain "5. Identifier and Publish" step instead of "Datacite" (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)
 - (users) Icons for support and language buttons
 - a constant for datacite

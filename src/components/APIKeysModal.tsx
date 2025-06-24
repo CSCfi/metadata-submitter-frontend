@@ -20,6 +20,9 @@ import MuiTextField from "@mui/material/TextField"
 import { Container, styled } from "@mui/system"
 import { useTranslation } from "react-i18next"
 
+import { ResponseStatus } from "constants/responseStatus"
+import { updateStatus } from "features/statusMessageSlice"
+import { useAppDispatch } from "hooks"
 import apiKeysService from "services/apiKeysAPI"
 
 type APIKeyModalProps = {
@@ -84,6 +87,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
   const [isUnique, setIsUnique] = useState(true)
 
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     const getApiKeys = async () => {
@@ -91,7 +95,12 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
       if (response.ok) {
         setApikeys(response.data.map(key => key.key_id))
       } else {
-        console.log("OOPS", response)
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: response,
+          })
+        )
       }
     }
     getApiKeys()
@@ -120,7 +129,12 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
         setNewKey({ keyName: newKey.keyName, keyValue: response.data })
         setApikeys(apiKeys.concat([newKey.keyName]))
       } else {
-        console.log("OOPS", response)
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: response,
+          })
+        )
       }
     } else setIsUnique(false)
   }
@@ -131,7 +145,12 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
       setApikeys(apiKeys.filter(item => item !== key))
       setNewKey({ keyName: "", keyValue: "" })
     } else {
-      console.log("OOPS deletion failed with key ", key, response)
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: response,
+        })
+      )
     }
   }
 

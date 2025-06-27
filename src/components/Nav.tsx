@@ -22,7 +22,6 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router"
 import i18n from "../i18n"
 import logo from "../images/csc_logo.svg"
 
-//import APIKeysModal from "./APIKeysModal"
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
 import { Locale } from "constants/locale"
@@ -115,9 +114,7 @@ const NavigationLinks = () => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "user-setting-button",
-        }}
+        slotProps={{ list: { "aria-labelledby": "user-setting-button" } }}
       >
         <MenuItem
           component="a"
@@ -206,9 +203,7 @@ const LanguageSelector = (props: MenuItemProps) => {
           vertical: "bottom",
           horizontal: "left",
         }}
-        MenuListProps={{
-          "aria-labelledby": "lang-selector",
-        }}
+        slotProps={{ list: { "aria-labelledby": "lang-selector" } }}
       >
         <MenuItem onClick={() => changeLang("en")} data-testid="en-lang">
           <Typography
@@ -237,10 +232,6 @@ const SupportSelector = ({ handleOpenKeyModal }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
-
-  // const [isOpenKeyModal, setIsOpenKeyModal] = useState(false)
-  // const handleOpenKeyModal = () => setIsOpenKeyModal(true)
-  // const handleKeyModalClose = () => setIsOpenKeyModal(false)
 
   const handleClick = (event: { currentTarget: HTMLElement }) => {
     setAnchorEl(event.currentTarget)
@@ -283,9 +274,9 @@ const SupportSelector = ({ handleOpenKeyModal }) => {
           vertical: "top",
           horizontal: "left",
         }}
-        MenuListProps={{ "aria-labelledby": "suport-selector" }}
+        slotProps={{ list: { "aria-labelledby": "suport-selector" } }}
       >
-        <MenuItem sx={{ width: 1 }}>
+        <MenuItem sx={{ width: 1 }} onClick={() => handleClose()}>
           <Link
             href="https://docs.csc.fi/data/sensitive-data/"
             target="_blank"
@@ -304,7 +295,7 @@ const SupportSelector = ({ handleOpenKeyModal }) => {
             <OpenInNewIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem sx={{ width: 1 }}>
+        <MenuItem sx={{ width: 1 }} onClick={() => handleClose()}>
           <Button onClick={handleOpenKeyModal}>
             <Typography variant="subtitle2" color="secondary" sx={{ fontWeight: 700 }}>
               {t("createAPIKeys")}
@@ -347,7 +338,7 @@ const NavigationMenu = ({ handleOpenKeyModal }) => {
           </Button>
         )}
         <LanguageSelector currentLocale={currentLocale} />
-        {pathsWithoutLogin.indexOf(location.pathname) === -1 && (
+        {!PathsWithoutLogin.includes(location.pathname) && (
           <SupportSelector handleOpenKeyModal={handleOpenKeyModal} />
         )}
         {!PathsWithoutLogin.includes(location.pathname) && <NavigationLinks />}
@@ -371,7 +362,7 @@ const NavToolBar = ({ handleOpenKeyModal }) => {
     </Toolbar>
   )
 }
-const Nav: React.FC<{ isFixed: boolean; handleOpenKeyModal }> = ({
+const Nav: React.FC<{ isFixed: boolean; handleOpenKeyModal: () => void }> = ({
   isFixed,
   handleOpenKeyModal,
 }) => {

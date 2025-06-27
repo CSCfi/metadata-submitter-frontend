@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -6,6 +6,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router"
 
 import i18n from "./i18n"
 
+import APIKeysModal from "components/APIKeysModal"
 import Footer from "components/Footer"
 import Nav from "components/Nav"
 import SecondaryNav from "components/SecondaryNav"
@@ -30,11 +31,14 @@ import Home from "views/Home"
 import Login from "views/Login"
 import SubmissionWizard from "views/Submission"
 
-const NavigationMenu = () => {
+const NavigationMenu = ({ handleOpenKeyModal }) => {
   const location = useLocation()
   return (
     <>
-      <Nav isFixed={!location.pathname.includes("/submission")} />
+      <Nav
+        isFixed={!location.pathname.includes("/submission")}
+        handleOpenKeyModal={handleOpenKeyModal}
+      />
       {location.pathname.includes("/home") && <SecondaryNav />}
     </>
   )
@@ -150,10 +154,13 @@ const App: React.FC = () => {
     </Container>
   )
 
+  const [isOpenKeyModal, setIsOpenKeyModal] = useState(false)
+
   return (
     <>
       <CssBaseline />
-      <NavigationMenu />
+      <NavigationMenu handleOpenKeyModal={() => setIsOpenKeyModal(true)} />
+      <APIKeysModal open={isOpenKeyModal} onClose={() => setIsOpenKeyModal(false)} />
       <Routes>
         <Route path="/home" element={<Navigate replace to={`/${locale}/home`} />} />
         <Route

@@ -22,7 +22,7 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router"
 import i18n from "../i18n"
 import logo from "../images/csc_logo.svg"
 
-import APIKeysModal from "./APIKeysModal"
+//import APIKeysModal from "./APIKeysModal"
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
 import { Locale } from "constants/locale"
@@ -233,14 +233,14 @@ const LanguageSelector = (props: MenuItemProps) => {
   )
 }
 
-const SupportSelector = () => {
+const SupportSelector = ({ handleOpenKeyModal }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
 
-  const [isOpenKeyModal, setIsOpenKeyModal] = useState(false)
-  const handleOpenKeyModal = () => setIsOpenKeyModal(true)
-  const handleKeyModalClose = () => setIsOpenKeyModal(false)
+  // const [isOpenKeyModal, setIsOpenKeyModal] = useState(false)
+  // const handleOpenKeyModal = () => setIsOpenKeyModal(true)
+  // const handleKeyModalClose = () => setIsOpenKeyModal(false)
 
   const handleClick = (event: { currentTarget: HTMLElement }) => {
     setAnchorEl(event.currentTarget)
@@ -310,14 +310,13 @@ const SupportSelector = () => {
               {t("createAPIKeys")}
             </Typography>
           </Button>
-          <APIKeysModal open={isOpenKeyModal} onClose={handleKeyModalClose} />
         </MenuItem>
       </Menu>
     </>
   )
 }
 
-const NavigationMenu = () => {
+const NavigationMenu = ({ handleOpenKeyModal }) => {
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()
@@ -348,7 +347,9 @@ const NavigationMenu = () => {
           </Button>
         )}
         <LanguageSelector currentLocale={currentLocale} />
-        {pathsWithoutLogin.indexOf(location.pathname) === -1 && <SupportSelector />}
+        {pathsWithoutLogin.indexOf(location.pathname) === -1 && (
+          <SupportSelector handleOpenKeyModal={handleOpenKeyModal} />
+        )}
         {!PathsWithoutLogin.includes(location.pathname) && <NavigationLinks />}
       </NavLinks>
       {dialogOpen && (
@@ -358,7 +359,7 @@ const NavigationMenu = () => {
   )
 }
 
-const NavToolBar = () => {
+const NavToolBar = ({ handleOpenKeyModal }) => {
   const { t } = useTranslation()
   return (
     <Toolbar disableGutters>
@@ -366,20 +367,23 @@ const NavToolBar = () => {
         <Logo src={logo} alt="CSC_logo" />
       </Link>
       <ServiceTitle variant="h5">{t("serviceTitle")}</ServiceTitle>
-      <NavigationMenu />
+      <NavigationMenu handleOpenKeyModal={() => handleOpenKeyModal()} />
     </Toolbar>
   )
 }
-const Nav: React.FC<{ isFixed: boolean }> = ({ isFixed }) => {
+const Nav: React.FC<{ isFixed: boolean; handleOpenKeyModal }> = ({
+  isFixed,
+  handleOpenKeyModal,
+}) => {
   return (
     <>
       {isFixed ? (
         <NavBar position="fixed">
-          <NavToolBar />
+          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
         </NavBar>
       ) : (
         <NavBar position="relative">
-          <NavToolBar />
+          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
         </NavBar>
       )}
     </>

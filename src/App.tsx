@@ -160,7 +160,9 @@ const App: React.FC = () => {
     <>
       <CssBaseline />
       <NavigationMenu handleOpenKeyModal={() => setIsOpenKeyModal(true)} />
-      <APIKeysModal open={isOpenKeyModal} onClose={() => setIsOpenKeyModal(false)} />
+      {!PathsWithoutLogin.includes(location.pathname) && (
+        <APIKeysModal open={isOpenKeyModal} onClose={() => setIsOpenKeyModal(false)} />
+      )}
       <Routes>
         <Route path="/home" element={<Navigate replace to={`/${locale}/home`} />} />
         <Route

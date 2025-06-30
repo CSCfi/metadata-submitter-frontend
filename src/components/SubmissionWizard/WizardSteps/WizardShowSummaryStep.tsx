@@ -77,7 +77,7 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
   const workflowType = useAppSelector(state => state.workflowType)
-  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
+  const mappedSummarySteps = useAppSelector(state => state.wizardMappedSteps)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -116,9 +116,7 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
-
-  const summarySteps = mappedSteps.slice(0, mappedSteps.length - 1)
-  const rows = summarySteps.flatMap((summaryItem, index) => {
+  const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
     return (
       summaryItem.schemas?.flatMap(stepItem => {
@@ -227,7 +225,7 @@ const WizardShowSummaryStep: React.FC = () => {
           handleClearFilteringText={() => setFilteringText("")}
         />
       </Box>
-      {summarySteps.map((summaryItem, index) => {
+      {mappedSummarySteps.map((summaryItem, index) => {
         const step = index + 1
         const stepRows = filteredRows.filter(row => row.step === step)
 

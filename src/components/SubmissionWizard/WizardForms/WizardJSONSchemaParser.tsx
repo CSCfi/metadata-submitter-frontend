@@ -772,80 +772,35 @@ const FormTextField = ({
 
   // Default Value of input
   const defaultValue = getDefaultValue(name, nestedField)
-
-  // Case: DOI form - Affilation fields to be prefilled
-  const prefilledFields = ["affiliationIdentifier", "schemeUri", "affiliationIdentifierScheme"]
-  let watchAutocompleteFieldName = ""
-  let prefilledValue: null | undefined = null
-
-  // Some prefilled fields may be hidden from UI
-  const hiddenTextFields = ["affiliationIdentifier"]
-
-  // Case: DOI form - Check if it's <contributors>'s FullName field in DOI form
-  const isFullNameField = path[0] === "contributors" && path[2] === "name"
-  let fullNameValue = "" // Case: DOI form - Contributors' FullName
-
-  let disabled = false // boolean if inputValue is disabled
-
   // useWatch to watch any changes in form's fields
   const watchValues = useWatch()
 
-  if (isDOIForm) {
-    watchAutocompleteFieldName =
-      name.includes("affiliation") && prefilledFields.includes(lastPathItem)
-        ? getPathName(path, "name")
-        : ""
-
-    // check changes of value of autocompleteField from watchValues
-    prefilledValue = watchAutocompleteFieldName
-      ? get(watchValues, watchAutocompleteFieldName)
-      : null
-
-    // If it's <contributors>'s FullName field, watch the values of GivenName and FamilyName
-    if (isFullNameField) {
-      const givenName = getPathName(path, "givenName")
-      const givenNameValue = get(watchValues, givenName) || ""
-      const familyName = getPathName(path, "familyName")
-      const familyNameValue =
-        get(watchValues, familyName)?.length > 0 ? get(watchValues, familyName).concat(",") : ""
-      // Return value for FullName field
-      fullNameValue = `${familyNameValue}${givenNameValue}`
-    }
-
-    // Conditions to disable input field: disable editing option if the field is rendered as prefilled
-    disabled =
-      (prefilledFields.includes(lastPathItem) && prefilledValue !== null) ||
-      isFullNameField ||
-      (defaultValue !== "" && name.includes("formats"))
-  }
+  // Case: DOI form - Affilation identifier to be prefilled and hidden
+  const prefilledHiddenFields = ["affiliationIdentifier"]
+  const isPrefilledHiddenField = isDOIForm && prefilledHiddenFields.includes(lastPathItem)
 
   /*
    * Handle DOI form values
    */
   const { setValue, getValues } = useFormContext()
+  const watchAutocompleteFieldName = isPrefilledHiddenField ? getPathName(path, "name") : null
+  const prefilledValue = watchAutocompleteFieldName
+    ? get(watchValues, watchAutocompleteFieldName)
+    : null
 
   // Check value of current name path
   const val = getValues(name)
 
-  // Set values for Affiliations' fields if autocompleteField exists
   React.useEffect(() => {
-    if (prefilledValue && !val && isDOIForm) {
-      lastPathItem === prefilledFields[0] ? setValue(name, autocompleteField) : null
-      lastPathItem === prefilledFields[1] ? setValue(name, "https://ror.org") : null
-      lastPathItem === prefilledFields[2] ? setValue(name, "ROR") : null
+    if (!isPrefilledHiddenField) return
+    if (prefilledValue && !val) {
+      // Set value for prefilled field if autocompleteField exists
+      setValue(name, autocompleteField)
+    } else if (prefilledValue === undefined && val) {
+      // Remove values if autocompleteField is deleted
+      setValue(name, "")
     }
   }, [autocompleteField, prefilledValue])
-
-  // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
-  React.useEffect(() => {
-    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && isDOIForm)
-      setValue(name, "")
-  }, [prefilledValue])
-
-  React.useEffect(() => {
-    // Set value of <contributors>'s FullName field with the fullNameValue from givenName and familyName
-    if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
-  }, [isFullNameField, fullNameValue])
 
   return (
     <ConnectForm>
@@ -857,7 +812,6 @@ const FormTextField = ({
             render={({ field, fieldState: { error } }) => {
               const inputValue =
                 (watchAutocompleteFieldName && typeof val !== "object" && val) ||
-                fullNameValue ||
                 (typeof field.value !== "object" && field.value) ||
                 ""
 
@@ -871,9 +825,7 @@ const FormTextField = ({
 
               return (
                 <div style={{ marginBottom: "1rem" }}>
-                  <BaselineDiv
-                    style={hiddenTextFields.includes(lastPathItem) ? { display: "none" } : {}}
-                  >
+                  <BaselineDiv style={isPrefilledHiddenField ? { display: "none" } : {}}>
                     <TextField
                       {...field}
                       slotProps={{ htmlInput: { "data-testid": name } }}
@@ -890,7 +842,7 @@ const FormTextField = ({
                       rows={5}
                       value={inputValue}
                       onChange={handleChange}
-                      disabled={disabled}
+                      disabled={defaultValue !== "" && name.includes("formats")}
                     />
                     {description && (
                       <FieldTooltip

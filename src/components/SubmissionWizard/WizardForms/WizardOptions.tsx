@@ -1,3 +1,4 @@
+/* XML upload is disabled for MVP */
 import React from "react"
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
@@ -26,25 +27,27 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 type WizardOptionsProps = {
   objectType: string
   onClearForm: () => void
-  onOpenXMLModal: () => void
+  //onOpenXMLModal: () => void
   onDeleteForm: () => void
-  disableUploadXML?: boolean
+  //disableUploadXML?: boolean
 }
 
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
-  const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
+  //const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
+  const { objectType, onClearForm, onDeleteForm } = props
   const { t } = useTranslation()
 
   const options =
     objectType !== ObjectTypes.datacite
-      ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+      ? // ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
+        [t("formActions.clearForm"), t("formActions.deleteForm")]
       : [t("formActions.clearForm")]
 
-  const shouldDisableXMLModal = [
+  /*const shouldDisableXMLModal = [
     ObjectTypes.datacite,
     ObjectTypes.dacPolicies,
     ObjectTypes.file,
-  ].includes(objectType)
+  ].includes(objectType)*/
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -56,19 +59,19 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   const handleClose = (e, option?: string) => {
     setAnchorEl(null)
 
-    if (option === options[0]) {
+    /*if (option === options[0]) {
       if (shouldDisableXMLModal) {
         onClearForm()
       } else {
         onOpenXMLModal()
       }
-    }
+    }*/
 
-    if (option === options[1]) {
+    if (option === options[0]) {
       onClearForm()
     }
 
-    if (option === options[2]) {
+    if (option === options[1]) {
       onDeleteForm()
     }
   }
@@ -105,7 +108,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
           <StyledMenuItem
             key={option}
             selected={index === 0}
-            disabled={index === 0 && disableUploadXML}
+            //disabled={index === 0 && disableUploadXML}
             onClick={e => handleClose(e, option)}
             data-testid={option}
           >

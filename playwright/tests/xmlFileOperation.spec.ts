@@ -1,4 +1,5 @@
-﻿import { expect } from "@playwright/test"
+﻿/* XML upload is disabled for MVP */
+/*import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
@@ -36,4 +37,4 @@ test.describe("XML File Operation", () => {
   })
 })
 
-export {}
+export {}*/

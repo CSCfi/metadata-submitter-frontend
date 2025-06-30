@@ -1,3 +1,4 @@
+/* XML upload is disabled for MVP */
 /* Breaking change for JSON schema version draft-2020-12:
  * https://ajv.js.org/json-schema.html#draft-2020-12
  */
@@ -27,7 +28,7 @@ import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
 import WizardOptions from "./WizardOptions"
-import WizardXMLUploadModal from "./WizardXMLUploadModal"
+//import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
@@ -42,7 +43,7 @@ import {
   replaceObjectInSubmission,
   addDoiInfoToSubmission,
 } from "features/wizardSubmissionSlice"
-import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
+//import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
@@ -125,7 +126,7 @@ type CustomCardHeaderProps = {
   onClickSubmit: () => void
   onClickSaveDOI: () => Promise<void>
   onClickClearForm: () => void
-  onOpenXMLModal: () => void
+  //onOpenXMLModal: () => void
   onDeleteForm: () => void
   refForm: string
 }
@@ -156,7 +157,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     onClickSubmit,
     onClickSaveDOI,
     onClickClearForm,
-    onOpenXMLModal,
+    //onOpenXMLModal,
     onDeleteForm,
   } = props
 
@@ -173,11 +174,11 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
-        onOpenXMLModal={onOpenXMLModal}
+        //onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
-        disableUploadXML={
+        /*disableUploadXML={
           objectType === ObjectTypes.study && (hasDraftObject || hasSubmittedObject)
-        }
+        }*/
       />
       <ButtonGroup>
         <Button
@@ -219,7 +220,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <WizardOptions
         objectType={objectType}
         onClearForm={onClickClearForm}
-        onOpenXMLModal={onOpenXMLModal}
+        //onOpenXMLModal={onOpenXMLModal}
         onDeleteForm={onDeleteForm}
       />
       <ButtonGroup>
@@ -535,9 +536,9 @@ const FormContent = ({
     }
   }
 
-  const handleXMLModalOpen = () => {
+  /*const handleXMLModalOpen = () => {
     dispatch(setXMLModalOpen())
-  }
+  }*/
 
   const handleDeleteForm = async () => {
     if (currentObjectId) {
@@ -585,7 +586,7 @@ const FormContent = ({
           handleValidationErrors
         )}
         onClickClearForm={() => handleClearForm()}
-        onOpenXMLModal={() => handleXMLModalOpen()}
+        //onOpenXMLModal={() => handleXMLModalOpen()}
         onDeleteForm={() => handleDeleteForm()}
       />
       <Form
@@ -611,7 +612,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
-  const openedXMLModal = useAppSelector(state => state.openedXMLModal)
+  //const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
   const { hasDraftObject, hasSubmittedObject } = checkObjectStatus(submission, objectType)
 
@@ -798,12 +799,12 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           ref={ref}
         />
         {submitting && <LinearProgress />}
-        <WizardXMLUploadModal
+        {/*<WizardXMLUploadModal
           open={openedXMLModal}
           handleClose={() => {
             dispatch(resetXMLModalOpen())
           }}
-        />
+        />*/}
       </Container>
     </>
   )

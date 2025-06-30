@@ -1,3 +1,4 @@
+﻿/* XML upload is disabled for MVP */
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import { styled } from "@mui/system"
@@ -41,7 +42,8 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
         <Grid size={{ xs: 12 }}>
           {objectType === "" ? (
             <ObjectInfo>
-              <p>Add objects by clicking the name, then fill form or upload XML File.</p>
+              {/*<p>Add objects by clicking the name, then fill form or upload XML File.</p>*/}
+              <p>Add objects by clicking the name, then fill a form.</p>
               <p>You can also add objects and edit them after saving your draft.</p>
             </ObjectInfo>
           ) : objectType === ObjectTypes.dacPolicies ? (

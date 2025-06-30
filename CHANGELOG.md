@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) added Identifier step to summary view (#1052)
 - (users) Added date validation for DOI form (#1058)
 - (users) Added a warning alert when not DOI form has validation errors (#1045)
 - (users) The accordion to contain "5. Identifier and Publish" step instead of "Datacite" (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/979)

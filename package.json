@@ -11,7 +11,7 @@
     "@mui/codemod": "^7.0.0",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
-    "@mui/system": "^7.0.0",
+    "@mui/system": "^7.2.0",
     "@mui/x-data-grid": "^8.0.0",
     "@mui/x-date-pickers": "^8.4.0",
     "@reduxjs/toolkit": "^2.2.7",

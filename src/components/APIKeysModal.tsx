@@ -93,7 +93,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
     const getApiKeys = async () => {
       const response = await apiKeysService.getAPIKeys()
       if (response.ok) {
-        setApikeys(response.data.map(key => key.key_id))
+        setApikeys(response.data.map(item => item.key_id))
       } else {
         dispatch(
           updateStatus({
@@ -196,7 +196,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
           variant="contained"
           type="submit"
           aria-label="Create API key"
-          data-testid="apikey"
+          data-testid="api-key-create-button"
           onClick={() => handleCreateKey()}
         >
           {t("apiKeys.createKey")}
@@ -211,7 +211,11 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
               <TableBody>
                 <TableRow>
                   <TableCell width="25%">{newKey.keyName}</TableCell>
-                  <TableCell width="60%" sx={{ wordWrap: "break-word" }}>
+                  <TableCell
+                    width="60%"
+                    data-testid="new-key-value"
+                    sx={{ wordWrap: "break-word" }}
+                  >
                     {newKey.keyValue}
                   </TableCell>
                   <TableCell align="right" sx={{ p: 0 }}>
@@ -220,7 +224,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
                       size="small"
                       type="submit"
                       aria-label="Create API key"
-                      data-testid="apikey"
+                      data-testid="api-key-copy"
                       onClick={() => handleCopy()}
                       startIcon={<ContentCopyIcon fontSize="large" />}
                     >
@@ -246,13 +250,17 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
         {isLoading ? (
           <CircularProgress color="primary" />
         ) : apiKeys?.length > 0 ? (
-          <KeyTable size="small" aria-label="key table">
+          <KeyTable size="small" aria-label="key table" data-testid="api-key-table">
             <TableBody>
               {apiKeys.map(apikey => (
                 <TableRow key={apikey}>
                   <TableCell>{apikey}</TableCell>
                   <TableCell align="right">
-                    <Button sx={{ pt: 0, mt: 0 }} onClick={() => handleDelete(apikey)}>
+                    <Button
+                      data-testid="api-key-delete"
+                      sx={{ pt: 0, mt: 0 }}
+                      onClick={() => handleDelete(apikey)}
+                    >
                       <DeleteOutlineIcon fontSize="large" sx={{ mr: "1rem" }} />
                       <Typography variant={"subtitle1"}>{t("delete")}</Typography>
                     </Button>
@@ -262,7 +270,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
             </TableBody>
           </KeyTable>
         ) : (
-          <KeyTable>
+          <KeyTable aria-label="no keys table" data-testid="no-api-keys">
             <TableBody>
               <TableRow sx={{ bgcolor: theme => theme.palette.primary.lightest }}>
                 <TableCell>{t("apiKeys.noAPIKeys")}</TableCell>

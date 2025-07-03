@@ -99,7 +99,7 @@ const DacPoliciesForm = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: "snackbarMessages.error.helperText.fetchSubmissionError",
+              helperText: "snackbarMessages.error.helperText.fetchSubmission",
             })
           )
         }
@@ -134,7 +134,7 @@ const DacPoliciesForm = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "snackbarMessages.error.helperText.submitRemsError",
+            helperText: "snackbarMessages.error.helperText.submitRems",
           })
         )
       )

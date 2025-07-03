@@ -71,12 +71,21 @@
       "504": "Unfortunately we couldn't connect to our server.",
       "400": "{{helperText}} Details: {{responseDetail}}",
       "helperText": {
-        "deleteObjectFromSubmission": "Can't delete object",
-        "fetchWorkflowsError": "Error getting all workflows",
-        "submitDoiError": "Can't submit information for DOI.",
-        "fetchRemsInfoError": "Error getting REMS information.",
-        "fetchSubmissionError": "Error fetching submission.",
-        "submitRemsError": "Can't save information for REMS."
+        "cacheFormFields": "Error caching form fields.",
+        "deleteObject": "Can't delete object.",
+        "fetchWorkflows": "Error getting all workflows.",
+        "fetchRemsInfo": "Error getting REMS information.",
+        "fetchDraft": "Error fetching draft.",
+        "fetchObject": "Error fetching object.",
+        "fetchSchema": "Error fetching schema.",
+        "fetchSubmission": "Error fetching submission.",
+        "fetchSubmissions": "Error fetching submissions.",
+        "modifyObject": "Error modifying object.",
+        "submitDoi": "Can't submit information for DOI.",
+        "submitRems": "Can't save information for REMS.",
+        "submissionPublish": "Error publishing submission.",
+        "saveDraft": "Error saving draft.",
+        "validation": "Validation failed"
       }
     },
     "info": {

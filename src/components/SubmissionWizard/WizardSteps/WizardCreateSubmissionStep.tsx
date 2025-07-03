@@ -65,7 +65,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
               updateStatus({
                 status: ResponseStatus.error,
                 response: error,
-                helperText: "snackbarMessages.error.helperText.fetchWorkflowsError",
+                helperText: "snackbarMessages.error.helperText.fetchWorkflows",
               })
             )
           }

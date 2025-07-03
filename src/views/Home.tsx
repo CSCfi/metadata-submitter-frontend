@@ -125,7 +125,7 @@ const Home: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
-              helperText: "Fetching submissions error.",
+              helperText: "snackbarMessages.error.helperText.fetchSubmissions",
             })
           )
         }

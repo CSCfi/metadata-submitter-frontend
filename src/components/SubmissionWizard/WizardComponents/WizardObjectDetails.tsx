@@ -92,7 +92,7 @@ const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
               updateStatus({
                 status: ResponseStatus.error,
                 response: schemaResponse,
-                helperText: "Can't fetch schema",
+                helperText: "snackbarMessages.error.helperText.fetchSchema",
               })
             )
             setStates({

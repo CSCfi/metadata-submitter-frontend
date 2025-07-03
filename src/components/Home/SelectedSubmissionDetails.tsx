@@ -87,7 +87,7 @@ const SelectedSubmissionDetails: React.FC = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: response,
-            helperText: "Object fetching error.",
+            helperText: "snackbarMessages.error.helperText.fetchObject",
           })
         )
       }
@@ -127,7 +127,7 @@ const SelectedSubmissionDetails: React.FC = () => {
               updateStatus({
                 status: ResponseStatus.error,
                 response: response,
-                helperText: "Fetching submissions error.",
+                helperText: "snackbarMessages.error.helperText.fetchSubmission",
               })
             )
           }
@@ -170,7 +170,7 @@ const SelectedSubmissionDetails: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: JSON.parse(error),
-              helperText: `Couldn't publish submission with id ${selectedSubmission.originalSubmissionData.submissionId}`,
+              helperText: "snackbarMessages.error.helperText.submissionPublish",
             })
           )
         })
@@ -200,7 +200,7 @@ const SelectedSubmissionDetails: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Draft fetching error",
+          helperText: "snackbarMessages.error.helperText.fetchDraft",
         })
       )
     }
@@ -219,7 +219,7 @@ const SelectedSubmissionDetails: React.FC = () => {
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
-          helperText: "Object deleted",
+          helperText: "snackbarMessages.success.objects.deleted",
         })
       )
     } else {
@@ -227,7 +227,7 @@ const SelectedSubmissionDetails: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Can't delete object",
+          helperText: "snackbarMessages.error.helperText.deleteObject",
         })
       )
     }

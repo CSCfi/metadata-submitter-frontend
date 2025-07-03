@@ -66,7 +66,7 @@ const submitObjectHook = async (
       updateStatus({
         status: ResponseStatus.error,
         response: response,
-        helperText: "Validation failed",
+        helperText: "snackbarMessages.error.helperText.validation",
       })
     )
   }

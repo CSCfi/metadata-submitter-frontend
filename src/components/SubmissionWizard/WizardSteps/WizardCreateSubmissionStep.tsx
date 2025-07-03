@@ -239,7 +239,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         size="large"
         variant="contained"
         type="submit"
-        aria-label="Save submission details"
+        aria-label={t("ariaLabels.saveDetails")}
         data-testid="create-submission"
       >
         {t("save")}

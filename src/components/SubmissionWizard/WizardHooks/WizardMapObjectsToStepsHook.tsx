@@ -112,7 +112,7 @@ const mapObjectsToStepsHook = (
    * First step is always enabled.
    */
   const createSubmissionStep = {
-    title: t("submissionDetails"),
+    title: t("submission.details"),
     schemas: [
       {
         objectType: "submissionDetails",

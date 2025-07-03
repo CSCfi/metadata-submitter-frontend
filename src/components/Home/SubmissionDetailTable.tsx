@@ -107,7 +107,7 @@ const Row = (props: RowProps) => {
             <TableCell>
               <Button
                 disabled={row.submissionType === SubmissionStatus.published}
-                aria-label="Edit this object"
+                aria-label={t("ariaLabels.editObject")}
                 data-testid="edit-object"
                 onClick={() =>
                   onEdit(row.accessionId, row.objectType, row.status, row.submissionType)
@@ -119,7 +119,7 @@ const Row = (props: RowProps) => {
             <TableCell>
               <Button
                 disabled={row.submissionType === SubmissionStatus.published}
-                aria-label="Delete this object"
+                aria-label={t("ariaLabels.deleteObject")}
                 data-testid="delete-object"
                 onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
               >
@@ -131,7 +131,7 @@ const Row = (props: RowProps) => {
 
         <TableCell>
           <Button
-            aria-label="Show object details"
+            aria-label={t("ariaLabels.showDetails")}
             data-testid="toggle-details"
             onClick={() => showObjectDetails()}
           >
@@ -216,7 +216,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                   {submissionType === SubmissionStatus.unpublished && (
                     <Button
                       color="secondary"
-                      aria-label="Edit current submission"
+                      aria-label={t("ariaLabels.editSubmission")}
                       data-testid="edit-button"
                       onClick={() => onEditSubmission(0)}
                     >
@@ -226,7 +226,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                   {submissionType === SubmissionStatus.unpublished && (
                     <Button
                       disabled={!hasSubmittedObject}
-                      aria-label="Publish current submission"
+                      aria-label={t("ariaLabels.publishSubmission")}
                       variant="contained"
                       data-testid="publish-button"
                       onClick={() => onPublishSubmission()}
@@ -280,7 +280,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
         <Button
           color="primary"
           variant="contained"
-          aria-label="Add objects to this submission"
+          aria-label={t("ariaLabels.addObjects")}
           data-testid="add-objects-button"
           onClick={() => onEditSubmission(1)}
         >

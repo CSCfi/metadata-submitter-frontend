@@ -145,6 +145,7 @@ const StepItems = (props: {
   const [clickedItem, setClickedItem] = useState({
     objectData: { accessionId: "", schema: "", tags: {} },
   })
+  const { t } = useTranslation()
   const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
 
   const handleClick = item => {
@@ -227,7 +228,7 @@ const StepItems = (props: {
                       tabIndex={0} // "href with # target will cause Firefox to refresh the page"
                       onClick={() => handleClick(item)}
                       data-testid={`${draft ? "draft" : "submitted"}-${objectType}-list-item`}
-                      aria-label={`Edit ${draft ? "draft" : "submitted"} ${objectType} object`}
+                      aria-label={t("ariaLabels.editObject")}
                       sx={theme => ({
                         fontWeight: "300",
                         textDecoration: "underline",

@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useLocation, Link as RouterLink } from "react-router"
 
 import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
@@ -53,6 +54,7 @@ const SelectedSubmissionDetails: React.FC = () => {
 
   const submissionId = useLocation().pathname.split("/").pop()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Fetch submission data and map objects
   useEffect(() => {
@@ -244,7 +246,7 @@ const SelectedSubmissionDetails: React.FC = () => {
       {isFetchingSubmission && <CircularProgress size={50} thickness={2.5} sx={{ m: 10 }} />}
       {!isFetchingSubmission && (
         <>
-          <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
+          <Breadcrumbs aria-label={t("ariaLabels.breadcrumb")} data-testid="breadcrumb">
             <Link color="inherit" component={RouterLink} to={pathWithLocale("home")}>
               Home
             </Link>

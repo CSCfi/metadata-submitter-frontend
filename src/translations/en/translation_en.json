@@ -76,7 +76,8 @@
     "options": "Options",
     "uploadXML": "Upload XML",
     "clearForm": "Clear form",
-    "deleteForm": "Delete form"
+    "deleteForm": "Delete form",
+    "addItem": "Add new item"
   },
   "login": "Log in",
   "logout": "Log out",
@@ -263,5 +264,28 @@
       "name": "Name",
       "size": "Size"
     }
+  },
+  "ariaLabels": {
+    "tabs": "draft and published submissions tabs",
+    "breadcrumb": "breadcrumb",
+    "editObject": "edit this object",
+    "deleteObject": "delete this object",
+    "showDetails": "show object details",
+    "editSubmission": "edit current submission",
+    "publishSubmission": "publish current submission",
+    "addObjects": "add objects to this submission",
+    "selectProject": "select project id",
+    "saveSubmission": "save a new submission and move to frontpage",
+    "previousPage": "previous page",
+    "nextPage": "next page",
+    "clear": "clear",
+    "saveForm": "save form as draft",
+    "submitForm": "submit form",
+    "saveDOI": "save doi form",
+    "saveDetails": "save submission details",
+    "saveDAC": "save DAC and policies",
+    "linkFolder": "link datafolder",
+    "folderBreadcrumb": "folder breadcrumb",
+    "options": "options button"
   }
 }

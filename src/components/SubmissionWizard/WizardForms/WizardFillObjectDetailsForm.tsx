@@ -183,7 +183,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <ButtonGroup>
         <Button
           variant="contained"
-          aria-label="save form as draft"
+          aria-label={t("ariaLabels.saveForm")}
           size="small"
           onClick={onClickSaveDraft}
           data-testid="form-draft"
@@ -196,7 +196,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         </Button>
         <Button
           variant="contained"
-          aria-label="submit form"
+          aria-label={t("ariaLabels.submitForm")}
           size="small"
           type="submit"
           onClick={onClickSubmit}
@@ -226,7 +226,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <ButtonGroup>
         <Button
           variant="contained"
-          aria-label="save Datacite"
+          aria-label={t("ariaLabels.saveDOI")}
           size="small"
           onClick={onClickSaveDOI}
           data-testid="form-datacite"

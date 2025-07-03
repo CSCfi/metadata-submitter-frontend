@@ -77,7 +77,7 @@ const SecondaryNav: React.FC = () => {
       <Select
         value={projectId ? projectId : ""}
         onChange={handleProjectIdChange}
-        inputProps={{ "aria-label": "Select project id" }}
+        inputProps={{ "aria-label": t("ariaLabels.selectProject") }}
         IconComponent={ExpandMore}
         sx={{ ".MuiSelect-icon": { color: "primary.main" } }}
       >
@@ -101,7 +101,7 @@ const SecondaryNav: React.FC = () => {
             onClick={resetWizard}
             data-testid="link-create-submission"
           >
-            {t("createSubmission")}
+            {t("submission.create")}
           </Button>
         </Link>
       </Toolbar>

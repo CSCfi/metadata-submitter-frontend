@@ -144,7 +144,7 @@ const DacPoliciesForm = () => {
     <Button
       disabled={!selectedRems.organizationId || !selectedRems.workflowId || isSubmitting}
       variant="contained"
-      aria-label="save dac and policies"
+      aria-label={t("ariaLabels.saveDAC")}
       size="small"
       type="submit"
       data-testid="form-ready"

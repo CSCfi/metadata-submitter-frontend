@@ -20,7 +20,6 @@ const WizardRemsOrganization = (props: WizardRemsOrganizationProps) => {
           labelId="select-organization"
           id="organizationId"
           value={selectedOrgId}
-          label="Select organization"
           onChange={handleOrgChange}
           data-testid="organizationId"
         >

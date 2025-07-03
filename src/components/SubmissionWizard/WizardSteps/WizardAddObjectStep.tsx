@@ -2,6 +2,7 @@
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import { styled } from "@mui/system"
+import { useTranslation } from "react-i18next"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
@@ -35,6 +36,7 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -42,9 +44,8 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
         <Grid size={{ xs: 12 }}>
           {objectType === "" ? (
             <ObjectInfo>
-              {/*<p>Add objects by clicking the name, then fill form or upload XML File.</p>*/}
-              <p>Add objects by clicking the name, then fill a form.</p>
-              <p>You can also add objects and edit them after saving your draft.</p>
+              <p>{t("objects.add")}</p>
+              <p>{t("objects.edit")}</p>
             </ObjectInfo>
           ) : objectType === ObjectTypes.dacPolicies ? (
             <WizardDacPoliciesStep />

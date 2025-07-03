@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField"
 import { styled } from "@mui/system"
 import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
@@ -64,6 +65,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   const focusTarget = useRef<HTMLLabelElement | null>(null)
   const shouldFocus = useAppSelector(state => state.focus)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
@@ -73,7 +75,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     if (watchFile && watchFile[0] && watchFile[0].name) {
       setPlaceHolder(watchFile[0].name)
     } else {
-      setPlaceHolder(currentObject?.tags?.fileName || "Name")
+      setPlaceHolder(currentObject?.tags?.fileName || t("xml.placeholderFileName"))
     }
   }, [currentObject, watchFile])
 
@@ -93,12 +95,12 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   const resetForm = () => {
     reset()
-    setPlaceHolder("Name")
+    setPlaceHolder(t("xml.placeholderFileName"))
   }
 
   type FileUpload = { fileUpload: FileList }
 
-  const fileName = watchFile && watchFile[0] ? watchFile[0].name : "No file name"
+  const fileName = watchFile && watchFile[0] ? watchFile[0].name : t("xml.noFileName")
   const onSubmit = async (data: FileUpload) => {
     dispatch(resetStatusDetails())
     setSubmitting(true)
@@ -178,7 +180,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       }
       onClick={handleSubmit(async data => onSubmit(data as FileUpload))}
     >
-      {currentObject?.status === ObjectStatus.submitted ? "Replace" : "Submit"}
+      {currentObject?.status === ObjectStatus.submitted ? t("replace") : t("submit")}
     </Button>
   )
 
@@ -193,7 +195,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       {...getRootProps()}
     >
       <CardHeader
-        title="Upload XML File"
+        title={t("xml.modalTitle")}
         titleTypographyProps={{ variant: "inherit" }}
         action={submitButton}
       />
@@ -232,9 +234,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
                     )
 
                     if (!response.data.isValid) {
-                      return `The file you attached is not valid ${objectType},
-                      our server reported following error:
-                      ${response.data.detail.reason}.`
+                      return t("xml.invalidObject")
                     }
                   },
                 },
@@ -243,16 +243,16 @@ const WizardUploadObjectXMLForm: React.FC = () => {
           </FileField>
           {/* Helper text for selecting / submitting file */}
           {!watchFile || watchFile.length === 0 || errors.fileUpload != null ? (
-            <p>Choose a file or drag it here.</p>
+            <p>{t("xml.chooseFile")}</p>
           ) : (
-            <p>Use Submit button to upload the file.</p>
+            <p>{t("xml.clickSubmit")}</p>
           )}
           {/* Errors */}
           {errors.fileUpload?.type === "isFile" && (
-            <Alert severity="error">Please attach a file.</Alert>
+            <Alert severity="error">{t("xml.attachFile")}</Alert>
           )}
           {errors.fileUpload?.type === "isXML" && (
-            <Alert severity="error">Please attach an XML file.</Alert>
+            <Alert severity="error">{t("xml.attachXMLFile")}</Alert>
           )}
           {errors.fileUpload?.type === "isValidXML" && (
             <Alert severity="error">{errors?.fileUpload?.message?.toString()}</Alert>

@@ -1,11 +1,7 @@
 {
   "serviceTitle": "SD Submit",
   "serviceIntro": "Tool for submitting metadata.",
-  "createSubmission": "Create submission",
-  "allSubmissions": "All submissions",
-  "draftSubmissions": "Draft submissions",
-  "publishedSubmissions": "Published submissions",
-  "submissionDetails": "Submission details",
+  "project": "Project",
   "save": "Save",
   "add": "Add",
   "edit": "Edit",
@@ -13,9 +9,10 @@
   "close": "Close",
   "view": "View",
   "publish": "Publish",
+  "replace": "Replace",
+  "submit": "Submit",
   "draft": "Draft",
   "ready": "Ready",
-  "saveSubmission": "Save progress and exit",
   "showMore": "Show more",
   "showLess": "Show less",
   "visibleLanguage": {
@@ -52,6 +49,24 @@
       "date": "Invalid date",
       "range": "Invalid range"
     }
+  },
+  "objects": {
+    "add": "Add objects by clicking the name, then fill a form.",
+    "edit": "You can also add objects and edit them after saving your draft."
+  },
+  "submission": {
+    "create": "Create submission",
+    "save": "Save progress and exit",
+    "all": "All submissions",
+    "draft": "Draft submissions",
+    "published": "Published submissions",
+    "details": "Submission details",
+    "empty": "Current submission is empty",
+    "addObjects": "Add objects to submission",
+    "objectRequired": "Publishing requires submitted object(s).",
+    "submissions": "Your {{submissionType}} submissions",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details"
   },
   "formActions": {
     "saveAsDraft": "Save as draft",
@@ -232,5 +247,21 @@
     "linkFromSDConnect": "Link folder from SD Connect",
     "linkedFolder": "Linked folder",
     "allFolders": "All folders"
+  },
+  "xml": {
+    "modalTitle": "Upload XML file",
+    "dragDrop": "Drag and drop the file here or",
+    "selectFile": "Select file",
+    "placeholderFileName": "Name",
+    "noFileName": "No file name",
+    "chooseFile": "Choose a file or drag it here.",
+    "clickSubmit": "Use Submit button to upload the file.",
+    "attachFile": "Please attach a file.",
+    "attachXMLFile": "Please attach an XML file.",
+    "invalidObject": "The file you attached is not a valid object.",
+    "table": {
+      "name": "Name",
+      "size": "Size"
+    }
   }
 }

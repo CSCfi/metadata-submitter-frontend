@@ -24,6 +24,7 @@ import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Tooltip from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
@@ -68,6 +69,7 @@ type RowProps = {
 const Row = (props: RowProps) => {
   const dispatch = useAppDispatch()
   const openedRows = useAppSelector(state => state.openedRows) || []
+  const { t } = useTranslation()
   const { index, row, publishedSubmission, onEdit, onDelete } = props
 
   const getDateFormat = (date: string) => {
@@ -98,7 +100,7 @@ const Row = (props: RowProps) => {
         <TableCell>{row.status}</TableCell>
         <TableCell>{getDateFormat(row.lastModified)}</TableCell>
         <TableCell>
-          <Button disabled>View</Button>
+          <Button disabled>{t("view")}</Button>
         </TableCell>
         {!publishedSubmission && (
           <>
@@ -111,7 +113,7 @@ const Row = (props: RowProps) => {
                   onEdit(row.accessionId, row.objectType, row.status, row.submissionType)
                 }
               >
-                {row.submissionType === ObjectSubmissionTypes.xml ? "Replace" : "Edit"}
+                {row.submissionType === ObjectSubmissionTypes.xml ? t("replace") : t("edit")}
               </Button>
             </TableCell>
             <TableCell>
@@ -121,7 +123,7 @@ const Row = (props: RowProps) => {
                 data-testid="delete-object"
                 onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
               >
-                Delete
+                {t("delete")}
               </Button>
             </TableCell>
           </>
@@ -133,7 +135,7 @@ const Row = (props: RowProps) => {
             data-testid="toggle-details"
             onClick={() => showObjectDetails()}
           >
-            {rowOpen ? "Hide details" : "Show details"}
+            {rowOpen ? t("submission.hideDetails") : t("submission.showDetails")}
           </Button>
         </TableCell>
       </TableRow>
@@ -155,6 +157,7 @@ const Row = (props: RowProps) => {
 
 const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const {
     submissionTitle,
@@ -217,7 +220,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                       data-testid="edit-button"
                       onClick={() => onEditSubmission(0)}
                     >
-                      Edit
+                      {t("edit")}
                     </Button>
                   )}
                   {submissionType === SubmissionStatus.unpublished && (
@@ -228,16 +231,12 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
                       data-testid="publish-button"
                       onClick={() => onPublishSubmission()}
                     >
-                      Publish
+                      {t("publish")}
                     </Button>
                   )}
                   {!hasSubmittedObject && (
                     <Box pl={1} display="flex">
-                      <Tooltip
-                        title={"Publishing requires submitted object(s)."}
-                        placement="top"
-                        arrow
-                      >
+                      <Tooltip title={t("submission.objectRequired")} placement="top" arrow>
                         <HelpOutlineIcon></HelpOutlineIcon>
                       </Tooltip>
                     </Box>
@@ -274,7 +273,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
     <>
       <CardContent>
         <Typography align="center" variant="body2">
-          Current submission is empty
+          {t("submission.empty")}
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center" }}>
@@ -285,7 +284,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
           data-testid="add-objects-button"
           onClick={() => onEditSubmission(1)}
         >
-          Add objects to submission
+          {t("submission.addObjects")}
         </Button>
       </CardActions>
     </>
@@ -308,7 +307,7 @@ const SubmissionDetailTable: React.FC<SubmissionDetailTableProps> = props => {
               }}
             />
           }
-          title={`Your ${submissionType} submissions`}
+          title={t("submission.submissions", { submissionType })}
           titleTypographyProps={{ variant: "subtitle1", fontWeight: "fontWeightBold" }}
           sx={{
             fontSize: "0.5em",

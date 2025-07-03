@@ -10,6 +10,7 @@ import {
   FormControl,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
+import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import { setProjectId } from "features/projectIdSlice"
@@ -60,6 +61,7 @@ const SecondaryNav: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector((state: RootState) => state.user)
   const projectId = useAppSelector((state: RootState) => state.projectId as string)
+  const { t } = useTranslation()
 
   const handleProjectIdChange = (event: SelectChangeEvent<string>) => {
     dispatch(setProjectId(event.target.value))
@@ -81,7 +83,7 @@ const SecondaryNav: React.FC = () => {
       >
         {user.projects.map(project => (
           <StyledMenuItem key={project.projectId} value={project.projectId}>
-            {`Project_${project.projectId}`}
+            {t("project") + "_" + project.projectId}
           </StyledMenuItem>
         ))}
       </Select>
@@ -99,7 +101,7 @@ const SecondaryNav: React.FC = () => {
             onClick={resetWizard}
             data-testid="link-create-submission"
           >
-            Create submission
+            {t("createSubmission")}
           </Button>
         </Link>
       </Toolbar>

@@ -12,6 +12,7 @@ import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useDropzone } from "react-dropzone"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
@@ -92,6 +93,7 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
   const loading = useAppSelector(state => state.loading)
   const focusTarget = useRef<HTMLButtonElement | null>(null)
   const shouldFocus = useAppSelector(state => state.focus)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
@@ -225,12 +227,12 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
           color="secondary"
           sx={{ pb: "2.5rem", fontWeight: 700 }}
         >
-          Upload XML File
+          {t("xml.modalTitle")}
         </Typography>
         <form>
           <StyledFormControl isDragActive={isDragActive}>
             <Typography variant="body1" color="secondary">
-              Drag and drop the file here or
+              {t("xml.dragDrop")}
             </Typography>
             <StyledButton
               ref={focusTarget}
@@ -241,7 +243,7 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
               sx={{ ml: "1rem" }}
               data-testid="select-xml-file"
             >
-              Select file
+              {t("xml.selectFile")}
             </StyledButton>
             <input
               type="file"
@@ -258,13 +260,12 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
                       value[0]
                     )
                     if (!response.ok) {
-                      const errors = response.data.errors.map(
+                      /*const errors = response.data.errors.map(
                         error =>
                           ` ${error.reason} Position: ${error.position}, pointer: ${error.pointer}`
-                      )
-                      return `The file you attached is not valid ${objectType},
-                      our server reported following error: ${response.data.detail} Detail: ${errors}`
-                      // TODO: replace this MUI Alert with StatusMessageHanlder
+                      )*/
+                      return t("xml.invalidObject")
+                      // TODO: replace this MUI Alert with StatusMessageHandler, include errors and translated response.data.detail
                     }
                   },
                 },

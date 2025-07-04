@@ -33,6 +33,7 @@ import { useTranslation } from "react-i18next"
 
 import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
+import { addDoiInfo } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
@@ -1110,23 +1111,21 @@ const FormAutocompleteField = ({
 }: FormFieldBaseProps & { description: string }) => {
   const dispatch = useAppDispatch()
 
-  const { setValue, getValues } = useFormContext()
-
-  const defaultValue = getValues(name) || ""
-  const [selection, setSelection] = React.useState<RORItem | null>(null)
+  const { setValue, control } = useFormContext()
   const [open, setOpen] = React.useState(false)
-  const [options, setOptions] = React.useState([])
-  const [inputValue, setInputValue] = React.useState("")
+  const [options, setOptions] = React.useState<RORItem[]>([])
   const [loading, setLoading] = React.useState(false)
   const clearForm = useAppSelector(state => state.clearForm)
 
+  // Watch the field value from RHF
+  const fieldValue = useWatch({ name, control })
+  const [inputValue, setInputValue] = React.useState(fieldValue || "")
+
+  // Fetch organisations from ROR API
   const fetchOrganisations = async (searchTerm: string) => {
-    // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
     const isContainingNonWordChar = searchTerm.match(/\W/g)
     const response =
       isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
-
-    if (response) setLoading(false)
 
     if (response?.ok) {
       const mappedOrganisations = response.data.items.map((org: RORItem) => ({
@@ -1135,11 +1134,25 @@ const FormAutocompleteField = ({
       }))
       setOptions(mappedOrganisations)
     }
+    setLoading(false)
   }
 
-  const debouncedSearch = debounce((newInput: string) => {
-    if (newInput.length > 0) fetchOrganisations(newInput)
-  }, 150)
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((newInput: string) => {
+        if (newInput.length > 0) {
+          setLoading(true)
+          fetchOrganisations(newInput)
+        } else {
+          setOptions([])
+        }
+      }, 150),
+    []
+  )
+  // Sync inputValue with form value
+  React.useEffect(() => {
+    setInputValue(fieldValue || "")
+  }, [fieldValue])
 
   React.useEffect(() => {
     let active = true
@@ -1158,119 +1171,117 @@ const FormAutocompleteField = ({
       active = false
       setLoading(false)
     }
-  }, [selection, inputValue])
+  }, [open, inputValue])
 
+  // Clear on form clear
   React.useEffect(() => {
     if (clearForm) {
-      setSelection(null)
       setInputValue("")
+      setOptions([])
+      setValue(name, "")
     }
-  }, [clearForm])
+  }, [clearForm, setValue, name])
+
+  // Fetch options when input changes
+  React.useEffect(() => {
+    if (open && inputValue) {
+      debouncedSearch(inputValue)
+    } else if (!inputValue) {
+      setOptions([])
+    }
+  }, [inputValue, open, debouncedSearch])
 
   return (
-    <ConnectForm>
-      {({ errors, control }: ConnectFormMethods) => {
-        const error = get(errors, name)
-
-        const handleAutocompleteValueChange = (_event: unknown, option: RORItem) => {
-          setSelection(option)
-          setValue(name, option?.name)
-          option?.id ? dispatch(setAutocompleteField(option.id)) : null
-        }
-
-        const handleInputChange = (_event: unknown, newInputValue: string, reason: string) => {
-          setInputValue(newInputValue)
-          switch (reason) {
-            case "input":
-            case "clear":
-              setInputValue(newInputValue)
-              break
-            case "reset":
-              selection ? setInputValue(selection?.name) : null
-              break
-            default:
-              break
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <StyledAutocomplete
+          freeSolo
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          options={options}
+          getOptionLabel={option =>
+            typeof option === "object" && option !== null
+              ? option.name
+              : typeof option === "string"
+                ? option
+                : ""
           }
-        }
-
-        return (
-          <Controller
-            render={() => (
-              <StyledAutocomplete
-                freeSolo
-                open={open}
-                onOpen={() => {
-                  setOpen(true)
+          loading={loading}
+          disableClearable={inputValue.length === 0}
+          renderInput={params => (
+            <BaselineDiv>
+              <TextField
+                {...params}
+                label={label}
+                id={name}
+                name={name}
+                variant="outlined"
+                error={false}
+                required={required}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
                 }}
-                onClose={() => {
-                  setOpen(false)
-                }}
-                options={options}
-                getOptionLabel={option => option.name || ""}
-                disableClearable={inputValue.length === 0}
-                renderInput={params => (
-                  <BaselineDiv>
-                    <TextField
-                      {...params}
-                      label={label}
-                      id={name}
-                      name={name}
-                      variant="outlined"
-                      error={!!error}
-                      required={required}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <React.Fragment>
-                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                            {params.InputProps.endAdornment}
-                          </React.Fragment>
-                        ),
-                      }}
-                      inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
-                      sx={[
-                        {
-                          "&.MuiAutocomplete-endAdornment": {
-                            top: 0,
-                          },
-                        },
-                      ]}
-                    />
-                    {description && (
-                      <FieldTooltip
-                        title={
-                          <DisplayDescription description={description}>
-                            <>
-                              <br />
-                              {"Organisations provided by "}
-                              <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                                {"ror.org"}
-                                <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
-                              </a>
-                            </>
-                          </DisplayDescription>
-                        }
-                        placement="right"
-                        arrow
-                        describeChild
-                      >
-                        <TooltipIcon />
-                      </FieldTooltip>
-                    )}
-                  </BaselineDiv>
-                )}
-                onChange={handleAutocompleteValueChange}
-                onInputChange={handleInputChange}
-                value={defaultValue}
-                inputValue={inputValue || defaultValue}
+                inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
+                sx={[
+                  {
+                    "&.MuiAutocomplete-endAdornment": {
+                      top: 0,
+                    },
+                  },
+                ]}
               />
-            )}
-            name={name}
-            control={control}
-          />
-        )
-      }}
-    </ConnectForm>
+              {description && (
+                <FieldTooltip
+                  title={
+                    <DisplayDescription description={description}>
+                      <>
+                        <br />
+                        {"Organisations provided by "}
+                        <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                          {"ror.org"}
+                          <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
+                        </a>
+                      </>
+                    </DisplayDescription>
+                  }
+                  placement="right"
+                  arrow
+                  describeChild
+                >
+                  <TooltipIcon />
+                </FieldTooltip>
+              )}
+            </BaselineDiv>
+          )}
+          value={
+            // Find the selected option object by name, or null if empty
+            options.find(option => option.name === field.value) ||
+            (field.value ? { name: field.value, id: "" } : null)
+          }
+          inputValue={inputValue}
+          onChange={(_event, option) => {
+            if (option && typeof option === "object" && "name" in option) {
+              field.onChange(option.name)
+              dispatch(setAutocompleteField(option.id))
+            } else if (typeof option === "string") {
+              field.onChange(option)
+            } else {
+              field.onChange("")
+            }
+          }}
+          onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
+        />
+      )}
+    />
   )
 }
 
@@ -1288,125 +1299,197 @@ const FormTagField = ({
   required,
   description,
 }: FormFieldBaseProps & { description: string }) => {
-  const savedValues = useWatch({ name })
+  const { setValue, control } = useFormContext()
+  const clearForm = useAppSelector(state => state.clearForm)
+  const currentObject = useAppSelector(state => state.currentObject)
+  const submission = useAppSelector(state => state.submission)
+  const dispatch = useAppDispatch()
+
+  // Watch the value in the form state
+  const watchedValue = useWatch({ name, control })
+
+  // Get keywords from Redux state - check both currentObject and submission.doiInfo
+  const keywordsFromState = React.useMemo(() => {
+    // First check if it's in currentObject
+    if (currentObject && name in currentObject) {
+      const stateValue = currentObject[name]
+      return typeof stateValue === "string" ? stateValue : ""
+    }
+
+    // Then check if it's keywords in doiInfo
+    if (name === "keywords" && submission?.doiInfo?.keywords) {
+      return submission.doiInfo.keywords
+    }
+
+    return ""
+  }, [currentObject, submission?.doiInfo?.keywords, name])
+
+  // Always parse as array for UI - prioritize Redux state over form state
+  const tags = React.useMemo(() => {
+    const valueToUse = keywordsFromState || watchedValue
+    return typeof valueToUse === "string" && valueToUse.length > 0
+      ? valueToUse
+          .split(",")
+          .map(s => s.trim())
+          .filter(Boolean)
+      : []
+  }, [keywordsFromState, watchedValue])
+
   const [inputValue, setInputValue] = React.useState("")
-  const [tags, setTags] = React.useState<Array<string>>([])
 
+  // Initialize from Redux state when currentObject or submission changes
   React.useEffect(() => {
-    // update tags when value becomes available or changes
-    const updatedTags = savedValues ? savedValues.split(",") : []
-    setTags(updatedTags)
-  }, [savedValues])
+    if (keywordsFromState && keywordsFromState !== watchedValue) {
+      setValue(name, keywordsFromState, { shouldDirty: false, shouldValidate: false })
+    }
+  }, [keywordsFromState, watchedValue, setValue, name])
 
-  const handleInputChange = e => {
+  // Update Redux state when form value changes
+  React.useEffect(() => {
+    if (watchedValue && watchedValue !== keywordsFromState) {
+      if (name === "keywords" && submission) {
+        // Update doiInfo.keywords in submission
+        dispatch(
+          addDoiInfo({
+            ...submission.doiInfo,
+            keywords: watchedValue,
+          })
+        )
+      }
+    }
+  }, [watchedValue, keywordsFromState, submission, dispatch, name])
+
+  // Clear form handler
+  React.useEffect(() => {
+    if (clearForm) {
+      setInputValue("")
+      setValue(name, "", { shouldDirty: false, shouldValidate: false })
+
+      // Clear from Redux state too
+      if (name === "keywords" && submission) {
+        dispatch(
+          addDoiInfo({
+            ...submission.doiInfo,
+            keywords: "",
+          })
+        )
+      }
+    }
+  }, [clearForm, name, setValue, submission, dispatch])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
   }
 
-  const clearForm = useAppSelector(state => state.clearForm)
-
-  React.useEffect(() => {
-    if (clearForm) {
-      setTags([])
-      setInputValue("")
+  const updateKeywordsInState = (newTagsString: string) => {
+    if (name === "keywords" && submission) {
+      // Update doiInfo.keywords in submission
+      dispatch(
+        addDoiInfo({
+          ...submission.doiInfo,
+          keywords: newTagsString,
+        })
+      )
     }
-  }, [clearForm])
+  }
 
   return (
-    <ConnectForm>
-      {({ control }: ConnectFormMethods) => {
+    <Controller
+      name={name}
+      control={control}
+      defaultValue=""
+      render={({ field }) => {
+        const handleKeywordAsTag = (keyword: string) => {
+          const trimmedKeyword = keyword.trim()
+          if (!trimmedKeyword) return
+
+          if (!tags.includes(trimmedKeyword)) {
+            const newTags = [...tags, trimmedKeyword]
+            const newTagsString = newTags.join(",")
+
+            // Update both form and Redux state
+            field.onChange(newTagsString)
+            setValue(name, newTagsString)
+            updateKeywordsInState(newTagsString)
+          }
+          setInputValue("")
+        }
+
+        const handleKeyDown = (e: React.KeyboardEvent) => {
+          if ((e.key === "," || e.key === "Enter") && inputValue.trim()) {
+            e.preventDefault()
+            handleKeywordAsTag(inputValue)
+          }
+        }
+
+        const handleOnBlur = () => {
+          if (inputValue.trim()) {
+            handleKeywordAsTag(inputValue)
+          }
+        }
+
+        const handleTagDelete = (item: string) => () => {
+          const newTags = tags.filter(tag => tag !== item)
+          const newTagsString = newTags.join(",")
+
+          // Update both form and Redux state
+          field.onChange(newTagsString)
+          setValue(name, newTagsString)
+          updateKeywordsInState(newTagsString)
+        }
+
         return (
-          <Controller
-            name={name}
-            control={control}
-            defaultValue=""
-            render={({ field }) => {
-              const handleKeywordAsTag = (keyword: string) => {
-                // newTags with unique values
-                const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
-                setInputValue("")
-                // Convert tags to string for hidden registered input's values
-                field.onChange(newTags.join(","))
-              }
+          <BaselineDiv>
+            <input
+              {...field}
+              required={required && tags.length === 0}
+              style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
+            />
+            <ValidationTagField
+              slotProps={{
+                htmlInput: { "data-testid": name },
+                input: {
+                  startAdornment:
+                    tags.length > 0
+                      ? tags.map(item => (
+                          <Chip
+                            key={item}
+                            tabIndex={-1}
+                            label={item}
+                            onDelete={handleTagDelete(item)}
+                            color="primary"
+                            deleteIcon={<ClearIcon fontSize="small" />}
+                            data-testid={item}
+                            sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                          />
+                        ))
+                      : null,
+                },
+              }}
+              label={label}
+              id={name}
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onBlur={handleOnBlur}
+            />
 
-              const handleKeyDown = e => {
-                const { key } = e
-                const trimmedInput = inputValue.trim()
-                // Convert to tags if users press "," OR "Enter"
-                if ((key === "," || key === "Enter") && trimmedInput.length > 0) {
-                  e.preventDefault()
-                  handleKeywordAsTag(trimmedInput)
-                }
-              }
-
-              // Convert to tags when user clicks outside of input field
-              const handleOnBlur = () => {
-                const trimmedInput = inputValue.trim()
-                if (trimmedInput.length > 0) {
-                  handleKeywordAsTag(trimmedInput)
-                }
-              }
-
-              const handleTagDelete = item => () => {
-                const newTags = tags.filter(tag => tag !== item)
-                field.onChange(newTags.join(","))
-              }
-
-              return (
-                <BaselineDiv>
-                  <input
-                    {...field}
-                    required={required}
-                    style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
-                  />
-                  <ValidationTagField
-                    slotProps={{
-                      htmlInput: { "data-testid": name },
-                      input: {
-                        startAdornment:
-                          tags.length > 0
-                            ? tags.map(item => (
-                                <Chip
-                                  key={item}
-                                  tabIndex={-1}
-                                  label={item}
-                                  onDelete={handleTagDelete(item)}
-                                  color="primary"
-                                  deleteIcon={<ClearIcon fontSize="small" />}
-                                  data-testid={item}
-                                  sx={{ fontSize: "1.4rem", m: "0.5rem" }}
-                                />
-                              ))
-                            : null,
-                      },
-                    }}
-                    label={label}
-                    id={name}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleOnBlur}
-                  />
-
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
-                </BaselineDiv>
-              )
-            }}
-          />
+            {description && (
+              <FieldTooltip
+                title={<DisplayDescription description={description} />}
+                placement="right"
+                arrow
+                describeChild
+              >
+                <TooltipIcon />
+              </FieldTooltip>
+            )}
+          </BaselineDiv>
         )
       }}
-    </ConnectForm>
+    />
   )
 }
-
 /*
  * Highlight required Checkbox
  */

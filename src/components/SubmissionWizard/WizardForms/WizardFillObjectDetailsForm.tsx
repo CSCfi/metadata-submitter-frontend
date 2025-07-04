@@ -319,7 +319,7 @@ const FormContent = ({
     } catch (e) {
       console.error("Reset failed:", e)
     }
-  }, [currentObject?.accessionId])
+  }, [currentObject?.accessionId, currentObject])
 
   useEffect(() => {
     dispatch(setClearForm(false))
@@ -333,30 +333,36 @@ const FormContent = ({
   const { isSubmitSuccessful } = methods.formState // Check if the form has been successfully submitted without any errors
 
   useEffect(() => {
-    // Delete draft form ONLY if the form was successfully submitted
     if (isSubmitSuccessful) {
-      if (
-        currentObject?.status === ObjectStatus.draft &&
-        currentObjectId &&
-        Object.keys(currentObject).length > 0
-      ) {
-        handleDeleteForm()
+      // Reset only draft status
+      dispatch(resetDraftStatus())
+
+      // Update current object status to submitted
+      if (currentObjectId) {
+        dispatch(
+          setCurrentObject({
+            ...currentObject,
+            status: ObjectStatus.submitted,
+            accessionId: currentObjectId,
+          })
+        )
       }
+
+      // Reset form but keep values for editing
+      methods.reset()
+      methods.getValues()
     }
   }, [isSubmitSuccessful])
 
   const handleClearForm = () => {
     resetTimer()
-    methods.reset({ undefined })
+    dispatch(resetCurrentObject())
     dispatch(setClearForm(true))
-    dispatch(
-      setCurrentObject({
-        objectId: currentObjectId,
-        status: currentObject.status,
-      })
-    )
+    dispatch(resetAutocompleteField())
+    setTimeout(() => {
+      methods.reset(undefined)
+    }, 0)
   }
-
   // Check if the form is empty
   const isFormCleanedValuesEmpty = (cleanedValues: {
     [x: string]: unknown
@@ -530,6 +536,8 @@ const FormContent = ({
           })
         )
         dispatch(resetDraftStatus())
+        dispatch(resetCurrentObject())
+        setTimeout(() => methods.reset({}), 0)
       }
     } else {
       emptyFormError()
@@ -723,6 +731,8 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const onSubmit = (data: Record<string, unknown>) => {
     if (Object.keys(data).length === 0) return
 
+    const shouldClearAfterSubmit = !data.accessionId && objectType !== ObjectTypes.datacite
+
     // Handle submitted object update
     const patchObject = async () => {
       const accessionId = data.accessionId as string
@@ -742,8 +752,13 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           cleanedValues,
           dispatch
         )
-        dispatch(resetCurrentObject())
-        methods.reset({ undefined })
+        if (shouldClearAfterSubmit) {
+          methods.reset({}, { keepDefaultValues: false })
+          dispatch(resetCurrentObject())
+        } else {
+          methods.reset(cleanedValues)
+        }
+
         // Dispatch fileTypes if object is Run or Analysis
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(
@@ -769,7 +784,13 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
         await patchObject()
       } else {
         await submitObjectHook(data, submission.submissionId, objectType, dispatch)
-        methods.reset({ undefined })
+
+        if (shouldClearAfterSubmit) {
+          methods.reset({}, { keepDefaultValues: false })
+          dispatch(resetCurrentObject())
+        } else {
+          methods.reset(data)
+        }
       }
     })
   }

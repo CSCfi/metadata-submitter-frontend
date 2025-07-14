@@ -356,12 +356,15 @@ const FormContent = ({
 
   const handleClearForm = () => {
     resetTimer()
-    dispatch(resetCurrentObject())
-    dispatch(setClearForm(true))
-    dispatch(resetAutocompleteField())
-    setTimeout(() => {
-      methods.reset(undefined)
-    }, 0)
+    // dispatch(resetCurrentObject())
+    // dispatch(setClearForm(true))
+    // dispatch(resetAutocompleteField())
+
+    methods.reset({})
+
+    // setTimeout(() => {
+    //   methods.reset(undefined)
+    // }, 0)
   }
   // Check if the form is empty
   const isFormCleanedValuesEmpty = (cleanedValues: {
@@ -752,6 +755,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           cleanedValues,
           dispatch
         )
+
         if (shouldClearAfterSubmit) {
           methods.reset({}, { keepDefaultValues: false })
           dispatch(resetCurrentObject())
@@ -794,7 +798,6 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
       }
     })
   }
-
   if (states.isLoading) return <CircularProgress />
   // Schema validation error differs from response status handler
   if (states.error)

@@ -33,7 +33,6 @@ import { useTranslation } from "react-i18next"
 
 import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
-import { addDoiInfo } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
@@ -1299,195 +1298,125 @@ const FormTagField = ({
   required,
   description,
 }: FormFieldBaseProps & { description: string }) => {
-  const { setValue, control } = useFormContext()
-  const clearForm = useAppSelector(state => state.clearForm)
-  const currentObject = useAppSelector(state => state.currentObject)
-  const submission = useAppSelector(state => state.submission)
-  const dispatch = useAppDispatch()
-
-  // Watch the value in the form state
-  const watchedValue = useWatch({ name, control })
-
-  // Get keywords from Redux state - check both currentObject and submission.doiInfo
-  const keywordsFromState = React.useMemo(() => {
-    // First check if it's in currentObject
-    if (currentObject && name in currentObject) {
-      const stateValue = currentObject[name]
-      return typeof stateValue === "string" ? stateValue : ""
-    }
-
-    // Then check if it's keywords in doiInfo
-    if (name === "keywords" && submission?.doiInfo?.keywords) {
-      return submission.doiInfo.keywords
-    }
-
-    return ""
-  }, [currentObject, submission?.doiInfo?.keywords, name])
-
-  // Always parse as array for UI - prioritize Redux state over form state
-  const tags = React.useMemo(() => {
-    const valueToUse = keywordsFromState || watchedValue
-    return typeof valueToUse === "string" && valueToUse.length > 0
-      ? valueToUse
-          .split(",")
-          .map(s => s.trim())
-          .filter(Boolean)
-      : []
-  }, [keywordsFromState, watchedValue])
-
+  // const savedValues = useWatch({ name })
   const [inputValue, setInputValue] = React.useState("")
 
-  // Initialize from Redux state when currentObject or submission changes
-  React.useEffect(() => {
-    if (keywordsFromState && keywordsFromState !== watchedValue) {
-      setValue(name, keywordsFromState, { shouldDirty: false, shouldValidate: false })
-    }
-  }, [keywordsFromState, watchedValue, setValue, name])
+  // React.useEffect(() => {
+  //   // update tags when value becomes available or changes
+  //   const updatedTags = savedValues ? savedValues.split(",") : []
+  //   setTags(updatedTags)
+  // }, [savedValues])
 
-  // Update Redux state when form value changes
-  React.useEffect(() => {
-    if (watchedValue && watchedValue !== keywordsFromState) {
-      if (name === "keywords" && submission) {
-        // Update doiInfo.keywords in submission
-        dispatch(
-          addDoiInfo({
-            ...submission.doiInfo,
-            keywords: watchedValue,
-          })
-        )
-      }
-    }
-  }, [watchedValue, keywordsFromState, submission, dispatch, name])
-
-  // Clear form handler
-  React.useEffect(() => {
-    if (clearForm) {
-      setInputValue("")
-      setValue(name, "", { shouldDirty: false, shouldValidate: false })
-
-      // Clear from Redux state too
-      if (name === "keywords" && submission) {
-        dispatch(
-          addDoiInfo({
-            ...submission.doiInfo,
-            keywords: "",
-          })
-        )
-      }
-    }
-  }, [clearForm, name, setValue, submission, dispatch])
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = e => {
     setInputValue(e.target.value)
   }
 
-  const updateKeywordsInState = (newTagsString: string) => {
-    if (name === "keywords" && submission) {
-      // Update doiInfo.keywords in submission
-      dispatch(
-        addDoiInfo({
-          ...submission.doiInfo,
-          keywords: newTagsString,
-        })
-      )
-    }
-  }
+  // const clearForm = useAppSelector(state => state.clearForm)
+
+  // React.useEffect(() => {
+  //   if (clearForm) {
+  //     setTags([])
+  //     setInputValue("")
+  //   }
+  // }, [clearForm])
 
   return (
-    <Controller
-      name={name}
-      control={control}
-      defaultValue=""
-      render={({ field }) => {
-        const handleKeywordAsTag = (keyword: string) => {
-          const trimmedKeyword = keyword.trim()
-          if (!trimmedKeyword) return
-
-          if (!tags.includes(trimmedKeyword)) {
-            const newTags = [...tags, trimmedKeyword]
-            const newTagsString = newTags.join(",")
-
-            // Update both form and Redux state
-            field.onChange(newTagsString)
-            setValue(name, newTagsString)
-            updateKeywordsInState(newTagsString)
-          }
-          setInputValue("")
-        }
-
-        const handleKeyDown = (e: React.KeyboardEvent) => {
-          if ((e.key === "," || e.key === "Enter") && inputValue.trim()) {
-            e.preventDefault()
-            handleKeywordAsTag(inputValue)
-          }
-        }
-
-        const handleOnBlur = () => {
-          if (inputValue.trim()) {
-            handleKeywordAsTag(inputValue)
-          }
-        }
-
-        const handleTagDelete = (item: string) => () => {
-          const newTags = tags.filter(tag => tag !== item)
-          const newTagsString = newTags.join(",")
-
-          // Update both form and Redux state
-          field.onChange(newTagsString)
-          setValue(name, newTagsString)
-          updateKeywordsInState(newTagsString)
-        }
-
+    <ConnectForm>
+      {({ control }: ConnectFormMethods) => {
         return (
-          <BaselineDiv>
-            <input
-              {...field}
-              required={required && tags.length === 0}
-              style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
-            />
-            <ValidationTagField
-              slotProps={{
-                htmlInput: { "data-testid": name },
-                input: {
-                  startAdornment:
-                    tags.length > 0
-                      ? tags.map(item => (
-                          <Chip
-                            key={item}
-                            tabIndex={-1}
-                            label={item}
-                            onDelete={handleTagDelete(item)}
-                            color="primary"
-                            deleteIcon={<ClearIcon fontSize="small" />}
-                            data-testid={item}
-                            sx={{ fontSize: "1.4rem", m: "0.5rem" }}
-                          />
-                        ))
-                      : null,
-                },
-              }}
-              label={label}
-              id={name}
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              onBlur={handleOnBlur}
-            />
+          <Controller
+            name={name}
+            control={control}
+            defaultValue=""
+            render={({ field }) => {
+              console.info("FormTagField", field.value)
 
-            {description && (
-              <FieldTooltip
-                title={<DisplayDescription description={description} />}
-                placement="right"
-                arrow
-                describeChild
-              >
-                <TooltipIcon />
-              </FieldTooltip>
-            )}
-          </BaselineDiv>
+              const tags = field.value ? field.value.split(",") : []
+
+              const handleKeywordAsTag = (keyword: string) => {
+                // newTags with unique values
+                const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
+                setInputValue("")
+                // Convert tags to string for hidden registered input's values
+                field.onChange(newTags.join(","))
+              }
+
+              const handleKeyDown = e => {
+                const { key } = e
+                const trimmedInput = inputValue.trim()
+                // Convert to tags if users press "," OR "Enter"
+                if ((key === "," || key === "Enter") && trimmedInput.length > 0) {
+                  e.preventDefault()
+                  handleKeywordAsTag(trimmedInput)
+                }
+              }
+
+              // Convert to tags when user clicks outside of input field
+              const handleOnBlur = () => {
+                const trimmedInput = inputValue.trim()
+                if (trimmedInput.length > 0) {
+                  handleKeywordAsTag(trimmedInput)
+                }
+              }
+
+              const handleTagDelete = item => () => {
+                const newTags = tags.filter(tag => tag !== item)
+                field.onChange(newTags.join(","))
+              }
+
+              return (
+                <BaselineDiv>
+                  <input
+                    {...field}
+                    required={required}
+                    style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
+                  />
+                  <ValidationTagField
+                    slotProps={{
+                      htmlInput: { "data-testid": name },
+                      input: {
+                        startAdornment:
+                          tags.length > 0
+                            ? tags.map(item => (
+                                <Chip
+                                  key={item}
+                                  tabIndex={-1}
+                                  label={item}
+                                  onDelete={handleTagDelete(item)}
+                                  color="primary"
+                                  deleteIcon={<ClearIcon fontSize="small" />}
+                                  data-testid={item}
+                                  sx={{ fontSize: "1.4rem", m: "0.5rem" }}
+                                />
+                              ))
+                            : null,
+                      },
+                    }}
+                    label={label}
+                    id={name}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onBlur={handleOnBlur}
+                  />
+
+                  {description && (
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
+                    </FieldTooltip>
+                  )}
+                </BaselineDiv>
+              )
+            }}
+          />
         )
       }}
-    />
+    </ConnectForm>
   )
 }
 /*

@@ -1295,128 +1295,84 @@ const ValidationTagField = styled(TextField)(({ theme }) => ({
 const FormTagField = ({
   name,
   label,
-  required,
   description,
 }: FormFieldBaseProps & { description: string }) => {
-  // const savedValues = useWatch({ name })
+  const { control } = useFormContext()
   const [inputValue, setInputValue] = React.useState("")
-
-  // React.useEffect(() => {
-  //   // update tags when value becomes available or changes
-  //   const updatedTags = savedValues ? savedValues.split(",") : []
-  //   setTags(updatedTags)
-  // }, [savedValues])
-
-  const handleInputChange = e => {
-    setInputValue(e.target.value)
-  }
-
-  // const clearForm = useAppSelector(state => state.clearForm)
-
-  // React.useEffect(() => {
-  //   if (clearForm) {
-  //     setTags([])
-  //     setInputValue("")
-  //   }
-  // }, [clearForm])
-
   return (
-    <ConnectForm>
-      {({ control }: ConnectFormMethods) => {
+    <Controller
+      name={name}
+      control={control}
+      defaultValue=""
+      render={({ field, fieldState: { error } }) => {
+        const tags = field.value ? field.value.split(",").filter(Boolean) : []
+
+        const handleAddTag = (tag: string) => {
+          const trimmedTag = tag.trim()
+          if (trimmedTag && !tags.includes(trimmedTag)) {
+            const newTags = [...tags, trimmedTag]
+            field.onChange(newTags.join(","))
+          }
+          setInputValue("")
+        }
+
+        const handleRemoveTag = (tagToRemove: string) => {
+          const newTags = tags.filter(tag => tag !== tagToRemove)
+          field.onChange(newTags.join(","))
+        }
+
+        const handleKeyDown = (e: React.KeyboardEvent) => {
+          if (["Enter", ","].includes(e.key) && inputValue.trim()) {
+            e.preventDefault()
+            handleAddTag(inputValue)
+          }
+        }
+
         return (
-          <Controller
-            name={name}
-            control={control}
-            defaultValue=""
-            render={({ field }) => {
-              console.info("FormTagField", field.value)
+          <div style={{ marginBottom: "1rem" }}>
+            <BaselineDiv>
+              <ValidationTagField
+                label={label}
+                value={inputValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={() => {
+                  if (inputValue.trim()) handleAddTag(inputValue)
+                }}
+                InputProps={{
+                  startAdornment: tags.map(tag => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      onDelete={() => handleRemoveTag(tag)}
+                      color="primary"
+                      deleteIcon={<ClearIcon fontSize="small" />}
+                      sx={{ margin: "0.2rem" }}
+                    />
+                  )),
+                }}
+                error={!!error}
+                helperText={error?.message}
+                inputProps={{ "data-testid": name }}
+              />
 
-              const tags = field.value ? field.value.split(",") : []
+              {description && (
+                <FieldTooltip
+                  title={<DisplayDescription description={description} />}
+                  placement="right"
+                  arrow
+                  describeChild
+                >
+                  <TooltipIcon />
+                </FieldTooltip>
+              )}
+            </BaselineDiv>
 
-              const handleKeywordAsTag = (keyword: string) => {
-                // newTags with unique values
-                const newTags = !tags.includes(keyword) ? [...tags, keyword] : tags
-                setInputValue("")
-                // Convert tags to string for hidden registered input's values
-                field.onChange(newTags.join(","))
-              }
-
-              const handleKeyDown = e => {
-                const { key } = e
-                const trimmedInput = inputValue.trim()
-                // Convert to tags if users press "," OR "Enter"
-                if ((key === "," || key === "Enter") && trimmedInput.length > 0) {
-                  e.preventDefault()
-                  handleKeywordAsTag(trimmedInput)
-                }
-              }
-
-              // Convert to tags when user clicks outside of input field
-              const handleOnBlur = () => {
-                const trimmedInput = inputValue.trim()
-                if (trimmedInput.length > 0) {
-                  handleKeywordAsTag(trimmedInput)
-                }
-              }
-
-              const handleTagDelete = item => () => {
-                const newTags = tags.filter(tag => tag !== item)
-                field.onChange(newTags.join(","))
-              }
-
-              return (
-                <BaselineDiv>
-                  <input
-                    {...field}
-                    required={required}
-                    style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
-                  />
-                  <ValidationTagField
-                    slotProps={{
-                      htmlInput: { "data-testid": name },
-                      input: {
-                        startAdornment:
-                          tags.length > 0
-                            ? tags.map(item => (
-                                <Chip
-                                  key={item}
-                                  tabIndex={-1}
-                                  label={item}
-                                  onDelete={handleTagDelete(item)}
-                                  color="primary"
-                                  deleteIcon={<ClearIcon fontSize="small" />}
-                                  data-testid={item}
-                                  sx={{ fontSize: "1.4rem", m: "0.5rem" }}
-                                />
-                              ))
-                            : null,
-                      },
-                    }}
-                    label={label}
-                    id={name}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleOnBlur}
-                  />
-
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
-                </BaselineDiv>
-              )
-            }}
-          />
+            <input type="hidden" name={name} value={field.value} />
+          </div>
         )
       }}
-    </ConnectForm>
+    />
   )
 }
 /*

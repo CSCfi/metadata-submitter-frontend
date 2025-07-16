@@ -355,16 +355,8 @@ const FormContent = ({
   }, [isSubmitSuccessful])
 
   const handleClearForm = () => {
-    resetTimer()
-    // dispatch(resetCurrentObject())
-    // dispatch(setClearForm(true))
-    // dispatch(resetAutocompleteField())
-
-    methods.reset({})
-
-    // setTimeout(() => {
-    //   methods.reset(undefined)
-    // }, 0)
+    methods.reset({}) // Reset RHF form
+    dispatch(resetAutocompleteField()) // Clear Redux autocomplete
   }
   // Check if the form is empty
   const isFormCleanedValuesEmpty = (cleanedValues: {

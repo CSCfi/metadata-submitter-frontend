@@ -354,9 +354,33 @@ const FormContent = ({
     }
   }, [isSubmitSuccessful])
 
+  const handleClear = () => {
+    // Set the clearForm flag to notify special fields
+    dispatch(setClearForm(true))
+
+    // Reset RHF form
+    methods.reset({})
+
+    // Clear Redux autocomplete
+    dispatch(resetAutocompleteField())
+
+    // Reset current object
+    dispatch(resetCurrentObject())
+
+    // Reset the clearForm flag after a short delay to allow components to react
+    setTimeout(() => {
+      dispatch(setClearForm(false))
+    }, 100)
+  }
+
   const handleClearForm = () => {
-    methods.reset({}) // Reset RHF form
-    dispatch(resetAutocompleteField()) // Clear Redux autocomplete
+    // Clear form values
+    handleClear()
+
+    // Reset URL to show from accordion
+    if (window.history.pushState) {
+      window.history.pushState(null, "", window.location.pathname)
+    }
   }
   // Check if the form is empty
   const isFormCleanedValuesEmpty = (cleanedValues: {

@@ -313,17 +313,16 @@ const FormContent = ({
 
   // Set form default values
   useEffect(() => {
-    try {
-      const mutable = cloneDeep(currentObject)
-      methods.reset(mutable)
-    } catch (e) {
-      console.error("Reset failed:", e)
+    // Don't reset form if we're in the middle of clearing
+    if (!clearForm) {
+      try {
+        const mutable = cloneDeep(currentObject)
+        methods.reset(mutable)
+      } catch (e) {
+        console.error("Reset failed:", e)
+      }
     }
-  }, [currentObject?.accessionId, currentObject])
-
-  useEffect(() => {
-    dispatch(setClearForm(false))
-  }, [clearForm])
+  }, [currentObject?.accessionId, currentObject, clearForm])
 
   // Check if form has been edited
   useEffect(() => {
@@ -358,19 +357,24 @@ const FormContent = ({
     // Set the clearForm flag to notify special fields
     dispatch(setClearForm(true))
 
-    // Reset RHF form
-    methods.reset({})
-
-    // Clear Redux autocomplete
-    dispatch(resetAutocompleteField())
-
-    // Reset current object
-    dispatch(resetCurrentObject())
-
-    // Reset the clearForm flag after a short delay to allow components to react
+    // Wait a moment, then clear everything
     setTimeout(() => {
+      // Reset RHF form completely
+      methods.reset({})
+
+      // Clear all form fields explicitly
+      const formData = methods.getValues()
+      Object.keys(formData).forEach(key => {
+        methods.setValue(key, "")
+      })
+
+      // Clear Redux states
+      dispatch(resetAutocompleteField())
+      dispatch(resetCurrentObject())
+
+      // Reset the clearForm flag
       dispatch(setClearForm(false))
-    }, 100)
+    }, 50)
   }
 
   const handleClearForm = () => {
@@ -411,7 +415,7 @@ const FormContent = ({
 
   // Draft data is set to state on every change to form
   const handleChange = () => {
-    clearForm ? dispatch(setClearForm(false)) : null
+    // clearForm ? dispatch(setClearForm(false)) : null
     const clone = cloneDeep(currentObject)
     const values = getCleanedValues()
 

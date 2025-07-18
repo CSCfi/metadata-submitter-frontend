@@ -802,6 +802,25 @@ const FormTextField = ({
     }
   }, [autocompleteField, prefilledValue])
 
+  // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
+  React.useEffect(() => {
+    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && isDOIForm)
+      setValue(name, "")
+  }, [prefilledValue])
+
+  React.useEffect(() => {
+    // Set value of <contributors>'s FullName field with the fullNameValue from givenName and familyName
+    if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
+  }, [isFullNameField, fullNameValue])
+
+  const clearForm = useAppSelector(state => state.clearForm)
+
+  React.useEffect(() => {
+    if (clearForm) {
+      setValue(name, "")
+    }
+  }, [clearForm, setValue, name])
+
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
@@ -879,63 +898,78 @@ const FormSelectField = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => (
-  <ConnectForm>
-    {({ control }: ConnectFormMethods) => {
-      return (
-        <Controller
-          name={name}
-          control={control}
-          render={({ field, fieldState: { error } }) => {
-            return (
-              <BaselineDiv>
-                <TextField
-                  {...field}
-                  label={label}
-                  id={name}
-                  value={field.value || ""}
-                  error={!!error}
-                  helperText={error?.message}
-                  required={required}
-                  select
-                  SelectProps={{ native: true }}
-                  onChange={e => {
-                    let val = e.target.value
-                    // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
-                    if (val?.includes("Title")) {
-                      const hyphenIndex = val.indexOf("-")
-                      val = val.slice(0, hyphenIndex - 1)
-                    }
-                    return field.onChange(val)
-                  }}
-                  inputProps={{ "data-testid": name }}
-                  sx={{ mb: "1rem" }}
-                >
-                  <option value="" disabled />
-                  {options.map(option => (
-                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
-                      {option}
-                    </option>
-                  ))}
-                </TextField>
-                {description && (
-                  <FieldTooltip
-                    title={<DisplayDescription description={description} />}
-                    placement="right"
-                    arrow
-                    describeChild
+}: FormSelectFieldProps & { description: string }) => {
+  const clearForm = useAppSelector(state => state.clearForm)
+  const { setValue } = useFormContext()
+
+  // Add this useEffect to handle clearing
+  React.useEffect(() => {
+    if (clearForm) {
+      setValue(name, "")
+    }
+  }, [clearForm, setValue, name])
+  return (
+    <ConnectForm>
+      {({ control }: ConnectFormMethods) => {
+        return (
+          <Controller
+            name={name}
+            control={control}
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <BaselineDiv>
+                  <TextField
+                    {...field}
+                    label={label}
+                    id={name}
+                    value={field.value || ""}
+                    error={!!error}
+                    helperText={error?.message}
+                    required={required}
+                    select
+                    SelectProps={{ native: true }}
+                    onChange={e => {
+                      let val = e.target.value
+                      // Case: linkingAccessionIds which include "AccessionId + Form's title", we need to return only accessionId as value
+                      if (val?.includes("Title")) {
+                        const hyphenIndex = val.indexOf("-")
+                        val = val.slice(0, hyphenIndex - 1)
+                      }
+                      return field.onChange(val)
+                    }}
+                    inputProps={{ "data-testid": name }}
+                    sx={{ mb: "1rem" }}
                   >
-                    <TooltipIcon />
-                  </FieldTooltip>
-                )}
-              </BaselineDiv>
-            )
-          }}
-        />
-      )
-    }}
-  </ConnectForm>
-)
+                    <option aria-label="None" value="" disabled />
+                    {options.map(option => (
+                      <option
+                        key={`${name}-${option}`}
+                        value={option}
+                        data-testid={`${name}-option`}
+                      >
+                        {option}
+                      </option>
+                    ))}
+                  </TextField>
+                  {description && (
+                    <FieldTooltip
+                      title={<DisplayDescription description={description} />}
+                      placement="right"
+                      arrow
+                      describeChild
+                    >
+                      <TooltipIcon />
+                    </FieldTooltip>
+                  )}
+                </BaselineDiv>
+              )
+            }}
+          />
+        )
+      }}
+    </ConnectForm>
+  )
+}
 
 /*
  * FormDatePicker used for selecting date or date rage in DOI form

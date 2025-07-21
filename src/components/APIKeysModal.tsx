@@ -83,6 +83,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
   const [apiKeys, setApikeys] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [newKey, setNewKey] = useState({ keyName: "", keyValue: "" })
+  const [keyInput, setKeyInput] = useState("")
   const [isEmptyName, setIsEmptyName] = useState(false)
   const [isUnique, setIsUnique] = useState(true)
 
@@ -117,6 +118,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
 
   const handleGetName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewKey({ ...newKey, keyName: e.target.value })
+    setKeyInput(e.target.value)
     setIsEmptyName(false)
     setIsUnique(true)
   }
@@ -128,6 +130,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
       if (response.ok) {
         setNewKey({ keyName: newKey.keyName, keyValue: response.data })
         setApikeys(apiKeys.concat([newKey.keyName]))
+        setKeyInput("")
       } else {
         dispatch(
           updateStatus({
@@ -185,8 +188,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
           required={true}
           margin="dense"
           onChange={e => handleGetName(e)}
-          onKeyDown={e => e.stopPropagation()}
-          value={newKey.keyName}
+          value={keyInput}
           helperText={!isUnique && t("apiKeys.keyMustBeUnique")}
         />
 

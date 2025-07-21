@@ -241,6 +241,11 @@ const SupportSelector = ({ handleOpenKeyModal }) => {
     setAnchorEl(undefined)
   }
 
+  const handleApikeyClick = () => {
+    handleOpenKeyModal()
+    handleClose()
+  }
+
   return (
     <>
       <Button
@@ -295,12 +300,10 @@ const SupportSelector = ({ handleOpenKeyModal }) => {
             <OpenInNewIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
-        <MenuItem sx={{ width: 1 }} onClick={() => handleClose()}>
-          <Button onClick={handleOpenKeyModal}>
-            <Typography variant="subtitle2" color="secondary" sx={{ fontWeight: 700 }}>
-              {t("createAPIKeys")}
-            </Typography>
-          </Button>
+        <MenuItem sx={{ width: 1 }} onClick={() => handleApikeyClick()}>
+          <Typography variant="subtitle2" color="text.primary" sx={{ ml: "1rem", fontWeight: 700 }}>
+            {t("createAPIKeys")}
+          </Typography>
         </MenuItem>
       </Menu>
     </>

@@ -150,6 +150,9 @@
       },
       "rems": {
         "saved": "REMS information has been saved successfully"
+      },
+      "apikey": {
+        "copied": "API key copied to clipboard"
       }
     }
   },

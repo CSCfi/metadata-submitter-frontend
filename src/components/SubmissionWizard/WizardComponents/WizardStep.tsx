@@ -8,6 +8,7 @@ import Link from "@mui/material/Link"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import { styled } from "@mui/material/styles"
+import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 import { TransitionGroup } from "react-transition-group"
@@ -81,19 +82,45 @@ const ActionButton = (props: {
 
   return (
     <React.Fragment>
-      <Button
-        role="button"
-        disabled={disabled}
-        variant="contained"
-        onClick={() => handleClick()}
-        sx={theme => ({ marginTop: theme.spacing(2.4) })}
-        form="hook-form"
-        type="reset"
-        data-testid={`${buttonText} ${parent}`}
+      <Grid
+        container
+        alignItems="center"
+        style={{
+          marginTop: 24,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
       >
-        {buttonText}
-      </Button>
-      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
+        <div style={{ display: "inline-block", marginRight: 8 }}>
+          {" "}
+          <Button
+            role="button"
+            disabled={disabled}
+            variant="contained"
+            onClick={() => handleClick()}
+            style={{ height: 40 }}
+            form="hook-form"
+            type="reset"
+            data-testid={`${buttonText} ${parent}`}
+          >
+            {buttonText}
+          </Button>
+        </div>
+        {parent === ObjectTypes.file && submission.filesStatus === "linked" && (
+          <div style={{ display: "inline-block" }}>
+            {" "}
+            <WizardObjectStatusBadge status="linked" />
+          </div>
+        )}
+      </Grid>
+      {alert && (
+        <WizardAlert
+          onAlert={handleAlert}
+          parentLocation="submission"
+          alertType={ObjectSubmissionTypes.form}
+        />
+      )}
     </React.Fragment>
   )
 }
@@ -193,7 +220,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge />
+                    <WizardObjectStatusBadge status="draft" />
                   </Grid>
                 </Grid>
               </ObjectItem>
@@ -246,6 +273,11 @@ const ObjectWrapper = styled("div")(({ theme }) => {
       "& li:last-of-type:before": {
         borderLeft: treeBorder,
       },
+      "& .stepItemHeader": {
+        display: "flex",
+        alignItems: "center",
+        gap: theme.spacing(1),
+      },
     },
   }
 })
@@ -292,7 +324,10 @@ const WizardStep = (props: WizardStepProps) => {
               <ObjectWrapper className={isActive ? "activeObject" : ""}>
                 <div className="stepItemHeader">
                   {isActive && <ChevronRightIcon fontSize="large" />}
-                  {name}
+                  <Typography component="span">{name}</Typography>
+                  {/* {objectType === ObjectTypes.file && submission.filesStatus === "linked" && (
+                    <WizardObjectStatusBadge status="linked" />
+                  )} */}
                 </div>
 
                 {objects && (

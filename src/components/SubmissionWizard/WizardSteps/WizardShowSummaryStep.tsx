@@ -153,7 +153,7 @@ const WizardShowSummaryStep: React.FC = () => {
       field: "status",
       headerName: t("Status"),
       renderCell: (params: GridRenderCellParams) => (
-        <WizardObjectStatusBadge draft={params.row.draft} />
+        <WizardObjectStatusBadge status={params.row.draft ? "draft" : "ready"} />
       ),
       flex: 0.5,
     },

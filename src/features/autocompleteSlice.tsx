@@ -6,8 +6,7 @@ const autocompleteFieldSlice = createSlice({
   name: "autocompleteField",
   initialState,
   reducers: {
-    setAutocompleteField: (_state, action) =>
-      typeof action.payload === "string" ? action.payload : "",
+    setAutocompleteField: (_state, action) => action.payload,
     resetAutocompleteField: () => initialState,
   },
 })

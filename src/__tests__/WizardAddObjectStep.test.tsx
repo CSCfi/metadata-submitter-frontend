@@ -1,3 +1,4 @@
+﻿/* XML upload is disabled for MVP */
 import { act } from "react"
 
 import { screen } from "@testing-library/react"
@@ -26,7 +27,8 @@ describe("WizardAddObjectStep", () => {
       }
     )
     expect(
-      screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")
+      //screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")
+      screen.getByText("Add objects by clicking the name, then fill a form.")
     ).toBeInTheDocument()
   })
 

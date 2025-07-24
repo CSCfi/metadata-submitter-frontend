@@ -713,8 +713,10 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           cleanedValues,
           dispatch
         )
-        dispatch(resetCurrentObject())
-        // methods.reset({ undefined })
+
+        if (objectType !== ObjectTypes.dataset) {
+          dispatch(resetCurrentObject())
+        }
 
         if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
           const objectWithFileTypes = getNewUniqueFileTypes(

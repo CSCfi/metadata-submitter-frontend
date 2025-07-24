@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Disable XML upload related functionality and tests for MVP (#1061)
 - (users) Hide prefilled affiliationIdentifier field in DOI form (#1005)
 - Replaced mui/lab with mui/x-date-pickers package. Updated date selection component in DOI form (#1021)
 - Adapt to backend changes to use JWT token in secure cookie (#1032)

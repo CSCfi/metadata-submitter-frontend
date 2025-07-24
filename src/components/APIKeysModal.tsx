@@ -160,7 +160,6 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(newKey.keyValue)
-    setNewKey({ keyName: "", keyValue: "" })
     dispatch(
       updateStatus({
         status: ResponseStatus.success,

@@ -150,7 +150,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             error={!!error}
             helperText={error ? t("newSubmission.errors.missingName") : null}
             disabled={isSubmitting}
-            inputProps={{ "data-testid": "submissionName" }}
+            slotProps={{ htmlInput: { "data-testid": "submissionName" } }}
           />
         )}
         rules={{ required: true, validate: { name: value => value.length > 0 } }}
@@ -170,7 +170,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             error={!!error}
             helperText={error ? t("newSubmission.errors.missingDescription") : null}
             disabled={isSubmitting}
-            inputProps={{ "data-testid": "submissionDescription" }}
+            slotProps={{ htmlInput: { "data-testid": "submissionDescription" } }}
           />
         )}
         rules={{ required: true, validate: { description: value => value.length > 0 } }}

@@ -108,20 +108,17 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
-  const getLinkedFolderName = () => {
+  const getLinkedFolderName = (): string => {
     try {
       const filesData = sessionStorage.getItem("files")
       if (filesData) {
         const files = JSON.parse(filesData)
         const folderNames = [...new Set(files.map(file => file["path"].split("/")[1]))]
-        // If there's a linked folder in submission, find it in the folder names
+        // find linked folder name
         if (submission.linkedFolder) {
-          return (
-            folderNames.find(name => name === submission.linkedFolder) || submission.linkedFolder
-          )
+          return (folderNames.find(name => name === submission.linkedFolder) ||
+            submission.linkedFolder) as string
         }
-        // Otherwise return the first folder name if available
-        return folderNames[0] || "Datafolder"
       }
     } catch (error) {
       console.error("Error getting folder name:", error)

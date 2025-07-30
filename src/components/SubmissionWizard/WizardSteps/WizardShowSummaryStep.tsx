@@ -22,6 +22,7 @@ import WizardPagination from "../WizardComponents/WizardPagination"
 import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
+import { ObjectTypes } from "constants/wizardObject"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -112,6 +113,29 @@ const WizardShowSummaryStep: React.FC = () => {
     return (
       summaryItem.schemas?.flatMap(stepItem => {
         const objects = stepItem.objects
+
+        // Add row for linked files
+        if (
+          stepItem.objectType === ObjectTypes.file &&
+          submission.filesStatus === "linked" &&
+          (!objects || Object.values(objects).flat().length === 0)
+        ) {
+          return [
+            {
+              id: `linked-files-${step}`,
+              status: "linked",
+              name: "Datafolder",
+              action: "",
+              step,
+              draft: false,
+              objectType: stepItem.objectType,
+              objectData: undefined,
+              objectsList: [],
+              isLinkedFile: true,
+            },
+          ]
+        }
+
         if (objects) {
           const objectsList = Object.values(objects).flat()
           return objectsList
@@ -129,6 +153,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 objectType: stepItem.objectType,
                 objectData: item.objectData,
                 objectsList,
+                isLinkedFile: false,
               }
             })
         }
@@ -152,9 +177,10 @@ const WizardShowSummaryStep: React.FC = () => {
     {
       field: "status",
       headerName: t("Status"),
-      renderCell: (params: GridRenderCellParams) => (
-        <WizardObjectStatusBadge status={params.row.draft ? "draft" : "ready"} />
-      ),
+      renderCell: (params: GridRenderCellParams) => {
+        const status = params.row.isLinkedFile ? "linked" : params.row.draft ? "draft" : "ready"
+        return <WizardObjectStatusBadge status={status} />
+      },
       flex: 0.5,
     },
     { field: "name", headerName: t("Name"), flex: 1 },

@@ -118,19 +118,18 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
   }
 
   const handleGetName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setNewKey({ ...newKey, keyName: e.target.value })
     setKeyInput(e.target.value)
     setIsEmptyName(false)
     setIsUnique(true)
   }
 
   const handleCreateKey = async () => {
-    if (newKey.keyName === "") setIsEmptyName(true)
-    else if (!apiKeys.includes(newKey.keyName)) {
-      const response = await apiKeysService.addAPIKey(newKey.keyName)
+    if (keyInput === "") setIsEmptyName(true)
+    else if (!apiKeys.includes(keyInput)) {
+      const response = await apiKeysService.addAPIKey(keyInput)
       if (response.ok) {
-        setNewKey({ keyName: newKey.keyName, keyValue: response.data })
-        setApikeys(apiKeys.concat([newKey.keyName]))
+        setNewKey({ keyName: keyInput, keyValue: response.data })
+        setApikeys(apiKeys.concat([keyInput]))
         setKeyInput("")
       } else {
         dispatch(
@@ -147,7 +146,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
     const response = await apiKeysService.deleteAPIKey(key)
     if (response.ok) {
       setApikeys(apiKeys.filter(item => item !== key))
-      setNewKey({ keyName: "", keyValue: "" })
+      if (key === newKey.keyName) setNewKey({ keyName: "", keyValue: "" })
     } else {
       dispatch(
         updateStatus({

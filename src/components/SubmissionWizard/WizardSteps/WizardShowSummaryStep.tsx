@@ -108,6 +108,27 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
+  const getLinkedFolderName = () => {
+    try {
+      const filesData = sessionStorage.getItem("files")
+      if (filesData) {
+        const files = JSON.parse(filesData)
+        const folderNames = [...new Set(files.map(file => file["path"].split("/")[1]))]
+        // If there's a linked folder in submission, find it in the folder names
+        if (submission.linkedFolder) {
+          return (
+            folderNames.find(name => name === submission.linkedFolder) || submission.linkedFolder
+          )
+        }
+        // Otherwise return the first folder name if available
+        return folderNames[0] || "Datafolder"
+      }
+    } catch (error) {
+      console.error("Error getting folder name:", error)
+    }
+    return "Datafolder"
+  }
+
   const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
     return (
@@ -124,7 +145,7 @@ const WizardShowSummaryStep: React.FC = () => {
             {
               id: `linked-files-${step}`,
               status: "linked",
-              name: "Datafolder",
+              name: String(getLinkedFolderName()),
               action: "",
               step,
               draft: false,
@@ -146,7 +167,7 @@ const WizardShowSummaryStep: React.FC = () => {
               return {
                 id: item.id,
                 status: draft ? t("draft") : t("ready"),
-                name,
+                name: String(name),
                 action: draft ? t("Please mark as ready") : "",
                 step,
                 draft,
@@ -158,7 +179,7 @@ const WizardShowSummaryStep: React.FC = () => {
             })
         }
         return []
-      }) || []
+      }) ?? []
     )
   })
 

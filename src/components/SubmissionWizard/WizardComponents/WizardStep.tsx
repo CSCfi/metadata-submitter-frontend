@@ -107,12 +107,6 @@ const ActionButton = (props: {
             {buttonText}
           </Button>
         </div>
-        {parent === ObjectTypes.file && submission.filesStatus === "linked" && (
-          <div style={{ display: "inline-block" }}>
-            {" "}
-            <WizardObjectStatusBadge status="linked" />
-          </div>
-        )}
       </Grid>
       {alert && (
         <WizardAlert
@@ -220,7 +214,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge status="draft" />
+                    <WizardObjectStatusBadge status={draft ? "draft" : "ready"} />
                   </Grid>
                 </Grid>
               </ObjectItem>
@@ -303,6 +297,8 @@ const WizardStep = (props: WizardStepProps) => {
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   return (
     <React.Fragment>
@@ -325,10 +321,47 @@ const WizardStep = (props: WizardStepProps) => {
                 <div className="stepItemHeader">
                   {isActive && <ChevronRightIcon fontSize="large" />}
                   <Typography component="span">{name}</Typography>
-                  {/* {objectType === ObjectTypes.file && submission.filesStatus === "linked" && (
-                    <WizardObjectStatusBadge status="linked" />
-                  )} */}
                 </div>
+
+                {/* Add Datafolder link structure like other steps */}
+                {objectType === ObjectTypes.file && submission.filesStatus === "linked" && (
+                  <ul className="tree">
+                    <li>
+                      <div style={{ paddingTop: "20px" }}>
+                        <Grid container justifyContent="space-between">
+                          <Grid display="flex" alignItems="center" size={{ xs: 6 }}>
+                            <Link
+                              tabIndex={0}
+                              onClick={() => {
+                                dispatch(updateStep({ step: step, objectType: objectType }))
+                                navigate({
+                                  pathname: pathWithLocale(`submission/${submission.submissionId}`),
+                                  search: `step=${step}`,
+                                })
+                                dispatch(setSubmissionType(ObjectSubmissionTypes.form))
+                                dispatch(setObjectType(objectType))
+                              }}
+                              data-testid={`linked-${objectType}-list-item`}
+                              aria-label={`View ${objectType} step`}
+                              sx={theme => ({
+                                fontWeight: "300",
+                                textDecoration: "underline",
+                                wordBreak: "break-all",
+                                cursor: "pointer",
+                                color: theme.palette.primary.main,
+                              })}
+                            >
+                              Datafolder
+                            </Link>
+                          </Grid>
+                          <Grid>
+                            <WizardObjectStatusBadge status="linked" />
+                          </Grid>
+                        </Grid>
+                      </div>
+                    </li>
+                  </ul>
+                )}
 
                 {objects && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>

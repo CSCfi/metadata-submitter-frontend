@@ -83,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) Remove schemeUri, affiliationIdentifierScheme, fullName fields from prefilled DOI form text fields (#1008)
 - Removed Cypress tests, relevant configuration and Github workflow (#1039)
 - Removed template-related functionality (#1034)
 - (users) "Sensitive Data Services" phrase from navigation bar.

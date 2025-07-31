@@ -84,7 +84,7 @@ const WizardDataFolderStep = () => {
     <Button
       disabled={!selectedFolder || !!linkedFolder}
       variant="contained"
-      aria-label="link datafolder"
+      aria-label={t("ariaLabels.linkFolder")}
       size="small"
       type="submit"
       onClick={handleLinkFolder}
@@ -104,7 +104,7 @@ const WizardDataFolderStep = () => {
     !!breadcrumbs.length && (
       <Breadcrumbs
         separator={<NavigateNextIcon fontSize="large" />}
-        aria-label="folder-breadcrumb"
+        aria-label={t("ariaLabels.folderBreadcrumb")}
         data-testid="folder-breadcrumb"
       >
         {breadcrumbs.map((el, index) => (

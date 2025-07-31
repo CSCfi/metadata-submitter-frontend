@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useLocation, Link as RouterLink } from "react-router"
 
 import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
@@ -53,6 +54,7 @@ const SelectedSubmissionDetails: React.FC = () => {
 
   const submissionId = useLocation().pathname.split("/").pop()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Fetch submission data and map objects
   useEffect(() => {
@@ -87,7 +89,7 @@ const SelectedSubmissionDetails: React.FC = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: response,
-            helperText: "Object fetching error.",
+            helperText: "snackbarMessages.error.helperText.fetchObject",
           })
         )
       }
@@ -127,7 +129,7 @@ const SelectedSubmissionDetails: React.FC = () => {
               updateStatus({
                 status: ResponseStatus.error,
                 response: response,
-                helperText: "Fetching submissions error.",
+                helperText: "snackbarMessages.error.helperText.fetchSubmission",
               })
             )
           }
@@ -170,7 +172,7 @@ const SelectedSubmissionDetails: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: JSON.parse(error),
-              helperText: `Couldn't publish submission with id ${selectedSubmission.originalSubmissionData.submissionId}`,
+              helperText: "snackbarMessages.error.helperText.submissionPublish",
             })
           )
         })
@@ -200,7 +202,7 @@ const SelectedSubmissionDetails: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Draft fetching error",
+          helperText: "snackbarMessages.error.helperText.fetchDraft",
         })
       )
     }
@@ -219,7 +221,7 @@ const SelectedSubmissionDetails: React.FC = () => {
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
-          helperText: "Object deleted",
+          helperText: "snackbarMessages.success.objects.deleted",
         })
       )
     } else {
@@ -227,7 +229,7 @@ const SelectedSubmissionDetails: React.FC = () => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Can't delete object",
+          helperText: "snackbarMessages.error.helperText.deleteObject",
         })
       )
     }
@@ -244,7 +246,7 @@ const SelectedSubmissionDetails: React.FC = () => {
       {isFetchingSubmission && <CircularProgress size={50} thickness={2.5} sx={{ m: 10 }} />}
       {!isFetchingSubmission && (
         <>
-          <Breadcrumbs aria-label="breadcrumb" data-testid="breadcrumb">
+          <Breadcrumbs aria-label={t("ariaLabels.breadcrumb")} data-testid="breadcrumb">
             <Link color="inherit" component={RouterLink} to={pathWithLocale("home")}>
               Home
             </Link>

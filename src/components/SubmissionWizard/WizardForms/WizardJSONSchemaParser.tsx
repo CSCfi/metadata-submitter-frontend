@@ -716,7 +716,7 @@ const FormOneOfField = ({
                 inputProps={{ "data-testid": name }}
                 sx={{ mb: "1rem" }}
               >
-                <option aria-label="None" value="" disabled />
+                <option value="" disabled />
                 {options?.map((optionObject: { title: string }) => {
                   const option = optionObject.title
                   return (
@@ -911,7 +911,7 @@ const FormSelectField = ({
                   inputProps={{ "data-testid": name }}
                   sx={{ mb: "1rem" }}
                 >
-                  <option aria-label="None" value="" disabled />
+                  <option value="" disabled />
                   {options.map(option => (
                     <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
                       {option}
@@ -1487,7 +1487,7 @@ const FormCheckBoxArray = ({
   description,
 }: FormSelectFieldProps & { description: string }) => (
   <Box px={1}>
-    <p>{label} Check from following options</p>
+    <p>{label}</p>
     <ConnectForm>
       {({ register, errors, getValues }: ConnectFormMethods) => {
         const values = getValues()[name]
@@ -1789,7 +1789,7 @@ const FormArray = ({
           onClick={() => handleAppend()}
           sx={{ mb: "1rem" }}
         >
-          Add new item
+          {t("formActions.addItem")}
         </Button>
       </Grid>
     </Grid>

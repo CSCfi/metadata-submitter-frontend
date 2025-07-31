@@ -61,7 +61,7 @@ const Login: React.FC = () => {
     <LoginContainer disableGutters maxWidth={false}>
       <LoginBanner elevation={0}>
         <Typography variant="h4" sx={{ color: "primary.main", fontWeight: 700 }}>
-          SD Submit
+          {t("serviceTitle")}
         </Typography>
         <Typography variant="subtitle1" sx={{ mt: "3.6rem" }}>
           {t("serviceIntro")}

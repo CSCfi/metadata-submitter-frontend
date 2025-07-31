@@ -3,6 +3,7 @@ import SearchIcon from "@mui/icons-material/Search"
 import IconButton from "@mui/material/IconButton"
 import { styled } from "@mui/material/styles"
 import MuiTextField from "@mui/material/TextField"
+import { useTranslation } from "react-i18next"
 
 type WizardSearchBoxProps = {
   placeholder: string
@@ -27,6 +28,7 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
 
 const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
   const { placeholder, filteringText, handleChangeFilteringText, handleClearFilteringText } = props
+  const { t } = useTranslation()
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChangeFilteringText(e)
@@ -51,7 +53,7 @@ const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
         endAdornment: (
           <IconButton
             title="Clear"
-            aria-label="Clear"
+            aria-label={t("ariaLabels.clear")}
             size="medium"
             sx={{ visibility: filteringText ? "visible" : "hidden" }}
             onClick={handleClearFilteringText}

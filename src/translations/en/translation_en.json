@@ -1,11 +1,7 @@
 {
   "serviceTitle": "SD Submit",
   "serviceIntro": "Tool for submitting metadata.",
-  "createSubmission": "Create submission",
-  "allSubmissions": "All submissions",
-  "draftSubmissions": "Draft submissions",
-  "publishedSubmissions": "Published submissions",
-  "submissionDetails": "Submission details",
+  "project": "Project",
   "save": "Save",
   "add": "Add",
   "edit": "Edit",
@@ -13,9 +9,10 @@
   "close": "Close",
   "view": "View",
   "publish": "Publish",
+  "replace": "Replace",
+  "submit": "Submit",
   "draft": "Draft",
   "ready": "Ready",
-  "saveSubmission": "Save progress and exit",
   "showMore": "Show more",
   "showLess": "Show less",
   "visibleLanguage": {
@@ -53,6 +50,24 @@
       "range": "Invalid range"
     }
   },
+  "objects": {
+    "add": "Add objects by clicking the name, then fill a form.",
+    "edit": "You can also add objects and edit them after saving your draft."
+  },
+  "submission": {
+    "create": "Create submission",
+    "save": "Save progress and exit",
+    "all": "All submissions",
+    "draft": "Draft submissions",
+    "published": "Published submissions",
+    "details": "Submission details",
+    "empty": "Current submission is empty",
+    "addObjects": "Add objects to submission",
+    "objectRequired": "Publishing requires submitted object(s).",
+    "submissions": "Your {{submissionType}} submissions",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details"
+  },
   "formActions": {
     "saveAsDraft": "Save as draft",
     "updateDraft": "Update draft",
@@ -61,7 +76,8 @@
     "options": "Options",
     "uploadXML": "Upload XML",
     "clearForm": "Clear form",
-    "deleteForm": "Delete form"
+    "deleteForm": "Delete form",
+    "addItem": "Add new item"
   },
   "login": "Log in",
   "logout": "Log out",
@@ -71,12 +87,21 @@
       "504": "Unfortunately we couldn't connect to our server.",
       "400": "{{helperText}} Details: {{responseDetail}}",
       "helperText": {
-        "deleteObjectFromSubmission": "Can't delete object",
-        "fetchWorkflowsError": "Error getting all workflows",
-        "submitDoiError": "Can't submit information for DOI.",
-        "fetchRemsInfoError": "Error getting REMS information.",
-        "fetchSubmissionError": "Error fetching submission.",
-        "submitRemsError": "Can't save information for REMS."
+        "cacheFormFields": "Error caching form fields.",
+        "deleteObject": "Can't delete object.",
+        "fetchWorkflows": "Error getting all workflows.",
+        "fetchRemsInfo": "Error getting REMS information.",
+        "fetchDraft": "Error fetching draft.",
+        "fetchObject": "Error fetching object.",
+        "fetchSchema": "Error fetching schema.",
+        "fetchSubmission": "Error fetching submission.",
+        "fetchSubmissions": "Error fetching submissions.",
+        "modifyObject": "Error modifying object.",
+        "submitDoi": "Can't submit information for DOI.",
+        "submitRems": "Can't save information for REMS.",
+        "submissionPublish": "Error publishing submission.",
+        "saveDraft": "Error saving draft.",
+        "validation": "Validation failed"
       }
     },
     "info": {
@@ -223,5 +248,44 @@
     "linkFromSDConnect": "Link folder from SD Connect",
     "linkedFolder": "Linked folder",
     "allFolders": "All folders"
+  },
+  "xml": {
+    "modalTitle": "Upload XML file",
+    "dragDrop": "Drag and drop the file here or",
+    "selectFile": "Select file",
+    "placeholderFileName": "Name",
+    "noFileName": "No file name",
+    "chooseFile": "Choose a file or drag it here.",
+    "clickSubmit": "Use Submit button to upload the file.",
+    "attachFile": "Please attach a file.",
+    "attachXMLFile": "Please attach an XML file.",
+    "invalidObject": "The file you attached is not a valid object.",
+    "table": {
+      "name": "Name",
+      "size": "Size"
+    }
+  },
+  "ariaLabels": {
+    "tabs": "draft and published submissions tabs",
+    "breadcrumb": "breadcrumb",
+    "editObject": "edit this object",
+    "deleteObject": "delete this object",
+    "showDetails": "show object details",
+    "editSubmission": "edit current submission",
+    "publishSubmission": "publish current submission",
+    "addObjects": "add objects to this submission",
+    "selectProject": "select project id",
+    "saveSubmission": "save a new submission and move to frontpage",
+    "previousPage": "previous page",
+    "nextPage": "next page",
+    "clear": "clear",
+    "saveForm": "save form as draft",
+    "submitForm": "submit form",
+    "saveDOI": "save doi form",
+    "saveDetails": "save submission details",
+    "saveDAC": "save DAC and policies",
+    "linkFolder": "link datafolder",
+    "folderBreadcrumb": "folder breadcrumb",
+    "options": "options button"
   }
 }

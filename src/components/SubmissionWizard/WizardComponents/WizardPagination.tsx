@@ -97,6 +97,7 @@ const WizardPaginationActions = ({
   onPageChange,
 }: WizardPaginationActionsType): ReactElement<unknown> => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const totalPages = Math.ceil(count / rowsPerPage)
 
   const matches = useMediaQuery(theme.breakpoints.down("md"))
@@ -118,7 +119,7 @@ const WizardPaginationActions = ({
           <IconButton
             onClick={handleBackButtonClick}
             disabled={page === 0}
-            aria-label="previous page"
+            aria-label={t("ariaLabels.previousPage")}
             data-testid="previous page"
           >
             {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
@@ -126,7 +127,7 @@ const WizardPaginationActions = ({
           <IconButton
             onClick={handleNextButtonClick}
             disabled={page + 1 === totalPages} // Disable when on the last page
-            aria-label="next page"
+            aria-label={t("ariaLabels.nextPage")}
             data-testid="next page"
           >
             {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}

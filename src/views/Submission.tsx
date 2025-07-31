@@ -93,7 +93,7 @@ const SubmissionWizard: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: response,
-              helperText: "Fetching submission error.",
+              helperText: "snackbarMessages.error.helperText.fetchSubmission",
             })
           )
           dispatch(resetSubmission())

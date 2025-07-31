@@ -331,7 +331,7 @@ const NavigationMenu = () => {
             onClick={() => setDialogOpen(true)}
             data-testid="save-submission"
           >
-            {t("saveSubmission")}
+            {t("submission.save")}
           </Button>
         )}
         <LanguageSelector currentLocale={currentLocale} />

@@ -183,7 +183,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <ButtonGroup>
         <Button
           variant="contained"
-          aria-label="save form as draft"
+          aria-label={t("ariaLabels.saveForm")}
           size="small"
           onClick={onClickSaveDraft}
           data-testid="form-draft"
@@ -196,7 +196,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
         </Button>
         <Button
           variant="contained"
-          aria-label="submit form"
+          aria-label={t("ariaLabels.submitForm")}
           size="small"
           type="submit"
           onClick={onClickSubmit}
@@ -226,7 +226,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       <ButtonGroup>
         <Button
           variant="contained"
-          aria-label="save Datacite"
+          aria-label={t("ariaLabels.saveDOI")}
           size="small"
           onClick={onClickSaveDOI}
           data-testid="form-datacite"
@@ -279,7 +279,7 @@ const patchHandler = (
       updateStatus({
         status: ResponseStatus.error,
         response: response,
-        helperText: "Unexpected error",
+        helperText: "",
       })
     )
   }
@@ -427,7 +427,7 @@ const FormContent = ({
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "snackbarMessages.error.helperText.submitDoiError",
+            helperText: "snackbarMessages.error.helperText.submitDoi",
           })
         )
       )
@@ -559,7 +559,7 @@ const FormContent = ({
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "snackbarMessages.error.helperText.deleteObjectFromSubmission",
+            helperText: "snackbarMessages.error.helperText.deleteObject",
           })
         )
       }
@@ -614,6 +614,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const locale = useAppSelector(state => state.locale)
   //const openedXMLModal = useAppSelector(state => state.openedXMLModal)
 
+  const { t } = useTranslation()
   const { hasDraftObject, hasSubmittedObject } = checkObjectStatus(submission, objectType)
 
   // States that will update in useEffect()
@@ -647,7 +648,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           setStates({
             ...states,
             error: true,
-            helperText: "Unfortunately an error happened while catching form fields",
+            helperText: t("snackbarMessages.error.helperText.cacheFormFields"),
             isLoading: false,
           })
           return
@@ -756,7 +757,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "Unexpected error when modifying object",
+            helperText: "snackbarMessages.error.helperText.modifyObject",
           })
         )
       }

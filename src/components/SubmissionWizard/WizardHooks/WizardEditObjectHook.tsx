@@ -46,7 +46,7 @@ const editObjectHook = async (
       updateStatus({
         status: ResponseStatus.error,
         response: response,
-        helperText: `Error while fetching${draft && " draft"} object`,
+        helperText: "snackbarMessages.error.helperText.fetchDraft",
       })
     )
   }

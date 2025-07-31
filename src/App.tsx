@@ -116,7 +116,7 @@ const App: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: "snackbarMessages.error.helperText.fetchRemsInfoError",
+              helperText: "snackbarMessages.error.helperText.fetchRemsInfo",
             })
           )
         }

@@ -82,7 +82,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
         {t("formActions.options")}
       </Typography>
       <IconButton
-        aria-label="options-button"
+        aria-label={t("ariaLabels.options")}
         id="options-button"
         aria-controls={open ? "options" : undefined}
         aria-expanded={open ? "true" : undefined}

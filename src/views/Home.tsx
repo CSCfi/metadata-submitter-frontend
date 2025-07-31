@@ -73,10 +73,10 @@ const Home: React.FC = () => {
 
   // Array of tabs to be rendered
   const frontpageTabs = [
-    { label: t("allSubmissions"), value: SubmissionStatus.all, testId: "all-tab" },
-    { label: t("draftSubmissions"), value: SubmissionStatus.unpublished, testId: "draft-tab" },
+    { label: t("submission.all"), value: SubmissionStatus.all, testId: "all-tab" },
+    { label: t("submission.draft"), value: SubmissionStatus.unpublished, testId: "draft-tab" },
     {
-      label: t("publishedSubmissions"),
+      label: t("submission.published"),
       value: SubmissionStatus.published,
       testId: "published-tab",
     },
@@ -125,7 +125,7 @@ const Home: React.FC = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
-              helperText: "Fetching submissions error.",
+              helperText: "snackbarMessages.error.helperText.fetchSubmissions",
             })
           )
         }
@@ -343,7 +343,7 @@ const Home: React.FC = () => {
     <FrontPageContainer maxWidth={false} disableGutters>
       <Box sx={{ mt: 10 }}>
         <SubmissionTabs
-          tabsAriaLabel="draft-and-published-submissions-tabs"
+          tabsAriaLabel={t("ariaLabels.tabs")}
           tabs={frontpageTabs}
           tabValue={tabValue}
           handleChangeTab={handleChangeTab}

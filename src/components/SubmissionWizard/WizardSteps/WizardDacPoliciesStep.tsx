@@ -99,7 +99,7 @@ const DacPoliciesForm = () => {
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: "snackbarMessages.error.helperText.fetchSubmissionError",
+              helperText: "snackbarMessages.error.helperText.fetchSubmission",
             })
           )
         }
@@ -134,7 +134,7 @@ const DacPoliciesForm = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "snackbarMessages.error.helperText.submitRemsError",
+            helperText: "snackbarMessages.error.helperText.submitRems",
           })
         )
       )
@@ -144,7 +144,7 @@ const DacPoliciesForm = () => {
     <Button
       disabled={!selectedRems.organizationId || !selectedRems.workflowId || isSubmitting}
       variant="contained"
-      aria-label="save dac and policies"
+      aria-label={t("ariaLabels.saveDAC")}
       size="small"
       type="submit"
       data-testid="form-ready"

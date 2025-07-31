@@ -216,7 +216,7 @@ const CancelFormDialog = ({
               </Button>
               <Button
                 variant="contained"
-                aria-label="Save a new submission and move to frontpage"
+                aria-label={t("ariaLabels.saveSubmission")}
                 onClick={() => handleDialog(true)}
                 color="primary"
               >

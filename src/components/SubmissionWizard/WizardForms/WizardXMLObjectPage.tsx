@@ -9,6 +9,7 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Typography from "@mui/material/Typography"
+import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 
@@ -35,6 +36,7 @@ const WizardXMLObjectPage = () => {
   const dispatch = useAppDispatch()
   const xmlObject = useAppSelector(state => state.currentObject)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -52,8 +54,8 @@ const WizardXMLObjectPage = () => {
           <Table>
             <TableHead>
               <StyledTableRow>
-                <TableCell width={"25%"}>Name</TableCell>
-                <TableCell width={"25%"}>Size</TableCell>
+                <TableCell width={"25%"}>{t("xml.table.name")}</TableCell>
+                <TableCell width={"25%"}>{t("xml.table.size")}</TableCell>
                 <TableCell></TableCell>
               </StyledTableRow>
             </TableHead>
@@ -66,7 +68,7 @@ const WizardXMLObjectPage = () => {
                     onClick={() => dispatch(setXMLModalOpen())}
                     sx={{ mr: "4rem", "&:hover": { cursor: "pointer" } }}
                   >
-                    Replace
+                    {t("replace")}
                   </Link>
                 </TableCell>
               </StyledTableRow>

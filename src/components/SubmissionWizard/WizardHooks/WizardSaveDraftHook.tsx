@@ -47,7 +47,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Cannot save draft",
+          helperText: "snackbarMessages.error.helperText.saveDraft",
         })
       )
     }
@@ -80,7 +80,7 @@ const saveDraftHook = async (props: SaveDraftHookProps) => {
         updateStatus({
           status: ResponseStatus.error,
           response: response,
-          helperText: "Cannot save draft",
+          helperText: "snackbarMessages.error.helperText.saveDraft",
         })
       )
     }

@@ -802,6 +802,17 @@ const FormTextField = ({
     }
   }, [autocompleteField, prefilledValue])
 
+  // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
+  React.useEffect(() => {
+    if (
+      prefilledValue === undefined &&
+      val &&
+      lastPathItem === prefilledHiddenFields[0] &&
+      isDOIForm
+    )
+      setValue(name, "")
+  }, [prefilledValue])
+
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
@@ -911,7 +922,7 @@ const FormSelectField = ({
                   inputProps={{ "data-testid": name }}
                   sx={{ mb: "1rem" }}
                 >
-                  <option value="" disabled />
+                  <option aria-label="None" value="" disabled />
                   {options.map(option => (
                     <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
                       {option}

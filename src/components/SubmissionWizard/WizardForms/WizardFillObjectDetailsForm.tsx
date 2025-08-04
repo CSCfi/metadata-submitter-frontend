@@ -340,18 +340,18 @@ const FormContent = ({
   }
 
   // Check if the form is empty
-  const isFormCleanedValuesEmpty = (cleanedValues: {
-    [x: string]: unknown
-    [x: number]: unknown
-    accessionId?: string
-    lastModified?: string
-    objectType?: string
-    status?: string
-    title?: string
-    submissionType?: string
-  }) => {
-    return Object.keys(cleanedValues).filter(val => val !== "index").length === 0
-  }
+  // const isFormCleanedValuesEmpty = (cleanedValues: {
+  //   [x: string]: unknown
+  //   [x: number]: unknown
+  //   accessionId?: string
+  //   lastModified?: string
+  //   objectType?: string
+  //   status?: string
+  //   title?: string
+  //   submissionType?: string
+  // }) => {
+  //   return Object.keys(cleanedValues).filter(val => val !== "index").length === 0
+  // }
 
   // const checkDirty = () => {
   //   const isFormTouched = () => {
@@ -370,7 +370,7 @@ const FormContent = ({
     const clone = cloneDeep(currentObject)
     const values = getCleanedValues()
 
-    if (clone && !isFormCleanedValuesEmpty(values)) {
+    if (clone && Object.keys(values).filter(val => val !== "index").length > 0) {
       Object.keys(values).forEach(item => (clone[item] = values[item]))
 
       !currentObject.accessionId && currentObjectId
@@ -391,7 +391,7 @@ const FormContent = ({
     dispatch(addDoiInfoToSubmission(submission.submissionId, data))
       .then(() => {
         dispatch(resetAutocompleteField())
-        dispatch(resetCurrentObject())
+        // dispatch(resetCurrentObject())
         dispatch(
           updateStatus({
             status: ResponseStatus.success,

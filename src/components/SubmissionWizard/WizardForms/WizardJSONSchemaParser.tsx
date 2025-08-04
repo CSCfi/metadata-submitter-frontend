@@ -804,14 +804,14 @@ const FormTextField = ({
 
   // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
   React.useEffect(() => {
-    if (prefilledValue === undefined && val && lastPathItem === prefilledFields[0] && isDOIForm)
+    if (
+      prefilledValue === undefined &&
+      val &&
+      lastPathItem === prefilledHiddenFields[0] &&
+      isDOIForm
+    )
       setValue(name, "")
   }, [prefilledValue])
-
-  React.useEffect(() => {
-    // Set value of <contributors>'s FullName field with the fullNameValue from givenName and familyName
-    if (isFullNameField && fullNameValue) setValue(name, fullNameValue)
-  }, [isFullNameField, fullNameValue])
 
   return (
     <ConnectForm>

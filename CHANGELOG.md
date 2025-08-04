@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Removed Options menu with Clear button (#1036)
+- (users) Removed clearing upon save functionality (#1036)
+- (users) Removed draft functionality (#1035)
 - Replaced hardcoded strings with translatable strings (#1064)
 - (users) Disable XML upload related functionality and tests for MVP (#1061)
 - (users) Hide prefilled affiliationIdentifier field in DOI form (#1005)

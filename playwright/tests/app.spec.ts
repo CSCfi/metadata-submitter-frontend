@@ -1,3 +1,4 @@
+/* Workflows are disabled for MVP */
 import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
@@ -5,6 +6,7 @@ import test from "../fixtures/commands"
 import { ObjectTypes } from "constants/wizardObject"
 
 test.describe("Basic application flow", () => {
+  test.skip()
   test.beforeEach(async ({ resetDB }) => {
     await resetDB()
   })
@@ -121,7 +123,7 @@ test.describe("Basic application flow", () => {
     await page.getByTestId("View Summary").click()
 
     /*
-      Verify that all summary steps are present. There are 4 steps in FEGA workflow: 
+      Verify that all summary steps are present. There are 4 steps in FEGA workflow:
       1. Submission details
       2. Study, DAC and Policy
       3. Datafolder

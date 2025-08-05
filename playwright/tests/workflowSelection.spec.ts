@@ -1,8 +1,10 @@
+/* Workflows are disabled for MVP */
 import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
 test.describe("Test workflow selection", () => {
+  test.skip()
   test.beforeEach(async ({ resetDB }) => {
     await resetDB()
   })

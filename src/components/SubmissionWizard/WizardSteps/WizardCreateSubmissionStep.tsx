@@ -1,3 +1,4 @@
+/* Workflows are disabled for MVP */
 import React, { RefObject, useState } from "react"
 
 import {
@@ -45,6 +46,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
 
   // Temporary disable workflow selection and use SDSX only
   // const [workflows, setWorkflows] = useState([""])
+  const [selectedWorkflowType] = useState("SDSX")
 
   // useEffect(() => {
   //   let isMounted = true
@@ -127,7 +129,6 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   // Temporary disable workflow selection and use SDSX only
   // const workflowType = useAppSelector(state => state.workflowType)
   // const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
-  const [selectedWorkflowType] = useState("SDSX")
 
   return (
     <Form
@@ -181,7 +182,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         control={control}
         name="workflowType"
         defaultValue={selectedWorkflowType}
-        render={() => <input type="hidden" name="workflowType" />}
+        data-testid="SDSX"
+        render={() => <input id="hiddenWorkflow" type="hidden" name="workflowType" />}
       />
       {/* <Grid sx={{ mt: 2 }} container spacing={2}>
         <Grid>

@@ -4,7 +4,7 @@ import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
 
-const api = create({ baseURL: "https://api.ror.org" })
+const api = create({ baseURL: "https://api.ror.org/v1" })
 api.addMonitor(errorMonitor)
 
 const getOrganisations = async (searchTerm: string): Promise<APIResponse> => {

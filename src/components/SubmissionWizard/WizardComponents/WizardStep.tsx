@@ -301,21 +301,7 @@ const WizardStep = (props: WizardStepProps) => {
   const navigate = useNavigate()
 
   const getLinkedFolderName = (): string => {
-    try {
-      const filesData = sessionStorage.getItem("files")
-      if (filesData) {
-        const files = JSON.parse(filesData)
-        const folderNames = [...new Set(files.map(file => file["path"].split("/")[1]))]
-        // find linked folder name
-        if (submission.linkedFolder) {
-          return (folderNames.find(name => name === submission.linkedFolder) ||
-            submission.linkedFolder) as string
-        }
-      }
-    } catch (error) {
-      console.error("Error getting folder name:", error)
-    }
-    return "Datafolder"
+    return submission.linkedFolder || "Datafolder"
   }
 
   return (

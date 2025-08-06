@@ -12,7 +12,7 @@ import { renderWithProviders } from "utils/test-utils"
 const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
 
 const restHandlers = [
-  http.get("https://api.ror.org/organizations", ({ request }) => {
+  http.get("https://api.ror.org/v1/organizations", ({ request }) => {
     const url = new URL(request.url)
     const searchTerm = url.searchParams.get("query") as string
 

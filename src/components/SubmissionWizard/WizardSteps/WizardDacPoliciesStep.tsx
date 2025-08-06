@@ -12,6 +12,7 @@ import WizardRemsPolicies from "components/SubmissionWizard/WizardComponents/Wiz
 import WizardStepContentHeader from "components/SubmissionWizard/WizardComponents/WizardStepContentHeader"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
+import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addRemsToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
@@ -92,7 +93,12 @@ const DacPoliciesForm = () => {
           const response = await submissionAPIService.getSubmissionById(submissionId)
           if (response.data.rems) {
             setSelectedRems(response.data.rems)
-            setValue("organizationId", response.data.rems["organizationId"])
+            // set default form values
+            reset({
+              organizationId: response.data.rems["organizationId"] || "",
+              workflowId: response.data.rems["workflowId"] || null,
+              licenses: response.data.rems["licenses"] || [],
+            })
           }
         } catch (error) {
           dispatch(
@@ -115,13 +121,17 @@ const DacPoliciesForm = () => {
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, dirtyFields, defaultValues },
     setValue,
+    getValues,
+    reset,
   } = useForm()
+
   const onSubmit = async data => {
     const remsData = { ...data, licenses: data.licenses.concat(linkedPolicies) }
     dispatch(addRemsToSubmission(submissionId, remsData))
       .then(() => {
+        reset(data, { keepValues: true }) // reset form state
         dispatch(
           updateStatus({
             status: ResponseStatus.success,
@@ -140,6 +150,17 @@ const DacPoliciesForm = () => {
       )
   }
 
+  const handleFormBlur = () => {
+    const isDirty = Object.keys(dirtyFields).some(field => {
+      const value = getValues(field)
+      const defaultValue = defaultValues?.[field]
+
+      if (value && !defaultValue) return true
+      return value !== defaultValue
+    })
+    dispatch(isDirty ? setUnsavedForm() : resetUnsavedForm())
+  }
+
   const SaveButton = (
     <Button
       disabled={!selectedRems.organizationId || !selectedRems.workflowId || isSubmitting}
@@ -154,7 +175,10 @@ const DacPoliciesForm = () => {
   )
 
   return (
-    <Form onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}>
+    <Form
+      onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}
+      onBlur={handleFormBlur}
+    >
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">

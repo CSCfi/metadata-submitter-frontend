@@ -13,6 +13,7 @@ import remsInfoReducer from "features/remsInfoSlice"
 import selectedSubmissionReducer from "features/selectedSubmissionSlice"
 import statusMessageReducer from "features/statusMessageSlice"
 import stepObjectsReducer from "features/stepObjectSlice"
+import unsavedFormReducer from "features/unsavedFormSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   objectType: objectTypeReducer,
   stepObject: stepObjectReducer,
   submission: submissionReducer,
+  unsavedForm: unsavedFormReducer,
   currentObject: currentObjectReducer,
   user: userReducer,
   selectedSubmission: selectedSubmissionReducer,

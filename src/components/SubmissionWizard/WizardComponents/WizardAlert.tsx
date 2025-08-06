@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 
 import WarningIcon from "@mui/icons-material/Warning"
-import Alert from "@mui/material/Alert"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
@@ -12,12 +11,8 @@ import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
-import { ResponseStatus } from "constants/responseStatus"
-import { updateStatus } from "features/statusMessageSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
-import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { useAppSelector, useAppDispatch } from "hooks"
-import objectAPIService from "services/objectAPI"
+import { useAppDispatch } from "hooks"
 import type { CurrentFormObject } from "types"
 
 const CustomDialog = styled(Dialog)(({ theme }) => ({
@@ -34,13 +29,12 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    minWidth: "65rem",
   },
 }))
 
 const CustomBox = styled(Box)(() => ({
   width: "100%",
-  padding: "1rem",
+  padding: "0 3rem",
   paddingTop: "0",
   display: "flex",
   flexDirection: "row",
@@ -55,11 +49,10 @@ const IconBox = styled(Box)(() => ({
 }))
 
 const ContentBox = styled(Box)(() => ({
-  width: "90%",
+  minWidth: "45rem",
   display: "flex",
   flexDirection: "column",
-  padding: "1rem",
-  paddingTop: 0,
+  paddingLeft: "2rem",
 }))
 
 const CustomDialogTitle = styled(Typography)(() => ({
@@ -79,11 +72,6 @@ const CustomDialogContentText = styled(DialogContentText)(({ theme }) => ({
   paddingLeft: 0,
 }))
 
-// Simple template for error messages
-const ErrorMessage = (props: { message: string }) => {
-  return <Alert severity="error">{props.message}</Alert>
-}
-
 /*
  * Dialog contents are rendered based on parent component location and alert type
  */
@@ -96,33 +84,6 @@ const CancelFormDialog = ({
   alertType?: string
   parentLocation: string
 }) => {
-  const currentObject = useAppSelector(state => state.currentObject)
-  const objectType = useAppSelector(state => state.objectType)
-  const [error, setError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const dispatch = useAppDispatch()
-
-  const updateForm = async () => {
-    const response = await objectAPIService.patchFromJSON(
-      objectType,
-      currentObject.accessionId,
-      currentObject.cleanedValues
-    )
-    if (response.ok) {
-      dispatch(
-        updateStatus({
-          status: ResponseStatus.success,
-          response: response,
-          helperText: "",
-        })
-      )
-      dispatch(resetCurrentObject())
-      handleDialog(true)
-    } else {
-      setError(true)
-      setErrorMessage(t("errors.connection.updateObject"))
-    }
-  }
 
   const { t } = useTranslation()
   let [dialogTitle, dialogContent] = ["", ""]
@@ -130,24 +91,17 @@ const CancelFormDialog = ({
 
   switch (parentLocation) {
     case "submission": {
-      dialogTitle = t("alerts.submitted.title")
-      dialogContent = t("alerts.submitted.content")
+      // Text depends on ObjectStatus or ObjectSubmissionType
+      const textType = alertType?.toLowerCase()
+      dialogTitle = t(`${"alerts." + textType + ".title"}`)
+      dialogContent = t(`${"alerts." + textType + ".content"}`)
       dialogActions = (
         <DialogActions>
-          <Button variant="outlined" onClick={() => handleDialog(false)} color="primary">
+          <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
+            {t("alerts.actions.exit")}
+          </Button>
+          <Button variant="contained" onClick={() => handleDialog(false)} color="primary">
             {t("alerts.actions.cancel")}
-          </Button>
-          <Button variant="contained" onClick={() => handleDialog(true)} color="primary">
-            {t("alerts.actions.noSave")}
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              updateForm()
-            }}
-            color="primary"
-          >
-            {t("alerts.actions.update")}
           </Button>
         </DialogActions>
       )
@@ -213,7 +167,6 @@ const CancelFormDialog = ({
             >
               {dialogContent}
             </CustomDialogContentText>
-            {error && <ErrorMessage message={errorMessage} />}
             <DialogActions style={{ width: "100%", justifyContent: "flex-end", padding: "1rem" }}>
               {dialogActions}
             </DialogActions>

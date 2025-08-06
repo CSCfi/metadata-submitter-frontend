@@ -19,6 +19,7 @@ import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
 import { ObjectTypes } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
@@ -37,6 +38,7 @@ const ActionButton = (props: {
 
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
+  const unsavedForm = useAppSelector(state => state.unsavedForm)
   const dispatch = useAppDispatch()
   const [alert, setAlert] = useState(false)
 
@@ -45,10 +47,16 @@ const ActionButton = (props: {
   )
 
   const handleClick = () => {
-    handleNavigation()
+    if (unsavedForm) {
+      setAlert(true)
+    } else {
+      // no data to lose, navigate
+      handleNavigation()
+    }
   }
 
   const handleNavigation = () => {
+    dispatch(resetUnsavedForm())
     dispatch(resetObjectType())
     dispatch(resetCurrentObject())
     dispatch(updateStep({ step: step, objectType: parent }))
@@ -111,6 +119,7 @@ const StepItems = (props: {
 }) => {
   const { step, objects, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
+  const unsavedForm = useAppSelector(state => state.unsavedForm)
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
   const [clickedItem, setClickedItem] = useState({})
@@ -118,7 +127,11 @@ const StepItems = (props: {
 
   const handleClick = (item: StepObject) => {
     setClickedItem(item)
-    handleItemEdit(item)
+    if (unsavedForm) {
+      setAlert(true)
+    } else {
+      handleItemEdit(item)
+    }
   }
 
   const handleItemEdit = formObject => {

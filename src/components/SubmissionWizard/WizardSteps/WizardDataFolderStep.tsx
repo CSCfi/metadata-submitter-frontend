@@ -15,6 +15,7 @@ import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader
 
 import WizardDataFolderTable from "components/SubmissionWizard/WizardComponents/WizardDataFolderTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
+import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addLinkedFolderToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { isFile } from "utils"
@@ -34,11 +35,13 @@ const WizardDataFolderStep = () => {
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
 
   const handleLinkFolder = async () => {
+    dispatch(resetUnsavedForm())
     dispatch(addLinkedFolderToSubmission(submission.submissionId, selectedFolder))
   }
 
   const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFolder(event.target.value)
+    dispatch(setUnsavedForm())
   }
 
   const handleFilesView = (folderName: string) => {

@@ -238,11 +238,7 @@ export const addDoiInfoToSubmission =
       })
     )
 
-    // const subjectSchema = { subjectScheme: "Fields of Science and Technology (FOS)" }
-    // // Add fixed subject schema as we are using FOS by default
-
     const modifiedSubjects = doiFormDetails.subjects?.map((subject: DoiSubject) => {
-      // Only add subjectScheme if the backend supports it
       return subject
     })
 

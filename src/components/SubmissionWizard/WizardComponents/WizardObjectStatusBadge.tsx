@@ -1,13 +1,9 @@
 import { Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 
-/*
- * Render a badge implying the status of an object in the Accordion or Summary View
- */
-const WizardObjectStatusBadge = (props: { draft?: boolean }) => {
+const WizardObjectStatusBadge = () => {
   const { t } = useTranslation()
-  const { draft } = props
-  const statusLabel = draft ? t("draft") : t("ready")
+  const statusLabel = t("ready")
 
   return (
     <Typography
@@ -19,9 +15,8 @@ const WizardObjectStatusBadge = (props: { draft?: boolean }) => {
         borderRadius: theme.spacing(0.4),
         padding: theme.spacing(0.1, 0),
         width: theme.spacing(7.3),
-        backgroundColor:
-          statusLabel === "draft" ? theme.palette.warning.light : theme.palette.success.light,
-        color: statusLabel === "draft" ? theme.palette.warning.dark : theme.palette.success.dark,
+        backgroundColor: theme.palette.success.light,
+        color: theme.palette.success.dark,
       })}
     >
       {statusLabel}

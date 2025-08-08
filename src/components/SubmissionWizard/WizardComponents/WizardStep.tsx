@@ -328,7 +328,7 @@ const WizardStep = (props: WizardStepProps) => {
                 </div>
 
                 {/* Add Datafolder link structure like other steps */}
-                {objectType === ObjectTypes.file && submission.filesStatus === "linked" && (
+                {objectType === ObjectTypes.file && submission.linkedFolder && (
                   <ul className="tree">
                     <li>
                       <div style={{ paddingTop: "20px" }}>
@@ -355,7 +355,7 @@ const WizardStep = (props: WizardStepProps) => {
                                 color: theme.palette.primary.main,
                               })}
                             >
-                              {getLinkedFolderName()}
+                              {submission.linkedFolder}
                             </Link>
                           </Grid>
                           <Grid>

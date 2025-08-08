@@ -108,9 +108,6 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
-  // const getLinkedFolderName = (): string => {
-  //   return submission.linkedFolder || "Datafolder"
-  // }
 
   const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
@@ -127,15 +124,14 @@ const WizardShowSummaryStep: React.FC = () => {
           return [
             {
               id: `linked-files-${step}`,
-              status: "ready", // Change from "linked" to "ready"
+              status: t("ready"),
               name: submission.linkedFolder,
               action: "",
               step,
-              draft: false, // This will show "Ready" status
+              draft: false,
               objectType: stepItem.objectType,
               objectData: undefined,
               objectsList: [],
-              isLinkedFile: true,
             },
           ]
         }
@@ -150,19 +146,18 @@ const WizardShowSummaryStep: React.FC = () => {
               return {
                 id: item.id,
                 status: draft ? t("draft") : t("ready"),
-                name: String(name),
+                name,
                 action: draft ? t("Please mark as ready") : "",
                 step,
                 draft,
                 objectType: stepItem.objectType,
                 objectData: item.objectData,
                 objectsList,
-                isLinkedFile: false,
               }
             })
         }
         return []
-      }) ?? []
+      }) || []
     )
   })
 
@@ -178,15 +173,15 @@ const WizardShowSummaryStep: React.FC = () => {
   }, [rows, filteringText])
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: t("Name"), flex: 1 },
     {
       field: "status",
       headerName: t("Status"),
-      renderCell: (params: GridRenderCellParams) => {
-        return <WizardObjectStatusBadge draft={params.row.draft} />
-      },
+      renderCell: (params: GridRenderCellParams) => (
+        <WizardObjectStatusBadge draft={params.row.draft} />
+      ),
       flex: 0.5,
     },
+    { field: "name", headerName: t("Name"), flex: 1 },
     { field: "action", headerName: t("Required Action"), flex: 1 },
     {
       field: "edit",

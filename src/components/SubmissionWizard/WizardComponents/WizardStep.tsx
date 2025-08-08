@@ -300,10 +300,6 @@ const WizardStep = (props: WizardStepProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  // const getLinkedFolderName = (): string => {
-  //   return submission.linkedFolder || "Datafolder"
-  // }
-
   return (
     <React.Fragment>
       {schemas.map((item, index) => {

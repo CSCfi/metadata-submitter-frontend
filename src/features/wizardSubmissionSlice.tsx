@@ -18,10 +18,7 @@ import type {
 
 type InitialState = SubmissionDetailsWithId & {
   doiInfo: Record<string, unknown> & DoiFormDetails
-} & {
-  linkedFolder?: string
-  filesStatus?: "unlinked" | "linked"
-} & { rems?: RemsDetails }
+} & { linkedFolder?: string } & { rems?: RemsDetails }
 
 const initialState: InitialState = {
   submissionId: "",
@@ -31,7 +28,6 @@ const initialState: InitialState = {
   published: false,
   doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   linkedFolder: "",
-  filesStatus: "unlinked",
 }
 
 const wizardSubmissionSlice = createSlice({
@@ -180,12 +176,7 @@ export const addLinkedFolderToSubmission =
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        dispatch(
-          addLinkedFolder({
-            folder: linkedFolderName,
-            status: "linked",
-          })
-        )
+        dispatch(addLinkedFolder(linkedFolderName))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

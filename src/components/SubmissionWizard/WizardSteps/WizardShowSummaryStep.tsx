@@ -17,7 +17,7 @@ import {
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
-// import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
+import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
 import WizardPagination from "../WizardComponents/WizardPagination"
 import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
@@ -179,6 +179,14 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const columns: GridColDef[] = [
     { field: "name", headerName: t("Name"), flex: 1 },
+    {
+      field: "status",
+      headerName: t("Status"),
+      renderCell: (params: GridRenderCellParams) => {
+        return <WizardObjectStatusBadge draft={params.row.draft} />
+      },
+      flex: 0.5,
+    },
     { field: "action", headerName: t("Required Action"), flex: 1 },
     {
       field: "edit",

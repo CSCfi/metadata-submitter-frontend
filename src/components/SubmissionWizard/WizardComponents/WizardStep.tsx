@@ -214,7 +214,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge status={draft ? "draft" : "ready"} />
+                    <WizardObjectStatusBadge draft={draft} />
                   </Grid>
                 </Grid>
               </ObjectItem>
@@ -300,9 +300,9 @@ const WizardStep = (props: WizardStepProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const getLinkedFolderName = (): string => {
-    return submission.linkedFolder || "Datafolder"
-  }
+  // const getLinkedFolderName = (): string => {
+  //   return submission.linkedFolder || "Datafolder"
+  // }
 
   return (
     <React.Fragment>
@@ -359,7 +359,7 @@ const WizardStep = (props: WizardStepProps) => {
                             </Link>
                           </Grid>
                           <Grid>
-                            <WizardObjectStatusBadge status="linked" />
+                            <WizardObjectStatusBadge draft={false} />
                           </Grid>
                         </Grid>
                       </div>

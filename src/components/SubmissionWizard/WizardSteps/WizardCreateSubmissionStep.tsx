@@ -18,10 +18,8 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { updateStatus } from "features/statusMessageSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
-import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import workflowAPIService from "services/workflowAPI"
@@ -116,7 +114,6 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         .then(response => {
           const submissionId = response.data.submissionId
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
-          dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))

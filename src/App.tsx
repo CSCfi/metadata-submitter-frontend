@@ -11,16 +11,8 @@ import Nav from "components/Nav"
 import SecondaryNav from "components/SecondaryNav"
 import StatusMessageHandler from "components/StatusMessageHandler"
 import { Locale } from "constants/locale"
-import { PathsWithoutLogin } from "constants/paths"
-import { ResponseStatus } from "constants/responseStatus"
-import { ObjectTypes } from "constants/wizardObject"
 import { setLocale } from "features/localeSlice"
-import { setObjectTypesArray } from "features/objectTypesArraySlice"
-import { setRemsInfo } from "features/remsInfoSlice"
-import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import remsAPIService from "services/remsAPI"
-import schemaAPIService from "services/schemaAPI"
 import Page400 from "views/ErrorPages/Page400"
 import Page401 from "views/ErrorPages/Page401"
 import Page403 from "views/ErrorPages/Page403"
@@ -48,86 +40,21 @@ const App: React.FC = () => {
   const dispatch = useAppDispatch()
   const locale = useAppSelector(state => state.locale)
 
-  // Get locale from url and set application wide locale setting
-  const getLocale = () => {
-    let locale: string
-    const locales = ["en", "fi"]
-    const currentLocale = location.pathname.split("/")[1]
-    if (locales.indexOf(currentLocale) > -1) {
-      locale = currentLocale
-    } else locale = Locale.defaultLocale
-
-    i18n.changeLanguage(locale)
-
-    dispatch(setLocale(locale))
-  }
-
-  // Fetch array of schemas from backend and store it in frontend
-  // Fetch only if the initial array is empty
-  // if there is any errors while fetching, it will return a manually created ObjectsArray instead
-  // &&
-  // Handle initial locale setting
   useEffect(() => {
+    // Get locale from url and set application wide locale setting
+    const getLocale = () => {
+      let locale: string
+      const locales = ["en", "fi"]
+      const currentLocale = location.pathname.split("/")[1]
+      if (locales.indexOf(currentLocale) > -1) {
+        locale = currentLocale
+      } else locale = Locale.defaultLocale
+
+      i18n.changeLanguage(locale)
+
+      dispatch(setLocale(locale))
+    }
     getLocale()
-    if (PathsWithoutLogin.includes(location.pathname)) return
-    let isMounted = true
-    const getSchemas = async () => {
-      const response = await schemaAPIService.getAllSchemas()
-      if (isMounted) {
-        if (response.ok) {
-          const exceptionalSchemas = ["Project", "Submission"]
-          const schemas = response.data
-            .filter((schema: { title: string }) => !exceptionalSchemas.includes(schema.title))
-            .map((schema: { title: string }) =>
-              schema.title.toLowerCase().includes(ObjectTypes.datacite)
-                ? ObjectTypes.datacite
-                : schema.title.toLowerCase()
-            )
-          dispatch(setObjectTypesArray(schemas))
-        } else {
-          dispatch(
-            setObjectTypesArray([
-              ObjectTypes.study,
-              ObjectTypes.sample,
-              ObjectTypes.experiment,
-              ObjectTypes.run,
-              ObjectTypes.analysis,
-              ObjectTypes.dac,
-              ObjectTypes.policy,
-              ObjectTypes.dataset,
-              ObjectTypes.bpsample,
-              ObjectTypes.bpimage,
-              ObjectTypes.bpdataset,
-              ObjectTypes.bpobservation,
-              ObjectTypes.bpstaining,
-            ])
-          )
-        }
-      }
-    }
-
-    const getRemsInfo = async () => {
-      if (isMounted) {
-        try {
-          const response = await remsAPIService.getRemsInfo()
-          dispatch(setRemsInfo(response.data))
-        } catch (error) {
-          dispatch(
-            updateStatus({
-              status: ResponseStatus.error,
-              response: error,
-              helperText: "snackbarMessages.error.helperText.fetchRemsInfo",
-            })
-          )
-        }
-      }
-    }
-
-    getSchemas()
-    getRemsInfo()
-    return () => {
-      isMounted = false
-    }
   }, [dispatch])
 
   const setPath = (path: string) => {

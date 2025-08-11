@@ -15,23 +15,20 @@ import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
 import { resetFocus } from "features/focusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import { addObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
-import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import objectAPIService from "services/objectAPI"
 import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
-import { ObjectDetails, ObjectTags } from "types"
+import { CurrentFormObject } from "types"
 
 type WizardXMLUploadModalProps = {
   open: boolean
-  currentObject?: ObjectDetails & ObjectTags
+  currentObject?: CurrentFormObject
   handleClose: () => void
 }
 
@@ -127,27 +124,10 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
         )
 
         if (response.ok) {
-          dispatch(
-            replaceObjectInSubmission(
-              currentObject.accessionId,
-              {
-                submissionType: ObjectSubmissionTypes.xml,
-                fileName: file.name,
-                fileSize: file.size,
-              },
-              ObjectStatus.submitted
-            )
-          )
           dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
           dispatch(
             setCurrentObject({
               ...response.data,
-              status: ObjectStatus.submitted,
-              tags: {
-                submissionType: ObjectSubmissionTypes.xml,
-                fileName: file.name,
-                fileSize: file.size,
-              },
             })
           )
           resetForm()
@@ -158,31 +138,10 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
         const response = await objectAPIService.createFromXML(objectType, submissionId, file)
 
         if (response.ok) {
+          // TODO (if needed): addObject to objects array
           dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
-          dispatch(
-            addObject({
-              accessionId: response.data.accessionId,
-              schema: objectType,
-              tags: {
-                submissionType: ObjectSubmissionTypes.xml,
-                fileName: file.name,
-                fileSize: file.size,
-              },
-            })
-          )
-          dispatch(setSubmissionType(ObjectSubmissionTypes.xml))
           dispatch(setObjectType(objectType))
-          dispatch(
-            setCurrentObject({
-              ...response.data,
-              status: ObjectStatus.submitted,
-              tags: {
-                submissionType: ObjectSubmissionTypes.xml,
-                fileName: file.name,
-                fileSize: file.size,
-              },
-            })
-          )
+          dispatch(setCurrentObject({}))
           resetForm()
         } else {
           dispatch(updateStatus({ status: ResponseStatus.error, response: response }))

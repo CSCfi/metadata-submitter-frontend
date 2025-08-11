@@ -1,18 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { extend, reject, merge } from "lodash"
+import { extend, merge } from "lodash"
 
-import { ObjectStatus } from "constants/wizardObject"
-import draftAPIService from "services/draftAPI"
-import objectAPIService from "services/objectAPI"
 import publishAPIService from "services/publishAPI"
 import submissionAPIService from "services/submissionAPI"
 import type {
   SubmissionDetails,
   SubmissionDetailsWithId,
   SubmissionDataFromForm,
-  ObjectInsideSubmissionWithTags,
   DoiFormDetails,
-  ObjectTags,
   APIResponse,
   DoiCreator,
   DoiContributor,
@@ -31,19 +26,8 @@ const initialState: InitialState = {
   description: "",
   workflow: "",
   published: false,
-  drafts: [],
-  metadataObjects: [],
   doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   linkedFolder: "",
-}
-
-const setTags = (
-  objects: ObjectInsideSubmissionWithTags[],
-  accessionId: string,
-  tags: ObjectTags
-) => {
-  const item = objects.find((item: { accessionId: string }) => item.accessionId === accessionId)
-  if (item) item.tags = tags
 }
 
 const wizardSubmissionSlice = createSlice({
@@ -51,35 +35,8 @@ const wizardSubmissionSlice = createSlice({
   initialState,
   reducers: {
     setSubmission: (_state, action) => action.payload,
-    addObject: (state, action) => {
-      state.metadataObjects.push(action.payload)
-    },
-    addDraftObject: (state: InitialState, action) => {
-      state.drafts.push(action.payload)
-    },
     addDoiInfo: (state, action) => {
       state.doiInfo = action.payload
-    },
-    deleteObject: (state: InitialState, action) => {
-      if (state)
-        state.metadataObjects = reject(
-          state.metadataObjects,
-          function (o: { accessionId: string }) {
-            return o.accessionId === action.payload
-          }
-        )
-    },
-    deleteDraftObject: (state, action) => {
-      if (state)
-        state.drafts = reject(state.drafts, function (o: { accessionId: string }) {
-          return o.accessionId === action.payload
-        })
-    },
-    modifyObjectTags: (state, action) => {
-      setTags(state.metadataObjects, action.payload.accessionId, action.payload.tags)
-    },
-    modifyDraftObjectTags: (state, action) => {
-      setTags(state.drafts, action.payload.accessionId, action.payload.tags)
     },
     addLinkedFolder: (state, action) => {
       state.linkedFolder = action.payload
@@ -91,19 +48,8 @@ const wizardSubmissionSlice = createSlice({
   },
 })
 
-export const {
-  setSubmission,
-  addObject,
-  addDraftObject,
-  addDoiInfo,
-  deleteObject,
-  deleteDraftObject,
-  modifyObjectTags,
-  modifyDraftObjectTags,
-  addLinkedFolder,
-  addRemsData,
-  resetSubmission,
-} = wizardSubmissionSlice.actions
+export const { setSubmission, addDoiInfo, addLinkedFolder, addRemsData, resetSubmission } =
+  wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
 
 export const createSubmission =
@@ -116,8 +62,6 @@ export const createSubmission =
       workflow,
       projectId,
       published: false,
-      metadataObjects: [],
-      drafts: [],
     }
     const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 
@@ -153,41 +97,6 @@ export const updateSubmission =
           { name: submissionDetails.name, description: submissionDetails.description }
         )
         dispatch(setSubmission(updatedSubmission))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
-  }
-
-export const replaceObjectInSubmission =
-  (
-    accessionId: string,
-    tags: { submissionType?: string; displayTitle?: string; fileName?: string; fileSize?: number },
-    objectStatus?: string
-  ) =>
-  (dispatch: (reducer: DispatchReducer) => void) => {
-    objectStatus === ObjectStatus.submitted
-      ? dispatch(modifyObjectTags({ accessionId: accessionId, tags: tags }))
-      : dispatch(
-          modifyDraftObjectTags({
-            accessionId,
-            tags,
-          })
-        )
-  }
-
-// Delete object from either metaDataObjects or drafts depending on savedType
-export const deleteObjectFromSubmission =
-  (savedType: string, objectId: string, objectType: string) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const service = savedType === ObjectStatus.submitted ? objectAPIService : draftAPIService
-    const response = await service.deleteObjectByAccessionId(objectType, objectId)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        savedType === ObjectStatus.submitted
-          ? dispatch(deleteObject(objectId))
-          : dispatch(deleteDraftObject(objectId))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

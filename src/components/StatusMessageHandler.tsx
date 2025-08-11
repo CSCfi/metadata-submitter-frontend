@@ -182,18 +182,6 @@ const SuccessHandler = (props: MessageHandlerProps) => {
   let message = ""
   if (response) {
     switch (response?.config?.baseURL) {
-      case "/v1/drafts": {
-        switch (response?.config.method) {
-          case "patch": {
-            message = t("snackbarMessages.success.drafts.updated")
-            break
-          }
-          default: {
-            message = t("snackbarMessages.success.drafts.saved")
-          }
-        }
-        break
-      }
       case "/v1/objects": {
         switch (response.config.method) {
           case "patch": {

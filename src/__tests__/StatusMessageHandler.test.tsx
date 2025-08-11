@@ -41,7 +41,7 @@ describe("StatusMessageHandler", () => {
   })
 
   it("should render success message", () => {
-    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/v1/drafts" } }
+    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/v1/objects" } }
 
     renderWithProviders(<StatusMessageHandler />, {
       preloadedState: {
@@ -51,6 +51,6 @@ describe("StatusMessageHandler", () => {
         },
       },
     })
-    expect(screen.getByText(/Draft saved successfully/i)).toBeDefined()
+    expect(screen.getByText(/Submitted successfully/i)).toBeDefined()
   })
 })

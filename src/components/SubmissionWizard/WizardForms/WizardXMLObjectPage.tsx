@@ -48,7 +48,7 @@ const WizardXMLObjectPage = () => {
           color="secondary"
           sx={{ pb: "2.5rem", fontWeight: 700 }}
         >
-          {xmlObject.tags?.fileName}
+          {/* {xmlObject.fileName} */}
         </Typography>
         <TableContainer component={Box}>
           <Table>
@@ -61,8 +61,8 @@ const WizardXMLObjectPage = () => {
             </TableHead>
             <TableBody>
               <StyledTableRow>
-                <TableCell>{xmlObject.tags?.fileName}</TableCell>
-                <TableCell>{xmlObject.tags?.fileSize || 1} B</TableCell>
+                {/* <TableCell>{xmlObject.fileName}</TableCell>
+                <TableCell>{xmlObject.fileSize || 1} B</TableCell> */}
                 <TableCell align="right">
                   <Link
                     onClick={() => dispatch(setXMLModalOpen())}

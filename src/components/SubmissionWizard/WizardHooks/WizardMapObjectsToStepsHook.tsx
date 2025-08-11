@@ -3,48 +3,29 @@ import { startCase } from "lodash"
 
 import { ObjectTypes } from "constants/wizardObject"
 import { WorkflowTypes } from "constants/wizardWorkflow"
-import {
+import type {
+  StepObject,
   Schema,
   SubmissionFolder,
   Workflow,
   WorkflowStep,
   MappedSteps,
-  WorkflowSchema,
 } from "types"
 import { hasDoiInfo } from "utils"
 
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
+  objects: StepObject[],
   objectTypesArray: Schema[],
   currentWorkflow: Workflow | Record<string, unknown>,
   t: TFunction,
   remsInfo: Record<string, unknown>[]
 ): { mappedSteps: MappedSteps[] } => {
-  // Group objects by schema and status of the object
-  // Sort newest first by reversing array order
+  // Group objects by schema
   const groupedObjects = objectTypesArray
     .map((schema: Schema) => {
-      const mapItem = item => ({
-        id: item.accessionId,
-        displayTitle: item.tags.displayTitle,
-        objectData: { ...item },
-      })
       return {
-        [schema]: {
-          drafts: submission.drafts
-            .filter(
-              (object: { schema: string }) =>
-                object.schema.toLowerCase() === `draft-${schema.toLowerCase()}`
-            )
-            .map(item => mapItem(item))
-            .reverse(),
-          ready: submission.metadataObjects
-            .filter(
-              (object: { schema: string }) => object.schema.toLowerCase() === schema.toLowerCase()
-            )
-            .map(item => mapItem(item))
-            .reverse(),
-        },
+        [schema]: objects.filter(obj => obj.schema === schema),
       }
     })
     .reduce((map, obj) => {
@@ -53,39 +34,12 @@ const mapObjectsToStepsHook = (
       return map
     }, {})
 
-  // Test if object type has ready or draft objects
-  const checkSchemaReady = (objectTypes: string[]) => {
-    const foundObjects: string[] = []
-    objectTypes.forEach(type => {
-      if (groupedObjects[type]?.drafts?.length || groupedObjects[type]?.ready?.length) {
-        foundObjects.push(type)
-      }
-    })
-
-    return foundObjects.length === objectTypes.length
-  }
-
   const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
   const workflowSteps = allSteps?.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
 
   const schemaSteps =
     workflowSteps?.length > 0
-      ? workflowSteps.map((step: WorkflowStep, index: number) => {
-          /*
-           * Filter previous steps and check whether their required schemas
-            have been saved/submitted before enabling next step
-          */
-          const previousSteps = workflowSteps.filter((step, ind) => ind < index)
-
-          const requiredSchemas = previousSteps
-            .flatMap(step => step.schemas)
-            .reduce((result: string[], schema: WorkflowSchema) => {
-              if (schema.required && schema.name !== "file") {
-                result.push(schema.name)
-              }
-              return result
-            }, [])
-
+      ? workflowSteps.map((step: WorkflowStep) => {
           return {
             ...step,
             title: step.title.toLowerCase().includes(ObjectTypes.file)
@@ -101,15 +55,14 @@ const mapObjectsToStepsHook = (
               objectType: schema.name,
               objects: groupedObjects[schema.name],
             })),
-            disabled: index > 0 && !checkSchemaReady(requiredSchemas),
           }
         })
       : []
 
   /*
    * List of accordion steps and configurations.
-   * Steps are disabled by checking if previous step has been filled.
    * First step is always enabled.
+   * Rest of the steps are visiblef after first step is saved.
    */
   const createSubmissionStep = {
     title: t("submission.details"),
@@ -117,11 +70,14 @@ const mapObjectsToStepsHook = (
       {
         objectType: "submissionDetails",
         name: t("newSubmission.nameSubmission"),
-        objects: {
-          ready: submission.submissionId
-            ? [{ id: submission.submissionId, displayTitle: submission.name }]
-            : [],
-        },
+        objects: submission.submissionId
+          ? [
+              {
+                id: submission.submissionId,
+                displayTitle: submission.name,
+              },
+            ]
+          : [],
         required: true,
       },
     ],
@@ -160,6 +116,7 @@ const mapObjectsToStepsHook = (
       )
       return remsObj
     }
+    return []
   }
 
   const dacPoliciesStep = {
@@ -168,9 +125,7 @@ const mapObjectsToStepsHook = (
       {
         objectType: "dacPolicies",
         name: t("dacPolicies.title"),
-        objects: {
-          ready: getRemsObject(),
-        },
+        objects: getRemsObject(),
         required: true,
       },
     ],
@@ -188,29 +143,26 @@ const mapObjectsToStepsHook = (
       {
         name: t("identifier"),
         objectType: ObjectTypes.datacite,
-
-        objects: {
-          ready: hasDoi
-            ? [
-                {
-                  id: submission.submissionId,
-                  displayTitle: t("doiRegistrationInfo"),
-                },
-              ]
-            : [],
-        },
+        objects: hasDoi
+          ? [
+              {
+                id: submission.submissionId,
+                displayTitle: t("doiRegistrationInfo"),
+              },
+            ]
+          : [],
         required: true,
       },
       {
         name: t("summary"),
         objectType: t("summary"),
-        objects: { drafts: [], ready: [] },
+        objects: [],
         required: true,
       },
       {
         name: t("publishSubmission"),
         objectType: t("summaryPage.publish"),
-        objects: { drafts: [], ready: [] },
+        objects: [],
         required: true,
       },
     ],

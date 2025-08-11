@@ -28,7 +28,7 @@ import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
 import WizardObjectDetails from "components/SubmissionWizard/WizardComponents/WizardObjectDetails"
-import { ObjectSubmissionTypes, DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { DisplayObjectTypes, ObjectStatus } from "constants/wizardObject"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { addRow, removeRow, resetRows } from "features/openedRowsSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -70,15 +70,15 @@ const Row = (props: RowProps) => {
   const dispatch = useAppDispatch()
   const openedRows = useAppSelector(state => state.openedRows) || []
   const { t } = useTranslation()
-  const { index, row, publishedSubmission, onEdit, onDelete } = props
+  const { index, row, publishedSubmission } = props
 
-  const getDateFormat = (date: string) => {
-    const d = new Date(date)
-    const day = d.getDate()
-    const month = d.getMonth() + 1
-    const year = d.getFullYear()
-    return `${day}.${month}.${year}`
-  }
+  // const getDateFormat = (date: string) => {
+  //   const d = new Date(date)
+  //   const day = d.getDate()
+  //   const month = d.getMonth() + 1
+  //   const year = d.getFullYear()
+  //   return `${day}.${month}.${year}`
+  // }
 
   const rowOpen = openedRows.indexOf(index) > -1
 
@@ -98,7 +98,7 @@ const Row = (props: RowProps) => {
         </TableCell>
         <TableCell>{displayObjectType}</TableCell>
         <TableCell>{row.status}</TableCell>
-        <TableCell>{getDateFormat(row.lastModified)}</TableCell>
+        {/* <TableCell>{getDateFormat(row.lastModified)}</TableCell> */}
         <TableCell>
           <Button disabled>{t("view")}</Button>
         </TableCell>
@@ -109,11 +109,11 @@ const Row = (props: RowProps) => {
                 disabled={row.submissionType === SubmissionStatus.published}
                 aria-label={t("ariaLabels.editObject")}
                 data-testid="edit-object"
-                onClick={() =>
-                  onEdit(row.accessionId, row.objectType, row.status, row.submissionType)
-                }
+                // onClick={() =>
+                //   onEdit(row.accessionId, row.objectType, row.status, row.submissionType)
+                // }
               >
-                {row.submissionType === ObjectSubmissionTypes.xml ? t("replace") : t("edit")}
+                {/* {row.submissionType === ObjectSubmissionTypes.xml ? t("replace") : t("edit")} */}
               </Button>
             </TableCell>
             <TableCell>
@@ -121,7 +121,7 @@ const Row = (props: RowProps) => {
                 disabled={row.submissionType === SubmissionStatus.published}
                 aria-label={t("ariaLabels.deleteObject")}
                 data-testid="delete-object"
-                onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
+                // onClick={() => onDelete(row.accessionId, row.objectType, row.status)}
               >
                 {t("delete")}
               </Button>
@@ -144,7 +144,7 @@ const Row = (props: RowProps) => {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
             <Collapse in={rowOpen} timeout="auto" unmountOnExit>
               <WizardObjectDetails
-                objectType={row.objectType}
+                objectType={row.objectType || ""}
                 objectData={row.objectData}
               ></WizardObjectDetails>
             </Collapse>

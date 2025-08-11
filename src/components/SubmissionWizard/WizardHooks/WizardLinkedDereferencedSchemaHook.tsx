@@ -1,23 +1,23 @@
 import { merge } from "lodash"
 
 import { ObjectTypes } from "constants/wizardObject"
-import type { FormObject, ObjectInsideSubmissionWithTags } from "types"
+import type { FormObject, StepObject } from "types"
 import { getAccessionIds } from "utils"
 
 const getLinkedDereferencedSchema = (
   currentObject: Record<string, unknown>,
   objectType: string,
   dereferencedSchema: Promise<FormObject>,
-  metadataObjects: Array<ObjectInsideSubmissionWithTags>,
+  objects: StepObject[],
   analysisAccessionIds: Array<string>
 ): Promise<FormObject> => {
   // AccessionIds of submitted objects
-  const studyAccessionIds = getAccessionIds(ObjectTypes.study, metadataObjects)
-  const sampleAccessionIds = getAccessionIds(ObjectTypes.sample, metadataObjects)
-  const runAccessionIds = getAccessionIds(ObjectTypes.run, metadataObjects)
-  const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment, metadataObjects)
-  const policyAccessionIds = getAccessionIds(ObjectTypes.policy, metadataObjects)
-  const dacAccessionIds = getAccessionIds(ObjectTypes.dac, metadataObjects)
+  const studyAccessionIds = getAccessionIds(ObjectTypes.study, objects)
+  const sampleAccessionIds = getAccessionIds(ObjectTypes.sample, objects)
+  const runAccessionIds = getAccessionIds(ObjectTypes.run, objects)
+  const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment, objects)
+  const policyAccessionIds = getAccessionIds(ObjectTypes.policy, objects)
+  const dacAccessionIds = getAccessionIds(ObjectTypes.dac, objects)
 
   switch (objectType) {
     case ObjectTypes.experiment:

@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 
-const WizardObjectStatusBadge = (props: { draft: boolean }) => {
+const WizardObjectStatusBadge = (props: { draft?: boolean }) => {
   const { t } = useTranslation()
   const { draft } = props
   const statusLabel = draft ? t("draft") : t("ready")

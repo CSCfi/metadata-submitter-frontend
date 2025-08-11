@@ -1,28 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-import { ObjectDetails, ObjectTags } from "types"
+import { CurrentFormObject } from "types"
 
 const initialObject = {
   accessionId: "",
-  objectId: "",
-  lastModified: "",
-  objectType: "",
-  status: "",
-  title: "",
-  submissionType: "",
-  fileSize: "",
-  tags: {},
 }
 
-const initialState: ObjectDetails & {
-  objectId: string
-  tags: ObjectTags
-  cleanedValues: ObjectDetails
-  index: number
+const initialState: CurrentFormObject & {
+  cleanedValues: CurrentFormObject
 } = {
   ...initialObject,
   cleanedValues: initialObject,
-  index: 0,
 }
 
 const wizardCurrentObjectSlice = createSlice({

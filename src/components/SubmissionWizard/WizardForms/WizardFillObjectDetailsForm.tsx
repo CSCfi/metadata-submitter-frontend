@@ -14,7 +14,6 @@ import LinearProgress from "@mui/material/LinearProgress"
 import Typography from "@mui/material/Typography"
 import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
-import { ApiResponse } from "apisauce"
 import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, SubmitHandler } from "react-hook-form"
 import type { FieldErrors, UseFormReturn } from "react-hook-form"
@@ -22,46 +21,30 @@ import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
-// import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
 import JSONSchemaParser from "./WizardJSONSchemaParser"
-import WizardOptions from "./WizardOptions"
 //import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
-// import { setDraftStatus, resetDraftStatus } from "features/draftStatusSlice"
-import { setFileTypes, deleteFileType } from "features/fileTypesSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { setCurrentObject, resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import {
-  deleteObjectFromSubmission,
-  replaceObjectInSubmission,
-  addDoiInfoToSubmission,
-} from "features/wizardSubmissionSlice"
+import { setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { addDoiInfoToSubmission } from "features/wizardSubmissionSlice"
 //import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import objectAPIService from "services/objectAPI"
 import schemaAPIService from "services/schemaAPI"
 import type {
   DoiFormDetails,
   SubmissionDetailsWithId,
-  FormDataFiles,
+  CurrentFormObject,
   FormObject,
-  ObjectDetails,
-  ObjectDisplayValues,
   HandlerRef,
 } from "types"
-import {
-  getObjectDisplayTitle,
-  getAccessionIds,
-  getNewUniqueFileTypes,
-  checkObjectStatus,
-} from "utils"
+import { getAccessionIds } from "utils"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const CustomAlert = styled(Alert)(({ theme, severity }) => ({
@@ -99,35 +82,17 @@ const AlertMessage = styled(Typography)({
   fontWeight: "bold",
 })
 
-const ButtonGroup = styled(Box)(({ theme }) => ({
-  display: "flex",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  columnGap: "2rem",
-  marginLeft: "2rem",
-  marginRight: "3rem",
-  "& button": {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-    height: "4.5rem",
-    width: "16rem",
-  },
-}))
-
 const Form = styled("form")(({ theme }) => ({
   ...theme.form,
 }))
 
 type CustomCardHeaderProps = {
-  hasSubmittedObject: boolean
-  // hasDraftObject: boolean
   objectType: string
-  currentObject: ObjectDetails
-  // onClickSaveDraft: () => Promise<void>
   onClickSubmit: () => void
   onClickSaveDOI: () => Promise<void>
-  onClickClearForm: () => void
-  //onOpenXMLModal: () => void
-  onDeleteForm: () => void
+  // onClickClearForm: () => void
+  // onOpenXMLModal: () => void
+  // onDeleteForm: () => void
   refForm: string
 }
 
@@ -137,9 +102,7 @@ type FormContentProps = {
   onSubmit: SubmitHandler<FieldValues>
   objectType: string
   submission: SubmissionDetailsWithId
-  // hasDraftObject: boolean
-  hasSubmittedObject: boolean
-  currentObject: ObjectDetails & { objectId: string; [key: string]: unknown }
+  currentObject: CurrentFormObject
   ref: HandlerRef
 }
 
@@ -148,17 +111,13 @@ type FormContentProps = {
  */
 const CustomCardHeader = (props: CustomCardHeaderProps) => {
   const {
-    hasSubmittedObject,
-    // hasDraftObject,
     objectType,
-    currentObject,
     refForm,
-    // onClickSaveDraft,
     onClickSubmit,
     onClickSaveDOI,
-    onClickClearForm,
-    //onOpenXMLModal,
-    onDeleteForm,
+    // onClickClearForm,
+    // onOpenXMLModal,
+    // onDeleteForm,
   } = props
 
   const focusTarget = useRef<HTMLButtonElement>(null)
@@ -169,138 +128,42 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
     if (shouldFocus && focusTarget.current) focusTarget.current.focus()
   }, [shouldFocus])
 
-  const buttonGroup = (
-    <Box display="flex">
-      <WizardOptions
-        objectType={objectType}
-        onClearForm={onClickClearForm}
-        //onOpenXMLModal={onOpenXMLModal}
-        onDeleteForm={onDeleteForm}
-        /*disableUploadXML={
-          objectType === ObjectTypes.study && (hasDraftObject || hasSubmittedObject)
-        }*/
-      />
-      <ButtonGroup>
-        {/* <Button
-          variant="contained"
-          aria-label={t("ariaLabels.saveForm")}
-          size="small"
-          onClick={onClickSaveDraft}
-          data-testid="form-draft"
-          disabled={objectType === ObjectTypes.study && hasSubmittedObject}
-        >
-          {(objectType === ObjectTypes.study && hasDraftObject) ||
-          currentObject?.status === ObjectStatus.draft
-            ? t("formActions.updateDraft")
-            : t("formActions.saveAsDraft")}
-        </Button> */}
-        <Button
-          variant="contained"
-          aria-label={t("ariaLabels.submitForm")}
-          size="small"
-          type="submit"
-          onClick={onClickSubmit}
-          form={refForm}
-          data-testid="form-ready"
-          disabled={
-            objectType === ObjectTypes.study && hasSubmittedObject && !currentObject.accessionId
-          }
-        >
-          {(objectType === ObjectTypes.study && hasSubmittedObject) ||
-          currentObject?.status === ObjectStatus.submitted
-            ? t("formActions.update")
-            : t("formActions.markAsReady")}
-        </Button>
-      </ButtonGroup>
-    </Box>
+  const SaveButton = (
+    <Button
+      ref={focusTarget}
+      variant="contained"
+      aria-label={t("ariaLabels.submitForm")}
+      size="small"
+      onClick={objectType === ObjectTypes.datacite ? onClickSaveDOI : onClickSubmit}
+      form={refForm}
+      data-testid="form-datacite"
+      type="submit"
+    >
+      {t("save")}
+    </Button>
   )
 
-  const doiButtonGroup = (
-    <Box display="flex">
-      <ButtonGroup>
-        <Button
-          variant="contained"
-          aria-label={t("ariaLabels.saveDOI")}
-          size="small"
-          onClick={onClickSaveDOI}
-          data-testid="form-datacite"
-        >
-          {t("save")}
-        </Button>
-      </ButtonGroup>
-    </Box>
-  )
-
-  return (
-    <WizardStepContentHeader
-      action={objectType === ObjectTypes.datacite ? doiButtonGroup : buttonGroup}
-    />
-  )
+  return <WizardStepContentHeader action={SaveButton} />
 }
 
 /*
- * Draft save and object patch use both same response handler
- */
-const patchHandler = (
-  response: ApiResponse<unknown>,
-  submission: SubmissionDetailsWithId,
-  accessionId: string,
-  objectType: string,
-  cleanedValues: Record<string, unknown>,
-  dispatch: (reducer: unknown) => void
-) => {
-  if (response.ok) {
-    dispatch(
-      replaceObjectInSubmission(
-        accessionId,
-        {
-          submissionType: ObjectSubmissionTypes.form,
-          displayTitle: getObjectDisplayTitle(objectType, cleanedValues as ObjectDisplayValues),
-        },
-        ObjectStatus.submitted
-      )
-    )
-    // dispatch(resetDraftStatus())
-    dispatch(
-      updateStatus({
-        status: ResponseStatus.success,
-        response: response,
-        helperText: "",
-      })
-    )
-  } else {
-    dispatch(
-      updateStatus({
-        status: ResponseStatus.error,
-        response: response,
-        helperText: "",
-      })
-    )
-  }
-}
-
-/*
- * Return react-hook-form based form which is rendered from schema and checked against resolver. Set default values when continuing draft
+ * Return react-hook-form based form which is rendered from schema and checked against resolver.
  */
 const FormContent = ({
   methods,
   formSchema,
   onSubmit,
   objectType,
-  // hasDraftObject,
-  hasSubmittedObject,
   submission,
   currentObject,
   ref,
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-
   const clearForm = useAppSelector(state => state.clearForm)
   // const alert = useAppSelector(state => state.alert)
 
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
-  // const [draftAutoSaveAllowed, setDraftAutoSaveAllowed] = useState(false)
 
   // const autoSaveTimer: { current: NodeJS.Timeout | null } = useRef(null)
   // let timer = 0
@@ -319,8 +182,6 @@ const FormContent = ({
 
   useEffect(() => {
     //   if (isSubmitSuccessful) {
-    // // Reset only draft status
-    // dispatch(resetDraftStatus())
     dispatch(setClearForm(false))
   }, [clearForm])
 
@@ -328,16 +189,13 @@ const FormContent = ({
   //   checkDirty()
   // }, [methods.formState.isDirty])
 
-  const handleClearForm = () => {
-    methods.reset({ undefined })
-    dispatch(setClearForm(true))
-    dispatch(
-      setCurrentObject({
-        objectId: currentObjectId,
-        status: currentObject.status,
-      })
-    )
-  }
+  // const handleClearForm = () => {
+  //   methods.reset({ undefined })
+  //   dispatch(setClearForm(true))
+  //   dispatch(
+  //     setCurrentObject({ })
+  //   )
+  // }
 
   // Check if the form is empty
   // const isFormCleanedValuesEmpty = (cleanedValues: {
@@ -357,13 +215,10 @@ const FormContent = ({
   //   const isFormTouched = () => {
   //     return Object.keys(methods.formState.dirtyFields).length > 0
   //   }
-  //   // if (isFormTouched()) {
-  //   //   dispatch(setDraftStatus("notSaved"))
-  //   // } else dispatch(resetDraftStatus())
   // }
 
   const getCleanedValues = () =>
-    JSONSchemaParser.cleanUpFormValues(methods.getValues()) as ObjectDetails
+    JSONSchemaParser.cleanUpFormValues(methods.getValues()) as CurrentFormObject
 
   const handleChange = () => {
     clearForm ? dispatch(setClearForm(false)) : null
@@ -378,8 +233,6 @@ const FormContent = ({
             setCurrentObject({
               ...clone,
               cleanedValues: values,
-              // status: currentObject.status || ObjectStatus.draft,
-              status: currentObject.status,
               objectId: currentObjectId,
             })
           )
@@ -427,7 +280,6 @@ const FormContent = ({
 
   /*
    * Logic for auto-save feature.
-   * We use setDraftAutoSaveAllowed state change to render form before save.
    * This helps with getting current accession ID and form data without rendering on every timer increment.
    */
 
@@ -435,25 +287,14 @@ const FormContent = ({
   //   autoSaveTimer.current = setInterval(() => {
   //     timer = timer + 1
   //     if (timer >= 60) {
-  //       setDraftAutoSaveAllowed(true)
   //     }
   //   }, 1000)
   // }
 
   // const resetTimer = () => {
-  //   setDraftAutoSaveAllowed(false)
   //   clearInterval(autoSaveTimer.current as NodeJS.Timeout)
   //   timer = 0
   // }
-
-  // useEffect(() => {
-  //   if (alert) resetTimer()
-
-  //   if (draftAutoSaveAllowed) {
-  //     handleSaveDraft()
-  //     resetTimer()
-  //   }
-  // }, [draftAutoSaveAllowed, alert])
 
   // const keyHandler = () => {
   //   resetTimer()
@@ -479,70 +320,35 @@ const FormContent = ({
   //   )
   // }
 
-  /*
-   * Update or save new draft depending on object status
-   */
-  // const handleSaveDraft = async () => {
-  //   resetTimer()
-  //   const cleanedValues = getCleanedValues()
-
-  //   if (!isFormCleanedValuesEmpty(cleanedValues)) {
-  //     const handleSave = await saveDraftHook({
-  //       accessionId: currentObject.accessionId || currentObject.objectId,
-  //       objectType: objectType,
-  //       objectStatus: currentObject.status,
-  //       submission: submission,
-  //       values: cleanedValues,
-  //       dispatch: dispatch,
-  //     })
-
-  //     if (handleSave.ok && currentObject?.status !== ObjectStatus.submitted) {
-  //       setCurrentObjectId(handleSave.data.accessionId)
-  //       const clone = cloneDeep(currentObject)
-  //       dispatch(
-  //         setCurrentObject({
-  //           ...clone,
-  //           status: currentObject.status || ObjectStatus.draft,
-  //           accessionId: handleSave.data.accessionId,
-  //         })
-  //       )
-  //       dispatch(resetDraftStatus())
-  //       dispatch(resetCurrentObject())
-  //       setTimeout(() => methods.reset({}), 0)
-  //     }
-  //   } else {
-  //     emptyFormError()
-  //   }
-  // }
-
   /*const handleXMLModalOpen = () => {
     dispatch(setXMLModalOpen())
   }*/
 
-  const handleDeleteForm = async () => {
-    if (currentObjectId) {
-      try {
-        await dispatch(
-          deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
-        )
-        handleReset()
-        handleChange()
-        dispatch(resetCurrentObject())
+  // const handleDeleteForm = async () => {
+  //   if (currentObjectId) {
+  //     try {
+  //       *TODO: deleteObjectFromSubmission is removed, need to replace this func.
+  //       await dispatch(
+  //         deleteObjectFromSubmission(currentObject.status, currentObjectId, objectType)
+  //       )
+  //       handleReset()
+  //       handleChange()
+  //       dispatch(resetCurrentObject())
 
-        if (objectType === ObjectTypes.analysis || objectType === ObjectTypes.run) {
-          dispatch(deleteFileType(currentObjectId))
-        }
-      } catch (error) {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-            helperText: "snackbarMessages.error.helperText.deleteObject",
-          })
-        )
-      }
-    }
-  }
+  //       if (objectType === ObjectTypes.analysis || objectType === ObjectTypes.run) {
+  //         dispatch(deleteFileType(currentObjectId))
+  //       }
+  //     } catch (error) {
+  //       dispatch(
+  //         updateStatus({
+  //           status: ResponseStatus.error,
+  //           response: error,
+  //           helperText: "snackbarMessages.error.helperText.deleteObject",
+  //         })
+  //       )
+  //     }
+  //   }
+  // }
 
   const handleReset = () => {
     methods.reset({ undefined })
@@ -552,19 +358,16 @@ const FormContent = ({
   return (
     <FormProvider {...methods}>
       <CustomCardHeader
-        hasSubmittedObject={hasSubmittedObject}
-        // hasDraftObject={false}
         objectType={objectType}
-        currentObject={currentObject}
         refForm="hook-form"
         onClickSubmit={() => {}}
         onClickSaveDOI={methods.handleSubmit(
           async data => handleDOISubmit(data as DoiFormDetails),
           handleValidationErrors
         )}
-        onClickClearForm={() => handleClearForm()}
-        //onOpenXMLModal={() => handleXMLModalOpen()}
-        onDeleteForm={() => handleDeleteForm()}
+        // onClickClearForm={() => handleClearForm()}
+        // onOpenXMLModal={() => handleXMLModalOpen()}
+        // onDeleteForm={() => handleDeleteForm()}
       />
       <Form
         id="hook-form"
@@ -590,9 +393,9 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
   //const openedXMLModal = useAppSelector(state => state.openedXMLModal)
+  const objects = useAppSelector(state => state.stepObjects)
 
   const { t } = useTranslation()
-  const { hasSubmittedObject } = checkObjectStatus(submission, objectType)
 
   // States that will update in useEffect()
   const [states, setStates] = useState({
@@ -643,7 +446,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
         currentObject,
         parsedSchema.title.toLowerCase(),
         dereferencedSchema,
-        submission.metadataObjects,
+        objects,
         analysisAccessionIds
       )
 
@@ -672,7 +475,7 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   }, [objectType])
 
   // All Analysis AccessionIds
-  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, submission.metadataObjects)
+  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, objects)
 
   useEffect(() => {
     if (ObjectTypes.analysis) {
@@ -690,60 +493,14 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   }, [currentObject?.accessionId, analysisAccessionIds?.length])
 
   /*
-   * Submit form with cleaned values and check for response errors
+   * Submit a new or existing form with cleaned values and check for response errors
    */
   const onSubmit = (data: Record<string, unknown>) => {
     if (Object.keys(data).length === 0) return
 
-    const patchObject = async () => {
-      const accessionId = data.accessionId as string
-      const cleanedValues = JSONSchemaParser.cleanUpFormValues(data)
-      try {
-        const response = await objectAPIService.patchFromJSON(
-          objectType,
-          accessionId,
-          cleanedValues
-        )
-
-        patchHandler(
-          response,
-          submission,
-          currentObject.accessionId,
-          objectType,
-          cleanedValues,
-          dispatch
-        )
-
-        if (objectType !== ObjectTypes.dataset) {
-          dispatch(resetCurrentObject())
-        }
-
-        if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
-          const objectWithFileTypes = getNewUniqueFileTypes(
-            accessionId,
-            cleanedValues as FormDataFiles
-          )
-          objectWithFileTypes ? dispatch(setFileTypes(objectWithFileTypes)) : null
-        }
-      } catch (error) {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-            helperText: "snackbarMessages.error.helperText.modifyObject",
-          })
-        )
-      }
-    }
-
-    startTransition(async () => {
-      if (data.status === ObjectStatus.submitted) {
-        await patchObject()
-      } else {
-        await submitObjectHook(data, submission.submissionId, objectType, dispatch)
-        // methods.reset({ undefined })
-      }
-    })
+    startTransition(
+      async () => await submitObjectHook(data, submission.submissionId, objectType, dispatch)
+    )
   }
 
   if (states.isLoading) return <CircularProgress />
@@ -764,8 +521,6 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           methods={methods}
           onSubmit={onSubmit as SubmitHandler<FieldValues>}
           objectType={objectType}
-          // hasDraftObject={false}
-          hasSubmittedObject={hasSubmittedObject}
           submission={submission}
           currentObject={currentObject}
           key={currentObject?.accessionId || submission.submissionId}

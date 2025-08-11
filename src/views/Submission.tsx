@@ -13,10 +13,16 @@ import WizardDataFolderStep from "components/SubmissionWizard/WizardSteps/Wizard
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectTypes, ValidSteps } from "constants/wizardObject"
+import { setObjectTypesArray } from "features/objectTypesArraySlice"
+import { setRemsInfo } from "features/remsInfoSlice"
 import { updateStatus } from "features/statusMessageSlice"
+import { setObjects, resetObjects } from "features/stepObjectSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
+import objectAPIService from "services/objectAPI"
+import remsAPIService from "services/remsAPI"
+import schemaAPIService from "services/schemaAPI"
 import submissionAPIService from "services/submissionAPI"
 import type { HandlerRef } from "types"
 import { useQuery } from "utils"
@@ -69,6 +75,7 @@ const getStepContent = (
 const SubmissionWizard: React.FC = () => {
   const dispatch = useAppDispatch()
   const objectType = useAppSelector(state => state.objectType)
+  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
@@ -81,30 +88,157 @@ const SubmissionWizard: React.FC = () => {
   useEffect(() => {
     let isMounted = true
     const getSubmission = async () => {
-      const response = await submissionAPIService.getSubmissionById(submissionId)
       if (isMounted) {
-        if (response.ok) {
+        try {
+          const response = await submissionAPIService.getSubmissionById(submissionId)
+
           dispatch(setSubmission(response.data))
           dispatch(setWorkflowType(response.data.workflow))
           setFetchingSubmission(false)
-        } else {
+        } catch (error) {
           navigate({ pathname: "" })
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
-              response: response,
+              response: error,
               helperText: "snackbarMessages.error.helperText.fetchSubmission",
             })
           )
           dispatch(resetSubmission())
         }
+        dispatch(resetObjects())
       }
     }
     if (submissionId) getSubmission()
     return () => {
       isMounted = false
     }
-  }, [dispatch, submissionId, navigate])
+  }, [submissionId, navigate, dispatch])
+
+  useEffect(() => {
+    let isMounted = true
+    const getSchemas = async () => {
+      if (isMounted) {
+        let cachedObjectTypesArray = sessionStorage.getItem(`cached_objectTypesArray`) || ""
+        if (!cachedObjectTypesArray) {
+          try {
+            const response = await schemaAPIService.getAllSchemas()
+            const exceptionalSchemas = ["Project", "Submission"]
+            const objectTypesArray = response.data.reduce((arr, val) => {
+              if (!exceptionalSchemas.includes(val.title)) {
+                val.title.toLowerCase().includes(ObjectTypes.datacite)
+                  ? arr.push(ObjectTypes.datacite)
+                  : arr.push(val.title.toLowerCase())
+              }
+              return arr
+            }, [])
+            cachedObjectTypesArray = JSON.stringify(objectTypesArray)
+            sessionStorage.setItem(`cached_objectTypesArray`, cachedObjectTypesArray)
+          } catch (error) {
+            dispatch(
+              updateStatus({
+                status: ResponseStatus.error,
+                response: error,
+                helperText: "snackbarMessages.error.helperText.fetchSchemas",
+              })
+            )
+          }
+        }
+
+        try {
+          dispatch(setObjectTypesArray(JSON.parse(cachedObjectTypesArray)))
+        } catch (error) {
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: error,
+              helperText: "snackbarMessages.error.helperText.fetchSchemas",
+            })
+          )
+        }
+      }
+    }
+
+    const getRemsInfo = async () => {
+      if (isMounted) {
+        try {
+          const response = await remsAPIService.getRemsInfo()
+          dispatch(setRemsInfo(response.data))
+        } catch (error) {
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: error,
+              helperText: "snackbarMessages.error.helperText.fetchRemsInfo",
+            })
+          )
+        }
+      }
+    }
+
+    getSchemas()
+    getRemsInfo()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+    const getObjects = async () => {
+      if (isMounted) {
+        try {
+          const response = (
+            await Promise.all(
+              objectTypesArray.map(async objType => {
+                const allObjs = await objectAPIService.getAllObjectsByObjectType(
+                  objType,
+                  submissionId
+                )
+                const mappedObjs = allObjs.data.length
+                  ? await Promise.all(
+                      allObjs.data.map(async obj => {
+                        const { objectId, schema, ...rest } = obj
+                        const objData = await objectAPIService.getObjectByAccessionId(
+                          schema,
+                          objectId
+                        )
+
+                        return {
+                          accessionId: objectId,
+                          schema,
+                          displayTitle: objData.data.title,
+                          ...rest,
+                        }
+                      })
+                    )
+                  : []
+
+                return mappedObjs
+              })
+            )
+          ).flat()
+
+          dispatch(setObjects(response))
+        } catch (error) {
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.error,
+              response: error,
+              helperText: "snackbarMessages.error.helperText.fetchObjects",
+            })
+          )
+          dispatch(resetObjects())
+        }
+      }
+    }
+
+    if (submissionId) getObjects()
+
+    return () => {
+      isMounted = false
+    }
+  }, [objectTypesArray])
 
   const wizardStep = step ? Number(step) : -1
 

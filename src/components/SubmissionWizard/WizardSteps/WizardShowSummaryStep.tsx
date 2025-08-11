@@ -93,7 +93,7 @@ const WizardShowSummaryStep: React.FC = () => {
     }))
   }
 
-  const handleEdit = (draft, objectType, item, step, objects) => {
+  const handleEdit = (objectType, item, step) => {
     dispatch(updateStep({ step: step, objectType: objectType }))
     const folderId = submission.submissionId
     switch (step) {
@@ -103,16 +103,7 @@ const WizardShowSummaryStep: React.FC = () => {
         break
       }
       default: {
-        editObjectHook(
-          draft,
-          objectType,
-          item,
-          step,
-          folderId,
-          dispatch,
-          navigate,
-          objects.findIndex(object => object.id === item.accessionId)
-        )
+        editObjectHook(objectType, item, step, folderId, dispatch, navigate)
       }
     }
   }
@@ -127,11 +118,7 @@ const WizardShowSummaryStep: React.FC = () => {
             .filter(item => !!item && !!item.id)
             .map(item => {
               const draft = item.objectData?.schema?.includes("draft-")
-              const name =
-                item.displayTitle ||
-                item.objectData?.tags?.fileName ||
-                item.objectData?.accessionId ||
-                item.id
+              const name = item.displayTitle || item.fileName || item.id
               return {
                 id: item.id,
                 status: draft ? t("draft") : t("ready"),
@@ -179,15 +166,7 @@ const WizardShowSummaryStep: React.FC = () => {
         <GridActionsCellItem
           icon={<EditIcon color="primary" />}
           label={t("edit")}
-          onClick={() =>
-            handleEdit(
-              params.row.draft,
-              params.row.objectType,
-              params.row.objectData,
-              params.row.step,
-              params.row.objectsList
-            )
-          }
+          onClick={() => handleEdit(params.row.objectType, params.row.objectData, params.row.step)}
         />
       ),
       flex: 0.5,

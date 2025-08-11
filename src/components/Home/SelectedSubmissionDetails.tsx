@@ -12,7 +12,7 @@ import WizardAlert from "../SubmissionWizard/WizardComponents/WizardAlert"
 
 import SubmissionDetailTable from "components/Home/SubmissionDetailTable"
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectStatus } from "constants/wizardObject"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { updateStatus } from "features/statusMessageSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -22,13 +22,12 @@ import {
   setSubmission,
   resetSubmission,
 } from "features/wizardSubmissionSlice"
-import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import draftAPIService from "services/draftAPI"
 import objectAPIService from "services/objectAPI"
 import submissionAPIService from "services/submissionAPI"
-import type { OldSubmissionRow, ObjectInsideSubmissionWithTags } from "types"
-import { getItemPrimaryText, pathWithLocale } from "utils"
+import type { OldSubmissionRow } from "types"
+import { pathWithLocale } from "utils"
 
 interface SelectedSubmission {
   submissionId: string
@@ -62,38 +61,33 @@ const SelectedSubmissionDetails: React.FC = () => {
 
     const objectsArr: OldSubmissionRow[] = []
 
-    const handleObject = async (
-      draft: boolean,
-      objectType: string,
-      objectInSubmission: ObjectInsideSubmissionWithTags
-    ) => {
-      const service = draft ? draftAPIService : objectAPIService
-      const response = await service.getObjectByAccessionId(
-        objectType,
-        objectInSubmission.accessionId
-      )
+    // const handleObject = async (
+    //   draft: boolean,
+    //   objectType: string,
+    //   objectInSubmission: CurrentFormObject
+    // ) => {
+    //   const service = draft ? draftAPIService : objectAPIService
+    //   const response = await service.getObjectByAccessionId(objectType, objectInSubmission.id)
 
-      if (response.ok) {
-        const objectDetails: OldSubmissionRow = {
-          accessionId: objectInSubmission.accessionId,
-          title: getItemPrimaryText(objectInSubmission),
-          objectType,
-          submissionType: objectInSubmission.tags.submissionType || ObjectSubmissionTypes.form, // Fallback for 'Form'. Used in drafts
-          status: draft ? ObjectStatus.draft : ObjectStatus.submitted,
-          lastModified: response.data.dateModified,
-          objectData: response.data,
-        }
-        objectsArr.push(objectDetails)
-      } else {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: response,
-            helperText: "snackbarMessages.error.helperText.fetchObject",
-          })
-        )
-      }
-    }
+    //   if (response.ok) {
+    // const objectDetails: OldSubmissionRow = {
+    //   accessionId: objectInSubmission.id,
+    //   title: getItemPrimaryText(objectInSubmission),
+    //   objectType,
+    //   lastModified: response.data.dateModified,
+    //   objectData: response.data,
+    // }
+    // objectsArr.push(objectDetails)
+    //   } else {
+    //     dispatch(
+    //       updateStatus({
+    //         status: ResponseStatus.error,
+    //         response: response,
+    //         helperText: "snackbarMessages.error.helperText.fetchObject",
+    //       })
+    //     )
+    //   }
+    // }
 
     const getSubmission = async () => {
       if (submissionId) {
@@ -103,17 +97,16 @@ const SelectedSubmissionDetails: React.FC = () => {
             const data = response.data
             if (!data.published) {
               for (let i = 0; i < data.drafts?.length; i += 1) {
-                const objectType = data.drafts[i].schema.includes("draft-")
-                  ? data.drafts[i].schema.substr(6)
-                  : data.drafts[i].schema
-
-                await handleObject(true, objectType, data.drafts[i])
+                // const objectType = data.drafts[i].schema.includes("draft-")
+                //   ? data.drafts[i].schema.substr(6)
+                //   : data.drafts[i].schema
+                // await handleObject(true, objectType, data.drafts[i])
               }
             }
-            for (let i = 0; i < data.metadataObjects?.length; i += 1) {
-              const objectType = data.metadataObjects[i].schema
-              await handleObject(false, objectType, data.metadataObjects[i])
-            }
+            // for (let i = 0; i < data.metadataObjects?.length; i += 1) {
+            // const objectType = data.metadataObjects[i].schema
+            // await handleObject(false, objectType, data.metadataObjects[i])
+            // }
 
             setSelectedSubmission({
               submissionId: submissionId,
@@ -182,18 +175,12 @@ const SelectedSubmissionDetails: React.FC = () => {
   }
 
   // Edit object
-  const handleEditObject = async (
-    objectId: string,
-    objectType: string,
-    objectStatus: string,
-    submissionType: string
-  ) => {
+  const handleEditObject = async (objectId: string, objectType: string, objectStatus: string) => {
     const service = objectStatus === ObjectStatus.draft ? draftAPIService : objectAPIService
     const response = await service.getObjectByAccessionId(objectType, objectId)
 
     if (response.ok) {
       dispatch(setCurrentObject({ ...response.data, status: objectStatus }))
-      dispatch(setSubmissionType(submissionType))
       dispatch(setObjectType(objectType))
       dispatch(setSubmission(selectedSubmission.originalSubmissionData))
       navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: `step=1` })

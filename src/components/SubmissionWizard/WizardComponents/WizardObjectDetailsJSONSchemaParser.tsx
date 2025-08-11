@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography"
 import { styled } from "@mui/system"
 import { get } from "lodash"
 
-import { FormObject, NestedField, ObjectDetails } from "types"
+import { CurrentFormObject, FormObject, NestedField } from "types"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 const SectionHeader = styled(Typography)(({ theme }) => ({
@@ -25,7 +25,7 @@ const SectionHeader = styled(Typography)(({ theme }) => ({
 /*
  * Build object details based on given schema
  */
-const buildDetails = (schema: FormObject, objectValues: ObjectDetails) => {
+const buildDetails = (schema: FormObject, objectValues: CurrentFormObject) => {
   try {
     return traverseFields(schema, [], objectValues)
   } catch (error) {
@@ -39,7 +39,7 @@ const buildDetails = (schema: FormObject, objectValues: ObjectDetails) => {
 const traverseFields = (
   object: FormObject,
   path: string[],
-  objectValues: ObjectDetails,
+  objectValues: CurrentFormObject,
   nestedField?: NestedField
 ) => {
   const name = pathToName(path)
@@ -155,7 +155,7 @@ const DetailsSection = ({ name, label, level, children }: DetailsSectionProps) =
 type OneOfFieldProps = {
   path: string[]
   object: FormObject
-  objectValues: ObjectDetails
+  objectValues: CurrentFormObject
 }
 
 const OneOfField = ({ path, object, objectValues }: OneOfFieldProps) => {
@@ -223,7 +223,7 @@ const CheckboxArray = ({ label, values }: CheckboxArrayProps) => {
 type DetailsArrayProps = {
   object: FormObject
   path: Array<string>
-  objectValues: ObjectDetails
+  objectValues: CurrentFormObject
   values: Record<string, unknown>[]
 }
 

@@ -14,7 +14,7 @@ import type { RootState } from "../rootReducer"
 import type { AppStore } from "../store"
 import CSCtheme from "../theme"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import rootReducer from "rootReducer"
 import { Schema } from "types"
 
@@ -35,7 +35,6 @@ export const mockState = {
     ],
   },
   objectType: ObjectTypes.dac,
-  submissionType: ObjectSubmissionTypes.form,
   objectTypesArray: Object.keys(ObjectTypes) as Schema[],
   submission: {
     description: "Test desciption",

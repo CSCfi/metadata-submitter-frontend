@@ -23,6 +23,10 @@ const createFromXML = async (
   })
 }
 
+/*
+  Backend now supports creating multiple objects at once, the response is an Array of objects.
+  Frontend only creates one object at a time atm but we may support this multi-object feature also in the future.
+*/
 const createFromJSON = async (
   objectType: string,
   submissionId: string,
@@ -38,8 +42,11 @@ const getObjectByAccessionId = async (
   return await api.get(`/${objectType}/${accessionId}`)
 }
 
-const getAllObjectsByObjectType = async (objectType: string): Promise<APIResponse> => {
-  return await api.get(`/${objectType}`)
+const getAllObjectsByObjectType = async (
+  objectType: string,
+  submissionId: string
+): Promise<APIResponse> => {
+  return await api.get(`/${objectType}?submission=${submissionId}`)
 }
 
 const patchFromJSON = async (

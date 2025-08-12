@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next"
 import { files } from "../../../../playwright/fixtures/files_response" // MOCK files array
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 
+import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
 import WizardDataFolderTable from "components/SubmissionWizard/WizardComponents/WizardDataFolderTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
 import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
@@ -33,6 +34,12 @@ const WizardDataFolderStep = () => {
   const [selectedFolder, setSelectedFolder] = useState<string>("")
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
+  const [alert, setAlert] = useState<boolean>(false)
+
+  const handleAlert = (state: boolean) => {
+    if (state) handleLinkFolder()
+    setAlert(false)
+  }
 
   const handleLinkFolder = async () => {
     dispatch(resetUnsavedForm())
@@ -93,7 +100,7 @@ const WizardDataFolderStep = () => {
       aria-label={t("ariaLabels.linkFolder")}
       size="small"
       type="submit"
-      onClick={handleLinkFolder}
+      onClick={() => setAlert(true)}
       data-testid="link-datafolder"
     >
       {t("datafolder.linkFolder")}
@@ -163,6 +170,7 @@ const WizardDataFolderStep = () => {
         {renderFolderTable()}
         {renderFileTable()}
       </Box>
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="link" />}
     </Box>
   )
 }

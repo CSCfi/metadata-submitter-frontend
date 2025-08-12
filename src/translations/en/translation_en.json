@@ -153,15 +153,15 @@
       "cancel": "Cancel",
       "exit": "Exit",
       "continueSubmission": "No, continue creating the submission",
-      "saveExit": "Yes, save and exit"
+      "saveExit": "Yes, save and exit",
+      "link": "Link folder"
     },
-    "form": {
+    "exit": {
       "title": "Are you sure you want to exit this form?",
       "content": "Unsaved changes will be lost."
     },
-    "cancel": {
-      "title": "Cancel creating a submission?",
-      "content": "If you cancel creating a submission, the submission and its content will not be saved anywhere."
+    "link": {
+      "content": "Datafolder link cannot be changed afterwards. Are you sure of your selection?"
     },
     "save": {
       "title": "Save progress and exit?",

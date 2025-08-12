@@ -84,27 +84,47 @@ const CancelFormDialog = ({
   alertType?: string
   parentLocation: string
 }) => {
-
   const { t } = useTranslation()
   let [dialogTitle, dialogContent] = ["", ""]
   let dialogActions
 
   switch (parentLocation) {
     case "submission": {
-      // Text depends on ObjectStatus or ObjectSubmissionType
-      const textType = alertType?.toLowerCase()
-      dialogTitle = t(`${"alerts." + textType + ".title"}`)
-      dialogContent = t(`${"alerts." + textType + ".content"}`)
-      dialogActions = (
-        <DialogActions>
-          <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
-            {t("alerts.actions.exit")}
-          </Button>
-          <Button variant="contained" onClick={() => handleDialog(false)} color="primary">
-            {t("alerts.actions.cancel")}
-          </Button>
-        </DialogActions>
-      )
+      switch (alertType) {
+        case "exit": {
+          dialogTitle = t("alerts.exit.title")
+          dialogContent = t("alerts.exit.content")
+          dialogActions = (
+            <DialogActions>
+              <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
+                {t("alerts.actions.exit")}
+              </Button>
+              <Button variant="contained" onClick={() => handleDialog(false)} color="primary">
+                {t("alerts.actions.cancel")}
+              </Button>
+            </DialogActions>
+          )
+          break
+        }
+        case "link": {
+          dialogContent = t("alerts.link.content")
+          dialogActions = (
+            <DialogActions>
+              <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
+                {t("alerts.actions.link")}
+              </Button>
+              <Button variant="contained" onClick={() => handleDialog(false)} color="primary">
+                {t("alerts.actions.cancel")}
+              </Button>
+            </DialogActions>
+          )
+          break
+        }
+        default: {
+          dialogTitle = "default"
+          dialogContent = "default content"
+        }
+      }
       break
     }
     case "header": {

@@ -101,7 +101,7 @@ const ActionButton = (props: {
       >
         {buttonText}
       </Button>
-      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="exit" />}
     </React.Fragment>
   )
 }
@@ -220,7 +220,7 @@ const StepItems = (props: {
           )
         })}
       </TransitionGroup>
-      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="exit" />}
     </React.Fragment>
   )
 }

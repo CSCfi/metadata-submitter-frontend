@@ -8,7 +8,6 @@ import Link from "@mui/material/Link"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import { styled } from "@mui/material/styles"
-import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 import { TransitionGroup } from "react-transition-group"
@@ -82,32 +81,18 @@ const ActionButton = (props: {
 
   return (
     <React.Fragment>
-      <Grid
-        container
-        alignItems="center"
-        style={{
-          marginTop: 24,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
+      <Button
+        role="button"
+        disabled={disabled}
+        variant="contained"
+        onClick={() => handleClick()}
+        sx={theme => ({ marginTop: theme.spacing(2.4) })}
+        form="hook-form"
+        type="reset"
+        data-testid={`${buttonText} ${parent}`}
       >
-        <div style={{ display: "inline-block", marginRight: 8 }}>
-          {" "}
-          <Button
-            role="button"
-            disabled={disabled}
-            variant="contained"
-            onClick={() => handleClick()}
-            style={{ height: 40 }}
-            form="hook-form"
-            type="reset"
-            data-testid={`${buttonText} ${parent}`}
-          >
-            {buttonText}
-          </Button>
-        </div>
-      </Grid>
+        {buttonText}
+      </Button>
       {alert && (
         <WizardAlert
           onAlert={handleAlert}
@@ -267,11 +252,6 @@ const ObjectWrapper = styled("div")(({ theme }) => {
       "& li:last-of-type:before": {
         borderLeft: treeBorder,
       },
-      "& .stepItemHeader": {
-        display: "flex",
-        alignItems: "center",
-        gap: theme.spacing(1),
-      },
     },
   }
 })
@@ -297,14 +277,22 @@ const WizardStep = (props: WizardStepProps) => {
   const submission = useAppSelector(state => state.submission)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   return (
     <React.Fragment>
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
+        // Check if we should show linked folder instead of objects
+        const shouldShowLinkedFolder =
+          objectType === ObjectTypes.file &&
+          submission.linkedFolder &&
+          !objects?.ready?.length &&
+          !objects?.drafts?.length
+
+        const hasObjects =
+          !!(objects?.ready?.length || objects?.drafts?.length) || shouldShowLinkedFolder
+
         const buttonText =
           step === 1
             ? t("edit")
@@ -320,55 +308,38 @@ const WizardStep = (props: WizardStepProps) => {
               <ObjectWrapper className={isActive ? "activeObject" : ""}>
                 <div className="stepItemHeader">
                   {isActive && <ChevronRightIcon fontSize="large" />}
-                  <Typography component="span">{name}</Typography>
+                  {name}
                 </div>
 
-                {/* Add Datafolder link structure like other steps */}
-                {objectType === ObjectTypes.file && submission.linkedFolder && (
-                  <ul className="tree">
-                    <li>
-                      <div style={{ paddingTop: "20px" }}>
-                        <Grid container justifyContent="space-between">
-                          <Grid display="flex" alignItems="center" size={{ xs: 6 }}>
-                            <Link
-                              tabIndex={0}
-                              onClick={() => {
-                                dispatch(updateStep({ step: step, objectType: objectType }))
-                                navigate({
-                                  pathname: pathWithLocale(`submission/${submission.submissionId}`),
-                                  search: `step=${step}`,
-                                })
-                                dispatch(setSubmissionType(ObjectSubmissionTypes.form))
-                                dispatch(setObjectType(objectType))
-                              }}
-                              data-testid={`linked-${objectType}-list-item`}
-                              aria-label={`View ${objectType} step`}
-                              sx={theme => ({
-                                fontWeight: "300",
-                                textDecoration: "underline",
-                                wordBreak: "break-all",
-                                cursor: "pointer",
-                                color: theme.palette.primary.main,
-                              })}
-                            >
-                              {submission.linkedFolder}
-                            </Link>
-                          </Grid>
-                          <Grid>
-                            <WizardObjectStatusBadge draft={false} />
-                          </Grid>
-                        </Grid>
-                      </div>
-                    </li>
-                  </ul>
-                )}
-
-                {objects && (
+                {(objects || shouldShowLinkedFolder) && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
-                    {objects && (
+                    {objects? && (
                       <StepItems
                         step={step}
                         objects={objects}
+                        submissionId={submission.submissionId}
+                        doiInfo={submission.doiInfo}
+                        objectType={objectType}
+                      />
+                    )}
+                    {shouldShowLinkedFolder && (
+                      <StepItems
+                        step={step}
+                        objects={[
+                          {
+                            id: `linked-folder-${submission.submissionId}`,
+                            displayTitle: submission.linkedFolder ?? "",
+                            objectData: {
+                              accessionId: `linked-folder-${submission.submissionId}`,
+                              schema: "linked-folder",
+                              tags: {
+                                fileName: submission.linkedFolder,
+                                submissionType: "linked-folder",
+                              },
+                            },
+                          },
+                        ]}
+                        draft={false}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
@@ -381,7 +352,7 @@ const WizardStep = (props: WizardStepProps) => {
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
-                  disabled={!!objects.length && !allowMultipleObjects}
+                  disabled={Boolean(!!objects.length && !allowMultipleObjects)}
                   ref={ref}
                 />
               </ObjectWrapper>

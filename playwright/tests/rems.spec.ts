@@ -66,7 +66,7 @@ test.describe("Submitting REMS data", () => {
         .filter({ hasText: "Sensitive Data Access WF2 (Org 2)" })
     ).toBeVisible()
     await expect(
-      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "2 policies" })
+      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "1 policy" })
     ).toBeVisible()
   })
 })

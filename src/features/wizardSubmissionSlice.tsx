@@ -238,13 +238,9 @@ export const addDoiInfoToSubmission =
       })
     )
 
-    const subjectSchema = { subjectScheme: "Fields of Science and Technology (FOS)" }
-    // Add fixed subject schema as we are using FOS by default
-
-    const modifiedSubjects = doiFormDetails.subjects?.map((subject: DoiSubject) => ({
-      ...subject,
-      ...subjectSchema,
-    }))
+    const modifiedSubjects = doiFormDetails.subjects?.map((subject: DoiSubject) => {
+      return subject
+    })
 
     const modifiedDoiFormDetails = merge({}, doiFormDetails, {
       creators: modifiedCreators,

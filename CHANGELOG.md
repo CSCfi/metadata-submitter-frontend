@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Fixed licenses not being reset in DAC and policies form (#1073)
 - (users) Fixed required field validation in DOI form not working (#1055)
 - Fix a number of failing e2e tests
 - Fix error page 401 loop when entering protected routes (#1059)

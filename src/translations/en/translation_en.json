@@ -41,9 +41,11 @@
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",
     "submissionName": "Submission name",
+    "datasetTitle": "Submission (dataset) title",
     "submissionDescription": "Submission description",
     "errors": {
       "missingName": "Please give a name to the submission.",
+      "missingTitle": "Please give a dataset title.",
       "missingDescription": "Please give a description to the submission.",
       "missingWorkflow": "Please select a submission type."
     }

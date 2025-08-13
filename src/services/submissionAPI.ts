@@ -18,7 +18,7 @@ const getSubmissionById = async (submissionId: string): Promise<APIResponse> => 
 
 const patchSubmissionById = async (
   submissionId: string,
-  JSONContent: { name: string; description: string }
+  JSONContent: { name: string; title: string; description: string }
 ): Promise<APIResponse> => {
   return await api.patch(`/${submissionId}`, JSONContent)
 }

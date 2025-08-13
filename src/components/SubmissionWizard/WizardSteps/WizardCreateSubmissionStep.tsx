@@ -177,6 +177,23 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       />
       <Controller
         control={control}
+        name="title"
+        defaultValue={submission ? submission.title : ""}
+        render={({ field, fieldState: { error } }) => (
+          <TextField
+            {...field}
+            label={`${t("newSubmission.datasetTitle")} *`}
+            variant="outlined"
+            fullWidth
+            error={!!error}
+            helperText={error ? t("newSubmission.errors.missingTitle") : null}
+            disabled={isSubmitting}
+            slotProps={{ htmlInput: { "data-testid": "datasetTitle" } }}
+          />
+        )}
+      />
+      <Controller
+        control={control}
         name="description"
         defaultValue={""}
         render={({ field, fieldState: { error } }) => (

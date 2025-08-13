@@ -40,7 +40,9 @@
     "selectAdditionalPolicies": "Select additional policies (optional)",
     "dacTitle": "DAC title",
     "linkedPolicies": "Policies linked to DAC",
-    "policyTitle": "Policy title"
+    "policyTitle": "Policy title",
+    "policy": "policy",
+    "policies": "policies"
   },
   "datacite": {
     "startDate": "Date or Start Date",

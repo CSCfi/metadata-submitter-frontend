@@ -39,7 +39,7 @@ test.describe("Submitting REMS data", () => {
 
     // Change to another organization
     await page.getByTestId("organizationId").click()
-    await page.getByTestId("testorg").click()
+    await page.getByTestId("org2").click()
     // Assert DAC has been changed based on organization
     await expect(page.getByTestId("dacs")).toBeVisible()
     await page
@@ -47,7 +47,10 @@ test.describe("Submitting REMS data", () => {
       .filter({ has: page.locator("[type='radio']") })
       .click()
     // Assert additional Policies have been changed based on organization
-    await page.getByTestId("2").click()
+    await page
+      .getByTestId("2")
+      .filter({ has: page.locator("[type='checkbox']") })
+      .click()
 
     await formActions("form-ready")
     // Assert REMS data is saved successfully
@@ -58,7 +61,9 @@ test.describe("Submitting REMS data", () => {
     // Assert the left side Accordion shows saved DAC title and number of Policies
     await expect(page.getByTestId("submitted-dacPolicies-list-item")).toHaveCount(2)
     await expect(
-      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "Test Workflow DAC" })
+      page
+        .getByTestId("submitted-dacPolicies-list-item")
+        .filter({ hasText: "Sensitive Data Access WF2 (Org 2)" })
     ).toBeVisible()
     await expect(
       page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "1 policy" })

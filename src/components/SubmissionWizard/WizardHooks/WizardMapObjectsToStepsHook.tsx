@@ -143,11 +143,14 @@ const mapObjectsToStepsHook = (
               id: selectedRems["workflowId"],
               displayTitle: `${workflow["title"]} DAC`,
             })
-            const numberOfLicenses = (organization["licenses"] as Record<string, unknown>[]).length
+            const numberOfLicenses = selectedRems["licenses"].length
             if (numberOfLicenses > 0) {
               arr.push({
                 id: "",
-                displayTitle: numberOfLicenses > 1 ? `${numberOfLicenses} policies` : "1 policy",
+                displayTitle:
+                  numberOfLicenses > 1
+                    ? `${numberOfLicenses} ${t("dacPolicies.policies")}`
+                    : `1 ${t("dacPolicies.policy")}`,
               })
             }
           }

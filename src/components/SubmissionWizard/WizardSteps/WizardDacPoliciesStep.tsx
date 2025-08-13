@@ -173,6 +173,8 @@ const DacPoliciesForm = () => {
                 workflowId: null,
                 licenses: [],
               })
+              // reset licenses field when org is changed
+              setValue("licenses", [])
             }
 
             return (
@@ -200,6 +202,8 @@ const DacPoliciesForm = () => {
                     ...selectedRems,
                     workflowId: parseInt(e.target.value),
                   })
+                  // reset licenses field when workflow is changed
+                  setValue("licenses", [])
                 }
 
                 return (

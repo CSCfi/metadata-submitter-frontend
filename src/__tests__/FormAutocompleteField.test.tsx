@@ -9,15 +9,23 @@ import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardFo
 
 import { renderWithProviders } from "utils/test-utils"
 
-const mockOrganisations = [{ name: "Test Organisation" }, { name: "Mock Org" }]
+const mockOrganisations = [
+  {
+    id: "https://ror.org/01",
+    names: [{ lang: "en", types: ["ror_display"], value: "Test organization" }],
+  },
+  { id: "https://ror.org/02", names: [{ lang: null, types: ["ror_display"], value: "Mock Org" }] },
+]
 
 const restHandlers = [
-  http.get("https://api.ror.org/v1/organizations", ({ request }) => {
+  http.get("https://api.ror.org/organizations", ({ request }) => {
     const url = new URL(request.url)
     const searchTerm = url.searchParams.get("query") as string
 
     return HttpResponse.json({
-      items: mockOrganisations.filter(item => item.name.toLowerCase().includes(searchTerm)),
+      items: mockOrganisations.filter(item =>
+        item.names.some(name => name.value.toLowerCase().includes(searchTerm))
+      ),
     })
   }),
 ]
@@ -68,10 +76,10 @@ describe("Test autocomplete on organisation field", () => {
     // Find options wrapper
     await waitFor(() => screen.getByRole("presentation"))
     // Wait for dropdown result to appear
-    await screen.findByText(mockOrganisations[0].name)
+    await screen.findByText(mockOrganisations[0].names[0].value)
     // Select first option
     await userEvent.keyboard("{arrowdown}")
     await userEvent.keyboard("{enter}")
-    expect(autocomplete.value).toEqual(mockOrganisations[0].name)
+    expect(autocomplete.value).toEqual(mockOrganisations[0].names[0].value)
   })
 })

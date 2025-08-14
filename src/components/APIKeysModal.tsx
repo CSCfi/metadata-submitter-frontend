@@ -74,7 +74,7 @@ const APIKeyAlert = styled(Alert)(({ theme }) => ({
   borderTop: `0.15rem solid ${theme.palette.warning.main}`,
   borderRight: `0.15rem solid ${theme.palette.warning.main}`,
   borderBottom: `0.15rem solid ${theme.palette.warning.main}`,
-  color: theme.palette.secondary.main,
+  color: theme.palette.text.primary,
   alignItems: "center",
 }))
 

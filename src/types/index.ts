@@ -208,9 +208,8 @@ export type NestedField = {
 export type APIResponse = ApiResponse<any>
 
 export type ObjectDisplayValues = {
-  descriptor: { studyTitle: string }
-  contacts: { name: string; mainContact: boolean }[]
-  title: string
+  descriptor?: { studyTitle?: string }
+  title?: string
 }
 
 /*

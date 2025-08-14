@@ -11,7 +11,7 @@ const stepObjectSlice = createSlice({
   reducers: {
     setObjects: (_state, action) => action.payload,
     upsertObject: (state, action) => {
-      const existingObj = state.find(obj => obj.id === action.payload.accessionId)
+      const existingObj = state.find(obj => obj.id === action.payload.id)
       if (existingObj) {
         assign(existingObj, action.payload)
       } else {

@@ -15,13 +15,14 @@ import type {
 
 export const getObjectDisplayTitle = (
   objectType: string,
-  cleanedValues: ObjectDisplayValues
+  objectData: Record<string, unknown>
 ): string => {
+  const data = objectData as ObjectDisplayValues
   switch (objectType) {
     case ObjectTypes.study:
-      return cleanedValues.descriptor?.studyTitle || ""
+      return data.descriptor?.studyTitle ?? ""
     default:
-      return cleanedValues.title || ""
+      return data.title ?? ""
   }
 }
 

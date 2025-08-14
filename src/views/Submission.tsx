@@ -17,6 +17,7 @@ import { setObjectTypesArray } from "features/objectTypesArraySlice"
 import { setRemsInfo } from "features/remsInfoSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setObjects, resetObjects } from "features/stepObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
@@ -25,7 +26,7 @@ import remsAPIService from "services/remsAPI"
 import schemaAPIService from "services/schemaAPI"
 import submissionAPIService from "services/submissionAPI"
 import type { HandlerRef } from "types"
-import { useQuery } from "utils"
+import { getObjectDisplayTitle, useQuery } from "utils"
 import Page404 from "views/ErrorPages/Page404"
 
 /**
@@ -107,6 +108,7 @@ const SubmissionWizard: React.FC = () => {
           dispatch(resetSubmission())
         }
         dispatch(resetObjects())
+        dispatch(resetCurrentObject())
       }
     }
     if (submissionId) getSubmission()
@@ -203,11 +205,11 @@ const SubmissionWizard: React.FC = () => {
                           schema,
                           objectId
                         )
-
+                        const objTitle = getObjectDisplayTitle(schema, objData.data)
                         return {
-                          accessionId: objectId,
+                          id: objectId,
                           schema,
-                          displayTitle: objData.data.title,
+                          displayTitle: objTitle,
                           ...rest,
                         }
                       })

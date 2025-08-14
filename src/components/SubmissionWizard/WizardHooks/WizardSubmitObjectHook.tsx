@@ -7,7 +7,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { upsertObject } from "features/stepObjectSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import objectAPIService from "services/objectAPI"
-import { APIResponse, FormDataFiles, ObjectDisplayValues } from "types"
+import { APIResponse, FormDataFiles } from "types"
 import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
 
 const submitObjectHook = async (
@@ -34,7 +34,7 @@ const submitObjectHook = async (
 
     const objectDisplayTitle = getObjectDisplayTitle(
       objectType,
-      cleanedValues as ObjectDisplayValues
+      cleanedValues as Record<string, unknown>
     )
 
     const objAccessionId = Array.isArray(response.data)

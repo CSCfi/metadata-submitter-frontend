@@ -154,7 +154,7 @@ const StepItems = (props: {
           dispatch(resetCurrentObject())
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
           dispatch(setObjectType(objectType))
-        } else if (formObject.objectData?.tags?.submissionType === "linked-folder") {
+        } else if (objectType === ObjectTypes.file) {
           // Handle linked folder click
           navigate({
             pathname: pathWithLocale(`submission/${submissionId}`),

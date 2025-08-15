@@ -76,6 +76,9 @@ const APIKeyAlert = styled(Alert)(({ theme }) => ({
   borderBottom: `0.15rem solid ${theme.palette.warning.main}`,
   color: theme.palette.text.primary,
   alignItems: "center",
+  "& .MuiAlert-icon": {
+    opacity: 1,
+  },
 }))
 
 const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {

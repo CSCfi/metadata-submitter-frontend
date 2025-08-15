@@ -95,8 +95,6 @@ const ActionButton = (props: {
         variant="contained"
         onClick={() => handleClick()}
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
-        form="hook-form"
-        type="reset"
         data-testid={`${buttonText} ${parent}`}
       >
         {buttonText}

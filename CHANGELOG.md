@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Modified types of the step objects and form object (#1072)
+- Restructured the mapped step objects in Accordion (#1072)
+- Replaced metadataObjects and drafts by objects (#1072)
 - (users) Removed Options menu with Clear button (#1036)
 - (users) Removed clearing upon save functionality (#1036)
 - (users) Removed draft functionality (#1035)
@@ -71,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Redux state, reducer and action for objects (#1072)
 - (users) added Identifier step to summary view (#1052)
 - (users) Added date validation for DOI form (#1058)
 - (users) Added a warning alert when not DOI form has validation errors (#1045)
@@ -88,6 +92,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Tags property from object (#1072)
+- Draft and Ready status from WizardStepper (#1072)
+- All metadataObjects and drafts from submission and their related functionalities (#1072)
 - (users) removed subjectScheme from frontend (#1070)
 - (users) Remove schemeUri, affiliationIdentifierScheme, fullName fields from prefilled DOI form text fields (#1008)
 - Removed Cypress tests, relevant configuration and Github workflow (#1039)

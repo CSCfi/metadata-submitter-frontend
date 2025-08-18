@@ -37,7 +37,6 @@ describe("WizardStepper", () => {
             step: 2,
             stepObjectType: "study",
           },
-          draftStatus: "notSaved",
         },
       }
     )

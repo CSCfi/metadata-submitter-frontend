@@ -17,20 +17,13 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
-import { resetDraftStatus } from "features/draftStatusSlice"
+import { ObjectTypes } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
 import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
-import { setSubmissionType } from "features/wizardSubmissionTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type {
-  DoiFormDetails,
-  HandlerRef,
-  ObjectInsideSubmissionWithTags,
-  StepItemObject,
-} from "types"
+import type { DoiFormDetails, HandlerRef, StepObject } from "types"
 import { hasDoiInfo, pathWithLocale } from "utils"
 
 const ActionButton = (props: {
@@ -44,26 +37,18 @@ const ActionButton = (props: {
 
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
-  const formState = useAppSelector(state => state.submissionType)
-  const draftStatus = useAppSelector(state => state.draftStatus)
   const dispatch = useAppDispatch()
   const [alert, setAlert] = useState(false)
 
-  const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
   const pathname = pathWithLocale(
     submission.submissionId ? `submission/${submission.submissionId}` : `submission`
   )
 
   const handleClick = () => {
-    if (unsavedSubmission) {
-      setAlert(true)
-    } else {
-      handleNavigation()
-    }
+    handleNavigation()
   }
 
   const handleNavigation = () => {
-    dispatch(resetDraftStatus())
     dispatch(resetObjectType())
     dispatch(resetCurrentObject())
     dispatch(updateStep({ step: step, objectType: parent }))
@@ -81,7 +66,6 @@ const ActionButton = (props: {
       }
       default: {
         navigate({ pathname: pathname, search: stepParam })
-        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         dispatch(setObjectType(parent))
         if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
@@ -109,52 +93,32 @@ const ActionButton = (props: {
       >
         {buttonText}
       </Button>
-      {alert && (
-        <WizardAlert
-          onAlert={handleAlert}
-          parentLocation="submission"
-          alertType={ObjectSubmissionTypes.form}
-        />
-      )}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
     </React.Fragment>
   )
 }
 
 /*
  * Render items belonging to step.
- * Step can host for example submission details and ready & draft objects.
+ * Step can host for example submission details and its objects.
  */
 const StepItems = (props: {
   step: number
-  objects: {
-    id: string | number
-    displayTitle: string
-    objectData?: ObjectInsideSubmissionWithTags
-  }[]
-  draft: boolean
+  objects: StepObject[]
   submissionId: string
   doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
 }) => {
-  const { step, objects, draft, submissionId, doiInfo, objectType } = props
+  const { step, objects, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
-  const formState = useAppSelector(state => state.submissionType)
-  const draftStatus = useAppSelector(state => state.draftStatus)
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
-  const [clickedItem, setClickedItem] = useState({
-    objectData: { accessionId: "", schema: "", tags: {} },
-  })
+  const [clickedItem, setClickedItem] = useState({})
   const { t } = useTranslation()
-  const unsavedSubmission = formState.trim().length > 0 && draftStatus === "notSaved"
 
-  const handleClick = item => {
+  const handleClick = (item: StepObject) => {
     setClickedItem(item)
-    if (unsavedSubmission) {
-      setAlert(true)
-    } else {
-      handleItemEdit(item)
-    }
+    handleItemEdit(item)
   }
 
   const handleItemEdit = formObject => {
@@ -176,7 +140,6 @@ const StepItems = (props: {
           pathname: pathWithLocale(`submission/${submissionId}`),
           search: "step=5",
         })
-        dispatch(setSubmissionType(ObjectSubmissionTypes.form))
         dispatch(setObjectType(objectType))
         break
       }
@@ -184,20 +147,9 @@ const StepItems = (props: {
         if (objectType === ObjectTypes.dacPolicies) {
           dispatch(resetCurrentObject())
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
-          dispatch(setSubmissionType(ObjectSubmissionTypes.form))
           dispatch(setObjectType(objectType))
         } else {
-          const item = formObject.objectData
-          editObjectHook(
-            draft,
-            objectType,
-            item,
-            step,
-            submissionId,
-            dispatch,
-            navigate,
-            objects.findIndex(object => object.id === item.accessionId)
-          )
+          editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
         }
         break
       }
@@ -227,7 +179,7 @@ const StepItems = (props: {
                     <Link
                       tabIndex={0} // "href with # target will cause Firefox to refresh the page"
                       onClick={() => handleClick(item)}
-                      data-testid={`${draft ? "draft" : "submitted"}-${objectType}-list-item`}
+                      data-testid={`${objectType}-list-item`}
                       aria-label={t("ariaLabels.editObject")}
                       sx={theme => ({
                         fontWeight: "300",
@@ -237,15 +189,11 @@ const StepItems = (props: {
                         color: theme.palette.primary.main,
                       })}
                     >
-                      {item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
-                        ? item.objectData.tags.fileName
-                        : item.displayTitle !== ""
-                          ? item.displayTitle
-                          : item.id}
+                      {item.displayTitle}
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge draft={draft} />
+                    <WizardObjectStatusBadge />
                   </Grid>
                 </Grid>
               </ObjectItem>
@@ -253,13 +201,7 @@ const StepItems = (props: {
           )
         })}
       </TransitionGroup>
-      {alert && (
-        <WizardAlert
-          onAlert={handleAlert}
-          parentLocation="submission"
-          alertType={ObjectSubmissionTypes.form}
-        />
-      )}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
     </React.Fragment>
   )
 }
@@ -315,7 +257,7 @@ type WizardStepProps = {
     name: string
     required?: boolean
     allowMultipleObjects?: boolean
-    objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
+    objects: StepObject[]
   }[]
   ref?: HandlerRef
 }
@@ -332,7 +274,6 @@ const WizardStep = (props: WizardStepProps) => {
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
-        const hasObjects = !!(objects?.ready?.length || objects?.drafts?.length)
         const buttonText =
           step === 1
             ? t("edit")
@@ -353,20 +294,10 @@ const WizardStep = (props: WizardStepProps) => {
 
                 {objects && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
-                    {objects.drafts && (
+                    {objects && (
                       <StepItems
                         step={step}
-                        objects={objects.drafts}
-                        draft={true}
-                        submissionId={submission.submissionId}
-                        objectType={objectType}
-                      />
-                    )}
-                    {objects.ready && (
-                      <StepItems
-                        step={step}
-                        objects={objects.ready}
-                        draft={false}
+                        objects={objects}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
@@ -379,7 +310,7 @@ const WizardStep = (props: WizardStepProps) => {
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
-                  disabled={hasObjects && !allowMultipleObjects}
+                  disabled={!!objects.length && !allowMultipleObjects}
                   ref={ref}
                 />
               </ObjectWrapper>

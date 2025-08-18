@@ -13,12 +13,11 @@ import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectSubmissionTypes, ObjectStatus } from "constants/wizardObject"
+import { ObjectStatus } from "constants/wizardObject"
 import { resetFocus } from "features/focusSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { resetStatusDetails, updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addObject, replaceObjectInSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
 import xmlSubmissionAPIService from "services/xmlSubmissionAPI"
@@ -75,7 +74,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
     if (watchFile && watchFile[0] && watchFile[0].name) {
       setPlaceHolder(watchFile[0].name)
     } else {
-      setPlaceHolder(currentObject?.tags?.fileName || t("xml.placeholderFileName"))
+      // setPlaceHolder(currentObject?.fileName || t("xml.placeholderFileName"))
     }
   }, [currentObject, watchFile])
 
@@ -100,7 +99,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
   type FileUpload = { fileUpload: FileList }
 
-  const fileName = watchFile && watchFile[0] ? watchFile[0].name : t("xml.noFileName")
+  // const fileName = watchFile && watchFile[0] ? watchFile[0].name : t("xml.noFileName")
   const onSubmit = async (data: FileUpload) => {
     dispatch(resetStatusDetails())
     setSubmitting(true)
@@ -118,18 +117,6 @@ const WizardUploadObjectXMLForm: React.FC = () => {
       )
 
       if (response.ok) {
-        dispatch(
-          replaceObjectInSubmission(
-            currentObject.accessionId,
-
-            {
-              submissionType: ObjectSubmissionTypes.xml,
-              fileName: fileName,
-              displayTitle: fileName,
-            },
-            ObjectStatus.submitted
-          )
-        )
         dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
         dispatch(resetCurrentObject())
         resetForm()
@@ -141,13 +128,7 @@ const WizardUploadObjectXMLForm: React.FC = () => {
 
       if (response.ok) {
         dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
-        dispatch(
-          addObject({
-            accessionId: response.data.accessionId,
-            schema: objectType,
-            tags: { submissionType: ObjectSubmissionTypes.xml, fileName, displayTitle: fileName },
-          })
-        )
+        // TODO (if needed): addObject to objects array
         resetForm()
       } else {
         dispatch(updateStatus({ status: ResponseStatus.error, response: response }))

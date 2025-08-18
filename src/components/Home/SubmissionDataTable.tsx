@@ -7,9 +7,6 @@ import { useNavigate } from "react-router"
 
 import DataTable from "components/DataTable"
 import { SubmissionStatus } from "constants/wizardSubmission"
-import { setSubmission } from "features/wizardSubmissionSlice"
-import { useAppDispatch } from "hooks"
-import submissionAPIService from "services/submissionAPI"
 import { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
@@ -25,7 +22,6 @@ type SubmissionDataTableProps = {
 
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const { submissionType, page, totalItems, fetchPageOnChange, rows, onDeleteSubmission } = props
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
 
@@ -94,8 +90,6 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
 
   const handleEditSubmission = async (e, id) => {
     e.stopPropagation()
-    const response = await submissionAPIService.getSubmissionById(id)
-    dispatch(setSubmission(response.data))
     navigate({
       pathname: pathWithLocale(`submission/${id}`),
       search: `step=1`,

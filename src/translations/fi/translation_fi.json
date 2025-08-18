@@ -54,7 +54,7 @@
   },
   "objects": {
     "add": "Add objects by clicking the name, then fill a form.",
-    "edit": "You can also add objects and edit them after saving your draft."
+    "edit": "You can also add objects and edit them after."
   },
   "submission": {
     "create": "Create submission",
@@ -71,8 +71,6 @@
     "hideDetails": "Hide details"
   },
   "formActions": {
-    "saveAsDraft": "Save as draft",
-    "updateDraft": "Update draft",
     "markAsReady": "Mark as ready",
     "update": "Update",
     "options": "Options",
@@ -93,16 +91,16 @@
         "deleteObject": "Can't delete object.",
         "fetchWorkflows": "Error getting all workflows.",
         "fetchRemsInfo": "Error getting REMS information.",
-        "fetchDraft": "Error fetching draft.",
         "fetchObject": "Error fetching object.",
+        "fetchObjects": "Error fetching list of objects.",
         "fetchSchema": "Error fetching schema.",
+        "fetchSchemas": "Error fetching all schemas.",
         "fetchSubmission": "Error fetching submission.",
         "fetchSubmissions": "Error fetching submissions.",
         "modifyObject": "Error modifying object.",
         "submitDoi": "Can't submit information for DOI.",
         "submitRems": "Can't save information for REMS.",
         "submissionPublish": "Error publishing submission.",
-        "saveDraft": "Error saving draft.",
         "validation": "Validation failed"
       }
     },
@@ -115,11 +113,6 @@
     "success": {
       "submission": {
         "updated": "Submission updated"
-      },
-      "drafts": {
-        "saved": "Draft saved successfully",
-        "updated": "Draft updated successfully",
-        "deleted": "Draft deleted successfully"
       },
       "objects": {
         "submitted": "Submitted successfully",
@@ -143,7 +136,6 @@
       "cancel": "Cancel",
       "save": "Save",
       "noSave": "Do not save",
-      "saveDraft": "Save as draft",
       "update": "Update",
       "continueSubmission": "No, continue creating the submission",
       "cancelSubmission": "Yes, cancel creating a submission",
@@ -151,19 +143,11 @@
     },
     "submitted": {
       "title": "Would you like to save the edited form data?",
-      "content": "Unsaved changes will be lost. If you save the form as a draft, you can continue filling it later."
-    },
-    "form": {
-      "title": "Would you like to save a draft version of this form?",
-      "content": "If you save this form as a draft, you can continue filling it later."
+      "content": "Unsaved changes will be lost."
     },
     "xml": {
-      "title": "Would you like to save a draft version of this xml upload?",
-      "content": "If you save the xml as a draft, you can upload it later."
-    },
-    "existing": {
-      "title": "Would you like to save a draft version of this existing object upload?",
-      "content": "If you save the object as a draft, you can upload it later."
+      "title": "Would you like to save this xml upload?",
+      "content": "If you don't save, the uploaded xml file will be lost."
     },
     "cancel": {
       "title": "Cancel creating a submission?",
@@ -176,7 +160,6 @@
   },
   "errors": {
     "connection": {
-      "saveDraft": "Connection error, cannot save draft.",
       "updateObject": "Connection error, cannot update object."
     },
     "form": {
@@ -281,7 +264,6 @@
     "previousPage": "previous page",
     "nextPage": "next page",
     "clear": "clear",
-    "saveForm": "save form as draft",
     "submitForm": "submit form",
     "saveDOI": "save doi form",
     "saveDetails": "save submission details",

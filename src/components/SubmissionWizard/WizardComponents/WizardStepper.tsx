@@ -84,6 +84,7 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const objectType = useAppSelector(state => state.objectType)
   const submission = useAppSelector(state => state.submission)
+  const objects = useAppSelector(state => state.stepObjects)
   const currentStepObject = useAppSelector(state => state.stepObject)
   const workflowType = useAppSelector(state => state.workflowType)
   const remsInfo = useAppSelector(state => state.remsInfo)
@@ -111,13 +112,14 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
   useEffect(() => {
     const { mappedSteps } = WizardMapObjectsToStepHook(
       submission,
+      objects,
       objectTypesArray,
       currentWorkflow,
       t,
       remsInfo
     )
     dispatch(setWizardMappedSteps(mappedSteps))
-  }, [submission, objectTypesArray, currentWorkflow, t])
+  }, [submission, objects, objectTypesArray, currentWorkflow, t])
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
@@ -179,10 +181,9 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
         return (
           <Accordion
             key={index}
-            disabled={step.disabled}
             expanded={expandedPanels.includes(stepNumber)}
             onChange={() => handlePanelChange(stepNumber)}
-            data-testid={`${stepNumber}-step-${step.disabled ? "disabled" : "enabled"}`}
+            data-testid={`step-${stepNumber}}`}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>

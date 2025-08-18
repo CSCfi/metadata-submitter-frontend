@@ -3,36 +3,32 @@ import moment from "moment"
 import { useLocation } from "react-router"
 
 import { Locale } from "constants/locale"
-import { ObjectTypes, ObjectSubmissionTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import type {
   File,
   FormDataFiles,
   ObjectDisplayValues,
   ObjectInsideSubmissionWithTags,
-  SubmissionDetailsWithId,
   DoiFormDetails,
+  StepObject,
 } from "types"
 
 export const getObjectDisplayTitle = (
   objectType: string,
-  cleanedValues: ObjectDisplayValues
+  objectData: Record<string, unknown>
 ): string => {
+  const data = objectData as ObjectDisplayValues
   switch (objectType) {
     case ObjectTypes.study:
-      return cleanedValues.descriptor?.studyTitle || ""
+      return data.descriptor?.studyTitle ?? ""
     default:
-      return cleanedValues.title || ""
+      return data.title ?? ""
   }
 }
 
 // Get Primary text for displaying item's title
-export const getItemPrimaryText = (item: ObjectInsideSubmissionWithTags): string => {
-  if (item.tags?.displayTitle) {
-    return item.tags.displayTitle
-  } else if (item.tags?.fileName) {
-    return item.tags.fileName
-  }
-  return ""
+export const getItemPrimaryText = (item: StepObject): string => {
+  return item.displayTitle ? item.displayTitle : item.fileName ? item.fileName : ""
 }
 
 export const useQuery = (): URLSearchParams => {
@@ -66,20 +62,17 @@ export const getDraftObjects = (
   return draftObjects
 }
 
-export const getAccessionIds = (
-  objectType: string,
-  metadataObjects?: Array<ObjectInsideSubmissionWithTags>
-): Array<string> => {
-  if (metadataObjects) {
-    const submissions = metadataObjects.filter(obj => obj.schema.toLowerCase() === objectType)
+export const getAccessionIds = (objectType: string, objects?: StepObject[]): Array<string> => {
+  if (objects) {
+    const submissions = objects.filter(obj => obj.schema?.toLowerCase() === objectType)
     // SubmissionType Form: Add "- Title: " to accessionId, special case DAC form: add "- Main Contact:"
     // SubmissionType XML: Add "- File name: " to accessionId
     const accessionIds = submissions.map(obj => {
-      const accessionId = obj.accessionId
-      const displayTitle = obj.tags?.displayTitle || ""
+      const accessionId = obj.id
+      const displayTitle = obj.displayTitle || ""
       return obj.schema === ObjectTypes.dac
         ? `${accessionId} - Main Contact: ${displayTitle}`
-        : obj.tags?.submissionType === ObjectSubmissionTypes.xml
+        : obj.isXML
           ? `${accessionId} - File name: ${displayTitle}`
           : `${accessionId} - Title: ${displayTitle}`
     })
@@ -124,15 +117,6 @@ export const getConvertedDate = (timestamp: number): string => {
 // Check if it's a file or a subfolder (current path equals original file path)
 export const isFile = (files: File[], path: string) =>
   files.findIndex(file => file.path === path) > -1
-
-// Check if submission contains draft or submitted objects of a specific schema/objectType
-export const checkObjectStatus = (submission: SubmissionDetailsWithId, objectType: string) => {
-  const hasDraftObject: boolean =
-    submission.drafts.filter(object => object.schema === `draft-${objectType}`).length > 0
-  const hasSubmittedObject: boolean =
-    submission.metadataObjects.filter(object => object.schema === objectType).length > 0
-  return { hasDraftObject, hasSubmittedObject }
-}
 
 // Check that doiInfo exist and that it contains data at least at one of the keys
 export const hasDoiInfo = (doi: DoiFormDetails): boolean => {

@@ -12,18 +12,13 @@ import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
-import saveDraftHook from "../WizardHooks/WizardSaveDraftHook"
-
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectStatus, ObjectTypes } from "constants/wizardObject"
-import { resetDraftStatus } from "features/draftStatusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setAlert, resetAlert } from "features/wizardAlertSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import objectAPIService from "services/objectAPI"
-import type { ObjectInsideSubmissionWithTags } from "types"
-import { checkObjectStatus } from "utils"
+import type { CurrentFormObject } from "types"
 
 const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -97,40 +92,15 @@ const CancelFormDialog = ({
   alertType,
   parentLocation,
 }: {
-  handleDialog: (status: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => void
+  handleDialog: (status: boolean, formData?: CurrentFormObject[]) => void
   alertType?: string
   parentLocation: string
-  currentSubmissionType: string
 }) => {
-  const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const objectType = useAppSelector(state => state.objectType)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useAppDispatch()
-
-  const { hasSubmittedObject } = checkObjectStatus(submission, ObjectTypes.study)
-
-  // Draft save logic
-  const saveDraft = async () => {
-    setError(false)
-
-    const handleSave = await saveDraftHook({
-      accessionId: currentObject.accessionId || currentObject.objectId,
-      objectType: objectType,
-      objectStatus: currentObject.status,
-      submission: submission,
-      values: currentObject.cleanedValues || currentObject,
-      dispatch: dispatch,
-    })
-
-    if (handleSave.ok) {
-      handleDialog(true)
-    } else {
-      setError(true)
-      setErrorMessage(t("errors.connection.saveDraft"))
-    }
-  }
 
   const updateForm = async () => {
     const response = await objectAPIService.patchFromJSON(
@@ -139,7 +109,6 @@ const CancelFormDialog = ({
       currentObject.cleanedValues
     )
     if (response.ok) {
-      dispatch(resetDraftStatus())
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
@@ -161,11 +130,8 @@ const CancelFormDialog = ({
 
   switch (parentLocation) {
     case "submission": {
-      // Text depends on ObjectStatus or ObjectSubmissionType
-      const textType =
-        currentObject?.status === ObjectStatus.submitted ? "submitted" : alertType?.toLowerCase()
-      dialogTitle = t(`${"alerts." + textType + ".title"}`)
-      dialogContent = t(`${"alerts." + textType + ".content"}`)
+      dialogTitle = t("alerts.submitted.title")
+      dialogContent = t("alerts.submitted.content")
       dialogActions = (
         <DialogActions>
           <Button variant="outlined" onClick={() => handleDialog(false)} color="primary">
@@ -177,24 +143,12 @@ const CancelFormDialog = ({
           <Button
             variant="contained"
             onClick={() => {
-              saveDraft()
+              updateForm()
             }}
             color="primary"
-            disabled={hasSubmittedObject && objectType === ObjectTypes.study}
           >
-            {t("alerts.actions.saveDraft")}
+            {t("alerts.actions.update")}
           </Button>
-          {textType === "submitted" && (
-            <Button
-              variant="contained"
-              onClick={() => {
-                updateForm()
-              }}
-              color="primary"
-            >
-              {t("alerts.actions.update")}
-            </Button>
-          )}
         </DialogActions>
       )
       break
@@ -278,19 +232,17 @@ const WizardAlert = ({
   parentLocation,
   alertType,
 }: {
-  onAlert: (status: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => void
+  onAlert: (status: boolean, formData?: CurrentFormObject[]) => void
   parentLocation: string
   alertType?: string
 }) => {
-  const currentSubmissionType = useAppSelector(state => state.submissionType)
-
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(setAlert())
   }, [dispatch])
 
-  const handleDialog = (action: boolean, formData?: Array<ObjectInsideSubmissionWithTags>) => {
+  const handleDialog = (action: boolean, formData?: CurrentFormObject[]) => {
     dispatch(resetAlert())
     onAlert(action, formData)
   }
@@ -301,7 +253,6 @@ const WizardAlert = ({
         handleDialog={handleDialog}
         alertType={alertType}
         parentLocation={parentLocation}
-        currentSubmissionType={currentSubmissionType}
       />
     </div>
   )

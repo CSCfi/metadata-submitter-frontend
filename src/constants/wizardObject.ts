@@ -34,6 +34,7 @@ export const DisplayObjectTypes = {
 export const ObjectStatus = {
   draft: "Draft",
   submitted: "Submitted",
+  ready: "Ready",
 }
 
 export const ObjectSubmissionTypes = {

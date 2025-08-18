@@ -15,7 +15,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppDispatch } from "hooks"
 import schemaAPIService from "services/schemaAPI"
-import { FormObject, ObjectDetails } from "types"
+import type { FormObject, CurrentFormObject } from "types"
 import { dereferenceSchema } from "utils/JSONSchemaUtils"
 
 const DetailComponents = styled("div")(({ theme }) => ({
@@ -131,7 +131,7 @@ const WizardObjectDetails: React.FC<ObjectDetailsType> = props => {
         <DetailComponents>
           {JSONSchemaParser.buildDetails(
             states.schema as FormObject,
-            states.objectData as ObjectDetails
+            states.objectData as CurrentFormObject
           )}
         </DetailComponents>
       )}

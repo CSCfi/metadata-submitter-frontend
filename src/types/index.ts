@@ -34,12 +34,6 @@ export type Schema =
   | "analysis"
   | "dataset"
 
-export type StepItemObject = {
-  id: string | number
-  displayTitle: string
-  objectData?: ObjectInsideSubmissionWithTags
-}
-
 export type Workflow = {
   name: string
   description: string
@@ -73,28 +67,40 @@ export type MappedSteps = {
   schemas?: {
     name: string
     objectType: string
+    objects: StepObject[] | []
     title?: string
     required?: boolean
     allowMultipleObjects?: boolean
-    objects?: { ready?: StepItemObject[]; drafts?: StepItemObject[] }
   }[]
   required?: boolean
-  actionButtonText?: string
-  disabled?: boolean
 }
 
-export type ObjectDetails = {
+// Type of object shown in Accordion step
+export type StepObject = {
+  id: string | number
+  displayTitle: string
+  submissionId?: string
+  schema?: string
+  fileName?: string // Used for XML
+  isXML?: boolean
+  objectData?: ObjectInsideSubmission // to be removed when modifying WizardSummaryPage
+}
+
+// Type of current object shown in a form
+export type CurrentFormObject = {
   accessionId: string
-  lastModified: string
-  objectType: string
-  status: string
-  title: string
-  submissionType: string
+  [key: string]: unknown
+  cleanedValues?: CurrentFormObject
+  /* The 3 properties below can be removed when 
+    unnecessary components are removed.
+  */
+  objectType?: string
+  status?: string
+  title?: string
 }
 
-export type OldSubmissionRow = ObjectDetails & {
+export type OldSubmissionRow = CurrentFormObject & {
   objectData: Record<string, unknown>
-  submissionType?: string
 }
 
 export type ObjectInsideSubmission = {
@@ -102,14 +108,7 @@ export type ObjectInsideSubmission = {
   schema: string
 }
 
-export type ObjectTags = {
-  submissionType?: string
-  fileName?: string
-  fileSize?: string
-  displayTitle?: string
-}
-
-export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission & { tags: ObjectTags }
+export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission
 
 export type ObjectInsideSubmissionWithTagsBySchema = {
   [schema: string]: ObjectInsideSubmissionWithTags[]
@@ -132,9 +131,7 @@ export type SubmissionDetails = {
   workflow: string
   dateCreated?: number
   published: boolean
-  drafts: Array<ObjectInsideSubmissionWithTags>
-  metadataObjects: Array<ObjectInsideSubmissionWithTags>
-  allObjects?: Array<ObjectDetails>
+  allObjects?: Array<CurrentFormObject>
 }
 
 export type SubmissionDetailsWithId = SubmissionId & SubmissionDetails
@@ -211,9 +208,8 @@ export type NestedField = {
 export type APIResponse = ApiResponse<any>
 
 export type ObjectDisplayValues = {
-  descriptor: { studyTitle: string }
-  contacts: { name: string; mainContact: boolean }[]
-  title: string
+  descriptor?: { studyTitle?: string }
+  title?: string
 }
 
 /*

@@ -1,8 +1,7 @@
 import { styled } from "@mui/material/styles"
 
 import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
-import WizardXMLObjectPage from "components/SubmissionWizard/WizardForms/WizardXMLObjectPage"
-import { ObjectSubmissionTypes } from "constants/wizardObject"
+// import WizardXMLObjectPage from "components/SubmissionWizard/WizardForms/WizardXMLObjectPage"
 import { useAppSelector } from "hooks"
 import type { HandlerRef } from "types"
 
@@ -16,29 +15,22 @@ const StyledContent = styled("div")(() => ({
  * Render correct form to add objects based on submission type in store
  */
 const WizardAddObjectCard = ({ formRef }: { formRef?: HandlerRef }) => {
-  const submissionType = useAppSelector(state => state.submissionType)
   const objectType = useAppSelector(state => state.objectType)
 
   const content = {
-    [ObjectSubmissionTypes.form]: {
-      component: <WizardFillObjectDetailsForm key={objectType + submissionType} ref={formRef} />,
-      testId: ObjectSubmissionTypes.form,
-    },
-    [ObjectSubmissionTypes.xml]: {
-      component: <WizardXMLObjectPage key={objectType + submissionType} />,
-      testId: ObjectSubmissionTypes.xml,
-    },
+    component: <WizardFillObjectDetailsForm key={objectType} ref={formRef} />,
+    testId: "form",
   }
+  /* Redux's submissionType is removed:
+    - To simplify the codes as the frontend doesn't support XML for MVP.
+    - New StepObject has a prop "isXML" to check directly if XML otherwise Form. We can extend this feature.
+  */
+  // [ObjectSubmissionTypes.xml]: {
+  //   component: <WizardXMLObjectPage key={objectType} />,
+  //   testId: ObjectSubmissionTypes.xml,
+  // },
 
-  return (
-    <>
-      {submissionType && (
-        <StyledContent data-testid={content[submissionType]["testId"]}>
-          {content[submissionType]["component"]}
-        </StyledContent>
-      )}
-    </>
-  )
+  return <StyledContent data-testid={content["testId"]}>{content["component"]}</StyledContent>
 }
 
 export default WizardAddObjectCard

@@ -2,7 +2,6 @@ import { combineReducers } from "@reduxjs/toolkit"
 
 import autocompleteReducer from "features/autocompleteSlice"
 import clearFormReducer from "features/clearFormSlice"
-import draftStatusReducer from "features/draftStatusSlice"
 import fileTypesReducer from "features/fileTypesSlice"
 import focusReducer from "features/focusSlice"
 import loadingReducer from "features/loadingSlice"
@@ -13,6 +12,7 @@ import projectReducer from "features/projectIdSlice"
 import remsInfoReducer from "features/remsInfoSlice"
 import selectedSubmissionReducer from "features/selectedSubmissionSlice"
 import statusMessageReducer from "features/statusMessageSlice"
+import stepObjectsReducer from "features/stepObjectSlice"
 import userReducer from "features/userSlice"
 import wizardAlertReducer from "features/wizardAlertSlice"
 import currentObjectReducer from "features/wizardCurrentObjectSlice"
@@ -20,7 +20,6 @@ import wizardMappedStepsReducer from "features/wizardMappedStepsSlice"
 import objectTypeReducer from "features/wizardObjectTypeSlice"
 import stepObjectReducer from "features/wizardStepObjectSlice"
 import submissionReducer from "features/wizardSubmissionSlice"
-import submissionTypeReducer from "features/wizardSubmissionTypeSlice"
 import wizardXMLModalReducer from "features/wizardXMLModalSlice"
 import workflowTypeReducer from "features/workflowTypeSlice"
 
@@ -33,8 +32,6 @@ const rootReducer = combineReducers({
   objectType: objectTypeReducer,
   stepObject: stepObjectReducer,
   submission: submissionReducer,
-  submissionType: submissionTypeReducer,
-  draftStatus: draftStatusReducer,
   currentObject: currentObjectReducer,
   user: userReducer,
   selectedSubmission: selectedSubmissionReducer,
@@ -48,6 +45,7 @@ const rootReducer = combineReducers({
   workflowType: workflowTypeReducer,
   wizardMappedSteps: wizardMappedStepsReducer,
   remsInfo: remsInfoReducer,
+  stepObjects: stepObjectsReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -114,9 +114,7 @@ const NavigationLinks = () => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "user-setting-button",
-        }}
+        slotProps={{ list: { "aria-labelledby": "user-setting-button" } }}
       >
         <MenuItem
           component="a"
@@ -205,9 +203,7 @@ const LanguageSelector = (props: MenuItemProps) => {
           vertical: "bottom",
           horizontal: "left",
         }}
-        MenuListProps={{
-          "aria-labelledby": "lang-selector",
-        }}
+        slotProps={{ list: { "aria-labelledby": "lang-selector" } }}
       >
         <MenuItem onClick={() => changeLang("en")} data-testid="en-lang">
           <Typography
@@ -232,7 +228,7 @@ const LanguageSelector = (props: MenuItemProps) => {
   )
 }
 
-const SupportSelector = () => {
+const SupportSelector = ({ handleOpenKeyModal }) => {
   const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const open = Boolean(anchorEl)
@@ -243,6 +239,11 @@ const SupportSelector = () => {
 
   const handleClose = () => {
     setAnchorEl(undefined)
+  }
+
+  const handleApikeyClick = () => {
+    handleOpenKeyModal()
+    handleClose()
   }
 
   return (
@@ -278,9 +279,9 @@ const SupportSelector = () => {
           vertical: "top",
           horizontal: "left",
         }}
-        MenuListProps={{ "aria-labelledby": "suport-selector" }}
+        slotProps={{ list: { "aria-labelledby": "suport-selector" } }}
       >
-        <MenuItem sx={{ width: 1 }}>
+        <MenuItem sx={{ width: 1 }} onClick={() => handleClose()}>
           <Link
             href="https://docs.csc.fi/data/sensitive-data/"
             target="_blank"
@@ -299,12 +300,17 @@ const SupportSelector = () => {
             <OpenInNewIcon sx={{ color: "text.primary" }} />
           </ListItemIcon>
         </MenuItem>
+        <MenuItem sx={{ width: 1 }} onClick={() => handleApikeyClick()}>
+          <Typography variant="subtitle2" color="text.primary" sx={{ ml: "1rem", fontWeight: 700 }}>
+            {t("createAPIKeys")}
+          </Typography>
+        </MenuItem>
       </Menu>
     </>
   )
 }
 
-const NavigationMenu = () => {
+const NavigationMenu = ({ handleOpenKeyModal }) => {
   const location = useLocation()
   const currentLocale = useAppSelector(state => state.locale) || Locale.defaultLocale
   const navigate = useNavigate()
@@ -335,7 +341,9 @@ const NavigationMenu = () => {
           </Button>
         )}
         <LanguageSelector currentLocale={currentLocale} />
-        <SupportSelector />
+        {!PathsWithoutLogin.includes(location.pathname) && (
+          <SupportSelector handleOpenKeyModal={handleOpenKeyModal} />
+        )}
         {!PathsWithoutLogin.includes(location.pathname) && <NavigationLinks />}
       </NavLinks>
       {dialogOpen && (
@@ -345,7 +353,7 @@ const NavigationMenu = () => {
   )
 }
 
-const NavToolBar = () => {
+const NavToolBar = ({ handleOpenKeyModal }) => {
   const { t } = useTranslation()
   return (
     <Toolbar disableGutters>
@@ -353,20 +361,23 @@ const NavToolBar = () => {
         <Logo src={logo} alt="CSC_logo" />
       </Link>
       <ServiceTitle variant="h5">{t("serviceTitle")}</ServiceTitle>
-      <NavigationMenu />
+      <NavigationMenu handleOpenKeyModal={() => handleOpenKeyModal()} />
     </Toolbar>
   )
 }
-const Nav: React.FC<{ isFixed: boolean }> = ({ isFixed }) => {
+const Nav: React.FC<{ isFixed: boolean; handleOpenKeyModal: () => void }> = ({
+  isFixed,
+  handleOpenKeyModal,
+}) => {
   return (
     <>
       {isFixed ? (
         <NavBar position="fixed">
-          <NavToolBar />
+          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
         </NavBar>
       ) : (
         <NavBar position="relative">
-          <NavToolBar />
+          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
         </NavBar>
       )}
     </>

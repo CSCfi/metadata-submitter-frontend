@@ -13,6 +13,8 @@
   "submit": "Submit",
   "draft": "Draft",
   "ready": "Ready",
+  "copy": "Copy",
+  "saveSubmission": "Save progress and exit",
   "showMore": "Show more",
   "showLess": "Show less",
   "visibleLanguage": {
@@ -21,7 +23,20 @@
   },
   "inEnglish": "In English",
   "inFinnish": "In Finnish",
+  "support": "Support",
+  "createAPIKeys": "Create API keys",
   "userGuide": "User guide",
+  "apiKeys": {
+    "createAPIKeysTitle": "Create {{serviceTitle}} API keys",
+    "nameAPIKey": "Give name to your API key. Name needs to be unique.",
+    "keyName": "Key name",
+    "createKey": "Create key",
+    "keyMustBeUnique": "Key name must be unique.",
+    "latestKey": "Latest key",
+    "keyStoreWarning": "This API key is displayed only once at this time. Please save it securely, as it will not be shown again.",
+    "activeKeys": "Active keys for this project",
+    "noAPIKeys": "There are no API keys in this project"
+  },
   "newSubmission": {
     "nameSubmission": "Name your submission",
     "typeOfSubmission": "Type of submission",
@@ -127,6 +142,9 @@
       },
       "rems": {
         "saved": "REMS information has been saved successfully"
+      },
+      "apikey": {
+        "copied": "API key copied to clipboard"
       }
     }
   },

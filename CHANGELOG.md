@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Support link in the navigation bar to be visible only after login.
+- Nav.tsx Support link to be conditioned according user logged in, and MenuItems to close when clicked
 - Modified types of the step objects and form object (#1072)
 - Restructured the mapped step objects in Accordion (#1072)
 - Replaced metadataObjects and drafts by objects (#1072)
@@ -74,6 +76,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) A page to create and remove API keys #1038
+- Unit test APIKeysModal.test.tsx
+- App.tsx to hold status of API key modal #1038
+- API key modal and API keys API service  #1038
 - Redux state, reducer and action for objects (#1072)
 - (users) added Identifier step to summary view (#1052)
 - (users) Added date validation for DOI form (#1058)

@@ -14,6 +14,9 @@ type WizardRemsPoliciesProps = {
   handlePolicyChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+/*
+ * Render the optional Policies section of a Dac and Policies form
+ */
 const WizardRemsPolicies = (props: WizardRemsPoliciesProps) => {
   const { t } = useTranslation()
   const { policies, selectedPolicies, linkedPolicies, handlePolicyChange } = props

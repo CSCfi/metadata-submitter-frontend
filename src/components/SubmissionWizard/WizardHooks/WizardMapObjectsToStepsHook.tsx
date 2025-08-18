@@ -13,6 +13,9 @@ import type {
 } from "types"
 import { hasDoiInfo } from "utils"
 
+/*
+ * Map the structure of objects within a submission to separate steps in the Accordion
+ */
 const mapObjectsToStepsHook = (
   submission: SubmissionFolder,
   objects: StepObject[],

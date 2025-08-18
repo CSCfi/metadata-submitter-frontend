@@ -70,6 +70,9 @@ const FooterLinkStart = styled(FooterLink)(({ theme }) => ({
   color: theme.palette.text.primary,
 }))
 
+/*
+ * Render the content of footer. The Footer remains the same accross the views.
+ */
 const Footer: React.FC = () => {
   const { t } = useTranslation()
   const location = useLocation()

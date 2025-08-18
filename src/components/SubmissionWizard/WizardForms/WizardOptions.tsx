@@ -32,6 +32,9 @@ type WizardOptionsProps = {
   //disableUploadXML?: boolean
 }
 
+/*
+ * Render a menu of actions inside a form such as: Clear form, Delete form, Upload XML
+ */
 const WizardOptions: React.FC<WizardOptionsProps> = props => {
   //const { objectType, onClearForm, onOpenXMLModal, onDeleteForm, disableUploadXML } = props
   const { objectType, onClearForm, onDeleteForm } = props

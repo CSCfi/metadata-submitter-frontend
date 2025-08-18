@@ -262,6 +262,9 @@ type WizardStepProps = {
   ref?: HandlerRef
 }
 
+/*
+ * Render a single step inside WizardStepper in the Accordion
+ */
 const WizardStep = (props: WizardStepProps) => {
   const { step, schemas, ref } = props
 

@@ -18,7 +18,6 @@ export default defineConfig(({ mode }) => {
     "/v1/submit": proxyTo,
     "/v1/submissions": proxyTo,
     "/v1/publish": proxyTo,
-    "/v1/drafts": proxyTo,
     "/callback": proxyTo,
     "/logout": proxyTo,
     "/v1/users": proxyTo,

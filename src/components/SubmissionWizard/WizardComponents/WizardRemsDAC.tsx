@@ -13,6 +13,9 @@ type WizardRemsDACProps = {
   handleDACChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+/*
+ * Render the DAC section of a Dac and Policies form
+ */
 const WizardRemsDAC = (props: WizardRemsDACProps) => {
   const { t } = useTranslation()
   const { dacs, selectedDAC, handleDACChange } = props

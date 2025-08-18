@@ -245,8 +245,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   )
 }
 
-/**
- * Show form to create submission as first step of new draft wizard
+/*
+ * Show form to create submission as first step of new submission wizard
  */
 
 const WizardCreateSubmissionStep = ({ ref }: { ref: HandlerRef }) => (

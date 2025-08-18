@@ -8,6 +8,9 @@ type WizardRemsOrganizationProps = {
   handleOrgChange: (event: SelectChangeEvent) => void
 }
 
+/*
+ * Render the Organization section of a Dac and Policies form
+ */
 const WizardRemsOrganization = (props: WizardRemsOrganizationProps) => {
   const { t } = useTranslation()
   const { organizations, selectedOrgId, handleOrgChange } = props

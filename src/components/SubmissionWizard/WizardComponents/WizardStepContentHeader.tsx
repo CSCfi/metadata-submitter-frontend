@@ -8,6 +8,10 @@ const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
   },
 }))
 
+/*
+ * Render the heading part of a form with customizable component, 
+  such as a form's Save button
+ */
 const WizardStepContentHeader = ({ action }: { action?: React.ReactNode }) => (
   <StyledCardHeader action={action} />
 )

@@ -12,7 +12,7 @@ const StyledContent = styled("div")(() => ({
 }))
 
 /*
- * Render correct form to add objects based on submission type in store
+ * Render correct form to add objects based on object's submission type (form, XML) in store
  */
 const WizardAddObjectCard = ({ formRef }: { formRef?: HandlerRef }) => {
   const objectType = useAppSelector(state => state.objectType)

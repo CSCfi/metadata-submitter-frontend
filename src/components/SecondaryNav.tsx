@@ -57,6 +57,9 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
 }))
 
+/*
+ * Render the secondary navigation bar consisting of project selection and create submission button
+ */
 const SecondaryNav: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector((state: RootState) => state.user)

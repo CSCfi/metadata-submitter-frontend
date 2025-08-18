@@ -1,6 +1,9 @@
 import { Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 
+/*
+ * Render a badge implying the status of an object in the Accordion or Summary View
+ */
 const WizardObjectStatusBadge = (props: { draft?: boolean }) => {
   const { t } = useTranslation()
   const { draft } = props

@@ -20,6 +20,9 @@ type SubmissionDataTableProps = {
   onDeleteSubmission?: (submissionId: string, submissionType: string) => void
 }
 
+/*
+ * Render a table of submissions based on submission type
+ */
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const { submissionType, page, totalItems, fetchPageOnChange, rows, onDeleteSubmission } = props
   const navigate = useNavigate()

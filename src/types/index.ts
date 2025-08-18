@@ -91,12 +91,6 @@ export type CurrentFormObject = {
   accessionId: string
   [key: string]: unknown
   cleanedValues?: CurrentFormObject
-  /* The 3 properties below can be removed when 
-    unnecessary components are removed.
-  */
-  objectType?: string
-  status?: string
-  title?: string
 }
 
 export type OldSubmissionRow = CurrentFormObject & {
@@ -108,21 +102,8 @@ export type ObjectInsideSubmission = {
   schema: string
 }
 
-export type ObjectInsideSubmissionWithTags = ObjectInsideSubmission
-
-export type ObjectInsideSubmissionWithTagsBySchema = {
-  [schema: string]: ObjectInsideSubmissionWithTags[]
-}
-
 export type SubmissionId = {
   submissionId: string
-}
-
-export type ObjectInsideSubmissionWithTagsBySchemaAndStatus = {
-  [schema: string]: {
-    drafts: ObjectInsideSubmissionWithTags[]
-    ready: ObjectInsideSubmissionWithTags[]
-  }
 }
 
 export type SubmissionDetails = {

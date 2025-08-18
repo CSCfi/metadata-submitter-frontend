@@ -10,6 +10,9 @@ import objectAPIService from "services/objectAPI"
 import { APIResponse, FormDataFiles } from "types"
 import { getObjectDisplayTitle, getNewUniqueFileTypes } from "utils"
 
+/*
+ * Create a new object or update an existing object, and update information in Redux
+ */
 const submitObjectHook = async (
   formData: Record<string, unknown>,
   submissionId: string,

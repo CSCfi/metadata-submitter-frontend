@@ -2,7 +2,6 @@
 import CircularProgress from "@mui/material/CircularProgress"
 import Grid from "@mui/material/Grid"
 import { styled } from "@mui/system"
-import { useTranslation } from "react-i18next"
 
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
@@ -25,44 +24,32 @@ const GridContainer = styled(Grid)({
   },
 })
 
-const ObjectInfo = styled("div")({
-  margin: 2,
-})
-
-/**
- * Show selection for object and submission types and correct form based on users choice.
+/*
+ * Show the correct content of the form based on selected object or step (in the Accordion)
  */
 const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
-  const { t } = useTranslation()
 
   return (
-    <>
-      <GridContainer container spacing={2}>
-        <Grid size={{ xs: 12 }}>
-          {objectType === "" ? (
-            <ObjectInfo>
-              <p>{t("objects.add")}</p>
-              <p>{t("objects.edit")}</p>
-            </ObjectInfo>
-          ) : objectType === ObjectTypes.dacPolicies ? (
-            <WizardDacPoliciesStep />
-          ) : (
-            <WizardAddObjectCard formRef={formRef} />
-          )}
-        </Grid>
+    <GridContainer container spacing={2}>
+      <Grid size={{ xs: 12 }}>
+        {objectType === ObjectTypes.dacPolicies ? (
+          <WizardDacPoliciesStep />
+        ) : (
+          <WizardAddObjectCard formRef={formRef} />
+        )}
+      </Grid>
 
-        <Grid>
-          {!openedXMLModal && loading && (
-            <Grid container justifyContent="center">
-              <CircularProgress />
-            </Grid>
-          )}
-        </Grid>
-      </GridContainer>
-    </>
+      <Grid>
+        {!openedXMLModal && loading && (
+          <Grid container justifyContent="center">
+            <CircularProgress />
+          </Grid>
+        )}
+      </Grid>
+    </GridContainer>
   )
 }
 

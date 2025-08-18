@@ -27,8 +27,6 @@ const restHandlers = [
           description: submissionDescription,
           submissionId: id,
           workflow: "FEGA",
-          drafts: [],
-          metadataObjects: [],
         })
       : new HttpResponse("Not found", { status: 404 })
   }),

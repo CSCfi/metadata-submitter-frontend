@@ -4,78 +4,78 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+// import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardShowSummaryStep", () => {
-  const submittedObjects = [
-    {
-      accessionId: "a971460fc54340ae8b16a617cd7d46be",
-      schema: ObjectTypes.study,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test study title",
-      },
-    },
-    {
-      accessionId: "3830b4425c7b47c4abd930a85c1f63bb",
-      schema: ObjectTypes.dac,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test DAC title",
-      },
-    },
-    {
-      accessionId: "bd467672bf2949439b193f9b6c95ea42",
-      schema: ObjectTypes.policy,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test policy title",
-      },
-    },
-    {
-      accessionId: "85b8f23048ea4ac69084eb7f57a6774c",
-      schema: ObjectTypes.sample,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test sample title",
-      },
-    },
-    {
-      accessionId: "572da0179be748bcb26e8af3773cf81e",
-      schema: ObjectTypes.experiment,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test experiment title",
-      },
-    },
-    {
-      accessionId: "80ebcbca98cf49cb9b794c65a9b9f99e",
-      schema: ObjectTypes.run,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test run title",
-      },
-    },
-    {
-      accessionId: "7eb7696625414f70b8eab2a5aab2ceeb",
-      schema: ObjectTypes.analysis,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test analysis title",
-      },
-    },
-    {
-      accessionId: "bfc47b455a0e4fe3a9db11f4ac77449d",
-      schema: ObjectTypes.dataset,
-      tags: {
-        submissionType: ObjectSubmissionTypes.form,
-        displayTitle: "Test Dataset title",
-      },
-    },
-  ]
+  // const submittedObjects = [
+  //   {
+  //     accessionId: "a971460fc54340ae8b16a617cd7d46be",
+  //     schema: ObjectTypes.study,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test study title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "3830b4425c7b47c4abd930a85c1f63bb",
+  //     schema: ObjectTypes.dac,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test DAC title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "bd467672bf2949439b193f9b6c95ea42",
+  //     schema: ObjectTypes.policy,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test policy title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "85b8f23048ea4ac69084eb7f57a6774c",
+  //     schema: ObjectTypes.sample,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test sample title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "572da0179be748bcb26e8af3773cf81e",
+  //     schema: ObjectTypes.experiment,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test experiment title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "80ebcbca98cf49cb9b794c65a9b9f99e",
+  //     schema: ObjectTypes.run,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test run title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "7eb7696625414f70b8eab2a5aab2ceeb",
+  //     schema: ObjectTypes.analysis,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test analysis title",
+  //     },
+  //   },
+  //   {
+  //     accessionId: "bfc47b455a0e4fe3a9db11f4ac77449d",
+  //     schema: ObjectTypes.dataset,
+  //     tags: {
+  //       submissionType: ObjectSubmissionTypes.form,
+  //       displayTitle: "Test Dataset title",
+  //     },
+  //   },
+  // ]
 
   beforeEach(() => {
     const state = {
@@ -85,8 +85,6 @@ describe("WizardShowSummaryStep", () => {
         description: "Description for folder",
         projectId: "a0981b1b4df349e5af7ecbe22a1a1f75",
         published: false,
-        metadataObjects: submittedObjects,
-        drafts: [],
         openedXMLModal: true,
         workflow: "FEGA",
         doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },

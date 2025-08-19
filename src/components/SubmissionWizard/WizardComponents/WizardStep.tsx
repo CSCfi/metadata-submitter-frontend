@@ -183,13 +183,24 @@ const StepItems = (props: {
     <React.Fragment>
       <TransitionGroup component={null}>
         {objects.map(item => {
+          const isNewStructure = "objectData" in item
+          const displayTitle = isNewStructure
+            ? item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
+              ? item.objectData.tags.fileName
+              : item.objectData?.tags.submissionType === "linked-folder"
+                ? item.displayTitle
+                : item.displayTitle !== ""
+                  ? item.displayTitle
+                  : item.id
+            : item.displayTitle
+
           return (
             <Collapse component={"li"} key={item.id}>
               <ObjectItem>
                 <Grid container justifyContent="space-between">
                   <Grid display="flex" alignItems="center" size={{ xs: 6 }}>
                     <Link
-                      tabIndex={0} // "href with # target will cause Firefox to refresh the page"
+                      tabIndex={0}
                       onClick={() => handleClick(item)}
                       data-testid={`${objectType}-list-item`}
                       aria-label={t("ariaLabels.editObject")}
@@ -289,15 +300,27 @@ const WizardStep = (props: WizardStepProps) => {
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
-        // Check if we should show linked folder instead of objects
+
+        // Handle both old and new object structures with proper type checking
+        const isNewStructure =
+          objects && !Array.isArray(objects) && ("ready" in objects || "drafts" in objects)
+
+        const newStructureObjects = isNewStructure
+          ? (objects as { ready?: StepItemObject[]; drafts?: StepItemObject[] })
+          : null
+        const oldStructureObjects = !isNewStructure ? (objects as StepObject[]) : null
+
         const shouldShowLinkedFolder =
           objectType === ObjectTypes.file &&
           submission.linkedFolder &&
-          !objects?.ready?.length &&
-          !objects?.drafts?.length
+          (oldStructureObjects
+            ? !oldStructureObjects.length
+            : !(newStructureObjects?.ready?.length || newStructureObjects?.drafts?.length))
 
-        const hasObjects =
-          !!(objects?.ready?.length || objects?.drafts?.length) || shouldShowLinkedFolder
+        const hasObjects = newStructureObjects
+          ? !!(newStructureObjects.ready?.length || newStructureObjects.drafts?.length) ||
+            shouldShowLinkedFolder
+          : !!oldStructureObjects?.length || shouldShowLinkedFolder
 
         const buttonText =
           step === 1

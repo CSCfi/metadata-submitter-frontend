@@ -42,7 +42,7 @@ test.describe("Basic SDSX flow", () => {
      */
 
     await page.getByRole("button", { name: "Datafolder" }).click()
-    await page.getByTestId("View file").click()
+    await page.getByTestId("View linkedFolder").click()
     await page.getByRole("radio", { name: "folderA" }).check()
     await expect(page.getByTestId("link-datafolder")).toBeEnabled()
     await page.getByTestId("link-datafolder").click()
@@ -75,7 +75,7 @@ test.describe("Basic SDSX flow", () => {
     await formActions("form-datacite")
 
     // Summary
-    await page.getByTestId("View Summary").click()
+    await page.getByTestId("View summary").click()
     await expect(
       page.getByTestId("summary-step-1").getByRole("heading", { name: "1. Submission details" })
     ).toBeVisible()

@@ -31,7 +31,7 @@ import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
-import { DisplayObjectTypes, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
@@ -189,8 +189,9 @@ const traverseFields = (
 
   switch (object.type) {
     case "object": {
+      //remove properties below when Describe step is removed
       const properties =
-        label === DisplayObjectTypes.dataset && path.length === 0
+        label === "Dataset" && path.length === 0
           ? { title: object.properties["title"], description: object.properties["description"] }
           : object.properties
 

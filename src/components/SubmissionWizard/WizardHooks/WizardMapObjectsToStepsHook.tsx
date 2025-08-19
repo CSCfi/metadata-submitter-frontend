@@ -2,7 +2,7 @@ import type { TFunction } from "i18next"
 import { startCase } from "lodash"
 
 import { ObjectTypes } from "constants/wizardObject"
-import { WorkflowTypes } from "constants/wizardWorkflow"
+//import { WorkflowTypes } from "constants/wizardWorkflow"
 import type {
   StepObject,
   Schema,
@@ -38,21 +38,16 @@ const mapObjectsToStepsHook = (
     }, {})
 
   const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
-  const workflowSteps = allSteps?.filter(step => step.title.toLowerCase() !== ObjectTypes.datacite)
 
   const schemaSteps =
-    workflowSteps?.length > 0
-      ? workflowSteps.map((step: WorkflowStep) => {
+    allSteps?.length > 0
+      ? allSteps.map((step: WorkflowStep) => {
           return {
             ...step,
-            title: step.title.toLowerCase().includes(ObjectTypes.file)
-              ? t("datafolder.datafolder")
-              : step.title,
             ["schemas"]: step.schemas.map(schema => ({
               ...schema,
-              name: schema.name.toLowerCase().includes(ObjectTypes.file)
-                ? t("datafolder.datafolder")
-                : schema.name === ObjectTypes.dac
+              name:
+                schema.name === ObjectTypes.dac
                   ? schema.name.toUpperCase()
                   : startCase(schema.name),
               objectType: schema.name,
@@ -71,7 +66,7 @@ const mapObjectsToStepsHook = (
     title: t("submission.details"),
     schemas: [
       {
-        objectType: "submissionDetails",
+        objectType: ObjectTypes.submissionDetails,
         name: t("newSubmission.nameSubmission"),
         objects: submission.submissionId
           ? [
@@ -126,9 +121,21 @@ const mapObjectsToStepsHook = (
     title: t("dacPolicies.title"),
     schemas: [
       {
-        objectType: "dacPolicies",
+        objectType: ObjectTypes.dacPolicies,
         name: t("dacPolicies.title"),
         objects: getRemsObject(),
+        required: true,
+      },
+    ],
+  }
+
+  const datafolderStep = {
+    title: t("datafolder.datafolder"),
+    schemas: [
+      {
+        objectType: ObjectTypes.linkedFolder,
+        name: t("datafolder.datafolder"),
+        objects: [],
         required: true,
       },
     ],
@@ -158,27 +165,24 @@ const mapObjectsToStepsHook = (
       },
       {
         name: t("summary"),
-        objectType: t("summary"),
+        objectType: ObjectTypes.summary,
         objects: [],
         required: true,
       },
       {
         name: t("publishSubmission"),
-        objectType: t("summaryPage.publish"),
+        objectType: ObjectTypes.publish,
         objects: [],
         required: true,
       },
     ],
   }
-
-  const mappedSteps = (
-    currentWorkflow?.name === WorkflowTypes.sdsx
-      ? [createSubmissionStep, dacPoliciesStep]
-      : [createSubmissionStep]
-  ).concat(schemaSteps)
-
-  if (submission.name !== "") mappedSteps.push(idPublishStep)
-
+  // Comment out steps for other workflows
+  const mappedSteps = submission.submissionId
+    ? // ? currentWorkflow?.name == WorkflowTypes.sdsx
+      [createSubmissionStep, dacPoliciesStep, datafolderStep, ...schemaSteps, idPublishStep]
+    : //  : [createSubmissionStep, ...schemaSteps, datafolderStep, idPublishStep]
+      [createSubmissionStep]
   return { mappedSteps }
 }
 

@@ -3,27 +3,18 @@
 import test from "../fixtures/commands"
 import { files } from "../fixtures/files_response"
 
-import { ObjectTypes } from "constants/wizardObject"
-
 test.describe("DataFolder view", () => {
-  test.beforeEach(
-    async ({ page, login, resetDB, generateSubmissionAndObjects, clickAccordionPanel }) => {
-      await resetDB()
-      await login()
-      await generateSubmissionAndObjects(ObjectTypes.policy)
+  test.beforeEach(async ({ page, login, resetDB, newSubmission, clickAccordionPanel }) => {
+    await resetDB()
+    await login()
+    await newSubmission("SDSX")
+    await clickAccordionPanel("Datafolder")
+    const viewFolderButton = await page.getByTestId("View linkedFolder")
+    await viewFolderButton.dispatchEvent("click")
 
-      // Edit newly created submission
-      await page.getByText("Edit").first().click()
-      await page.waitForLoadState()
-
-      await clickAccordionPanel("Datafolder")
-      const viewfileButton = await page.getByTestId("View file")
-      await viewfileButton.dispatchEvent("click")
-
-      // Mock files response
-      await page.route(`/v1/files`, async route => await route.fulfill({ json: files }))
-    }
-  )
+    // Mock files response
+    await page.route(`/v1/files`, async route => await route.fulfill({ json: files }))
+  })
 
   test("should be able show correct Folder table", async ({ page, clickAccordionPanel }) => {
     test.slow()
@@ -61,7 +52,7 @@ test.describe("DataFolder view", () => {
       .locator("[data-testid='edit-draft-submission']")
       .click()
     await clickAccordionPanel("Datafolder")
-    await page.getByTestId("View file").click()
+    await page.getByTestId("View linkedFolder").click()
     await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(1)
     await expect(page.locator("[data-id='folderB']")).toBeVisible()
     await expect(page.getByTestId("link-datafolder")).toBeDisabled()

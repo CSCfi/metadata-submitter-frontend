@@ -8,7 +8,7 @@ export const ObjectTypes = {
   datacite: "datacite",
   policy: "policy",
   dataset: "dataset",
-  file: "file",
+  linkedFolder: "linkedFolder",
   bpimage: "bpimage",
   bpdataset: "bpdataset",
   bpsample: "bpsample",
@@ -17,19 +17,17 @@ export const ObjectTypes = {
   dacPolicies: "dacPolicies",
   summary: "summary",
   publish: "publish",
+  submissionDetails: "submissionDetails",
 }
 
-export const DisplayObjectTypes = {
-  study: "Study",
-  sample: "Sample",
-  experiment: "Experiment",
-  run: "Run",
-  analysis: "Analysis",
-  dac: "DAC",
-  policy: "Policy",
-  dataset: "Dataset",
-  file: "Datafolder",
-}
+export const NotMetadataObjects = [
+  ObjectTypes.dacPolicies,
+  ObjectTypes.datacite,
+  ObjectTypes.linkedFolder,
+  ObjectTypes.publish,
+  ObjectTypes.submissionDetails,
+  ObjectTypes.summary,
+]
 
 export const ObjectStatus = {
   draft: "Draft",

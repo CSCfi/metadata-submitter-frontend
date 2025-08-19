@@ -183,7 +183,7 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
             key={index}
             expanded={expandedPanels.includes(stepNumber)}
             onChange={() => handlePanelChange(stepNumber)}
-            data-testid={`step-${stepNumber}}`}
+            data-testid={`step-${stepNumber}`}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>

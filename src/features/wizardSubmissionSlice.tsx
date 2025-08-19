@@ -65,11 +65,8 @@ export const createSubmission =
       projectId,
       published: false,
     }
-    // Temporary work around to be removed  also in types/indesx.ts  Submission details the question mark
-    const { ...tempSubmission } = submissionForBackend
-    delete tempSubmission.title
 
-    const response = await submissionAPIService.createNewSubmission(tempSubmission)
+    const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {

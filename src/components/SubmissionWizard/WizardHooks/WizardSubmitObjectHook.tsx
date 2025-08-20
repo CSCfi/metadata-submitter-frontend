@@ -83,6 +83,7 @@ const submitObjectHook = async (
   }
 
   dispatch(resetLoading())
+  return response
 }
 
 export default submitObjectHook

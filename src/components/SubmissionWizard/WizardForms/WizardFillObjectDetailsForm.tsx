@@ -530,9 +530,13 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const onSubmit = (data: Record<string, unknown>) => {
     if (Object.keys(data).length === 0) return
 
-    startTransition(
-      async () => await submitObjectHook(data, submission.submissionId, objectType, dispatch)
-    )
+    startTransition(async () => {
+      const response = await submitObjectHook(data, submission.submissionId, objectType, dispatch)
+      if (response["ok"]) {
+        methods.reset(data, { keepValues: true })
+        dispatch(resetUnsavedForm())
+      }
+    })
   }
 
   if (states.isLoading) return <CircularProgress />

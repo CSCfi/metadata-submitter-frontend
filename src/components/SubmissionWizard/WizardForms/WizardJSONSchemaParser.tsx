@@ -1662,14 +1662,18 @@ const FormArray = ({
     if (index === 0 && getValues(name)?.length <= 1) {
       remove()
       unregister(name)
-      return
+    } else {
+      // Set the correct values according to the name path when removing a field
+      const values = getValues(name)
+      const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
+      setValue(name, filteredValues)
+      setFormFields(filteredValues)
+      remove(index)
     }
-    // Set the correct values according to the name path when removing a field
-    const values = getValues(name)
-    const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
-    setValue(name, filteredValues)
-    setFormFields(filteredValues)
-    remove(index)
+    if (document.activeElement instanceof HTMLElement) {
+      // force input check onBlur
+      document.activeElement.blur()
+    }
   }
 
   return (

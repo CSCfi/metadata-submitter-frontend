@@ -76,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Extra descriptions for UI components and hooks' purposes
 - (users) A page to create and remove API keys #1038
 - Unit test APIKeysModal.test.tsx
 - App.tsx to hold status of API key modal #1038
@@ -98,6 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- MetadataObjects and drafts from unit tests (#1088)
+- Legacy components no longer used for the UI (#1086)
 - Tags property from object (#1072)
 - Draft and Ready status from WizardStepper (#1072)
 - All metadataObjects and drafts from submission and their related functionalities (#1072)

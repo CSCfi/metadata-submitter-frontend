@@ -19,6 +19,9 @@ import { addLinkedFolderToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { isFile } from "utils"
 
+/*
+ * Render folders and files from SD Connect based on user selection
+ */
 const WizardDataFolderStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)

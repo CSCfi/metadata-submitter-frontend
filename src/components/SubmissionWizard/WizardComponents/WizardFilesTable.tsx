@@ -18,6 +18,9 @@ type FilesTableProps = {
   handleClickFileRow: (path: string, name: string) => void
 }
 
+/*
+ * Render a table of files inside shared folders received from SD Connect
+ */
 const FilesTable: React.FC<FilesTableProps> = props => {
   const { currentFilePath, files, handleClickFileRow } = props
   const { t } = useTranslation()

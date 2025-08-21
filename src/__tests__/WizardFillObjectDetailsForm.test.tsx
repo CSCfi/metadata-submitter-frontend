@@ -55,11 +55,6 @@ describe("WizardFillObjectDetailsForm", () => {
       submissionId: "FOL90524783",
       name: "Testname",
       published: false,
-      metadataObjects: [
-        { accessionId: "id1", schema: ObjectTypes.study, tags: {} },
-        { accessionId: "id2", schema: ObjectTypes.sample, tags: {} },
-      ],
-      drafts: [],
       workflow: "",
       doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
     },

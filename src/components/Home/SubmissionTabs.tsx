@@ -32,6 +32,9 @@ type SubmissionTabsProps = {
   handleChangeTab: (e: React.SyntheticEvent, newTabValue: string) => void
 }
 
+/*
+ * Render the tabs indicating the submission types: All, Published, Draft submissions
+ */
 const SubmissionTabs: React.FC<SubmissionTabsProps> = props => {
   const { tabsAriaLabel, tabs, tabValue, handleChangeTab } = props
   return (

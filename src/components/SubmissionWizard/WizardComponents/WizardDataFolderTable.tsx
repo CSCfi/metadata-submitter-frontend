@@ -25,6 +25,9 @@ type DataFolderTableProps = {
   handleFilesView: (folderName: string) => void
 }
 
+/*
+ * Render a table of shared folders received from SD Connect
+ */
 const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
   const { selectedFolder, linkedFolder, handleFolderChange, handleFilesView } = props
   const projectId = useAppSelector(state => state.projectId)

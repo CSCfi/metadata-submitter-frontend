@@ -32,6 +32,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "& td": { fontSize: "1.6rem" },
 }))
 
+/*
+ * Render a page to display uploaded XML files
+ */
+
 const WizardXMLObjectPage = () => {
   const dispatch = useAppDispatch()
   const xmlObject = useAppSelector(state => state.currentObject)

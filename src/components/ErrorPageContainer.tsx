@@ -43,6 +43,9 @@ const ErrorCardContent = styled(CardContent)(({ theme }) => ({
   color: theme.palette.text.primary,
 }))
 
+/*
+ * Render a customizable error page based on error codes such as 400, 401
+ */
 const ErrorPage: React.FC<ErrorPageProps> = (props: ErrorPageProps) => {
   const { children, title } = props
 

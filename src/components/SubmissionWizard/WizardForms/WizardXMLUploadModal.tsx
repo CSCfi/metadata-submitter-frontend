@@ -83,6 +83,9 @@ const CustomAlert = styled(Alert)(({ theme }) => ({
   fontSize: "1.75rem !important",
 }))
 
+/*
+ * Render a modal to upload XML file and validate the file
+ */
 const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUploadModalProps) => {
   const dispatch = useAppDispatch()
   const objectType = useAppSelector(state => state.objectType)

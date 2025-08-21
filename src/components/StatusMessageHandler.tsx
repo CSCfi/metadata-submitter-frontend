@@ -275,6 +275,9 @@ const Message = (props: StatusMessageProps) => {
       )
 }
 
+/*
+ * Render a pop-up notification indicates whether an action is done with success/failure/warning
+ */
 const StatusMessageHandler: React.FC = () => {
   const statusDetails = useAppSelector(state => state.statusDetails)
   return (

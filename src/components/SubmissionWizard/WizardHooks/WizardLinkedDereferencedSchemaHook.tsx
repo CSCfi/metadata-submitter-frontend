@@ -4,6 +4,9 @@ import { ObjectTypes } from "constants/wizardObject"
 import type { FormObject, StepObject } from "types"
 import { getAccessionIds } from "utils"
 
+/*
+ * Link an object to another object in the form by accessionId, based on object schema
+ */
 const getLinkedDereferencedSchema = (
   currentObject: Record<string, unknown>,
   objectType: string,

@@ -70,7 +70,7 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
-/**
+/*
  * Show summary of objects added to submission
  */
 

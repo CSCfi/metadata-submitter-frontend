@@ -76,6 +76,9 @@ type DataTableProps = {
   fetchPageOnChange?: (page: number) => void
 }
 
+/*
+ * Render a customizable table of data such as Submission, DataFolder, REMS
+ */
 const DataTable: React.FC<DataTableProps> = props => {
   const { columns, rows, totalItems, sortingModel, fetchPageOnChange } = props
   const { t } = useTranslation()

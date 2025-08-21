@@ -153,7 +153,9 @@ type WizardPaginationProps = {
   ) => void
 }
 
-// Pagination Component
+/*
+ * Render a customizable pagination of a table
+ */
 const WizardPagination: React.FC<WizardPaginationProps> = props => {
   const { totalNumberOfItems, page, itemsPerPage, handleChangePage, handleItemsPerPageChange } =
     props

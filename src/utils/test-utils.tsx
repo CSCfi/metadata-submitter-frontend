@@ -42,32 +42,14 @@ export const mockState = {
     name: "Test name",
     published: false,
     workflow: "FEGA",
-    drafts: [],
-    metadataObjects: [],
     doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   },
   openedXMLModal: false,
   currentObject: {
-    objectId: "",
-    tags: {
-      fileName: "Test XML file",
-      fileSize: "1",
-    },
     accessionId: "TESTID0000",
-    lastModified: "",
-    objectType: "",
-    status: "",
-    title: "",
-    submissionType: "",
     cleanedValues: {
       accessionId: "TESTID0000",
-      lastModified: "",
-      objectType: "",
-      status: "",
-      title: "",
-      submissionType: "",
     },
-    index: 1,
   },
 }
 

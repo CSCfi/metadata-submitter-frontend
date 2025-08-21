@@ -365,22 +365,18 @@ const NavToolBar = ({ handleOpenKeyModal }) => {
     </Toolbar>
   )
 }
+
+/*
+ * Render the primary navigation bar
+ */
 const Nav: React.FC<{ isFixed: boolean; handleOpenKeyModal: () => void }> = ({
   isFixed,
   handleOpenKeyModal,
 }) => {
   return (
-    <>
-      {isFixed ? (
-        <NavBar position="fixed">
-          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
-        </NavBar>
-      ) : (
-        <NavBar position="relative">
-          <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
-        </NavBar>
-      )}
-    </>
+    <NavBar position={isFixed ? "fixed" : "relative"}>
+      <NavToolBar handleOpenKeyModal={handleOpenKeyModal} />
+    </NavBar>
   )
 }
 

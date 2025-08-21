@@ -35,8 +35,8 @@ const SectionTitle = ({ children }: { children: string[] }) => (
   </Typography>
 )
 
-/**
- * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
+/*
+ * Render DAC and Policies form content
  */
 const DacPoliciesForm = () => {
   const dispatch = useAppDispatch()

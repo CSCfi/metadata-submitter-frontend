@@ -1,5 +1,5 @@
 ﻿/* XML upload is disabled for MVP */
-// import { act } from "react"
+import { act } from "react"
 
 import { screen } from "@testing-library/react"
 import { MemoryRouter, Routes, Route } from "react-router"
@@ -7,50 +7,31 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 
-// import { ObjectSubmissionsArray, ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardAddObjectStep", () => {
-  it("should not render any cards if no selected object type", () => {
-    renderWithProviders(
-      <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
-        <Routes>
-          <Route path="/submission" element={<WizardAddObjectStep />} />
-        </Routes>
-      </MemoryRouter>,
-      {
-        preloadedState: {
-          objectType: "",
-        },
-      }
+  /* This test may be changed in the future when we afford XML object.
+   * Currently we narrows down to only have form object.
+   */
+
+  test("should render appropriate card", async () => {
+    act(() =>
+      renderWithProviders(
+        <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
+          <Routes>
+            <Route path="/submission" element={<WizardAddObjectStep />} />
+          </Routes>
+        </MemoryRouter>,
+        {
+          preloadedState: {
+            objectType: ObjectTypes.study,
+          },
+        }
+      )
     )
-    expect(
-      //screen.getByText("Add objects by clicking the name, then fill form or upload XML File.")
-      screen.getByText("Add objects by clicking the name, then fill a form.")
-    ).toBeInTheDocument()
+    expect(screen.getByTestId("form")).toBeInTheDocument()
   })
-
-  /* Commenting out this test because we only support Form object.*/
-
-  // test("should render appropriate card", async () => {
-  //   ObjectSubmissionsArray.forEach(typeName => {
-  //     act(() =>
-  //       renderWithProviders(
-  //         <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
-  //           <Routes>
-  //             <Route path="/submission" element={<WizardAddObjectStep />} />
-  //           </Routes>
-  //         </MemoryRouter>,
-  //         {
-  //           preloadedState: {
-  //             objectType: ObjectTypes.study,
-  //           },
-  //         }
-  //       )
-  //     )
-  //     expect(screen.getByTestId(typeName)).toBeInTheDocument()
-  //   })
-  // })
 })

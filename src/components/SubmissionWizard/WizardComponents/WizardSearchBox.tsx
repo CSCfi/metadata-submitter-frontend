@@ -26,6 +26,9 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
   width: "30%",
 }))
 
+/*
+ * Render a customizable field for searching or filtering items
+ */
 const WizardSearchBox: React.FC<WizardSearchBoxProps> = props => {
   const { placeholder, filteringText, handleChangeFilteringText, handleClearFilteringText } = props
   const { t } = useTranslation()

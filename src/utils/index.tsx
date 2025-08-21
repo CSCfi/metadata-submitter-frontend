@@ -4,14 +4,7 @@ import { useLocation } from "react-router"
 
 import { Locale } from "constants/locale"
 import { ObjectTypes } from "constants/wizardObject"
-import type {
-  File,
-  FormDataFiles,
-  ObjectDisplayValues,
-  ObjectInsideSubmissionWithTags,
-  DoiFormDetails,
-  StepObject,
-} from "types"
+import type { File, FormDataFiles, ObjectDisplayValues, DoiFormDetails, StepObject } from "types"
 
 export const getObjectDisplayTitle = (
   objectType: string,
@@ -33,33 +26,6 @@ export const getItemPrimaryText = (item: StepObject): string => {
 
 export const useQuery = (): URLSearchParams => {
   return new URLSearchParams(useLocation().search)
-}
-
-export const formatDisplayObjectType = (objectType: string): string => {
-  if (objectType === ObjectTypes.dac) {
-    return `${objectType.toUpperCase()}`
-  } else if (objectType === `draft-${ObjectTypes.dac}`) {
-    const hyphenIndex = objectType.indexOf("-")
-    return `draft-${objectType.slice(hyphenIndex + 1).toUpperCase()}`
-  } else {
-    return `${objectType.charAt(0).toUpperCase()}${objectType.slice(1)}`
-  }
-}
-
-// draftObjects contains an array of objects and each has a schema and the related draft(s) array if there is any
-export const getDraftObjects = (
-  drafts: Array<ObjectInsideSubmissionWithTags>,
-  objectTypesArray: Array<string>
-): { [draftObjectType: string]: ObjectInsideSubmissionWithTags[] }[] => {
-  const draftObjects = objectTypesArray.flatMap((schema: string) => {
-    const draftSchema = `draft-${schema}`
-    const draftArray = drafts.filter(
-      draft => draft.schema.toLowerCase() === draftSchema.toLowerCase()
-    )
-    return draftArray.length > 0 ? [{ [draftSchema]: draftArray }] : []
-  })
-
-  return draftObjects
 }
 
 export const getAccessionIds = (objectType: string, objects?: StepObject[]): Array<string> => {

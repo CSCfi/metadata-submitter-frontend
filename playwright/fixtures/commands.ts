@@ -1,3 +1,4 @@
+/* Workflows are disabled for MVP */
 import { test as base, expect } from "@playwright/test"
 import { MongoClient } from "mongodb"
 
@@ -95,7 +96,7 @@ const test = base.extend<CommandFixtures>({
         .getByTestId("submissionName")
         .fill(submissionName ? submissionName : "Test submission name")
       await page.getByTestId("submissionDescription").fill("Test submission description")
-      await page.getByTestId(workflowType ? workflowType : "FEGA").click()
+      await page.getByTestId(workflowType ? workflowType : "FEGA").isHidden() // For temporary hiding
       await page.getByTestId("create-submission").click()
       await submissions
     }

@@ -1,14 +1,15 @@
-import React, { RefObject, useEffect, useState } from "react"
+/* Workflows are disabled for MVP */
+import React, { RefObject, useState } from "react"
 
 import {
   Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  FormHelperText,
-  Grid,
-  Radio,
-  RadioGroup,
+  // FormControl,
+  // FormControlLabel,
+  // FormLabel,
+  // FormHelperText,
+  // Grid,
+  // Radio,
+  // RadioGroup,
   TextField,
   Typography,
 } from "@mui/material"
@@ -22,7 +23,7 @@ import { updateStatus } from "features/statusMessageSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import workflowAPIService from "services/workflowAPI"
+// import workflowAPIService from "services/workflowAPI"
 import type { SubmissionDataFromForm, HandlerRef } from "types"
 import { pathWithLocale } from "utils"
 
@@ -43,48 +44,51 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
 
   const { t } = useTranslation()
 
-  const [workflows, setWorkflows] = useState([""])
+  // Temporary disable workflow selection and use SDSX only
+  // const [workflows, setWorkflows] = useState([""])
+  const [selectedWorkflowType] = useState("SDSX")
 
-  useEffect(() => {
-    let isMounted = true
-    const getAllWorkflows = async () => {
-      if (isMounted) {
-        let cachedWorkflows = sessionStorage.getItem(`cached_workflows`)
+  // useEffect(() => {
+  //   let isMounted = true
+  //   const getAllWorkflows = async () => {
+  //     if (isMounted) {
+  //       let cachedWorkflows = sessionStorage.getItem(`cached_workflows`)
 
-        if (!cachedWorkflows) {
-          try {
-            const response = await workflowAPIService.getAllWorkflows()
-            if (response.ok) {
-              cachedWorkflows = JSON.stringify(response.data)
-              sessionStorage.setItem(`cached_workflows`, cachedWorkflows)
-            }
-          } catch (error) {
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.error,
-                response: error,
-                helperText: "snackbarMessages.error.helperText.fetchWorkflows",
-              })
-            )
-          }
-        }
+  //       if (!cachedWorkflows) {
+  //         try {
+  //           const response = await workflowAPIService.getAllWorkflows()
+  //           if (response.ok) {
+  //             cachedWorkflows = JSON.stringify(response.data)
+  //             sessionStorage.setItem(`cached_workflows`, cachedWorkflows)
+  //           }
+  //         } catch (error) {
+  //           dispatch(
+  //             updateStatus({
+  //               status: ResponseStatus.error,
+  //               response: error,
+  //               helperText: "snackbarMessages.error.helperText.fetchWorkflows",
+  //             })
+  //           )
+  //         }
+  //       }
 
-        const parsedWorkflows = JSON.parse(cachedWorkflows as string)
+  //       const parsedWorkflows = JSON.parse(cachedWorkflows as string)
 
-        setWorkflows(Object.keys(parsedWorkflows))
-      }
-    }
+  //       setWorkflows(Object.keys(parsedWorkflows))
+  //     }
+  //   }
 
-    getAllWorkflows()
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  //   getAllWorkflows()
+  //   return () => {
+  //     isMounted = false
+  //   }
+  // }, [])
 
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting, isSubmitted },
+    // formState: { isSubmitting, isSubmitted },
+    formState: { isSubmitting },
   } = useForm()
 
   const navigate = useNavigate()
@@ -109,7 +113,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         })
     } else {
       // Create a new submission
-      dispatch(setWorkflowType(data.workflowType))
+      // dispatch(setWorkflowType(data.workflowType))
+      dispatch(setWorkflowType("SDSX"))
       dispatch(createSubmission(projectId, data))
         .then(response => {
           const submissionId = response.data.submissionId
@@ -121,8 +126,9 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     }
   }
 
-  const workflowType = useAppSelector(state => state.workflowType)
-  const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
+  // Temporary disable workflow selection and use SDSX only
+  // const workflowType = useAppSelector(state => state.workflowType)
+  // const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
   return (
     <Form
@@ -145,7 +151,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             error={!!error}
             helperText={error ? t("newSubmission.errors.missingName") : null}
             disabled={isSubmitting}
-            inputProps={{ "data-testid": "submissionName" }}
+            slotProps={{ htmlInput: { "data-testid": "submissionName" } }}
           />
         )}
         rules={{ required: true, validate: { name: value => value.length > 0 } }}
@@ -165,12 +171,21 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             error={!!error}
             helperText={error ? t("newSubmission.errors.missingDescription") : null}
             disabled={isSubmitting}
-            inputProps={{ "data-testid": "submissionDescription" }}
+            slotProps={{ htmlInput: { "data-testid": "submissionDescription" } }}
           />
         )}
         rules={{ required: true, validate: { description: value => value.length > 0 } }}
       />
-      <Grid sx={{ mt: 2 }} container spacing={2}>
+
+      {/* Temporary disable workflow selection and use SDSX only */}
+      <Controller
+        control={control}
+        name="workflowType"
+        defaultValue={selectedWorkflowType}
+        data-testid="SDSX"
+        render={() => <input id="hiddenWorkflow" type="hidden" name="workflowType" />}
+      />
+      {/* <Grid sx={{ mt: 2 }} container spacing={2}>
         <Grid>
           <FormLabel
             id="submission-type-selection-label"
@@ -230,7 +245,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             )}
           </FormControl>
         </Grid>
-      </Grid>
+      </Grid> */}
       <Button
         sx={{ mt: "2rem", p: "1rem 5rem" }}
         size="large"

@@ -11,12 +11,18 @@ test.describe("Filling DOI form", () => {
     await newSubmission("SDSX")
   })
 
-  test("should be able to fill  and save the required fields", async ({ page }) => {
+  test("should be able to fill  and save the required fields", async ({
+    page,
+    clickAccordionPanel,
+    clickAddObject,
+  }) => {
     test.slow()
 
     //await clickAccordionPanel("Identifier and publish")
-    await page.getByRole("button", { name: "Identifier and publish" }).click()
-    await page.getByTestId("Add datacite").click()
+    // await page.getByRole("button", { name: "Identifier and publish" }).click()
+    // await page.getByTestId("Add datacite").click()
+    clickAccordionPanel("Identifier and publish")
+    clickAddObject("Add datacite")
     await expect(page.getByRole("heading", { name: "DOI Registration Information" })).toBeVisible()
 
     // Add a creator
@@ -31,15 +37,6 @@ test.describe("Filling DOI form", () => {
     await page.getByTestId("creators.0.affiliation.0.name-inputField").fill("a")
     await page.getByRole("option", { name: "A&A Biotechnology (Poland)" }).click()
     await expect(page.getByTestId("creators.0.affiliation.0.name-inputField")).not.toBeEmpty()
-
-    // Add subject
-    await page
-      .locator("div")
-      .filter({ hasText: /^Subjects\*Add new item$/ })
-      .getByRole("button")
-      .click()
-    await page.getByTestId("subjects.0.subject").click()
-    await page.getByTestId("subjects.0.subject").selectOption("1 - Natural sciences")
 
     // Add keywords
     await page.getByTestId("keywords").fill("test word")

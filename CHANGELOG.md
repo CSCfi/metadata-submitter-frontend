@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Removed workflow radio button "Type of submission selection" from submission details page (#1067)
+- Skipped submission creation test app.spec.ts (#1067)
+- Commented away workflow radiobuttons from submission details page, replaced by hardcoded SDSX workflow in WizardCreateSubmissionStep.tsx (#1067)
 - (users) Support link in the navigation bar to be visible only after login.
 - Nav.tsx Support link to be conditioned according user logged in, and MenuItems to close when clicked
 - Modified types of the step objects and form object (#1072)
@@ -53,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Replaced deprecated inputProps with slotProps in WizardCreateSubmissionStep.tsx
 - (users) Fixed licenses not being reset in DAC and policies form (#1073)
 - (users) Fixed required field validation in DOI form not working (#1055)
 - Fix a number of failing e2e tests
@@ -76,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Test appSDSX.spec.ts (#1067)
 - Extra descriptions for UI components and hooks' purposes
 - (users) A page to create and remove API keys #1038
 - Unit test APIKeysModal.test.tsx

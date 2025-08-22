@@ -54,6 +54,7 @@ describe("WizardFillObjectDetailsForm", () => {
       description: "AWD",
       submissionId: "FOL90524783",
       name: "Testname",
+      title: "TestTitle",
       published: false,
       workflow: "",
       doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },

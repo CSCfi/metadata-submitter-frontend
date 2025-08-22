@@ -191,6 +191,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             slotProps={{ htmlInput: { "data-testid": "datasetTitle" } }}
           />
         )}
+        rules={{ required: true, validate: { title: value => value.length > 0 } }}
       />
       <Controller
         control={control}

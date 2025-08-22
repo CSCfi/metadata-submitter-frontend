@@ -40,6 +40,7 @@ export const mockState = {
     description: "Test desciption",
     submissionId: "FOL90524783",
     name: "Test name",
+    title: "Test Title",
     published: false,
     workflow: "FEGA",
     doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },

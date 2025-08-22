@@ -82,6 +82,7 @@ describe("WizardShowSummaryStep", () => {
       submission: {
         submissionId: "FOL90524783",
         name: "Test folder",
+        title: "Test Title",
         description: "Description for folder",
         projectId: "a0981b1b4df349e5af7ecbe22a1a1f75",
         published: false,

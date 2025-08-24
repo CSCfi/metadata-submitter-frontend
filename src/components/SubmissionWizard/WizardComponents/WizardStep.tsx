@@ -93,13 +93,7 @@ const ActionButton = (props: {
       >
         {buttonText}
       </Button>
-      {alert && (
-        <WizardAlert
-          onAlert={handleAlert}
-          parentLocation="submission"
-          alertType={ObjectSubmissionTypes.form}
-        />
-      )}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
     </React.Fragment>
   )
 }
@@ -114,8 +108,9 @@ const StepItems = (props: {
   submissionId: string
   doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
+  draft?: boolean // Add draft prop for badge functionality
 }) => {
-  const { step, objects, submissionId, doiInfo, objectType } = props
+  const { step, objects, submissionId, doiInfo, objectType, draft = false } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
@@ -183,17 +178,6 @@ const StepItems = (props: {
     <React.Fragment>
       <TransitionGroup component={null}>
         {objects.map(item => {
-          const isNewStructure = "objectData" in item
-          const displayTitle = isNewStructure
-            ? item.objectData?.tags.submissionType === ObjectSubmissionTypes.xml
-              ? item.objectData.tags.fileName
-              : item.objectData?.tags.submissionType === "linked-folder"
-                ? item.displayTitle
-                : item.displayTitle !== ""
-                  ? item.displayTitle
-                  : item.id
-            : item.displayTitle
-
           return (
             <Collapse component={"li"} key={item.id}>
               <ObjectItem>
@@ -301,26 +285,11 @@ const WizardStep = (props: WizardStepProps) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
 
-        // Handle both old and new object structures with proper type checking
-        const isNewStructure =
-          objects && !Array.isArray(objects) && ("ready" in objects || "drafts" in objects)
-
-        const newStructureObjects = isNewStructure
-          ? (objects as { ready?: StepItemObject[]; drafts?: StepItemObject[] })
-          : null
-        const oldStructureObjects = !isNewStructure ? (objects as StepObject[]) : null
-
+        // Check if we should show linked folder instead of objects
         const shouldShowLinkedFolder =
-          objectType === ObjectTypes.file &&
-          submission.linkedFolder &&
-          (oldStructureObjects
-            ? !oldStructureObjects.length
-            : !(newStructureObjects?.ready?.length || newStructureObjects?.drafts?.length))
+          objectType === ObjectTypes.file && submission.linkedFolder && !objects?.length
 
-        const hasObjects = newStructureObjects
-          ? !!(newStructureObjects.ready?.length || newStructureObjects.drafts?.length) ||
-            shouldShowLinkedFolder
-          : !!oldStructureObjects?.length || shouldShowLinkedFolder
+        const hasObjects = !!objects?.length
 
         const buttonText =
           step === 1
@@ -342,13 +311,14 @@ const WizardStep = (props: WizardStepProps) => {
 
                 {(objects || shouldShowLinkedFolder) && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
-                    {objects? && (
+                    {objects && (
                       <StepItems
                         step={step}
                         objects={objects}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
+                        draft={false}
                       />
                     )}
                     {shouldShowLinkedFolder && (
@@ -358,20 +328,12 @@ const WizardStep = (props: WizardStepProps) => {
                           {
                             id: `linked-folder-${submission.submissionId}`,
                             displayTitle: submission.linkedFolder ?? "",
-                            objectData: {
-                              accessionId: `linked-folder-${submission.submissionId}`,
-                              schema: "linked-folder",
-                              tags: {
-                                fileName: submission.linkedFolder,
-                                submissionType: "linked-folder",
-                              },
-                            },
-                          },
+                          } as StepObject,
                         ]}
-                        draft={false}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
+                        draft={false}
                       />
                     )}
                   </ul>
@@ -381,7 +343,7 @@ const WizardStep = (props: WizardStepProps) => {
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
-                  disabled={Boolean(!!objects.length && !allowMultipleObjects)}
+                  disabled={Boolean(hasObjects && !allowMultipleObjects)}
                   ref={ref}
                 />
               </ObjectWrapper>

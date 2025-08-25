@@ -148,6 +148,12 @@ const StepItems = (props: {
           dispatch(resetCurrentObject())
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
           dispatch(setObjectType(objectType))
+        } else if (objectType === ObjectTypes.file) {
+          // Handle linked folder click
+          navigate({
+            pathname: pathWithLocale(`submission/${submissionId}`),
+            search: `step=${step}`,
+          })
         } else {
           editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
         }
@@ -177,7 +183,7 @@ const StepItems = (props: {
                 <Grid container justifyContent="space-between">
                   <Grid display="flex" alignItems="center" size={{ xs: 6 }}>
                     <Link
-                      tabIndex={0} // "href with # target will cause Firefox to refresh the page"
+                      tabIndex={0}
                       onClick={() => handleClick(item)}
                       data-testid={`${objectType}-list-item`}
                       aria-label={t("ariaLabels.editObject")}
@@ -277,6 +283,10 @@ const WizardStep = (props: WizardStepProps) => {
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
+
+        // Check if we should show linked folder instead of objects
+        const shouldShowLinkedFolder = objectType === ObjectTypes.file && submission.linkedFolder
+
         const buttonText =
           step === 1
             ? t("edit")
@@ -295,12 +305,26 @@ const WizardStep = (props: WizardStepProps) => {
                   {name}
                 </div>
 
-                {objects && (
+                {(objects || shouldShowLinkedFolder) && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
                     {objects && (
                       <StepItems
                         step={step}
                         objects={objects}
+                        submissionId={submission.submissionId}
+                        doiInfo={submission.doiInfo}
+                        objectType={objectType}
+                      />
+                    )}
+                    {shouldShowLinkedFolder && (
+                      <StepItems
+                        step={step}
+                        objects={[
+                          {
+                            id: `linked-folder-${submission.submissionId}`,
+                            displayTitle: submission.linkedFolder ?? "",
+                          } as StepObject,
+                        ]}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
@@ -313,7 +337,7 @@ const WizardStep = (props: WizardStepProps) => {
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
-                  disabled={!!objects.length && !allowMultipleObjects}
+                  disabled={!!objects?.length && !allowMultipleObjects}
                   ref={ref}
                 />
               </ObjectWrapper>

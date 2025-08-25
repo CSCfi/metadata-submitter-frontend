@@ -22,6 +22,7 @@ import WizardPagination from "../WizardComponents/WizardPagination"
 import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
+import { ObjectTypes } from "constants/wizardObject"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -107,11 +108,34 @@ const WizardShowSummaryStep: React.FC = () => {
       }
     }
   }
+
   const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
     return (
       summaryItem.schemas?.flatMap(stepItem => {
         const objects = stepItem.objects
+
+        // Add row for linked files
+        if (
+          stepItem.objectType === ObjectTypes.file &&
+          submission.linkedFolder &&
+          (!objects || Object.values(objects).flat().length === 0)
+        ) {
+          return [
+            {
+              id: `linked-files-${step}`,
+              status: t("ready"),
+              name: submission.linkedFolder,
+              action: "",
+              step,
+              draft: false,
+              objectType: stepItem.objectType,
+              objectData: undefined,
+              objectsList: [],
+            },
+          ]
+        }
+
         if (objects) {
           const objectsList = Object.values(objects).flat()
           return objectsList
@@ -152,9 +176,7 @@ const WizardShowSummaryStep: React.FC = () => {
     {
       field: "status",
       headerName: t("Status"),
-      renderCell: (params: GridRenderCellParams) => (
-        <WizardObjectStatusBadge draft={params.row.draft} />
-      ),
+      renderCell: () => <WizardObjectStatusBadge />,
       flex: 0.5,
     },
     { field: "name", headerName: t("Name"), flex: 1 },

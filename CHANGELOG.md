@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Migrate to ROR API version 2 as default version (#1076)
 - (users) Removed workflow radio button "Type of submission selection" from submission details page (#1067)
 - Skipped submission creation test app.spec.ts (#1067)
 - Commented away workflow radiobuttons from submission details page, replaced by hardcoded SDSX workflow in WizardCreateSubmissionStep.tsx (#1067)

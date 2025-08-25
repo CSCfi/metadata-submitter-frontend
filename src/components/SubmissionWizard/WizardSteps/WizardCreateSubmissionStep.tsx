@@ -18,9 +18,10 @@ import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
+import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
-import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -147,22 +148,11 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   // const workflowType = useAppSelector(state => state.workflowType)
   // const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
-  const handleFormBlur = () => {
-    const isDirty = Object.keys(dirtyFields).some(field => {
-      const value = getValues(field)
-      const defaultValue = defaultValues?.[field]
-
-      if (value && !defaultValue) return true
-      return value !== defaultValue
-    })
-    dispatch(isDirty ? setUnsavedForm() : resetUnsavedForm())
-  }
-
   return (
     <Form
       onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
       ref={ref as RefObject<HTMLFormElement>}
-      onBlur={handleFormBlur}
+      onBlur={() => checkUnsavedInputHook(dirtyFields, defaultValues, getValues, dispatch)}
     >
       <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
         {t("newSubmission.nameSubmission")}

@@ -14,12 +14,13 @@ import LinearProgress from "@mui/material/LinearProgress"
 import Typography from "@mui/material/Typography"
 import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
-import { cloneDeep, set, isEqual } from "lodash"
+import { cloneDeep, set } from "lodash"
 import { useForm, FormProvider, FieldValues, SubmitHandler } from "react-hook-form"
 import type { FieldErrors, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
+import checkUnsavedInputHook from "../WizardHooks/WizardCheckUnsavedInputHook"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
@@ -32,7 +33,7 @@ import { ObjectTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
-import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addDoiInfoToSubmission } from "features/wizardSubmissionSlice"
 //import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
@@ -241,35 +242,6 @@ const FormContent = ({
     }
   }
 
-  const handleFormBlur = () => {
-    // For every dirty field, check if default value matches current value
-    const isDirty = Object.keys(methods.formState.dirtyFields).some(field => {
-      const value = methods.getValues(field)
-      const defaultValue = methods.formState.defaultValues?.[field]
-
-      if (value && !defaultValue) {
-        // No default value to compare against
-        return true
-      }
-      if (Array.isArray(value)) {
-        // value is an array (e.g. nested fields)
-        return value.some((item, i) => {
-          if (!defaultValue?.[i]) {
-            // new item added
-            return true
-          }
-          if (!isEqual(item, defaultValue[i])) {
-            // existing item modified
-            return true
-          }
-          return false
-        })
-      }
-      return value !== defaultValue
-    })
-    dispatch(isDirty ? setUnsavedForm() : resetUnsavedForm())
-  }
-
   const handleDOISubmit = async (data: DoiFormDetails) => {
     dispatch(addDoiInfoToSubmission(submission.submissionId, data))
       .then(() => {
@@ -406,7 +378,14 @@ const FormContent = ({
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={ref as RefObject<HTMLFormElement>}
-        onBlur={() => handleFormBlur()}
+        onBlur={() =>
+          checkUnsavedInputHook(
+            methods.formState.dirtyFields,
+            methods.formState.defaultValues,
+            methods.getValues,
+            dispatch
+          )
+        }
       >
         <Box>{JSONSchemaParser.buildFields(formSchema)}</Box>
       </Form>

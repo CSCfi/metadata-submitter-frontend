@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Add Ready badge for Datafolder step (#1053)
 - Test appSDSX.spec.ts (#1067)
 - Extra descriptions for UI components and hooks' purposes
 - (users) A page to create and remove API keys #1038
@@ -105,6 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) Remove draft logic for badges (#1078)
 - MetadataObjects and drafts from unit tests (#1088)
 - Legacy components no longer used for the UI (#1086)
 - Tags property from object (#1072)

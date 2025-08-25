@@ -108,9 +108,8 @@ const StepItems = (props: {
   submissionId: string
   doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
-  draft?: boolean // Add draft prop for badge functionality
 }) => {
-  const { step, objects, submissionId, doiInfo, objectType, draft = false } = props
+  const { step, objects, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
@@ -200,7 +199,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge draft={draft} />
+                    <WizardObjectStatusBadge />
                   </Grid>
                 </Grid>
               </ObjectItem>
@@ -286,10 +285,7 @@ const WizardStep = (props: WizardStepProps) => {
         const isActive = currentStepObject.stepObjectType === objectType
 
         // Check if we should show linked folder instead of objects
-        const shouldShowLinkedFolder =
-          objectType === ObjectTypes.file && submission.linkedFolder && !objects?.length
-
-        const hasObjects = !!objects?.length
+        const shouldShowLinkedFolder = objectType === ObjectTypes.file && submission.linkedFolder
 
         const buttonText =
           step === 1
@@ -318,7 +314,6 @@ const WizardStep = (props: WizardStepProps) => {
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
-                        draft={false}
                       />
                     )}
                     {shouldShowLinkedFolder && (
@@ -333,7 +328,6 @@ const WizardStep = (props: WizardStepProps) => {
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}
-                        draft={false}
                       />
                     )}
                   </ul>
@@ -343,7 +337,7 @@ const WizardStep = (props: WizardStepProps) => {
                   step={step}
                   parent={step === 1 ? "submissionDetails" : objectType}
                   buttonText={buttonText}
-                  disabled={Boolean(hasObjects && !allowMultipleObjects)}
+                  disabled={!!objects?.length && !allowMultipleObjects}
                   ref={ref}
                 />
               </ObjectWrapper>

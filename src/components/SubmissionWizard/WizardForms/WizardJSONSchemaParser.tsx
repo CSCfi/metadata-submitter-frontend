@@ -1104,6 +1104,13 @@ type RORItem = {
   name: string
   id: string
 }
+/*
+  More details of ROR data structure is here: https://ror.readme.io/docs/ror-data-structure
+*/
+type ROROrganization = Record<string, unknown> & {
+  id: string
+  names: { lang: string | null; types: string[]; value: string }[]
+}
 
 const StyledAutocomplete = styled(Autocomplete)(() => ({
   flex: "auto",
@@ -1140,10 +1147,20 @@ const FormAutocompleteField = ({
     if (response) setLoading(false)
 
     if (response?.ok) {
-      const mappedOrganisations = response.data.items.map((org: RORItem) => ({
-        name: org.name,
-        id: org.id,
-      }))
+      const mappedOrganisations = response.data.items.reduce(
+        (orgArr: RORItem[], org: ROROrganization) => {
+          const orgName = org.names.filter(name => name.types.includes("ror_display"))[0]?.value
+          if (orgName) {
+            orgArr.push({
+              name: orgName,
+              id: org.id,
+            })
+          }
+          return orgArr
+        },
+        []
+      )
+
       setOptions(mappedOrganisations)
     }
   }
@@ -1217,7 +1234,8 @@ const FormAutocompleteField = ({
                   setOpen(false)
                 }}
                 options={options}
-                getOptionLabel={option => option.name || ""}
+                getOptionKey={option => option.id ?? ""}
+                getOptionLabel={option => option.name ?? ""}
                 disableClearable={inputValue.length === 0}
                 renderInput={params => (
                   <BaselineDiv>

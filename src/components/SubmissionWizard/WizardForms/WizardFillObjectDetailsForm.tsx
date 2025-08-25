@@ -165,7 +165,7 @@ const FormContent = ({
   const clearForm = useAppSelector(state => state.clearForm)
   // const alert = useAppSelector(state => state.alert)
 
-  const currentObjectId = currentObject?.accessionId
+  const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
 
   // const autoSaveTimer: { current: NodeJS.Timeout | null } = useRef(null)
   // let timer = 0
@@ -354,10 +354,10 @@ const FormContent = ({
   //   }
   // }
 
-  // const handleReset = () => {
-  //   methods.reset({ undefined })
-  //   setCurrentObjectId(null)
-  // }
+  const handleReset = () => {
+    methods.reset({ undefined })
+    setCurrentObjectId(null)
+  }
 
   return (
     <FormProvider {...methods}>
@@ -378,6 +378,7 @@ const FormContent = ({
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={ref as RefObject<HTMLFormElement>}
+        onReset={handleReset}
         onBlur={() =>
           checkUnsavedInputHook(
             methods.formState.dirtyFields,

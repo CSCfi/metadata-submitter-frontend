@@ -75,6 +75,7 @@ const ActionButton = (props: {
       default: {
         navigate({ pathname: pathname, search: stepParam })
         dispatch(setObjectType(parent))
+        // resets only hook-form
         if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
     }

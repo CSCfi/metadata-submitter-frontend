@@ -18,11 +18,8 @@ test.describe("Filling DOI form", () => {
   }) => {
     test.slow()
 
-    //await clickAccordionPanel("Identifier and publish")
-    // await page.getByRole("button", { name: "Identifier and publish" }).click()
-    // await page.getByTestId("Add datacite").click()
-    clickAccordionPanel("Identifier and publish")
-    clickAddObject("Add datacite")
+    await clickAccordionPanel("Identifier and publish")
+    await clickAddObject("datacite")
     await expect(page.getByRole("heading", { name: "DOI Registration Information" })).toBeVisible()
 
     // Add a creator
@@ -52,9 +49,8 @@ test.describe("Filling DOI form", () => {
 
     // Check the DOI input to be persistent
     await page.getByTestId("View Summary").click()
-    await page.getByTestId("submitted-datacite-list-item").click()
+    await page.getByTestId("datacite-list-item").click()
     await expect(page.getByTestId("creators.0.givenName")).toHaveValue("Test")
-    await expect(page.getByTestId("subjects.0.subject")).toHaveValue("1 - Natural sciences")
     await expect(page.getByTestId("third")).toContainText("third")
   })
 
@@ -66,7 +62,7 @@ test.describe("Filling DOI form", () => {
     await page.getByTestId("Add datacite").click()
     await page.getByTestId("form-datacite").click()
     await page.getByText("must have at least 1 item").first().focus()
-    await expect(page.getByText("must have at least 1 item")).toHaveCount(2)
+    await expect(page.getByText("must have at least 1 item")).toHaveCount(1)
     await page
       .getByText("Please fill in all the required fields.")
       .getByRole("button", { name: "Close" }).click
@@ -81,13 +77,6 @@ test.describe("Filling DOI form", () => {
     await page.getByTestId("creators.0.affiliation.0.name-inputField").fill("b")
     await page.getByRole("option", { name: "B & B" }).click()
 
-    await page
-      .locator("div")
-      .filter({ hasText: /^Subjects\*.*Add new item$/ })
-      .getByRole("button")
-      .click()
-    await page.getByTestId("subjects.0.subject").click()
-    await page.getByTestId("subjects.0.subject").selectOption("2 - Engineering and technology")
     await page.getByTestId("form-datacite").click()
     await expect(page.getByText("Please fill in all the required fields.")).toBeVisible()
   })

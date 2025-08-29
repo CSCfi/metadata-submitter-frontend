@@ -27,6 +27,7 @@ import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 import { Locale } from "constants/locale"
 import { PathsWithoutLogin } from "constants/paths"
 import { setLocale } from "features/localeSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { fetchUser, resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmission } from "features/wizardSubmissionSlice"
@@ -323,6 +324,7 @@ const NavigationMenu = ({ handleOpenKeyModal }) => {
       navigate(pathWithLocale("home"))
       dispatch(resetObjectType())
       dispatch(resetSubmission())
+      dispatch(resetUnsavedForm())
     }
     setDialogOpen(false)
   }

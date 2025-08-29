@@ -19,6 +19,7 @@ import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
 import { ObjectTypes } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
@@ -37,6 +38,7 @@ const ActionButton = (props: {
 
   const navigate = useNavigate()
   const submission = useAppSelector(state => state.submission)
+  const unsavedForm = useAppSelector(state => state.unsavedForm)
   const dispatch = useAppDispatch()
   const [alert, setAlert] = useState(false)
 
@@ -45,10 +47,16 @@ const ActionButton = (props: {
   )
 
   const handleClick = () => {
-    handleNavigation()
+    if (unsavedForm) {
+      setAlert(true)
+    } else {
+      // no data to lose, navigate
+      handleNavigation()
+    }
   }
 
   const handleNavigation = () => {
+    dispatch(resetUnsavedForm())
     dispatch(resetObjectType())
     dispatch(resetCurrentObject())
     dispatch(updateStep({ step: step, objectType: parent }))
@@ -67,6 +75,7 @@ const ActionButton = (props: {
       default: {
         navigate({ pathname: pathname, search: stepParam })
         dispatch(setObjectType(parent))
+        // resets only hook-form
         if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
       }
     }
@@ -87,13 +96,11 @@ const ActionButton = (props: {
         variant="contained"
         onClick={() => handleClick()}
         sx={theme => ({ marginTop: theme.spacing(2.4) })}
-        form="hook-form"
-        type="reset"
         data-testid={`${buttonText} ${parent}`}
       >
         {buttonText}
       </Button>
-      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="exit" />}
     </React.Fragment>
   )
 }
@@ -111,6 +118,7 @@ const StepItems = (props: {
 }) => {
   const { step, objects, submissionId, doiInfo, objectType } = props
   const dispatch = useAppDispatch()
+  const unsavedForm = useAppSelector(state => state.unsavedForm)
   const navigate = useNavigate()
   const [alert, setAlert] = useState(false)
   const [clickedItem, setClickedItem] = useState({})
@@ -118,7 +126,11 @@ const StepItems = (props: {
 
   const handleClick = (item: StepObject) => {
     setClickedItem(item)
-    handleItemEdit(item)
+    if (unsavedForm) {
+      setAlert(true)
+    } else {
+      handleItemEdit(item)
+    }
   }
 
   const handleItemEdit = formObject => {
@@ -207,7 +219,7 @@ const StepItems = (props: {
           )
         })}
       </TransitionGroup>
-      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" />}
+      {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="exit" />}
     </React.Fragment>
   )
 }

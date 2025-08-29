@@ -10,6 +10,7 @@ import WizardRemsDAC from "components/SubmissionWizard/WizardComponents/WizardRe
 import WizardRemsOrganization from "components/SubmissionWizard/WizardComponents/WizardRemsOrganization"
 import WizardRemsPolicies from "components/SubmissionWizard/WizardComponents/WizardRemsPolicies"
 import WizardStepContentHeader from "components/SubmissionWizard/WizardComponents/WizardStepContentHeader"
+import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { addRemsToSubmission } from "features/wizardSubmissionSlice"
@@ -92,7 +93,12 @@ const DacPoliciesForm = () => {
           const response = await submissionAPIService.getSubmissionById(submissionId)
           if (response.data.rems) {
             setSelectedRems(response.data.rems)
-            setValue("organizationId", response.data.rems["organizationId"])
+            // set default form values
+            reset({
+              organizationId: response.data.rems["organizationId"] || "",
+              workflowId: response.data.rems["workflowId"] || null,
+              licenses: response.data.rems["licenses"] || [],
+            })
           }
         } catch (error) {
           dispatch(
@@ -115,13 +121,17 @@ const DacPoliciesForm = () => {
   const {
     handleSubmit,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, dirtyFields, defaultValues },
     setValue,
+    getValues,
+    reset,
   } = useForm()
+
   const onSubmit = async data => {
     const remsData = { ...data, licenses: data.licenses.concat(linkedPolicies) }
     dispatch(addRemsToSubmission(submissionId, remsData))
       .then(() => {
+        reset(data, { keepValues: true }) // reset form state
         dispatch(
           updateStatus({
             status: ResponseStatus.success,
@@ -154,7 +164,10 @@ const DacPoliciesForm = () => {
   )
 
   return (
-    <Form onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}>
+    <Form
+      onSubmit={handleSubmit(async data => onSubmit(data as DacPoliciesData))}
+      onBlur={() => checkUnsavedInputHook(dirtyFields, defaultValues, getValues, dispatch)}
+    >
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">

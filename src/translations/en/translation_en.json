@@ -86,7 +86,7 @@
     "hideDetails": "Hide details"
   },
   "formActions": {
-    "update": "Update",
+    "save": "Save",
     "options": "Options",
     "uploadXML": "Upload XML",
     "clearForm": "Clear form",
@@ -151,24 +151,17 @@
   "alerts": {
     "actions": {
       "cancel": "Cancel",
-      "save": "Save",
-      "noSave": "Do not save",
-      "update": "Update",
+      "exit": "Exit",
       "continueSubmission": "No, continue creating the submission",
-      "cancelSubmission": "Yes, cancel creating a submission",
-      "saveExit": "Yes, save and exit"
+      "saveExit": "Yes, save and exit",
+      "link": "Link folder"
     },
-    "submitted": {
-      "title": "Would you like to save the edited form data?",
+    "exit": {
+      "title": "Are you sure you want to exit this form?",
       "content": "Unsaved changes will be lost."
     },
-    "xml": {
-      "title": "Would you like to save this xml upload?",
-      "content": "If you don't save, the uploaded xml file will be lost."
-    },
-    "cancel": {
-      "title": "Cancel creating a submission?",
-      "content": "If you cancel creating a submission, the submission and its content will not be saved anywhere."
+    "link": {
+      "content": "Datafolder link cannot be changed afterwards. Are you sure of your selection?"
     },
     "save": {
       "title": "Save progress and exit?",
@@ -176,9 +169,6 @@
     }
   },
   "errors": {
-    "connection": {
-      "updateObject": "Connection error, cannot update object."
-    },
     "form": {
       "empty": "must have at least 1 item"
     }

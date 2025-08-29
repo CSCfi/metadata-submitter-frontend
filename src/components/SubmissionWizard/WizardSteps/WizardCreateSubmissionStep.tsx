@@ -1,5 +1,5 @@
 /* Workflows are disabled for MVP */
-import React, { RefObject, useState } from "react"
+import React, { RefObject, useEffect, useState } from "react"
 
 import {
   Button,
@@ -18,8 +18,10 @@ import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
+import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -84,11 +86,22 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   //   }
   // }, [])
 
+  useEffect(() => {
+    if (submission?.name && submission?.description) {
+      // set default form values
+      reset({
+        name: submission.name,
+        description: submission.description,
+      })
+    }
+  }, [submission])
+
   const {
     handleSubmit,
     control,
-    // formState: { isSubmitting, isSubmitted },
-    formState: { isSubmitting },
+    reset,
+    getValues,
+    formState: { isSubmitting, dirtyFields, defaultValues },
   } = useForm()
 
   const navigate = useNavigate()
@@ -101,6 +114,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     if (submission && submission?.submissionId) {
       dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
         .then(() => {
+          reset(data, { keepValues: true }) // reset form state
+          dispatch(resetUnsavedForm())
           dispatch(
             updateStatus({
               status: ResponseStatus.success,
@@ -118,6 +133,9 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       dispatch(createSubmission(projectId, data))
         .then(response => {
           const submissionId = response.data.submissionId
+          // RHF does not reset form state after submit
+          reset(data, { keepValues: true })
+          dispatch(resetUnsavedForm())
           navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
         })
         .catch((error: string) => {
@@ -134,6 +152,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     <Form
       onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
       ref={ref as RefObject<HTMLFormElement>}
+      onBlur={() => checkUnsavedInputHook(dirtyFields, defaultValues, getValues, dispatch)}
     >
       <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
         {t("newSubmission.nameSubmission")}
@@ -141,7 +160,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       <Controller
         control={control}
         name="name"
-        defaultValue={submission ? submission.name : ""}
+        defaultValue={""}
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
@@ -159,7 +178,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       <Controller
         control={control}
         name="description"
-        defaultValue={submission ? submission.description : ""}
+        defaultValue={""}
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}

@@ -3,13 +3,12 @@ import { BrowserRouter } from "react-router"
 
 import WizardAlert from "../components/SubmissionWizard/WizardComponents/WizardAlert"
 
-import { ObjectSubmissionsArray } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardAlert", () => {
   test("should render appropriate dialogs", async () => {
     const alerts = [
-      { location: "submission", types: ObjectSubmissionsArray },
+      { location: "submission", types: ["exit", "link"] },
       { location: "header", types: ["save"] },
     ]
 

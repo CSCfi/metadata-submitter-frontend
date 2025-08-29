@@ -1014,12 +1014,12 @@ const FormDatePicker = ({
       {({ setValue }: ConnectFormMethods) => {
         const handleChangeStartDate = (newValue: moment.Moment | null) => {
           setStartDate(newValue)
-          setValue(name, makeValidDateString(newValue, endDate))
+          setValue(name, makeValidDateString(newValue, endDate), { shouldDirty: true })
         }
 
         const handleChangeEndDate = (newValue: moment.Moment | null) => {
           setEndDate(newValue)
-          setValue(name, makeValidDateString(startDate, newValue))
+          setValue(name, makeValidDateString(startDate, newValue), { shouldDirty: true })
         }
 
         return (
@@ -1127,16 +1127,13 @@ const FormAutocompleteField = ({
   description,
 }: FormFieldBaseProps & { description: string }) => {
   const dispatch = useAppDispatch()
-
-  const { setValue, getValues } = useFormContext()
+  const { getValues } = useFormContext()
 
   const defaultValue = getValues(name) || ""
-  const [selection, setSelection] = React.useState<RORItem | null>(null)
   const [open, setOpen] = React.useState(false)
   const [options, setOptions] = React.useState([])
   const [inputValue, setInputValue] = React.useState("")
   const [loading, setLoading] = React.useState(false)
-  const clearForm = useAppSelector(state => state.clearForm)
 
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
@@ -1186,116 +1183,96 @@ const FormAutocompleteField = ({
       active = false
       setLoading(false)
     }
-  }, [selection, inputValue])
-
-  React.useEffect(() => {
-    if (clearForm) {
-      setSelection(null)
-      setInputValue("")
-    }
-  }, [clearForm])
+  }, [inputValue])
 
   return (
     <ConnectForm>
       {({ errors, control }: ConnectFormMethods) => {
         const error = get(errors, name)
 
-        const handleAutocompleteValueChange = (_event: unknown, option: RORItem) => {
-          setSelection(option)
-          setValue(name, option?.name)
-          option?.id ? dispatch(setAutocompleteField(option.id)) : null
-        }
-
-        const handleInputChange = (_event: unknown, newInputValue: string, reason: string) => {
-          setInputValue(newInputValue)
-          switch (reason) {
-            case "input":
-            case "clear":
-              setInputValue(newInputValue)
-              break
-            case "reset":
-              selection ? setInputValue(selection?.name) : null
-              break
-            default:
-              break
-          }
-        }
-
         return (
           <Controller
-            render={() => (
-              <StyledAutocomplete
-                freeSolo
-                open={open}
-                onOpen={() => {
-                  setOpen(true)
-                }}
-                onClose={() => {
-                  setOpen(false)
-                }}
-                options={options}
-                getOptionKey={option => option.id ?? ""}
-                getOptionLabel={option => option.name ?? ""}
-                disableClearable={inputValue.length === 0}
-                renderInput={params => (
-                  <BaselineDiv>
-                    <TextField
-                      {...params}
-                      label={label}
-                      id={name}
-                      name={name}
-                      variant="outlined"
-                      error={!!error}
-                      required={required}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <React.Fragment>
-                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                            {params.InputProps.endAdornment}
-                          </React.Fragment>
-                        ),
-                      }}
-                      inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
-                      sx={[
-                        {
-                          "&.MuiAutocomplete-endAdornment": {
-                            top: 0,
-                          },
-                        },
-                      ]}
-                    />
-                    {description && (
-                      <FieldTooltip
-                        title={
-                          <DisplayDescription description={description}>
-                            <>
-                              <br />
-                              {"Organisations provided by "}
-                              <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                                {"ror.org"}
-                                <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
-                              </a>
-                            </>
-                          </DisplayDescription>
-                        }
-                        placement="right"
-                        arrow
-                        describeChild
-                      >
-                        <TooltipIcon />
-                      </FieldTooltip>
-                    )}
-                  </BaselineDiv>
-                )}
-                onChange={handleAutocompleteValueChange}
-                onInputChange={handleInputChange}
-                value={defaultValue}
-                inputValue={inputValue || defaultValue}
-              />
-            )}
             name={name}
             control={control}
+            defaultValue={defaultValue}
+            render={({ field }) => {
+              return (
+                <StyledAutocomplete
+                  freeSolo
+                  open={open}
+                  onOpen={() => {
+                    setOpen(true)
+                  }}
+                  onClose={() => {
+                    setOpen(false)
+                  }}
+                  options={options}
+                  getOptionKey={option => option.id ?? ""}
+                  getOptionLabel={option => option.name || ""}
+                  disableClearable={inputValue.length === 0}
+                  value={field.value}
+                  inputValue={inputValue || defaultValue}
+                  onChange={(_event, option: RORItem) => {
+                    field.onChange(option?.name)
+                    option?.id
+                      ? dispatch(setAutocompleteField(option.id))
+                      : dispatch(setAutocompleteField(null))
+                  }}
+                  onInputChange={(_event, newInputValue: string) => setInputValue(newInputValue)}
+                  renderInput={params => (
+                    <BaselineDiv>
+                      <TextField
+                        {...params}
+                        label={label}
+                        id={name}
+                        name={name}
+                        variant="outlined"
+                        error={!!error}
+                        required={required}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                        inputProps={{ ...params.inputProps, "data-testid": `${name}-inputField` }}
+                        sx={[
+                          {
+                            "&.MuiAutocomplete-endAdornment": {
+                              top: 0,
+                            },
+                          },
+                        ]}
+                      />
+                      {description && (
+                        <FieldTooltip
+                          title={
+                            <DisplayDescription description={description}>
+                              <>
+                                <br />
+                                {"Organisations provided by "}
+                                <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                                  {"ror.org"}
+                                  <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
+                                </a>
+                              </>
+                            </DisplayDescription>
+                          }
+                          placement="right"
+                          arrow
+                          describeChild
+                        >
+                          <TooltipIcon />
+                        </FieldTooltip>
+                      )}
+                    </BaselineDiv>
+                  )}
+                />
+              )
+            }}
           />
         )
       }}
@@ -1340,6 +1317,8 @@ const FormTagField = ({
     }
   }, [clearForm])
 
+  const inputRef = React.useRef<HTMLInputElement | null>(null)
+
   return (
     <ConnectForm>
       {({ control }: ConnectFormMethods) => {
@@ -1347,7 +1326,7 @@ const FormTagField = ({
           <Controller
             name={name}
             control={control}
-            defaultValue=""
+            defaultValue={""}
             render={({ field }) => {
               const handleKeywordAsTag = (keyword: string) => {
                 // newTags with unique values
@@ -1378,6 +1357,8 @@ const FormTagField = ({
               const handleTagDelete = item => () => {
                 const newTags = tags.filter(tag => tag !== item)
                 field.onChange(newTags.join(","))
+                // manual focus to trigger blur event
+                inputRef.current?.focus()
               }
 
               return (
@@ -1386,6 +1367,7 @@ const FormTagField = ({
                     {...field}
                     required={required}
                     style={{ width: 0, opacity: 0, transform: "translate(8rem, 2rem)" }}
+                    ref={inputRef}
                   />
                   <ValidationTagField
                     slotProps={{
@@ -1680,14 +1662,18 @@ const FormArray = ({
     if (index === 0 && getValues(name)?.length <= 1) {
       remove()
       unregister(name)
-      return
+    } else {
+      // Set the correct values according to the name path when removing a field
+      const values = getValues(name)
+      const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
+      setValue(name, filteredValues)
+      setFormFields(filteredValues)
+      remove(index)
     }
-    // Set the correct values according to the name path when removing a field
-    const values = getValues(name)
-    const filteredValues = values?.filter((_val: unknown, ind: number) => ind !== index)
-    setValue(name, filteredValues)
-    setFormFields(filteredValues)
-    remove(index)
+    if (document.activeElement instanceof HTMLElement) {
+      // force input check onBlur
+      document.activeElement.blur()
+    }
   }
 
   return (

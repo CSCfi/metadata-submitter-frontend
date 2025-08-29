@@ -20,6 +20,7 @@ import type { FieldErrors, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
+import checkUnsavedInputHook from "../WizardHooks/WizardCheckUnsavedInputHook"
 import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
@@ -32,6 +33,7 @@ import { ObjectTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { addDoiInfoToSubmission } from "features/wizardSubmissionSlice"
 //import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
@@ -245,6 +247,8 @@ const FormContent = ({
       .then(() => {
         dispatch(resetAutocompleteField())
         // dispatch(resetCurrentObject())
+        methods.reset(data, { keepValues: true })
+        dispatch(resetUnsavedForm())
         dispatch(
           updateStatus({
             status: ResponseStatus.success,
@@ -375,6 +379,14 @@ const FormContent = ({
         onSubmit={methods.handleSubmit(onSubmit)}
         ref={ref as RefObject<HTMLFormElement>}
         onReset={handleReset}
+        onBlur={() =>
+          checkUnsavedInputHook(
+            methods.formState.dirtyFields,
+            methods.formState.defaultValues,
+            methods.getValues,
+            dispatch
+          )
+        }
       >
         <Box>{JSONSchemaParser.buildFields(formSchema)}</Box>
       </Form>
@@ -498,9 +510,13 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   const onSubmit = (data: Record<string, unknown>) => {
     if (Object.keys(data).length === 0) return
 
-    startTransition(
-      async () => await submitObjectHook(data, submission.submissionId, objectType, dispatch)
-    )
+    startTransition(async () => {
+      const response = await submitObjectHook(data, submission.submissionId, objectType, dispatch)
+      if (response["ok"]) {
+        methods.reset(data, { keepValues: true })
+        dispatch(resetUnsavedForm())
+      }
+    })
   }
 
   if (states.isLoading) return <CircularProgress />

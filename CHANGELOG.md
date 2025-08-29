@@ -81,6 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Add datafolder link confirmation dialog (#1068)
+- (users) Check forms for new input on blur and alert user of input loss when navigating away (#1068)
 - (users) Add Ready badge for Datafolder step (#1053)
 - Test appSDSX.spec.ts (#1067)
 - Extra descriptions for UI components and hooks' purposes

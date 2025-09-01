@@ -49,7 +49,7 @@ const getStepContent = (
       return <WizardAddObjectStep formRef={objectFormRef} />
     case 5:
       // Datacite, Summary and Publish steps
-      switch (objectType.toLowerCase()) {
+      switch (objectType) {
         case ObjectTypes.datacite:
           return <WizardAddObjectStep formRef={objectFormRef} />
         case ObjectTypes.summary:

@@ -117,7 +117,7 @@ const WizardShowSummaryStep: React.FC = () => {
 
         // Add row for linked files
         if (
-          stepItem.objectType === ObjectTypes.file &&
+          stepItem.objectType === ObjectTypes.linkedFolder &&
           submission.linkedFolder &&
           (!objects || Object.values(objects).flat().length === 0)
         ) {

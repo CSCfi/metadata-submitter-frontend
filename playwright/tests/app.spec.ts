@@ -120,7 +120,7 @@ test.describe("Basic application flow", () => {
     await clickAccordionPanel("Identifier and publish")
 
     // Click the "View Summary" button
-    await page.getByTestId("View Summary").click()
+    await page.getByTestId("View summary").click()
 
     /*
       Verify that all summary steps are present. There are 4 steps in FEGA workflow:
@@ -179,7 +179,7 @@ test.describe("Basic application flow", () => {
 
     // Verify that the updated name is displayed
     await clickAccordionPanel("Identifier and publish")
-    await page.getByTestId("View Summary").click()
+    await page.getByTestId("View summary").click()
 
     const updatedNameLocator = page
       .locator("[data-field='name']")

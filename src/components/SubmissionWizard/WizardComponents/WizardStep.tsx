@@ -17,7 +17,7 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes, NotMetadataObjects } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -63,22 +63,10 @@ const ActionButton = (props: {
     dispatch(setFocus())
 
     const stepParam = `step=${step}`
-    switch (parent) {
-      case "submissionDetails": {
-        navigate({ pathname: pathname, search: stepParam })
-        break
-      }
-      case "publish": {
-        navigate({ pathname: pathname, search: stepParam })
-        break
-      }
-      default: {
-        navigate({ pathname: pathname, search: stepParam })
-        dispatch(setObjectType(parent))
-        // resets only hook-form
-        if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
-      }
-    }
+    navigate({ pathname: pathname, search: stepParam })
+    dispatch(setObjectType(parent))
+    // resets only hook-form
+    if (ref?.current) ref.current?.dispatchEvent(new Event("reset", { bubbles: true }))
   }
 
   const handleAlert = (navigate: boolean) => {
@@ -135,42 +123,18 @@ const StepItems = (props: {
 
   const handleItemEdit = formObject => {
     dispatch(updateStep({ step: step, objectType: objectType }))
-
-    switch (step) {
-      case 1: {
-        dispatch(resetObjectType())
-        navigate({
-          pathname: pathWithLocale(`submission/${submissionId}`),
-          search: "step=1",
-        })
-        break
-      }
-      case 5: {
-        dispatch(resetCurrentObject())
+    if (NotMetadataObjects.includes(objectType)) {
+      dispatch(resetCurrentObject())
+      dispatch(setObjectType(objectType))
+      if (objectType === ObjectTypes.datacite) {
         dispatch(setCurrentObject(doiInfo))
-        navigate({
-          pathname: pathWithLocale(`submission/${submissionId}`),
-          search: "step=5",
-        })
-        dispatch(setObjectType(objectType))
-        break
       }
-      default: {
-        if (objectType === ObjectTypes.dacPolicies) {
-          dispatch(resetCurrentObject())
-          navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
-          dispatch(setObjectType(objectType))
-        } else if (objectType === ObjectTypes.file) {
-          // Handle linked folder click
-          navigate({
-            pathname: pathWithLocale(`submission/${submissionId}`),
-            search: `step=${step}`,
-          })
-        } else {
-          editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
-        }
-        break
-      }
+      navigate({
+        pathname: pathWithLocale(`submission/${submissionId}`),
+        search: `step=${step}`,
+      })
+    } else {
+      editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
     }
   }
 
@@ -297,16 +261,17 @@ const WizardStep = (props: WizardStepProps) => {
         const isActive = currentStepObject.stepObjectType === objectType
 
         // Check if we should show linked folder instead of objects
-        const shouldShowLinkedFolder = objectType === ObjectTypes.file && submission.linkedFolder
+        const shouldShowLinkedFolder =
+          objectType === ObjectTypes.linkedFolder && submission.linkedFolder
 
         const buttonText =
-          step === 1
-            ? t("edit")
-            : objectType === ObjectTypes.file || objectType === "Summary"
-              ? t("view")
-              : objectType === t("summaryPage.publish") || hasDoiInfo(submission.doiInfo)
-                ? t("edit")
-                : t("add")
+          objectType === ObjectTypes.linkedFolder || objectType === ObjectTypes.summary
+            ? t("view")
+            : objectType === ObjectTypes.publish ||
+                objectType === ObjectTypes.submissionDetails ||
+                hasDoiInfo(submission.doiInfo)
+              ? t("edit")
+              : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>
@@ -347,7 +312,7 @@ const WizardStep = (props: WizardStepProps) => {
 
                 <ActionButton
                   step={step}
-                  parent={step === 1 ? "submissionDetails" : objectType}
+                  parent={objectType}
                   buttonText={buttonText}
                   disabled={!!objects?.length && !allowMultipleObjects}
                   ref={ref}

@@ -29,7 +29,7 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 //import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectTypes } from "constants/wizardObject"
+import { ObjectTypes, NotMetadataObjects } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
@@ -476,13 +476,8 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
       })
     }
 
-    // In case of there is object type, and Summary amd Publish do not have schema
-    if (
-      objectType.length &&
-      objectType !== "file" &&
-      objectType !== "Summary" &&
-      objectType !== "Publish"
-    )
+    // Don't fetch schema for non metadata objects, except datacite
+    if (!NotMetadataObjects.includes(objectType) || objectType === ObjectTypes.datacite)
       fetchSchema()
   }, [objectType])
 

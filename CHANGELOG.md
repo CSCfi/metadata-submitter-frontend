@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added a new DOI form E2E test (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1043)
 - (users) Add datafolder link confirmation dialog (#1068)
 - (users) Check forms for new input on blur and alert user of input loss when navigating away (#1068)
 - (users) Add Ready badge for Datafolder step (#1053)

@@ -189,12 +189,6 @@ const traverseFields = (
 
   switch (object.type) {
     case "object": {
-      //remove properties below when Describe step is removed
-      const properties =
-        label === "Dataset" && path.length === 0
-          ? { title: object.properties["title"], description: object.properties["description"] }
-          : object.properties
-
       return (
         <FormSection
           key={name}
@@ -204,8 +198,8 @@ const traverseFields = (
           description={description}
           isTitleShown
         >
-          {Object.keys(properties).map(propertyKey => {
-            const property = properties[propertyKey] as FormObject
+          {Object.keys(object.properties).map(propertyKey => {
+            const property = object.properties[propertyKey] as FormObject
             const required = object?.else?.required ?? object.required
             let requireFirstItem = false
 
@@ -220,9 +214,9 @@ const traverseFields = (
             if (
               requireFirst ||
               requiredProperties?.includes(name) ||
-              requiredProperties?.includes(Object.keys(properties)[0])
+              requiredProperties?.includes(Object.keys(object.properties)[0])
             ) {
-              const parentProperty = Object.values(properties)[0] as { title: string }
+              const parentProperty = Object.values(object.properties)[0] as { title: string }
               requireFirstItem = parentProperty.title === property.title ? true : false
             }
 

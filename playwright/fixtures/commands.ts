@@ -95,6 +95,7 @@ const test = base.extend<CommandFixtures>({
       await page
         .getByTestId("submissionName")
         .fill(submissionName ? submissionName : "Test submission name")
+      await page.getByTestId("datasetTitle").fill("Test title")
       await page.getByTestId("submissionDescription").fill("Test submission description")
       await page.getByTestId(workflowType ? workflowType : "FEGA").isHidden() // For temporary hiding
       await page.getByTestId("create-submission").click()

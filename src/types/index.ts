@@ -112,6 +112,7 @@ export type SubmissionDetails = {
   workflow: string
   dateCreated?: number
   published: boolean
+  linkedFolder?: string
   allObjects?: Array<CurrentFormObject>
 }
 

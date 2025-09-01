@@ -135,7 +135,14 @@ const mapObjectsToStepsHook = (
       {
         objectType: ObjectTypes.linkedFolder,
         name: t("datafolder.datafolder"),
-        objects: [],
+        objects: submission?.linkedFolder
+          ? [
+              {
+                id: `linked-folder-${submission.submissionId}`,
+                displayTitle: submission?.linkedFolder,
+              },
+            ]
+          : [],
         required: true,
       },
     ],

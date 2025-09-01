@@ -54,13 +54,18 @@ test.describe("Filling DOI form", () => {
     await expect(page.getByTestId("third")).toContainText("third")
   })
 
-  test("Should not allow saving of form without required fields", async ({ page }) => {
+  test("Should not allow saving of form without required fields", async ({
+    page,
+    clickAccordionPanel,
+    clickAddObject,
+    formActions,
+  }) => {
     test.slow()
 
-    // try to save an empty form
-    await page.getByRole("button", { name: "Identifier and publish" }).click()
-    await page.getByTestId("Add datacite").click()
-    await page.getByTestId("form-datacite").click()
+    await clickAccordionPanel("Identifier and publish")
+    await clickAddObject("datacite")
+    await formActions("form-datacite")
+
     await page.getByText("must have at least 1 item").first().focus()
     await expect(page.getByText("must have at least 1 item")).toHaveCount(1)
     await page

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Adapt frontend to no Datacite step in the workflow schema (#1091)
+- Adapt frontend to no Files step in the workflow schema (#1074)
 - Migrate to ROR API version 2 as default version (#1076)
 - (users) Removed workflow radio button "Type of submission selection" from submission details page (#1067)
 - Skipped submission creation test app.spec.ts (#1067)

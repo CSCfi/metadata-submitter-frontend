@@ -8,6 +8,7 @@ import SubmissionWizard from "views/Submission"
 
 const allWorkflows = { FEGA: "", Bigpicture: "", SDSX: "" }
 const submissionName = "Submission name"
+const submissionTitle = "Submission dataset title"
 const submissionDescription = "Submission description"
 
 const restHandlers = [
@@ -24,6 +25,7 @@ const restHandlers = [
     return id === "123456"
       ? HttpResponse.json({
           name: submissionName,
+          title: submissionTitle,
           description: submissionDescription,
           submissionId: id,
           workflow: "FEGA",

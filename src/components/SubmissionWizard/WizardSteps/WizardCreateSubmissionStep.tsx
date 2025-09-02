@@ -87,10 +87,11 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   // }, [])
 
   useEffect(() => {
-    if (submission?.name && submission?.description) {
+    if (submission?.name && submission?.title && submission?.description) {
       // set default form values
       reset({
         name: submission.name,
+        title: submission.title,
         description: submission.description,
       })
     }
@@ -178,7 +179,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       <Controller
         control={control}
         name="title"
-        defaultValue={submission ? submission.title : ""}
+        defaultValue={""}
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}

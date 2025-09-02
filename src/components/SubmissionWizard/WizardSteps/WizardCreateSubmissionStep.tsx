@@ -29,12 +29,16 @@ import { useAppSelector, useAppDispatch } from "hooks"
 import type { SubmissionDataFromForm, HandlerRef } from "types"
 import { pathWithLocale } from "utils"
 
-const Form = styled("form")({
+const Form = styled("form")(({ theme }) => ({
   "& .MuiTextField-root": {
     margin: "1rem 0",
   },
+  "&  .MuiFormHelperText-root": {
+    color: theme.palette.secondary.main,
+    fontSize: "1rem",
+  },
   padding: "4rem",
-})
+}))
 
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
@@ -165,11 +169,13 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            label={`${t("newSubmission.submissionName")} *`}
+            label={`${t("newSubmission.datasetName")} *`}
             variant="outlined"
             fullWidth
             error={!!error}
-            helperText={error ? t("newSubmission.errors.missingName") : null}
+            helperText={
+              error ? t("newSubmission.errors.missingName") : t("newSubmission.helpers.datasetName")
+            }
             disabled={isSubmitting}
             slotProps={{ htmlInput: { "data-testid": "submissionName" } }}
           />
@@ -187,7 +193,11 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             variant="outlined"
             fullWidth
             error={!!error}
-            helperText={error ? t("newSubmission.errors.missingTitle") : null}
+            helperText={
+              error
+                ? t("newSubmission.errors.missingTitle")
+                : t("newSubmission.helpers.datasetTitle")
+            }
             disabled={isSubmitting}
             slotProps={{ htmlInput: { "data-testid": "datasetTitle" } }}
           />
@@ -201,13 +211,17 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            label={`${t("newSubmission.submissionDescription")} *`}
+            label={`${t("newSubmission.datasetDescription")} *`}
             variant="outlined"
             fullWidth
             multiline
             rows={5}
             error={!!error}
-            helperText={error ? t("newSubmission.errors.missingDescription") : null}
+            helperText={
+              error
+                ? t("newSubmission.errors.missingDescription")
+                : t("newSubmission.helpers.datasetDescription")
+            }
             disabled={isSubmitting}
             slotProps={{ htmlInput: { "data-testid": "submissionDescription" } }}
           />

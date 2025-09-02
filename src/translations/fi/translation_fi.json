@@ -38,16 +38,21 @@
     "noAPIKeys": "There are no API keys in this project"
   },
   "newSubmission": {
-    "nameSubmission": "Name your submission",
+    "nameSubmission": "Add public title and description",
     "typeOfSubmission": "Type of submission",
-    "submissionName": "Submission name",
-    "datasetTitle": "Submission (dataset) title",
-    "submissionDescription": "Submission description",
+    "datasetName": "Dataset name",
+    "datasetTitle": "Dataset title",
+    "datasetDescription": "Dataset description",
     "errors": {
       "missingName": "Please give a name to the submission.",
       "missingTitle": "Please give a dataset title.",
       "missingDescription": "Please give a description to the submission.",
       "missingWorkflow": "Please select a submission type."
+    },
+    "helpers": {
+      "datasetName": "Name of your dataset in SD Submit service",
+      "datasetTitle": "Title of your dataset in Etsin or any other discovery service",
+      "datasetDescription": "Abstract describing your dataset in Etsin or other discovery service"
     }
   },
   "dacPolicies": {

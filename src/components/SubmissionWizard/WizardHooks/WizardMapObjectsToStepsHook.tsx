@@ -63,7 +63,7 @@ const mapObjectsToStepsHook = (
    * Rest of the steps are visiblef after first step is saved.
    */
   const createSubmissionStep = {
-    title: t("submission.details"),
+    title: t("submission.datasetDetails"),
     schemas: [
       {
         objectType: ObjectTypes.submissionDetails,

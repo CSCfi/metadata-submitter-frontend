@@ -169,7 +169,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            label={`${t("newSubmission.datasetName")} *`}
+            label={`${t("newSubmission.datasetName")}*`}
             variant="outlined"
             fullWidth
             error={!!error}
@@ -189,7 +189,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            label={`${t("newSubmission.datasetTitle")} *`}
+            label={`${t("newSubmission.datasetTitle")}*`}
             variant="outlined"
             fullWidth
             error={!!error}
@@ -211,7 +211,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
         render={({ field, fieldState: { error } }) => (
           <TextField
             {...field}
-            label={`${t("newSubmission.datasetDescription")} *`}
+            label={`${t("newSubmission.datasetDescription")}*`}
             variant="outlined"
             fullWidth
             multiline

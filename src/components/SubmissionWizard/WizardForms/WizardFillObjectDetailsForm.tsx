@@ -477,7 +477,10 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
     }
 
     // Don't fetch schema for non metadata objects, except datacite
-    if (!NotMetadataObjects.includes(objectType) || objectType === ObjectTypes.datacite)
+    if (
+      objectType &&
+      (!NotMetadataObjects.includes(objectType) || objectType === ObjectTypes.datacite)
+    )
       fetchSchema()
   }, [objectType])
 

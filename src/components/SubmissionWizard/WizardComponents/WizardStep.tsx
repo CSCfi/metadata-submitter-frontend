@@ -259,11 +259,6 @@ const WizardStep = (props: WizardStepProps) => {
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
-
-        // Check if we should show linked folder instead of objects
-        const shouldShowLinkedFolder =
-          objectType === ObjectTypes.linkedFolder && submission.linkedFolder
-
         const buttonText =
           objectType === ObjectTypes.linkedFolder || objectType === ObjectTypes.summary
             ? t("view")
@@ -282,26 +277,12 @@ const WizardStep = (props: WizardStepProps) => {
                   {name}
                 </div>
 
-                {(objects || shouldShowLinkedFolder) && (
+                {objects && (
                   <ul className="tree" data-testid={`${objectType}-objects-list`}>
                     {objects && (
                       <StepItems
                         step={step}
                         objects={objects}
-                        submissionId={submission.submissionId}
-                        doiInfo={submission.doiInfo}
-                        objectType={objectType}
-                      />
-                    )}
-                    {shouldShowLinkedFolder && (
-                      <StepItems
-                        step={step}
-                        objects={[
-                          {
-                            id: `linked-folder-${submission.submissionId}`,
-                            displayTitle: submission.linkedFolder ?? "",
-                          } as StepObject,
-                        ]}
                         submissionId={submission.submissionId}
                         doiInfo={submission.doiInfo}
                         objectType={objectType}

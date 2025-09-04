@@ -98,7 +98,11 @@ export const updateSubmission =
       if (response.ok) {
         const updatedSubmission = extend(
           { ...submissionDetails.submission },
-          { name: submissionDetails.name, description: submissionDetails.description }
+          {
+            name: submissionDetails.name,
+            title: submissionDetails.title,
+            description: submissionDetails.description,
+          }
         )
         dispatch(setSubmission(updatedSubmission))
         resolve(response)

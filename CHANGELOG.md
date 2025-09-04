@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Refactor Datafolder step object initialization (#1101)
 - Adapt frontend to no Datacite step in the workflow schema (#1091)
 - Adapt frontend to no Files step in the workflow schema (#1074)
 - Migrate to ROR API version 2 as default version (#1076)

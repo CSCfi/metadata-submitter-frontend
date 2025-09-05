@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Input field labels of the first page (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
+- Some unit tests and Playwright fixture to contain the title field.
+- Text field labels according to the new design (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
 - Refactor Datafolder step object initialization (#1101)
 - Adapt frontend to no Datacite step in the workflow schema (#1091)
 - Adapt frontend to no Files step in the workflow schema (#1074)
@@ -84,6 +87,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Helper texts below input fields of first page (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
+- (users) A new dataset title field for submission (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1080)
+- Helper text to text fields (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
+- types/index.ts SubmissionDetails and SubmissionDataFromForm, and submissionAPI to contain title (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1080)
+- A new title field in create submission wizard page (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1080)
 - Added a new DOI form E2E test (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1043)
 - (users) Add datafolder link confirmation dialog (#1068)
 - (users) Check forms for new input on blur and alert user of input loss when navigating away (#1068)

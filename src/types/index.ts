@@ -108,6 +108,7 @@ export type SubmissionId = {
 
 export type SubmissionDetails = {
   name: string
+  title: string
   description: string
   workflow: string
   dateCreated?: number
@@ -128,6 +129,7 @@ export type SubmissionRow = {
 
 export type SubmissionDataFromForm = {
   name: string
+  title: string
   description: string
   workflowType: string
 }

@@ -23,6 +23,7 @@ type InitialState = SubmissionDetailsWithId & {
 const initialState: InitialState = {
   submissionId: "",
   name: "",
+  title: "",
   description: "",
   workflow: "",
   published: false,
@@ -55,14 +56,16 @@ export default wizardSubmissionSlice.reducer
 export const createSubmission =
   (projectId: string, submissionDetails: SubmissionDataFromForm) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const { name, description, workflowType: workflow } = submissionDetails
+    const { name, title, description, workflowType: workflow } = submissionDetails
     const submissionForBackend: SubmissionDetails & { projectId: string } = {
       name,
+      title,
       description,
       workflow,
       projectId,
       published: false,
     }
+
     const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 
     return new Promise((resolve, reject) => {
@@ -87,6 +90,7 @@ export const updateSubmission =
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await submissionAPIService.patchSubmissionById(submissionId, {
       name: submissionDetails.name,
+      title: submissionDetails.title,
       description: submissionDetails.description,
     })
 
@@ -94,7 +98,11 @@ export const updateSubmission =
       if (response.ok) {
         const updatedSubmission = extend(
           { ...submissionDetails.submission },
-          { name: submissionDetails.name, description: submissionDetails.description }
+          {
+            name: submissionDetails.name,
+            title: submissionDetails.title,
+            description: submissionDetails.description,
+          }
         )
         dispatch(setSubmission(updatedSubmission))
         resolve(response)

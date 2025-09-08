@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Fix removed form array items flagged as required (#1077)
 - Replaced deprecated inputProps with slotProps in WizardCreateSubmissionStep.tsx
 - (users) Fixed licenses not being reset in DAC and policies form (#1073)
 - (users) Fixed required field validation in DOI form not working (#1055)

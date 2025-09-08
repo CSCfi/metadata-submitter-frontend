@@ -1655,7 +1655,8 @@ const FormArray = ({
   const handleRemove = (index: number) => {
     // Unregister field if removing last item: empty array isn't flagged as missing or invalid
     if (index === 0 && getValues(name)?.length <= 1) {
-      remove()
+      setFormFields([])
+      remove(index)
       unregister(name)
     } else {
       // Set the correct values according to the name path when removing a field

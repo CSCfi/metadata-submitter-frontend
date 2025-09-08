@@ -3,6 +3,7 @@ import React, { RefObject, useEffect, useState } from "react"
 
 import {
   Button,
+  CardContent,
   // FormControl,
   // FormControlLabel,
   // FormLabel,
@@ -18,6 +19,8 @@ import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
+import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
+
 import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
@@ -30,6 +33,7 @@ import type { SubmissionDataFromForm, HandlerRef } from "types"
 import { pathWithLocale } from "utils"
 
 const Form = styled("form")(({ theme }) => ({
+  "& .MuiCardContent-root": { padding: "4rem" },
   "& .MuiTextField-root": {
     margin: "1rem 0",
   },
@@ -37,7 +41,6 @@ const Form = styled("form")(({ theme }) => ({
     color: theme.palette.secondary.main,
     fontSize: "1rem",
   },
-  padding: "4rem",
 }))
 
 /**
@@ -153,91 +156,108 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   // const workflowType = useAppSelector(state => state.workflowType)
   // const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
+  const SaveButton = (
+    <Button
+      disabled={isSubmitting}
+      size="small"
+      variant="contained"
+      type="submit"
+      aria-label={t("ariaLabels.saveDetails")}
+      data-testid="form-ready"
+    >
+      {t("save")}
+    </Button>
+  )
+
   return (
     <Form
       onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
       ref={ref as RefObject<HTMLFormElement>}
       onBlur={() => checkUnsavedInputHook(dirtyFields, defaultValues, getValues, dispatch)}
     >
-      <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
-        {t("newSubmission.nameSubmission")}
-      </Typography>
-      <Controller
-        control={control}
-        name="name"
-        defaultValue={""}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            {...field}
-            label={`${t("newSubmission.datasetName")}*`}
-            variant="outlined"
-            fullWidth
-            error={!!error}
-            helperText={
-              error ? t("newSubmission.errors.missingName") : t("newSubmission.helpers.datasetName")
-            }
-            disabled={isSubmitting}
-            slotProps={{ htmlInput: { "data-testid": "submissionName" } }}
-          />
-        )}
-        rules={{ required: true, validate: { name: value => value.length > 0 } }}
-      />
-      <Controller
-        control={control}
-        name="title"
-        defaultValue={""}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            {...field}
-            label={`${t("newSubmission.datasetTitle")}*`}
-            variant="outlined"
-            fullWidth
-            error={!!error}
-            helperText={
-              error
-                ? t("newSubmission.errors.missingTitle")
-                : t("newSubmission.helpers.datasetTitle")
-            }
-            disabled={isSubmitting}
-            slotProps={{ htmlInput: { "data-testid": "datasetTitle" } }}
-          />
-        )}
-        rules={{ required: true, validate: { title: value => value.length > 0 } }}
-      />
-      <Controller
-        control={control}
-        name="description"
-        defaultValue={""}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            {...field}
-            label={`${t("newSubmission.datasetDescription")}*`}
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={5}
-            error={!!error}
-            helperText={
-              error
-                ? t("newSubmission.errors.missingDescription")
-                : t("newSubmission.helpers.datasetDescription")
-            }
-            disabled={isSubmitting}
-            slotProps={{ htmlInput: { "data-testid": "submissionDescription" } }}
-          />
-        )}
-        rules={{ required: true, validate: { description: value => value.length > 0 } }}
-      />
+      <WizardStepContentHeader action={SaveButton} />
+      <CardContent>
+        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
+          {t("newSubmission.nameSubmission")}
+        </Typography>
+        <Controller
+          control={control}
+          name="name"
+          defaultValue={""}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label={`${t("newSubmission.datasetName")}*`}
+              variant="outlined"
+              fullWidth
+              error={!!error}
+              helperText={
+                error
+                  ? t("newSubmission.errors.missingName")
+                  : t("newSubmission.helpers.datasetName")
+              }
+              disabled={isSubmitting}
+              slotProps={{ htmlInput: { "data-testid": "submissionName" } }}
+            />
+          )}
+          rules={{ required: true, validate: { name: value => value.length > 0 } }}
+        />
+        <Controller
+          control={control}
+          name="title"
+          defaultValue={""}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label={`${t("newSubmission.datasetTitle")}*`}
+              variant="outlined"
+              fullWidth
+              error={!!error}
+              helperText={
+                error
+                  ? t("newSubmission.errors.missingTitle")
+                  : t("newSubmission.helpers.datasetTitle")
+              }
+              disabled={isSubmitting}
+              slotProps={{ htmlInput: { "data-testid": "datasetTitle" } }}
+            />
+          )}
+          rules={{ required: true, validate: { title: value => value.length > 0 } }}
+        />
+        <Controller
+          control={control}
+          name="description"
+          defaultValue={""}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label={`${t("newSubmission.datasetDescription")}*`}
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={5}
+              error={!!error}
+              helperText={
+                error
+                  ? t("newSubmission.errors.missingDescription")
+                  : t("newSubmission.helpers.datasetDescription")
+              }
+              disabled={isSubmitting}
+              slotProps={{ htmlInput: { "data-testid": "submissionDescription" } }}
+            />
+          )}
+          rules={{ required: true, validate: { description: value => value.length > 0 } }}
+        />
 
-      {/* Temporary disable workflow selection and use SDSX only */}
-      <Controller
-        control={control}
-        name="workflowType"
-        defaultValue={selectedWorkflowType}
-        data-testid="SDSX"
-        render={() => <input id="hiddenWorkflow" type="hidden" name="workflowType" />}
-      />
-      {/* <Grid sx={{ mt: 2 }} container spacing={2}>
+        {/* Temporary disable workflow selection and use SDSX only */}
+        <Controller
+          control={control}
+          name="workflowType"
+          defaultValue={selectedWorkflowType}
+          data-testid="SDSX"
+          render={() => <input id="hiddenWorkflow" type="hidden" name="workflowType" />}
+        />
+        {/* <Grid sx={{ mt: 2 }} container spacing={2}>
         <Grid>
           <FormLabel
             id="submission-type-selection-label"
@@ -297,17 +317,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
             )}
           </FormControl>
         </Grid>
-      </Grid> */}
-      <Button
-        sx={{ mt: "2rem", p: "1rem 5rem" }}
-        size="large"
-        variant="contained"
-        type="submit"
-        aria-label={t("ariaLabels.saveDetails")}
-        data-testid="create-submission"
-      >
-        {t("save")}
-      </Button>
+        </Grid> */}
+      </CardContent>
     </Form>
   )
 }

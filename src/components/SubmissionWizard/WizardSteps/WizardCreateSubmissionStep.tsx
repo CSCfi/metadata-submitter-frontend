@@ -16,7 +16,6 @@ import {
 import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router"
 
 import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
@@ -27,7 +26,6 @@ import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 // import workflowAPIService from "services/workflowAPI"
 import type { SubmissionDataFromForm, HandlerRef } from "types"
-import { pathWithLocale } from "utils"
 
 const Form = styled("form")(({ theme }) => ({
   "& .MuiTextField-root": {
@@ -109,8 +107,6 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     formState: { isSubmitting, dirtyFields, defaultValues },
   } = useForm()
 
-  const navigate = useNavigate()
-
   const onSubmit = async (data: SubmissionDataFromForm) => {
     if (selectedWorkflowType === "") {
       return
@@ -136,12 +132,16 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
       // dispatch(setWorkflowType(data.workflowType))
       dispatch(setWorkflowType("SDSX"))
       dispatch(createSubmission(projectId, data))
-        .then(response => {
-          const submissionId = response.data.submissionId
+        .then(() => {
           // RHF does not reset form state after submit
           reset(data, { keepValues: true })
           dispatch(resetUnsavedForm())
-          navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=2" })
+          dispatch(
+            updateStatus({
+              status: ResponseStatus.success,
+              helperText: "snackbarMessages.success.submission.created",
+            })
+          )
         })
         .catch((error: string) => {
           dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))

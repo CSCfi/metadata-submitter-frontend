@@ -133,6 +133,7 @@
     },
     "success": {
       "submission": {
+        "created": "Title and description were successfully saved.",
         "updated": "Submission updated"
       },
       "objects": {

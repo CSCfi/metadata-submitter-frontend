@@ -121,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- (users) Remove redirection to step 2 after creating a submission (#1103)
 - (users) Remove draft logic for badges (#1078)
 - MetadataObjects and drafts from unit tests (#1088)
 - Legacy components no longer used for the UI (#1086)

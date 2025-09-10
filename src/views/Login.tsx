@@ -63,9 +63,11 @@ const Login: React.FC = () => {
         <Typography variant="h4" sx={{ color: "primary.main", fontWeight: 700 }}>
           {t("serviceTitle")}
         </Typography>
-        <Typography variant="subtitle1" sx={{ mt: "3.6rem" }}>
-          {t("serviceIntro")}
-        </Typography>
+        <div style={{ width: "60%" }}>
+          <Typography variant="subtitle1" sx={{ mt: "3.6rem" }}>
+            {t("serviceIntro")}
+          </Typography>
+        </div>
         <LoginButton
           variant="contained"
           color="primary"

@@ -1,6 +1,6 @@
 {
   "serviceTitle": "SD Submit",
-  "serviceIntro": "Tool for submitting metadata.",
+  "serviceIntro": "SD Submit is a service for submitting sensitive research data and related metadata, enabling researchers to publish their datasets securely, with full control over access and reuse.",
   "project": "Project",
   "save": "Save",
   "add": "Add",

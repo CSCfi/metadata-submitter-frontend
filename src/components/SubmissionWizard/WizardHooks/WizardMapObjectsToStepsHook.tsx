@@ -1,5 +1,6 @@
+/* metadataObjects is disabled for MVP */
 import type { TFunction } from "i18next"
-import { startCase } from "lodash"
+//import { startCase } from "lodash"
 
 import { ObjectTypes } from "constants/wizardObject"
 //import { WorkflowTypes } from "constants/wizardWorkflow"
@@ -8,7 +9,7 @@ import type {
   Schema,
   SubmissionFolder,
   Workflow,
-  WorkflowStep,
+  // WorkflowStep,
   MappedSteps,
 } from "types"
 import { hasDoiInfo } from "utils"
@@ -25,37 +26,37 @@ const mapObjectsToStepsHook = (
   remsInfo: Record<string, unknown>[]
 ): { mappedSteps: MappedSteps[] } => {
   // Group objects by schema
-  const groupedObjects = objectTypesArray
-    .map((schema: Schema) => {
-      return {
-        [schema]: objects.filter(obj => obj.schema === schema),
-      }
-    })
-    .reduce((map, obj) => {
-      const key = Object.keys(obj)[0]
-      map[key] = obj[key]
-      return map
-    }, {})
+  // const groupedObjects = objectTypesArray
+  //   .map((schema: Schema) => {
+  //     return {
+  //       [schema]: objects.filter(obj => obj.schema === schema),
+  //     }
+  //   })
+  //   .reduce((map, obj) => {
+  //     const key = Object.keys(obj)[0]
+  //     map[key] = obj[key]
+  //     return map
+  //   }, {})
 
-  const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
+  // const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
 
-  const schemaSteps =
-    allSteps?.length > 0
-      ? allSteps.map((step: WorkflowStep) => {
-          return {
-            ...step,
-            ["schemas"]: step.schemas.map(schema => ({
-              ...schema,
-              name:
-                schema.name === ObjectTypes.dac
-                  ? schema.name.toUpperCase()
-                  : startCase(schema.name),
-              objectType: schema.name,
-              objects: groupedObjects[schema.name],
-            })),
-          }
-        })
-      : []
+  // const schemaSteps =
+  //   allSteps?.length > 0
+  //     ? allSteps.map((step: WorkflowStep) => {
+  //         return {
+  //           ...step,
+  //           ["schemas"]: step.schemas.map(schema => ({
+  //             ...schema,
+  //             name:
+  //               schema.name === ObjectTypes.dac
+  //                 ? schema.name.toUpperCase()
+  //                 : startCase(schema.name),
+  //             objectType: schema.name,
+  //             objects: groupedObjects[schema.name],
+  //           })),
+  //         }
+  //       })
+  //     : []
 
   /*
    * List of accordion steps and configurations.
@@ -187,7 +188,8 @@ const mapObjectsToStepsHook = (
   // Comment out steps for other workflows
   const mappedSteps = submission.submissionId
     ? // ? currentWorkflow?.name == WorkflowTypes.sdsx
-      [createSubmissionStep, dacPoliciesStep, datafolderStep, ...schemaSteps, idPublishStep]
+      // [createSubmissionStep, dacPoliciesStep, datafolderStep, ...schemaSteps, idPublishStep]
+      [createSubmissionStep, dacPoliciesStep, datafolderStep, idPublishStep]
     : //  : [createSubmissionStep, ...schemaSteps, datafolderStep, idPublishStep]
       [createSubmissionStep]
   return { mappedSteps }

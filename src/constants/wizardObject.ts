@@ -41,7 +41,13 @@ export const ObjectSubmissionTypes = {
   existing: "Existing",
 }
 
-export const ValidSteps = [1, 2, 3, 4, 5]
+// SDSX valid steps
+export const ValidSteps = [
+  "createSubmissionStep",
+  "dacPoliciesStep",
+  "datafolderStep",
+  "idPublishStep",
+]
 
 // Used only in WizardDraftSelections.tsx, not affected by workflows?
 export const ObjectSubmissionStepsList = [

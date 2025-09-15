@@ -38,16 +38,14 @@ const getStepContent = (
   objectFormRef: HandlerRef,
   objectType: string
 ) => {
-  switch (wizardStep) {
-    case 1:
+  switch (ValidSteps[wizardStep - 1]) {
+    case "createSubmissionStep":
       return <WizardCreateSubmissionStep ref={createSubmissionFormRef} />
-    case 2:
+    case "dacPoliciesStep":
       return <WizardAddObjectStep formRef={objectFormRef} />
-    case 3:
+    case "datafolderStep":
       return <WizardDataFolderStep />
-    case 4:
-      return <WizardAddObjectStep formRef={objectFormRef} />
-    case 5:
+    case "idPublishStep":
       // Datacite, Summary and Publish steps
       switch (objectType) {
         case ObjectTypes.datacite:
@@ -248,7 +246,7 @@ const SubmissionWizard: React.FC = () => {
 
   const objectFormRef = useRef<HandlerRef>(undefined)
 
-  return ValidSteps.includes(wizardStep) ? (
+  return wizardStep > 0 && ValidSteps.length >= wizardStep ? (
     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
       <Grid
         sx={{

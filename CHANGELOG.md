@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Updated login text (#1093)
 - (users) In the Dataset details position of Save button is moved to top right (#1102)
 - In the Dataset details position of Save button is moved to top right (#1102)
 - (users) Input field labels of the first page (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)

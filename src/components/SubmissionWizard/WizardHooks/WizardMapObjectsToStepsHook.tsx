@@ -7,7 +7,7 @@ import { ObjectTypes } from "constants/wizardObject"
 import type {
   StepObject,
   Schema,
-  SubmissionFolder,
+  Submission,
   Workflow,
   // WorkflowStep,
   MappedSteps,
@@ -18,7 +18,7 @@ import { hasDoiInfo } from "utils"
  * Map the structure of objects within a submission to separate steps in the Accordion
  */
 const mapObjectsToStepsHook = (
-  submission: SubmissionFolder,
+  submission: Submission,
   objects: StepObject[],
   objectTypesArray: Schema[],
   currentWorkflow: Workflow | Record<string, unknown>,
@@ -130,17 +130,17 @@ const mapObjectsToStepsHook = (
     ],
   }
 
-  const datafolderStep = {
-    title: t("datafolder.datafolder"),
+  const dataBucketStep = {
+    title: t("dataBucket.dataBucket"),
     schemas: [
       {
-        objectType: ObjectTypes.linkedFolder,
-        name: t("datafolder.datafolder"),
-        objects: submission?.linkedFolder
+        objectType: ObjectTypes.bucket,
+        name: t("dataBucket.linkBucket"),
+        objects: submission?.bucket
           ? [
               {
-                id: `linked-folder-${submission.submissionId}`,
-                displayTitle: submission?.linkedFolder,
+                id: `linked-data-bucket-${submission.submissionId}`,
+                displayTitle: submission?.bucket,
               },
             ]
           : [],
@@ -188,9 +188,9 @@ const mapObjectsToStepsHook = (
   // Comment out steps for other workflows
   const mappedSteps = submission.submissionId
     ? // ? currentWorkflow?.name == WorkflowTypes.sdsx
-      // [createSubmissionStep, dacPoliciesStep, datafolderStep, ...schemaSteps, idPublishStep]
-      [createSubmissionStep, dacPoliciesStep, datafolderStep, idPublishStep]
-    : //  : [createSubmissionStep, ...schemaSteps, datafolderStep, idPublishStep]
+      // [createSubmissionStep, dacPoliciesStep, dataBucketStep, ...schemaSteps, idPublishStep]
+      [createSubmissionStep, dacPoliciesStep, dataBucketStep, idPublishStep]
+    : //  : [createSubmissionStep, ...schemaSteps, dataBucketStep, idPublishStep]
       [createSubmissionStep]
   return { mappedSteps }
 }

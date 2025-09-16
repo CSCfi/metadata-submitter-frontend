@@ -8,7 +8,7 @@ export const ObjectTypes = {
   datacite: "datacite",
   policy: "policy",
   dataset: "dataset",
-  linkedFolder: "linkedFolder",
+  bucket: "bucket",
   bpimage: "bpimage",
   bpdataset: "bpdataset",
   bpsample: "bpsample",
@@ -21,9 +21,9 @@ export const ObjectTypes = {
 }
 
 export const NotMetadataObjects = [
+  ObjectTypes.bucket,
   ObjectTypes.dacPolicies,
   ObjectTypes.datacite,
-  ObjectTypes.linkedFolder,
   ObjectTypes.publish,
   ObjectTypes.submissionDetails,
   ObjectTypes.summary,
@@ -45,7 +45,7 @@ export const ObjectSubmissionTypes = {
 export const ValidSteps = [
   "createSubmissionStep",
   "dacPoliciesStep",
-  "datafolderStep",
+  "dataBucketStep",
   "idPublishStep",
 ]
 

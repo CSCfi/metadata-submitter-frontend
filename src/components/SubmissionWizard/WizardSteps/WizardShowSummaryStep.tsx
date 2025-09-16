@@ -117,15 +117,15 @@ const WizardShowSummaryStep: React.FC = () => {
 
         // Add row for linked files
         if (
-          stepItem.objectType === ObjectTypes.linkedFolder &&
-          submission.linkedFolder &&
+          stepItem.objectType === ObjectTypes.bucket &&
+          submission.bucket &&
           (!objects || Object.values(objects).flat().length === 0)
         ) {
           return [
             {
               id: `linked-files-${step}`,
               status: t("ready"),
-              name: submission.linkedFolder,
+              name: submission.bucket,
               action: "",
               step,
               draft: false,

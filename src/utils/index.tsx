@@ -80,7 +80,7 @@ export const getConvertedDate = (timestamp: number): string => {
   return convertedDate
 }
 
-// Check if it's a file or a subfolder (current path equals original file path)
+// Check if it's a file or a folder (current path equals original file path)
 export const isFile = (files: File[], path: string) =>
   files.findIndex(file => file.path === path) > -1
 

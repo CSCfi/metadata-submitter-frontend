@@ -43,8 +43,8 @@ const patchDOIInfo = async (
   return await api.patch(`${submissionId}/doi`, doiFormDetails)
 }
 
-const putLinkedFolder = async (submissionId: string, folderName: string): Promise<APIResponse> => {
-  return await api.patch(`${submissionId}/folder`, { linkedFolder: folderName })
+const putBucket = async (submissionId: string, bucketName: string): Promise<APIResponse> => {
+  return await api.patch(`${submissionId}/bucket`, { bucket: bucketName })
 }
 
 const putRemsData = async (
@@ -61,6 +61,6 @@ export default {
   deleteSubmissionById,
   getSubmissions,
   patchDOIInfo,
-  putLinkedFolder,
+  putBucket,
   putRemsData,
 }

@@ -260,7 +260,7 @@ const WizardStep = (props: WizardStepProps) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
         const buttonText =
-          objectType === ObjectTypes.linkedFolder || objectType === ObjectTypes.summary
+          objectType === ObjectTypes.bucket || objectType === ObjectTypes.summary
             ? t("view")
             : objectType === ObjectTypes.publish ||
                 objectType === ObjectTypes.submissionDetails ||

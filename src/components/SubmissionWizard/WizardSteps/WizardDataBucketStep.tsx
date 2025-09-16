@@ -14,59 +14,59 @@ import { files } from "../../../../playwright/fixtures/files_response" // MOCK f
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 
 import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
-import WizardDataFolderTable from "components/SubmissionWizard/WizardComponents/WizardDataFolderTable"
+import WizardDataBucketTable from "components/SubmissionWizard/WizardComponents/WizardDataBucketTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
 import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
-import { addLinkedFolderToSubmission } from "features/wizardSubmissionSlice"
+import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { isFile } from "utils"
 
 /*
- * Render folders and files from SD Connect based on user selection
+ * Render buckets and files from SD Connect based on user selection
  */
-const WizardDataFolderStep = () => {
+const WizardDataBucketStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
-  const linkedFolder = submission.linkedFolder || ""
+  const bucket = submission.bucket || ""
 
   const { t } = useTranslation()
 
-  const [selectedFolder, setSelectedFolder] = useState<string>("")
+  const [selectedBucket, setSelectedBucket] = useState<string>("")
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
   const [alert, setAlert] = useState<boolean>(false)
 
   const handleAlert = (state: boolean) => {
-    if (state) handleLinkFolder()
+    if (state) handleLinkBucket()
     setAlert(false)
   }
 
-  const handleLinkFolder = async () => {
+  const handleLinkBucket = async () => {
     dispatch(resetUnsavedForm())
-    dispatch(addLinkedFolderToSubmission(submission.submissionId, selectedFolder))
+    dispatch(addBucketToSubmission(submission.submissionId, selectedBucket))
   }
 
-  const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFolder(event.target.value)
+  const handleBucketChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedBucket(event.target.value)
     dispatch(setUnsavedForm())
   }
 
-  const handleFilesView = (folderName: string) => {
-    const currentFolderPath = files
-      .filter(file => file.path.split("/")[1] === folderName)[0]
+  const handleFilesView = (bucketName: string) => {
+    const currentPath = files
+      .filter(file => file.path.split("/")[1] === bucketName)[0]
       .path.split("/")
       .slice(0, 2)
       .join("/")
-    setCurrentFilePath(currentFolderPath)
-    setBreadcrumbs([t("datafolder.allFolders"), folderName])
+    setCurrentFilePath(currentPath)
+    setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
   }
 
-  const handleAddToBreadcrumbs = (subfolderName: string) => {
-    setBreadcrumbs(prevState => [...prevState, subfolderName])
+  const handleAddToBreadcrumbs = (folderName: string) => {
+    setBreadcrumbs(prevState => [...prevState, folderName])
   }
 
   const handleClickBreadcrumb = (breadcrumb: string, index: number) => {
-    /* Remove all breadcrumbs if "All folders" is clicked.
+    /* Remove all breadcrumbs if "All buckets" is clicked.
      * Otherwise, remove the following breadcrumbs if one breadcrumb is clicked/selected.
      */
     if (index === 0) setBreadcrumbs([])
@@ -86,30 +86,30 @@ const WizardDataFolderStep = () => {
   const handleClickFileRow = (path: string, name: string) => {
     if (!isFile(files, path)) {
       /* Keep setting new filePath if current filePath's length < original filePath's length.
-       * It means that the current file is still nested under subfolder
+       * It means that the current file is still nested under folder
        */
       setCurrentFilePath(path)
       handleAddToBreadcrumbs(name)
     }
   }
 
-  const linkFolderButton = (
+  const linkBucketButton = (
     <Button
-      disabled={!selectedFolder || !!linkedFolder}
+      disabled={!selectedBucket || !!bucket}
       variant="contained"
-      aria-label={t("ariaLabels.linkFolder")}
+      aria-label={t("ariaLabels.linkBucket")}
       size="small"
       type="submit"
       onClick={() => setAlert(true)}
-      data-testid="link-datafolder"
+      data-testid="link-data-bucket"
     >
-      {t("datafolder.linkFolder")}
+      {t("dataBucket.linkBucket")}
     </Button>
   )
 
   const renderHeading = () => (
     <Typography variant="h5" fontWeight="700" color="secondary">
-      {linkedFolder ? t("datafolder.linkedFolder") : t("datafolder.linkFromSDConnect")}
+      {bucket ? t("dataBucket.linkedBucket") : t("dataBucket.linkFromSDConnect")}
     </Typography>
   )
 
@@ -136,18 +136,18 @@ const WizardDataFolderStep = () => {
                 sx={{ mr: "0.5rem", verticalAlign: "middle" }}
               />
             )}
-            {index === 0 ? t("datafolder.allFolders") : upperFirst(el)}
+            {index === 0 ? t("dataBucket.allBuckets") : upperFirst(el)}
           </Link>
         ))}
       </Breadcrumbs>
     )
 
-  const renderFolderTable = () =>
+  const renderBucketTable = () =>
     !breadcrumbs.length && (
-      <WizardDataFolderTable
-        selectedFolder={selectedFolder}
-        linkedFolder={linkedFolder}
-        handleFolderChange={handleFolderChange}
+      <WizardDataBucketTable
+        selectedBucket={selectedBucket}
+        bucket={bucket}
+        handleBucketChange={handleBucketChange}
         handleFilesView={handleFilesView}
       />
     )
@@ -163,11 +163,11 @@ const WizardDataFolderStep = () => {
 
   return (
     <Box>
-      <WizardStepContentHeader action={linkFolderButton} />
+      <WizardStepContentHeader action={linkBucketButton} />
       <Box display="flex" flexDirection="column" p="5rem" gap={4}>
         {renderHeading()}
         {renderBreadcrumbs()}
-        {renderFolderTable()}
+        {renderBucketTable()}
         {renderFileTable()}
       </Box>
       {alert && <WizardAlert onAlert={handleAlert} parentLocation="submission" alertType="link" />}
@@ -175,4 +175,4 @@ const WizardDataFolderStep = () => {
   )
 }
 
-export default WizardDataFolderStep
+export default WizardDataBucketStep

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router"
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
 import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
-import WizardDataFolderStep from "components/SubmissionWizard/WizardSteps/WizardDataFolderStep"
+import WizardDataBucketStep from "components/SubmissionWizard/WizardSteps/WizardDataBucketStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 import { ResponseStatus } from "constants/responseStatus"
 import { ObjectTypes, ValidSteps } from "constants/wizardObject"
@@ -43,8 +43,8 @@ const getStepContent = (
       return <WizardCreateSubmissionStep ref={createSubmissionFormRef} />
     case "dacPoliciesStep":
       return <WizardAddObjectStep formRef={objectFormRef} />
-    case "datafolderStep":
-      return <WizardDataFolderStep />
+    case "dataBucketStep":
+      return <WizardDataBucketStep />
     case "idPublishStep":
       // Datacite, Summary and Publish steps
       switch (objectType) {

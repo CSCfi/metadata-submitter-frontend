@@ -5,7 +5,7 @@ import { GridColDef, GridSortDirection } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import type { DataFolderRow } from "types"
+import type { DataBucketRow } from "types"
 
 type WizardRemsDACProps = {
   dacs: { id: number; title: string; policies: { id: number; title: string }[] }[]
@@ -45,7 +45,7 @@ const WizardRemsDAC = (props: WizardRemsDACProps) => {
     },
   ]
 
-  const getRows = (): DataFolderRow[] => {
+  const getRows = (): DataBucketRow[] => {
     return dacs.map(dac => {
       const linkedPolicies = dac.policies.map(pol => pol.title).join(",")
       return {

@@ -7,7 +7,7 @@ import { DataGrid, GridColDef, GridSortModel } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 
 import WizardPagination from "components/SubmissionWizard/WizardComponents/WizardPagination"
-import type { SubmissionRow, DataFolderRow, DataFileRow } from "types"
+import type { SubmissionRow, DataBucketRow, DataFileRow } from "types"
 
 const Table = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnSeparator, & .MuiDataGrid-cell:last-of-type": {
@@ -69,7 +69,7 @@ const Table = styled(DataGrid)(({ theme }) => ({
 
 type DataTableProps = {
   columns: GridColDef[]
-  rows: Array<SubmissionRow | DataFolderRow | DataFileRow>
+  rows: Array<SubmissionRow | DataBucketRow | DataFileRow>
   page?: number
   totalItems?: number
   sortingModel: GridSortModel
@@ -77,7 +77,7 @@ type DataTableProps = {
 }
 
 /*
- * Render a customizable table of data such as Submission, DataFolder, REMS
+ * Render a customizable table of data such as Submission, Data bucket, REMS
  */
 const DataTable: React.FC<DataTableProps> = props => {
   const { columns, rows, totalItems, sortingModel, fetchPageOnChange } = props

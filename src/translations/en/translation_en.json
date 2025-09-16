@@ -162,14 +162,14 @@
       "exit": "Exit",
       "continueSubmission": "No, continue creating the submission",
       "saveExit": "Yes, save and exit",
-      "link": "Link folder"
+      "link": "Link data bucket"
     },
     "exit": {
       "title": "Are you sure you want to exit this form?",
       "content": "Unsaved changes will be lost."
     },
     "link": {
-      "content": "Datafolder link cannot be changed afterwards. Are you sure of your selection?"
+      "content": "Data bucket link cannot be changed afterwards. Are you sure of your selection?"
     },
     "save": {
       "title": "Save progress and exit?",
@@ -242,12 +242,12 @@
     "privacy": "Privacy",
     "aboutSensitiveDataServices": "About Sensitive Data services"
   },
-  "datafolder": {
-    "datafolder": "Datafolder",
-    "linkFolder": "Link folder",
-    "linkFromSDConnect": "Link folder from SD Connect",
-    "linkedFolder": "Linked folder",
-    "allFolders": "All folders"
+  "dataBucket": {
+    "dataBucket": "Data bucket",
+    "linkBucket": "Link data bucket",
+    "linkFromSDConnect": "Link data bucket from SD Connect",
+    "linkedBucket": "Linked data bucket",
+    "allBuckets": "All buckets"
   },
   "xml": {
     "modalTitle": "Upload XML file",
@@ -283,7 +283,7 @@
     "saveDOI": "save doi form",
     "saveDetails": "save submission details",
     "saveDAC": "save DAC and policies",
-    "linkFolder": "link datafolder",
+    "linkBucket": "link data bucket",
     "folderBreadcrumb": "folder breadcrumb",
     "options": "options button"
   }

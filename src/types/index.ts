@@ -113,7 +113,7 @@ export type SubmissionDetails = {
   workflow: string
   dateCreated?: number
   published: boolean
-  linkedFolder?: string
+  bucket?: string
   allObjects?: Array<CurrentFormObject>
 }
 
@@ -134,7 +134,7 @@ export type SubmissionDataFromForm = {
   workflowType: string
 }
 
-export type SubmissionFolder = SubmissionDetailsWithId & { doiInfo: DoiFormDetails } & {
+export type Submission = SubmissionDetailsWithId & { doiInfo: DoiFormDetails } & {
   rems?: RemsDetails
 }
 
@@ -225,7 +225,7 @@ export type RemsDetails = {
   licenses: number[]
 }
 
-export type DataFolderRow = {
+export type DataBucketRow = {
   id: string | number
   name?: string
   size?: number

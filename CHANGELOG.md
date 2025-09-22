@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Renamed folder to bucket, subfolder to folder (#1096)
 - (users) Updated login text (#1093)
 - (users) In the Dataset details position of Save button is moved to top right (#1102)
 - In the Dataset details position of Save button is moved to top right (#1102)

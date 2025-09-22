@@ -57,14 +57,19 @@
   },
   "dacPolicies": {
     "title": "DAC and policies",
-    "selectOrganization": "Select organization",
+    "selectOrganization": "Select data controller's organization",
     "selectDAC": "Select DAC",
     "selectAdditionalPolicies": "Select additional policies (optional)",
     "dacTitle": "DAC title",
     "linkedPolicies": "Policies linked to DAC",
     "policyTitle": "Policy title",
     "policy": "policy",
-    "policies": "policies"
+    "policies": "policies",
+    "help": {
+      "organization": "Data controller organization has created the DAC and policies in SD Apply service.\n\nSelect the organization that is the data controller of the dataset you are submitting.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\n Read more",
+      "dac": "Data Access Committee (DAC) manages access to all datasets the organization is the data controller of.\n\nSelect the DAC that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\nRead more",
+      "policies": "Policies define the agreements and terms of use that the applicant has to accept to be able to use the data.\n\nSelect the policies that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\nRead more"
+    }
   },
   "datacite": {
     "startDate": "Date or Start Date",

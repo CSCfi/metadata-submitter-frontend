@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from "react"
 
-import { Box, Button, Typography } from "@mui/material"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import { Box, Button, Tooltip, TooltipProps, Typography } from "@mui/material"
 import { SelectChangeEvent } from "@mui/material/Select"
 import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
@@ -23,8 +24,29 @@ const Form = styled("form")({
     margin: "1rem 0",
   },
 })
+//
+const HelpTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} placement="right" arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  "& .MuiTooltip-tooltip": {
+    padding: "2rem",
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.secondary.main,
+    fontSize: "1.4rem",
+    boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
+    border: `0.1rem solid ${theme.palette.secondary.light}`,
+    maxWidth: "25rem",
+    whiteSpace: "pre-line",
+  },
+  "& .MuiTooltip-arrow": {
+    "&:before": {
+      border: `0.1rem solid ${theme.palette.secondary.light}`,
+    },
+    color: theme.palette.common.white,
+  },
+}))
 
-const SectionTitle = ({ children }: { children: string[] }) => (
+const SectionTitle = ({ children, helpText }: { children: string[]; helpText: string }) => (
   <Typography
     variant="h5"
     gutterBottom
@@ -33,6 +55,12 @@ const SectionTitle = ({ children }: { children: string[] }) => (
     sx={{ color: "secondary.main", pt: "3rem", pb: "1rem" }}
   >
     {children}
+    <HelpTooltip title={helpText}>
+      <HelpOutlineIcon
+        fontSize="inherit"
+        sx={{ ml: "1rem", pt: "0.25rem", color: "primary.main" }}
+      />
+    </HelpTooltip>
   </Typography>
 )
 
@@ -171,9 +199,11 @@ const DacPoliciesForm = () => {
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
         <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
-          {t("add")} {t("dacPolicies.title")}
+          {t("dacPolicies.title")}
         </Typography>
-        <SectionTitle>1. {t("dacPolicies.selectOrganization")}</SectionTitle>
+        <SectionTitle helpText={t("dacPolicies.help.organization")}>
+          1. {t("dacPolicies.selectOrganization")}
+        </SectionTitle>
         <Controller
           control={control}
           name="organizationId"
@@ -203,7 +233,9 @@ const DacPoliciesForm = () => {
         />
         {selectedRems.organizationId && (
           <>
-            <SectionTitle>2. {t("dacPolicies.selectDAC")}</SectionTitle>
+            <SectionTitle helpText={t("dacPolicies.help.dac")}>
+              2. {t("dacPolicies.selectDAC")}*
+            </SectionTitle>
             <Controller
               control={control}
               name="workflowId"
@@ -230,7 +262,9 @@ const DacPoliciesForm = () => {
               }}
               rules={{ required: true }}
             />
-            <SectionTitle>3. {t("dacPolicies.selectAdditionalPolicies")}</SectionTitle>
+            <SectionTitle helpText={t("dacPolicies.help.policies")}>
+              3. {t("dacPolicies.selectAdditionalPolicies")}
+            </SectionTitle>
             <Controller
               control={control}
               name="licenses"

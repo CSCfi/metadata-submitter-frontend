@@ -18,7 +18,7 @@ import type {
 
 type InitialState = SubmissionDetailsWithId & {
   doiInfo: Record<string, unknown> & DoiFormDetails
-} & { linkedFolder?: string } & { rems?: RemsDetails }
+} & { bucket?: string } & { rems?: RemsDetails }
 
 const initialState: InitialState = {
   submissionId: "",
@@ -28,7 +28,7 @@ const initialState: InitialState = {
   workflow: "",
   published: false,
   doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
-  linkedFolder: "",
+  bucket: "",
 }
 
 const wizardSubmissionSlice = createSlice({
@@ -39,8 +39,8 @@ const wizardSubmissionSlice = createSlice({
     addDoiInfo: (state, action) => {
       state.doiInfo = action.payload
     },
-    addLinkedFolder: (state, action) => {
-      state.linkedFolder = action.payload
+    addBucket: (state, action) => {
+      state.bucket = action.payload
     },
     addRemsData: (state, action) => {
       state.rems = action.payload
@@ -49,7 +49,7 @@ const wizardSubmissionSlice = createSlice({
   },
 })
 
-export const { setSubmission, addDoiInfo, addLinkedFolder, addRemsData, resetSubmission } =
+export const { setSubmission, addDoiInfo, addBucket, addRemsData, resetSubmission } =
   wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
 
@@ -177,14 +177,14 @@ export const addDoiInfoToSubmission =
     })
   }
 
-export const addLinkedFolderToSubmission =
-  (submissionId: string, linkedFolderName: string) =>
+export const addBucketToSubmission =
+  (submissionId: string, bucketName: string) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.putLinkedFolder(submissionId, linkedFolderName)
+    const response = await submissionAPIService.putBucket(submissionId, bucketName)
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        dispatch(addLinkedFolder(linkedFolderName))
+        dispatch(addBucket(bucketName))
         resolve(response)
       } else {
         reject(JSON.stringify(response))

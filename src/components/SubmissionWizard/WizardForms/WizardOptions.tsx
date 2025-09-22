@@ -49,7 +49,7 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   /*const shouldDisableXMLModal = [
     ObjectTypes.datacite,
     ObjectTypes.dacPolicies,
-    ObjectTypes.linkedFolder,
+    ObjectTypes.bucket,
   ].includes(objectType)*/
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)

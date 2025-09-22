@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
 
-import FolderIcon from "@mui/icons-material/Folder"
 import Box from "@mui/material/Box"
 import Radio from "@mui/material/Radio"
+import SvgIcon from "@mui/material/SvgIcon"
 import Typography from "@mui/material/Typography"
 import { GridColDef } from "@mui/x-data-grid"
 import type { GridSortDirection } from "@mui/x-data-grid"
@@ -16,20 +16,20 @@ import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import filesAPIService from "services/filesAPI"
-import type { DataFolderRow } from "types"
+import type { DataBucketRow } from "types"
 
-type DataFolderTableProps = {
-  selectedFolder: string
-  linkedFolder: string
-  handleFolderChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleFilesView: (folderName: string) => void
+type DataBucketTableProps = {
+  selectedBucket: string
+  bucket: string
+  handleBucketChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleFilesView: (bucketName: string) => void
 }
 
 /*
- * Render a table of shared folders received from SD Connect
+ * Render a table of shared buckets received from SD Connect
  */
-const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
-  const { selectedFolder, linkedFolder, handleFolderChange, handleFilesView } = props
+const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
+  const { selectedBucket, bucket, handleBucketChange, handleFilesView } = props
   const projectId = useAppSelector(state => state.projectId)
   const dispatch = useAppDispatch()
 
@@ -43,21 +43,24 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
       renderCell: params => {
         return (
           <Box display="flex" alignItems="center" height="100%">
-            {!linkedFolder && (
+            {!bucket && (
               <Radio
-                checked={selectedFolder === params.row.name}
-                onChange={handleFolderChange}
+                checked={selectedBucket === params.row.name}
+                onChange={handleBucketChange}
                 value={params.row.name}
                 name="radio-buttons"
                 inputProps={{ "aria-label": params.row.name }}
               />
             )}
-            <FolderIcon
+            {/* Use mdiPail path: MUI icons lack a corresponding icon */}
+            <SvgIcon
               color="primary"
               fontSize="medium"
               sx={{ ml: "1rem", mr: "0.5rem" }}
               onClick={() => handleFilesView(params.row.name)}
-            />
+            >
+              <path d="M11.5 7.63C11.97 7.35 12.58 7.5 12.86 8C13.14 8.47 12.97 9.09 12.5 9.36L4.27 14.11C3.79 14.39 3.18 14.23 2.9 13.75C2.62 13.27 2.79 12.66 3.27 12.38L11.5 7.63M7 21L5.79 14.97L13.21 10.69C14 10.26 14.5 9.44 14.5 8.5C14.5 7.12 13.38 6 12 6C11.53 6 11.09 6.13 10.71 6.36L4.76 9.79L4 6H3V4H21V6H20L17 21H7Z" />
+            </SvgIcon>
             <Typography component="span" onClick={() => handleFilesView(params.row.name)}>
               {upperFirst(params.row.name)}
             </Typography>
@@ -104,26 +107,26 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
   }, [])
 
   useEffect(() => {
-    !linkedFolder ? setTotalItems(getFolderNames().length) : setTotalItems(1)
-  }, [linkedFolder])
+    !bucket ? setTotalItems(getBucketNames().length) : setTotalItems(1)
+  }, [bucket])
 
-  const getRows = (): DataFolderRow[] => {
-    const folderNames = getFolderNames()
-    return folderNames
-      .filter(folderName => (!!linkedFolder ? folderName === linkedFolder : folderName))
-      .map(folderName => {
-        const currentFiles = files.filter(file => file.path.includes(`/${folderName}/`))
+  const getRows = (): DataBucketRow[] => {
+    const bucketNames = getBucketNames()
+    return bucketNames
+      .filter(bucketName => (!!bucket ? bucketName === bucket : bucketName))
+      .map(bucketName => {
+        const currentFiles = files.filter(file => file.path.includes(`/${bucketName}/`))
         const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
         return {
-          id: folderName,
-          name: folderName,
+          id: bucketName,
+          name: bucketName,
           size: totalSize,
           items: currentFiles.length,
         }
       })
   }
 
-  const getFolderNames = () => [...new Set(files.map(file => file["path"].split("/")[1]))]
+  const getBucketNames = () => [...new Set(files.map(file => file["path"].split("/")[1]))]
 
   const sortingModel = [
     {
@@ -151,4 +154,4 @@ const WizardDataFolderTable: React.FC<DataFolderTableProps> = props => {
   )
 }
 
-export default WizardDataFolderTable
+export default WizardDataBucketTable

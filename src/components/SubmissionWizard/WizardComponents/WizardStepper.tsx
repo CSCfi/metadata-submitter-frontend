@@ -122,7 +122,7 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
   }, [submission, objects, objectTypesArray, currentWorkflow, t])
 
   // Set step on initialization based on query paramater in url
-  // Steps with single step item (Submission details, datafolder & summary) should have only step item as active item
+  // Steps with single step item (dataset details, data bucket & summary) should have only step item as active item
   useEffect(() => {
     if (location.search.includes("step")) {
       const stepInUrl = Number(location.search.split("step=")[1].slice(0, 1))

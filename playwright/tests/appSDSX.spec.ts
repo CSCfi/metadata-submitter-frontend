@@ -38,14 +38,14 @@ test.describe("Basic SDSX flow", () => {
     await formActions("form-ready")
 
     /*
-     * 3rd step, Datafolder
+     * 3rd step, Data bucket
      */
 
-    await page.getByRole("button", { name: "Datafolder" }).click()
-    await page.getByTestId("View linkedFolder").click()
-    await page.getByRole("radio", { name: "folderA" }).check()
-    await expect(page.getByTestId("link-datafolder")).toBeEnabled()
-    await page.getByTestId("link-datafolder").click()
+    await page.getByRole("button", { name: "Data bucket" }).click()
+    await page.getByTestId("View bucket").click()
+    await page.getByRole("radio", { name: "bucketA" }).check()
+    await expect(page.getByTestId("link-data-bucket")).toBeEnabled()
+    await page.getByTestId("link-data-bucket").click()
 
     /*
      * 4th step, Identifier and publish

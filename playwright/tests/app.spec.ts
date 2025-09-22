@@ -101,10 +101,10 @@ test.describe("Basic application flow", () => {
     await formActions("form-ready")
 
     /*
-     * 3rd step, Datafolder
+     * 3rd step, Data bucket
      */
 
-    await clickAccordionPanel("Datafolder")
+    await clickAccordionPanel("Data bucket")
     await expect(page.getByTestId("file-details")).toBeVisible()
     await page.getByRole("button", { name: "View" }).click()
 
@@ -126,7 +126,7 @@ test.describe("Basic application flow", () => {
       Verify that all summary steps are present. There are 4 steps in FEGA workflow:
       1. Submission details
       2. Study, DAC and Policy
-      3. Datafolder
+      3. Data bucket
       4. Describe
     */
     const stepTestIds = ["summary-step-1", "summary-step-2", "summary-step-3", "summary-step-4"]

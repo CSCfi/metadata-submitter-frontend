@@ -19,7 +19,7 @@ type FilesTableProps = {
 }
 
 /*
- * Render a table of files inside shared folders received from SD Connect
+ * Render a table of files inside shared buckets received from SD Connect
  */
 const FilesTable: React.FC<FilesTableProps> = props => {
   const { currentFilePath, files, handleClickFileRow } = props

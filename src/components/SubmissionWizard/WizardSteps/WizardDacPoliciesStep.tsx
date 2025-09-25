@@ -34,7 +34,7 @@ const SectionTitle = ({ children, helpText }: { children: string[]; helpText: st
     sx={{ color: "secondary.main", pt: "3rem", pb: "1rem" }}
   >
     {children}
-    <HelpTooltip helpText={helpText} placement={"right"} shortTextLength="80" />
+    <HelpTooltip helpText={helpText} placement={"right"} shortTextLength={80} />
   </Typography>
 )
 

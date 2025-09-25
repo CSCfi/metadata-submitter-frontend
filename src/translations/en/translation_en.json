@@ -219,6 +219,7 @@
     }
   },
   "searchItems": "Search items",
+  "OrganisationsBy": "Organisations provided by ",
   "dataTable": {
     "name": "Name",
     "dateCreated": "Date created",

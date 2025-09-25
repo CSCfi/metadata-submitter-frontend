@@ -2,7 +2,6 @@ import * as React from "react"
 
 import AddIcon from "@mui/icons-material/Add"
 import ClearIcon from "@mui/icons-material/Clear"
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
 import LaunchIcon from "@mui/icons-material/Launch"
 import RemoveIcon from "@mui/icons-material/Remove"
 import { FormControl } from "@mui/material"
@@ -21,7 +20,6 @@ import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
 import { TypographyVariant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
-import Tooltip, { TooltipProps } from "@mui/material/Tooltip"
 import Typography from "@mui/material/Typography"
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
@@ -31,6 +29,7 @@ import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
+import HelpTooltip from "components/HelpTooltip"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
@@ -51,31 +50,6 @@ const BaselineDiv = styled("div")({
   display: "flex",
   alignItems: "baseline",
 })
-
-const FieldTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  "& .MuiTooltip-tooltip": {
-    padding: "2rem",
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.secondary.main,
-    fontSize: "1.4rem",
-    boxShadow: theme.shadows[1],
-    border: `0.1rem solid ${theme.palette.primary.main}`,
-    maxWidth: "25rem",
-  },
-  "& .MuiTooltip-arrow": {
-    "&:before": {
-      border: `0.1rem solid ${theme.palette.primary.main}`,
-    },
-    color: theme.palette.common.white,
-  },
-}))
-
-const TooltipIcon = styled(HelpOutlineIcon)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  marginLeft: "1rem",
-}))
 
 /*
  * Clean up form values from empty strings and objects, translate numbers inside strings to numbers.
@@ -358,42 +332,6 @@ const traverseFields = (
   }
 }
 
-const DisplayDescription = ({
-  description,
-  children,
-}: {
-  description: string
-  children?: React.ReactElement<unknown>
-}) => {
-  const { t } = useTranslation()
-  const [isReadMore, setIsReadMore] = React.useState(description.length > 60)
-
-  const toggleReadMore = () => {
-    setIsReadMore(!isReadMore)
-  }
-
-  const ReadmoreText = styled("span")(({ theme }) => ({
-    fontWeight: 700,
-    textDecoration: "underline",
-    display: "block",
-    marginTop: "0.5rem",
-    color: theme.palette.primary.main,
-    "&:hover": { cursor: "pointer" },
-  }))
-
-  return (
-    <p>
-      {isReadMore ? `${description.slice(0, 60)}...` : description}
-      {!isReadMore && children}
-      {description?.length >= 60 && (
-        <ReadmoreText onClick={toggleReadMore}>
-          {isReadMore ? t("showMore") : t("showLess")}
-        </ReadmoreText>
-      )}
-    </p>
-  )
-}
-
 type FormSectionProps = {
   name: string
   label: string
@@ -440,16 +378,7 @@ const FormSection = ({
             color="secondary"
           >
             {label} {name.includes("keywords") ? "*" : ""}
-            {description && level === 1 && (
-              <FieldTooltip
-                title={<DisplayDescription description={description} />}
-                placement="top"
-                arrow
-                describeChild
-              >
-                <TooltipIcon />
-              </FieldTooltip>
-            )}
+            {description && level === 1 && <HelpTooltip helpText={description} placement={"top"} />}
           </Typography>
         </FormSectionTitle>
       )}
@@ -720,16 +649,7 @@ const FormOneOfField = ({
                   )
                 })}
               </TextField>
-              {description && (
-                <FieldTooltip
-                  title={<DisplayDescription description={description} />}
-                  placement="right"
-                  arrow
-                  describeChild
-                >
-                  <TooltipIcon />
-                </FieldTooltip>
-              )}
+              {description && <HelpTooltip helpText={description} placement={"right"} />}
             </BaselineDiv>
             {child}
           </>
@@ -801,16 +721,7 @@ const FormTextField = ({
                       onChange={handleChange}
                       disabled={defaultValue !== "" && name.includes("formats")}
                     />
-                    {description && (
-                      <FieldTooltip
-                        title={<DisplayDescription description={description} />}
-                        placement="right"
-                        arrow
-                        describeChild
-                      >
-                        <TooltipIcon />
-                      </FieldTooltip>
-                    )}
+                    {description && <HelpTooltip helpText={description} placement={"right"} />}
                   </BaselineDiv>
                 </div>
               )
@@ -875,16 +786,7 @@ const FormSelectField = ({
                     </option>
                   ))}
                 </TextField>
-                {description && (
-                  <FieldTooltip
-                    title={<DisplayDescription description={description} />}
-                    placement="right"
-                    arrow
-                    describeChild
-                  >
-                    <TooltipIcon />
-                  </FieldTooltip>
-                )}
+                {description && <HelpTooltip helpText={description} placement={"right"} />}
               </BaselineDiv>
             )
           }}
@@ -1025,16 +927,7 @@ const FormDatePicker = ({
                   switchViewIcon: { color: "primary" },
                 }}
               />
-              {description && (
-                <FieldTooltip
-                  title={<DisplayDescription description={description} />}
-                  placement="right"
-                  arrow
-                  describeChild
-                >
-                  <TooltipIcon />
-                </FieldTooltip>
-              )}
+              {description && <HelpTooltip helpText={description} placement={"right"} />}
             </Box>
           </LocalizationProvider>
         )
@@ -1080,6 +973,8 @@ const FormAutocompleteField = ({
   const [options, setOptions] = React.useState([])
   const [inputValue, setInputValue] = React.useState("")
   const [loading, setLoading] = React.useState(false)
+
+  const { t } = useTranslation()
 
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
@@ -1194,25 +1089,20 @@ const FormAutocompleteField = ({
                         ]}
                       />
                       {description && (
-                        <FieldTooltip
-                          title={
-                            <DisplayDescription description={description}>
-                              <>
-                                <br />
-                                {"Organisations provided by "}
-                                <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                                  {"ror.org"}
-                                  <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
-                                </a>
-                              </>
-                            </DisplayDescription>
+                        <HelpTooltip
+                          helpText={description}
+                          child={
+                            <>
+                              <br />
+                              {t("OrganisationsBy")}
+                              <a href="https://ror.org/" target="_blank" rel="noreferrer">
+                                {"ror.org"}
+                                <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
+                              </a>
+                            </>
                           }
-                          placement="right"
-                          arrow
-                          describeChild
-                        >
-                          <TooltipIcon />
-                        </FieldTooltip>
+                          placement={"right"}
+                        />
                       )}
                     </BaselineDiv>
                   )}
@@ -1344,16 +1234,7 @@ const FormTagField = ({
                     onBlur={handleOnBlur}
                   />
 
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
+                  {description && <HelpTooltip helpText={description} placement={"right"} />}
                 </BaselineDiv>
               )
             }}
@@ -1414,16 +1295,7 @@ const FormBooleanField = ({
                       </label>
                     }
                   />
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
+                  {description && <HelpTooltip helpText={description} placement={"right"} />}
                 </BaselineDiv>
 
                 <FormHelperText>{error?.message}</FormHelperText>
@@ -1476,16 +1348,7 @@ const FormCheckBoxArray = ({
                     }
                     label={option}
                   />
-                  {description && (
-                    <FieldTooltip
-                      title={<DisplayDescription description={description} />}
-                      placement="right"
-                      arrow
-                      describeChild
-                    >
-                      <TooltipIcon />
-                    </FieldTooltip>
-                  )}
+                  {description && <HelpTooltip helpText={description} placement={"right"} />}
                 </React.Fragment>
               ))}
               <FormHelperText>{error?.message}</FormHelperText>
@@ -1651,16 +1514,7 @@ const FormArray = ({
                   </FormControl>
                 </span>
               )}
-              {description && (
-                <FieldTooltip
-                  title={<DisplayDescription description={description} />}
-                  placement="top"
-                  arrow
-                  describeChild
-                >
-                  <TooltipIcon />
-                </FieldTooltip>
-              )}
+              {description && <HelpTooltip helpText={description} placement={"top"} />}
             </Typography>
           </FormArrayTitle>
         }

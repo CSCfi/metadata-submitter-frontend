@@ -1,12 +1,12 @@
 ﻿import React, { useEffect, useState } from "react"
 
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
-import { Box, Button, Tooltip, TooltipProps, Typography } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import { SelectChangeEvent } from "@mui/material/Select"
 import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
+import HelpTooltip from "components/HelpTooltip"
 import WizardRemsDAC from "components/SubmissionWizard/WizardComponents/WizardRemsDAC"
 import WizardRemsOrganization from "components/SubmissionWizard/WizardComponents/WizardRemsOrganization"
 import WizardRemsPolicies from "components/SubmissionWizard/WizardComponents/WizardRemsPolicies"
@@ -24,27 +24,6 @@ const Form = styled("form")({
     margin: "1rem 0",
   },
 })
-//
-const HelpTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} placement="right" arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  "& .MuiTooltip-tooltip": {
-    padding: "2rem",
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.secondary.main,
-    fontSize: "1.4rem",
-    boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
-    border: `0.1rem solid ${theme.palette.secondary.light}`,
-    maxWidth: "25rem",
-    whiteSpace: "pre-line",
-  },
-  "& .MuiTooltip-arrow": {
-    "&:before": {
-      border: `0.1rem solid ${theme.palette.secondary.light}`,
-    },
-    color: theme.palette.common.white,
-  },
-}))
 
 const SectionTitle = ({ children, helpText }: { children: string[]; helpText: string }) => (
   <Typography
@@ -55,12 +34,7 @@ const SectionTitle = ({ children, helpText }: { children: string[]; helpText: st
     sx={{ color: "secondary.main", pt: "3rem", pb: "1rem" }}
   >
     {children}
-    <HelpTooltip title={helpText}>
-      <HelpOutlineIcon
-        fontSize="inherit"
-        sx={{ ml: "1rem", pt: "0.25rem", color: "primary.main" }}
-      />
-    </HelpTooltip>
+    <HelpTooltip helpText={helpText} placement={"right"} shortTextLength="80" />
   </Typography>
 )
 

@@ -15,6 +15,8 @@
   "ready": "Ready",
   "copy": "Copy",
   "saveSubmission": "Save progress and exit",
+  "readMore": "Read more",
+  "readLess": "Read less",
   "showMore": "Näytä enemmän",
   "showLess": "Näytä vähemmän",
   "visibleLanguage": {
@@ -66,9 +68,9 @@
     "policy": "policy",
     "policies": "policies",
     "help": {
-      "organization": "Data controller organization has created the DAC and policies in SD Apply service.\n\nSelect the organization that is the data controller of the dataset you are submitting.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\n Read more",
-      "dac": "Data Access Committee (DAC) manages access to all datasets the organization is the data controller of.\n\nSelect the DAC that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\nRead more",
-      "policies": "Policies define the agreements and terms of use that the applicant has to accept to be able to use the data.\n\nSelect the policies that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.\nRead more"
+      "organization": "Data controller organization has created the DAC and policies in SD Apply service.\n\nSelect the organization that is the data controller of the dataset you are submitting.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.",
+      "dac": "Data Access Committee (DAC) manages access to all datasets the organization is the data controller of.\n\nSelect the DAC that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions.",
+      "policies": "Policies define the agreements and terms of use that the applicant has to accept to be able to use the data.\n\nSelect the policies that data controller has instructed.\n\nIf you are uncertain what you should select, please contact the data controller organization directly and ask for further instructions."
     }
   },
   "datacite": {

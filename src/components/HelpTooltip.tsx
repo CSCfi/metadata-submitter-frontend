@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next"
  */
 
 const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} placement="right" arrow classes={{ popper: className }} />
+  <Tooltip {...props} placement="right" arrow classes={{ popper: className }} describeChild />
 ))(({ theme }) => ({
   "& .MuiTooltip-tooltip": {
     padding: "2rem",
@@ -66,7 +66,7 @@ const DisplayDescription = ({
       {isReadMore ? `${description.slice(0, shortTextLength)}...` : description}
       {!isReadMore && children}
       {description?.length >= shortTextLength && (
-        <ReadmoreText onClick={toggleReadMore}>
+        <ReadmoreText data-testid="readmoreless" onClick={toggleReadMore}>
           {isReadMore ? t("readMore") : t("readLess")}
         </ReadmoreText>
       )}
@@ -75,11 +75,15 @@ const DisplayDescription = ({
 }
 
 const HelpTooltip = props => {
-  const { helpText, placement, shortTextLength = 60 } = props
+  const { helpText, placement, shortTextLength = 60, child } = props
 
   return (
     <StyledTooltip
-      title={<DisplayDescription description={helpText} shortTextLength={shortTextLength} />}
+      title={
+        <DisplayDescription description={helpText} shortTextLength={shortTextLength}>
+          {child}
+        </DisplayDescription>
+      }
       placement={placement}
     >
       <StyledHelpOutlinedIcon />

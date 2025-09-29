@@ -144,28 +144,24 @@ const WizardShowSummaryStep: React.FC = () => {
         if (objects && objects.length > 0) {
           const objectsList = Object.values(objects).flat()
 
-          return (
-            objectsList
-              //.filter(item => !!item && !!item.id) // lists only first of REMS objects, organization but not policy
-              .map(item => {
-                const name = item.displayTitle || item.fileName || item.id
+          return objectsList.map(item => {
+            const name = item.displayTitle || item.fileName || item.id
 
-                return {
-                  id: item.id,
-                  status: formState,
-                  name,
-                  action: isFormReady(step, submission)
-                    ? ""
-                    : stepItem.objectType === SDObjectTypes.linkBucket
-                      ? t("summaryPage.selectBucket")
-                      : t("summaryPage.fillForm"),
-                  step,
-                  objectType: stepItem.objectType,
-                  objectData: item.objectData,
-                  objectsList,
-                }
-              })
-          )
+            return {
+              id: item.id,
+              status: formState,
+              name,
+              action: isFormReady(step, submission)
+                ? ""
+                : stepItem.objectType === SDObjectTypes.linkBucket
+                  ? t("summaryPage.selectBucket")
+                  : t("summaryPage.fillForm"),
+              step,
+              objectType: stepItem.objectType,
+              objectData: item.objectData,
+              objectsList,
+            }
+          })
         } else {
           if ([1, 2, 3].includes(step) || stepItem.objectType === SDObjectTypes.publicMetadata) {
             return [
@@ -225,8 +221,7 @@ const WizardShowSummaryStep: React.FC = () => {
           onClick={() => handleEdit(params.row.objectType, params.row.objectData, params.row.step)}
           data-testid={`edit-${params.row.objectType}-summary`}
           disabled={
-            params.row.objectType === SDObjectTypes.linkBucket &&
-            submission.bucket !== undefined
+            params.row.objectType === SDObjectTypes.linkBucket && submission.bucket !== undefined
           }
         />
       ),

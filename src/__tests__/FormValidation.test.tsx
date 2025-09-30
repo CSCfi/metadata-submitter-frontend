@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react"
-import { useForm, FormProvider } from "react-hook-form"
+import { useForm, FormProvider, Resolver } from "react-hook-form"
 import { vi } from "vitest"
 
 import { WizardAjvResolver } from "components/SubmissionWizard/WizardForms/WizardAjvResolver"
@@ -22,7 +22,7 @@ const schema = {
 describe("Test form render by custom schema", () => {
   const onSubmit = vi.fn()
 
-  const resolver = WizardAjvResolver(schema, "en")
+  const resolver = WizardAjvResolver(schema, "en") as Resolver<Record<string, unknown>, unknown, {}>
 
   beforeEach(() => {
     const FormComponent = () => {

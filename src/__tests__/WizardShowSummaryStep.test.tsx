@@ -87,7 +87,7 @@ describe("WizardShowSummaryStep", () => {
         projectId: "a0981b1b4df349e5af7ecbe22a1a1f75",
         published: false,
         openedXMLModal: true,
-        workflow: "FEGA",
+        workflow: "SDSX",
         doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
       },
     }

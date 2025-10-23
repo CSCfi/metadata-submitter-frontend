@@ -15,7 +15,7 @@ import Typography from "@mui/material/Typography"
 import { Box, styled } from "@mui/system"
 import Ajv2020 from "ajv/dist/2020"
 import { cloneDeep, set } from "lodash"
-import { useForm, FormProvider, FieldValues, SubmitHandler } from "react-hook-form"
+import { useForm, FormProvider, FieldValues, SubmitHandler, Resolver } from "react-hook-form"
 import type { FieldErrors, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
@@ -417,7 +417,11 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
     validationSchema: {} as FormObject,
     isLoading: true,
   })
-  const resolver = WizardAjvResolver(states.validationSchema, locale)
+  const resolver = WizardAjvResolver(states.validationSchema, locale) as Resolver<
+    Record<string, unknown>,
+    unknown,
+    {}
+  >
   const methods = useForm({ mode: "onBlur", resolver })
 
   const [submitting, startTransition] = useTransition()

@@ -42,7 +42,7 @@ export const mockState = {
     name: "Test name",
     title: "Test Title",
     published: false,
-    workflow: "FEGA",
+    workflow: "SDSX",
     doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
   },
   openedXMLModal: false,

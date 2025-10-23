@@ -28,7 +28,7 @@ const restHandlers = [
           title: submissionTitle,
           description: submissionDescription,
           submissionId: id,
-          workflow: "FEGA",
+          workflow: "SDSX",
         })
       : new HttpResponse("Not found", { status: 404 })
   }),

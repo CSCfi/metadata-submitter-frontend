@@ -4,9 +4,11 @@ import { screen, waitFor, fireEvent } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
+import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 
+import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 const mockOrganisations = [
@@ -32,38 +34,52 @@ const restHandlers = [
 
 const server = setupServer(...restHandlers)
 
-describe("Test autocomplete on organisation field", () => {
+describe("Test autocomplete on affiliation field", () => {
   beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  const schema = {
-    title: "DAC",
-    type: "object",
-    properties: {
-      organisation: {
-        type: "string",
-        title: "Organisation",
+  vi.mock("../schemas/submission.json", () => ({
+    default: {
+      title: "Submission",
+      type: "object",
+      properties: {
+        metadata: {
+          type: "object",
+          properties: {
+            affiliation: {
+              type: "string",
+              title: "Organisation",
+            },
+          },
+        },
       },
     },
-  }
+  }))
 
-  sessionStorage.setItem(`cached_dac_schema`, JSON.stringify(schema))
-  test("should render autocomplete field if schema has 'organisation' property", async () => {
+  test("should render autocomplete field if schema has 'affiliation' property", async () => {
     act(() => {
-      renderWithProviders(<WizardFillObjectDetailsForm />)
+      renderWithProviders(<WizardFillObjectDetailsForm />, {
+        preloadedState: {
+          objectType: SDObjectTypes.publicMetadata,
+        },
+      })
     })
     await waitFor(() => {
-      const autocomplete = screen.getByTestId("organisation-inputField")
+      const autocomplete = screen.getByTestId("affiliation-inputField")
       expect(autocomplete).toBeDefined()
     })
   })
-  test("should search for organisations", async () => {
+  test("should search for affiliations", async () => {
     act(() => {
-      renderWithProviders(<WizardFillObjectDetailsForm />)
+      renderWithProviders(<WizardFillObjectDetailsForm />, {
+        preloadedState: {
+          objectType: SDObjectTypes.publicMetadata,
+        },
+      })
     })
     const autocomplete = (await waitFor(() =>
-      screen.getByTestId("organisation-inputField")
+      screen.getByTestId("affiliation-inputField")
     )) as HTMLInputElement
     act(() => {
       autocomplete.focus()

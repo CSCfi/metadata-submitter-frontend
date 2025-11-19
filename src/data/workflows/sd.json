@@ -1,0 +1,55 @@
+﻿{
+  "name": "SD",
+  "description": "",
+  "steps": [
+    {
+      "title": "dacPolicies",
+      "required": true,
+      "schemas": [
+        {
+          "name": "dacPolicies",
+          "required": true,
+          "allowMultipleObjects": false
+        }
+      ]
+    },
+    {
+      "title": "dataBucket",
+      "required": true,
+      "schemas": [
+        {
+          "name": "linkBucket",
+          "required": true,
+          "allowMultipleObjects": false
+        }
+      ]
+    },
+    {
+      "title": "metadata",
+      "required": true,
+      "schemas": [
+        {
+          "name": "publicMetadata",
+          "required": true,
+          "allowMultipleObjects": false
+        }
+      ]
+    },
+    {
+      "title": "publish",
+      "required": true,
+      "schemas": [
+        {
+          "name": "summary",
+          "required": true,
+          "allowMultipleObjects": false
+        },
+        {
+          "name": "publishSubmission",
+          "required": true,
+          "allowMultipleObjects": false
+        }
+      ]
+    }
+  ]
+}

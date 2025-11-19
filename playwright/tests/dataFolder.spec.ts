@@ -7,7 +7,7 @@ test.describe("Data bucket view", () => {
   test.beforeEach(async ({ page, login, resetDB, newSubmission, clickAccordionPanel }) => {
     await resetDB()
     await login()
-    await newSubmission("SDSX")
+    await newSubmission("SD")
     await clickAccordionPanel("Data bucket")
     const viewBucketButton = await page.getByTestId("View bucket")
     await viewBucketButton.dispatchEvent("click")

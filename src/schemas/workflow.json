@@ -1,0 +1,77 @@
+﻿{
+  "type": "object",
+  "title": "Workflow",
+  "required": ["name", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Workflow name"
+    },
+    "description": {
+      "type": "string",
+      "title": "Workflow description"
+    },
+    "steps": {
+      "type": "array",
+      "title": "Workflow steps",
+      "items": {
+        "type": "object",
+        "title": "Workflow step",
+        "required": ["title", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Workflow step title"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Whether the step is required for publication"
+          },
+          "schemas": {
+            "type": "array",
+            "title": "Workflow step schemas",
+            "description": "Schemas in the order they should be displayed",
+            "items": {
+              "type": "object",
+              "title": "Schema that belongs to this workflow",
+              "description": "The order of the schemas is the order they will render in the front-end",
+              "required": ["name", "required", "allowMultipleObjects"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "Name of the schema"
+                },
+                "required": {
+                  "type": "boolean",
+                  "title": "Whether the schema is required for publication"
+                },
+                "hide": {
+                  "type": "array",
+                  "title": "Schema fields to be hidden",
+                  "description": "JsonPath fields to hide in the front-end"
+                },
+                "allowMultipleObjects": {
+                  "type": "boolean",
+                  "title": "Allow multiple objects",
+                  "description": "Whether multiple instances of this schema is allowed"
+                },
+                "requires": {
+                  "type": "array",
+                  "title": "Requires schema",
+                  "description": "List of schemas required by this schema",
+                  "items": {
+                    "type": "string",
+                    "title": "Required schema name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

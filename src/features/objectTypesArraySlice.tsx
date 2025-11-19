@@ -13,5 +13,5 @@ const objectTypesArraySlice = createSlice({
   },
 })
 
-export const { setObjectTypesArray } = objectTypesArraySlice.actions
+export const { setObjectTypesArray, resetObjectTypesArray } = objectTypesArraySlice.actions
 export default objectTypesArraySlice.reducer

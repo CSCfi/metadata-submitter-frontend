@@ -3,7 +3,7 @@
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { FEGAObjectTypes } from "constants/wizardObject"
 
 test.describe("XML File Operation", () => {
   test.beforeEach(async ({ login, resetDB, newSubmission }) => {
@@ -16,7 +16,7 @@ test.describe("XML File Operation", () => {
     test.slow()
 
     // Add Study object
-    await clickAddObject(ObjectTypes.study)
+    await clickAddObject(FEGAObjectTypes.study)
 
     // Upload XML File
     await page.getByTestId("MoreHorizIcon").click()

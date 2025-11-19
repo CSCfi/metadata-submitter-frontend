@@ -3,7 +3,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { FEGAObjectTypes } from "constants/wizardObject"
 
 test.describe("Basic application flow", () => {
   test.skip()
@@ -55,7 +55,7 @@ test.describe("Basic application flow", () => {
     await expect(page.getByTestId("study-objects-list")).toHaveCount(1)
 
     // DAC form
-    await clickAddObject(ObjectTypes.dac)
+    await clickAddObject(FEGAObjectTypes.dac)
 
     // Try to submit empty DAC form. This should be invalid
     await page.getByTestId("title").fill("Test title")
@@ -91,7 +91,7 @@ test.describe("Basic application flow", () => {
     ).toBeVisible()
 
     // Fill Policy form
-    await clickAddObject(ObjectTypes.policy)
+    await clickAddObject(FEGAObjectTypes.policy)
     await page.getByTestId("title").fill("Test Policy title")
     await page.getByTestId("dacRef.accessionId").selectOption({ index: 1 })
     await expect(page.getByTestId("dacRef.accessionId")).toContainText(" - Main Contact:")

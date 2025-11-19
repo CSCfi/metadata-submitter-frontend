@@ -4,7 +4,7 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 
-// import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+// import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
@@ -87,8 +87,8 @@ describe("WizardShowSummaryStep", () => {
         projectId: "a0981b1b4df349e5af7ecbe22a1a1f75",
         published: false,
         openedXMLModal: true,
-        workflow: "SDSX",
-        doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
+        workflow: "SD",
+        metadata: { creators: [], keywords: "" },
       },
     }
 

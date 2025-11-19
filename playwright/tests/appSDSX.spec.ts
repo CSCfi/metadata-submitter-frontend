@@ -3,11 +3,11 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-test.describe("Basic SDSX flow", () => {
+test.describe("Basic SD flow", () => {
   test.beforeEach(async ({ resetDB }) => {
     await resetDB
   })
-  test("completes SDSX steps and publishes a new submission", async ({
+  test("completes SD steps and publishes a new submission", async ({
     page,
     login,
     newSubmission,
@@ -23,7 +23,7 @@ test.describe("Basic SDSX flow", () => {
 
     // Add submission name & description
     await login()
-    await newSubmission("SDSX")
+    await newSubmission("SD")
 
     /*
      * 2nd step DAC and Policy

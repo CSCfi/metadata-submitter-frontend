@@ -13,8 +13,9 @@ import { styled } from "@mui/material/styles"
 import { useTranslation } from "react-i18next"
 import { Link as RouterLink } from "react-router"
 
+import { ExtraObjectTypes } from "constants/wizardObject"
 import { setProjectId } from "features/projectIdSlice"
-import { resetObjectType } from "features/wizardObjectTypeSlice"
+import { setObjectType } from "features/wizardObjectTypeSlice"
 import { resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
@@ -71,7 +72,7 @@ const SecondaryNav: React.FC = () => {
   }
 
   const resetWizard = () => {
-    dispatch(resetObjectType())
+    dispatch(setObjectType(ExtraObjectTypes.submissionDetails))
     dispatch(resetSubmission())
   }
 

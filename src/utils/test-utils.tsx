@@ -14,7 +14,7 @@ import type { RootState } from "../rootReducer"
 import type { AppStore } from "../store"
 import CSCtheme from "../theme"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 import rootReducer from "rootReducer"
 import { Schema } from "types"
 
@@ -34,16 +34,17 @@ export const mockState = {
       { projectId: "PROJECT2", projectNumber: "Project 2" },
     ],
   },
-  objectType: ObjectTypes.dac,
-  objectTypesArray: Object.keys(ObjectTypes) as Schema[],
+  objectType: SDObjectTypes.dacPolicies,
+  objectTypesArray: Object.keys(SDObjectTypes) as Schema[],
   submission: {
+    projectId: "Project1",
     description: "Test desciption",
     submissionId: "FOL90524783",
     name: "Test name",
     title: "Test Title",
     published: false,
-    workflow: "SDSX",
-    doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
+    workflow: "SD",
+    metadata: { creators: [], keywords: "" },
   },
   openedXMLModal: false,
   currentObject: {

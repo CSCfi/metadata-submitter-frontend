@@ -1,4 +1,6 @@
 import $RefParser from "@apidevtools/json-schema-ref-parser"
+import Ajv2020 from "ajv/dist/2020"
+import { mergeWith } from "lodash"
 
 import { FormObject } from "types"
 
@@ -74,4 +76,62 @@ export const traverseValues = (object: FormObject) => {
       break
     }
   }
+}
+
+const rawSchemaModules = import.meta.glob("../schemas/**/*.json")
+const rawDataModules = import.meta.glob("../data/**/*.json")
+
+const getModules = (rawModules: Record<string, () => Promise<unknown>>) =>
+  Object.fromEntries(Object.entries(rawModules).map(([k, v]) => [k.toLowerCase(), v]))
+
+async function loadJSONFile<T>(
+  rawModules: Record<string, () => Promise<unknown>>,
+  basePath: string,
+  filePath: string,
+  errorMessage: string
+): Promise<T> {
+  const key = `${basePath}/${filePath}.json`.toLowerCase()
+  const modules = getModules(rawModules)
+  const loader = modules[key]
+  if (!loader) {
+    throw new Error(`${errorMessage}: ${basePath}/${filePath}.json`)
+  }
+  const module = (await loader()) as { default: T }
+  return module.default
+}
+
+export async function loadJSONSchema(schemaPath: string): Promise<FormObject> {
+  return loadJSONFile<FormObject>(
+    rawSchemaModules,
+    "../schemas",
+    schemaPath,
+    "JSON Schema not found"
+  )
+}
+
+export async function loadJSONData<T>(dataPath: string): Promise<T> {
+  return loadJSONFile<T>(rawDataModules, "../data", dataPath, "JSON Data file not found")
+}
+
+export function validateJSONSchema(schema: FormObject) {
+  const ajv = new Ajv2020()
+  const isValid = ajv.validateSchema(schema)
+  if (!isValid) console.error(`Invalid JSON schema: ${ajv.errorsText(ajv.errors)}`)
+}
+
+export function validateJSONData<T>(schema: FormObject, data: T) {
+  const ajv = new Ajv2020()
+  const validate = ajv.compile(schema)
+  if (!validate(data)) console.error("Invalid JSON data", data)
+}
+
+export const localizeSchema = (translationKey, namespace, baseSchema, t) => {
+  const translationMap = t(`${translationKey}`, { ns: namespace, returnObjects: true }) || {}
+  const customizer = (objValue, srcValue, key) => {
+    // Common keys that would need translation, can be added more.
+    const translatableKeys = ["title", "description", "enum"]
+    if (translatableKeys.includes(key)) return srcValue
+    return undefined
+  }
+  return mergeWith({}, baseSchema, translationMap, customizer)
 }

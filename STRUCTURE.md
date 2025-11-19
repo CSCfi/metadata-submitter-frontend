@@ -13,7 +13,7 @@ Form components are crucial part of the application:
 
 ### Constants
 
-Folder `src/constants` holds all the constants used in the application. The constants are uniquely defined and separated into different files according to its related context. For example, the file `constants/wizardObject.ts` contains unique constants regarding to `wizardObject` such as: `ObjectTypes, ObjectStatus, etc.`
+Folder `src/constants` holds all the constants used in the application. The constants are uniquely defined and separated into different files according to its related context. For example, the file `constants/wizardObject.ts` contains unique constants regarding to `wizardObject` such as: `SDObjectTypes, ObjectStatus, etc.`
 
 The purposes of using these `constants` are:
 

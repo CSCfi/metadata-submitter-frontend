@@ -1,33 +1,36 @@
-export const ObjectTypes = {
-  study: "study",
-  sample: "sample",
-  experiment: "experiment",
-  run: "run",
-  analysis: "analysis",
-  dac: "dac",
-  datacite: "datacite",
-  policy: "policy",
-  dataset: "dataset",
-  bucket: "bucket",
-  bpimage: "bpimage",
-  bpdataset: "bpdataset",
-  bpsample: "bpsample",
-  bpobservation: "bpobservation",
-  bpstaining: "bpstaining",
-  dacPolicies: "dacPolicies",
-  summary: "summary",
-  publish: "publish",
-  submissionDetails: "submissionDetails",
+export enum SDObjectTypes {
+  dacPolicies = "dacPolicies",
+  linkBucket = "linkBucket",
+  publicMetadata = "publicMetadata",
+  summary = "summary",
+  publishSubmission = "publishSubmission",
 }
 
-export const NotMetadataObjects = [
-  ObjectTypes.bucket,
-  ObjectTypes.dacPolicies,
-  ObjectTypes.datacite,
-  ObjectTypes.publish,
-  ObjectTypes.submissionDetails,
-  ObjectTypes.summary,
-]
+export enum FEGAObjectTypes {
+  study = "study",
+  sample = "sample",
+  experiment = "experiment",
+  run = "run",
+  analysis = "analysis",
+  dac = "dac",
+  policy = "policy",
+  dataset = "dataset",
+}
+
+export enum BPObjectTypes {
+  bpimage = "bpimage",
+  bpdataset = "bpdataset",
+  bpsample = "bpsample",
+  bpobservation = "bpobservation",
+  bpstaining = "bpstaining",
+  bpannotation = "bpannotation",
+  bppolicy = "bppolicy",
+  bprems = "bprems",
+}
+
+export const ExtraObjectTypes = {
+  submissionDetails: "submissionDetails",
+}
 
 export const ObjectStatus = {
   draft: "Draft",
@@ -40,32 +43,6 @@ export const ObjectSubmissionTypes = {
   xml: "XML",
   existing: "Existing",
 }
-
-// SDSX valid steps
-export const ValidSteps = [
-  "createSubmissionStep",
-  "dacPoliciesStep",
-  "dataBucketStep",
-  "idPublishStep",
-]
-
-// Used only in WizardDraftSelections.tsx, not affected by workflows?
-export const ObjectSubmissionStepsList = [
-  {
-    stepNumber: 2,
-    objectTypes: [ObjectTypes.study, ObjectTypes.dac, ObjectTypes.policy],
-  },
-  {
-    stepNumber: 4,
-    objectTypes: [
-      ObjectTypes.sample,
-      ObjectTypes.experiment,
-      ObjectTypes.run,
-      ObjectTypes.analysis,
-      ObjectTypes.dataset,
-    ],
-  },
-]
 
 export const ObjectSubmissionsArray = [ObjectSubmissionTypes.form, ObjectSubmissionTypes.xml]
 

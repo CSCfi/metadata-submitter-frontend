@@ -20,7 +20,7 @@ test.describe("Test workflow selection", () => {
     await expect(page.getByTestId("missing-workflow-error")).toBeVisible()
 
     // Select a workflow and submit, should pass
-    await page.getByTestId("SDSX").click()
+    await page.getByTestId("SD").click()
     await expect(page.getByTestId("missing-workflow-error")).not.toBeVisible()
     await page.getByTestId("create-submission").click()
     await page.waitForLoadState("domcontentloaded", { timeout: 30000 })

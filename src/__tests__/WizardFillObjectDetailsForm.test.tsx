@@ -5,106 +5,108 @@ import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 
-import { ObjectSubmissionTypes, ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 describe("WizardFillObjectDetailsForm", () => {
-  const schema = {
-    title: "Study",
-    type: "object",
-    required: ["descriptor"],
-    properties: {
-      descriptor: {
-        type: "object",
-        title: "Study Details",
-        required: ["studyTitle"],
-        properties: {
-          studyTitle: {
-            title: "Study Title",
-            description: "Title of the study",
-            type: "string",
-          },
-          studyDescription: {
-            title: "Study Description",
-            description: "Study Description should provide additional information about the study.",
-            type: "string",
-          },
-        },
-      },
-      center: {
-        title: "Description for Center",
-        description: "More for backwards compatibility, we might not need it.",
-        type: "object",
-        properties: {
-          centerProjectName: {
-            title: "Center Project Name",
-            description:
-              " Submitter defined project name. This field is intended for backward tracking of the study record to the submitter's LIMS.",
-            type: "string",
+  vi.mock("../schemas/submission.json", () => ({
+    default: {
+      title: "Submission",
+      type: "object",
+      properties: {
+        metadata: {
+          type: "object",
+          title: "Public metadata of your dataset",
+          properties: {
+            creators: {
+              type: "array",
+              title: "Creators",
+              description:
+                "The main researcher(s) involved in producing the data, or the author(s) of the publication.",
+              items: {
+                type: "object",
+                title: "Main researcher(s) involved with data or the author(s) of the publication.",
+                required: ["givenName", "familyName", "affiliation"],
+                properties: {
+                  givenName: {
+                    type: "string",
+                    title: "Given Name",
+                  },
+                  familyName: {
+                    type: "string",
+                    title: "Family Name",
+                  },
+                  affiliation: {
+                    type: "array",
+                    title: "Affiliations",
+                    description:
+                      "The organizational or institutional affiliation of the creator. Upon filling the form with the organization or institution suggestion will be made from Research Organization Registry (ROR) Community API.",
+                    items: {
+                      type: "object",
+                      title: "Affiliation Details",
+                      required: ["name"],
+                      properties: {
+                        name: {
+                          type: "string",
+                          title: "Name of the place of affiliation",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            keywords: {
+              type: "string",
+              title: "Keywords",
+              description: "A list of keywords or tags describing the resources.",
+            },
           },
         },
       },
     },
-  }
+  }))
 
   const state = {
-    objectType: ObjectTypes.study,
-    submissionType: ObjectSubmissionTypes.form,
+    objectType: SDObjectTypes.publicMetadata,
     submission: {
-      description: "AWD",
+      projectId: "Project1",
+      description: "Testdescription",
       submissionId: "FOL90524783",
       name: "Testname",
       title: "TestTitle",
       published: false,
-      workflow: "",
-      doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
+      workflow: "SD",
+      metadata: { creators: [], keywords: "" },
     },
-    openedXMLModal: false,
   }
 
-  sessionStorage.setItem(`cached_study_schema`, JSON.stringify(schema))
-
-  it("should create study form from schema in sessionStorage", async () => {
+  test("should create metadata form from submission json schema", async () => {
     renderWithProviders(
       <WizardFillObjectDetailsForm />,
 
       { preloadedState: state }
     )
-    await waitFor(() => screen.getByText("Study Details"))
-    expect(screen.getByText("Study Details")).toBeDefined()
+    const text = await waitFor(() => screen.getByText("Creators"))
+    expect(text).toBeDefined()
   })
 
-  it("should validate without errors on blur", async () => {
+  test("should validate without errors on blur", async () => {
     renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
 
-    const input = await waitFor(() => screen.getByTestId("descriptor.studyTitle"))
+    const input = await waitFor(() => screen.getByTestId("keywords"))
     await waitFor(() => {
-      fireEvent.change(input, { target: { value: "Title" } })
+      fireEvent.change(input, { target: { value: "key1,key2" } })
       fireEvent.blur(input)
     })
     await waitFor(() => expect(input).toBeVisible())
-  })
-
-  test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
-    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
-
-    // For description with length equal or less than 60, the tooltip should display all content
-    const TooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[0])
-
-    act(() => {
-      fireEvent.mouseOver(TooltipIcon)
-    })
-
-    const tooltipBox = await waitFor(() => screen.getByRole("tooltip"))
-    expect(tooltipBox).toBeVisible()
-    expect(tooltipBox).toHaveTextContent("Title of the study")
   })
 
   test("should show partly tooltip with Read more/Expand option on mouse over if the text length is > 60 chars", async () => {
     renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
 
     // For description with length more than 60, the tooltip should display Read more/Expand
-    const tooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[1])
+    const tooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[0])
 
     act(() => {
       fireEvent.mouseOver(tooltipIcon)
@@ -121,7 +123,7 @@ describe("WizardFillObjectDetailsForm", () => {
     })
     await waitFor(() =>
       expect(tooltipBox).toHaveTextContent(
-        "Study Description should provide additional information about the study."
+        "The main researcher(s) involved in producing the data, or the author(s) of the publication."
       )
     )
 
@@ -133,19 +135,23 @@ describe("WizardFillObjectDetailsForm", () => {
 
     await waitFor(() =>
       expect(tooltipBox).toHaveTextContent(
-        "Study Description should provide additional information abou...Show more"
+        "The main researcher(s) involved in producing the data, or th...Show more"
       )
     )
   })
 
-  // Note: If this test runs before form creation, form creation fails because getItem spy messes sessionStorage init somehow
-  test("should call sessionStorage", async () => {
-    const spy = vi.spyOn(Storage.prototype, "getItem")
+  test("should show full tooltip on mouse over if the text length is <= 60 chars", async () => {
     renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
-    expect(spy).toBeCalledWith("cached_study_schema")
 
-    await waitFor(() => {
-      expect(spy.mock.calls.length).toBe(1)
+    // For description with length equal or less than 60, the tooltip should display all content
+    const TooltipIcon = await waitFor(() => screen.getAllByTestId("HelpOutlineIcon")[1])
+
+    act(() => {
+      fireEvent.mouseOver(TooltipIcon)
     })
+
+    const tooltipBox = await waitFor(() => screen.getByRole("tooltip"))
+    expect(tooltipBox).toBeVisible()
+    expect(tooltipBox).toHaveTextContent("A list of keywords or tags describing the resources.")
   })
 })

@@ -2,14 +2,14 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { FEGAObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 test.describe("Draft operations", () => {
   test.beforeEach(async ({ page, login, generateSubmissionAndObjects, resetDB }) => {
     await resetDB()
     await login()
     // Add submission name & description, navigate to submissions
-    await generateSubmissionAndObjects(ObjectTypes.dac)
+    await generateSubmissionAndObjects(FEGAObjectTypes.dac)
     // Edit newly created submission
     await page.getByText("Edit").first().click()
     await page.waitForLoadState()
@@ -27,7 +27,7 @@ test.describe("Draft operations", () => {
     await clickAccordionPanel("Study, DAC and Policy")
 
     // Create a new DAC form and submit
-    await clickAddObject(ObjectTypes.dac)
+    await clickAddObject(FEGAObjectTypes.dac)
     await page.getByTestId("title").fill("Test DAC title")
     await page.locator("div[data-testid='contacts'] > div > button").click()
     await page.getByTestId("contacts.0.name").fill("Test contact name")
@@ -61,7 +61,7 @@ test.describe("Draft operations", () => {
 
     // Update draft, save from dialog
     await page.getByTestId("title").fill("Test title 2 second save")
-    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.policy, ObjectStatus.draft)
     await expect(
       page
         .locator("p")
@@ -73,7 +73,7 @@ test.describe("Draft operations", () => {
     await expect(page.getByTestId("policy-objects-list").locator("li")).toHaveCount(2)
 
     // Continue first draft
-    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.policy, ObjectStatus.draft)
 
     // Clear form
     await optionsActions("Clear form")
@@ -92,7 +92,7 @@ test.describe("Draft operations", () => {
     ).toBeVisible()
 
     // Submit first form draft
-    await continueLatestForm(ObjectTypes.policy, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.policy, ObjectStatus.draft)
 
     await page.getByTestId("dacRef.accessionId").selectOption({ index: 1 })
     await page.getByTestId("policy").selectOption({ label: "Policy Text" })

@@ -17,15 +17,15 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { ObjectTypes, NotMetadataObjects } from "constants/wizardObject"
+import { SDObjectTypes, ExtraObjectTypes } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
-import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
+import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import type { DoiFormDetails, HandlerRef, StepObject } from "types"
-import { hasDoiInfo, pathWithLocale } from "utils"
+import type { HandlerRef, StepObject } from "types"
+import { hasMetadata, pathWithLocale } from "utils"
 
 const ActionButton = (props: {
   step: number
@@ -99,12 +99,11 @@ const ActionButton = (props: {
  */
 const StepItems = (props: {
   step: number
-  objects: StepObject[]
-  submissionId: string
-  doiInfo?: (Record<string, unknown> & DoiFormDetails) | undefined
   objectType: string
+  objects: StepObject[]
+  submissionId?: string
 }) => {
-  const { step, objects, submissionId, doiInfo, objectType } = props
+  const { step, objects, submissionId, objectType } = props
   const dispatch = useAppDispatch()
   const unsavedForm = useAppSelector(state => state.unsavedForm)
   const navigate = useNavigate()
@@ -122,20 +121,23 @@ const StepItems = (props: {
   }
 
   const handleItemEdit = formObject => {
-    dispatch(updateStep({ step: step, objectType: objectType }))
-    if (NotMetadataObjects.includes(objectType)) {
+    dispatch(updateStep({ step, objectType }))
+
+    if (!submissionId) return
+
+    // objects belong to ExtraObjectTypes and SDObjectTypes don't need to be fetched from backend
+    const isNotFetchableTypes = SDObjectTypes[objectType] || ExtraObjectTypes[objectType]
+
+    if (isNotFetchableTypes) {
       dispatch(resetCurrentObject())
       dispatch(setObjectType(objectType))
-      if (objectType === ObjectTypes.datacite) {
-        dispatch(setCurrentObject(doiInfo))
-      }
       navigate({
         pathname: pathWithLocale(`submission/${submissionId}`),
         search: `step=${step}`,
       })
-    } else {
-      editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
+      return
     }
+    editObjectHook(objectType, formObject, step, submissionId, dispatch, navigate)
   }
 
   const handleAlert = (navigate: boolean) => {
@@ -259,14 +261,17 @@ const WizardStep = (props: WizardStepProps) => {
       {schemas.map((item, index) => {
         const { objectType, name, objects, allowMultipleObjects } = item
         const isActive = currentStepObject.stepObjectType === objectType
-        const buttonText =
-          objectType === ObjectTypes.bucket || objectType === ObjectTypes.summary
-            ? t("view")
-            : objectType === ObjectTypes.publish ||
-                objectType === ObjectTypes.submissionDetails ||
-                hasDoiInfo(submission.doiInfo)
-              ? t("edit")
-              : t("add")
+        // Define buttonText based on objectType
+        const viewTypes = new Set([SDObjectTypes.linkBucket, SDObjectTypes.summary])
+        const editTypes = new Set([
+          SDObjectTypes.publishSubmission,
+          ExtraObjectTypes.submissionDetails,
+        ])
+        const buttonText = viewTypes.has(objectType as SDObjectTypes)
+          ? t("view")
+          : editTypes.has(objectType as SDObjectTypes) || hasMetadata(submission.metadata)
+            ? t("edit")
+            : t("add")
 
         return (
           <List key={objectType} disablePadding data-testid={`${objectType}-details`}>
@@ -284,7 +289,6 @@ const WizardStep = (props: WizardStepProps) => {
                         step={step}
                         objects={objects}
                         submissionId={submission.submissionId}
-                        doiInfo={submission.doiInfo}
                         objectType={objectType}
                       />
                     )}

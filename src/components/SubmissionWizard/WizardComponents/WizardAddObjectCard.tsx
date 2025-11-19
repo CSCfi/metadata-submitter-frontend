@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles"
 import WizardFillObjectDetailsForm from "components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 // import WizardXMLObjectPage from "components/SubmissionWizard/WizardForms/WizardXMLObjectPage"
 import { useAppSelector } from "hooks"
-import type { HandlerRef } from "types"
 
 const StyledContent = styled("div")(() => ({
   width: "100%",
@@ -14,12 +13,12 @@ const StyledContent = styled("div")(() => ({
 /*
  * Render correct form to add objects based on object's submission type (form, XML) in store
  */
-const WizardAddObjectCard = ({ formRef }: { formRef?: HandlerRef }) => {
+const WizardAddObjectCard = () => {
   const objectType = useAppSelector(state => state.objectType)
 
   const content = {
-    component: <WizardFillObjectDetailsForm key={objectType} ref={formRef} />,
-    testId: "form",
+    component: <WizardFillObjectDetailsForm key={objectType} />,
+    testId: "form1",
   }
   /* Redux's submissionType is removed:
     - To simplify the codes as the frontend doesn't support XML for MVP.

@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { FEGAObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 test.describe("render objects' links and attributes", () => {
   test.beforeEach(async ({ resetDB }) => {
@@ -75,7 +75,7 @@ test.describe("render objects' links and attributes", () => {
     await expect(page.getByTestId("study-objects-list").locator("li")).toHaveCount(1)
 
     // Check submitted object has correnct rendering data
-    await continueLatestForm(ObjectTypes.study, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.study, ObjectStatus.draft)
     await expect(page.getByTestId("descriptor.studyTitle")).toHaveValue("Test title")
 
     // Check XRef Link
@@ -114,7 +114,7 @@ test.describe("render objects' links and attributes", () => {
 
     // Test that removed link item is removed also from backend
     await formActions("form-draft")
-    await continueLatestForm(ObjectTypes.study, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.study, ObjectStatus.draft)
     await expect(page.locator("div[data-testid='studyLinks'] > div")).toHaveCount(2)
   })
 })

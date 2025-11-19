@@ -18,7 +18,7 @@ const getSubmissionById = async (submissionId: string): Promise<APIResponse> => 
 
 const patchSubmissionById = async (
   submissionId: string,
-  JSONContent: { name: string; title: string; description: string }
+  JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
   return await api.patch(`/${submissionId}`, JSONContent)
 }
@@ -36,22 +36,24 @@ const getSubmissions = async (params: {
   return await api.get("", params)
 }
 
-const patchDOIInfo = async (
+/* The below 2 endpoints from backend are mostly focusing on XML objects and
+ * not fully serving what we may ultimately need yet, for example json objects for FEGA or BP if we ever need.
+ * Their responses are envisioned what we could get when the backend function being more generalized
+ * to serve different cases in the future.
+ */
+const getAllObjectsByObjectType = async (
   submissionId: string,
-  doiFormDetails: Record<string, unknown>[]
+  objectType: string
 ): Promise<APIResponse> => {
-  return await api.patch(`${submissionId}/doi`, doiFormDetails)
+  return await api.get(`${submissionId}/objects/docs?objectType=${objectType}`)
 }
 
-const putBucket = async (submissionId: string, bucketName: string): Promise<APIResponse> => {
-  return await api.patch(`${submissionId}/bucket`, { bucket: bucketName })
-}
-
-const putRemsData = async (
+const getObjectByObjectId = async (
   submissionId: string,
-  remsData: Record<string, unknown>
+  objectType: string,
+  objectId: string
 ): Promise<APIResponse> => {
-  return await api.patch(`${submissionId}/rems`, remsData)
+  return await api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
 }
 
 export default {
@@ -60,7 +62,6 @@ export default {
   patchSubmissionById,
   deleteSubmissionById,
   getSubmissions,
-  patchDOIInfo,
-  putBucket,
-  putRemsData,
+  getAllObjectsByObjectType,
+  getObjectByObjectId,
 }

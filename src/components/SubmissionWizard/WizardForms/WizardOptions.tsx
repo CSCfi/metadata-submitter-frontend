@@ -10,7 +10,7 @@ import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { useTranslation } from "react-i18next"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   padding: "1.2rem",
@@ -41,15 +41,15 @@ const WizardOptions: React.FC<WizardOptionsProps> = props => {
   const { t } = useTranslation()
 
   const options =
-    objectType !== ObjectTypes.datacite
+    objectType !== SDObjectTypes.publicMetadata
       ? // ? [t("formActions.uploadXML"), t("formActions.clearForm"), t("formActions.deleteForm")]
         [t("formActions.clearForm"), t("formActions.deleteForm")]
       : [t("formActions.clearForm")]
 
   /*const shouldDisableXMLModal = [
-    ObjectTypes.datacite,
-    ObjectTypes.dacPolicies,
-    ObjectTypes.bucket,
+    SDObjectTypes.publicMetadata,
+    SDObjectTypes.dacPolicies,
+    SDObjectTypes.linkBucket,
   ].includes(objectType)*/
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)

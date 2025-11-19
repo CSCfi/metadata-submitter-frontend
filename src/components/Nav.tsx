@@ -24,8 +24,8 @@ import logo from "../images/csc_logo.svg"
 
 import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 
-import { Locale } from "constants/locale"
 import { PathsWithoutLogin } from "constants/paths"
+import { Locale } from "constants/translation"
 import { setLocale } from "features/localeSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { fetchUser, resetUser } from "features/userSlice"

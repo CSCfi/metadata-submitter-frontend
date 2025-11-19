@@ -1,0 +1,11 @@
+﻿{
+  "publicMetadata": {
+    "title": "FI_Public metadata of your dataset",
+    "properties": {
+      "creators": {
+        "title": "FI_Creators",
+        "description": "FI_The main researcher(s) involved in producing the data, or the author(s) of the publication."
+      }
+    }
+  }
+}

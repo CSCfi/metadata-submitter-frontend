@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-import { Locale } from "constants/locale"
+import { Locale } from "constants/translation"
 import { DispatchReducer } from "types"
 
 const initialState: string = localStorage.getItem("locale") || Locale.defaultLocale

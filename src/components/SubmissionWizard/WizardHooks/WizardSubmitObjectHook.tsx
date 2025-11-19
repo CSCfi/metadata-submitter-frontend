@@ -1,6 +1,6 @@
 import JSONSchemaParser from "components/SubmissionWizard/WizardForms/WizardJSONSchemaParser"
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectTypes } from "constants/wizardObject"
+import { FEGAObjectTypes } from "constants/wizardObject"
 import { setFileTypes } from "features/fileTypesSlice"
 import { setLoading, resetLoading } from "features/loadingSlice"
 import { updateStatus } from "features/statusMessageSlice"
@@ -54,7 +54,7 @@ const submitObjectHook = async (
     )
 
     // Dispatch fileTypes if object is Run or Analysis
-    if (objectType === ObjectTypes.run || objectType === ObjectTypes.analysis) {
+    if (objectType === FEGAObjectTypes.run || objectType === FEGAObjectTypes.analysis) {
       const objectWithFileTypes = getNewUniqueFileTypes(
         response.data.accessionId,
         cleanedValues as FormDataFiles

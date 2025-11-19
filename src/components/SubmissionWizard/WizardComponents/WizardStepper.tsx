@@ -6,21 +6,17 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails"
 import MuiAccordionSummary, { AccordionSummaryProps } from "@mui/material/AccordionSummary"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
-import { useTranslation } from "react-i18next"
 import { useLocation } from "react-router"
-
-import WizardMapObjectsToStepHook from "../WizardHooks/WizardMapObjectsToStepsHook"
 
 import WizardStep from "./WizardStep"
 
-import { setWizardMappedSteps } from "features/wizardMappedStepsSlice"
+import { resetObjectTypesArray } from "features/objectTypesArraySlice"
 import { resetWizardMappedSteps } from "features/wizardMappedStepsSlice"
 import { setObjectType, resetObjectType } from "features/wizardObjectTypeSlice"
 import { resetStepObject, updateStep } from "features/wizardStepObjectSlice"
 import { resetWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import workflowAPIService from "services/workflowAPI"
-import type { HandlerRef, Workflow } from "types"
+import type { HandlerRef } from "types"
 
 // Top & bottom borders for first and last disabled elements
 const AccordionWrapper = styled("div")(({ theme }) => ({
@@ -81,45 +77,13 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
  */
 
 const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
-  const objectTypesArray = useAppSelector(state => state.objectTypesArray)
   const objectType = useAppSelector(state => state.objectType)
-  const submission = useAppSelector(state => state.submission)
-  const objects = useAppSelector(state => state.stepObjects)
   const currentStepObject = useAppSelector(state => state.stepObject)
-  const workflowType = useAppSelector(state => state.workflowType)
-  const remsInfo = useAppSelector(state => state.remsInfo)
   const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
 
   const dispatch = useAppDispatch()
 
   const location = useLocation()
-
-  const { t } = useTranslation()
-
-  const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | Record<string, unknown>>({})
-
-  // Fetch workflow based on workflowType
-  useEffect(() => {
-    const getWorkflow = async () => {
-      if (workflowType) {
-        const response = await workflowAPIService.getWorkflowByType(workflowType)
-        setCurrentWorkflow(response.data)
-      }
-    }
-    getWorkflow()
-  }, [workflowType])
-
-  useEffect(() => {
-    const { mappedSteps } = WizardMapObjectsToStepHook(
-      submission,
-      objects,
-      objectTypesArray,
-      currentWorkflow,
-      t,
-      remsInfo
-    )
-    dispatch(setWizardMappedSteps(mappedSteps))
-  }, [submission, objects, objectTypesArray, currentWorkflow, t])
 
   // Set step on initialization based on query paramater in url
   // Steps with single step item (dataset details, data bucket & summary) should have only step item as active item
@@ -135,10 +99,8 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
             objectType: objectType ? objectType : currentStep.schemas[0]?.objectType,
           })
         )
-        // Only set correct objectType after creating a new submission (stepInUrl === 1)
-        if (stepInUrl > 1) {
-          dispatch(setObjectType(objectType ? objectType : currentStep.schemas[0]?.objectType))
-        }
+
+        dispatch(setObjectType(objectType ? objectType : currentStep.schemas[0]?.objectType))
       }
     }
   }, [mappedSteps.length, location.search])
@@ -149,6 +111,7 @@ const WizardStepper = ({ ref }: { ref?: HandlerRef }) => {
       dispatch(resetStepObject())
       dispatch(resetObjectType())
       dispatch(resetWorkflowType())
+      dispatch(resetObjectTypesArray())
       dispatch(resetWizardMappedSteps())
     },
     []

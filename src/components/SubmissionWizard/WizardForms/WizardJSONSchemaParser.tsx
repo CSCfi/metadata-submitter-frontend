@@ -31,12 +31,11 @@ import moment from "moment"
 import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
-import { ObjectTypes } from "constants/wizardObject"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
-import { pathToName, traverseValues, getPathName } from "utils/JSONSchemaUtils"
+import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 /*
  * Highlight style for required fields
@@ -759,54 +758,9 @@ const FormTextField = ({
   type = "string",
   nestedField,
 }: FormFieldBaseProps & { description: string; type?: string; nestedField?: NestedField }) => {
-  const objectType = useAppSelector(state => state.objectType)
-  const isDOIForm = objectType === ObjectTypes.datacite
-  const autocompleteField = useAppSelector(state => state.autocompleteField)
-  const path = name.split(".")
-  const [lastPathItem] = path.slice(-1)
-
   // Default Value of input
   const defaultValue = getDefaultValue(name, nestedField)
-  // useWatch to watch any changes in form's fields
-  const watchValues = useWatch()
-
-  // Case: DOI form - Affilation identifier to be prefilled and hidden
-  const prefilledHiddenFields = ["affiliationIdentifier"]
-  const isPrefilledHiddenField = isDOIForm && prefilledHiddenFields.includes(lastPathItem)
-
-  /*
-   * Handle DOI form values
-   */
-  const { setValue, getValues } = useFormContext()
-  const watchAutocompleteFieldName = isPrefilledHiddenField ? getPathName(path, "name") : null
-  const prefilledValue = watchAutocompleteFieldName
-    ? get(watchValues, watchAutocompleteFieldName)
-    : null
-
-  // Check value of current name path
-  const val = getValues(name)
-
-  React.useEffect(() => {
-    if (!isPrefilledHiddenField) return
-    if (prefilledValue && !val) {
-      // Set value for prefilled field if autocompleteField exists
-      setValue(name, autocompleteField)
-    } else if (prefilledValue === undefined && val) {
-      // Remove values if autocompleteField is deleted
-      setValue(name, "")
-    }
-  }, [autocompleteField, prefilledValue])
-
-  // Remove values for Affiliations' <location of affiliation identifier> field if autocompleteField is deleted
-  React.useEffect(() => {
-    if (
-      prefilledValue === undefined &&
-      val &&
-      lastPathItem === prefilledHiddenFields[0] &&
-      isDOIForm
-    )
-      setValue(name, "")
-  }, [prefilledValue])
+  const { setValue } = useFormContext()
 
   return (
     <ConnectForm>
@@ -816,10 +770,7 @@ const FormTextField = ({
         return (
           <Controller
             render={({ field, fieldState: { error } }) => {
-              const inputValue =
-                (watchAutocompleteFieldName && typeof val !== "object" && val) ||
-                (typeof field.value !== "object" && field.value) ||
-                ""
+              const inputValue = (typeof field.value !== "object" && field.value) || ""
 
               const handleChange = (e: { target: { value: string | number } }) => {
                 const { value } = e.target
@@ -831,7 +782,7 @@ const FormTextField = ({
 
               return (
                 <div style={{ marginBottom: "1rem" }}>
-                  <BaselineDiv style={isPrefilledHiddenField ? { display: "none" } : {}}>
+                  <BaselineDiv>
                     <TextField
                       {...field}
                       slotProps={{ htmlInput: { "data-testid": name } }}

@@ -1,73 +1,41 @@
 /* metadataObjects is disabled for MVP */
 import type { TFunction } from "i18next"
-//import { startCase } from "lodash"
 
-import { ObjectTypes } from "constants/wizardObject"
-//import { WorkflowTypes } from "constants/wizardWorkflow"
+import { Namespaces } from "constants/translation"
+import { ExtraObjectTypes, SDObjectTypes } from "constants/wizardObject"
+import { STEP_CONTENT_KEYS } from "constants/wizardStepContent"
+import { WorkflowTypes } from "constants/wizardWorkflow"
 import type {
   StepObject,
   Schema,
-  Submission,
+  SubmissionDetailsWithId,
   Workflow,
-  // WorkflowStep,
+  WorkflowStep,
   MappedSteps,
+  SDSchemaName,
 } from "types"
-import { hasDoiInfo } from "utils"
-
+import { hasMetadata } from "utils"
 /*
  * Map the structure of objects within a submission to separate steps in the Accordion
  */
 const mapObjectsToStepsHook = (
-  submission: Submission,
+  submission: SubmissionDetailsWithId,
   objects: StepObject[],
   objectTypesArray: Schema[],
-  currentWorkflow: Workflow | Record<string, unknown>,
+  currentWorkflow: Workflow,
   t: TFunction,
   remsInfo: Record<string, unknown>[]
 ): { mappedSteps: MappedSteps[] } => {
-  // Group objects by schema
-  // const groupedObjects = objectTypesArray
-  //   .map((schema: Schema) => {
-  //     return {
-  //       [schema]: objects.filter(obj => obj.schema === schema),
-  //     }
-  //   })
-  //   .reduce((map, obj) => {
-  //     const key = Object.keys(obj)[0]
-  //     map[key] = obj[key]
-  //     return map
-  //   }, {})
-
-  // const allSteps: WorkflowStep[] = currentWorkflow?.steps as WorkflowStep[]
-
-  // const schemaSteps =
-  //   allSteps?.length > 0
-  //     ? allSteps.map((step: WorkflowStep) => {
-  //         return {
-  //           ...step,
-  //           ["schemas"]: step.schemas.map(schema => ({
-  //             ...schema,
-  //             name:
-  //               schema.name === ObjectTypes.dac
-  //                 ? schema.name.toUpperCase()
-  //                 : startCase(schema.name),
-  //             objectType: schema.name,
-  //             objects: groupedObjects[schema.name],
-  //           })),
-  //         }
-  //       })
-  //     : []
-
   /*
    * List of accordion steps and configurations.
    * First step is always enabled.
-   * Rest of the steps are visiblef after first step is saved.
+   * Rest of the steps are visible after first step is saved.
    */
   const createSubmissionStep = {
     title: t("submission.datasetDetails"),
     schemas: [
       {
-        objectType: ObjectTypes.submissionDetails,
+        objectType: ExtraObjectTypes.submissionDetails,
         name: t("newSubmission.nameSubmission"),
         objects: submission.submissionId
           ? [
@@ -78,6 +46,7 @@ const mapObjectsToStepsHook = (
             ]
           : [],
         required: true,
+        componentKey: STEP_CONTENT_KEYS.createSubmissionStep,
       },
     ],
   }
@@ -87,7 +56,7 @@ const mapObjectsToStepsHook = (
       const selectedRems = submission.rems
       const remsObj = remsInfo.reduce(
         (
-          arr: { id: number | string; displayTitle: string }[],
+          arr: { id: string | number; displayTitle: string }[],
           organization: Record<string, unknown>
         ) => {
           if (organization["id"] === selectedRems["organizationId"]) {
@@ -118,80 +87,87 @@ const mapObjectsToStepsHook = (
     return []
   }
 
-  const dacPoliciesStep = {
-    title: t("dacPolicies.title"),
-    schemas: [
-      {
-        objectType: ObjectTypes.dacPolicies,
-        name: t("dacPolicies.title"),
-        objects: getRemsObject(),
-        required: true,
-      },
-    ],
-  }
+  // Returns 'id' and 'displayTitle' for any saved objects
+  const getSDSchemaObjects = (
+    getTranslationKey: (key: string) => string,
+    schemaName: SDSchemaName
+  ) => {
+    const { submissionId, bucket, metadata } = submission
 
-  const dataBucketStep = {
-    title: t("dataBucket.dataBucket"),
-    schemas: [
-      {
-        objectType: ObjectTypes.bucket,
-        name: t("dataBucket.linkBucket"),
-        objects: submission?.bucket
+    const schemaMap: Record<string, () => { id: string | number; displayTitle: string }[] | []> = {
+      [SDObjectTypes.dacPolicies]: () => getRemsObject(),
+      [SDObjectTypes.linkBucket]: () =>
+        submissionId && bucket
           ? [
               {
-                id: `linked-data-bucket-${submission.submissionId}`,
-                displayTitle: submission?.bucket,
+                id: `linked-data-bucket-${submissionId}`,
+                displayTitle: getTranslationKey(schemaName),
               },
             ]
           : [],
-        required: true,
-      },
-    ],
-  }
-
-  /*
-   * Add to the "Identifier and publish" step of accordion the summary and publish substeps
-   */
-
-  const hasDoi: boolean = hasDoiInfo(submission.doiInfo)
-
-  const idPublishStep = {
-    title: t("identifierPublish"),
-    schemas: [
-      {
-        name: t("identifier"),
-        objectType: ObjectTypes.datacite,
-        objects: hasDoi
+      [SDObjectTypes.publicMetadata]: () =>
+        submissionId && hasMetadata(metadata)
           ? [
               {
-                id: submission.submissionId,
-                displayTitle: t("doiRegistrationInfo"),
+                id: submissionId,
+                displayTitle: getTranslationKey(schemaName),
               },
             ]
           : [],
-        required: true,
-      },
-      {
-        name: t("summary"),
-        objectType: ObjectTypes.summary,
-        objects: [],
-        required: true,
-      },
-      {
-        name: t("publishSubmission"),
-        objectType: ObjectTypes.publish,
-        objects: [],
-        required: true,
-      },
-    ],
+      [SDObjectTypes.summary]: () => [],
+      [SDObjectTypes.publishSubmission]: () => [],
+    }
+
+    return schemaMap[schemaName]?.() ?? []
   }
-  // Comment out steps for other workflows
-  const mappedSteps = submission.submissionId
-    ? // ? currentWorkflow?.name == WorkflowTypes.sdsx
-      // [createSubmissionStep, dacPoliciesStep, dataBucketStep, ...schemaSteps, idPublishStep]
-      [createSubmissionStep, dacPoliciesStep, dataBucketStep, idPublishStep]
-    : //  : [createSubmissionStep, ...schemaSteps, dataBucketStep, idPublishStep]
-      [createSubmissionStep]
+
+  const groupSchemaObjects = (
+    getTranslationKey: (key: string) => string,
+    schemaName: string
+  ): { id: string | number; displayTitle: string }[] => {
+    if (currentWorkflow.name == WorkflowTypes.sd)
+      return getSDSchemaObjects(getTranslationKey, schemaName as SDSchemaName)
+    else return []
+  }
+
+  const getSDStepComponents = (schemaName: string) => {
+    const schemaMap: Record<string, () => string> = {
+      [SDObjectTypes.dacPolicies]: () => STEP_CONTENT_KEYS.addObjectStep,
+      [SDObjectTypes.linkBucket]: () => STEP_CONTENT_KEYS.dataBucketStep,
+      [SDObjectTypes.publicMetadata]: () => STEP_CONTENT_KEYS.addObjectStep,
+      [SDObjectTypes.summary]: () => STEP_CONTENT_KEYS.showSummaryStep,
+      [SDObjectTypes.publishSubmission]: () => STEP_CONTENT_KEYS.publishSubmissionStep,
+    }
+
+    return schemaMap[schemaName]?.() ?? ""
+  }
+
+  const getStepComponents = (schemaName: string) => {
+    if (currentWorkflow.name == WorkflowTypes.sd) return getSDStepComponents(schemaName)
+    else return ""
+  }
+
+  const schemaSteps = currentWorkflow?.steps
+    ? currentWorkflow.steps.map((step: WorkflowStep, index: number) => {
+        const getTranslationKey = (key: string) =>
+          t(`${currentWorkflow.name}.${index}.${key}`, { ns: Namespaces.workflowSteps })
+
+        return {
+          ...step,
+          title: getTranslationKey(step.title),
+          ["schemas"]: step.schemas.map(schema => ({
+            ...schema,
+            name: getTranslationKey(schema.name),
+            objectType: schema.name,
+            objects: groupSchemaObjects(getTranslationKey, schema.name),
+            componentKey: getStepComponents(schema.name),
+          })),
+        }
+      })
+    : []
+
+  const mappedSteps = [createSubmissionStep, ...(submission.submissionId ? schemaSteps : [])]
+
   return { mappedSteps }
 }
 

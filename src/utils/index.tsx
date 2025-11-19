@@ -2,9 +2,15 @@ import { uniq } from "lodash"
 import moment from "moment"
 import { useLocation } from "react-router"
 
-import { Locale } from "constants/locale"
-import { ObjectTypes } from "constants/wizardObject"
-import type { File, FormDataFiles, ObjectDisplayValues, DoiFormDetails, StepObject } from "types"
+import { Locale } from "constants/translation"
+import { FEGAObjectTypes } from "constants/wizardObject"
+import type {
+  File,
+  FormDataFiles,
+  ObjectDisplayValues,
+  MetadataFormDetails,
+  StepObject,
+} from "types"
 
 export const getObjectDisplayTitle = (
   objectType: string,
@@ -12,7 +18,7 @@ export const getObjectDisplayTitle = (
 ): string => {
   const data = objectData as ObjectDisplayValues
   switch (objectType) {
-    case ObjectTypes.study:
+    case FEGAObjectTypes.study:
       return data.descriptor?.studyTitle ?? ""
     default:
       return data.title ?? ""
@@ -36,11 +42,10 @@ export const getAccessionIds = (objectType: string, objects?: StepObject[]): Arr
     const accessionIds = submissions.map(obj => {
       const accessionId = obj.id
       const displayTitle = obj.displayTitle || ""
-      return obj.schema === ObjectTypes.dac
-        ? `${accessionId} - Main Contact: ${displayTitle}`
-        : obj.isXML
-          ? `${accessionId} - File name: ${displayTitle}`
-          : `${accessionId} - Title: ${displayTitle}`
+      let label = "Title"
+      if (obj.schema === FEGAObjectTypes.dac) label = "Main Contact"
+      if (obj.isXML) label = "File name"
+      return `${accessionId} - ${label}: ${displayTitle}`
     })
     return accessionIds
   }
@@ -84,10 +89,11 @@ export const getConvertedDate = (timestamp: number): string => {
 export const isFile = (files: File[], path: string) =>
   files.findIndex(file => file.path === path) > -1
 
-// Check that doiInfo exist and that it contains data at least at one of the keys
-export const hasDoiInfo = (doi: DoiFormDetails): boolean => {
-  const retval = doi
-    ? Object.values(doi).some(item => Array.isArray(item) && item.length > 0)
-    : false
-  return retval
+// Check that submission's metadata exist and that it contains data at least at one of the keys
+export const hasMetadata = (metadata: MetadataFormDetails | undefined): boolean => {
+  return !!metadata && Object.values(metadata).some(item => Array.isArray(item) && item.length)
+}
+
+export const removeWhitespace = (item: string): string => {
+  return item.replace(/\s+/g, "")
 }

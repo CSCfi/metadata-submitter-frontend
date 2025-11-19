@@ -1,6 +1,6 @@
 import { merge } from "lodash"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { FEGAObjectTypes } from "constants/wizardObject"
 import type { FormObject, StepObject } from "types"
 import { getAccessionIds } from "utils"
 
@@ -15,15 +15,15 @@ const getLinkedDereferencedSchema = (
   analysisAccessionIds: Array<string>
 ): Promise<FormObject> => {
   // AccessionIds of submitted objects
-  const studyAccessionIds = getAccessionIds(ObjectTypes.study, objects)
-  const sampleAccessionIds = getAccessionIds(ObjectTypes.sample, objects)
-  const runAccessionIds = getAccessionIds(ObjectTypes.run, objects)
-  const experimentAccessionIds = getAccessionIds(ObjectTypes.experiment, objects)
-  const policyAccessionIds = getAccessionIds(ObjectTypes.policy, objects)
-  const dacAccessionIds = getAccessionIds(ObjectTypes.dac, objects)
+  const studyAccessionIds = getAccessionIds(FEGAObjectTypes.study, objects)
+  const sampleAccessionIds = getAccessionIds(FEGAObjectTypes.sample, objects)
+  const runAccessionIds = getAccessionIds(FEGAObjectTypes.run, objects)
+  const experimentAccessionIds = getAccessionIds(FEGAObjectTypes.experiment, objects)
+  const policyAccessionIds = getAccessionIds(FEGAObjectTypes.policy, objects)
+  const dacAccessionIds = getAccessionIds(FEGAObjectTypes.dac, objects)
 
   switch (objectType) {
-    case ObjectTypes.experiment:
+    case FEGAObjectTypes.experiment:
       // Study Link
       if (studyAccessionIds.length > 0) {
         dereferencedSchema = merge({}, dereferencedSchema, {
@@ -45,7 +45,7 @@ const getLinkedDereferencedSchema = (
         })
       }
       break
-    case ObjectTypes.analysis:
+    case FEGAObjectTypes.analysis:
       // Study Link
       if (studyAccessionIds.length > 0) {
         dereferencedSchema = merge({}, dereferencedSchema, {
@@ -104,7 +104,7 @@ const getLinkedDereferencedSchema = (
         })
       }
       break
-    case ObjectTypes.run:
+    case FEGAObjectTypes.run:
       // Experiment Link
       if (experimentAccessionIds.length > 0) {
         dereferencedSchema = merge({}, dereferencedSchema, {
@@ -118,7 +118,7 @@ const getLinkedDereferencedSchema = (
         })
       }
       break
-    case ObjectTypes.policy:
+    case FEGAObjectTypes.policy:
       // DAC Link
       if (dacAccessionIds.length > 0) {
         dereferencedSchema = merge({}, dereferencedSchema, {
@@ -130,7 +130,7 @@ const getLinkedDereferencedSchema = (
         })
       }
       break
-    case ObjectTypes.dataset:
+    case FEGAObjectTypes.dataset:
       // Policy Link
       if (policyAccessionIds.length > 0) {
         dereferencedSchema = merge({}, dereferencedSchema, {

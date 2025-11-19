@@ -2,7 +2,7 @@
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 
 test.describe("Submitting REMS data", () => {
   test.beforeEach(async ({ login, resetDB, newSubmission }) => {
@@ -10,7 +10,7 @@ test.describe("Submitting REMS data", () => {
     await login()
 
     // Add submission name & description
-    await newSubmission("SDSX")
+    await newSubmission("SD")
   })
 
   test("should be able to select Organization, DAC, and Policies and Save", async ({
@@ -19,7 +19,7 @@ test.describe("Submitting REMS data", () => {
     formActions,
   }) => {
     test.slow()
-    await clickAddObject(ObjectTypes.dacPolicies)
+    await clickAddObject(SDObjectTypes.dacPolicies)
 
     // Select organization, DAC and additional Policy
     await page.getByTestId("organizationId").click()

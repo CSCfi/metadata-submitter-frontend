@@ -5,7 +5,7 @@ import { setFocus } from "features/focusSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetCurrentObject, setCurrentObject } from "features/wizardCurrentObjectSlice"
 import { setObjectType } from "features/wizardObjectTypeSlice"
-import objectAPIService from "services/objectAPI"
+import submissionAPIService from "services/submissionAPI"
 import type { APIResponse, StepObject } from "types"
 import { pathWithLocale } from "utils"
 
@@ -21,7 +21,11 @@ const editObjectHook = async (
   dispatch: (reducer: unknown) => Promise<APIResponse>,
   navigate: NavigateFunction
 ) => {
-  const response = await objectAPIService.getObjectByAccessionId(objectType, item.id as string)
+  const response = await submissionAPIService.getObjectByObjectId(
+    submissionId,
+    objectType,
+    item.id as string
+  )
   const pathname = pathWithLocale(`submission/${submissionId}`)
 
   if (response.ok) {

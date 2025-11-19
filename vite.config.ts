@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => {
   const proxy = {
     "/aai": proxyTo,
     "/v1/objects": proxyTo,
-    "/v1/schemas": proxyTo,
     "/v1/validate": proxyTo,
     "/v1/submit": proxyTo,
     "/v1/submissions": proxyTo,
@@ -21,7 +20,6 @@ export default defineConfig(({ mode }) => {
     "/callback": proxyTo,
     "/logout": proxyTo,
     "/v1/users": proxyTo,
-    "/v1/workflows": proxyTo,
     "/v1/files": proxyTo,
     "/v1/rems": proxyTo,
     "/v1/api/keys": proxyTo,

@@ -18,6 +18,8 @@ import {
   UseFormWatch,
 } from "react-hook-form"
 
+import { SDObjectTypes } from "constants/wizardObject"
+
 export type User = {
   id: string
   name: string
@@ -34,11 +36,17 @@ export type Schema =
   | "analysis"
   | "dataset"
 
+export type SDSchemaName =
+  | SDObjectTypes.dacPolicies
+  | SDObjectTypes.linkBucket
+  | SDObjectTypes.publicMetadata
+  | SDObjectTypes.summary
+  | SDObjectTypes.publishSubmission
+
 export type Workflow = {
   name: string
   description: string
   steps: WorkflowStep[]
-  publish: WorkflowPublish[]
 }
 
 export type WorkflowStep = {
@@ -53,26 +61,16 @@ export type WorkflowSchema = {
   allowMultipleObjects: boolean
 }
 
-export type WorkflowPublish = {
-  publish: {
-    name: string
-    endpoint: string
-    requiredSchemas?: string[]
-    required?: string[]
-  }
-}
-
 export type MappedSteps = {
   title: string
-  schemas?: {
+  schemas: {
     name: string
     objectType: string
     objects: StepObject[] | []
-    title?: string
+    componentKey: string
     required?: boolean
     allowMultipleObjects?: boolean
   }[]
-  required?: boolean
 }
 
 // Type of object shown in Accordion step
@@ -93,10 +91,6 @@ export type CurrentFormObject = {
   cleanedValues?: CurrentFormObject
 }
 
-export type OldSubmissionRow = CurrentFormObject & {
-  objectData: Record<string, unknown>
-}
-
 export type ObjectInsideSubmission = {
   accessionId: string
   schema: string
@@ -107,14 +101,18 @@ export type SubmissionId = {
 }
 
 export type SubmissionDetails = {
+  projectId: string
   name: string
   title: string
   description: string
   workflow: string
-  dateCreated?: number
-  published: boolean
+  dateCreated?: string
+  datePublished?: string
+  lastModified?: string
+  metadata?: MetadataFormDetails
   bucket?: string
-  allObjects?: Array<CurrentFormObject>
+  rems?: RemsDetails
+  published?: boolean
 }
 
 export type SubmissionDetailsWithId = SubmissionId & SubmissionDetails
@@ -122,7 +120,7 @@ export type SubmissionDetailsWithId = SubmissionId & SubmissionDetails
 export type SubmissionRow = {
   id: string
   name: string
-  dateCreated?: number
+  dateCreated?: string
   lastModifiedBy: string
   submissionType: string
 }
@@ -132,10 +130,6 @@ export type SubmissionDataFromForm = {
   title: string
   description: string
   workflowType: string
-}
-
-export type Submission = SubmissionDetailsWithId & { doiInfo: DoiFormDetails } & {
-  rems?: RemsDetails
 }
 
 export type StatusDetails = {
@@ -202,21 +196,35 @@ export type ObjectDisplayValues = {
 */
 export type FormDataFiles = { files: { filetype: string }[] }
 
-export type DoiCreator = {
+export type Creator = {
   givenName: string | undefined
   familyName: string | undefined
   name: string | undefined
+  [key: string]: unknown
 }
 
-export type DoiContributor = DoiCreator & { contributorType: string }
+export type Contributor = Creator & { contributorType: string }
 
-export type DoiSubject = { subject: string }
+export type Description = {
+  descriptionType?: string
+  [key: string]: unknown
+}
 
-export type DoiFormDetails = {
-  creators: DoiCreator[]
-  contributors: DoiContributor[]
-  subjects: DoiSubject[]
+export type RelatedIdentifier = {
+  relatedIdentifier: string
+  relatedIdentifierType: string
+  relationType: string
+  resourceTypeGeneral?: string
+  [key: string]: unknown
+}
+
+export type MetadataFormDetails = {
+  creators: Creator[]
   keywords: string
+  contributors?: Contributor[]
+  descriptions?: Description[]
+  relatedIdentifiers?: RelatedIdentifier[]
+  [key: string]: unknown
 }
 
 export type RemsDetails = {

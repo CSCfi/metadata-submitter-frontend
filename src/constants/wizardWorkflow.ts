@@ -1,5 +1,5 @@
 ﻿export const WorkflowTypes = {
-  sdsx: "SDSX",
+  sd: "SD",
   fega: "FEGA",
   bp: "Bigpicture",
 }

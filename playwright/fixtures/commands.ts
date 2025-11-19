@@ -20,7 +20,7 @@ import {
   //TestDatasetObject,
 } from "./test-objects"
 
-import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { FEGAObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 type CommandFixtures = {
   mockAuthUrl: string
@@ -138,14 +138,14 @@ const test = base.extend<CommandFixtures>({
         // List of object types in particular order
         // This list is used to choose into what point of object generation is stopped
         let objectTypesArray: string[] = [
-          ObjectTypes.study,
-          ObjectTypes.dac,
-          ObjectTypes.policy,
-          ObjectTypes.sample,
-          ObjectTypes.experiment,
-          ObjectTypes.run,
-          ObjectTypes.analysis,
-          ObjectTypes.dataset,
+          FEGAObjectTypes.study,
+          FEGAObjectTypes.dac,
+          FEGAObjectTypes.policy,
+          FEGAObjectTypes.sample,
+          FEGAObjectTypes.experiment,
+          FEGAObjectTypes.run,
+          FEGAObjectTypes.analysis,
+          FEGAObjectTypes.dataset,
         ]
 
         // Modify object type list if stop point is defined
@@ -195,15 +195,15 @@ const test = base.extend<CommandFixtures>({
             }
           }
 
-          generateObject(ObjectTypes.study, TestStudyObject)?.then(() => {
-            generateObject(ObjectTypes.dac, TestDACObject)?.then(DACResponse => {
-              generateObject(ObjectTypes.policy, {
+          generateObject(FEGAObjectTypes.study, TestStudyObject)?.then(() => {
+            generateObject(FEGAObjectTypes.dac, TestDACObject)?.then(DACResponse => {
+              generateObject(FEGAObjectTypes.policy, {
                 ...TestPolicyObject,
                 dacRef: { accessionId: DACResponse.accessionId },
               })?.then(() => {
                 /* TODO: To be continued after the workflow is defined */
-                //generateObject(ObjectTypes.sample, TestSampleObject)?.then(sampleResponse => {
-                //  generateObject(ObjectTypes.experiment, {
+                //generateObject(FEGAObjectTypes.sample, TestSampleObject)?.then(sampleResponse => {
+                //  generateObject(FEGAObjectTypes.experiment, {
                 //    ...TestExperimentObject,
                 //    studyRef: { accessionId: studyResponse.accessionId },
                 //    design: {
@@ -211,12 +211,12 @@ const test = base.extend<CommandFixtures>({
                 //      sampleDescriptor: { accessionId: sampleResponse.accessionId },
                 //    },
                 //})?.then(experimentResponse => {
-                //  generateObject(ObjectTypes.run, {
+                //  generateObject(FEGAObjectTypes.run, {
                 //    ...TestRunObject,
                 //    experimentRef: [{ accessionId: experimentResponse.accessionId }],
                 //})?.then(() => {
-                //  generateObject(ObjectTypes.analysis, TestAnalysisObject)?.then(() => {
-                //    generateObject(ObjectTypes.dataset, TestDatasetObject)?.then(() => {
+                //  generateObject(FEGAObjectTypes.analysis, TestAnalysisObject)?.then(() => {
+                //    generateObject(FEGAObjectTypes.dataset, TestDatasetObject)?.then(() => {
                 //      cy.log("All objects generated")
                 //    })
                 //  })
@@ -250,7 +250,7 @@ const test = base.extend<CommandFixtures>({
   checkWorkflowRadios: async ({ page }, baseUse) => {
     const checkWorkflowRadio = async checked => {
       await expect(page.getByRole("radiogroup")).toBeVisible()
-      await expect(page.getByTestId("SDSX")).toBeDisabled()
+      await expect(page.getByTestId("SD")).toBeDisabled()
       await expect(page.getByTestId("Bigpicture")).toBeDisabled()
       await expect(page.getByTestId("FEGA")).toBeDisabled()
       await expect(page.getByTestId(checked)).toBeChecked()

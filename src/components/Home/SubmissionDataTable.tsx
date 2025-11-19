@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
 import DataTable from "components/DataTable"
+import { ExtraObjectTypes } from "constants/wizardObject"
 import { SubmissionStatus } from "constants/wizardSubmission"
+import { setObjectType } from "features/wizardObjectTypeSlice"
+import { useAppDispatch } from "hooks"
 import { SubmissionRow } from "types"
 import { getConvertedDate, pathWithLocale } from "utils"
 
@@ -24,6 +27,7 @@ type SubmissionDataTableProps = {
  * Render a table of submissions based on submission type
  */
 const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
+  const dispatch = useAppDispatch()
   const { submissionType, page, totalItems, fetchPageOnChange, rows, onDeleteSubmission } = props
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -97,6 +101,7 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
       pathname: pathWithLocale(`submission/${id}`),
       search: `step=1`,
     })
+    dispatch(setObjectType(ExtraObjectTypes.submissionDetails))
   }
 
   const handleDeleteSubmission = async (e, id, submissionType) => {

@@ -8,7 +8,7 @@ test.describe("Filling DOI form", () => {
   test.beforeEach(async ({ login, resetDB, newSubmission }) => {
     await resetDB()
     await login()
-    await newSubmission("SDSX")
+    await newSubmission("SD")
   })
 
   test("should be able to fill  and save the required fields", async ({

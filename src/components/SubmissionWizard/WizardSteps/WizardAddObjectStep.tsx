@@ -6,9 +6,8 @@ import { styled } from "@mui/system"
 import WizardAddObjectCard from "../WizardComponents/WizardAddObjectCard"
 
 import WizardDacPoliciesStep from "components/SubmissionWizard/WizardSteps/WizardDacPoliciesStep"
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 import { useAppSelector } from "hooks"
-import type { HandlerRef } from "types"
 
 const GridContainer = styled(Grid)({
   margin: 0,
@@ -27,7 +26,7 @@ const GridContainer = styled(Grid)({
 /*
  * Show the correct content of the form based on selected object or step (in the Accordion)
  */
-const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
+const WizardAddObjectStep = () => {
   const objectType = useAppSelector(state => state.objectType)
   const loading = useAppSelector(state => state.loading)
   const openedXMLModal = useAppSelector(state => state.openedXMLModal)
@@ -35,10 +34,10 @@ const WizardAddObjectStep = ({ formRef }: { formRef?: HandlerRef }) => {
   return (
     <GridContainer container spacing={2}>
       <Grid size={{ xs: 12 }}>
-        {objectType === ObjectTypes.dacPolicies ? (
+        {objectType === SDObjectTypes.dacPolicies ? (
           <WizardDacPoliciesStep />
         ) : (
-          <WizardAddObjectCard formRef={formRef} />
+          <WizardAddObjectCard />
         )}
       </Grid>
 

@@ -2,26 +2,21 @@
 /* Breaking change for JSON schema version draft-2020-12:
  * https://ajv.js.org/json-schema.html#draft-2020-12
  */
-import React, { useEffect, useState, useRef, useTransition, RefObject } from "react"
+import React, { useEffect, useState, useRef, useTransition } from "react"
 
-import CancelIcon from "@mui/icons-material/Cancel"
 import { GlobalStyles } from "@mui/material"
-import Alert from "@mui/material/Alert"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
 import Container from "@mui/material/Container"
 import LinearProgress from "@mui/material/LinearProgress"
-import Typography from "@mui/material/Typography"
 import { Box, styled } from "@mui/system"
-import Ajv2020 from "ajv/dist/2020"
-import { cloneDeep, set } from "lodash"
+import { cloneDeep } from "lodash"
 import { useForm, FormProvider, FieldValues, SubmitHandler, Resolver } from "react-hook-form"
 import type { FieldErrors, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 import checkUnsavedInputHook from "../WizardHooks/WizardCheckUnsavedInputHook"
-import getLinkedDereferencedSchema from "../WizardHooks/WizardLinkedDereferencedSchemaHook"
 import submitObjectHook from "../WizardHooks/WizardSubmitObjectHook"
 
 import { WizardAjvResolver } from "./WizardAjvResolver"
@@ -29,60 +24,28 @@ import JSONSchemaParser from "./WizardJSONSchemaParser"
 //import WizardXMLUploadModal from "./WizardXMLUploadModal"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectTypes, NotMetadataObjects } from "constants/wizardObject"
+import { Namespaces } from "constants/translation"
+import { SDObjectTypes } from "constants/wizardObject"
 import { resetAutocompleteField } from "features/autocompleteSlice"
 import { setClearForm } from "features/clearFormSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { setCurrentObject } from "features/wizardCurrentObjectSlice"
-import { addDoiInfoToSubmission } from "features/wizardSubmissionSlice"
+import { addMetadataToSubmission } from "features/wizardSubmissionSlice"
 //import { setXMLModalOpen, resetXMLModalOpen } from "features/wizardXMLModalSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import schemaAPIService from "services/schemaAPI"
 import type {
-  DoiFormDetails,
+  MetadataFormDetails,
   SubmissionDetailsWithId,
   CurrentFormObject,
   FormObject,
-  HandlerRef,
 } from "types"
-import { getAccessionIds } from "utils"
-import { dereferenceSchema } from "utils/JSONSchemaUtils"
-
-const CustomAlert = styled(Alert)(({ theme, severity }) => ({
-  backgroundColor: theme.palette.background.paper,
-  borderLeft: `1.25rem solid ${
-    severity === "error" ? theme.palette.error.main : theme.palette.success.main
-  }`,
-  borderTop: `0.25rem solid ${
-    severity === "error" ? theme.palette.error.main : theme.palette.success.main
-  }`,
-  borderRight: `0.25rem solid ${
-    severity === "error" ? theme.palette.error.main : theme.palette.success.main
-  }`,
-  borderBottom: `0.25rem solid ${
-    severity === "error" ? theme.palette.error.main : theme.palette.success.main
-  }`,
-  "& .MuiAlert-icon": {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0 0.5rem",
-  },
-  lineHeight: "1.75",
-  boxShadow: "0 0.25rem 0.625rem rgba(0, 0, 0, 0.2)",
-  position: "relative",
-  padding: "1rem",
-  display: "flex",
-  justifyContent: "flex-start",
-  alignItems: "center",
-  width: "40%",
-  margin: "6.25rem auto 0 auto",
-}))
-
-const AlertMessage = styled(Typography)({
-  fontWeight: "bold",
-})
+import {
+  dereferenceSchema,
+  loadJSONSchema,
+  validateJSONSchema,
+  localizeSchema,
+} from "utils/JSONSchemaUtils"
 
 const Form = styled("form")(({ theme }) => ({
   ...theme.form,
@@ -105,7 +68,6 @@ type FormContentProps = {
   objectType: string
   submission: SubmissionDetailsWithId
   currentObject: CurrentFormObject
-  ref: HandlerRef
 }
 
 /*
@@ -136,7 +98,7 @@ const CustomCardHeader = (props: CustomCardHeaderProps) => {
       variant="contained"
       aria-label={t("ariaLabels.submitForm")}
       size="small"
-      onClick={objectType === ObjectTypes.datacite ? onClickSaveDOI : onClickSubmit}
+      onClick={objectType === SDObjectTypes.publicMetadata ? onClickSaveDOI : onClickSubmit}
       form={refForm}
       data-testid="form-datacite"
       type="submit"
@@ -158,13 +120,11 @@ const FormContent = ({
   objectType,
   submission,
   currentObject,
-  ref,
 }: FormContentProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const clearForm = useAppSelector(state => state.clearForm)
   // const alert = useAppSelector(state => state.alert)
-
   const [currentObjectId, setCurrentObjectId] = useState<string | null>(currentObject?.accessionId)
 
   // const autoSaveTimer: { current: NodeJS.Timeout | null } = useRef(null)
@@ -242,8 +202,8 @@ const FormContent = ({
     }
   }
 
-  const handleDOISubmit = async (data: DoiFormDetails) => {
-    dispatch(addDoiInfoToSubmission(submission.submissionId, data))
+  const handleMetadataSubmit = async (data: MetadataFormDetails) => {
+    dispatch(addMetadataToSubmission(submission.submissionId, data))
       .then(() => {
         dispatch(resetAutocompleteField())
         // dispatch(resetCurrentObject())
@@ -304,7 +264,7 @@ const FormContent = ({
   //   resetTimer()
 
   //   // Prevent auto save from DOI form
-  //   if (![ObjectTypes.datacite, ObjectTypes.study].includes(objectType)) startTimer()
+  //   if (![SDObjectTypes.datacite, FEGAObjectTypes.study].includes(objectType)) startTimer()
   // }
 
   // useEffect(() => {
@@ -339,7 +299,7 @@ const FormContent = ({
   //       handleChange()
   //       dispatch(resetCurrentObject())
 
-  //       if (objectType === ObjectTypes.analysis || objectType === ObjectTypes.run) {
+  //       if (objectType === FEGAObjectTypes.analysis || objectType === FEGAObjectTypes.run) {
   //         dispatch(deleteFileType(currentObjectId))
   //       }
   //     } catch (error) {
@@ -366,7 +326,7 @@ const FormContent = ({
         refForm="hook-form"
         onClickSubmit={() => {}}
         onClickSaveDOI={methods.handleSubmit(
-          async data => handleDOISubmit(data as DoiFormDetails),
+          async data => handleMetadataSubmit(data as MetadataFormDetails),
           handleValidationErrors
         )}
         // onClickClearForm={() => handleClearForm()}
@@ -377,7 +337,6 @@ const FormContent = ({
         id="hook-form"
         onChange={() => handleChange()}
         onSubmit={methods.handleSubmit(onSubmit)}
-        ref={ref as RefObject<HTMLFormElement>}
         onReset={handleReset}
         onBlur={() =>
           checkUnsavedInputHook(
@@ -397,27 +356,26 @@ const FormContent = ({
 /*
  * Container for json schema based form. Handles json schema loading, form rendering, form submitting and error/success alerts.
  */
-const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
+const WizardFillObjectDetailsForm = () => {
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const objectType = useAppSelector(state => state.objectType)
   const submission = useAppSelector(state => state.submission)
   const currentObject = useAppSelector(state => state.currentObject)
   const locale = useAppSelector(state => state.locale)
+
   //const openedXMLModal = useAppSelector(state => state.openedXMLModal)
-  const objects = useAppSelector(state => state.stepObjects)
 
-  const { t } = useTranslation()
-
-  // States that will update in useEffect()
   const [states, setStates] = useState({
-    error: false,
-    helperText: "",
+    baseSchema: {}, // keep the orginal version of schema that won't be changed with translation
     formSchema: {},
-    validationSchema: {} as FormObject,
     isLoading: true,
   })
-  const resolver = WizardAjvResolver(states.validationSchema, locale) as Resolver<
+
+  const [namespace, setNamespace] = useState("")
+
+  const resolver = WizardAjvResolver(states.formSchema, locale) as Resolver<
     Record<string, unknown>,
     unknown,
     {}
@@ -431,88 +389,48 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
    */
   useEffect(() => {
     const fetchSchema = async () => {
-      const schema: string | null = sessionStorage.getItem(`cached_${objectType}_schema`)
-      let parsedSchema: FormObject
-      const ajv = new Ajv2020()
+      let currentSchema
 
-      if (!schema || !ajv.validateSchema(JSON.parse(schema))) {
-        const response = await schemaAPIService.getSchemaByObjectType(objectType)
-        if (response.ok) {
-          parsedSchema = response.data
-          sessionStorage.setItem(`cached_${objectType}_schema`, JSON.stringify(parsedSchema))
-        } else {
-          setStates({
-            ...states,
-            error: true,
-            helperText: t("snackbarMessages.error.helperText.cacheFormFields"),
-            isLoading: false,
-          })
-          return
-        }
+      if (objectType === SDObjectTypes.publicMetadata) {
+        const submissionSchema = await loadJSONSchema("submission")
+        const metadataSchema = submissionSchema.properties.metadata
+        currentSchema = metadataSchema
+        setNamespace(Namespaces.submissionMetadata)
+        if (submission.metadata) dispatch(setCurrentObject(submission.metadata))
       } else {
-        parsedSchema = JSON.parse(schema)
+        // Use case for other JSON schemas in the future.
+        // set to correct i18n namespace if necessary.
+        const schema = await loadJSONSchema(objectType)
+        currentSchema = schema
       }
-
-      // Dereference Schema and link AccessionIds to equivalent objects
-      let dereferencedSchema: Promise<FormObject> = await dereferenceSchema(
-        parsedSchema as FormObject
+      validateJSONSchema(currentSchema)
+      const dereferencedSchema: Promise<FormObject> = await dereferenceSchema(
+        currentSchema as FormObject
       )
 
-      dereferencedSchema = getLinkedDereferencedSchema(
-        currentObject,
-        parsedSchema.title.toLowerCase(),
-        dereferencedSchema,
-        objects,
-        analysisAccessionIds
-      )
-
-      // In local state also remove "Datacite" from string coming from schema submission.doiInfo.title
       setStates({
         ...states,
-        formSchema: {
-          ...dereferencedSchema,
-          title: parsedSchema.title.toLowerCase().includes(ObjectTypes.datacite)
-            ? parsedSchema.title.slice(9)
-            : parsedSchema.title,
-        },
-        validationSchema: parsedSchema,
+        baseSchema: { ...dereferencedSchema },
+        formSchema: { ...dereferencedSchema },
         isLoading: false,
       })
     }
 
-    // Don't fetch schema for non metadata objects, except datacite
-    if (
-      objectType &&
-      (!NotMetadataObjects.includes(objectType) || objectType === ObjectTypes.datacite)
-    )
-      fetchSchema()
+    // Only fetch schema for SD's publicMetadata for now
+    if (objectType === SDObjectTypes.publicMetadata) fetchSchema()
   }, [objectType])
 
-  // All Analysis AccessionIds
-  const analysisAccessionIds = getAccessionIds(ObjectTypes.analysis, objects)
-
   useEffect(() => {
-    if (ObjectTypes.analysis) {
-      if (analysisAccessionIds?.length > 0) {
-        // Link other Analysis AccessionIds to current Analysis form
-        setStates(prevState => {
-          return set(
-            prevState,
-            `formSchema.properties.analysisRef.items.properties.accessionId.enum`,
-            analysisAccessionIds.filter(id => id !== currentObject?.accessionId)
-          )
-        })
-      }
-    }
-  }, [currentObject?.accessionId, analysisAccessionIds?.length])
+    const localizedSchema = localizeSchema(objectType, namespace, states.baseSchema, t)
+    setStates({ ...states, formSchema: { ...localizedSchema } })
+  }, [locale, states.baseSchema])
 
   /*
    * Submit a new or existing form with cleaned values and check for response errors
    */
   const onSubmit = (data: Record<string, unknown>) => {
-    if (Object.keys(data).length === 0) return
-
     startTransition(async () => {
+      if (!Object.keys(data).length) return
       const response = await submitObjectHook(data, submission.submissionId, objectType, dispatch)
       if (response["ok"]) {
         methods.reset(data, { keepValues: true })
@@ -522,13 +440,6 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
   }
 
   if (states.isLoading) return <CircularProgress />
-  // Schema validation error differs from response status handler
-  if (states.error)
-    return (
-      <CustomAlert severity="error" icon={<CancelIcon sx={{ fontSize: "2rem" }} />}>
-        <AlertMessage>{states.helperText}</AlertMessage>
-      </CustomAlert>
-    )
 
   return (
     <>
@@ -542,7 +453,6 @@ const WizardFillObjectDetailsForm = ({ ref }: { ref?: HandlerRef }) => {
           submission={submission}
           currentObject={currentObject}
           key={currentObject?.accessionId || submission.submissionId}
-          ref={ref}
         />
         {submitting && <LinearProgress />}
         {/*<WizardXMLUploadModal

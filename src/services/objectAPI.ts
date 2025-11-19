@@ -6,6 +6,13 @@ import { errorMonitor } from "./errorMonitor"
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
 
+/* NB: 
+  - '/v1/object' endpoint is already removed from backend, but we will need a replacement for it in the end
+  to add an (metadata) object to a submission and update it.
+  - The functions below are left as is so we could update them/have them as template when the new endpoints are available.
+  - 'getAllObjectsByObjectType' and 'getObjectByObjectId' are moved to 'submissionAPI'.
+*
+*/
 const api = create({ baseURL: "/v1/objects" })
 api.addMonitor(errorMonitor)
 
@@ -33,20 +40,6 @@ const createFromJSON = async (
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
   return await api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
-}
-
-const getObjectByAccessionId = async (
-  objectType: string,
-  accessionId: string
-): Promise<APIResponse> => {
-  return await api.get(`/${objectType}/${accessionId}`)
-}
-
-const getAllObjectsByObjectType = async (
-  objectType: string,
-  submissionId: string
-): Promise<APIResponse> => {
-  return await api.get(`/${objectType}?submission=${submissionId}`)
 }
 
 const patchFromJSON = async (
@@ -77,8 +70,6 @@ const deleteObjectByAccessionId = async (
 export default {
   createFromXML,
   createFromJSON,
-  getObjectByAccessionId,
-  getAllObjectsByObjectType,
   patchFromJSON,
   replaceXML,
   deleteObjectByAccessionId,

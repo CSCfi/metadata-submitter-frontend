@@ -228,7 +228,6 @@
   "identifier": "Identifier",
   "doiRegistrationInfo": "DOI registration information",
   "summary": "Summary",
-  "publishSubmission": "Publish submission",
   "summaryPage": {
     "publish": "Publish",
     "setReleaseDate": "Set release date",
@@ -243,7 +242,6 @@
     "aboutSensitiveDataServices": "About Sensitive Data services"
   },
   "dataBucket": {
-    "dataBucket": "Data bucket",
     "linkBucket": "Link data bucket",
     "linkFromSDConnect": "Link data bucket from SD Connect",
     "linkedBucket": "Linked data bucket",

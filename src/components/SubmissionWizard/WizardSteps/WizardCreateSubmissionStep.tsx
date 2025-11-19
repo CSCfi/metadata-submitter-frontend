@@ -1,5 +1,5 @@
 /* Workflows are disabled for MVP */
-import React, { RefObject, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import {
   Button,
@@ -22,13 +22,15 @@ import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader
 
 import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
+import { ExtraObjectTypes } from "constants/wizardObject"
+import { WorkflowTypes } from "constants/wizardWorkflow"
 import { updateStatus } from "features/statusMessageSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
+import { setObjectType } from "features/wizardObjectTypeSlice"
 import { createSubmission, updateSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-// import workflowAPIService from "services/workflowAPI"
-import type { SubmissionDataFromForm, HandlerRef } from "types"
+import type { SubmissionDataFromForm } from "types"
 
 const Form = styled("form")(({ theme }) => ({
   "& .MuiCardContent-root": { padding: "4rem" },
@@ -44,52 +46,15 @@ const Form = styled("form")(({ theme }) => ({
 /**
  * Define React Hook Form for adding new submission. Ref is added to RHF so submission can be triggered outside this component.
  */
-const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
+const CreateSubmissionForm = () => {
   const dispatch = useAppDispatch()
   const projectId = useAppSelector(state => state.projectId)
   const submission = useAppSelector(state => state.submission)
 
   const { t } = useTranslation()
 
-  // Temporary disable workflow selection and use SDSX only
-  // const [workflows, setWorkflows] = useState([""])
-  const [selectedWorkflowType] = useState("SDSX")
-
-  // useEffect(() => {
-  //   let isMounted = true
-  //   const getAllWorkflows = async () => {
-  //     if (isMounted) {
-  //       let cachedWorkflows = sessionStorage.getItem(`cached_workflows`)
-
-  //       if (!cachedWorkflows) {
-  //         try {
-  //           const response = await workflowAPIService.getAllWorkflows()
-  //           if (response.ok) {
-  //             cachedWorkflows = JSON.stringify(response.data)
-  //             sessionStorage.setItem(`cached_workflows`, cachedWorkflows)
-  //           }
-  //         } catch (error) {
-  //           dispatch(
-  //             updateStatus({
-  //               status: ResponseStatus.error,
-  //               response: error,
-  //               helperText: "snackbarMessages.error.helperText.fetchWorkflows",
-  //             })
-  //           )
-  //         }
-  //       }
-
-  //       const parsedWorkflows = JSON.parse(cachedWorkflows as string)
-
-  //       setWorkflows(Object.keys(parsedWorkflows))
-  //     }
-  //   }
-
-  //   getAllWorkflows()
-  //   return () => {
-  //     isMounted = false
-  //   }
-  // }, [])
+  // Temporary disable workflow selection and use SD only
+  const [selectedWorkflowType] = useState(WorkflowTypes.sd)
 
   useEffect(() => {
     if (submission?.name && submission?.title && submission?.description) {
@@ -116,7 +81,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     }
 
     if (submission && submission?.submissionId) {
-      dispatch(updateSubmission(submission.submissionId, Object.assign({ ...data, submission })))
+      dispatch(updateSubmission(Object.assign({ ...data, submission })))
         .then(() => {
           reset(data, { keepValues: true }) // reset form state
           dispatch(resetUnsavedForm())
@@ -133,7 +98,8 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     } else {
       // Create a new submission
       // dispatch(setWorkflowType(data.workflowType))
-      dispatch(setWorkflowType("SDSX"))
+      dispatch(setWorkflowType(WorkflowTypes.sd))
+      dispatch(setObjectType(ExtraObjectTypes.submissionDetails))
       dispatch(createSubmission(projectId, data))
         .then(() => {
           // RHF does not reset form state after submit
@@ -152,7 +118,7 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
     }
   }
 
-  // Temporary disable workflow selection and use SDSX only
+  // Temporary disable workflow selection and use SD only
   // const workflowType = useAppSelector(state => state.workflowType)
   // const [selectedWorkflowType, setSelectedWorkflowType] = useState(workflowType)
 
@@ -172,7 +138,6 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
   return (
     <Form
       onSubmit={handleSubmit(async data => onSubmit(data as SubmissionDataFromForm))}
-      ref={ref as RefObject<HTMLFormElement>}
       onBlur={() => checkUnsavedInputHook(dirtyFields, defaultValues, getValues, dispatch)}
     >
       <WizardStepContentHeader action={SaveButton} />
@@ -249,12 +214,12 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
           rules={{ required: true, validate: { description: value => value.length > 0 } }}
         />
 
-        {/* Temporary disable workflow selection and use SDSX only */}
+        {/* Temporary disable workflow selection and use SD only */}
         <Controller
           control={control}
           name="workflowType"
           defaultValue={selectedWorkflowType}
-          data-testid="SDSX"
+          data-testid={WorkflowTypes.sd}
           render={() => <input id="hiddenWorkflow" type="hidden" name="workflowType" />}
         />
         {/* <Grid sx={{ mt: 2 }} container spacing={2}>
@@ -327,8 +292,6 @@ const CreateSubmissionForm = ({ ref }: { ref: HandlerRef }) => {
  * Show form to create submission as first step of new submission wizard
  */
 
-const WizardCreateSubmissionStep = ({ ref }: { ref: HandlerRef }) => (
-  <CreateSubmissionForm ref={ref} />
-)
+const WizardCreateSubmissionStep = () => <CreateSubmissionForm />
 
 export default WizardCreateSubmissionStep

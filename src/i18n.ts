@@ -1,18 +1,29 @@
 import * as i18n from "i18next"
 import { initReactI18next } from "react-i18next"
 
+import EnSubmissionMetadata from "./translations/en/submission_metadata_en.json"
 import EnTranslation from "./translations/en/translation_en.json"
+import EnWorkflowSteps from "./translations/en/workflow_steps_en"
+import FiSubmissionMetadata from "./translations/fi/submission_metadata_fi.json"
 import FiTranslation from "./translations/fi/translation_fi.json"
+import FiWorkflowSteps from "./translations/fi/workflow_steps_fi"
+
+import { Namespaces } from "constants/translation"
+
 /*
  * Later we could add here different translation files for
   various objects and forms
  */
 const resources = {
   en: {
-    translation: EnTranslation,
+    [Namespaces.translation]: EnTranslation,
+    [Namespaces.workflowSteps]: EnWorkflowSteps,
+    [Namespaces.submissionMetadata]: EnSubmissionMetadata,
   },
   fi: {
-    translation: FiTranslation,
+    [Namespaces.translation]: FiTranslation,
+    [Namespaces.workflowSteps]: FiWorkflowSteps,
+    [Namespaces.submissionMetadata]: FiSubmissionMetadata,
   },
 }
 
@@ -24,6 +35,7 @@ i18n
     // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
     // if you're using a language detector, do not define the lng option
     fallbackLng: ["en", "fi"],
+    ns: [Namespaces.translation, Namespaces.workflowSteps, Namespaces.submissionMetadata],
     interpolation: {
       escapeValue: false, // react already safes from xss
     },

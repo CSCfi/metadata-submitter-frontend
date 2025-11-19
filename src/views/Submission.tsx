@@ -4,84 +4,83 @@ import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import LinearProgress from "@mui/material/LinearProgress"
 import Paper from "@mui/material/Paper"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router"
 
 import WizardStepper from "components/SubmissionWizard/WizardComponents/WizardStepper"
-import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
-import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
-import WizardDataBucketStep from "components/SubmissionWizard/WizardSteps/WizardDataBucketStep"
-import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
+import WizardMapObjectsToStepHook from "components/SubmissionWizard/WizardHooks/WizardMapObjectsToStepsHook"
 import { ResponseStatus } from "constants/responseStatus"
-import { ObjectTypes, ValidSteps } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
+import { WizardStepContent } from "constants/wizardStepContent"
+import { WorkflowTypes } from "constants/wizardWorkflow"
 import { setObjectTypesArray } from "features/objectTypesArraySlice"
 import { setRemsInfo } from "features/remsInfoSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { setObjects, resetObjects } from "features/stepObjectSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
+import { setWizardMappedSteps } from "features/wizardMappedStepsSlice"
 import { setSubmission, resetSubmission } from "features/wizardSubmissionSlice"
 import { setWorkflowType } from "features/workflowTypeSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
-import objectAPIService from "services/objectAPI"
 import remsAPIService from "services/remsAPI"
-import schemaAPIService from "services/schemaAPI"
 import submissionAPIService from "services/submissionAPI"
-import type { HandlerRef } from "types"
-import { getObjectDisplayTitle, useQuery } from "utils"
+import type { HandlerRef, MappedSteps, Workflow } from "types"
+import { useQuery } from "utils"
+import { loadJSONSchema, loadJSONData, validateJSONData } from "utils/JSONSchemaUtils"
 import Page404 from "views/ErrorPages/Page404"
 
 /**
  * Return correct content for each step
  */
-const getStepContent = (
-  wizardStep: number,
-  createSubmissionFormRef: HandlerRef,
-  objectFormRef: HandlerRef,
-  objectType: string
-) => {
-  switch (ValidSteps[wizardStep - 1]) {
-    case "createSubmissionStep":
-      return <WizardCreateSubmissionStep ref={createSubmissionFormRef} />
-    case "dacPoliciesStep":
-      return <WizardAddObjectStep formRef={objectFormRef} />
-    case "dataBucketStep":
-      return <WizardDataBucketStep />
-    case "idPublishStep":
-      // Datacite, Summary and Publish steps
-      switch (objectType) {
-        case ObjectTypes.datacite:
-          return <WizardAddObjectStep formRef={objectFormRef} />
-        case ObjectTypes.summary:
-          return <WizardShowSummaryStep />
-        case ObjectTypes.publish:
-          return (
-            <div>
-              <h1>FIXME publish page here</h1>
-            </div>
-          )
-      }
-      break
-    default:
-      // An empty page
-      break
-  }
+const getStepContent = (mappedSteps: MappedSteps[], wizardStep: number, objectType: string) => {
+  const stepSchema =
+    mappedSteps.length && objectType && Number.isInteger(wizardStep)
+      ? mappedSteps[wizardStep - 1].schemas.find(schema => schema.objectType === objectType)
+      : null
+  if (!stepSchema) return null
+  // Render corrent component based on the defined 'componentKey'
+  const StepComponent = WizardStepContent[stepSchema.componentKey]
+  return StepComponent ? (
+    <StepComponent />
+  ) : (
+    <div>
+      <h1>FIXME publish page here</h1>
+    </div>
+  )
 }
 
 /**
- * Container for wizard, renders content for each wizard step.
- *
- * Some children components need to hook extra functionalities to "next step"-button, so reference hook it set here.
+ * Container for wizard, renders wizard step and content for each wizard step.
  */
 const SubmissionWizard: React.FC = () => {
   const dispatch = useAppDispatch()
+  const objects = useAppSelector(state => state.stepObjects)
   const objectType = useAppSelector(state => state.objectType)
   const objectTypesArray = useAppSelector(state => state.objectTypesArray)
+  const submission = useAppSelector(state => state.submission)
+  const workflowType = useAppSelector(state => state.workflowType)
+  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
+  const remsInfo = useAppSelector(state => state.remsInfo)
+
   const navigate = useNavigate()
   const params = useParams()
   const queryParams = useQuery()
 
-  const [isFetchingSubmission, setFetchingSubmission] = useState<boolean>(true)
-  const step = queryParams.get("step")
+  const { t } = useTranslation(["translation", "workflowSteps"])
+
   const submissionId = params.submissionId || ""
+  const step = queryParams.get("step")
+  const wizardStep = step ? Number(step) : -1
+
+  const [isFetchingSubmission, setFetchingSubmission] = useState<boolean>(true)
+  const [currentWorkflow, setCurrentWorkflow] = useState<Workflow>({
+    name: "",
+    description: "",
+    steps: [],
+  })
+  const [isValidStep, setValidStep] = useState<boolean>(true)
+
+  const objectFormRef = useRef<HandlerRef>(undefined)
 
   // Get submission if URL parameters have submissionId. Redirect to home if invalid submissionId
   useEffect(() => {
@@ -90,9 +89,15 @@ const SubmissionWizard: React.FC = () => {
       if (isMounted) {
         try {
           const response = await submissionAPIService.getSubmissionById(submissionId)
-
+          if (response.status === 404) setValidStep(false) // Not a valid step if submissionId is not found
           dispatch(setSubmission(response.data))
-          dispatch(setWorkflowType(response.data.workflow))
+          const workflowType = response.data.workflow
+          dispatch(setWorkflowType(workflowType))
+          /* Set objectTypesArray based on workflowType.
+           * FEGAObjectTypes and BPObjectTypes could be decided in the future.
+           */
+          if (workflowType === WorkflowTypes.sd)
+            dispatch(setObjectTypesArray(Object.keys(SDObjectTypes)))
           setFetchingSubmission(false)
         } catch (error) {
           navigate({ pathname: "" })
@@ -109,6 +114,7 @@ const SubmissionWizard: React.FC = () => {
         dispatch(resetCurrentObject())
       }
     }
+
     if (submissionId) getSubmission()
     return () => {
       isMounted = false
@@ -117,48 +123,51 @@ const SubmissionWizard: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true
-    const getSchemas = async () => {
+    const getObjects = async () => {
       if (isMounted) {
-        let cachedObjectTypesArray = sessionStorage.getItem(`cached_objectTypesArray`) || ""
-        if (!cachedObjectTypesArray) {
-          try {
-            const response = await schemaAPIService.getAllSchemas()
-            const exceptionalSchemas = ["Project", "Submission"]
-            const objectTypesArray = response.data.reduce((arr, val) => {
-              if (!exceptionalSchemas.includes(val.title)) {
-                val.title.toLowerCase().includes(ObjectTypes.datacite)
-                  ? arr.push(ObjectTypes.datacite)
-                  : arr.push(val.title.toLowerCase())
-              }
-              return arr
-            }, [])
-            cachedObjectTypesArray = JSON.stringify(objectTypesArray)
-            sessionStorage.setItem(`cached_objectTypesArray`, cachedObjectTypesArray)
-          } catch (error) {
-            dispatch(
-              updateStatus({
-                status: ResponseStatus.error,
-                response: error,
-                helperText: "snackbarMessages.error.helperText.fetchSchemas",
-              })
-            )
-          }
-        }
-
         try {
-          dispatch(setObjectTypesArray(JSON.parse(cachedObjectTypesArray)))
+          const response = await Promise.all(
+            objectTypesArray.map(async objType => {
+              const allObjs = await submissionAPIService.getAllObjectsByObjectType(
+                submissionId,
+                objType
+              )
+              const mappedObjs = allObjs.data.length
+                ? allObjs.data.map(obj => ({
+                    id: obj.objectId,
+                    schema: obj.objectType,
+                    displayTitle: obj.title,
+                    ...obj,
+                  }))
+                : []
+
+              return mappedObjs
+            })
+          )
+
+          dispatch(setObjects(response))
         } catch (error) {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
               response: error,
-              helperText: "snackbarMessages.error.helperText.fetchSchemas",
+              helperText: "snackbarMessages.error.helperText.fetchObjects",
             })
           )
+          dispatch(resetObjects())
         }
       }
     }
 
+    if (submissionId && workflowType !== WorkflowTypes.sd) getObjects()
+
+    return () => {
+      isMounted = false
+    }
+  }, [submissionId])
+
+  useEffect(() => {
+    let isMounted = true
     const getRemsInfo = async () => {
       if (isMounted) {
         try {
@@ -176,77 +185,47 @@ const SubmissionWizard: React.FC = () => {
       }
     }
 
-    getSchemas()
     getRemsInfo()
     return () => {
       isMounted = false
     }
   }, [])
 
+  // Fetch workflow based on workflowType
   useEffect(() => {
-    let isMounted = true
-    const getObjects = async () => {
-      if (isMounted) {
-        try {
-          const response = (
-            await Promise.all(
-              objectTypesArray.map(async objType => {
-                const allObjs = await objectAPIService.getAllObjectsByObjectType(
-                  objType,
-                  submissionId
-                )
-                const mappedObjs = allObjs.data.length
-                  ? await Promise.all(
-                      allObjs.data.map(async obj => {
-                        const { objectId, schema, ...rest } = obj
-                        const objData = await objectAPIService.getObjectByAccessionId(
-                          schema,
-                          objectId
-                        )
-                        const objTitle = getObjectDisplayTitle(schema, objData.data)
-                        return {
-                          id: objectId,
-                          schema,
-                          displayTitle: objTitle,
-                          ...rest,
-                        }
-                      })
-                    )
-                  : []
+    const getWorkflow = async () => {
+      if (workflowType) {
+        // Load 'workflow' JSON schema and validate the workflow's data against it.
+        const workflowSchema = await loadJSONSchema("workflow")
+        const workflowData = await loadJSONData<Workflow>(`workflows/${workflowType}`.toLowerCase())
+        validateJSONData(workflowSchema, workflowData)
+        setCurrentWorkflow(workflowData)
 
-                return mappedObjs
-              })
-            )
-          ).flat()
-
-          dispatch(setObjects(response))
-        } catch (error) {
-          dispatch(
-            updateStatus({
-              status: ResponseStatus.error,
-              response: error,
-              helperText: "snackbarMessages.error.helperText.fetchObjects",
-            })
-          )
-          dispatch(resetObjects())
-        }
+        // Get steps from the workflow and check for validStep
+        if (
+          !Number.isInteger(wizardStep) ||
+          wizardStep < 0 ||
+          wizardStep > workflowData.steps.length + 1
+        )
+          setValidStep(false)
       }
     }
+    getWorkflow()
+  }, [workflowType])
 
-    if (submissionId) getObjects()
+  useEffect(() => {
+    const { mappedSteps } = WizardMapObjectsToStepHook(
+      submission,
+      objects,
+      objectTypesArray,
+      currentWorkflow,
+      t,
+      remsInfo
+    )
+    dispatch(setWizardMappedSteps(mappedSteps))
+  }, [submission, objects, objectTypesArray, currentWorkflow, t])
 
-    return () => {
-      isMounted = false
-    }
-  }, [objectTypesArray])
-
-  const wizardStep = step ? Number(step) : -1
-
-  const createSubmissionFormRef = useRef<HandlerRef>(null)
-
-  const objectFormRef = useRef<HandlerRef>(undefined)
-
-  return wizardStep > 0 && ValidSteps.length >= wizardStep ? (
+  return isValidStep ? (
     <Container sx={{ flex: "1 0 auto", p: 0 }} maxWidth={false} disableGutters>
       <Grid
         sx={{
@@ -264,12 +243,7 @@ const SubmissionWizard: React.FC = () => {
           {isFetchingSubmission && submissionId && <LinearProgress />}
           {(!isFetchingSubmission || !submissionId) && (
             <Paper sx={{ p: 0, height: "100%" }} elevation={2}>
-              {getStepContent(
-                wizardStep,
-                createSubmissionFormRef as RefObject<HTMLFormElement | null>,
-                objectFormRef as RefObject<HTMLDivElement | null>,
-                objectType
-              )}
+              {getStepContent(mappedSteps, wizardStep, objectType)}
             </Paper>
           )}
         </Grid>

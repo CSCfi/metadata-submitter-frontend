@@ -22,7 +22,8 @@ import WizardPagination from "../WizardComponents/WizardPagination"
 import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
+import { WorkflowTypes } from "constants/wizardWorkflow"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
@@ -96,15 +97,15 @@ const WizardShowSummaryStep: React.FC = () => {
 
   const handleEdit = (objectType, item, step) => {
     dispatch(updateStep({ step: step, objectType: objectType }))
-    const folderId = submission.submissionId
+    const { submissionId } = submission
     switch (step) {
       case 1: {
         dispatch(resetObjectType())
-        navigate({ pathname: pathWithLocale(`submission/${folderId}`), search: "step=1" })
+        navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=1" })
         break
       }
       default: {
-        editObjectHook(objectType, item, step, folderId, dispatch, navigate)
+        editObjectHook(objectType, item, step, submissionId, dispatch, navigate)
       }
     }
   }
@@ -117,7 +118,7 @@ const WizardShowSummaryStep: React.FC = () => {
 
         // Add row for linked files
         if (
-          stepItem.objectType === ObjectTypes.bucket &&
+          stepItem.objectType === SDObjectTypes.linkBucket &&
           submission.bucket &&
           (!objects || Object.values(objects).flat().length === 0)
         ) {
@@ -210,7 +211,9 @@ const WizardShowSummaryStep: React.FC = () => {
             })}
           >
             <Typography>
-              {workflowType === "SDSX" ? t("summaryPage.publish") : t("summaryPage.setReleaseDate")}
+              {workflowType === WorkflowTypes.sd
+                ? t("summaryPage.publish")
+                : t("summaryPage.setReleaseDate")}
             </Typography>
           </Button>
         </Toolbar>

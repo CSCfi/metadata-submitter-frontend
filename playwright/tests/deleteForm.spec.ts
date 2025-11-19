@@ -2,7 +2,7 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { FEGAObjectTypes, ObjectStatus } from "constants/wizardObject"
 
 test.describe("Deleting Form", () => {
   test.beforeEach(async ({ login, resetDB, newSubmission }) => {
@@ -22,7 +22,7 @@ test.describe("Deleting Form", () => {
     test.slow()
 
     // Add Study form
-    await clickAddObject(ObjectTypes.study)
+    await clickAddObject(FEGAObjectTypes.study)
     await page.getByTestId("descriptor.studyTitle").fill("Test study")
     await page.getByTestId("descriptor.studyType").selectOption("Epigenetics")
     await page.getByTestId("descriptor.studyAbstract").fill("Study abstract")
@@ -33,7 +33,7 @@ test.describe("Deleting Form", () => {
     await expect(page.getByTestId("submitted-study-list-item")).toHaveCount(1)
 
     // Reopen submitted Study form
-    await continueLatestForm(ObjectTypes.study, ObjectStatus.submitted)
+    await continueLatestForm(FEGAObjectTypes.study, ObjectStatus.submitted)
     await expect(page.getByTestId("descriptor.studyTitle")).toHaveValue("Test study")
     await page.getByTestId("MoreHorizIcon").click()
     await page.getByTestId("Delete form").click()
@@ -51,7 +51,7 @@ test.describe("Deleting Form", () => {
     test.slow()
 
     // Add DAC form
-    await clickAddObject(ObjectTypes.dac)
+    await clickAddObject(FEGAObjectTypes.dac)
     await page.getByTestId("title").fill("Test dac")
 
     // Save as draft
@@ -60,7 +60,7 @@ test.describe("Deleting Form", () => {
     await expect(page.getByTestId("draft-dac-list-item")).toHaveCount(1)
 
     // Reopen draft DAC form
-    await continueLatestForm(ObjectTypes.dac, ObjectStatus.draft)
+    await continueLatestForm(FEGAObjectTypes.dac, ObjectStatus.draft)
     await expect(page.getByTestId("title")).toHaveValue("Test dac")
     await page.getByTestId("MoreHorizIcon").click()
     await page.getByTestId("Delete form").click()

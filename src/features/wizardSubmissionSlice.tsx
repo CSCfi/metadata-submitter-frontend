@@ -7,27 +7,26 @@ import type {
   SubmissionDetails,
   SubmissionDetailsWithId,
   SubmissionDataFromForm,
-  DoiFormDetails,
+  MetadataFormDetails,
   APIResponse,
-  DoiCreator,
-  DoiContributor,
-  DoiSubject,
+  Creator,
+  Contributor,
+  Description,
+  RelatedIdentifier,
   DispatchReducer,
   RemsDetails,
 } from "types"
+import { removeWhitespace } from "utils"
 
-type InitialState = SubmissionDetailsWithId & {
-  doiInfo: Record<string, unknown> & DoiFormDetails
-} & { bucket?: string } & { rems?: RemsDetails }
-
-const initialState: InitialState = {
+const initialState: SubmissionDetailsWithId = {
+  projectId: "",
   submissionId: "",
   name: "",
   title: "",
   description: "",
   workflow: "",
   published: false,
-  doiInfo: { creators: [], contributors: [], subjects: [], keywords: "" },
+  metadata: { creators: [], keywords: "" },
   bucket: "",
 }
 
@@ -36,8 +35,8 @@ const wizardSubmissionSlice = createSlice({
   initialState,
   reducers: {
     setSubmission: (_state, action) => action.payload,
-    addDoiInfo: (state, action) => {
-      state.doiInfo = action.payload
+    addMetadata: (state, action) => {
+      state.metadata = action.payload
     },
     addBucket: (state, action) => {
       state.bucket = action.payload
@@ -49,7 +48,7 @@ const wizardSubmissionSlice = createSlice({
   },
 })
 
-export const { setSubmission, addDoiInfo, addBucket, addRemsData, resetSubmission } =
+export const { setSubmission, addMetadata, addBucket, addRemsData, resetSubmission } =
   wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
 
@@ -57,7 +56,7 @@ export const createSubmission =
   (projectId: string, submissionDetails: SubmissionDataFromForm) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const { name, title, description, workflowType: workflow } = submissionDetails
-    const submissionForBackend: SubmissionDetails & { projectId: string } = {
+    const submissionForBackend: SubmissionDetails = {
       name,
       title,
       description,
@@ -83,16 +82,16 @@ export const createSubmission =
   }
 
 export const updateSubmission =
-  (
-    submissionId: string,
-    submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }
-  ) =>
+  (submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.patchSubmissionById(submissionId, {
-      name: submissionDetails.name,
-      title: submissionDetails.title,
-      description: submissionDetails.description,
-    })
+    const response = await submissionAPIService.patchSubmissionById(
+      submissionDetails.submission.submissionId,
+      {
+        name: submissionDetails.name,
+        title: submissionDetails.title,
+        description: submissionDetails.description,
+      }
+    )
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
@@ -138,38 +137,60 @@ export const deleteSubmissionAndContent =
     })
   }
 
-export const addDoiInfoToSubmission =
-  (submissionId: string, doiFormDetails: DoiFormDetails) =>
+export const addMetadataToSubmission =
+  (submissionId: string, metadataFormDetails: MetadataFormDetails) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const nameType = { nameType: "Personal" }
-    // Add "nameType": "Personal" to "creators" and "contributors"
-    const modifiedCreators = doiFormDetails.creators?.map((creator: DoiCreator) => ({
+    /*
+     * 'nameType' is currently set default to 'Personal for 'creators' and 'contributors'.
+     * Some fields need to have whitespace removed before sending them to backend:
+     * 'contributorType', 'relationType', 'resourceTypeGeneral'
+     */
+    const modifiedCreators = metadataFormDetails.creators?.map((creator: Creator) => ({
       ...creator,
       ...nameType,
     }))
 
-    const modifiedContributors = doiFormDetails.contributors?.map(
-      (contributor: DoiContributor) => ({
+    const modifiedContributors = metadataFormDetails.contributors?.map(
+      (contributor: Contributor) => ({
         ...contributor,
+        contributorType: removeWhitespace(contributor.contributorType),
         ...nameType,
       })
     )
 
-    const modifiedSubjects = doiFormDetails.subjects?.map((subject: DoiSubject) => {
-      return subject
-    })
+    const modifiedDescriptions = metadataFormDetails.descriptions?.map((desc: Description) => ({
+      ...desc,
+      ...(desc.descriptionType ? { descriptionType: removeWhitespace(desc.descriptionType) } : {}),
+    }))
 
-    const modifiedDoiFormDetails = merge({}, doiFormDetails, {
+    const modifiedRelatedIdentifiers = metadataFormDetails.relatedIdentifiers?.map(
+      (identifier: RelatedIdentifier) => ({
+        ...identifier,
+        relationType: removeWhitespace(identifier.relationType),
+        ...(identifier.resourceTypeGeneral
+          ? { resourceTypeGeneral: removeWhitespace(identifier.resourceTypeGeneral) }
+          : {}),
+      })
+    )
+
+    const modifiedMetadataFormDetails = merge({}, metadataFormDetails, {
       creators: modifiedCreators,
       contributors: modifiedContributors,
-      subjects: modifiedSubjects,
+      descriptions: modifiedDescriptions,
+      relatedIdentifiers: modifiedRelatedIdentifiers,
     })
 
-    const response = await submissionAPIService.patchDOIInfo(submissionId, modifiedDoiFormDetails)
+    delete modifiedMetadataFormDetails["accessionId"]
+    delete modifiedMetadataFormDetails["cleanedValues"]
+
+    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+      metadata: modifiedMetadataFormDetails,
+    })
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
-        dispatch(addDoiInfo(doiFormDetails))
+        dispatch(addMetadata(metadataFormDetails))
         resolve(response)
       } else {
         reject(JSON.stringify(response))
@@ -180,7 +201,9 @@ export const addDoiInfoToSubmission =
 export const addBucketToSubmission =
   (submissionId: string, bucketName: string) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.putBucket(submissionId, bucketName)
+    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+      bucket: bucketName,
+    })
 
     return new Promise((resolve, reject) => {
       if (response.ok) {
@@ -193,9 +216,11 @@ export const addBucketToSubmission =
   }
 
 export const addRemsToSubmission =
-  (submissionId: string, remsData: Record<string, unknown>) =>
+  (submissionId: string, remsData: RemsDetails) =>
   async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.putRemsData(submissionId, remsData)
+    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+      rems: remsData,
+    })
 
     return new Promise((resolve, reject) => {
       if (response.ok) {

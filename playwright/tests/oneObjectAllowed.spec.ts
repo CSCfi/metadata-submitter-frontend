@@ -2,7 +2,7 @@
 
 import test from "../fixtures/commands"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { FEGAObjectTypes } from "constants/wizardObject"
 
 test.describe("One draft or submitted object is allowed", () => {
   test.beforeEach(async ({ login, resetDB, newSubmission }) => {
@@ -21,7 +21,7 @@ test.describe("One draft or submitted object is allowed", () => {
     test.slow()
 
     // Add Study form
-    await clickAddObject(ObjectTypes.study)
+    await clickAddObject(FEGAObjectTypes.study)
     await page.getByTestId("descriptor.studyTitle").fill("Test study")
     await page.getByTestId("descriptor.studyType").selectOption("Epigenetics")
     await page.getByTestId("descriptor.studyAbstract").fill("Study abstract")

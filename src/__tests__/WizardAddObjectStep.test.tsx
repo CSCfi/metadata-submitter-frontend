@@ -7,31 +7,31 @@ import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 
-import { ObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
 expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardAddObjectStep", () => {
-  /* This test may be changed in the future when we afford XML object.
+  /* This test needs to be changed in the future when we afford XML object.
    * Currently we narrows down to only have form object.
    */
 
   test("should render appropriate card", async () => {
     act(() =>
       renderWithProviders(
-        <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=1" }]}>
+        <MemoryRouter initialEntries={[{ pathname: "/submission", search: "step=4" }]}>
           <Routes>
             <Route path="/submission" element={<WizardAddObjectStep />} />
           </Routes>
         </MemoryRouter>,
         {
           preloadedState: {
-            objectType: ObjectTypes.study,
+            objectType: SDObjectTypes.publicMetadata,
           },
         }
       )
     )
-    expect(screen.getByTestId("form")).toBeInTheDocument()
+    expect(screen.getByTestId("form1")).toBeInTheDocument()
   })
 })

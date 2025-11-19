@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (users) Moved Metadata form (previouly DOI registration form) out of Publish step and became a separate step (#1097)
+- Workflow SDSX becomes SD (#1113)
+- Refactor WizardMapObjectsToStepsHook and Submission components for dynamic render of wizard steps and step contents
+- Modified properties in submission's metadata schema (#1109)
 - (users) Renamed folder to bucket, subfolder to folder (#1096)
 - (users) Updated login text (#1093)
 - (users) In the Dataset details position of Save button is moved to top right (#1102)
@@ -67,6 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) DOI form aka Submission's metadata form is empty on page refresh (#1092)(#1108)
+- Unit tests
 - (users) Fix removed form array items flagged as required (#1077)
 - Replaced deprecated inputProps with slotProps in WizardCreateSubmissionStep.tsx
 - (users) Fixed licenses not being reset in DAC and policies form (#1073)
@@ -92,6 +98,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Different constants for different types of workflows (SDObjectTypes, FEGAObjectTypes, BPObjectTypes)
+- Localization config and translation files for workflow steps and submission's metadata schema (#1109)
+- Moved JSON schema files for submission, workflow, and workflow's data files to frontend (#1109)
 - (users) Helper texts below input fields of first page (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
 - (users) A new dataset title field for submission (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1080)
 - Helper text to text fields (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/-/issues/1094)
@@ -144,6 +153,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - files `WizardDOIForm.tsx` and `openedDoiFormSlice.tsx`
 - (users) all fields in Dataset form except Title and Description
 - (users) At Datacite step "Delete form" and "Upload XML file" from the "Options ..."
+
+### Deprecated
+
+- PATCH `/submissions/{submissionId}/doi`, `/submissions/{submissionId}/bucket` or `/submissions/{submissionId}/rems`, only PATCH `/submissions/{submissionId}` is used (#1114)
+- /schema and /workflow endpoint (#1111)
 
 ## [2024.7.0] - 2024-07-25
 

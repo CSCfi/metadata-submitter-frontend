@@ -9,14 +9,13 @@ import type { GridSortDirection } from "@mui/x-data-grid"
 import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
-import { files } from "../../../../playwright/fixtures/files_response" // MOCK files array
-
 import DataTable from "components/DataTable"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import filesAPIService from "services/filesAPI"
 import type { DataBucketRow } from "types"
+import { getMockBucketFiles } from "utils"
 
 type DataBucketTableProps = {
   selectedBucket: string
@@ -34,6 +33,10 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
   const dispatch = useAppDispatch()
 
   const { t } = useTranslation()
+
+  const [files, setFiles] = useState<
+    { id: string; path: string; name: string; bytes: number }[] | []
+  >([])
 
   const columns: GridColDef[] = [
     {
@@ -104,6 +107,10 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
     return () => {
       isMounted = false
     }
+  }, [])
+
+  useEffect(() => {
+    getMockBucketFiles().then(mockFiles => setFiles(mockFiles))
   }, [])
 
   useEffect(() => {

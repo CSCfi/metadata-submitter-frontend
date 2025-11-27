@@ -134,6 +134,7 @@
     "success": {
       "submission": {
         "created": "Title and description were successfully saved.",
+        "deleted": "The submission has been deleted successfully",
         "updated": "Submission updated"
       },
       "objects": {
@@ -145,14 +146,14 @@
       "doi": {
         "saved": "DOI form has been saved successfully"
       },
-      "submissions": {
-        "deleted": "The submission has been deleted successfully!"
-      },
       "rems": {
         "saved": "REMS information has been saved successfully"
       },
       "apikey": {
         "copied": "API key copied to clipboard"
+      },
+      "publish": {
+        "copied": "Link copied to clipboard"
       }
     }
   },
@@ -228,10 +229,17 @@
   "identifier": "Tunniste",
   "doiRegistrationInfo": "DOI registration information",
   "summary": "Yhteenveto",
-  "summaryPage": {
-    "publish": "Publish",
-    "setReleaseDate": "Set release date",
-    "noAddedItems": "No added items."
+  "publishPage": {
+    "draft": {
+      "title": "Publish submission",
+      "action": "Publish",
+      "text": "After you click publish, your dataset will be discoverable in Etsin and other users can apply for access to it via SD Apply."
+    },
+    "published": {
+      "title": "Submission was successfully published",
+      "action": "Copy link",
+      "text": "Permanent identifier link: "
+    }
   },
   "footer": {
     "sdSubmit": "SD Submit – Services for Sensitive Data",
@@ -271,6 +279,7 @@
     "showDetails": "show object details",
     "editSubmission": "edit current submission",
     "publishSubmission": "publish current submission",
+    "copyLink": "copy identifier link",
     "addObjects": "add objects to this submission",
     "selectProject": "select project id",
     "saveSubmission": "save a new submission and move to frontpage",

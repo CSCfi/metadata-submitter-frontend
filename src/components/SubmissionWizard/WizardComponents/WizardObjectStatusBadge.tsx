@@ -18,6 +18,7 @@ const WizardObjectStatusBadge = () => {
         backgroundColor: theme.palette.success.light,
         color: theme.palette.success.dark,
       })}
+      data-testid={`${statusLabel.toLowerCase()}-status-badge`}
     >
       {statusLabel}
     </Typography>

@@ -41,7 +41,7 @@
       "schemas": [
         {
           "name": "summary",
-          "required": true,
+          "required": false,
           "allowMultipleObjects": false
         },
         {

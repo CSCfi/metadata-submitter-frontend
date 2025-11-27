@@ -18,10 +18,10 @@ test.describe("Basic SD flow", () => {
     test.slow()
 
     /*
-     * 1st step, Submission details
+     * 1st step, Dataset details
      */
 
-    // Add submission name & description
+    // Add dataset name, title, description
     await login()
     await newSubmission("SD")
 
@@ -36,6 +36,9 @@ test.describe("Basic SD flow", () => {
     await page.getByTestId("CSC").click()
     await page.getByTestId("1").getByRole("radio").check()
     await formActions("form-ready")
+    await expect(page.getByTestId("success-alert")).toBeVisible()
+    // On real interaction clicking the panel blurs the form, simulate it
+    await page.getByTestId("1").getByRole("radio").focus()
 
     /*
      * 3rd step, Data bucket
@@ -46,6 +49,8 @@ test.describe("Basic SD flow", () => {
     await page.getByRole("radio", { name: "bucketA" }).check()
     await expect(page.getByTestId("link-data-bucket")).toBeEnabled()
     await page.getByTestId("link-data-bucket").click()
+    await expect(page.getByRole("dialog")).toBeVisible()
+    await page.getByTestId("link-bucket-confirm").click()
 
     /*
      * 4th step, Identifier and publish
@@ -54,31 +59,35 @@ test.describe("Basic SD flow", () => {
     // DOI
     await clickAccordionPanel("Identifier and publish")
     await clickAddObject("datacite")
-    await page
-      .locator("div")
-      .filter({ hasText: /^Creators\*Add new item$/ })
-      .getByRole("button")
-      .click()
+    await page.getByTestId("creators-add-item").click()
     await page.getByTestId("creators.0.givenName").click()
     await page.getByTestId("creators.0.givenName").fill("Jane")
     await page.getByTestId("creators.0.familyName").click()
     await page.getByTestId("creators.0.familyName").fill("Doe")
-    await page
-      .locator("div")
-      .filter({ hasText: /^Affiliations\*Add new item$/ })
-      .getByRole("button")
-      .click()
+    await page.getByTestId("creators.0.affiliation-add-item").click()
     await page.getByTestId("creators.0.affiliation.0.name-inputField").click()
     await page.getByTestId("creators.0.affiliation.0.name-inputField").fill("a")
     await page.getByRole("option", { name: "A&A Biotechnology (Poland)" }).click()
+    // Select subject: publishing without one fails at the moment
+    await page.getByTestId("subjects-add-item").click()
+    await page.getByTestId("subjects.0.subject").focus()
+    await page.keyboard.press("ArrowDown")
+    await page.keyboard.press("Enter")
     await page.getByTestId("keywords").fill("keyword")
     await formActions("form-datacite")
+    // Check form is saved correctly
+    await expect(page.getByTestId("success-alert")).toBeVisible()
 
     // Summary
     await page.getByTestId("View summary").click()
-    await expect(
-      page.getByTestId("summary-step-1").getByRole("heading", { name: "1. Submission details" })
-    ).toBeVisible()
+    await expect(page.getByTestId("summary-step-1").getByTestId("ready-status-badge")).toBeVisible()
+
+    // Publish page
+    await page.getByTestId("Edit publish").click()
+    // After submitting the previous steps, publishing should be enabled
+    await expect(page.getByTestId("publish-submission")).toBeEnabled()
+    await formActions("publish-submission")
+    await expect(page.getByTestId("copy-identifier-link")).toBeVisible()
   })
 })
 

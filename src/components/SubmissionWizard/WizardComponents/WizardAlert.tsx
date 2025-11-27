@@ -110,7 +110,12 @@ const CancelFormDialog = ({
           dialogContent = t("alerts.link.content")
           dialogActions = (
             <DialogActions>
-              <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
+              <Button
+                variant="outlined"
+                onClick={() => handleDialog(true)}
+                color="primary"
+                data-testid="link-bucket-confirm"
+              >
                 {t("alerts.actions.link")}
               </Button>
               <Button variant="contained" onClick={() => handleDialog(false)} color="primary">

@@ -5,11 +5,13 @@ export const errorMonitor = (res: APIResponse) => {
   /* Exceptional cases: 
     - replacing XML file with same name often causes error. 
     - invalid XML file returns 400.
+    - publishing submission
     We don't redirect to 400 page but only show error message.
   */
   const exceptionalCase =
     (res.config?.url?.includes("/objects") && res.config?.method === "put") ||
-    (res.config?.url?.includes("/validate") && res.config?.method === "post")
+    (res.config?.url?.includes("/validate") && res.config?.method === "post") ||
+    res.config?.baseURL?.includes("/publish")
 
   if (!res.ok && !exceptionalCase) {
     switch (res.status) {

@@ -98,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Added publish page content (#1060)
 - Different constants for different types of workflows (SDObjectTypes, FEGAObjectTypes, BPObjectTypes)
 - Localization config and translation files for workflow steps and submission's metadata schema (#1109)
 - Moved JSON schema files for submission, workflow, and workflow's data files to frontend (#1109)

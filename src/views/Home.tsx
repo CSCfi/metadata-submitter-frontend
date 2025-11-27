@@ -265,7 +265,7 @@ const Home: React.FC = () => {
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
-          helperText: "snackbarMessages.success.submissions.deleted",
+          helperText: "snackbarMessages.success.submission.deleted",
         })
       )
 

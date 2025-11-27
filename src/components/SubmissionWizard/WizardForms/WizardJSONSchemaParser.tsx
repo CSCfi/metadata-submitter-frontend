@@ -1750,6 +1750,7 @@ const FormArray = ({
           startIcon={<AddIcon />}
           onClick={() => handleAppend()}
           sx={{ mb: "1rem" }}
+          data-testid={`${name}-add-item`}
         >
           {t("formActions.addItem")}
         </Button>

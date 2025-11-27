@@ -139,7 +139,7 @@ const ErrorHandler = (props: MessageHandlerProps) => {
   const closeMessage = t("close")
 
   return (
-    <CustomAlert severity="error" icon={getSeverityIcon("error", theme)}>
+    <CustomAlert severity="error" icon={getSeverityIcon("error", theme)} data-testid="error-alert">
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -163,7 +163,11 @@ const InfoHandler = (props: MessageHandlerProps) => {
   }
 
   return (
-    <CustomAlert severity="warning" icon={getSeverityIcon("warning", theme)}>
+    <CustomAlert
+      severity="warning"
+      icon={getSeverityIcon("warning", theme)}
+      data-testid="warning-alert"
+    >
       <AlertWrap>
         <MessageContainer>{messageTemplate(helperText)}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>
@@ -206,7 +210,11 @@ const SuccessHandler = (props: MessageHandlerProps) => {
   const closeMessage = t("close")
 
   return (
-    <CustomAlert severity="success" icon={getSeverityIcon("success", theme)}>
+    <CustomAlert
+      severity="success"
+      icon={getSeverityIcon("success", theme)}
+      data-testid="success-alert"
+    >
       <AlertWrap>
         <MessageContainer>{message}</MessageContainer>
         <CustomIconButton onClick={() => handleClose(false)}>

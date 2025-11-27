@@ -113,6 +113,7 @@ export type SubmissionDetails = {
   bucket?: string
   rems?: RemsDetails
   published?: boolean
+  registrations?: RegistrationDetails
 }
 
 export type SubmissionDetailsWithId = SubmissionId & SubmissionDetails
@@ -272,3 +273,12 @@ export type HandlerRef =
   | React.RefObject<HTMLDivElement | null>
   | null
   | undefined
+
+export type RegistrationDetails = {
+  dataciteUrl: string
+  doi: string
+  metaxId: string
+  remsCatalogueId: string
+  remsResourceId: string
+  remsUrl: string
+}

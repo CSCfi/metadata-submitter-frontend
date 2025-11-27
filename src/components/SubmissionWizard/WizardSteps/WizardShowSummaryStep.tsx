@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
-import { AppBar, Toolbar } from "@mui/material"
 import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
 import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
@@ -23,17 +21,10 @@ import WizardSearchBox from "../WizardComponents/WizardSearchBox"
 import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
 import { SDObjectTypes } from "constants/wizardObject"
-import { WorkflowTypes } from "constants/wizardWorkflow"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { pathWithLocale } from "utils"
-
-const SummaryBar = styled(AppBar)(({ theme }) => ({
-  background: theme.palette.common.white,
-  borderBottom: `0.5rem solid ${theme.palette.primary.lightest}`,
-  marginBottom: "2rem",
-}))
 
 const SummaryTable = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-filler": {
@@ -78,7 +69,6 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
 
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
-  const workflowType = useAppSelector(state => state.workflowType)
   const mappedSummarySteps = useAppSelector(state => state.wizardMappedSteps)
 
   const dispatch = useAppDispatch()
@@ -201,23 +191,6 @@ const WizardShowSummaryStep: React.FC = () => {
 
   return (
     <>
-      <SummaryBar position="sticky" elevation={0}>
-        <Toolbar sx={{ ml: "auto" }}>
-          <Button
-            color="inherit"
-            sx={theme => ({
-              bgcolor: theme.palette.primary.main,
-              "&:hover": { bgcolor: theme.palette.primary.dark },
-            })}
-          >
-            <Typography>
-              {workflowType === WorkflowTypes.sd
-                ? t("summaryPage.publish")
-                : t("summaryPage.setReleaseDate")}
-            </Typography>
-          </Button>
-        </Toolbar>
-      </SummaryBar>
       <Typography component="h1" variant="h4" color="secondary" sx={{ p: 2 }}>
         {t("summary")}
       </Typography>

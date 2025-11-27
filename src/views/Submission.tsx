@@ -40,13 +40,7 @@ const getStepContent = (mappedSteps: MappedSteps[], wizardStep: number, objectTy
   if (!stepSchema) return null
   // Render corrent component based on the defined 'componentKey'
   const StepComponent = WizardStepContent[stepSchema.componentKey]
-  return StepComponent ? (
-    <StepComponent />
-  ) : (
-    <div>
-      <h1>FIXME publish page here</h1>
-    </div>
-  )
+  return StepComponent ? <StepComponent /> : <h1>Page not found</h1>
 }
 
 /**

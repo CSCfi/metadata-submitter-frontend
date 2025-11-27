@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { extend, merge } from "lodash"
+import { extend, merge, omit } from "lodash"
 
 import publishAPIService from "services/publishAPI"
 import submissionAPIService from "services/submissionAPI"
@@ -44,12 +44,21 @@ const wizardSubmissionSlice = createSlice({
     addRemsData: (state, action) => {
       state.rems = action.payload
     },
+    addRegistrations: (state, action) => {
+      state.registrations = action.payload
+    },
     resetSubmission: () => initialState,
   },
 })
 
-export const { setSubmission, addMetadata, addBucket, addRemsData, resetSubmission } =
-  wizardSubmissionSlice.actions
+export const {
+  setSubmission,
+  addMetadata,
+  addBucket,
+  addRemsData,
+  addRegistrations,
+  resetSubmission,
+} = wizardSubmissionSlice.actions
 export default wizardSubmissionSlice.reducer
 
 export const createSubmission =
@@ -112,11 +121,13 @@ export const updateSubmission =
   }
 
 export const publishSubmissionContent =
-  (submission: SubmissionDetailsWithId): (() => Promise<APIResponse>) =>
-  async () => {
+  (submission: SubmissionDetailsWithId) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
     const response = await publishAPIService.publishSubmissionById(submission.submissionId)
     return new Promise((resolve, reject) => {
       if (response.ok) {
+        const updatedSubmission = { ...submission, published: true }
+        dispatch(setSubmission(updatedSubmission))
         resolve(response)
       } else {
         reject(JSON.stringify(response))
@@ -225,6 +236,24 @@ export const addRemsToSubmission =
     return new Promise((resolve, reject) => {
       if (response.ok) {
         dispatch(addRemsData(remsData))
+        resolve(response)
+      } else {
+        reject(JSON.stringify(response))
+      }
+    })
+  }
+
+export const addRegistrationsToSubmission =
+  (submissionId: string) =>
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+    const response = await submissionAPIService.getSubmissionRegistrations(submissionId)
+    return new Promise((resolve, reject) => {
+      if (response.ok) {
+        const data = response.data?.[0]
+        if (data) {
+          const rest = omit(data, ["submissionId", "title", "description"])
+          dispatch(addRegistrations(rest))
+        }
         resolve(response)
       } else {
         reject(JSON.stringify(response))

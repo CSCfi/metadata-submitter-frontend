@@ -56,6 +56,10 @@ const getObjectByObjectId = async (
   return await api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
 }
 
+const getSubmissionRegistrations = async (submissionId: string): Promise<APIResponse> => {
+  return await api.get(`${submissionId}/registrations`)
+}
+
 export default {
   createNewSubmission,
   getSubmissionById,
@@ -64,4 +68,5 @@ export default {
   getSubmissions,
   getAllObjectsByObjectType,
   getObjectByObjectId,
+  getSubmissionRegistrations,
 }

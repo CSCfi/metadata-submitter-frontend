@@ -1,6 +1,7 @@
 ﻿import WizardAddObjectStep from "components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 import WizardCreateSubmissionStep from "components/SubmissionWizard/WizardSteps/WizardCreateSubmissionStep"
 import WizardDataBucketStep from "components/SubmissionWizard/WizardSteps/WizardDataBucketStep"
+import WizardPublishStep from "components/SubmissionWizard/WizardSteps/WizardPublishStep"
 import WizardShowSummaryStep from "components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 
 /* Current STEP_CONTENT_KEYS are made based on SD workflow.
@@ -21,4 +22,5 @@ export const WizardStepContent = {
   [STEP_CONTENT_KEYS.dataBucketStep]: WizardDataBucketStep,
   [STEP_CONTENT_KEYS.addObjectStep]: WizardAddObjectStep,
   [STEP_CONTENT_KEYS.showSummaryStep]: WizardShowSummaryStep,
+  [STEP_CONTENT_KEYS.publishSubmissionStep]: WizardPublishStep,
 }

@@ -9,32 +9,26 @@ RUN npm install -g pnpm
 
 WORKDIR /usr/src/app
 
+COPY index.html package.json pnpm-lock.yaml vite.config.ts ./
+
+RUN pnpm install --frozen-lockfile
+
 COPY src/ ./src/
 COPY public/ ./public/
-
-COPY index.html package.json vite.config.ts ./
+COPY index.html vite.config.ts ./
 
 RUN chown -R node:node /usr/src/app
 
-# USER node
-
-RUN pnpm install && pnpm build
+RUN pnpm build
 
 #=======================
 FROM ${NGINX_IMAGE}
 #=======================
-RUN apt-get -y update && apt-get install nginx -y
-COPY nginx-sd-submit.conf /etc/nginx/conf.d/
 
-# RUN chown -R nginx:nginx /etc/nginx/ \
-# && chown -R nginx:nginx /usr/share/nginx/html/ \
-# && chown -R nginx:nginx /var/cache/nginx/ \
-# && chown -R nginx:nginx /var/run/ \
-# && chown -R nginx:nginx /var/log/nginx/
+COPY nginx-sd-submit.conf /etc/nginx/conf.d/
 
 COPY --from=appbuilder /usr/src/app/build /home/app/
 
-EXPOSE 80
+EXPOSE 443
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
-

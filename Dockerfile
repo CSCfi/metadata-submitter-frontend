@@ -25,10 +25,11 @@ RUN pnpm build
 FROM ${NGINX_IMAGE}
 #=======================
 
-COPY nginx-sd-submit.conf /etc/nginx/conf.d/
+COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=appbuilder /usr/src/app/build /home/app/
 
-EXPOSE 443
+# This is just reminding the port in use inside a container
+EXPOSE 8043
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

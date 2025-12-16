@@ -98,6 +98,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Nginx configuration file for serving frontend (#1115)
+- Dockerfile for production (#1115)
 - (users) Added publish page content (#1060)
 - Different constants for different types of workflows (SDObjectTypes, FEGAObjectTypes, BPObjectTypes)
 - Localization config and translation files for workflow steps and submission's metadata schema (#1109)

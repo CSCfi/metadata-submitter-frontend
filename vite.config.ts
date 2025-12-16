@@ -1,3 +1,6 @@
+import fs from "fs"
+import path from "path"
+
 import react from "@vitejs/plugin-react"
 import { defineConfig, loadEnv } from "vite"
 import { nodePolyfills } from "vite-plugin-node-polyfills"
@@ -25,6 +28,29 @@ export default defineConfig(({ mode }) => {
     "/v1/api/keys": proxyTo,
   }
 
+  /*
+   * Bare file path is allowed in development but in production build in Docker container,
+   * the bare paths are not resolved automatically, we need to resolve them first.
+   * Otherwise, we would need to import component as "../../folder/component" instead of "folder/component"
+   */
+  // Configure the path aliases
+  const srcDir = path.resolve(__dirname, "src")
+  // Folder alias
+  const folders = fs
+    .readdirSync(srcDir, { withFileTypes: true })
+    .filter(f => f.isDirectory())
+    .map(f => f.name)
+  // File alias
+  const files = fs
+    .readdirSync(srcDir, { withFileTypes: true })
+    .filter(f => f.isFile())
+    .map(f => f.name.replace(/\.(ts|tsx)$/, ""))
+
+  const pathAliases = [...folders, ...files].map(name => ({
+    find: name,
+    replacement: path.resolve(srcDir, name),
+  }))
+
   return {
     base: "",
     build: {
@@ -50,6 +76,9 @@ export default defineConfig(({ mode }) => {
       }),
       viteTsconfigPaths(),
     ],
+    resolve: {
+      alias: pathAliases,
+    },
     server: {
       // this ensures that the browser opens upon server start
       open: true,

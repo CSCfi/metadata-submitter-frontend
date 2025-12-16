@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import HomeIcon from "@mui/icons-material/Home"
 import NavigateNextIcon from "@mui/icons-material/NavigateNext"
@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography"
 import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
-import { files } from "../../../../playwright/fixtures/files_response" // MOCK files array
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
 
 import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
@@ -19,7 +18,7 @@ import WizardFilesTable from "components/SubmissionWizard/WizardComponents/Wizar
 import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { isFile } from "utils"
+import { isFile, getMockBucketFiles } from "utils"
 
 /*
  * Render buckets and files from SD Connect based on user selection
@@ -31,10 +30,18 @@ const WizardDataBucketStep = () => {
 
   const { t } = useTranslation()
 
+  const [files, setFiles] = useState<
+    { id: string; path: string; name: string; bytes: number }[] | []
+  >([])
+
   const [selectedBucket, setSelectedBucket] = useState<string>("")
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
   const [alert, setAlert] = useState<boolean>(false)
+
+  useEffect(() => {
+    getMockBucketFiles().then(mockFiles => setFiles(mockFiles))
+  }, [])
 
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()

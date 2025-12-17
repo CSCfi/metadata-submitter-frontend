@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=node:22-bookworm-slim
-ARG NGINX_IMAGE=nginx:1.28.0-bookworm
+ARG NGINX_IMAGE=nginx:1.29.1-bookworm
 
 #=======================
 FROM ${BASE_IMAGE} AS appbuilder

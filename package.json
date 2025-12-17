@@ -38,6 +38,7 @@
   },
   "scripts": {
     "start": "vite",
+    "start:headless": "vite -m test",
     "build": "vite build",
     "test": "vitest watch",
     "test:no-watch": "vitest run",

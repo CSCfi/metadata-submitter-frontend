@@ -81,10 +81,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       // this ensures that the browser opens upon server start
-      open: true,
+      open: mode !== "test",
       // this sets a default port to 3000
       port: 3000,
       proxy,
+      host: mode === "test",
     },
     define: {
       "process.env": {},

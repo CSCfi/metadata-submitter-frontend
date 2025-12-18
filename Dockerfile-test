@@ -15,4 +15,10 @@ EXPOSE 3000
 
 RUN chown -R node:node /home/node
 
+RUN pnpm exec playwright install --with-deps
+
+USER node
+
+RUN  pnpm exec playwright install
+
 CMD ["pnpm", "start:headless"]

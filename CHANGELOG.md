@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Vite configuration to have a headless option (#1115)
 - (users) Dates becomes Time period (#1123)
 - (users) Field of science becomes a mandatory field (#1122)
 - (users) Moved Metadata form (previouly DOI registration form) out of Publish step and became a separate step (#1097)
@@ -100,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Dockerfile-test (#1115)
 - (users) Publisher as a mandatory field (#1120)
 - Nginx configuration file for serving frontend (#1115)
 - Dockerfile for production (#1115)
@@ -140,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Dockerfile-dev (#1115)
 - (users) Removed multiple fields in submission.json's metadata that are required for Metax (#1116)(#1120)
 - Schema steps commented out from mapObjectsToStepsHook (#1066)
 - (users) Remove redirection to step 2 after creating a submission (#1103)

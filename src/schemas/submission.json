@@ -50,7 +50,7 @@
     "metadata": {
       "type": "object",
       "title": "Public metadata of your dataset",
-      "required": ["creators", "keywords"],
+      "required": ["creators", "publisher", "subjects"],
       "properties": {
         "creators": {
           "type": "array",
@@ -114,10 +114,22 @@
           },
           "uniqueItems": true
         },
+        "publisher": {
+          "type": "object",
+          "title": "Publisher",
+          "description": "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource.",
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Publisher Name"
+            }
+          }
+        },
         "subjects": {
           "type": "array",
           "title": "Field of Science",
-          "description": "Information describing the subject of resources",
+          "description": "Select one or multiple fields of science from the Statistics Finland field of science classification.",
           "items": {
             "type": "object",
             "title": "Single subject",
@@ -126,7 +138,6 @@
               "subject": {
                 "type": "string",
                 "title": "Field of Science",
-                "description": "Select one or multiple fields of science from the Statistics Finland field of science classification.",
                 "enum": [
                   "1 - Natural sciences",
                   "111 - Mathematics",
@@ -208,11 +219,6 @@
             "additionalProperties": false
           },
           "uniqueItems": true
-        },
-        "keywords": {
-          "type": "string",
-          "title": "Keywords",
-          "description": "A list of keywords or tags describing the resources. It is recommended to use a controlled vocabulary, ontology or classification when choosing keywords. Multiple keywords can be added, separating them by comma."
         },
         "contributors": {
           "type": "array",
@@ -300,74 +306,18 @@
         },
         "dates": {
           "type": "array",
-          "title": "Dates",
-          "description": "List of relevant dates to publication. The type of date can vary and it is recommended to add information if appropriate to distinguish between dates.",
+          "title": "Time period",
+          "description": "Time period that is covered by the dataset, i.e. period of observations.",
           "items": {
             "type": "object",
             "title": "Date",
-            "required": ["date", "dateType"],
+            "required": ["date"],
             "properties": {
               "date": {
                 "type": "string",
                 "format": "rkms-iso8601-date",
                 "title": "Date",
                 "description": "A standard format for a date value."
-              },
-              "dateType": {
-                "type": "string",
-                "title": "Date Type",
-                "description": "Relevance of the date for the resources being submitted.",
-                "enum": [
-                  "Accepted",
-                  "Available",
-                  "Collected",
-                  "Copyrighted",
-                  "Created",
-                  "Issued",
-                  "Submitted",
-                  "Updated",
-                  "Valid",
-                  "Withdrawn",
-                  "Other"
-                ]
-              },
-              "dateInformation": {
-                "type": "string",
-                "title": "Date Information",
-                "description": "Specific information about the date, if appropriate."
-              }
-            },
-            "additionalProperties": false
-          },
-          "uniqueItems": true
-        },
-        "descriptions": {
-          "type": "array",
-          "title": "Descriptions",
-          "description": "Additional information about the resources that does not fit in any of the other categories, or general descriptions that are supplemental to the descriptions added for Study or Datasets.",
-          "items": {
-            "type": "object",
-            "title": "description",
-            "properties": {
-              "description": {
-                "type": "string",
-                "title": "description"
-              },
-              "descriptionType": {
-                "type": "string",
-                "title": "Description Type",
-                "enum": [
-                  "Abstract",
-                  "Methods",
-                  "Series Information",
-                  "Table Of Contents",
-                  "Technical Info",
-                  "Other"
-                ]
-              },
-              "lang": {
-                "type": "string",
-                "title": "Language"
               }
             },
             "additionalProperties": false
@@ -385,63 +335,6 @@
               "geoLocationPlace": {
                 "type": "string",
                 "title": "Geolocation Place"
-              },
-              "geoLocationPoint": {
-                "type": "object",
-                "title": "Geolocation Point",
-                "description": "A point location in space. A point contains a single longitude-latitude pair.",
-                "properties": {
-                  "pointLongitude": {
-                    "type": "string",
-                    "title": "Longitude coordinate"
-                  },
-                  "pointLatitude": {
-                    "type": "string",
-                    "title": "Latitude coordinate"
-                  }
-                },
-                "additionalProperties": false
-              },
-              "geoLocationBox": {
-                "type": "object",
-                "title": "Geolocation Box",
-                "description": "The spatial limits of a box. A box is defined by two geographic points. Left low corner and right upper corner. Each point is defined by its longitude and latitude.",
-                "properties": {
-                  "westBoundLongitude": {
-                    "type": "string",
-                    "title": "Longitude coordinate of west bound."
-                  },
-                  "eastBoundLongitude": {
-                    "type": "string",
-                    "title": "Longitude coordinate of east bound."
-                  },
-                  "southBoundLatitude": {
-                    "type": "string",
-                    "title": "Latitude coordinate of south bound."
-                  },
-                  "northBoundLatitude": {
-                    "type": "string",
-                    "title": "Latitude coordinate of north bound."
-                  }
-                }
-              },
-              "geoLocationPolygon": {
-                "type": "array",
-                "title": "A drawn polygon area, defined by a set of polygon points",
-                "items": {
-                  "type": "object",
-                  "title": "Polygon point object",
-                  "properties": {
-                    "pointLongitude": {
-                      "type": "string",
-                      "title": "Longitude coordinate"
-                    },
-                    "pointLatitude": {
-                      "type": "string",
-                      "title": "Latitude coordinate"
-                    }
-                  }
-                }
               }
             },
             "additionalProperties": false
@@ -639,200 +532,6 @@
             "Zulu"
           ]
         },
-        "relatedIdentifiers": {
-          "type": "array",
-          "title": "Related Identifiers",
-          "description": "Information about a resource related to the one being registered, primarily used to provide series information or a text citation where the related resource does not have an identifier. It is also optional to provide such an identifier.",
-          "items": {
-            "type": "object",
-            "title": "Identifier of related resource",
-            "required": ["relatedIdentifier", "relatedIdentifierType", "relationType"],
-            "properties": {
-              "relatedIdentifier": {
-                "type": "string",
-                "title": "Identifier",
-                "description": "These must be globally unique identifiers and correspond to the type selected. e.g. 10.2022/example.78m9865 for DOI identifier Type"
-              },
-              "relatedIdentifierType": {
-                "type": "string",
-                "title": "Identifier Type",
-                "enum": [
-                  "ARK",
-                  "arXiv",
-                  "bibcode",
-                  "DOI",
-                  "EAN13",
-                  "EISSN",
-                  "Handle",
-                  "IGSN",
-                  "ISBN",
-                  "ISSN",
-                  "ISTC",
-                  "LISSN",
-                  "LSID",
-                  "PMID",
-                  "PURL",
-                  "UPC",
-                  "URL",
-                  "URN",
-                  "w3id"
-                ]
-              },
-              "relationType": {
-                "type": "string",
-                "title": "Relationship Type",
-                "enum": [
-                  "Cites",
-                  "Is Cited By",
-                  "Compiles",
-                  "Is Compiled By",
-                  "Continues",
-                  "Is Continued By",
-                  "Describes",
-                  "Is Described By",
-                  "Documents",
-                  "Is Documented By",
-                  "Is Derived From",
-                  "Is Source Of",
-                  "Has Metadata",
-                  "Is Metadata For",
-                  "Has Part",
-                  "Is Part Of",
-                  "Is Supplemented By",
-                  "Is Supplement To",
-                  "Obsoletes",
-                  "Is Obsoleted By",
-                  "References",
-                  "Is Referenced By",
-                  "Requires",
-                  "Is Required By",
-                  "Reviews",
-                  "Is Reviewed By",
-                  "Has Version",
-                  "Is Version Of",
-                  "Is New version Of",
-                  "Is Previous Version Of",
-                  "Is Published In",
-                  "Is Variant Form Of",
-                  "Is Original Form Of",
-                  "Is Identical To"
-                ]
-              },
-              "relatedMetadataScheme": {
-                "type": "string",
-                "title": "Related Metadata Scheme",
-                "description": "To be used only with this relation pair: (Has Metadata/Is Metadata For). Example DDI-L"
-              },
-              "schemeUri": {
-                "type": "string",
-                "title": "Related Metadata Scheme URI",
-                "description": "To be used only with this relation pair: (Has Metadata/Is Metadata For). Example: http://www.ddialliance.org/Specification/DDI-Lifecycle/3.1/XMLSchema/instance.xsd"
-              },
-              "schemeType": {
-                "type": "string",
-                "title": "Related Metadata Scheme Type",
-                "description": "To be used only with this relation pair: (Has Metadata/Is Metadata For). Examples: XSD, DDT, Turtle"
-              },
-              "resourceTypeGeneral": {
-                "type": "string",
-                "title": "Resource Type",
-                "enum": [
-                  "Audiovisual",
-                  "Book",
-                  "Book Chapter",
-                  "Collection",
-                  "Computational Notebook",
-                  "Conference Paper",
-                  "Conference Proceeding",
-                  "Data Paper",
-                  "Dataset",
-                  "Dissertation",
-                  "Event",
-                  "Image",
-                  "Interactive Resource",
-                  "Journal",
-                  "Journal Article",
-                  "Model",
-                  "Output Management Plan",
-                  "Peer Review",
-                  "Physical Object",
-                  "Preprint",
-                  "Report",
-                  "Service",
-                  "Software",
-                  "Sound",
-                  "Standard",
-                  "Text",
-                  "Workflow",
-                  "Other"
-                ]
-              }
-            },
-            "additionalProperties": false
-          },
-          "uniqueItems": true
-        },
-        "alternateIdentifiers": {
-          "type": "array",
-          "title": "Alternate Identifiers",
-          "description": "An identifier or identifiers other than the primary or related identifier applied to the datasets being published.",
-          "items": {
-            "type": "object",
-            "title": "Identifier(s) other than the primary identifier of the resources",
-            "required": ["alternateIdentifier", "alternateIdentifierType"],
-            "properties": {
-              "alternateIdentifier": {
-                "type": "string",
-                "title": "Alternate Identifier"
-              },
-              "alternateIdentifierType": {
-                "type": "string",
-                "title": "Alternate Identifier Type",
-                "enum": [
-                  "ARK",
-                  "arXiv",
-                  "bibcode",
-                  "DOI",
-                  "EAN13",
-                  "EISSN",
-                  "Handle",
-                  "IGSN",
-                  "ISBN",
-                  "ISSN",
-                  "ISTC",
-                  "LISSN",
-                  "LSID",
-                  "PMID",
-                  "PURL",
-                  "UPC",
-                  "URL",
-                  "URN",
-                  "w3id"
-                ]
-              }
-            },
-            "additionalProperties": false
-          },
-          "uniqueItems": true
-        },
-        "sizes": {
-          "type": "array",
-          "title": "Sizes",
-          "description": "Size (e.g., bytes, pages, inches, etc.) or duration (extent), e.g., hours, minutes, days, etc., of a resources. Examples: '15 pages', '6 MB', '45 minutes'.",
-          "items": {
-            "type": "string",
-            "title": "Size"
-          }
-        },
-        "formats": {
-          "type": "array",
-          "title": "Formats",
-          "description": "Use file extension or MIME type where possible, e.g., PDF, XML, MPG or application/pdf, text/xml, video/mpeg. We will pre-fill some of them based on what was filled in metadata.",
-          "items": {
-            "type": "string",
-            "title": "Format"
-          }
-        },
         "fundingReferences": {
           "type": "array",
           "title": "Funding References",
@@ -840,59 +539,16 @@
           "items": {
             "type": "object",
             "title": "Information about financial support for producing the resources",
-            "required": ["funderName", "funderIdentifier", "funderIdentifierType"],
+            "required": ["funderName"],
             "properties": {
               "funderName": {
                 "type": "string",
-                "title": "Funder Name",
-                "enum": [
-                  "Alfred Kordelinin Säätiö",
-                  "Arvo ja Inkeri Suomisen Säätiö",
-                  "Blood Disease Research Foundation",
-                  "Helsingin Yliopisto",
-                  "Helsingin ja Uudenmaan Sairaanhoitopiiri",
-                  "Ida Montinin Säätiö",
-                  "Itä-Suomen Yliopisto",
-                  "Joensuun Yliopiston Tukisäätiö",
-                  "KAUTE-Säätiö",
-                  "Medicinska Understödsföreningen Liv och Hälsa",
-                  "Moikoisten Syöväntutkimussäätiö",
-                  "Nokia",
-                  "Paavo ja Eila Salosen Stipendirahaston",
-                  "Palosuojelurahasto",
-                  "Suomen Lääketieteen Säätiö",
-                  "Victoriastiftelsen",
-                  "Walter ja Andrée de Nottbeckin Säätiö",
-                  "Wilhelm och Else Stockmanns Stiftelse",
-                  "Yrjö Jahnssonin Säätiö",
-                  "Yrkeshögskolan Novia"
-                ]
-              },
-              "funderIdentifier": {
-                "type": "string",
-                "title": "Funder Identifier",
-                "description": "Unique identifier for funding entity"
-              },
-              "funderIdentifierType": {
-                "type": "string",
-                "title": "Funder Identity Type",
-                "description": "The type of funder identifier, one of Crossref Funder ID, GRID, ISNI, or ROR.",
-                "enum": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"]
+                "title": "Funder Name"
               },
               "awardNumber": {
                 "type": "string",
                 "title": "Award Number",
                 "description": "The code assigned by the funder to a sponsored award."
-              },
-              "awardTitle": {
-                "type": "string",
-                "title": "Award Title",
-                "description": "The human readable title of the award."
-              },
-              "awardUri": {
-                "type": "string",
-                "title": "Award URI",
-                "description": "The URI leading to a page provided by the funder for more information about the award (grant)."
               }
             },
             "additionalProperties": false

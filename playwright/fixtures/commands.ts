@@ -1,6 +1,6 @@
 /* Workflows are disabled for MVP */
 import { test as base, expect } from "@playwright/test"
-import { MongoClient } from "mongodb"
+import { Client } from "pg"
 
 import {
   dratfResponse30,
@@ -61,9 +61,19 @@ const test = base.extend<CommandFixtures>({
    */
   resetDB: async ({}, baseUse) => {
     const resetDB = async () => {
-      const database = await MongoClient.connect("mongodb://admin:admin@localhost:27017")
-      const db = database.db("default")
-      db.dropDatabase()
+      const DB_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/metadata_submitter"
+      const client = new Client({ connectionString: DB_URL })
+      await client.connect()
+
+      await client.query(`
+        TRUNCATE TABLE
+          public.submissions,
+          public.objects,
+          public.registrations,
+          public.files
+        RESTART IDENTITY CASCADE;
+      `)
+      await client.end()
     }
     await baseUse(resetDB)
   },
@@ -91,15 +101,13 @@ const test = base.extend<CommandFixtures>({
   newSubmission: async ({ page, submissionName }, baseUse) => {
     const newSubmission = async workflowType => {
       await page.getByTestId("link-create-submission").click()
-      const submissions = page.waitForResponse("/v1/submissions*")
       await page
         .getByTestId("submissionName")
         .fill(submissionName ? submissionName : "Test submission name")
       await page.getByTestId("datasetTitle").fill("Test title")
       await page.getByTestId("submissionDescription").fill("Test submission description")
       await page.getByTestId(workflowType ? workflowType : "FEGA").isHidden() // For temporary hiding
-      await page.getByTestId("create-submission").click()
-      await submissions
+      await page.getByTestId("form-ready").click()
     }
     await baseUse(workflowType => newSubmission(workflowType))
   },

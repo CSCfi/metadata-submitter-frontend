@@ -5,6 +5,7 @@ import { FormStatus } from "constants/wizardObject"
 
 const WizardObjectStatusBadge = ({ status }: { status: string }) => {
   const { t } = useTranslation()
+  const statusLabel = t(`${status}`)
 
   return (
     <Typography

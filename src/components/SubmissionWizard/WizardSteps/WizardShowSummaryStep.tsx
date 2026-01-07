@@ -16,12 +16,12 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
-import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
 import { SDObjectTypes, FormStatus } from "constants/wizardObject"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import { SubmissionDetails } from "types"
 import { pathWithLocale } from "utils"
 
 const SummaryTable = styled(DataGrid)(({ theme }) => ({
@@ -63,16 +63,16 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
 
 let formState: string = FormStatus.missing
 
-let isFormReady = (step, submission) => {
+let isFormReady = (step: number, submission: SubmissionDetails) => {
   switch (step) {
     case 1:
       return Boolean(submission.name.length)
     case 2:
       return Boolean(submission.rems && submission.rems?.organizationId.length)
     case 3:
-      return Boolean(submission.linkedFolder?.length)
+      return Boolean(submission.bucket?.length)
     case 4:
-      return Boolean(submission.doiInfo && submission.doiInfo.keywords?.length)
+      return Boolean(submission.metadata && Object.keys(submission.metadata).length)
   }
 }
 
@@ -82,7 +82,10 @@ let isFormReady = (step, submission) => {
 
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
-  const mappedSummarySteps = useAppSelector(state => state.wizardMappedSteps)
+  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
+
+  // Remove publish step
+  const mappedSummarySteps = mappedSteps.toSpliced(-1, 1)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -98,21 +101,15 @@ const WizardShowSummaryStep: React.FC = () => {
     }))
   }
 
-  const handleEdit = (objectType, item, step) => {
-    dispatch(updateStep({ step: step, objectType: objectType }))
+  const handleEdit = (objectType: string, step: number) => {
     const { submissionId } = submission
-    switch (step) {
-      case 1: {
-        dispatch(resetObjectType())
-        navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=1" })
-        break
-      }
-      default: {
-        editObjectHook(objectType, item, step, submissionId, dispatch, navigate)
-      }
-    }
+
+    dispatch(updateStep({ step: step, objectType: objectType }))
+    dispatch(resetObjectType())
+    navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: `step=${step}` })
   }
 
+  // Table of all summary rows
   const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
 
@@ -121,7 +118,7 @@ const WizardShowSummaryStep: React.FC = () => {
         const objects = stepItem.objects
         formState = isFormReady(step, submission) ? FormStatus.ready : FormStatus.missing
 
-        // Add row for linked files
+        // Add row for a linked bucket
         if (
           stepItem.objectType === SDObjectTypes.linkBucket &&
           submission.bucket &&
@@ -129,13 +126,12 @@ const WizardShowSummaryStep: React.FC = () => {
         ) {
           return [
             {
-              id: `linked-files-${step}`,
-              status: t("ready"),
+              id: `linked-bucket-${step}`,
+              status: formState,
               name: submission.bucket,
               action: "",
               step,
               objectType: stepItem.objectType,
-              objectData: undefined,
               objectsList: [],
             },
           ]
@@ -158,12 +154,11 @@ const WizardShowSummaryStep: React.FC = () => {
                   : t("summaryPage.fillForm"),
               step,
               objectType: stepItem.objectType,
-              objectData: item.objectData,
               objectsList,
             }
           })
         } else {
-          if ([1, 2, 3].includes(step) || stepItem.objectType === SDObjectTypes.publicMetadata) {
+          if ([1, 2, 3, 4].includes(step)) {
             return [
               {
                 id: `${submission.submissionId}-${stepItem.objectType}`,
@@ -175,7 +170,6 @@ const WizardShowSummaryStep: React.FC = () => {
                     : t("summaryPage.fillForm"),
                 step,
                 objectType: stepItem.objectType,
-                objectData: undefined,
                 objectsList: [],
               },
             ]
@@ -218,7 +212,9 @@ const WizardShowSummaryStep: React.FC = () => {
           icon={<EditIcon color="primary" />}
           label={t("edit")}
           showInMenu
-          onClick={() => handleEdit(params.row.objectType, params.row.objectData, params.row.step)}
+          onClick={() => {
+            handleEdit(params.row.objectType, params.row.step)
+          }}
           data-testid={`edit-${params.row.objectType}-summary`}
           disabled={
             params.row.objectType === SDObjectTypes.linkBucket && submission.bucket !== undefined

@@ -170,7 +170,14 @@ const DacPoliciesForm = () => {
     >
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
-        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
+        <Typography
+          variant="h4"
+          gutterBottom
+          component="div"
+          color="secondary"
+          fontWeight="700"
+          data-testid="dacPolicies-details"
+        >
           {t("add")} {t("dacPolicies.title")}
         </Typography>
         <SectionTitle>1. {t("dacPolicies.selectOrganization")}</SectionTitle>

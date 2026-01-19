@@ -29,6 +29,15 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=appbuilder /usr/src/app/build /home/app/
 
+RUN mkdir /tmp/client_temp \
+&& chown nginx:nginx /tmp/client_temp \
+&& chmod 700 /tmp/client_temp \
+&& chown -R nginx:nginx /usr/share/nginx/html/ \
+&& chown -R nginx:nginx /var/cache/nginx/ \
+&& chown -h -R nginx:nginx /var/run/ \
+&& chown -R nginx:nginx /var/log/nginx/
+
+
 # This is just reminding the port in use inside a container
 EXPOSE 8043
 

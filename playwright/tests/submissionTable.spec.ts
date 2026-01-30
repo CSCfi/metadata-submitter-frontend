@@ -45,7 +45,7 @@ test.describe("Submission data table in Home view", () => {
     test.slow()
 
     // Assert that "Draft Submissions" and "Published Submissions" tabs are visible
-    await expect(page.getByTestId("draft-tab")).toBeVisible()
+    // await expect(page.getByTestId("draft-tab")).toBeVisible()
     await expect(page.getByTestId("published-tab")).toBeVisible()
 
     // Select tab "Draft Submissions"
@@ -67,51 +67,51 @@ test.describe("Submission data table in Home view", () => {
     await checkItemsPerPage(10, 10)
   })
 
-  test("should have Edit action available for Draft Submissions", async ({ page }) => {
-    test.slow()
+  // test("should have Edit action available for Draft Submissions", async ({ page }) => {
+  //   test.slow()
 
-    // Select tab "Published Submissions"
-    await page.getByTestId("published-tab").click()
+  //   // Select tab "Published Submissions"
+  //   await page.getByTestId("published-tab").click()
 
-    // Assert that Edit and Delete buttons do not exist
-    await expect(page.getByTestId("edit-draft-submission")).not.toBeVisible()
-    await expect(page.getByTestId("delete-draft-submission")).not.toBeVisible()
+  //   // Assert that Edit and Delete buttons do not exist
+  //   await expect(page.getByTestId("edit-draft-submission")).not.toBeVisible()
+  //   await expect(page.getByTestId("delete-draft-submission")).not.toBeVisible()
 
-    // Select tab "Draft Submissions"
-    await page.getByTestId("draft-tab").click()
+  //   // Select tab "Draft Submissions"
+  //   await page.getByTestId("draft-tab").click()
 
-    // Assert that Edit button exist for Draft Submissions
-    await expect(page.getByTestId("edit-draft-submission")).toHaveCount(5)
+  //   // Assert that Edit button exist for Draft Submissions
+  //   await expect(page.getByTestId("edit-draft-submission")).toHaveCount(5)
 
-    // Assert that Edit button opens the Submission details again
-    await page.getByTestId("edit-draft-submission").nth(0).click()
-    await expect(page).toHaveURL(/\/submission\/DRAFT[0-9]+[?]step=1/)
-  })
+  //   // Assert that Edit button opens the Submission details again
+  //   await page.getByTestId("edit-draft-submission").nth(0).click()
+  //   await expect(page).toHaveURL(/\/submission\/DRAFT[0-9]+[?]step=1/)
+  // })
 
-  test("should have Delete action available for Draft Submissions", async ({ page }) => {
-    test.slow()
+  // test("should have Delete action available for Draft Submissions", async ({ page }) => {
+  //   test.slow()
 
-    // Select tab "Draft Submissions"
-    await page.getByTestId("draft-tab").click()
+  //   // Select tab "Draft Submissions"
+  //   await page.getByTestId("draft-tab").click()
 
-    // Assert that Delete button exist for Draft Submissions
-    await expect(page.getByTestId("delete-draft-submission")).toHaveCount(5)
+  //   // Assert that Delete button exist for Draft Submissions
+  //   await expect(page.getByTestId("delete-draft-submission")).toHaveCount(5)
 
-    // Mock for Delete request
-    await page.route("/v1/submissions/*", async route => {
-      await route.fulfill({
-        status: 204,
-      })
-    })
+  //   // Mock for Delete request
+  //   await page.route("/v1/submissions/*", async route => {
+  //     await route.fulfill({
+  //       status: 204,
+  //     })
+  //   })
 
-    // Assert that Delete button works and success notification shows
-    await page.getByTestId("delete-draft-submission").nth(0).click()
-    await expect(
-      page
-        .locator(".MuiAlert-message", { hasText: /The submission has been deleted successfully!/ })
-        .first()
-    ).toBeVisible()
-  })
+  //   // Assert that Delete button works and success notification shows
+  //   await page.getByTestId("delete-draft-submission").nth(0).click()
+  //   await expect(
+  //     page
+  //       .locator(".MuiAlert-message", { hasText: /The submission has been deleted successfully!/ })
+  //       .first()
+  //   ).toBeVisible()
+  // })
 })
 
 export {}

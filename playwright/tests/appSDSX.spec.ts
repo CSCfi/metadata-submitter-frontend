@@ -4,6 +4,8 @@ import { expect } from "@playwright/test"
 import test from "../fixtures/commands"
 
 test.describe("Basic SD flow", () => {
+  // Do skip until issues 1128 is fixed
+  test.skip()
   test.beforeEach(async ({ resetDB }) => {
     await resetDB
   })

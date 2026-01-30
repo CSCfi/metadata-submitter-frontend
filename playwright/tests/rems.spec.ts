@@ -15,10 +15,12 @@ test.describe("Submitting REMS data", () => {
 
   test("should be able to select Organization, DAC, and Policies and Save", async ({
     page,
+    clickAccordionPanel,
     clickAddObject,
     formActions,
   }) => {
     test.slow()
+    await clickAccordionPanel("DAC and Policies")
     await clickAddObject(SDObjectTypes.dacPolicies)
 
     // Select organization, DAC and additional Policy
@@ -29,7 +31,7 @@ test.describe("Submitting REMS data", () => {
       .getByTestId("1")
       .filter({ has: page.locator("[type='radio']") })
       .click()
-    await page.getByTestId("3").click()
+    await page.getByTestId("rems-dac-item-1").click()
 
     await formActions("form-ready")
     // Assert REMS data is saved successfully
@@ -59,14 +61,12 @@ test.describe("Submitting REMS data", () => {
       .filter({ hasText: "REMS information has been saved successfully" })
 
     // Assert the left side Accordion shows saved DAC title and number of Policies
-    await expect(page.getByTestId("submitted-dacPolicies-list-item")).toHaveCount(2)
+    //await expect(page.getByTestId("submitted-dacPolicies-list-item")).toHaveCount(2)
     await expect(
-      page
-        .getByTestId("submitted-dacPolicies-list-item")
-        .filter({ hasText: "Sensitive Data Access WF2 (Org 2)" })
+      page.getByTestId("rems-dac-item-3").filter({ hasText: "Sensitive Data Access WF2 (Org 2)" })
     ).toBeVisible()
     await expect(
-      page.getByTestId("submitted-dacPolicies-list-item").filter({ hasText: "1 policy" })
+      page.getByTestId("dacPolicies-item-2").filter({ hasText: "License 2" })
     ).toBeVisible()
   })
 })

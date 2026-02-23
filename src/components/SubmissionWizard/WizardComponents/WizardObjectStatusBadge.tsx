@@ -1,9 +1,11 @@
 import { Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 
-const WizardObjectStatusBadge = () => {
+import { FormStatus } from "constants/wizardObject"
+
+const WizardObjectStatusBadge = ({ status }: { status: string }) => {
   const { t } = useTranslation()
-  const statusLabel = t("ready")
+  const statusLabel = t(`${status}`)
 
   return (
     <Typography
@@ -15,12 +17,12 @@ const WizardObjectStatusBadge = () => {
         borderRadius: theme.spacing(0.4),
         padding: theme.spacing(0.1, 0),
         width: theme.spacing(7.3),
-        backgroundColor: theme.palette.success.light,
-        color: theme.palette.success.dark,
+        backgroundColor: `${status === FormStatus.missing ? theme.palette.warning.light : theme.palette.success.light}`,
+        color: `${status === FormStatus.missing ? theme.palette.warning.dark : theme.palette.success.dark}`,
       })}
       data-testid={`${statusLabel.toLowerCase()}-status-badge`}
     >
-      {statusLabel}
+      {t(`${status}`)}
     </Typography>
   )
 }

@@ -81,7 +81,6 @@ export type StepObject = {
   schema?: string
   fileName?: string // Used for XML
   isXML?: boolean
-  objectData?: ObjectInsideSubmission // to be removed when modifying WizardSummaryPage
 }
 
 // Type of current object shown in a form

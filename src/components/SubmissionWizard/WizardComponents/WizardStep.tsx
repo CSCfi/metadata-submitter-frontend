@@ -17,7 +17,7 @@ import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 import WizardAlert from "./WizardAlert"
 import WizardObjectStatusBadge from "./WizardObjectStatusBadge"
 
-import { SDObjectTypes, ExtraObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes, ExtraObjectTypes, FormStatus } from "constants/wizardObject"
 import { setFocus } from "features/focusSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { resetCurrentObject } from "features/wizardCurrentObjectSlice"
@@ -177,7 +177,7 @@ const StepItems = (props: {
                     </Link>
                   </Grid>
                   <Grid>
-                    <WizardObjectStatusBadge />
+                    <WizardObjectStatusBadge status={FormStatus.ready} />
                   </Grid>
                 </Grid>
               </ObjectItem>

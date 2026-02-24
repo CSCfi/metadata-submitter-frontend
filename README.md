@@ -21,6 +21,15 @@ Install pnpm that suits your machine from [pnpm installation](https://pnpm.io/in
 
 Install and run backend from SD Submit API repository [Gitlab](https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/) / [Github](https://github.com/CSCfi/metadata-submitter).
 
+```bash
+# Tip: TL;DR to get backend up quickly
+git clone <metadata-repo>
+cd metadata-submitter
+export VAULT_ADDR=<my-vault-url>
+make get_env
+docker compose --env-file tests/integration/.env --profile ui up --build -d
+```
+
 > **Note:** If you run the backend with `docker compose`, you will then also need to set the `REDIRECT_URL` environment variable to the UI address (e.g. add `REDIRECT_URL=http://localhost:3000` into the `.env` file).
 
 ### Running

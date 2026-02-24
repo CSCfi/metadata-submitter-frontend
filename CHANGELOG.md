@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- JSONSchemaParser FieldTooltip is replaced by HelpTooltip from the new component (#1095)
 - Summary page replaced WizardEditObjectHook with navigation to a form
 - Summary page, badge to show Missing text when needed (#1082)
 - Summary page, added variable to pass status to badge (#1082)
@@ -104,6 +105,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Tooltips with help icon to DAC and policies step (#1095)
+- Tooltips with help icon is used in DAC and policies step (#1095)
+- A new component HelpTooltip (#1095)
 - (users) Added a badge to show Missing text  when form filling is needed (#1082)
 - Dockerfile-test (#1115)
 - (users) Publisher as a mandatory field (#1120)

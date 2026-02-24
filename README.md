@@ -37,6 +37,10 @@ docker compose --env-file tests/integration/.env --profile ui up --build -d
 After the backend is up and running, install and run frontend with:
 
 ```bash
+git clone https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend.git
+
+cd metadata-submitter-frontend
+
 pnpm install
 
 pnpm start

@@ -6,6 +6,7 @@ import { styled } from "@mui/system"
 import { useForm, Controller } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
+import HelpTooltip from "components/HelpTooltip"
 import WizardRemsDAC from "components/SubmissionWizard/WizardComponents/WizardRemsDAC"
 import WizardRemsOrganization from "components/SubmissionWizard/WizardComponents/WizardRemsOrganization"
 import WizardRemsPolicies from "components/SubmissionWizard/WizardComponents/WizardRemsPolicies"
@@ -24,7 +25,7 @@ const Form = styled("form")({
   },
 })
 
-const SectionTitle = ({ children }: { children: string[] }) => (
+const SectionTitle = ({ children, helpText }: { children: string[]; helpText: string }) => (
   <Typography
     variant="h5"
     gutterBottom
@@ -33,6 +34,7 @@ const SectionTitle = ({ children }: { children: string[] }) => (
     sx={{ color: "secondary.main", pt: "3rem", pb: "1rem" }}
   >
     {children}
+    <HelpTooltip helpText={helpText} placement={"right"} shortTextLength={80} />
   </Typography>
 )
 
@@ -170,17 +172,12 @@ const DacPoliciesForm = () => {
     >
       <WizardStepContentHeader action={SaveButton} />
       <Box sx={{ p: "4rem" }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          component="div"
-          color="secondary"
-          fontWeight="700"
-          data-testid="dacPolicies-details"
-        >
-          {t("add")} {t("dacPolicies.title")}
+        <Typography variant="h4" gutterBottom component="div" color="secondary" fontWeight="700">
+          {t("dacPolicies.title")}
         </Typography>
-        <SectionTitle>1. {t("dacPolicies.selectOrganization")}</SectionTitle>
+        <SectionTitle helpText={t("dacPolicies.help.organization")}>
+          1. {t("dacPolicies.selectOrganization")}
+        </SectionTitle>
         <Controller
           control={control}
           name="organizationId"
@@ -210,7 +207,9 @@ const DacPoliciesForm = () => {
         />
         {selectedRems.organizationId && (
           <>
-            <SectionTitle>2. {t("dacPolicies.selectDAC")}</SectionTitle>
+            <SectionTitle helpText={t("dacPolicies.help.dac")}>
+              2. {t("dacPolicies.selectDAC")}*
+            </SectionTitle>
             <Controller
               control={control}
               name="workflowId"
@@ -237,7 +236,9 @@ const DacPoliciesForm = () => {
               }}
               rules={{ required: true }}
             />
-            <SectionTitle>3. {t("dacPolicies.selectAdditionalPolicies")}</SectionTitle>
+            <SectionTitle helpText={t("dacPolicies.help.policies")}>
+              3. {t("dacPolicies.selectAdditionalPolicies")}
+            </SectionTitle>
             <Controller
               control={control}
               name="licenses"

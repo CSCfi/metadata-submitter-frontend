@@ -12,6 +12,7 @@
   "replace": "Replace",
   "submit": "Submit",
   "draft": "Draft",
+  "missing": "Missing",
   "ready": "Ready",
   "copy": "Copy",
   "saveSubmission": "Save progress and exit",
@@ -237,6 +238,14 @@
   "identifier": "Identifier",
   "doiRegistrationInfo": "DOI registration information",
   "summary": "Summary",
+  "summaryPage": {
+    "requiredAction": "Required action",
+    "publish": "Publish",
+    "setReleaseDate": "Set release date",
+    "noAddedItems": "No added items.",
+    "selectBucket": "Please select bucket",
+    "fillForm": "Please fill out the form"
+  },
   "publishPage": {
     "draft": {
       "title": "Publish submission",

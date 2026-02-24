@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 
 import EditIcon from "@mui/icons-material/Edit"
 import Box from "@mui/material/Box"
@@ -16,14 +16,12 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
 import WizardObjectStatusBadge from "../WizardComponents/WizardObjectStatusBadge"
-import WizardPagination from "../WizardComponents/WizardPagination"
-import WizardSearchBox from "../WizardComponents/WizardSearchBox"
-import editObjectHook from "../WizardHooks/WizardEditObjectHook"
 
-import { SDObjectTypes } from "constants/wizardObject"
+import { SDObjectTypes, FormStatus } from "constants/wizardObject"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
 import { updateStep } from "features/wizardStepObjectSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import { SubmissionDetails } from "types"
 import { pathWithLocale } from "utils"
 
 const SummaryTable = styled(DataGrid)(({ theme }) => ({
@@ -63,13 +61,31 @@ const SummaryTable = styled(DataGrid)(({ theme }) => ({
   },
 }))
 
+let formState: string = FormStatus.missing
+
+let isFormReady = (step: number, submission: SubmissionDetails) => {
+  switch (step) {
+    case 1:
+      return Boolean(submission.name.length)
+    case 2:
+      return Boolean(submission.rems && submission.rems?.organizationId.length)
+    case 3:
+      return Boolean(submission.bucket?.length)
+    case 4:
+      return Boolean(submission.metadata && Object.keys(submission.metadata).length)
+  }
+}
+
 /*
  * Show summary of objects added to submission
  */
 
 const WizardShowSummaryStep: React.FC = () => {
   const submission = useAppSelector(state => state.submission)
-  const mappedSummarySteps = useAppSelector(state => state.wizardMappedSteps)
+  const mappedSteps = useAppSelector(state => state.wizardMappedSteps)
+
+  // Remove publish step
+  const mappedSummarySteps = mappedSteps.toSpliced(-1, 1)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -85,28 +101,24 @@ const WizardShowSummaryStep: React.FC = () => {
     }))
   }
 
-  const handleEdit = (objectType, item, step) => {
-    dispatch(updateStep({ step: step, objectType: objectType }))
+  const handleEdit = (objectType: string, step: number) => {
     const { submissionId } = submission
-    switch (step) {
-      case 1: {
-        dispatch(resetObjectType())
-        navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: "step=1" })
-        break
-      }
-      default: {
-        editObjectHook(objectType, item, step, submissionId, dispatch, navigate)
-      }
-    }
+
+    dispatch(updateStep({ step: step, objectType: objectType }))
+    dispatch(resetObjectType())
+    navigate({ pathname: pathWithLocale(`submission/${submissionId}`), search: `step=${step}` })
   }
 
+  // Table of all summary rows
   const rows = mappedSummarySteps.flatMap((summaryItem, index) => {
     const step = index + 1
+
     return (
       summaryItem.schemas?.flatMap(stepItem => {
         const objects = stepItem.objects
+        formState = isFormReady(step, submission) ? FormStatus.ready : FormStatus.missing
 
-        // Add row for linked files
+        // Add row for a linked bucket
         if (
           stepItem.objectType === SDObjectTypes.linkBucket &&
           submission.bucket &&
@@ -114,64 +126,84 @@ const WizardShowSummaryStep: React.FC = () => {
         ) {
           return [
             {
-              id: `linked-files-${step}`,
-              status: t("ready"),
+              id: `linked-bucket-${step}`,
+              status: formState,
               name: submission.bucket,
               action: "",
               step,
-              draft: false,
               objectType: stepItem.objectType,
-              objectData: undefined,
               objectsList: [],
             },
           ]
         }
-
-        if (objects) {
+        // if objects array contains objects
+        if (objects && objects.length > 0) {
           const objectsList = Object.values(objects).flat()
-          return objectsList
-            .filter(item => !!item && !!item.id)
-            .map(item => {
-              const draft = item.objectData?.schema?.includes("draft-")
-              const name = item.displayTitle || item.fileName || item.id
-              return {
-                id: item.id,
-                status: draft ? t("draft") : t("ready"),
-                name,
-                action: draft ? t("Please mark as ready") : "",
+
+          return objectsList.map(item => {
+            const name = item.displayTitle || item.fileName || item.id
+
+            return {
+              id: item.id,
+              status: formState,
+              name,
+              action: isFormReady(step, submission)
+                ? ""
+                : stepItem.objectType === SDObjectTypes.linkBucket
+                  ? t("summaryPage.selectBucket")
+                  : t("summaryPage.fillForm"),
+              step,
+              objectType: stepItem.objectType,
+              objectsList,
+            }
+          })
+        } else {
+          if ([1, 2, 3, 4].includes(step)) {
+            return [
+              {
+                id: `${submission.submissionId}-${stepItem.objectType}`,
+                status: FormStatus.missing,
+                name: "",
+                action:
+                  stepItem.objectType === SDObjectTypes.linkBucket
+                    ? t("summaryPage.selectBucket")
+                    : t("summaryPage.fillForm"),
                 step,
-                draft,
                 objectType: stepItem.objectType,
-                objectData: item.objectData,
-                objectsList,
-              }
-            })
+                objectsList: [],
+              },
+            ]
+          }
         }
         return []
       }) || []
     )
   })
 
-  const [filteringText, setFilteringText] = useState<string>("")
-  const filteredRows = useMemo(() => {
-    return rows.filter(row => {
-      const statusText = row.draft ? t("draft") : t("ready")
-      return (
-        String(row.name).toLowerCase().includes(filteringText.toLowerCase()) ||
-        statusText.toLowerCase().includes(filteringText.toLowerCase())
-      )
-    })
-  }, [rows, filteringText])
-
   const columns: GridColDef[] = [
     {
       field: "status",
       headerName: t("Status"),
-      renderCell: () => <WizardObjectStatusBadge />,
+      renderCell: (params: GridRenderCellParams) => (
+        <WizardObjectStatusBadge status={params.row.status} />
+      ),
       flex: 0.5,
     },
     { field: "name", headerName: t("Name"), flex: 1 },
-    { field: "action", headerName: t("Required Action"), flex: 1 },
+    {
+      field: "action",
+      headerName: t("summaryPage.requiredAction"),
+      renderCell: (params: GridRenderCellParams) => (
+        <Box>
+          {params.row.status === FormStatus.ready
+            ? ""
+            : params.row.objectType === SDObjectTypes.linkBucket
+              ? t("summaryPage.selectBucket")
+              : t("summaryPage.fillForm")}
+        </Box>
+      ),
+      flex: 1,
+    },
     {
       field: "edit",
       headerName: "",
@@ -179,32 +211,29 @@ const WizardShowSummaryStep: React.FC = () => {
         <GridActionsCellItem
           icon={<EditIcon color="primary" />}
           label={t("edit")}
-          onClick={() => handleEdit(params.row.objectType, params.row.objectData, params.row.step)}
+          showInMenu
+          onClick={() => {
+            handleEdit(params.row.objectType, params.row.step)
+          }}
+          data-testid={`edit-${params.row.objectType}-summary`}
+          disabled={
+            params.row.objectType === SDObjectTypes.linkBucket && submission.bucket !== undefined
+          }
         />
       ),
       flex: 0.5,
     },
   ]
 
-  const pageSizeOptions = [5, 10, 25, 50, 100]
-  const [paginationModel, setPaginationModel] = useState({ pageSize: 5, page: 0 })
-
   return (
     <>
       <Typography component="h1" variant="h4" color="secondary" sx={{ p: 2 }}>
         {t("summary")}
       </Typography>
-      <Box sx={{ p: 2 }}>
-        <WizardSearchBox
-          placeholder={t("searchItems")}
-          filteringText={filteringText}
-          handleChangeFilteringText={e => setFilteringText(e.target.value)}
-          handleClearFilteringText={() => setFilteringText("")}
-        />
-      </Box>
+
       {mappedSummarySteps.map((summaryItem, index) => {
         const step = index + 1
-        const stepRows = filteredRows.filter(row => row.step === step)
+        const stepRows = rows.filter(row => row.step === step)
 
         return (
           <Container
@@ -223,26 +252,7 @@ const WizardShowSummaryStep: React.FC = () => {
                 sortModel={sortModels[step] || []}
                 onSortModelChange={model => handleSortModelChange(step, model)}
                 disableColumnMenu
-                pagination
-                paginationMode="client"
-                paginationModel={paginationModel}
-                pageSizeOptions={pageSizeOptions}
                 hideFooter={false}
-              />
-              <WizardPagination
-                totalNumberOfItems={stepRows.length}
-                page={paginationModel.page}
-                itemsPerPage={paginationModel.pageSize}
-                handleChangePage={(_e, newPage) =>
-                  setPaginationModel(prev => ({ ...prev, page: newPage }))
-                }
-                handleItemsPerPageChange={e =>
-                  setPaginationModel(prev => ({
-                    ...prev,
-                    pageSize: parseInt(e.target.value, 10),
-                    page: 0,
-                  }))
-                }
               />
             </Box>
           </Container>

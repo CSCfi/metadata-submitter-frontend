@@ -34,7 +34,9 @@ const WizardRemsDAC = (props: WizardRemsDACProps) => {
             inputProps={{ "aria-label": params.row.name }}
             data-testid={params.row.id}
           />
-          <Typography component="span">{params.row.name}</Typography>
+          <Typography component="span" data-testid={`rems-dac-item-${params.row.id}`}>
+            {params.row.name}
+          </Typography>
         </Box>
       ),
     },

@@ -38,6 +38,11 @@ export const ObjectStatus = {
   ready: "Ready",
 }
 
+export const FormStatus = {
+  ready: "ready",
+  missing: "missing",
+}
+
 export const ObjectSubmissionTypes = {
   form: "Form",
   xml: "XML",

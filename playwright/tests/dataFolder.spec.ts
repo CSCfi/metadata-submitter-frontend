@@ -9,7 +9,7 @@ test.describe("Data bucket view", () => {
     await login()
     await newSubmission("SD")
     await clickAccordionPanel("Data bucket")
-    const viewBucketButton = await page.getByTestId("View bucket")
+    const viewBucketButton = await page.getByTestId("View linkBucket")
     await viewBucketButton.dispatchEvent("click")
 
     // Mock files response
@@ -30,6 +30,8 @@ test.describe("Data bucket view", () => {
     // Assert that Link data bucket button is enabled after selecting radio button
     await expect(page.getByTestId("link-data-bucket")).toBeEnabled()
     await page.getByTestId("link-data-bucket").click()
+
+    await page.getByTestId("link-bucket-confirm").click()
 
     // Assert that bucket table shows linked bucket: "Bucket B"
     await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(1)
@@ -52,7 +54,7 @@ test.describe("Data bucket view", () => {
       .locator("[data-testid='edit-draft-submission']")
       .click()
     await clickAccordionPanel("Data bucket")
-    await page.getByTestId("View bucket").click()
+    await page.getByTestId("linkBucket-list-item").click()
     await expect(page.locator("[role='rowgroup'] > [role='row']")).toHaveCount(1)
     await expect(page.locator("[data-id='bucketB']")).toBeVisible()
     await expect(page.getByTestId("link-data-bucket")).toBeDisabled()

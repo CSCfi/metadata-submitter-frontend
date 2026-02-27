@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated Nginx base image to nginx:1.29.5-trixie . Deployment fix (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/-/issues/915)
 - JSONSchemaParser FieldTooltip is replaced by HelpTooltip from the new component (#1095)
 - Summary page replaced WizardEditObjectHook with navigation to a form
 - Summary page, badge to show Missing text when needed (#1082)
@@ -78,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Changed ownership of directories Nginx need to access. Deployment fix (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/-/issues/915)
 - (users) DOI form aka Submission's metadata form is empty on page refresh (#1092)(#1108)
 - Unit tests
 - (users) Fix removed form array items flagged as required (#1077)

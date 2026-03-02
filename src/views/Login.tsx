@@ -52,9 +52,9 @@ const LoginButton = styled(Button)(() => ({
 const Login: React.FC = () => {
   const { t } = useTranslation()
 
-  let loginRoute = "/aai"
+  let loginRoute = "/login"
   if (import.meta.env.NODE_ENV === "development") {
-    loginRoute = "http://localhost:5430/aai"
+    loginRoute = "http://localhost:5430/login"
   }
 
   return (

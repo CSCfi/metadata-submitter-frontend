@@ -17,7 +17,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@typescript-eslint/parser": "^8.3.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "ajv-i18n": "^4.2.0",
     "apisauce": "^3.0.1",

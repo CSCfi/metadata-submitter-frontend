@@ -1,6 +1,6 @@
 {
-  "short_name": "Metadata Submitter Frontend",
-  "name": "Metadata Submitter Frontend",
+  "short_name": "SD Submit",
+  "name": "SD Submit",
   "icons": [
     {
       "src": "csc_logo.svg",

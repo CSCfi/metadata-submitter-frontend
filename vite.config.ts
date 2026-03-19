@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
     changeOrigin: true,
   }
   const proxy = {
-    "/aai": proxyTo,
+    "/login": proxyTo,
     "/v1/objects": proxyTo,
     "/v1/validate": proxyTo,
     "/v1/submit": proxyTo,

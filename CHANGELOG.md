@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- manifest.json to hold name SD Submit instead of Metadata Submitter Frontend
+- login path from /aai to /login (#1130)
 - Updated Nginx base image to nginx:1.29.5-trixie . Deployment fix (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/-/issues/915)
 - JSONSchemaParser FieldTooltip is replaced by HelpTooltip from the new component (#1095)
 - Summary page replaced WizardEditObjectHook with navigation to a form
@@ -152,6 +154,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- robots.txt not restricting anything (https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter/-/issues/915)
 - (users) Pagination of tables from Summary page (#1082)
 - (users) Search field filtering from Summary page (#1082)
 - Summary page, pagination of tables (#1082)

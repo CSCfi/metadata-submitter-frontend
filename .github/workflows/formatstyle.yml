@@ -11,7 +11,7 @@ jobs:
     name: Prettier check
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v5
         with:
           version: 8
       - name: Setup node ${{ matrix.node }}

@@ -7,20 +7,25 @@ ARG NGINX_IMAGE=nginx:1.29.5-trixie
 FROM ${BASE_IMAGE} AS appbuilder
 #=======================
 
+# Install pnpm for dependency installation
 RUN npm install -g pnpm
 
+# Setup the working directory
 WORKDIR /usr/src/app
 
-COPY index.html package.json pnpm-lock.yaml vite.config.ts ./
-
+# Assume these change less often than the other files
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
+# Now copy the other files into place
 COPY src/ ./src/
 COPY public/ ./public/
 COPY index.html vite.config.ts ./
 
-RUN chown -R node:node /usr/src/app
+# Change ownership - this is probably not required.
+# RUN chown -R node:node /usr/src/app
 
+# Build
 RUN pnpm build
 
 #=======================

@@ -3,8 +3,11 @@ import { create } from "apisauce"
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
+import { getApiPrefix } from "utils"
 
-const api = create({ baseURL: "/v1/api/keys" })
+const apiPath = await getApiPrefix("/v1/api/keys")
+
+const api = create({ baseURL: apiPath })
 api.addMonitor(errorMonitor)
 
 const addAPIKey = async (name: string): Promise<APIResponse> => {

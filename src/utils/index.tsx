@@ -5,12 +5,19 @@ import { useLocation } from "react-router"
 import { Locale } from "constants/translation"
 import { FEGAObjectTypes } from "constants/wizardObject"
 import type {
+  AppConfig,
   File,
   FormDataFiles,
   ObjectDisplayValues,
   MetadataFormDetails,
   StepObject,
 } from "types"
+
+export const getApiPrefix = async (path: string): Promise<string> => {
+  const config: AppConfig = await fetch("/config.json").then(res => res.json())
+  const prefixedpath: string = `${config.API_PREFIX}/${path}`
+  return prefixedpath.replace("//", "/")
+}
 
 export const getObjectDisplayTitle = (
   objectType: string,

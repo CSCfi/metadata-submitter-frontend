@@ -5,15 +5,18 @@ import { errorMonitor } from "./errorMonitor"
 
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
+import { getApiPrefix } from "utils"
 
-/* NB: 
+const apiPath = await getApiPrefix("/v1/objects")
+
+/* NB:
   - '/v1/object' endpoint is already removed from backend, but we will need a replacement for it in the end
   to add an (metadata) object to a submission and update it.
   - The functions below are left as is so we could update them/have them as template when the new endpoints are available.
   - 'getAllObjectsByObjectType' and 'getObjectByObjectId' are moved to 'submissionAPI'.
 *
 */
-const api = create({ baseURL: "/v1/objects" })
+const api = create({ baseURL: apiPath })
 api.addMonitor(errorMonitor)
 
 const createFromXML = async (

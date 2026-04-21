@@ -3,8 +3,11 @@
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
+import { getApiPrefix } from "utils"
 
-const api = create({ baseURL: "/v1/rems" })
+const apiPath = await getApiPrefix("/v1/rems")
+
+const api = create({ baseURL: apiPath })
 api.addMonitor(errorMonitor)
 
 const getRemsInfo = async (language?: string): Promise<APIResponse> => {

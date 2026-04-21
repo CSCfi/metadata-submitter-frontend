@@ -7,6 +7,10 @@ import { useTranslation } from "react-i18next"
 
 import CSCBannerLogin from "../images/csc_banner_login.png"
 
+import { getApiPrefix } from "utils"
+
+const apiPath: string = await getApiPrefix("login")
+
 const LoginContainer = styled(Container)(() => ({
   display: "flex",
   minHeight: "100vh",
@@ -52,9 +56,9 @@ const LoginButton = styled(Button)(() => ({
 const Login: React.FC = () => {
   const { t } = useTranslation()
 
-  let loginRoute = "/login"
+  let loginRoute = apiPath
   if (import.meta.env.NODE_ENV === "development") {
-    loginRoute = "http://localhost:5430/login"
+    loginRoute = "http://localhost:5430/api/login"
   }
 
   return (

@@ -20,6 +20,10 @@ import {
 
 import { SDObjectTypes } from "constants/wizardObject"
 
+export type AppConfig = {
+  API_PREFIX: string
+}
+
 export type User = {
   id: string
   name: string

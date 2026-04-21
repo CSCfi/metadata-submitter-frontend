@@ -14,18 +14,18 @@ export default defineConfig(({ mode }) => {
     changeOrigin: true,
   }
   const proxy = {
-    "/api/login": proxyTo,
-    "/api/v1/objects": proxyTo,
-    "/api/v1/validate": proxyTo,
-    "/api/v1/submit": proxyTo,
-    "/api/v1/submissions": proxyTo,
-    "/api/v1/publish": proxyTo,
     "/api/callback": proxyTo,
+    "/api/login": proxyTo,
     "/api/logout": proxyTo,
-    "/api/v1/users": proxyTo,
-    "/api/v1/files": proxyTo,
-    "/api/v1/rems": proxyTo,
     "/api/v1/api/keys": proxyTo,
+    "/api/v1/files": proxyTo,
+    "/api/v1/objects": proxyTo,
+    "/api/v1/publish": proxyTo,
+    "/api/v1/rems": proxyTo,
+    "/api/v1/submissions": proxyTo,
+    "/api/v1/submit": proxyTo,
+    "/api/v1/users": proxyTo,
+    "/api/v1/validate": proxyTo,
   }
 
   /*

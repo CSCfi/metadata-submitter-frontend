@@ -4,10 +4,12 @@ import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router"
 
 import App from "App"
-import { renderWithProviders } from "utils/test-utils"
+import { getApiPrefix, renderWithProviders } from "utils/test-utils"
+
+const apiPrefix = getApiPrefix()
 
 const restHandlers = [
-  http.get("/v1/users", () => {
+  http.get(`${apiPrefix}/v1/users`, () => {
     return HttpResponse.json({
       user_id: "001",
       user_name: "Test User",

@@ -13,11 +13,27 @@ import type {
   StepObject,
 } from "types"
 
-export const getApiPrefix = async (path: string): Promise<string> => {
+//console.log("fs data read", configData)
+
+export const addApiPrefix = async (path: string): Promise<string> => {
+  //const re = /[^:]\/\/+/g
+  //console.log("path", path)
   const config: AppConfig = await fetch("/config.json").then(res => res.json())
-  const prefixedpath: string = `${config.API_PREFIX}/${path}`
-  return prefixedpath.replace("//", "/")
+  //console.log("UTILS", config.API_PREFIX)
+  const prefixedPath: string = `${config.API_PREFIX}/${path}`
+
+  if (prefixedPath.includes("://")) {
+    const urlArray: Array<string> = prefixedPath.split("://")
+    //console.log("Array", urlArray)
+    const first: string = urlArray.shift() as string
+    //console.log("first",first)
+    const domainPath: string = urlArray.toString()
+    const fixedPath: string = domainPath.replaceAll(/\/\/+/g, "/")
+    //console.log("fixedPath",fixedPath)
+    return `${first}://${fixedPath}`
+  } else return prefixedPath.replaceAll(/\/\/+/g, "/")
 }
+// export const addApiPrefix = (path: string) => {return `/api${path}`}
 
 export const getObjectDisplayTitle = (
   objectType: string,

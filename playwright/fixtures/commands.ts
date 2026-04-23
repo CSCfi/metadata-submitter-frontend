@@ -2,6 +2,7 @@
 import { test as base, expect } from "@playwright/test"
 import { Client } from "pg"
 
+import { getApiPrefix } from "../../src/utils/test-utils"
 import {
   dratfResponse30,
   dratfResponse5,
@@ -41,6 +42,8 @@ type CommandFixtures = {
   checkItemsPerPage: (perPage: number, numberOfItems: number) => Promise<void>
   mockGetSubmissions: (itemsPerPage: number, isPublished: boolean) => Promise<void>
 }
+
+const apiPrefix = getApiPrefix()
 
 // Extend base test with our fixtures.
 const test = base.extend<CommandFixtures>({
@@ -193,7 +196,7 @@ const test = base.extend<CommandFixtures>({
 
           // Generate objects from templates
           const generateObject = async (objectType, template) => {
-            const objectPath = `/v1/objects/${objectType}?submission=${generatedSubmissionId}`
+            const objectPath = `${apiPrefix}/v1/objects/${objectType}?submission=${generatedSubmissionId}`
             if (objectTypesArray.includes(objectType)) {
               const objectResponse = await page.request.post(objectPath, {
                 data: template,
@@ -294,7 +297,7 @@ const test = base.extend<CommandFixtures>({
       }
 
       await page.route(
-        `/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
+        `${apiPrefix}/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
         async route => await route.fulfill({ json })
       )
     }

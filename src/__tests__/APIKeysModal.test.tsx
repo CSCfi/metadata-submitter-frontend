@@ -4,12 +4,14 @@ import { setupServer } from "msw/node"
 import { vi } from "vitest"
 
 import APIKeysModal from "components/APIKeysModal"
-import { renderWithProviders } from "utils/test-utils"
+import { getApiPrefix, renderWithProviders } from "utils/test-utils"
 
 type KeyProps = {
   key_id: string
   created_at: string
 }
+
+const apiPrefix = getApiPrefix()
 
 const handleClose = vi.fn()
 
@@ -24,14 +26,14 @@ const mockKeys: KeyProps[] = [
 ]
 
 const restHandlers = [
-  http.get("/v1/api/keys", () => {
+  http.get(`${apiPrefix}/v1/api/keys`, () => {
     return HttpResponse.json(mockKeys)
   }),
-  http.delete("/v1/api/keys", ({ params }) => {
+  http.delete(`${apiPrefix}/v1/api/keys`, ({ params }) => {
     const key_name = params.key_id
     return HttpResponse.json(mockKeys.filter(item => item.key_id !== key_name))
   }),
-  http.post("/v1/api/keys", async () => {
+  http.post(`${apiPrefix}/v1/api/keys`, async () => {
     return HttpResponse.json("a030151a32ca.itPXpPwFfSYnN9Yx2")
   }),
 ]

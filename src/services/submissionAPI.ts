@@ -3,9 +3,9 @@ import { create } from "apisauce"
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse, SubmissionDetails } from "types"
-import { getApiPrefix } from "utils"
+import { addApiPrefix } from "utils"
 
-const apiPath = await getApiPrefix("/v1/submissions")
+const apiPath = await addApiPrefix("/v1/submissions")
 
 const api = create({ baseURL: apiPath })
 

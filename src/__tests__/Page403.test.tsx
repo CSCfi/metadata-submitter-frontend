@@ -7,11 +7,13 @@ import { MemoryRouter } from "react-router"
 import { vi } from "vitest"
 
 import App from "App"
-import { renderWithProviders } from "utils/test-utils"
+import { getApiPrefix, renderWithProviders } from "utils/test-utils"
 import Page403 from "views/ErrorPages/Page403"
 
+const apiPrefix = getApiPrefix()
+
 const restHandlers = [
-  http.get("/v1/users", () => {
+  http.get(`${apiPrefix}/v1/users`, () => {
     return HttpResponse.json({
       user_id: "001",
       user_name: "Test User",

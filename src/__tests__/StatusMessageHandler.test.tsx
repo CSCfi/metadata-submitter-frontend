@@ -3,7 +3,9 @@ import { screen } from "@testing-library/react"
 import StatusMessageHandler from "../components/StatusMessageHandler"
 
 import { ResponseStatus } from "constants/responseStatus"
-import { renderWithProviders } from "utils/test-utils"
+import { getApiPrefix, renderWithProviders } from "utils/test-utils"
+
+const apiPrefix = getApiPrefix()
 
 describe("StatusMessageHandler", () => {
   it("should render error message", () => {
@@ -41,7 +43,10 @@ describe("StatusMessageHandler", () => {
   })
 
   it("should render success message", () => {
-    const responseMock = { data: { accessionId: "TESTID1234" }, config: { baseURL: "/v1/objects" } }
+    const responseMock = {
+      data: { accessionId: "TESTID1234" },
+      config: { baseURL: `${apiPrefix}/v1/objects` },
+    }
 
     renderWithProviders(<StatusMessageHandler />, {
       preloadedState: {

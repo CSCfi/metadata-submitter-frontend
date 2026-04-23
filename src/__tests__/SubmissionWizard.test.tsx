@@ -4,22 +4,24 @@ import { setupServer } from "msw/node"
 import { MemoryRouter, Routes, Route } from "react-router"
 
 import { ExtraObjectTypes } from "constants/wizardObject"
-import { renderWithProviders } from "utils/test-utils"
+import { getApiPrefix, renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
 
 const submissionName = "Submission name"
 const submissionTitle = "Submission dataset title"
 const submissionDescription = "Submission description"
 
+const apiPrefix = getApiPrefix()
+
 const restHandlers = [
-  http.get("/v1/users", () => {
+  http.get(`${apiPrefix}/v1/users`, () => {
     return HttpResponse.json({
       user_id: "001",
       user_name: "Test User",
       projects: [{ project_id: "PROJECT1" }],
     })
   }),
-  http.get("/v1/submissions/:submissionId", ({ params }) => {
+  http.get(`${apiPrefix}/v1/submissions/:submissionId`, ({ params }) => {
     const id = params.submissionId
 
     return id === "123456"

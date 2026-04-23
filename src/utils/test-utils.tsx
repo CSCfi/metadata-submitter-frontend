@@ -16,9 +16,24 @@ import CSCtheme from "../theme"
 
 import { SDObjectTypes } from "constants/wizardObject"
 import rootReducer from "rootReducer"
-import { Schema } from "types"
+import { Schema, AppConfig } from "types"
 
 import "../i18n"
+
+// config.json file API_PREFIX containing  :// will not work
+
+// TypeError: Failed to parse URL from /config.json [cause]: TypeError: Invalid URL
+// export const getApiPrefix = async (): Promise<string> => {
+//   const config: AppConfig = await fetch("/config.json")
+//   .then(res => res.json(), res => console.log("MITA", res))
+//   .catch(error => console.log(error))
+//   return config.API_PREFIX.replace(/\/\/+/g, "/")
+
+// }
+
+export const getApiPrefix = (): string => {
+  return "/api"
+}
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>

@@ -5,9 +5,10 @@ import { errorMonitor } from "./errorMonitor"
 
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
-import { getApiPrefix } from "utils"
+import { addApiPrefix } from "utils"
 
-const apiPath = await getApiPrefix("/v1/objects")
+const apiPath = await addApiPrefix("/v1/objects")
+console.log(apiPath)
 
 /* NB:
   - '/v1/object' endpoint is already removed from backend, but we will need a replacement for it in the end

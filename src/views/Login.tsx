@@ -10,7 +10,7 @@ import CSCBannerLogin from "../images/csc_banner_login.png"
 import { addApiPrefix } from "utils"
 
 const apiPath: string = await addApiPrefix("/login")
-console.log(apiPath)
+
 const LoginContainer = styled(Container)(() => ({
   display: "flex",
   minHeight: "100vh",

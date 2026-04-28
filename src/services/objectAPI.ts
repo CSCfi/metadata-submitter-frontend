@@ -8,7 +8,6 @@ import { APIResponse } from "types"
 import { addApiPrefix } from "utils"
 
 const apiPath = await addApiPrefix("/v1/objects")
-console.log(apiPath)
 
 /* NB:
   - '/v1/object' endpoint is already removed from backend, but we will need a replacement for it in the end

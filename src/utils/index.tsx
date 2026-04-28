@@ -5,7 +5,6 @@ import { useLocation } from "react-router"
 import { Locale } from "constants/translation"
 import { FEGAObjectTypes } from "constants/wizardObject"
 import type {
-  AppConfig,
   File,
   FormDataFiles,
   ObjectDisplayValues,
@@ -13,23 +12,24 @@ import type {
   StepObject,
 } from "types"
 
-//console.log("fs data read", configData)
+const fixedConfig: string = "/api/"
 
 export const addApiPrefix = async (path: string): Promise<string> => {
-  //const re = /[^:]\/\/+/g
-  //console.log("path", path)
-  const config: AppConfig = await fetch("/config.json").then(res => res.json())
-  //console.log("UTILS", config.API_PREFIX)
-  const prefixedPath: string = `${config.API_PREFIX}/${path}`
+  // Catching an error when failing in promise is offering an escape for Vitest having no fetch
+  const apiPrefix: string = await fetch("/config.json")
+    .then(res => res.json())
+    .then(data => data.API_PREFIX)
+    .catch(() => {
+      return fixedConfig as string
+    })
+
+  const prefixedPath: string = `${apiPrefix}/${path}`
 
   if (prefixedPath.includes("://")) {
     const urlArray: Array<string> = prefixedPath.split("://")
-    //console.log("Array", urlArray)
     const first: string = urlArray.shift() as string
-    //console.log("first",first)
     const domainPath: string = urlArray.toString()
     const fixedPath: string = domainPath.replaceAll(/\/\/+/g, "/")
-    //console.log("fixedPath",fixedPath)
     return `${first}://${fixedPath}`
   } else return prefixedPath.replaceAll(/\/\/+/g, "/")
 }

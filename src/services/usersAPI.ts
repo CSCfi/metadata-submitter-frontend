@@ -3,7 +3,7 @@ import { create } from "apisauce"
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
-import { addApiPrefix } from "utils"
+import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/users")
 

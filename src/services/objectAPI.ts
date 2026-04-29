@@ -5,7 +5,7 @@ import { errorMonitor } from "./errorMonitor"
 
 import { OmitObjectValues } from "constants/wizardObject"
 import { APIResponse } from "types"
-import { addApiPrefix } from "utils"
+import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/objects")
 

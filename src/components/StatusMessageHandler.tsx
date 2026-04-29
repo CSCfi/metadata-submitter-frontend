@@ -15,7 +15,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import { APIResponse } from "types"
-import { addApiPrefix } from "utils"
+import { addApiPrefix } from "utils/getConfig"
 
 type MessageHandlerProps = {
   response?: APIResponse

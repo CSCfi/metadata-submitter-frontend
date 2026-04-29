@@ -20,10 +20,6 @@ import { Schema } from "types"
 
 import "../i18n"
 
-export const getApiPrefix = (): string => {
-  return "/api"
-}
-
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>
   store?: AppStore

@@ -12,29 +12,6 @@ import type {
   StepObject,
 } from "types"
 
-const fixedConfig: string = "/api/"
-
-export const addApiPrefix = async (path: string): Promise<string> => {
-  // Catching an error when failing in promise is offering an escape for Vitest having no fetch
-  const apiPrefix: string = await fetch("/config.json")
-    .then(res => res.json())
-    .then(data => data.API_PREFIX)
-    .catch(() => {
-      return fixedConfig as string
-    })
-
-  const prefixedPath: string = `${apiPrefix}/${path}`
-
-  if (prefixedPath.includes("://")) {
-    const urlArray: Array<string> = prefixedPath.split("://")
-    const first: string = urlArray.shift() as string
-    const domainPath: string = urlArray.toString()
-    const fixedPath: string = domainPath.replaceAll(/\/\/+/g, "/")
-    return `${first}://${fixedPath}`
-  } else return prefixedPath.replaceAll(/\/\/+/g, "/")
-}
-// export const addApiPrefix = (path: string) => {return `/api${path}`}
-
 export const getObjectDisplayTitle = (
   objectType: string,
   objectData: Record<string, unknown>

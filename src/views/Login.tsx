@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next"
 
 import CSCBannerLogin from "../images/csc_banner_login.png"
 
-import { addApiPrefix } from "utils"
+import { addApiPrefix } from "utils/getConfig"
 
 const apiPath: string = await addApiPrefix("/login")
 

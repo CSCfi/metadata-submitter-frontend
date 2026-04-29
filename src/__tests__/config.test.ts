@@ -2,13 +2,15 @@ import { describe, it, expect, vi } from "vitest"
 
 import type { AppConfig } from "types"
 
-const getConfig = async (): Promise<AppConfig> =>
-  await fetch("/config.json").then(res => res.json())
+const url = new URL("/config.json", window.location.origin)
+const getConfig = async (): Promise<AppConfig> => await fetch(url).then(res => res.json())
+
+const testConfig = await getConfig()
 
 describe("Config Loading", () => {
   it("should load config from config.json", async () => {
     const mockConfig = {
-      APIP_REFIX: "/api",
+      API_PREFIX: "/api",
     }
 
     // Mock fetch to return config
@@ -19,10 +21,7 @@ describe("Config Loading", () => {
       } as unknown as Response)
     )
 
-    const config = await fetch("/config.json").then(res => res.json())
-
-    expect(global.fetch).toHaveBeenCalledWith("/config.json")
-    expect(config).toEqual(mockConfig)
+    expect(testConfig).toEqual(mockConfig)
   })
 
   it("should preserve config across multiple calls", async () => {

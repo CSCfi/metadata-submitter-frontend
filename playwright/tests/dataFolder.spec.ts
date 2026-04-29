@@ -3,7 +3,7 @@
 import test from "../fixtures/commands"
 import { files } from "../fixtures/files_response"
 
-import { getApiPrefix } from "utils/test-utils"
+import { addApiPrefix } from "utils/getConfig"
 
 test.describe("Data bucket view", () => {
   test.beforeEach(async ({ page, login, resetDB, newSubmission, clickAccordionPanel }) => {
@@ -14,10 +14,10 @@ test.describe("Data bucket view", () => {
     const viewBucketButton = await page.getByTestId("View linkBucket")
     await viewBucketButton.dispatchEvent("click")
 
-    const apiPrefix = getApiPrefix()
+    const prefixedPath = await addApiPrefix("/v1/files")
 
     // Mock files response FIXME to bucket endpoint
-    await page.route(`${apiPrefix}/v1/files`, async route => await route.fulfill({ json: files }))
+    await page.route(prefixedPath, async route => await route.fulfill({ json: files }))
   })
 
   test("should be able show correct Bucket table", async ({ page, clickAccordionPanel }) => {

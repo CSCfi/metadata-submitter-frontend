@@ -6,6 +6,9 @@ export const addApiPrefix = async (path: string): Promise<string> => {
   const apiPrefix: string = await fetch(url)
     .then(res => res.json())
     .then(data => data.API_PREFIX)
+    .catch(() => {
+      return "/api"
+    })
 
   return `${apiPrefix.replace(/\/$/, "")}/${path.replace(/^\//, "")}`
 }

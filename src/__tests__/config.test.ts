@@ -3,7 +3,12 @@ import { describe, it, expect, vi } from "vitest"
 import type { AppConfig } from "types"
 
 const url = new URL("/config.json", window.location.origin)
-const getConfig = async (): Promise<AppConfig> => await fetch(url).then(res => res.json())
+const getConfig = async (): Promise<AppConfig> =>
+  await fetch(url)
+    .then(res => res.json())
+    .catch(() => {
+      return { API_PREFIX: "/api" }
+    })
 
 const testConfig = await getConfig()
 

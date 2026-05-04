@@ -3,8 +3,11 @@
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
-const api = create({ baseURL: "/v1/files" })
+const apiPath = await addApiPrefix("/v1/files")
+
+const api = create({ baseURL: apiPath })
 api.addMonitor(errorMonitor)
 
 const getProjectFiles = async (projectId: string): Promise<APIResponse> => {

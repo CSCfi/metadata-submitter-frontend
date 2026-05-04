@@ -2,10 +2,14 @@ import { expect } from "@playwright/test"
 
 import test from "../fixtures/commands"
 
+import { addApiPrefix } from "utils/getConfig"
+
+const prefixedPath: string = await addApiPrefix("/v1/submissions")
+
 test.describe("catch error codes and display corresponding error page", function () {
   test("should redirect to 400 page if response status code is 400 ", async ({ page, login }) => {
     await login()
-    await page.route("/v1/submissions*", async route => {
+    await page.route(`${prefixedPath}*`, async route => {
       await route.fulfill({
         body: "Bad request!",
         status: 400,
@@ -29,7 +33,7 @@ test.describe("catch error codes and display corresponding error page", function
 
   test("should redirect to 403 page if response status code is 403 ", async ({ page, login }) => {
     await login()
-    await page.route("/v1/submissions*", async route => {
+    await page.route(`${prefixedPath}*`, async route => {
       route.fulfill({
         body: "Access is forbidden!",
         status: 403,
@@ -52,7 +56,7 @@ test.describe("catch error codes and display corresponding error page", function
 
   test("should redirect to 500 page if response status code is 500 ", async ({ page, login }) => {
     await login()
-    await page.route("/v1/submissions*", route => {
+    await page.route(`${prefixedPath}*`, route => {
       route.fulfill({
         body: "Internal server error!",
         status: 500,

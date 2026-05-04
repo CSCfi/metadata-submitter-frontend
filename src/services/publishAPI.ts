@@ -3,8 +3,11 @@ import { create } from "apisauce"
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
-const api = create({ baseURL: "/v1/publish" })
+const apiPath = await addApiPrefix("/v1/publish")
+
+const api = create({ baseURL: apiPath })
 api.addMonitor(errorMonitor)
 
 const publishSubmissionById = async (submissionId: string): Promise<APIResponse> => {

@@ -15,12 +15,15 @@ import { ResponseStatus } from "constants/responseStatus"
 import { resetStatusDetails } from "features/statusMessageSlice"
 import { useAppDispatch, useAppSelector } from "hooks"
 import { APIResponse } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
 type MessageHandlerProps = {
   response?: APIResponse
   helperText?: string
   handleClose: (status: boolean) => void
 }
+
+const apiPath = await addApiPrefix("/v1/objects")
 
 const CustomAlert = styled(Alert, {
   shouldForwardProp: prop => prop !== "severity",
@@ -186,7 +189,7 @@ const SuccessHandler = (props: MessageHandlerProps) => {
   let message = ""
   if (response) {
     switch (response?.config?.baseURL) {
-      case "/v1/objects": {
+      case `${apiPath}`: {
         switch (response.config.method) {
           case "patch": {
             message = t("snackbarMessages.success.objects.updated")

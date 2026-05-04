@@ -21,6 +21,7 @@ import {
 } from "./test-objects"
 
 import { FEGAObjectTypes, ObjectStatus } from "constants/wizardObject"
+import { addApiPrefix } from "utils/getConfig"
 
 type CommandFixtures = {
   mockAuthUrl: string
@@ -41,6 +42,9 @@ type CommandFixtures = {
   checkItemsPerPage: (perPage: number, numberOfItems: number) => Promise<void>
   mockGetSubmissions: (itemsPerPage: number, isPublished: boolean) => Promise<void>
 }
+
+const prefixedSubmissions: string = await addApiPrefix("/v1/submissions")
+const prefixedObjects: string = await addApiPrefix("/v1/objects")
 
 // Extend base test with our fixtures.
 const test = base.extend<CommandFixtures>({
@@ -193,7 +197,7 @@ const test = base.extend<CommandFixtures>({
 
           // Generate objects from templates
           const generateObject = async (objectType, template) => {
-            const objectPath = `/v1/objects/${objectType}?submission=${generatedSubmissionId}`
+            const objectPath = `${prefixedObjects}/${objectType}?submission=${generatedSubmissionId}`
             if (objectTypesArray.includes(objectType)) {
               const objectResponse = await page.request.post(objectPath, {
                 data: template,
@@ -294,7 +298,7 @@ const test = base.extend<CommandFixtures>({
       }
 
       await page.route(
-        `/v1/submissions?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
+        `${prefixedSubmissions}?page=1&per_page=${itemsPerPage}&published=${isPublished}*`,
         async route => await route.fulfill({ json })
       )
     }

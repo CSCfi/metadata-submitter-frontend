@@ -3,8 +3,11 @@ import { create } from "apisauce"
 import { errorMonitor } from "./errorMonitor"
 
 import { APIResponse, SubmissionDetails } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
-const api = create({ baseURL: "/v1/submissions" })
+const apiPath = await addApiPrefix("/v1/submissions")
+
+const api = create({ baseURL: apiPath })
 
 api.addMonitor(errorMonitor)
 

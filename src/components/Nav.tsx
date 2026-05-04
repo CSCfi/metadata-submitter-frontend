@@ -34,6 +34,7 @@ import { resetSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import { RootState } from "rootReducer"
 import { pathWithLocale } from "utils"
+import { addApiPrefix } from "utils/getConfig"
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
@@ -70,6 +71,8 @@ const NavLinks = styled("nav")(({ theme }) => ({
 type MenuItemProps = {
   currentLocale: string
 }
+
+const prefixedPath: string = await addApiPrefix("/logout")
 
 const NavigationLinks = () => {
   const user = useAppSelector((state: RootState) => state.user)
@@ -123,7 +126,7 @@ const NavigationLinks = () => {
             handleClose
             dispatch(resetUser())
           }}
-          href="/logout"
+          href={prefixedPath}
         >
           <Typography
             variant="subtitle2"

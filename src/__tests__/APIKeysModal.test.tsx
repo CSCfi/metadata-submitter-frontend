@@ -4,12 +4,15 @@ import { setupServer } from "msw/node"
 import { vi } from "vitest"
 
 import APIKeysModal from "components/APIKeysModal"
+import { addApiPrefix } from "utils/getConfig"
 import { renderWithProviders } from "utils/test-utils"
 
 type KeyProps = {
   key_id: string
   created_at: string
 }
+
+const prefixedPath: string = await addApiPrefix("/v1/api/keys")
 
 const handleClose = vi.fn()
 
@@ -24,14 +27,14 @@ const mockKeys: KeyProps[] = [
 ]
 
 const restHandlers = [
-  http.get("/v1/api/keys", () => {
+  http.get(prefixedPath, () => {
     return HttpResponse.json(mockKeys)
   }),
-  http.delete("/v1/api/keys", ({ params }) => {
+  http.delete(prefixedPath, ({ params }) => {
     const key_name = params.key_id
     return HttpResponse.json(mockKeys.filter(item => item.key_id !== key_name))
   }),
-  http.post("/v1/api/keys", async () => {
+  http.post(prefixedPath, async () => {
     return HttpResponse.json("a030151a32ca.itPXpPwFfSYnN9Yx2")
   }),
 ]

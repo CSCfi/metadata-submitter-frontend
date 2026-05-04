@@ -14,8 +14,12 @@ const getConfig = async (): Promise<AppConfig> => {
 
 describe("Config Loading", () => {
   it("should load config from config.json", async () => {
+    // Get the remote config
     let testConfig = await getConfig()
 
+    // We're only going to test the API_PREFIX, so copy
+    // the returned FETCHED-count to the mockConfig so it
+    // will be identical.
     const mockConfig = {
       API_PREFIX: "/api",
       FETCHED: testConfig.FETCHED,

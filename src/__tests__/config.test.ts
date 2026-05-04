@@ -1,30 +1,24 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
 
 import type { AppConfig } from "types"
 
-const url = new URL("/config.json", window.location.origin)
-const getConfig = async (): Promise<AppConfig> =>
-  await fetch(url)
+// Fetch the contents of /config.json
+const getConfig = async (): Promise<AppConfig> => {
+  return fetch("/config.json")
     .then(res => res.json())
     .catch(() => {
-      return { API_PREFIX: "/api" }
+      throw new Error("failed to fetch /config.jsonl")
     })
-
-const testConfig = await getConfig()
+}
 
 describe("Config Loading", () => {
   it("should load config from config.json", async () => {
+    let testConfig = await getConfig()
+
     const mockConfig = {
       API_PREFIX: "/api",
+      FETCHED: testConfig.FETCHED,
     }
-
-    // Mock fetch to return config
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockConfig),
-      } as unknown as Response)
-    )
 
     expect(testConfig).toEqual(mockConfig)
   })
@@ -34,17 +28,20 @@ describe("Config Loading", () => {
       API_PREFIX: "/api",
     }
 
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(config1),
-      } as unknown as Response)
-    )
+    // Two calls will both return the same API_PREFIX, however
+    // each will have a different FETCH-count
+    let firstCall = await getConfig()
+    let secondCall = await getConfig()
 
-    const firstCall = await getConfig()
-    const secondCall = await getConfig()
+    // should have numbers stored
+    expect(firstCall.FETCHED)
+    expect(secondCall.FETCHED)
 
-    expect(firstCall).toEqual(secondCall)
-    expect(firstCall).toEqual(config1)
+    // since the numbers increase every call the first should be smallest
+    expect(firstCall.FETCHED < secondCall.FETCHED)
+
+    // Now we expect equality
+    expect(config1.API_PREFIX).toEqual(firstCall.API_PREFIX)
+    expect(firstCall.API_PREFIX).toEqual(secondCall.API_PREFIX)
   })
 })

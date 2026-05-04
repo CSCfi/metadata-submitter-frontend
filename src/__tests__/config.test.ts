@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"
 
 import type { AppConfig } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
 // Fetch the contents of /config.json
 const getConfig = async (): Promise<AppConfig> => {
@@ -43,5 +44,15 @@ describe("Config Loading", () => {
     // Now we expect equality
     expect(config1.API_PREFIX).toEqual(firstCall.API_PREFIX)
     expect(firstCall.API_PREFIX).toEqual(secondCall.API_PREFIX)
+  })
+})
+
+describe("Config Loading", () => {
+  it("Should add /api to links", async () => {
+    let login = await addApiPrefix("login")
+    expect(login).toEqual("/api/login")
+
+    let logout = await addApiPrefix("logout")
+    expect(logout).toEqual("/api/logout")
   })
 })

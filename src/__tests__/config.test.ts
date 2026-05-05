@@ -8,7 +8,7 @@ const getConfig = async (): Promise<AppConfig> => {
   return fetch("/config.json")
     .then(res => res.json())
     .catch(() => {
-      throw new Error("failed to fetch /config.jsonl")
+      throw new Error("failed to fetch /config.json")
     })
 }
 

@@ -15,7 +15,7 @@ const getConfig = async (): Promise<AppConfig> => {
 describe("Config Loading", () => {
   it("should load config from config.json", async () => {
     // Get the remote config
-    let testConfig = await getConfig()
+    const testConfig = await getConfig()
 
     // We're only going to test the API_PREFIX, so copy
     // the returned FETCHED-count to the mockConfig so it
@@ -35,8 +35,8 @@ describe("Config Loading", () => {
 
     // Two calls will both return the same API_PREFIX, however
     // each will have a different FETCH-count
-    let firstCall = await getConfig()
-    let secondCall = await getConfig()
+    const firstCall = await getConfig()
+    const secondCall = await getConfig()
 
     // should have numbers stored
     expect(firstCall.FETCHED)
@@ -53,10 +53,10 @@ describe("Config Loading", () => {
 
 describe("Config Loading", () => {
   it("Should add /api to links", async () => {
-    let login = await addApiPrefix("login")
+    const login = await addApiPrefix("login")
     expect(login).toEqual("/api/login")
 
-    let logout = await addApiPrefix("logout")
+    const logout = await addApiPrefix("logout")
     expect(logout).toEqual("/api/logout")
   })
 })

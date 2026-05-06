@@ -13,9 +13,8 @@ import DataTable from "components/DataTable"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import filesAPIService from "services/filesAPI"
+import bucketsAPIService from "services/bucketsAPI"
 import type { DataBucketRow } from "types"
-import { getMockBucketFiles } from "utils"
 
 type DataBucketTableProps = {
   selectedBucket: string
@@ -34,7 +33,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
 
   const { t } = useTranslation()
 
-  const [files, setFiles] = useState<
+  const [buckets, setBuckets] = useState<
     { id: string; path: string; name: string; bytes: number }[] | []
   >([])
 
@@ -85,13 +84,13 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
 
   useEffect(() => {
     let isMounted = true
-    const getFiles = async () => {
+    const getBuckets = async () => {
       if (isMounted) {
         try {
-          const response = await filesAPIService.getProjectFiles(projectId)
-          const files = response.data
-          sessionStorage.setItem("files", JSON.stringify(files))
-          // TODO: consider saving files in redux instead of sessionStorage if needed
+          const response = await bucketsAPIService.getProjectBuckets(projectId)
+          const buckets = response.data
+          sessionStorage.setItem("buckets", JSON.stringify(buckets))
+          // TODO: consider saving buckets in redux instead of sessionStorage if needed
         } catch (error) {
           dispatch(
             updateStatus({
@@ -103,14 +102,14 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
         }
       }
     }
-    getFiles()
+    getBuckets()
     return () => {
       isMounted = false
     }
   }, [])
 
   useEffect(() => {
-    getMockBucketFiles().then(mockFiles => setFiles(mockFiles))
+    bucketsAPIService.getProjectBuckets(projectId).then(res => setBuckets(res.data))
   }, [])
 
   useEffect(() => {
@@ -122,7 +121,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
     return bucketNames
       .filter(bucketName => (!!bucket ? bucketName === bucket : bucketName))
       .map(bucketName => {
-        const currentFiles = files.filter(file => file.path.includes(`/${bucketName}/`))
+        const currentFiles = buckets.filter(file => file.path.includes(`/${bucketName}/`))
         const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
         return {
           id: bucketName,
@@ -133,7 +132,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
       })
   }
 
-  const getBucketNames = () => [...new Set(files.map(file => file["path"].split("/")[1]))]
+  const getBucketNames = () => [...new Set(buckets.map(file => file["path"].split("/")[1]))]
 
   const sortingModel = [
     {

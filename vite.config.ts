@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
     "/api/login": proxyTo,
     "/api/logout": proxyTo,
     "/api/v1/api/keys": proxyTo,
-    "/api/v1/files": proxyTo,
+    "/api/v1/buckets": proxyTo,
     "/api/v1/objects": proxyTo,
     "/api/v1/publish": proxyTo,
     "/api/v1/rems": proxyTo,

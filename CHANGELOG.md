@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026.5.0] - 2026-05-06
+
 ### Changed
 
 - manifest.json to hold name SD Submit instead of Metadata Submitter Frontend
@@ -701,7 +703,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2024.7.0...HEAD
+[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.5.0...HEAD
+[2026.5.0]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2024.7.0...2026.5.0
 [2024.7.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.13.0...2024.7.0
 [0.13.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.11.0...v0.13.0
 [0.11.0]: https://github.com/CSCfi/metadata-submitter-frontend/compare/v0.10.0...v0.11.0

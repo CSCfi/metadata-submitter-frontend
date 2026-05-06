@@ -22,6 +22,7 @@ import { SDObjectTypes } from "constants/wizardObject"
 
 export type AppConfig = {
   API_PREFIX: string
+  FETCHED: number
 }
 
 export type User = {

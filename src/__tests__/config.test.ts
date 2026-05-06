@@ -1,30 +1,29 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
 
 import type { AppConfig } from "types"
+import { addApiPrefix } from "utils/getConfig"
 
-const url = new URL("/config.json", window.location.origin)
-const getConfig = async (): Promise<AppConfig> =>
-  await fetch(url)
+// Fetch the contents of /config.json
+const getConfig = async (): Promise<AppConfig> => {
+  return fetch("/config.json")
     .then(res => res.json())
     .catch(() => {
-      return { API_PREFIX: "/api" }
+      throw new Error("failed to fetch /config.json")
     })
-
-const testConfig = await getConfig()
+}
 
 describe("Config Loading", () => {
   it("should load config from config.json", async () => {
+    // Get the remote config
+    const testConfig = await getConfig()
+
+    // We're only going to test the API_PREFIX, so copy
+    // the returned FETCHED-count to the mockConfig so it
+    // will be identical.
     const mockConfig = {
       API_PREFIX: "/api",
+      FETCHED: testConfig.FETCHED,
     }
-
-    // Mock fetch to return config
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockConfig),
-      } as unknown as Response)
-    )
 
     expect(testConfig).toEqual(mockConfig)
   })
@@ -34,17 +33,30 @@ describe("Config Loading", () => {
       API_PREFIX: "/api",
     }
 
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(config1),
-      } as unknown as Response)
-    )
-
+    // Two calls will both return the same API_PREFIX, however
+    // each will have a different FETCH-count
     const firstCall = await getConfig()
     const secondCall = await getConfig()
 
-    expect(firstCall).toEqual(secondCall)
-    expect(firstCall).toEqual(config1)
+    // should have numbers stored
+    expect(firstCall.FETCHED)
+    expect(secondCall.FETCHED)
+
+    // since the numbers increase every call the first should be smallest
+    expect(firstCall.FETCHED < secondCall.FETCHED)
+
+    // Now we expect equality
+    expect(config1.API_PREFIX).toEqual(firstCall.API_PREFIX)
+    expect(firstCall.API_PREFIX).toEqual(secondCall.API_PREFIX)
+  })
+})
+
+describe("Config Loading", () => {
+  it("Should add /api to links", async () => {
+    const login = await addApiPrefix("login")
+    expect(login).toEqual("/api/login")
+
+    const logout = await addApiPrefix("logout")
+    expect(logout).toEqual("/api/logout")
   })
 })

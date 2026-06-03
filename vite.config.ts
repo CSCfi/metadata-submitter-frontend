@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
   const proxyUrl = env.VITE_APP_BACKEND_PROXY || "localhost:5430"
   const proxyTo = {
     target: `http://${proxyUrl}`,
-    changeOrigin: true,
+    // changeOrigin: true,
   }
   const proxy = {
     "/api/callback": proxyTo,

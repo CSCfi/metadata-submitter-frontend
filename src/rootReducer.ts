@@ -1,6 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit"
 
 import autocompleteReducer from "features/autocompleteSlice"
+import bucketsSliceReducer from "features/bucketsSlice"
 import clearFormReducer from "features/clearFormSlice"
 import fileTypesReducer from "features/fileTypesSlice"
 import focusReducer from "features/focusSlice"
@@ -27,6 +28,7 @@ import workflowTypeReducer from "features/workflowTypeSlice"
 const rootReducer = combineReducers({
   locale: localeReducer,
   alert: wizardAlertReducer,
+  buckets: bucketsSliceReducer,
   focus: focusReducer,
   loading: loadingReducer,
   statusDetails: statusMessageReducer,

@@ -247,6 +247,11 @@ export type File = {
   lastModified?: string
 }
 
+export type Bucket = {
+  bucketName: string
+  files?: File[]
+}
+
 export type DataFileRow = {
   id: string
   name: string

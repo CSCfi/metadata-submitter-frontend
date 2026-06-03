@@ -5,6 +5,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import Box from "@mui/material/Box"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Button from "@mui/material/Button"
+import CircularProgress from "@mui/material/CircularProgress"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import { upperFirst } from "lodash"
@@ -15,10 +16,15 @@ import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader
 import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
 import WizardDataBucketTable from "components/SubmissionWizard/WizardComponents/WizardDataBucketTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
+import { ResponseStatus } from "constants/responseStatus"
+import { setBuckets, addFiles } from "features/bucketsSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { isFile, getMockBucketFiles } from "utils"
+import bucketsAPIService from "services/bucketsAPI"
+import type { Bucket, File } from "types"
+import { isFile } from "utils"
 
 /*
  * Render buckets and files from SD Connect based on user selection
@@ -26,22 +32,76 @@ import { isFile, getMockBucketFiles } from "utils"
 const WizardDataBucketStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
-  const bucket = submission.bucket || ""
+  const projectId = useAppSelector(state => state.projectId)
+  const buckets: Bucket[] = useAppSelector(state => state.buckets)
+  const linkedBucket = submission.bucket || ""
 
   const { t } = useTranslation()
 
-  const [files, setFiles] = useState<
-    { id: string; path: string; name: string; bytes: number }[] | []
-  >([])
+  const [files, setFiles] = useState<File[] | []>([])
 
-  const [selectedBucket, setSelectedBucket] = useState<string>("")
+  const [alert, setAlert] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
-  const [alert, setAlert] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [selectedBucket, setSelectedBucket] = useState<string>("")
+
+  if (selectedBucket.length > 0) {
+    console.log(
+      "TESTI",
+      buckets.filter(bucket => bucket.bucketName === selectedBucket)
+    )
+  }
 
   useEffect(() => {
-    getMockBucketFiles().then(mockFiles => setFiles(mockFiles))
-  }, [])
+    //   let isMounted = true
+    const getBuckets = async () => {
+      try {
+        const response = await bucketsAPIService.getProjectBuckets(projectId)
+        const bucketNames: string[] = response.data
+        dispatch(setBuckets(bucketNames)) // works on second render????
+        console.log("Before set", bucketNames)
+      } catch (error) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "",
+          })
+        )
+      }
+    }
+    getBuckets()
+    setIsLoading(false)
+    //   return () => { // returns a cleanup function for effect
+    //     isMounted = false
+    //   }
+  }, [projectId])
+
+  // Error 400 for bucket no access is granted?? ErrorMonitor is temporary removed
+  useEffect(() => {
+    const getFiles = async () => {
+      if (!!selectedBucket) {
+        try {
+          bucketsAPIService.grantAccessBucket(projectId, selectedBucket).then(res => {
+            return res.data
+          })
+          const response = await bucketsAPIService.getBucketFiles(projectId, selectedBucket)
+          if (response.status === 400) console.log("ERROR", response)
+          else {
+            console.log("RESPONSE FILES", response.data)
+            dispatch(addFiles({ bucketName: selectedBucket, files: files }))
+            setFiles(response.data) // THIS DOES NOT GET UPDATED ON FIRST
+            console.log("files", files)
+          }
+          //setFiles(response.data)
+        } catch (err) {
+          console.log("CATCHING", err)
+        }
+      }
+    }
+    getFiles()
+  }, [selectedBucket])
 
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()
@@ -54,16 +114,33 @@ const WizardDataBucketStep = () => {
   }
 
   const handleBucketChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedBucket(event.target.value)
+    // Calling the set function does not change the current state in the already executing code
+    setSelectedBucket(event.target.value) // for next render
+
     dispatch(setUnsavedForm())
   }
+  // TODO ????
+  // mock file path:    "s3:/bucketA/folder3/folder3A/folder3B/fileA5"
+  // actual Allas path: 'S3://sd-submit-test/metadata.json'
 
   const handleFilesView = (bucketName: string) => {
+    console.log(
+      "handle FILESVIEW",
+      files.map(file => file.path.split("//")[1].split("/")[0])
+    ) // WORKS
+    console.log(
+      "KUKKUU",
+      files.filter(file => file.path === "S3://sd-submit-test/metadata.json")
+    ) // undefined
+    console.log("bucketName", bucketName)
+
+    // return the path
     const currentPath = files
-      .filter(file => file.path.split("/")[1] === bucketName)[0]
+      .filter(file => file.path.split("//")[1].split("/")[0] === bucketName)[0]
       .path.split("/")
       .slice(0, 2)
       .join("/")
+    console.log("CurrentPath", currentPath)
     setCurrentFilePath(currentPath)
     setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
   }
@@ -89,7 +166,7 @@ const WizardDataBucketStep = () => {
       setCurrentFilePath(newFilePath)
     }
   }
-
+  //TODO???
   const handleClickFileRow = (path: string, name: string) => {
     if (!isFile(files, path)) {
       /* Keep setting new filePath if current filePath's length < original filePath's length.
@@ -102,7 +179,7 @@ const WizardDataBucketStep = () => {
 
   const linkBucketButton = (
     <Button
-      disabled={!selectedBucket || !!bucket}
+      disabled={!selectedBucket || !!linkedBucket}
       variant="contained"
       aria-label={t("ariaLabels.linkBucket")}
       size="small"
@@ -116,7 +193,7 @@ const WizardDataBucketStep = () => {
 
   const renderHeading = () => (
     <Typography variant="h5" fontWeight="700" color="secondary">
-      {bucket ? t("dataBucket.linkedBucket") : t("dataBucket.linkFromSDConnect")}
+      {linkedBucket ? t("dataBucket.linkedBucket") : t("dataBucket.linkFromSDConnect")}
     </Typography>
   )
 
@@ -150,14 +227,17 @@ const WizardDataBucketStep = () => {
     )
 
   const renderBucketTable = () =>
-    !breadcrumbs.length && (
+    !breadcrumbs.length &&
+    (isLoading ? (
+      <CircularProgress color="primary" />
+    ) : (
       <WizardDataBucketTable
         selectedBucket={selectedBucket}
-        bucket={bucket}
+        linkedBucket={linkedBucket}
         handleBucketChange={handleBucketChange}
         handleFilesView={handleFilesView}
       />
-    )
+    ))
 
   const renderFileTable = () =>
     !!breadcrumbs.length && (

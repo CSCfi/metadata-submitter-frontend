@@ -10,15 +10,13 @@ import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import { ResponseStatus } from "constants/responseStatus"
-import { updateStatus } from "features/statusMessageSlice"
-import { useAppSelector, useAppDispatch } from "hooks"
-import bucketsAPIService from "services/bucketsAPI"
-import type { DataBucketRow } from "types"
+//import { updateStatus } from "features/statusMessageSlice"
+import { useAppSelector } from "hooks"
+import type { Bucket, DataBucketRow } from "types"
 
 type DataBucketTableProps = {
   selectedBucket: string
-  bucket: string
+  linkedBucket: string
   handleBucketChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleFilesView: (bucketName: string) => void
 }
@@ -27,15 +25,13 @@ type DataBucketTableProps = {
  * Render a table of shared buckets received from SD Connect
  */
 const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
-  const { selectedBucket, bucket, handleBucketChange, handleFilesView } = props
-  const projectId = useAppSelector(state => state.projectId)
-  const dispatch = useAppDispatch()
+  const { selectedBucket, linkedBucket, handleBucketChange, handleFilesView } = props
+
+  const buckets: Bucket[] = useAppSelector(state => state.buckets)
 
   const { t } = useTranslation()
 
-  const [buckets, setBuckets] = useState<
-    { id: string; path: string; name: string; bytes: number }[] | []
-  >([])
+  // const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const columns: GridColDef[] = [
     {
@@ -45,13 +41,13 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
       renderCell: params => {
         return (
           <Box display="flex" alignItems="center" height="100%">
-            {!bucket && (
+            {!linkedBucket && (
               <Radio
                 checked={selectedBucket === params.row.name}
                 onChange={handleBucketChange}
                 value={params.row.name}
                 name="radio-buttons"
-                inputProps={{ "aria-label": params.row.name }}
+                slotProps={{ input: { "aria-labelledby": params.row.name } }}
               />
             )}
             {/* Use mdiPail path: MUI icons lack a corresponding icon */}
@@ -70,69 +66,47 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
         )
       },
     },
-    {
-      field: "items",
-      headerName: t("dataTable.totalItems"),
-      type: "number",
-    },
-    {
-      field: "size",
-      headerName: t("dataTable.size"),
-      sortable: true, // TODO: need to convert sizes to humanreadable bytes
-    },
+    // {
+    //   field: "items",
+    //   headerName: t("dataTable.totalItems"),
+    //   type: "number",
+    // },
+    // {
+    //   field: "size",
+    //   headerName: t("dataTable.size"),
+    //   sortable: true,
+    // },
   ]
 
   useEffect(() => {
-    let isMounted = true
-    const getBuckets = async () => {
-      if (isMounted) {
-        try {
-          const response = await bucketsAPIService.getProjectBuckets(projectId)
-          const buckets = response.data
-          sessionStorage.setItem("buckets", JSON.stringify(buckets))
-          // TODO: consider saving buckets in redux instead of sessionStorage if needed
-        } catch (error) {
-          dispatch(
-            updateStatus({
-              status: ResponseStatus.error,
-              response: error,
-              helperText: "",
-            })
-          )
-        }
-      }
-    }
-    getBuckets()
-    return () => {
-      isMounted = false
-    }
-  }, [])
+    !linkedBucket ? setTotalItems(buckets.length) : setTotalItems(1)
+  }, [linkedBucket])
 
-  useEffect(() => {
-    bucketsAPIService.getProjectBuckets(projectId).then(res => setBuckets(res.data))
-  }, [])
-
-  useEffect(() => {
-    !bucket ? setTotalItems(getBucketNames().length) : setTotalItems(1)
-  }, [bucket])
+  // const getRows = (): DataBucketRow[] => {
+  //   const bucketNames = buckets.map(bucket => bucket.bucketName)
+  //   return bucketNames
+  //     .filter(bucketName => (!!linkedBucket ? bucketName === linkedBucket : bucketName))
+  //     .map(bucketName => {
+  //       const currentFiles = files.filter(file => file.path.includes(`/${bucketName}/`))
+  //       const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
+  //       return {
+  //         id: bucketName,
+  //         name: bucketName,
+  //         size: totalSize,
+  //         items: currentFiles.length,
+  //       }
+  //     })
+  // }
 
   const getRows = (): DataBucketRow[] => {
-    const bucketNames = getBucketNames()
-    return bucketNames
-      .filter(bucketName => (!!bucket ? bucketName === bucket : bucketName))
-      .map(bucketName => {
-        const currentFiles = buckets.filter(file => file.path.includes(`/${bucketName}/`))
-        const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
-        return {
-          id: bucketName,
-          name: bucketName,
-          size: totalSize,
-          items: currentFiles.length,
-        }
-      })
+    const bucketNames = buckets.map(bucket => bucket.bucketName)
+    return bucketNames.map(bucketName => {
+      return {
+        id: bucketName,
+        name: bucketName,
+      }
+    })
   }
-
-  const getBucketNames = () => [...new Set(buckets.map(file => file["path"].split("/")[1]))]
 
   const sortingModel = [
     {
@@ -149,6 +123,9 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
   }
 
   return (
+    //  {isLoading ? (
+    //           <CircularProgress color="primary" />
+    //  ) : (
     <DataTable
       rows={getRows()}
       columns={columns}
@@ -157,6 +134,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
       totalItems={totalItems}
       fetchPageOnChange={fetchPageOnChange}
     />
+    //  )}
   )
 }
 

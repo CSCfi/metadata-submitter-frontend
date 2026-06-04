@@ -14,7 +14,7 @@ RUN npm install -g pnpm
 WORKDIR /usr/src/app
 
 # Assume these change less often than the other files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Now copy the other files into place

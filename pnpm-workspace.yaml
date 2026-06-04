@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  msw: false
+
+overrides:
+  "braces@<3.0.3": ">=3.0.3"
+  "ws@>=8.0.0 <8.17.1": ">=8.17.1"

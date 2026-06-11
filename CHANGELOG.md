@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- pnpm-workspace.yaml file for pnpm update, also in Dockerfile
+
+### Changed
+
+- Added Artifactory config for npm registry to be in pipeline (#1135)
+- moved pnpm config from package.json to new file
+
 ## [2026.5.0] - 2026-05-06
 
 ### Changed

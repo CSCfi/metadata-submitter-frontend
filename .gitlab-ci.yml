@@ -72,6 +72,10 @@ unittest:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
       allow_failure: true
+  before_script:
+    - echo "registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
+    - echo "@jsr:registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
+    - echo "${ARTIFACTORY_NPM_REGISTRY#https:}:_authToken=${ARTIFACTORY_NPM_TOKEN}" >> .npmrc
   script:
     - |
       if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then

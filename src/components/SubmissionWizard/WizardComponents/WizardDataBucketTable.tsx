@@ -31,6 +31,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
 
   const { t } = useTranslation()
 
+  const [totalItems, setTotalItems] = useState<number>(buckets.length)
   // const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const columns: GridColDef[] = [
@@ -82,30 +83,16 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
     !linkedBucket ? setTotalItems(buckets.length) : setTotalItems(1)
   }, [linkedBucket])
 
-  // const getRows = (): DataBucketRow[] => {
-  //   const bucketNames = buckets.map(bucket => bucket.bucketName)
-  //   return bucketNames
-  //     .filter(bucketName => (!!linkedBucket ? bucketName === linkedBucket : bucketName))
-  //     .map(bucketName => {
-  //       const currentFiles = files.filter(file => file.path.includes(`/${bucketName}/`))
-  //       const totalSize = currentFiles.reduce((acc, currentFile) => acc + currentFile["bytes"], 0)
-  //       return {
-  //         id: bucketName,
-  //         name: bucketName,
-  //         size: totalSize,
-  //         items: currentFiles.length,
-  //       }
-  //     })
-  // }
-
   const getRows = (): DataBucketRow[] => {
     const bucketNames = buckets.map(bucket => bucket.bucketName)
-    return bucketNames.map(bucketName => {
-      return {
-        id: bucketName,
-        name: bucketName,
-      }
-    })
+    return bucketNames
+      .filter(bucketName => (!!linkedBucket ? bucketName === linkedBucket : bucketName))
+      .map(bucketName => {
+        return {
+          id: bucketName,
+          name: bucketName,
+        }
+      })
   }
 
   const sortingModel = [
@@ -116,8 +103,8 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
   ]
 
   const [page, setPage] = useState<number>(0)
-  const [totalItems, setTotalItems] = useState<number>(0)
 
+  console.log("Total items", totalItems)
   const fetchPageOnChange = (page: number) => {
     setPage(page)
   }

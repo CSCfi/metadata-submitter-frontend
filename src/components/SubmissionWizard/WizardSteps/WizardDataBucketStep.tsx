@@ -5,7 +5,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import Box from "@mui/material/Box"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Button from "@mui/material/Button"
-import CircularProgress from "@mui/material/CircularProgress"
+// import CircularProgress from "@mui/material/CircularProgress" TODO!!!!
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import { upperFirst } from "lodash"
@@ -23,8 +23,9 @@ import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import bucketsAPIService from "services/bucketsAPI"
-import type { Bucket, File } from "types"
-import { isFile } from "utils"
+// import type { Bucket, File } from "types"
+import type { File } from "types"
+import { isBucketFile } from "utils"
 
 /*
  * Render buckets and files from SD Connect based on user selection
@@ -33,28 +34,32 @@ const WizardDataBucketStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
   const projectId = useAppSelector(state => state.projectId)
-  const buckets: Bucket[] = useAppSelector(state => state.buckets)
+  // const buckets: Bucket[] = useAppSelector(state => state.buckets) //When arriving to bukcets component,s hould we always use API to get bucekts or Reudux state????
   const linkedBucket = submission.bucket || ""
 
   const { t } = useTranslation()
+
+  const schemePrefix = "S3://"
 
   const [files, setFiles] = useState<File[] | []>([])
 
   const [alert, setAlert] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  // const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedBucket, setSelectedBucket] = useState<string>("")
 
-  if (selectedBucket.length > 0) {
-    console.log(
-      "TESTI",
-      buckets.filter(bucket => bucket.bucketName === selectedBucket)
-    )
-  }
+  // OK
+  // if (selectedBucket.length > 0) {
+  //   console.log(
+  //     "TESTI selectedBucket",
+  //     buckets.filter(bucket => bucket.bucketName === selectedBucket)
+  //   )
+  // }
 
+  // ????Works but there is a delay fetching bucket list when changing project
   useEffect(() => {
-    //   let isMounted = true
+    let isMounted = true
     const getBuckets = async () => {
       try {
         const response = await bucketsAPIService.getProjectBuckets(projectId)
@@ -71,15 +76,17 @@ const WizardDataBucketStep = () => {
         )
       }
     }
-    getBuckets()
-    setIsLoading(false)
-    //   return () => { // returns a cleanup function for effect
-    //     isMounted = false
-    //   }
+    if (isMounted) getBuckets()
+    // setIsLoading(false)
+    return () => {
+      // returns a cleanup function for effect
+      isMounted = false
+    }
   }, [projectId])
 
   // Error 400 for bucket no access is granted?? ErrorMonitor is temporary removed
   useEffect(() => {
+    let mounted = true
     const getFiles = async () => {
       if (!!selectedBucket) {
         try {
@@ -90,8 +97,8 @@ const WizardDataBucketStep = () => {
           if (response.status === 400) console.log("ERROR", response)
           else {
             console.log("RESPONSE FILES", response.data)
-            dispatch(addFiles({ bucketName: selectedBucket, files: files }))
-            setFiles(response.data) // THIS DOES NOT GET UPDATED ON FIRST
+            dispatch(addFiles({ bucketName: selectedBucket, files: response.data }))
+            setFiles(response.data)
             console.log("files", files)
           }
           //setFiles(response.data)
@@ -100,7 +107,11 @@ const WizardDataBucketStep = () => {
         }
       }
     }
-    getFiles()
+    if (mounted) getFiles()
+    return () => {
+      // returns a cleanup function for effect
+      mounted = false
+    }
   }, [selectedBucket])
 
   const handleAlert = (state: boolean) => {
@@ -114,35 +125,27 @@ const WizardDataBucketStep = () => {
   }
 
   const handleBucketChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Calling the set function does not change the current state in the already executing code
-    setSelectedBucket(event.target.value) // for next render
-
+    setSelectedBucket(event.target.value)
     dispatch(setUnsavedForm())
   }
-  // TODO ????
-  // mock file path:    "s3:/bucketA/folder3/folder3A/folder3B/fileA5"
-  // actual Allas path: 'S3://sd-submit-test/metadata.json'
 
   const handleFilesView = (bucketName: string) => {
-    console.log(
-      "handle FILESVIEW",
-      files.map(file => file.path.split("//")[1].split("/")[0])
-    ) // WORKS
-    console.log(
-      "KUKKUU",
-      files.filter(file => file.path === "S3://sd-submit-test/metadata.json")
-    ) // undefined
-    console.log("bucketName", bucketName)
-
-    // return the path
-    const currentPath = files
-      .filter(file => file.path.split("//")[1].split("/")[0] === bucketName)[0]
-      .path.split("/")
-      .slice(0, 2)
-      .join("/")
-    console.log("CurrentPath", currentPath)
-    setCurrentFilePath(currentPath)
-    setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
+    if (!linkedBucket) {
+      console.log("handling bucketName", bucketName)
+      const currentPath =
+        files.length > 0
+          ? schemePrefix.concat(
+              files
+                .filter(file => file.path.split("//")[1].split("/")[0] === bucketName)[0]
+                .path.split("//")[1]
+                .split("/")
+                .slice(0, 1)
+                .join("/")
+            )
+          : selectedBucket
+      setCurrentFilePath(currentPath)
+      setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
+    }
   }
 
   const handleAddToBreadcrumbs = (folderName: string) => {
@@ -166,9 +169,9 @@ const WizardDataBucketStep = () => {
       setCurrentFilePath(newFilePath)
     }
   }
-  //TODO???
+
   const handleClickFileRow = (path: string, name: string) => {
-    if (!isFile(files, path)) {
+    if (!isBucketFile(files, path)) {
       /* Keep setting new filePath if current filePath's length < original filePath's length.
        * It means that the current file is still nested under folder
        */
@@ -227,17 +230,14 @@ const WizardDataBucketStep = () => {
     )
 
   const renderBucketTable = () =>
-    !breadcrumbs.length &&
-    (isLoading ? (
-      <CircularProgress color="primary" />
-    ) : (
+    !breadcrumbs.length && (
       <WizardDataBucketTable
         selectedBucket={selectedBucket}
         linkedBucket={linkedBucket}
         handleBucketChange={handleBucketChange}
         handleFilesView={handleFilesView}
       />
-    ))
+    )
 
   const renderFileTable = () =>
     !!breadcrumbs.length && (
@@ -247,6 +247,8 @@ const WizardDataBucketStep = () => {
         handleClickFileRow={handleClickFileRow}
       />
     )
+
+  // if (isLoading) return <CircularProgress />
 
   return (
     <Box>

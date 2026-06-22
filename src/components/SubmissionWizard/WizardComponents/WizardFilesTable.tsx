@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
 import type { DataFileRow, File } from "types"
-import { formatBytes, isFile } from "utils"
+import { formatBytes, isBucketFile } from "utils"
 
 type FilesTableProps = {
   currentFilePath: string
@@ -47,7 +47,7 @@ const FilesTable: React.FC<FilesTableProps> = props => {
             height="100%"
             onClick={() => handleClickFileRow(params.row.id, params.row.name)}
           >
-            {!isFile(files, params.row.id) && (
+            {!isBucketFile(files, params.row.id) && (
               <FolderIcon color="primary" fontSize="medium" sx={{ mr: "0.5rem" }} />
             )}
             <Typography component="span">{params.row.name}</Typography>
@@ -95,7 +95,7 @@ const FilesTable: React.FC<FilesTableProps> = props => {
         id: file.path,
         name: file.name,
         size: formatBytes(file.bytes),
-        lastModified: "",
+        lastModified: "TBD",
       }
     })
   }

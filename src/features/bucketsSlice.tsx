@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 //import bucketsAPIService from "services/bucketsAPI"
 import type { Bucket } from "types"
@@ -10,14 +10,22 @@ const bucketsSlice = createSlice({
   initialState,
   reducers: {
     setBuckets: (state, action) => {
-      console.log("REDUCER", action.payload)
       return action.payload.map(bucket => ({
         bucketName: bucket,
         files: [],
       }))
     },
-    addFiles: (state, action) => {
-      console.log("TODO! REDUCER add FILES", action.payload)
+    addFiles: (state, action: PayloadAction<Bucket>) => {
+      return state.map(element => {
+        if (element.bucketName !== action.payload.bucketName) {
+          return element
+        }
+
+        return {
+          bucketName: element.bucketName,
+          files: action.payload.files,
+        }
+      })
     },
     resetBuckets: () => initialState,
   },

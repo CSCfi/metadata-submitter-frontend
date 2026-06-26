@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 
 import Box from "@mui/material/Box"
 import Radio from "@mui/material/Radio"
@@ -31,7 +31,6 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
 
   const { t } = useTranslation()
 
-  const [totalItems, setTotalItems] = useState<number>(buckets.length)
   // const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const columns: GridColDef[] = [
@@ -79,10 +78,6 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
     // },
   ]
 
-  useEffect(() => {
-    !linkedBucket ? setTotalItems(buckets.length) : setTotalItems(1)
-  }, [linkedBucket])
-
   const getRows = (): DataBucketRow[] => {
     const bucketNames = buckets.map(bucket => bucket.bucketName)
     return bucketNames
@@ -104,7 +99,6 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
 
   const [page, setPage] = useState<number>(0)
 
-  console.log("Total items", totalItems)
   const fetchPageOnChange = (page: number) => {
     setPage(page)
   }
@@ -118,7 +112,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
       columns={columns}
       page={page}
       sortingModel={sortingModel}
-      totalItems={totalItems}
+      totalItems={!linkedBucket ? buckets.length : 1}
       fetchPageOnChange={fetchPageOnChange}
     />
     //  )}

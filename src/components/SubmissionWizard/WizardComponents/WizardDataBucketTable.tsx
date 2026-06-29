@@ -10,7 +10,6 @@ import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-//import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector } from "hooks"
 import type { Bucket, DataBucketRow } from "types"
 

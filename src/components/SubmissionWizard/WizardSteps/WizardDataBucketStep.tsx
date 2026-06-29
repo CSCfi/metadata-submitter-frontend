@@ -49,14 +49,6 @@ const WizardDataBucketStep = () => {
   // const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedBucket, setSelectedBucket] = useState<string>("")
 
-  // OK
-  // if (selectedBucket.length > 0) {
-  //   console.log(
-  //     "TESTI selectedBucket",
-  //     buckets.filter(bucket => bucket.bucketName === selectedBucket)
-  //   )
-  // }
-
   // ????Works but there is a delay fetching bucket list when changing project
   useEffect(() => {
     let isMounted = true
@@ -65,7 +57,6 @@ const WizardDataBucketStep = () => {
         const response = await bucketsAPIService.getProjectBuckets(projectId)
         const bucketNames: string[] = response.data
         dispatch(setBuckets(bucketNames)) // works on second render????
-        console.log("Before set", bucketNames)
       } catch (error) {
         dispatch(
           updateStatus({
@@ -96,12 +87,9 @@ const WizardDataBucketStep = () => {
           const response = await bucketsAPIService.getBucketFiles(projectId, selectedBucket)
           if (response.status === 400) console.log("ERROR", response)
           else {
-            console.log("RESPONSE FILES", response.data)
             dispatch(addFiles({ bucketName: selectedBucket, files: response.data }))
             setFiles(response.data)
-            console.log("files", files)
           }
-          //setFiles(response.data)
         } catch (err) {
           console.log("CATCHING", err)
         }
@@ -131,7 +119,6 @@ const WizardDataBucketStep = () => {
 
   const handleFilesView = (bucketName: string) => {
     if (!linkedBucket) {
-      console.log("handling bucketName", bucketName)
       const currentPath =
         files.length > 0
           ? schemePrefix.concat(

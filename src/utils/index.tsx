@@ -111,13 +111,3 @@ export const formatBytes = (bytes: number, decimals: number = 2) => {
 
   return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(d))} ${sizes[i]}`
 }
-
-// Temporarily use for getting mock bucket's files.
-// Will be removed when we have the real endpoints to get the buckets and files.
-export const getMockBucketFiles = async () => {
-  if (import.meta.env.MODE === "development") {
-    const module = await import("../../playwright/fixtures/files_response")
-    return module.files
-  }
-  return []
-}

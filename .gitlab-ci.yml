@@ -13,6 +13,9 @@ include:
     ref: main
     file: "releases.yml"
 
+#
+# Code testing
+#
 code-style:
   stage: test
   tags:
@@ -136,6 +139,7 @@ unittest:
     - echo "$ARTIFACTORY_USER_PASSWORD" | sudo docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
   script:
     - gunzip -c image.tar.gz | docker load
+    # Push to Artifactory, retry a few times if pushing fails
     - |
       if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
         export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
@@ -145,7 +149,20 @@ unittest:
         export IMAGE_TAG="$CI_DEFAULT_BRANCH"
       fi
     - echo "Pushing image sd-submit-ui:${IMAGE_TAG}"
-    - docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}"
+    - |
+      max_retries=5
+      retry=1
+
+      until docker push docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" ; do
+        if [ "$retry" -ge "$max_retries" ]; then
+           echo "docker push failed after $max_retries attempts"
+           exit 1
+        fi
+
+        echo "Attempt $retry failed, retrying in 10 seconds..."
+        retry=$((retry + 1))
+        sleep 10
+      done
 
 release-job:
   extends: .automated-release

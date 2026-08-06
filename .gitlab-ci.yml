@@ -158,7 +158,7 @@ unittest:
       max_retries=5
       retry=1
 
-      until docker push docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" ; do
+      until docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" ; do
         if [ "$retry" -ge "$max_retries" ]; then
            echo "docker push failed after $max_retries attempts"
            exit 1

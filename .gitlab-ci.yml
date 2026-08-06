@@ -97,6 +97,7 @@ unittest:
 
 2-scan-image:
   stage: build
+  image: sds-docker.artifactory.ci.csc.fi/sds/sdd-common-ci:2026.7.1
   tags:
     - sds-build
   needs:
@@ -133,7 +134,7 @@ unittest:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: true
   before_script:
-    - echo "$ARTIFACTORY_USER_PASSWORD" | sudo docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
+    - echo "$ARTIFACTORY_USER_PASSWORD" | docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
   script:
     - gunzip -c image.tar.gz | docker load
     - |

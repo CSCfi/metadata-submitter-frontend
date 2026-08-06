@@ -6,6 +6,7 @@ stages:
 
 variables:
   BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci:2026.7.1
+  DEFAULT_IMAGE: $ARTIFACTORY_SERVER/docker:28-cli
 
 # Release process
 include:
@@ -68,6 +69,7 @@ unittest:
 #
 1-build-image:
   stage: build
+  image: $DEFAULT_IMAGE
   tags:
     - sds-build
   needs: []
@@ -100,7 +102,7 @@ unittest:
 
 2-scan-image:
   stage: build
-  image: sds-docker.artifactory.ci.csc.fi/sds/sdd-common-ci:2026.7.1
+  image: $BUILD_IMAGE
   tags:
     - sds-build
   needs:
@@ -125,6 +127,7 @@ unittest:
 
 1-upload-image:
   stage: upload
+  image: $DEFAULT_IMAGE
   tags:
     - sds-upload
   needs:

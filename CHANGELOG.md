@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- (admins) Gitlab pipeline not to push main branch to artifactory automatically (#1138)
+- (admins) Gitlab pipeline to use new runners (#1138)
+- Gitlab pipeline not to push main branch to artifactory automatically (#1138)
+- Gitlab pipeline to use new runners (#1138)
 - Added Artifactory config for npm registry to be in pipeline (#1135)
 - moved pnpm config from package.json to new file
 

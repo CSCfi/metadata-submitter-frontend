@@ -1,21 +1,26 @@
 stages:
-  - verify
   - test
-  - deploy
+  - build
+  - upload
   - release
 
 variables:
-  BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci
+  BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci:2026.7.1
+  DEFAULT_IMAGE: $ARTIFACTORY_SERVER/docker:28-cli
 
+# Release process
 include:
   - project: "sds-dev/releases"
     ref: main
     file: "releases.yml"
 
+#
+# Code testing
+#
 code-style:
-  stage: verify
+  stage: test
   tags:
-    - docker-exec
+    - sds-test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
@@ -25,9 +30,9 @@ code-style:
     - pnpm run lint:check
 
 format-style:
-  stage: verify
+  stage: test
   tags:
-    - docker-exec
+    - sds-test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
@@ -37,9 +42,9 @@ format-style:
     - pnpm run format:check
 
 type-check:
-  stage: verify
+  stage: test
   tags:
-    - docker-exec
+    - sds-test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
@@ -51,7 +56,7 @@ type-check:
 unittest:
   stage: test
   tags:
-    - docker-exec
+    - sds-test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   image: $BUILD_IMAGE
@@ -59,12 +64,14 @@ unittest:
     - pnpm install
   script:
     - pnpm run test:coverage
-
+#
 # Docker image build, scan and push pipeline
+#
 1-build-image:
-  stage: deploy
+  stage: build
+  image: $DEFAULT_IMAGE
   tags:
-    - sds
+    - sds-build
   needs: []
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
@@ -87,13 +94,20 @@ unittest:
       fi
     - echo "Building image sd-submit-ui:${IMAGE_TAG}"
     - docker buildx build -t "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" -f Dockerfile .
+    - docker save "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" | gzip > image.tar.gz
+  artifacts:
+    paths:
+      - image.tar.gz
+    expire_in: 1 day
 
 2-scan-image:
-  stage: deploy
+  stage: build
+  image: $BUILD_IMAGE
   tags:
-    - sds
+    - sds-build
   needs:
     - job: 1-build-image
+      artifacts: true
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
     - if: "$CI_COMMIT_TAG"
@@ -111,20 +125,26 @@ unittest:
       fi
     - jf docker scan --licenses --extended-table --min-severity=Medium $ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}
 
-3-push-image:
-  stage: deploy
+1-upload-image:
+  stage: upload
+  image: $DEFAULT_IMAGE
   tags:
-    - sds
+    - sds-upload
   needs:
+    - job: 1-build-image
+      artifacts: true
     - job: 2-scan-image
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
     - if: "$CI_COMMIT_TAG"
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: true
   before_script:
-    - echo "$ARTIFACTORY_USER_PASSWORD" | sudo docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
+    - echo "$ARTIFACTORY_USER_PASSWORD" | docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
   script:
+    - gunzip -c image.tar.gz | docker load
+    # Push to Artifactory, retry a few times if pushing fails
     - |
       if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
         export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
@@ -134,17 +154,20 @@ unittest:
         export IMAGE_TAG="$CI_DEFAULT_BRANCH"
       fi
     - echo "Pushing image sd-submit-ui:${IMAGE_TAG}"
-    - docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}"
-  after_script:
     - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-        export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
-      elif [ "$CI_COMMIT_TAG" ]; then
-        export IMAGE_TAG="$CI_COMMIT_TAG"
-      else
-        export IMAGE_TAG="$CI_DEFAULT_BRANCH"
-      fi
-    - docker rmi "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" || true
+      max_retries=5
+      retry=1
+
+      until docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" ; do
+        if [ "$retry" -ge "$max_retries" ]; then
+           echo "docker push failed after $max_retries attempts"
+           exit 1
+        fi
+
+        echo "Attempt $retry failed, retrying in 10 seconds..."
+        retry=$((retry + 1))
+        sleep 10
+      done
 
 release-job:
   extends: .automated-release

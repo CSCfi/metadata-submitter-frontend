@@ -32,14 +32,7 @@ export type User = {
 }
 
 export type Schema =
-  | "study"
-  | "dac"
-  | "policy"
-  | "sample"
-  | "experiment"
-  | "run"
-  | "analysis"
-  | "dataset"
+  "study" | "dac" | "policy" | "sample" | "experiment" | "run" | "analysis" | "dataset"
 
 export type SDSchemaName =
   | SDObjectTypes.dacPolicies

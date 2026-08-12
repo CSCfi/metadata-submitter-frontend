@@ -138,7 +138,7 @@ const Home: React.FC = () => {
   }, [dispatch, tabValue, projectId])
 
   /*
-   *  Get the list of all draft submissions
+   *  Get the list of all draft submissions, update also when projecId changes
    */
   useEffect(() => {
     let isMounted = true
@@ -159,10 +159,10 @@ const Home: React.FC = () => {
     return () => {
       isMounted = false
     }
-  }, [numberOfDraftSubmissions])
+  }, [numberOfDraftSubmissions, projectId])
 
   /*
-   *   Get the list of all published submissions
+   *   Get the list of all published submissions, update also when projecId changes
    */
   useEffect(() => {
     let isMounted = true
@@ -183,7 +183,7 @@ const Home: React.FC = () => {
     return () => {
       isMounted = false
     }
-  }, [numberOfPublishedSubmissions])
+  }, [numberOfPublishedSubmissions, projectId])
 
   /*
    *   Get the list of all (draft and published) submissions

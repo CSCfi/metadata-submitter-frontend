@@ -5,10 +5,9 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import Box from "@mui/material/Box"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Button from "@mui/material/Button"
-// import CircularProgress from "@mui/material/CircularProgress" TODO!!!!
+import CircularProgress from "@mui/material/CircularProgress"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
@@ -23,7 +22,6 @@ import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import bucketsAPIService from "services/bucketsAPI"
-// import type { Bucket, File } from "types"
 import type { File } from "types"
 import { isBucketFile } from "utils"
 
@@ -33,8 +31,7 @@ import { isBucketFile } from "utils"
 const WizardDataBucketStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
-  const projectId = useAppSelector(state => state.projectId)
-  // const buckets: Bucket[] = useAppSelector(state => state.buckets) //When arriving to bukcets component,s hould we always use API to get bucekts or Reudux state????
+  const projectId = submission.projectId
   const linkedBucket = submission.bucket || ""
 
   const { t } = useTranslation()
@@ -46,17 +43,19 @@ const WizardDataBucketStep = () => {
   const [alert, setAlert] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
-  // const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedBucket, setSelectedBucket] = useState<string>("")
 
-  // ????Works but there is a delay fetching bucket list when changing project
+  /*
+   * Fetch selected project related buckets
+   */
   useEffect(() => {
     let isMounted = true
     const getBuckets = async () => {
       try {
         const response = await bucketsAPIService.getProjectBuckets(projectId)
         const bucketNames: string[] = response.data
-        dispatch(setBuckets(bucketNames)) // works on second render????
+        dispatch(setBuckets(bucketNames))
       } catch (error) {
         dispatch(
           updateStatus({
@@ -68,13 +67,15 @@ const WizardDataBucketStep = () => {
       }
     }
     if (isMounted) getBuckets()
-    // setIsLoading(false)
+    setIsLoading(false)
     return () => {
-      // returns a cleanup function for effect
       isMounted = false
     }
   }, [projectId])
 
+  /*
+   * Fetch selected bucket's files
+   */
   useEffect(() => {
     let mounted = true
     const getFiles = async () => {
@@ -96,7 +97,6 @@ const WizardDataBucketStep = () => {
     }
     if (mounted) getFiles()
     return () => {
-      // returns a cleanup function for effect
       mounted = false
     }
   }, [selectedBucket])
@@ -209,7 +209,7 @@ const WizardDataBucketStep = () => {
                 sx={{ mr: "0.5rem", verticalAlign: "middle" }}
               />
             )}
-            {index === 0 ? t("dataBucket.allBuckets") : upperFirst(el)}
+            {index === 0 ? t("dataBucket.allBuckets") : el}
           </Link>
         ))}
       </Breadcrumbs>
@@ -234,7 +234,7 @@ const WizardDataBucketStep = () => {
       />
     )
 
-  // if (isLoading) return <CircularProgress />
+  if (isLoading) return <CircularProgress />
 
   return (
     <Box>

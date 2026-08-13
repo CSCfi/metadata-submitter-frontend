@@ -75,7 +75,6 @@ const WizardDataBucketStep = () => {
     }
   }, [projectId])
 
-  // Error 400 for bucket no access is granted?? ErrorMonitor is temporary removed
   useEffect(() => {
     let mounted = true
     const getFiles = async () => {

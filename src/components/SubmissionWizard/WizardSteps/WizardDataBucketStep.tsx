@@ -65,9 +65,11 @@ const WizardDataBucketStep = () => {
           })
         )
       }
+      setIsLoading(false)
     }
+
     if (isMounted) getBuckets()
-    setIsLoading(false)
+
     return () => {
       isMounted = false
     }

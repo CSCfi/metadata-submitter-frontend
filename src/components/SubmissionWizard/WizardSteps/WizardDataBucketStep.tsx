@@ -44,6 +44,7 @@ const WizardDataBucketStep = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [currentBucket, setCurrentBucket] = useState<string>("")
   const [selectedBucket, setSelectedBucket] = useState<string>("")
 
   /*
@@ -76,20 +77,22 @@ const WizardDataBucketStep = () => {
   }, [projectId])
 
   /*
-   * Fetch selected bucket's files
+   * Fetch current bucket's files
    */
   useEffect(() => {
     let mounted = true
     const getFiles = async () => {
-      if (!!selectedBucket) {
+      if (!!currentBucket || !!selectedBucket) {
         try {
-          bucketsAPIService.grantAccessBucket(projectId, selectedBucket).then(res => {
+          bucketsAPIService.grantAccessBucket(projectId, currentBucket).then(res => {
             return res.data
           })
-          const response = await bucketsAPIService.getBucketFiles(projectId, selectedBucket)
-          if (response.status === 400) console.log("ERROR", response)
-          else {
-            dispatch(addFiles({ bucketName: selectedBucket, files: response.data }))
+          const response = await bucketsAPIService.getBucketFiles(projectId, currentBucket)
+          if (response.status === 400) {
+            //Code should be something else than 400
+            setFiles([]) // Show empty data when files not found
+          } else {
+            dispatch(addFiles({ bucketName: currentBucket, files: response.data }))
             setFiles(response.data)
           }
         } catch (err) {
@@ -101,7 +104,23 @@ const WizardDataBucketStep = () => {
     return () => {
       mounted = false
     }
-  }, [selectedBucket])
+  }, [currentBucket])
+
+  // Update when a bucket is clicked
+  useEffect(() => {
+    if (currentBucket) {
+      const match = files.filter(
+        file => file.path.split("//")[1].split("/")[0] === currentBucket
+      )[0]
+      if (match) {
+        const currentPath = schemePrefix.concat(
+          match.path.split("//")[1].split("/").slice(0, 1).join("/")
+        )
+        setCurrentFilePath(currentPath)
+        setBreadcrumbs([t("dataBucket.allBuckets"), currentBucket])
+      }
+    }
+  }, [files, currentBucket])
 
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()
@@ -118,22 +137,12 @@ const WizardDataBucketStep = () => {
     dispatch(setUnsavedForm())
   }
 
+  /*
+   * Setting parameters for filesTable
+   */
   const handleFilesView = (bucketName: string) => {
-    if (!linkedBucket) {
-      const currentPath =
-        files.length > 0
-          ? schemePrefix.concat(
-              files
-                .filter(file => file.path.split("//")[1].split("/")[0] === bucketName)[0]
-                .path.split("//")[1]
-                .split("/")
-                .slice(0, 1)
-                .join("/")
-            )
-          : selectedBucket
-      setCurrentFilePath(currentPath)
-      setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
-    }
+    setCurrentBucket(bucketName)
+    setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
   }
 
   const handleAddToBreadcrumbs = (folderName: string) => {
@@ -158,6 +167,7 @@ const WizardDataBucketStep = () => {
     }
   }
 
+  // Used in filesTable
   const handleClickFileRow = (path: string, name: string) => {
     if (!isBucketFile(files, path)) {
       /* Keep setting new filePath if current filePath's length < original filePath's length.

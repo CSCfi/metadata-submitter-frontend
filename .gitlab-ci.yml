@@ -5,8 +5,8 @@ stages:
   - release
 
 variables:
-  BUILD_IMAGE: $ARTIFACTORY_SERVER/sds/sdd-common-ci:2026.7.1
-  DEFAULT_IMAGE: $ARTIFACTORY_SERVER/docker:28-cli
+  BUILD_IMAGE: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:mr-55
+  DEFAULT_IMAGE: ${ARTIFACTORY_SERVER}/docker:28-cli
 
 # Release process
 include:
@@ -17,7 +17,7 @@ include:
 #
 # Code testing
 #
-code-style:
+.test-base:
   stage: test
   tags:
     - sds-test
@@ -26,44 +26,27 @@ code-style:
   image: $BUILD_IMAGE
   before_script:
     - pnpm install
+
+code-style:
+  extends: .test-base
   script:
     - pnpm run lint:check
 
 format-style:
-  stage: test
-  tags:
-    - sds-test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  image: $BUILD_IMAGE
-  before_script:
-    - pnpm install
+  extends: .test-base
   script:
     - pnpm run format:check
 
 type-check:
-  stage: test
-  tags:
-    - sds-test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  image: $BUILD_IMAGE
-  before_script:
-    - pnpm install
+  extends: .test-base
   script:
     - pnpm run tsc
 
 unittest:
-  stage: test
-  tags:
-    - sds-test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  image: $BUILD_IMAGE
-  before_script:
-    - pnpm install
+  extends: .test-base
   script:
     - pnpm run test:coverage
+
 #
 # Docker image build, scan and push pipeline
 #
@@ -72,33 +55,26 @@ unittest:
   image: $DEFAULT_IMAGE
   tags:
     - sds-build
-  needs: []
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      variables:
+        IMAGE_TAG: $CI_DEFAULT_BRANCH_SLUG
     - if: "$CI_COMMIT_TAG"
+      variables:
+        IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
       allow_failure: true
+      variables:
+        IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
     - echo "registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
     - echo "@jsr:registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
     - echo "${ARTIFACTORY_NPM_REGISTRY#https:}:_authToken=${ARTIFACTORY_NPM_TOKEN}" >> .npmrc
   script:
-    - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-        export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
-      elif [ "$CI_COMMIT_TAG" ]; then
-        export IMAGE_TAG="$CI_COMMIT_TAG"
-      else
-        export IMAGE_TAG="$CI_DEFAULT_BRANCH"
-      fi
     - echo "Building image sd-submit-ui:${IMAGE_TAG}"
-    - docker buildx build -t "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" -f Dockerfile .
-    - docker save "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" | gzip > image.tar.gz
-  artifacts:
-    paths:
-      - image.tar.gz
-    expire_in: 1 day
+    - docker buildx build -t "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}" -f Dockerfile .
+    - docker push "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
 
 2-scan-image:
   stage: build
@@ -107,67 +83,47 @@ unittest:
     - sds-build
   needs:
     - job: 1-build-image
-      artifacts: true
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      variables:
+        IMAGE_TAG: $CI_DEFAULT_BRANCH_SLUG
     - if: "$CI_COMMIT_TAG"
+      variables:
+        IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: true
+      variables:
+        IMAGE_TAG: $CI_COMMIT_REF_SLUG
+  before_script:
+    - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
-    - jf config import "${JF_CONFIG}"
-    - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-        export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
-      elif [ "$CI_COMMIT_TAG" ]; then
-        export IMAGE_TAG="$CI_COMMIT_TAG"
-      else
-        export IMAGE_TAG="$CI_DEFAULT_BRANCH"
-      fi
-    - jf docker scan --licenses --extended-table --min-severity=Medium $ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}
+    - jf docker scan --licenses --extended-table --min-severity=Medium "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
 
 1-upload-image:
   stage: upload
   image: $DEFAULT_IMAGE
   tags:
     - sds-upload
-  needs:
-    - job: 1-build-image
-      artifacts: true
-    - job: 2-scan-image
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never
     - if: "$CI_COMMIT_TAG"
+      variables:
+        IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       allow_failure: true
+      variables:
+        IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
-    - echo "$ARTIFACTORY_USER_PASSWORD" | docker login --username "$ARTIFACTORY_USER" --password-stdin "$ARTIFACTORY_SERVER"
+    - jf config import "${JF_CONFIG}"
+  variables:
+    REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
   script:
-    - gunzip -c image.tar.gz | docker load
     # Push to Artifactory, retry a few times if pushing fails
-    - |
-      if [ "$CI_PIPELINE_SOURCE" = "merge_request_event" ]; then
-        export IMAGE_TAG="$(echo ${ENVIRONMENT:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME} | tr '/' '-')"
-      elif [ "$CI_COMMIT_TAG" ]; then
-        export IMAGE_TAG="$CI_COMMIT_TAG"
-      else
-        export IMAGE_TAG="$CI_DEFAULT_BRANCH"
-      fi
     - echo "Pushing image sd-submit-ui:${IMAGE_TAG}"
-    - |
-      max_retries=5
-      retry=1
-
-      until docker push "$ARTIFACTORY_SERVER/sds/sd-submit-ui:${IMAGE_TAG}" ; do
-        if [ "$retry" -ge "$max_retries" ]; then
-           echo "docker push failed after $max_retries attempts"
-           exit 1
-        fi
-
-        echo "Attempt $retry failed, retrying in 10 seconds..."
-        retry=$((retry + 1))
-        sleep 10
-      done
+    - docker pull "${REGISTRY_IMAGE}"
+    - docker tag "${REGISTRY_IMAGE}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
+    - jf docker push "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
 
 release-job:
   extends: .automated-release

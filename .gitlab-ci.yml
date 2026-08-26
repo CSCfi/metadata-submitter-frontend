@@ -1,5 +1,6 @@
 stages:
   - test
+  - audit
   - build
   - upload
   - release
@@ -48,6 +49,22 @@ unittest:
     - pnpm run test:coverage
 
 #
+# JFrog audit for pnpm
+#
+jfrog-pnpm-audit:
+  stage: audit
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+  image: $BUILD_IMAGE
+  tags:
+    - sds-test
+  before_script:
+    - jf config import "${JF_CONFIG_READ_ONLY}"
+  script:
+    - jf audit --pnpm --licenses --extended-table --watches=sds-watch
+
+#
 # Docker image build, scan and push pipeline
 #
 1-build-image:
@@ -63,8 +80,6 @@ unittest:
       variables:
         IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: manual
-      allow_failure: true
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
@@ -91,13 +106,13 @@ unittest:
       variables:
         IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      allow_failure: true
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
-    - jf docker scan --licenses --extended-table --min-severity=Medium "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
+    - docker pull "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
+    - jf docker scan --licenses --extended-table --watches=sds-watch "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
 
 1-upload-image:
   stage: upload
@@ -111,6 +126,7 @@ unittest:
       variables:
         IMAGE_TAG: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
       allow_failure: true
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG

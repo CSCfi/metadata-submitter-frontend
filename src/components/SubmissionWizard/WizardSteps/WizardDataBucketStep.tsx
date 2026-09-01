@@ -53,6 +53,7 @@ const WizardDataBucketStep = () => {
   useEffect(() => {
     let isMounted = true
     const getBuckets = async () => {
+      setIsLoading(true)
       try {
         const response = await bucketsAPIService.getProjectBuckets(projectId)
         const bucketNames: string[] = response.data
@@ -79,15 +80,20 @@ const WizardDataBucketStep = () => {
   /*
    * Fetch current bucket's files
    */
+
   useEffect(() => {
     let mounted = true
     const getFiles = async () => {
+      setIsLoading(true)
       if (!!currentBucket || !!selectedBucket) {
         try {
-          bucketsAPIService.grantAccessBucket(projectId, currentBucket).then(res => {
-            return res.data
-          })
+          const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, currentBucket)
+
+          if (hasGrant.status !== 200) {
+            await bucketsAPIService.grantAccessBucket(projectId, currentBucket)
+          }
           const response = await bucketsAPIService.getBucketFiles(projectId, currentBucket)
+
           if (response.status === 400) {
             //Code should be something else than 400
             setFiles([]) // Show empty data when files not found
@@ -96,8 +102,10 @@ const WizardDataBucketStep = () => {
             setFiles(response.data)
           }
         } catch (err) {
-          console.log("CATCHING", err)
+          console.error("Bucket endpoint error during getting files", err)
         }
+
+        setIsLoading(false)
       }
     }
     if (mounted) getFiles()

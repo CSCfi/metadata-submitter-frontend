@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:22-bookworm-slim
+ARG BASE_IMAGE=node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
 ARG NGINX_IMAGE=nginx:1.31.4-trixie@sha256:b34848eff6db786b6b1282d3a9c3fd0b5563dfb6d261df4923378b419e0d24f0
 # 1.29.5-trixie contains fix to prevenr man-in-the-middle (MITM) vulnerability
 # NGINX proxying to TLS-enabled HTTP (HTTP 1.x and HTTP/2), gRPC, and uWSGI backends

@@ -41,6 +41,7 @@ const WizardDataBucketStep = () => {
   const [files, setFiles] = useState<File[] | []>([])
 
   const [alert, setAlert] = useState<boolean>(false)
+  const [clicked, setClicked] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -127,8 +128,9 @@ const WizardDataBucketStep = () => {
         setCurrentFilePath(currentPath)
         setBreadcrumbs([t("dataBucket.allBuckets"), currentBucket])
       }
+      setClicked(false)
     }
-  }, [files, currentBucket])
+  }, [clicked, files, currentBucket])
 
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()
@@ -151,6 +153,7 @@ const WizardDataBucketStep = () => {
   const handleFilesView = (bucketName: string) => {
     setCurrentBucket(bucketName)
     setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
+    setClicked(true)
   }
 
   const handleAddToBreadcrumbs = (folderName: string) => {

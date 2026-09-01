@@ -2,12 +2,13 @@ stages:
   - test
   - audit
   - build
+  - scan
   - upload
   - release
 
 variables:
-  BUILD_IMAGE: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:mr-55
-  DEFAULT_IMAGE: ${ARTIFACTORY_SERVER}/docker:28-cli
+  BUILD_IMAGE: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:2026.9.0
+  REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui
 
 # Release process
 include:
@@ -69,7 +70,6 @@ jfrog-pnpm-audit:
 #
 1-build-image:
   stage: build
-  image: $DEFAULT_IMAGE
   tags:
     - sds-build
   rules:
@@ -83,40 +83,38 @@ jfrog-pnpm-audit:
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
-    - echo "registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
-    - echo "@jsr:registry=${ARTIFACTORY_NPM_REGISTRY}" >> .npmrc
-    - echo "${ARTIFACTORY_NPM_REGISTRY#https:}:_authToken=${ARTIFACTORY_NPM_TOKEN}" >> .npmrc
+    - pnpm config list
   script:
     - echo "Building image sd-submit-ui:${IMAGE_TAG}"
-    - docker buildx build -t "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}" -f Dockerfile .
-    - docker push "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
+    - docker buildx build -t "${REGISTRY_IMAGE}:${IMAGE_TAG}" -f Dockerfile .
+    - docker push "${REGISTRY_IMAGE}:${IMAGE_TAG}"
 
-2-scan-image:
-  stage: build
+1-scan-image:
+  stage: scan
   image: $BUILD_IMAGE
   tags:
-    - sds-build
-  needs:
-    - job: 1-build-image
+    - sds-test
   rules:
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       variables:
+        WATCH: sds-watch
         IMAGE_TAG: $CI_DEFAULT_BRANCH_SLUG
-    - if: "$CI_COMMIT_TAG"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME != "renovate-bot"'
       variables:
-        IMAGE_TAG: $CI_COMMIT_TAG
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        WATCH: sds-watch
+        IMAGE_TAG: $CI_COMMIT_REF_SLUG
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME == "renovate-bot"'
       variables:
+        WATCH: sds-renovate
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
   before_script:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
-    - docker pull "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
-    - jf docker scan --licenses --extended-table --watches=sds-watch "${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}"
+    - docker pull "${REGISTRY_IMAGE}:${IMAGE_TAG}"
+    - jf docker scan --licenses --extended-table --watches=$WATCH "${REGISTRY_IMAGE}:${IMAGE_TAG}"
 
 1-upload-image:
   stage: upload
-  image: $DEFAULT_IMAGE
   tags:
     - sds-upload
   rules:
@@ -125,21 +123,21 @@ jfrog-pnpm-audit:
     - if: "$CI_COMMIT_TAG"
       variables:
         IMAGE_TAG: $CI_COMMIT_TAG
+        JFROG_ARGS: --build-name=sd-submit-ui --build-number=$CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
       allow_failure: true
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
+        JFROG_ARGS: ""
   before_script:
     - jf config import "${JF_CONFIG}"
-  variables:
-    REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
   script:
-    # Push to Artifactory, retry a few times if pushing fails
     - echo "Pushing image sd-submit-ui:${IMAGE_TAG}"
-    - docker pull "${REGISTRY_IMAGE}"
-    - docker tag "${REGISTRY_IMAGE}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
-    - jf docker push "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
+    - docker pull "${REGISTRY_IMAGE}:${IMAGE_TAG}"
+    - docker tag "${REGISTRY_IMAGE}:${IMAGE_TAG}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}:${IMAGE_TAG}"
+    - jf docker push $JFROG_ARGS "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}:${IMAGE_TAG}"
+    - '[ -n "$CI_COMMIT_TAG" ] && jf rt build-publish sd-submit-ui $CI_COMMIT_TAG'
 
 release-job:
   extends: .automated-release

@@ -9,12 +9,12 @@ import { uniqBy } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import type { DataFileRow, File } from "types"
+import type { DataFileRow, BucketFile } from "types"
 import { formatBytes, isBucketFile } from "utils"
 
 type FilesTableProps = {
   currentFilePath: string
-  files: File[]
+  files: BucketFile[]
   handleClickFileRow: (path: string, name: string) => void
 }
 

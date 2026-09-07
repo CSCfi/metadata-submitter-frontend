@@ -22,7 +22,7 @@ import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import bucketsAPIService from "services/bucketsAPI"
-import type { File } from "types"
+import type { BucketFile } from "types"
 import { isBucketFile } from "utils"
 
 /*
@@ -38,7 +38,7 @@ const WizardDataBucketStep = () => {
 
   const schemePrefix = "S3://"
 
-  const [files, setFiles] = useState<File[] | []>([])
+  const [files, setFiles] = useState<BucketFile[]>([])
 
   const [alert, setAlert] = useState<boolean>(false)
   const [clicked, setClicked] = useState<boolean>(false)
@@ -99,8 +99,9 @@ const WizardDataBucketStep = () => {
             //Code should be something else than 400
             setFiles([]) // Show empty data when files not found
           } else {
-            dispatch(addFiles({ bucketName: currentBucket, files: response.data }))
-            setFiles(response.data)
+            const files = response.data ?? []
+            dispatch(addFiles({ bucketName: selectedBucket, files: files }))
+            setFiles(files)
           }
         } catch (err) {
           console.error("Bucket endpoint error during getting files", err)

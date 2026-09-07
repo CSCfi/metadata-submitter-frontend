@@ -5,7 +5,7 @@ import { useLocation } from "react-router"
 import { Locale } from "constants/translation"
 import { FEGAObjectTypes } from "constants/wizardObject"
 import type {
-  File,
+  BucketFile,
   FormDataFiles,
   ObjectDisplayValues,
   MetadataFormDetails,
@@ -86,7 +86,7 @@ export const getConvertedDate = (timestamp: number): string => {
 }
 
 // Check if it's a file or a folder (current path equals original file path)
-export const isBucketFile = (files: File[], path: string) =>
+export const isBucketFile = (files: BucketFile[], path: string) =>
   files.findIndex(file => file.path === path) > -1
 
 // Check that submission's metadata exist and that it contains data at least at one of the keys

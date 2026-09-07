@@ -239,7 +239,7 @@ export type DataBucketRow = {
   tags?: string
 }
 
-export type File = {
+export type BucketFile = {
   id: string
   path: string
   name: string
@@ -249,7 +249,7 @@ export type File = {
 
 export type Bucket = {
   bucketName: string
-  files?: File[]
+  files?: BucketFile[]
 }
 
 export type DataFileRow = {

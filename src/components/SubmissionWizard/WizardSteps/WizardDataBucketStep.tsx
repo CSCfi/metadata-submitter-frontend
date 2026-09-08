@@ -41,7 +41,6 @@ const WizardDataBucketStep = () => {
   const [files, setFiles] = useState<BucketFile[]>([])
 
   const [alert, setAlert] = useState<boolean>(false)
-  const [clicked, setClicked] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -78,61 +77,6 @@ const WizardDataBucketStep = () => {
     }
   }, [projectId])
 
-  /*
-   * Fetch current bucket's files
-   */
-
-  useEffect(() => {
-    let mounted = true
-    const getFiles = async () => {
-      setIsLoading(true)
-      if (!!currentBucket || !!selectedBucket) {
-        try {
-          const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, currentBucket)
-
-          if (hasGrant.status !== 200) {
-            await bucketsAPIService.grantAccessBucket(projectId, currentBucket)
-          }
-          const response = await bucketsAPIService.getBucketFiles(projectId, currentBucket)
-
-          if (response.status === 400) {
-            //Code should be something else than 400
-            setFiles([]) // Show empty data when files not found
-          } else {
-            const files = response.data ?? []
-            dispatch(addFiles({ bucketName: selectedBucket, files: files }))
-            setFiles(files)
-          }
-        } catch (err) {
-          console.error("Bucket endpoint error during getting files", err)
-        }
-
-        setIsLoading(false)
-      }
-    }
-    if (mounted) getFiles()
-    return () => {
-      mounted = false
-    }
-  }, [currentBucket])
-
-  // Update when a bucket is clicked
-  useEffect(() => {
-    if (currentBucket) {
-      const match = files.filter(
-        file => file.path.split("//")[1].split("/")[0] === currentBucket
-      )[0]
-      if (match) {
-        const currentPath = schemePrefix.concat(
-          match.path.split("//")[1].split("/").slice(0, 1).join("/")
-        )
-        setCurrentFilePath(currentPath)
-        setBreadcrumbs([t("dataBucket.allBuckets"), currentBucket])
-      }
-      setClicked(false)
-    }
-  }, [clicked, files, currentBucket])
-
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()
     setAlert(false)
@@ -148,13 +92,45 @@ const WizardDataBucketStep = () => {
     dispatch(setUnsavedForm())
   }
 
+  const getFiles = async (bucketName: string) => {
+    if (!!bucketName) {
+      try {
+        const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, bucketName)
+
+        if (hasGrant.status !== 200) {
+          await bucketsAPIService.grantAccessBucket(projectId, bucketName)
+        }
+        const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
+
+        if (response.status === 400) {
+          //Code should be something else than 400
+          return [] // Show empty data when files not found
+        } else {
+          const files = response.data ?? []
+          dispatch(addFiles({ bucketName: bucketName, files: files }))
+          return files
+        }
+      } catch (err) {
+        console.error("Bucket endpoint error during getting files", err)
+      }
+    }
+  }
+
   /*
    * Setting parameters for filesTable
    */
-  const handleFilesView = (bucketName: string) => {
-    setCurrentBucket(bucketName)
+  const handleFilesView = async (bucketName: string) => {
+    // Use cached files when possible
+    // Use Redux when implemented
+    if (bucketName != currentBucket) {
+      setCurrentBucket(bucketName)
+      setIsLoading(true)
+      setFiles(await getFiles(bucketName))
+      setIsLoading(false)
+    }
+    const currentPath = schemePrefix.concat(bucketName)
+    setCurrentFilePath(currentPath)
     setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
-    setClicked(true)
   }
 
   const handleAddToBreadcrumbs = (folderName: string) => {

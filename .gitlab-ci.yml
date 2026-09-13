@@ -134,15 +134,17 @@ jfrog-pnpm-audit:
     - if: "$CI_COMMIT_TAG"
       variables:
         IMAGE_TAG: $CI_COMMIT_TAG
-        JFROG_ARGS: --build-name=sd-submit-ui --build-number=$CI_COMMIT_TAG
+        JFROG_CLI_BUILD_NUMBER: $CI_COMMIT_TAG
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
       allow_failure: true
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
-        JFROG_ARGS: ""
+        JFROG_CLI_BUILD_NUMBER: $CI_COMMIT_REF_SLUG
   variables:
     REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
+    JFROG_CLI_BUILD_NAME: sd-submit-ui
+    JFROG_CLI_BUILD_PROJECT: sds
   before_script:
     - jf config import "${JF_CONFIG}"
   script:
@@ -150,7 +152,7 @@ jfrog-pnpm-audit:
     - docker pull "${REGISTRY_IMAGE}@${IMAGE_DIGEST}"
     - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
     - jf docker push $JFROG_ARGS "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
-    - '[ -n "$CI_COMMIT_TAG" ] && jf rt build-publish sd-submit-ui $CI_COMMIT_TAG'
+    - jf rt build-publish
 
 release-job:
   extends: .automated-release

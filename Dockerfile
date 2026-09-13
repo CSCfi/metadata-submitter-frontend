@@ -36,6 +36,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=appbuilder /usr/src/app/build /home/app/
 
+# To fix vulnerabilities
+RUN apt-get update && apt-get install --only-upgrade -yqq perl-base libc6 libc-bin
+
 RUN chown -R nginx:nginx /var/cache/nginx/ \
 && chown -R nginx:nginx /var/log/nginx \
 && chown -R nginx:nginx /usr/share/nginx \

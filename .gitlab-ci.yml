@@ -6,9 +6,6 @@ stages:
   - upload
   - release
 
-variables:
-  REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui
-
 default:
   image: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:feature-digest
 
@@ -87,12 +84,19 @@ jfrog-pnpm-audit:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
+  variables:
+    REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
   before_script:
     - pnpm config list
   script:
     - echo "Building image sd-submit-ui:${IMAGE_TAG}"
-    - docker buildx build -t "${REGISTRY_IMAGE}:${IMAGE_TAG}" -f Dockerfile .
-    - docker push "${REGISTRY_IMAGE}:${IMAGE_TAG}"
+    - docker buildx build -t "${REGISTRY_IMAGE}" --iidfile iid.out -f Dockerfile .
+    - docker push "${REGISTRY_IMAGE}"
+    # Save digest as a dotenv artifact
+    - echo "IMAGE_DIGEST=$(cat iid.out)" >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
 
 1-scan-image:
   stage: scan
@@ -111,11 +115,14 @@ jfrog-pnpm-audit:
       variables:
         WATCH: sds-renovate
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
+  variables:
+    REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
   before_script:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
-    - docker pull "${REGISTRY_IMAGE}:${IMAGE_TAG}"
-    - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}:${IMAGE_TAG}"
+    - docker pull "${REGISTRY_IMAGE}@${IMAGE_DIGEST}"
+    - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" ${REGISTRY_IMAGE}"
+    - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}
 
 1-upload-image:
   stage: upload
@@ -134,13 +141,15 @@ jfrog-pnpm-audit:
       variables:
         IMAGE_TAG: $CI_COMMIT_REF_SLUG
         JFROG_ARGS: ""
+  variables:
+    REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui:${IMAGE_TAG}
   before_script:
     - jf config import "${JF_CONFIG}"
   script:
     - echo "Pushing image sd-submit-ui:${IMAGE_TAG}"
-    - docker pull "${REGISTRY_IMAGE}:${IMAGE_TAG}"
-    - docker tag "${REGISTRY_IMAGE}:${IMAGE_TAG}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}:${IMAGE_TAG}"
-    - jf docker push $JFROG_ARGS "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}:${IMAGE_TAG}"
+    - docker pull "${REGISTRY_IMAGE}@${IMAGE_DIGEST}"
+    - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
+    - jf docker push $JFROG_ARGS "${ARTIFACTORY_SERVER}/${REGISTRY_IMAGE#*/}"
     - '[ -n "$CI_COMMIT_TAG" ] && jf rt build-publish sd-submit-ui $CI_COMMIT_TAG'
 
 release-job:

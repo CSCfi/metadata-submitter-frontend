@@ -7,8 +7,10 @@ stages:
   - release
 
 variables:
-  BUILD_IMAGE: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:2026.9.0
   REGISTRY_IMAGE: ${CONTAINER_REGISTRY_ADDRESS}/sds/sd-submit-ui
+
+default:
+  image: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:feature-digest
 
 # Release process
 include:
@@ -25,7 +27,6 @@ include:
     - sds-test
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  image: $BUILD_IMAGE
   before_script:
     - pnpm install
 
@@ -55,15 +56,19 @@ unittest:
 jfrog-pnpm-audit:
   stage: audit
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME != "renovate-bot"'
       when: always
-  image: $BUILD_IMAGE
+      variables:
+        WATCH: sds-watch
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME == "renovate-bot"'
+      variables:
+        WATCH: sds-renovate
   tags:
     - sds-test
   before_script:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
-    - jf audit --pnpm --licenses --extended-table --watches=sds-watch
+    - jf audit --pnpm --extended-table --watches=$WATCH
 
 #
 # Docker image build, scan and push pipeline
@@ -91,7 +96,6 @@ jfrog-pnpm-audit:
 
 1-scan-image:
   stage: scan
-  image: $BUILD_IMAGE
   tags:
     - sds-test
   rules:
@@ -111,7 +115,7 @@ jfrog-pnpm-audit:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
     - docker pull "${REGISTRY_IMAGE}:${IMAGE_TAG}"
-    - jf docker scan --licenses --extended-table --watches=$WATCH "${REGISTRY_IMAGE}:${IMAGE_TAG}"
+    - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}:${IMAGE_TAG}"
 
 1-upload-image:
   stage: upload

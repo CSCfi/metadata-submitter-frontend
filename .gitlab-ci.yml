@@ -158,3 +158,8 @@ release-job:
   extends: .automated-release
   release:
     description: $(cat release_changes.md)
+    assets:
+      links:
+        - name: "${ARTIFACTORY_SERVER}/sds/sd-submit-ui:${RELEASE_VERSION}"
+          url: "https://${ARTIFACTORY_SERVER}/artifactory/sds-docker/sds/sd-submit-ui/${RELEASE_VERSION}"
+          link_type: image

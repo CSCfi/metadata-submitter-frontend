@@ -7,7 +7,7 @@ stages:
   - release
 
 default:
-  image: ${ARTIFACTORY_SERVER}/sds/sdd-common-ci:feature-digest
+  image: "${ARTIFACTORY_SERVER}/sds/sdd-common-ci:2026.9.3"
 
 # Release process
 include:

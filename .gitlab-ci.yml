@@ -103,7 +103,7 @@ jfrog-pnpm-audit:
   tags:
     - sds-test
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       variables:
         WATCH: sds-watch
         IMAGE_TAG: $CI_DEFAULT_BRANCH_SLUG
@@ -121,8 +121,8 @@ jfrog-pnpm-audit:
     - jf config import "${JF_CONFIG_READ_ONLY}"
   script:
     - docker pull "${REGISTRY_IMAGE}@${IMAGE_DIGEST}"
-    - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" ${REGISTRY_IMAGE}"
-    - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}
+    - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" "${REGISTRY_IMAGE}"
+    - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}"
 
 1-upload-image:
   stage: upload

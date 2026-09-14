@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.27.0@sha256:bde3983e9c939224420ddaf6b784cc30e09b035a4dea01f581230c50809f372e
+
 ARG BASE_IMAGE=node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
 ARG NGINX_IMAGE=nginx:1.31.5-trixie@sha256:db3099a8d62d2bd8f5f7875e6e3d2dfbd92c999cd35967fb05d41374386535e1
 # 1.29.5-trixie contains fix to prevenr man-in-the-middle (MITM) vulnerability
@@ -14,8 +16,11 @@ RUN npm install -g pnpm
 WORKDIR /usr/src/app
 
 # Assume these change less often than the other files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc? ./
-RUN pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN --mount=type=secret,id=auth_file \
+    --mount=type=secret,id=npm_token \
+    ARTIFACTORY_NPM_TOKEN="$(cat /run/secrets/npm_token)" \
+    PNPM_CONFIG_NPMRC_AUTH_FILE="/run/secrets/auth_file" pnpm install --frozen-lockfile
 
 # Now copy the other files into place
 COPY src/ ./src/

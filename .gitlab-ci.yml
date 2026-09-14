@@ -68,9 +68,9 @@ jfrog-pnpm-audit:
     - jf audit --pnpm --extended-table --watches=$WATCH
 
 #
-# Docker image build, scan and push pipeline
+# Docker image build
 #
-1-build-image:
+build-image:
   stage: build
   tags:
     - sds-build
@@ -90,7 +90,11 @@ jfrog-pnpm-audit:
     - pnpm config list
   script:
     - echo "Building image sd-submit-ui:${IMAGE_TAG}"
-    - docker buildx build -t "${REGISTRY_IMAGE}" --iidfile iid.out -f Dockerfile .
+    - >
+      docker buildx build -t "${REGISTRY_IMAGE}"
+      --secret id=auth_file,src=$HOME/.config/pnpm/auth.ini
+      --secret id=npm_token,env=ARTIFACTORY_NPM_TOKEN
+      --iidfile iid.out -f Dockerfile .
     - docker push "${REGISTRY_IMAGE}"
     # Save digest as a dotenv artifact
     - echo "IMAGE_DIGEST=$(cat iid.out)" >> build.env
@@ -98,7 +102,10 @@ jfrog-pnpm-audit:
     reports:
       dotenv: build.env
 
-1-scan-image:
+#
+# Docker image scan
+#
+scan-image:
   stage: scan
   tags:
     - sds-test
@@ -124,7 +131,10 @@ jfrog-pnpm-audit:
     - docker tag "${REGISTRY_IMAGE}@${IMAGE_DIGEST}" "${REGISTRY_IMAGE}"
     - jf docker scan --extended-table --watches=$WATCH "${REGISTRY_IMAGE}"
 
-1-upload-image:
+#
+# Docker image push
+#
+upload-image:
   stage: upload
   tags:
     - sds-upload

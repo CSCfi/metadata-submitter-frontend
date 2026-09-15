@@ -9,16 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- link to Artifactory release in Gitlab release description
+- build-info metadata to releases
+- pnpm audit CI job
 - pnpm-workspace.yaml file for pnpm update, also in Dockerfile
 
 ### Changed
 
+- configure `pnpm` to use Artifactory
+- use `jf` to push image to Artifactory
+- use proper watches in CI scan job
+- use `sdd-common-ci` image that has already pnpm configured to use Artifactory
+- save image digest from build job as a dotenv artifact and use it to pull the image in following jobs
+- use out Docker registry to store images between jobs instead of using Gitlab artifacts
 - (admins) Gitlab pipeline not to push main branch to artifactory automatically (#1138)
 - (admins) Gitlab pipeline to use new runners (#1138)
 - Gitlab pipeline not to push main branch to artifactory automatically (#1138)
 - Gitlab pipeline to use new runners (#1138)
 - Added Artifactory config for npm registry to be in pipeline (#1135)
 - moved pnpm config from package.json to new file
+
+### Removed
+
+- license output from CI scan job
 
 ## [2026.5.0] - 2026-05-06
 

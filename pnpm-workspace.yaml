@@ -7,7 +7,7 @@ overrides:
   "sha.js@<2.4.12": "2.4.12"
   "cipher-base@<1.0.5": "1.0.7"
   "pbkdf2@<3.1.3": "3.1.6"
-  "axios@<1.15.2": "1.15.2"
+  "axios@<1.15.2": "1.18.0"
 
 registries:
   https://artifactory.ci.csc.fi/artifactory/api/npm/sds-npm/:

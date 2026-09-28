@@ -102,9 +102,8 @@ const WizardDataBucketStep = () => {
         }
         const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
 
-        if (response.status === 400) {
-          //Code should be something else than 400
-          return [] // Show empty data when files not found
+        if (response.status === 403) {
+          return [] // Show empty data when no files accessed
         } else {
           const files = response.data ?? []
           dispatch(addFiles({ bucketName: bucketName, files: files }))

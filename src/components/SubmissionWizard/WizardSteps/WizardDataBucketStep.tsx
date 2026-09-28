@@ -96,19 +96,13 @@ const WizardDataBucketStep = () => {
     if (!!bucketName) {
       try {
         const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, bucketName)
-
         if (hasGrant.status !== 200) {
           await bucketsAPIService.grantAccessBucket(projectId, bucketName)
         }
         const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
-
-        if (response.status === 403) {
-          return [] // Show empty data when no files accessed
-        } else {
-          const files = response.data ?? []
-          dispatch(addFiles({ bucketName: bucketName, files: files }))
-          return files
-        }
+        const files = response.data ?? []
+        dispatch(addFiles({ bucketName: bucketName, files: files }))
+        return files
       } catch (err) {
         console.error("Bucket endpoint error during getting files", err)
       }

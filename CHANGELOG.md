@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (users) Buckets to be visible (#1117)
+- bucketsSlice.tsx, for adding buckets to Redux state (#1117)
 - link to Artifactory release in Gitlab release description
 - build-info metadata to releases
 - pnpm audit CI job
@@ -31,7 +33,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- getMockBucketFiles function (#1117)
 - license output from CI scan job
+
+### Fixed
+
+- (users) changing project to show correct submissions (#1134)
+- changing projectId to show correct submissions (#1134)
 
 ## [2026.5.0] - 2026-05-06
 

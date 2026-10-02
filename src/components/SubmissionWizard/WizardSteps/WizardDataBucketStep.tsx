@@ -5,9 +5,9 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import Box from "@mui/material/Box"
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Button from "@mui/material/Button"
+import CircularProgress from "@mui/material/CircularProgress"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { upperFirst } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader"
@@ -15,10 +15,15 @@ import WizardStepContentHeader from "../WizardComponents/WizardStepContentHeader
 import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
 import WizardDataBucketTable from "components/SubmissionWizard/WizardComponents/WizardDataBucketTable"
 import WizardFilesTable from "components/SubmissionWizard/WizardComponents/WizardFilesTable"
+import { ResponseStatus } from "constants/responseStatus"
+import { setBuckets, addFiles } from "features/bucketsSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { setUnsavedForm, resetUnsavedForm } from "features/unsavedFormSlice"
 import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
-import { isFile, getMockBucketFiles } from "utils"
+import bucketsAPIService from "services/bucketsAPI"
+import type { BucketFile } from "types"
+import { isBucketFile } from "utils"
 
 /*
  * Render buckets and files from SD Connect based on user selection
@@ -26,22 +31,51 @@ import { isFile, getMockBucketFiles } from "utils"
 const WizardDataBucketStep = () => {
   const dispatch = useAppDispatch()
   const submission = useAppSelector(state => state.submission)
-  const bucket = submission.bucket || ""
+  const projectId = submission.projectId
+  const linkedBucket = submission.bucket || ""
 
   const { t } = useTranslation()
 
-  const [files, setFiles] = useState<
-    { id: string; path: string; name: string; bytes: number }[] | []
-  >([])
+  const schemePrefix = "S3://"
 
-  const [selectedBucket, setSelectedBucket] = useState<string>("")
+  const [files, setFiles] = useState<BucketFile[]>([])
+
+  const [alert, setAlert] = useState<boolean>(false)
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([])
   const [currentFilePath, setCurrentFilePath] = useState<string>("")
-  const [alert, setAlert] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [currentBucket, setCurrentBucket] = useState<string>("")
+  const [selectedBucket, setSelectedBucket] = useState<string>("")
 
+  /*
+   * Fetch selected project related buckets
+   */
   useEffect(() => {
-    getMockBucketFiles().then(mockFiles => setFiles(mockFiles))
-  }, [])
+    let isMounted = true
+    const getBuckets = async () => {
+      setIsLoading(true)
+      try {
+        const response = await bucketsAPIService.getProjectBuckets(projectId)
+        const bucketNames: string[] = response.data
+        dispatch(setBuckets(bucketNames))
+      } catch (error) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+            helperText: "",
+          })
+        )
+      }
+      setIsLoading(false)
+    }
+
+    if (isMounted) getBuckets()
+
+    return () => {
+      isMounted = false
+    }
+  }, [projectId])
 
   const handleAlert = (state: boolean) => {
     if (state) handleLinkBucket()
@@ -58,12 +92,36 @@ const WizardDataBucketStep = () => {
     dispatch(setUnsavedForm())
   }
 
-  const handleFilesView = (bucketName: string) => {
-    const currentPath = files
-      .filter(file => file.path.split("/")[1] === bucketName)[0]
-      .path.split("/")
-      .slice(0, 2)
-      .join("/")
+  const getFiles = async (bucketName: string) => {
+    if (!!bucketName) {
+      try {
+        const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, bucketName)
+        if (hasGrant.status !== 200) {
+          await bucketsAPIService.grantAccessBucket(projectId, bucketName)
+        }
+        const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
+        const files = response.data ?? []
+        dispatch(addFiles({ bucketName: bucketName, files: files }))
+        return files
+      } catch (err) {
+        console.error("Bucket endpoint error during getting files", err)
+      }
+    }
+  }
+
+  /*
+   * Setting parameters for filesTable
+   */
+  const handleFilesView = async (bucketName: string) => {
+    // Use cached files when possible
+    // Use Redux when implemented
+    if (bucketName != currentBucket) {
+      setCurrentBucket(bucketName)
+      setIsLoading(true)
+      setFiles(await getFiles(bucketName))
+      setIsLoading(false)
+    }
+    const currentPath = schemePrefix.concat(bucketName)
     setCurrentFilePath(currentPath)
     setBreadcrumbs([t("dataBucket.allBuckets"), bucketName])
   }
@@ -90,8 +148,9 @@ const WizardDataBucketStep = () => {
     }
   }
 
+  // Used in filesTable
   const handleClickFileRow = (path: string, name: string) => {
-    if (!isFile(files, path)) {
+    if (!isBucketFile(files, path)) {
       /* Keep setting new filePath if current filePath's length < original filePath's length.
        * It means that the current file is still nested under folder
        */
@@ -102,7 +161,7 @@ const WizardDataBucketStep = () => {
 
   const linkBucketButton = (
     <Button
-      disabled={!selectedBucket || !!bucket}
+      disabled={!selectedBucket || !!linkedBucket}
       variant="contained"
       aria-label={t("ariaLabels.linkBucket")}
       size="small"
@@ -116,7 +175,7 @@ const WizardDataBucketStep = () => {
 
   const renderHeading = () => (
     <Typography variant="h5" fontWeight="700" color="secondary">
-      {bucket ? t("dataBucket.linkedBucket") : t("dataBucket.linkFromSDConnect")}
+      {linkedBucket ? t("dataBucket.linkedBucket") : t("dataBucket.linkFromSDConnect")}
     </Typography>
   )
 
@@ -143,7 +202,7 @@ const WizardDataBucketStep = () => {
                 sx={{ mr: "0.5rem", verticalAlign: "middle" }}
               />
             )}
-            {index === 0 ? t("dataBucket.allBuckets") : upperFirst(el)}
+            {index === 0 ? t("dataBucket.allBuckets") : el}
           </Link>
         ))}
       </Breadcrumbs>
@@ -153,7 +212,7 @@ const WizardDataBucketStep = () => {
     !breadcrumbs.length && (
       <WizardDataBucketTable
         selectedBucket={selectedBucket}
-        bucket={bucket}
+        linkedBucket={linkedBucket}
         handleBucketChange={handleBucketChange}
         handleFilesView={handleFilesView}
       />
@@ -167,6 +226,8 @@ const WizardDataBucketStep = () => {
         handleClickFileRow={handleClickFileRow}
       />
     )
+
+  if (isLoading) return <CircularProgress />
 
   return (
     <Box>

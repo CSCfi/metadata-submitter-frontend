@@ -22,7 +22,8 @@ git clone <metadata-repo>
 cd metadata-submitter
 export VAULT_ADDR=<my-vault-url>
 make get_env
-docker compose --env-file tests/integration/.env --profile ui up --build -d
+docker compose --profile ui up --build -d
+# -d flag is optional
 ```
 
 > **Note:** If you run the backend with `docker compose`, you will then also need to set the `REDIRECT_URL` environment variable to the UI address (e.g. add `REDIRECT_URL=http://localhost:3000` into the `.env` file).

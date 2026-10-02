@@ -5,7 +5,7 @@ import { useLocation } from "react-router"
 import { Locale } from "constants/translation"
 import { FEGAObjectTypes } from "constants/wizardObject"
 import type {
-  File,
+  BucketFile,
   FormDataFiles,
   ObjectDisplayValues,
   MetadataFormDetails,
@@ -86,7 +86,7 @@ export const getConvertedDate = (timestamp: number): string => {
 }
 
 // Check if it's a file or a folder (current path equals original file path)
-export const isFile = (files: File[], path: string) =>
+export const isBucketFile = (files: BucketFile[], path: string) =>
   files.findIndex(file => file.path === path) > -1
 
 // Check that submission's metadata exist and that it contains data at least at one of the keys
@@ -98,12 +98,16 @@ export const removeWhitespace = (item: string): string => {
   return item.replace(/\s+/g, "")
 }
 
-// Temporarily use for getting mock bucket's files.
-// Will be removed when we have the real endpoints to get the buckets and files.
-export const getMockBucketFiles = async () => {
-  if (import.meta.env.MODE === "development") {
-    const module = await import("../../playwright/fixtures/files_response")
-    return module.files
-  }
-  return []
+// Convert file size to human readable format
+// inspiration from https://stackoverflow.com/a/18650828
+// logarithm of bytes base 1024  Math.log(bytes)/Math.log(1024)
+export const formatBytes = (bytes: number, decimals: number = 2) => {
+  if (bytes === 0) return "0 Bytes"
+
+  const base: number = 1024
+  const d: number = decimals < 0 ? 0 : decimals
+  const i: number = Math.floor(Math.log(bytes) / Math.log(base))
+  const sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
+
+  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(d))} ${sizes[i]}`
 }

@@ -239,12 +239,17 @@ export type DataBucketRow = {
   tags?: string
 }
 
-export type File = {
+export type BucketFile = {
   id: string
   path: string
   name: string
   bytes: number
   lastModified?: string
+}
+
+export type Bucket = {
+  bucketName: string
+  files?: BucketFile[]
 }
 
 export type DataFileRow = {

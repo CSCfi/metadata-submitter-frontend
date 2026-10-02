@@ -5,16 +5,16 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import { GridColDef } from "@mui/x-data-grid"
 import type { GridSortDirection } from "@mui/x-data-grid"
-import { uniqBy, upperFirst } from "lodash"
+import { uniqBy } from "lodash"
 import { useTranslation } from "react-i18next"
 
 import DataTable from "components/DataTable"
-import type { DataFileRow, File } from "types"
-import { isFile } from "utils"
+import type { DataFileRow, BucketFile } from "types"
+import { formatBytes, isBucketFile } from "utils"
 
 type FilesTableProps = {
   currentFilePath: string
-  files: File[]
+  files: BucketFile[]
   handleClickFileRow: (path: string, name: string) => void
 }
 
@@ -47,10 +47,10 @@ const FilesTable: React.FC<FilesTableProps> = props => {
             height="100%"
             onClick={() => handleClickFileRow(params.row.id, params.row.name)}
           >
-            {!isFile(files, params.row.id) && (
+            {!isBucketFile(files, params.row.id) && (
               <FolderIcon color="primary" fontSize="medium" sx={{ mr: "0.5rem" }} />
             )}
-            <Typography component="span">{upperFirst(params.row.name)}</Typography>
+            <Typography component="span">{params.row.name}</Typography>
           </Box>
         )
       },
@@ -59,7 +59,7 @@ const FilesTable: React.FC<FilesTableProps> = props => {
       field: "size",
       headerName: t("dataTable.size"),
       type: "number",
-      sortable: true, // TODO: need to convert sizes to humanreadable bytes
+      sortable: true,
     },
     {
       field: "lastModified",
@@ -94,8 +94,8 @@ const FilesTable: React.FC<FilesTableProps> = props => {
       return {
         id: file.path,
         name: file.name,
-        size: file.bytes,
-        lastModified: "",
+        size: formatBytes(file.bytes),
+        lastModified: "TBD",
       }
     })
   }

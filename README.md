@@ -8,8 +8,8 @@ SD Submit UI, also known as metadata submission frontend provides graphical user
 
 ### Prerequisites
 
-- Node 20+
-- pnpm
+- Node 24+
+- pnpm 12+
 - Backend
 
 Install pnpm that suits your machine from [pnpm installation](https://pnpm.io/installation).

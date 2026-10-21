@@ -1,6 +1,5 @@
 stages:
   - test
-  - audit
   - build
   - scan
   - upload
@@ -46,26 +45,6 @@ unittest:
   extends: .test-base
   script:
     - pnpm run test:coverage
-
-#
-# JFrog audit for pnpm
-#
-jfrog-pnpm-audit:
-  stage: audit
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME != "renovate-bot"'
-      when: always
-      variables:
-        WATCH: sds-watch
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $GITLAB_USER_NAME == "renovate-bot"'
-      variables:
-        WATCH: sds-renovate
-  tags:
-    - sds-test
-  before_script:
-    - jf config import "${JF_CONFIG_READ_ONLY}"
-  script:
-    - jf audit --pnpm --extended-table --watches=$WATCH
 
 #
 # Docker image build

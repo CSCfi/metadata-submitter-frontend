@@ -96,7 +96,6 @@
     "pg": "^8.16.3",
     "pinst": "^3.0.0",
     "prettier": "^3.0.0",
-    "snapshot-diff": "^0.10.0",
     "typescript": "^5.0.2",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vitest": "^4.0.16"

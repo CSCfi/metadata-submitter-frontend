@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- CI audit job
+- Default branch rules from both build and scan Gitlab pipelines are removed.
+
 ## [2026.10.0] - 2026-10-06
 
 ### Added

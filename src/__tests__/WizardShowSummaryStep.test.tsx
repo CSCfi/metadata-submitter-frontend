@@ -1,13 +1,10 @@
 //import { screen, within } from "@testing-library/react"
 import { MemoryRouter, Routes, Route } from "react-router"
-import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardShowSummaryStep from "../components/SubmissionWizard/WizardSteps/WizardShowSummaryStep"
 
 // import { ObjectSubmissionTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
-
-expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardShowSummaryStep", () => {
   // const submittedObjects = [

@@ -3,14 +3,11 @@ import { act } from "react"
 
 import { screen } from "@testing-library/react"
 import { MemoryRouter, Routes, Route } from "react-router"
-import { toMatchDiffSnapshot } from "snapshot-diff"
 
 import WizardAddObjectStep from "../components/SubmissionWizard/WizardSteps/WizardAddObjectStep"
 
 import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
-
-expect.extend({ toMatchDiffSnapshot })
 
 describe("WizardAddObjectStep", () => {
   /* This test needs to be changed in the future when we afford XML object.

@@ -341,9 +341,12 @@ const FormContent = ({
         onBlur={() =>
           checkUnsavedInputHook(
             methods.formState.dirtyFields,
-            methods.formState.defaultValues,
+            objectType === SDObjectTypes.publicMetadata
+              ? submission.metadata
+              : methods.formState.defaultValues,
             methods.getValues,
-            dispatch
+            dispatch,
+            true
           )
         }
       >

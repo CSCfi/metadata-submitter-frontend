@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI audit job
 - Default branch rules from both build and scan Gitlab pipelines are removed.
 
+### Fixed
+
+- (users) Fixed removing an added field not triggering unsaved input alert (#1105)
+
 ## [2026.10.0] - 2026-10-06
 
 ### Added

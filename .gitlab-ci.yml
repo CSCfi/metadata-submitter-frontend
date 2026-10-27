@@ -110,6 +110,14 @@ upload-image:
   stage: upload
   tags:
     - sds-upload
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: "$VAULT_SERVER_URL"
+  secrets:
+    JF_CONFIG:
+      vault: gitlab-ci-upload-runner/protected/JF_CONFIG@secret
+      token: $VAULT_ID_TOKEN
+      file: false
   rules:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never

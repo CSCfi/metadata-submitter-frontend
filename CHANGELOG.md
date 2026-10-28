@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (users) Fixed removing an added field not triggering unsaved input alert (#1105)
 
+### Changed
+
+- get secret CI variable `JF_CONFIG` from Vault
+
 ## [2026.10.0] - 2026-10-06
 
 ### Added

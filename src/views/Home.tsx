@@ -96,21 +96,21 @@ const Home: React.FC = () => {
   useEffect(() => {
     let isMounted = true
     const getSubmissions = async () => {
-      const unpublishedResponse = await submissionAPIService.getSubmissions({
-        page: 1,
-        per_page: 5,
-        published: false,
-        projectId: projectId,
-      })
-      const publishedResponse = await submissionAPIService.getSubmissions({
-        page: 1,
-        per_page: 5,
-        published: true,
-        projectId: projectId,
-      })
-
       if (isMounted) {
-        if (unpublishedResponse.ok && publishedResponse.ok) {
+        try {
+          const unpublishedResponse = await submissionAPIService.getSubmissions({
+            page: 1,
+            per_page: 5,
+            published: false,
+            projectId: projectId,
+          })
+          const publishedResponse = await submissionAPIService.getSubmissions({
+            page: 1,
+            per_page: 5,
+            published: true,
+            projectId: projectId,
+          })
+
           const unpublishedData = unpublishedResponse.data
           const publishedData = publishedResponse.data
           // Set total number of submissions
@@ -120,11 +120,11 @@ const Home: React.FC = () => {
             unpublishedData.page.totalSubmissions + publishedData.page.totalSubmissions
           )
           setFetchingSubmissions(false)
-        } else {
+        } catch (error) {
           dispatch(
             updateStatus({
               status: ResponseStatus.error,
-              response: !unpublishedResponse.ok ? unpublishedResponse : publishedResponse,
+              response: error,
               helperText: "snackbarMessages.error.helperText.fetchSubmissions",
             })
           )

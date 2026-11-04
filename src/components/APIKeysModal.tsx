@@ -95,14 +95,14 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
 
   useEffect(() => {
     const getApiKeys = async () => {
-      const response = await apiKeysService.getAPIKeys()
-      if (response.ok) {
+      try {
+        const response = await apiKeysService.getAPIKeys()
         setApikeys(response.data.map(item => item.key_id))
-      } else {
+      } catch (error) {
         dispatch(
           updateStatus({
             status: ResponseStatus.error,
-            response: response,
+            response: error,
           })
         )
       }
@@ -129,16 +129,16 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
   const handleCreateKey = async () => {
     if (keyInput === "") setIsEmptyName(true)
     else if (!apiKeys.includes(keyInput)) {
-      const response = await apiKeysService.addAPIKey(keyInput)
-      if (response.ok) {
+      try {
+        const response = await apiKeysService.addAPIKey(keyInput)
         setNewKey({ keyName: keyInput, keyValue: response.data })
         setApikeys(apiKeys.concat([keyInput]))
         setKeyInput("")
-      } else {
+      } catch (error) {
         dispatch(
           updateStatus({
             status: ResponseStatus.error,
-            response: response,
+            response: error,
           })
         )
       }
@@ -146,15 +146,15 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
   }
 
   const handleDelete = async (key: string) => {
-    const response = await apiKeysService.deleteAPIKey(key)
-    if (response.ok) {
+    try {
+      await apiKeysService.deleteAPIKey(key)
       setApikeys(apiKeys.filter(item => item !== key))
       if (key === newKey.keyName) setNewKey({ keyName: "", keyValue: "" })
-    } else {
+    } catch (error) {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
-          response: response,
+          response: error,
         })
       )
     }

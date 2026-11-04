@@ -4,6 +4,7 @@ import { setupServer } from "msw/node"
 import { MemoryRouter, Routes, Route } from "react-router"
 
 import { ExtraObjectTypes } from "constants/wizardObject"
+import { WorkflowTypes } from "constants/wizardWorkflow"
 import { addApiPrefix } from "utils/getConfig"
 import { renderWithProviders } from "utils/test-utils"
 import SubmissionWizard from "views/Submission"
@@ -25,7 +26,6 @@ const restHandlers = [
   }),
   http.get(`${submissionPath}/:submissionId`, ({ params }) => {
     const id = params.submissionId
-
     return id === "123456"
       ? HttpResponse.json({
           name: submissionName,
@@ -54,7 +54,12 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
+      {
+        preloadedState: {
+          workflowType: WorkflowTypes.sd,
+        },
+      }
     )
 
     await waitFor(() => expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument())
@@ -66,7 +71,12 @@ describe("SubmissionWizard", () => {
         <Routes>
           <Route path="/submission/:submissionId" element={<SubmissionWizard />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
+      {
+        preloadedState: {
+          workflowType: WorkflowTypes.sd,
+        },
+      }
     )
     await waitFor(() => expect(screen.getByText("404 – PAGE NOT FOUND")).toBeInTheDocument())
   })
@@ -81,6 +91,7 @@ describe("SubmissionWizard", () => {
       {
         preloadedState: {
           objectType: ExtraObjectTypes.submissionDetails,
+          workflowType: WorkflowTypes.sd,
         },
       }
     )

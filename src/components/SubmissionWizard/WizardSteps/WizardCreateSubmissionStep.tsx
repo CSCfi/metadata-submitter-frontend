@@ -81,40 +81,40 @@ const CreateSubmissionForm = () => {
     }
 
     if (submission && submission?.submissionId) {
-      dispatch(updateSubmission(Object.assign({ ...data, submission })))
-        .then(() => {
-          reset(data, { keepValues: true }) // reset form state
-          dispatch(resetUnsavedForm())
-          dispatch(
-            updateStatus({
-              status: ResponseStatus.success,
-              helperText: "snackbarMessages.success.submission.updated",
-            })
-          )
-        })
-        .catch((error: string) => {
-          dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
-        })
+      try {
+        await dispatch(updateSubmission(Object.assign({ ...data, submission })))
+        // reset form state
+        reset(data, { keepValues: true })
+        dispatch(resetUnsavedForm())
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "snackbarMessages.success.submission.updated",
+          })
+        )
+      } catch (error) {
+        dispatch(updateStatus({ status: ResponseStatus.error, response: error }))
+      }
     } else {
       // Create a new submission
       // dispatch(setWorkflowType(data.workflowType))
       dispatch(setWorkflowType(WorkflowTypes.sd))
       dispatch(setObjectType(ExtraObjectTypes.submissionDetails))
-      dispatch(createSubmission(projectId, data))
-        .then(() => {
-          // RHF does not reset form state after submit
-          reset(data, { keepValues: true })
-          dispatch(resetUnsavedForm())
-          dispatch(
-            updateStatus({
-              status: ResponseStatus.success,
-              helperText: "snackbarMessages.success.submission.created",
-            })
-          )
-        })
-        .catch((error: string) => {
-          dispatch(updateStatus({ status: ResponseStatus.error, response: JSON.parse(error) }))
-        })
+
+      try {
+        await dispatch(createSubmission(projectId, data))
+        // RHF does not reset form state after submit
+        reset(data, { keepValues: true })
+        dispatch(resetUnsavedForm())
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.success,
+            helperText: "snackbarMessages.success.submission.created",
+          })
+        )
+      } catch (error) {
+        dispatch(updateStatus({ status: ResponseStatus.error, response: error }))
+      }
     }
   }
 

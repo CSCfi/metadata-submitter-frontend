@@ -22,12 +22,23 @@ const WizardPublishStep = () => {
 
   useEffect(() => {
     if (submission.published && !submission.registrations) {
-      dispatch(addRegistrationsToSubmission(submission.submissionId))
+      try {
+        dispatch(addRegistrationsToSubmission(submission.submissionId))
+      } catch (error) {
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: error,
+          })
+        )
+      }
     }
   }, [submission.published])
 
-  const publish = async () => {
-    dispatch(publishSubmissionContent(submission)).catch(error =>
+  const publish = () => {
+    try {
+      dispatch(publishSubmissionContent(submission))
+    } catch (error) {
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
@@ -35,7 +46,7 @@ const WizardPublishStep = () => {
           helperText: "snackbarMessages.error.helperText.submissionPublish",
         })
       )
-    )
+    }
   }
 
   const copyLink = () => {

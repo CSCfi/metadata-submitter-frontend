@@ -21,29 +21,30 @@ const editObjectHook = async (
   dispatch: (reducer: unknown) => Promise<APIResponse>,
   navigate: NavigateFunction
 ) => {
-  const response = await submissionAPIService.getObjectByObjectId(
-    submissionId,
-    objectType,
-    item.id as string
-  )
-  const pathname = pathWithLocale(`submission/${submissionId}`)
+  try {
+    const response = await submissionAPIService.getObjectByObjectId(
+      submissionId,
+      objectType,
+      item.id as string
+    )
+    const pathname = pathWithLocale(`submission/${submissionId}`)
 
-  if (response.ok) {
     dispatch(setObjectType(objectType))
     dispatch(resetCurrentObject())
     dispatch(setCurrentObject({ ...response.data }))
     dispatch(setFocus())
     navigate({ pathname: pathname, search: `step=${step}` })
-  } else {
+
+    return response
+  } catch (error) {
     dispatch(
       updateStatus({
         status: ResponseStatus.error,
-        response: response,
+        response: error,
         helperText: "snackbarMessages.error.helperText.fetchObject",
       })
     )
   }
-  return response
 }
 
 export default editObjectHook

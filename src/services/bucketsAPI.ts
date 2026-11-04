@@ -1,32 +1,29 @@
-import { create } from "apisauce"
+import { APIResponse } from "../types"
 
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
-import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/buckets")
 
-const api = create({ baseURL: apiPath })
-api.addMonitor(errorMonitor)
+const api = createApiClient(apiPath)
 
-const getProjectBuckets = async (projectId: string): Promise<APIResponse> => {
-  return await api.get("", { projectId })
+const getProjectBuckets = (projectId: string): Promise<APIResponse> => {
+  return api.get("", { params: { projectId } })
 }
 
-const getBucketFiles = async (projectId: string, bucketName: string): Promise<APIResponse> => {
-  const files = await api.get(`/${bucketName}/files/?projectId=${projectId}`)
-  return files
+const getBucketFiles = (projectId: string, bucketName: string): Promise<APIResponse> => {
+  return api.get(`/${bucketName}/files/?projectId=${projectId}`)
 }
 
 // Grant access to a specific bucket
-const grantAccessBucket = async (projectId: string, bucketName: string): Promise<APIResponse> => {
-  return await api.put(`/${bucketName}?projectId=${projectId}`)
+const grantAccessBucket = (projectId: string, bucketName: string): Promise<APIResponse> => {
+  return api.put(`/${bucketName}?projectId=${projectId}`)
 }
 
 // Check if a specific bucket can be accessed
-const checkAccessBucket = async (projectId: string, bucketName: string): Promise<APIResponse> => {
-  return await api.head(`/${bucketName}?projectId=${projectId}`)
+const checkAccessBucket = (projectId: string, bucketName: string): Promise<APIResponse> => {
+  return api.head(`/${bucketName}?projectId=${projectId}`)
 }
 
 export default {

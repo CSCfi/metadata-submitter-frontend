@@ -11,6 +11,24 @@ import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardFo
 import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
+vi.mock("../schemas/submission.json", () => ({
+  default: {
+    title: "Submission",
+    type: "object",
+    properties: {
+      metadata: {
+        type: "object",
+        properties: {
+          affiliation: {
+            type: "string",
+            title: "Organisation",
+          },
+        },
+      },
+    },
+  },
+}))
+
 const mockOrganisations = [
   {
     id: "https://ror.org/01",
@@ -38,24 +56,6 @@ describe("Test autocomplete on affiliation field", () => {
   beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
-
-  vi.mock("../schemas/submission.json", () => ({
-    default: {
-      title: "Submission",
-      type: "object",
-      properties: {
-        metadata: {
-          type: "object",
-          properties: {
-            affiliation: {
-              type: "string",
-              title: "Organisation",
-            },
-          },
-        },
-      },
-    },
-  }))
 
   test("should render autocomplete field if schema has 'affiliation' property", async () => {
     act(() => {

@@ -82,9 +82,18 @@ const WizardDataBucketStep = () => {
     setAlert(false)
   }
 
-  const handleLinkBucket = async () => {
+  const handleLinkBucket = () => {
     dispatch(resetUnsavedForm())
-    dispatch(addBucketToSubmission(submission.submissionId, selectedBucket))
+    try {
+      dispatch(addBucketToSubmission(submission.submissionId, selectedBucket))
+    } catch (error) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: error,
+        })
+      )
+    }
   }
 
   const handleBucketChange = (event: React.ChangeEvent<HTMLInputElement>) => {

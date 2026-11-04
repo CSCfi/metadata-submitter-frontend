@@ -120,13 +120,12 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
       const file = data.fileUpload[0] || {}
 
       if (currentObject?.accessionId) {
-        const response = await objectAPIService.replaceXML(
-          objectType,
-          currentObject.accessionId,
-          file
-        )
-
-        if (response.ok) {
+        try {
+          const response = await objectAPIService.replaceXML(
+            objectType,
+            currentObject.accessionId,
+            file
+          )
           dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
           dispatch(
             setCurrentObject({
@@ -134,20 +133,19 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
             })
           )
           resetForm()
-        } else {
-          dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
+        } catch (error) {
+          dispatch(updateStatus({ status: ResponseStatus.error, response: error }))
         }
       } else {
-        const response = await objectAPIService.createFromXML(objectType, submissionId, file)
-
-        if (response.ok) {
+        try {
+          const response = await objectAPIService.createFromXML(objectType, submissionId, file)
           // TODO (if needed): addObject to objects array
           dispatch(updateStatus({ status: ResponseStatus.success, response: response }))
           dispatch(setObjectType(objectType))
           dispatch(setCurrentObject({}))
           resetForm()
-        } else {
-          dispatch(updateStatus({ status: ResponseStatus.error, response: response }))
+        } catch (error) {
+          dispatch(updateStatus({ status: ResponseStatus.error, response: error }))
         }
       }
       dispatch(resetLoading())
@@ -217,11 +215,9 @@ const WizardXMLUploadModal = ({ open, handleClose, currentObject }: WizardXMLUpl
                   isFile: value => value?.length > 0,
                   isXML: value => value[0]?.type === "text/xml",
                   isValidXML: async value => {
-                    const response = await xmlSubmissionAPIService.validateXMLFile(
-                      objectType,
-                      value[0]
-                    )
-                    if (!response.ok) {
+                    try {
+                      await xmlSubmissionAPIService.validateXMLFile(objectType, value[0])
+                    } catch {
                       /*const errors = response.data.errors.map(
                         error =>
                           ` ${error.reason} Position: ${error.position}, pointer: ${error.pointer}`

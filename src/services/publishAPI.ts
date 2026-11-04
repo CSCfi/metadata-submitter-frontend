@@ -1,17 +1,15 @@
-import { create } from "apisauce"
+import { APIResponse } from "../types"
 
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
-import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/publish")
 
-const api = create({ baseURL: apiPath })
-api.addMonitor(errorMonitor)
+const api = createApiClient(apiPath)
 
-const publishSubmissionById = async (submissionId: string): Promise<APIResponse> => {
-  return await api.patch(`/${submissionId}`)
+const publishSubmissionById = (submissionId: string): Promise<APIResponse> => {
+  return api.patch(`/${submissionId}`)
 }
 
 export default {

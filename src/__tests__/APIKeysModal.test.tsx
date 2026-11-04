@@ -44,14 +44,14 @@ const server = setupServer(...restHandlers)
 describe("APIKeysModal", () => {
   beforeAll(() => server.listen())
 
-  beforeEach(async () => {
+  beforeEach(() => {
     renderWithProviders(<APIKeysModal open={true} onClose={handleClose} />)
   })
 
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  test("shpuld render the modal", async () => {
+  test("should render the modal", async () => {
     expect(screen.getByText("Create SD Submit API keys")).toBeVisible()
     expect(screen.getByTestId("api-key-create-button")).toHaveTextContent("Create key")
     expect(screen.getByTestId("no-api-keys")).toBeVisible()

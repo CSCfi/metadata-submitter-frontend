@@ -30,7 +30,9 @@ import { useFieldArray, useFormContext, useForm, Controller, useWatch } from "re
 import { useTranslation } from "react-i18next"
 
 import HelpTooltip from "components/HelpTooltip"
+import { ResponseStatus } from "constants/responseStatus"
 import { setAutocompleteField } from "features/autocompleteSlice"
+import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import rorAPIService from "services/rorAPI"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
@@ -979,13 +981,13 @@ const FormAutocompleteField = ({
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
     const isContainingNonWordChar = searchTerm.match(/\W/g)
-    const response =
-      isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
 
-    if (response) setLoading(false)
+    try {
+      const response =
+        isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
+      setLoading(false)
 
-    if (response?.ok) {
-      const mappedOrganisations = response.data.items.reduce(
+      const mappedOrganisations = response?.data.items.reduce(
         (orgArr: RORItem[], org: ROROrganization) => {
           const orgName = org.names.filter(name => name.types.includes("ror_display"))[0]?.value
           if (orgName) {
@@ -998,8 +1000,14 @@ const FormAutocompleteField = ({
         },
         []
       )
-
       setOptions(mappedOrganisations)
+    } catch (error) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: error,
+        })
+      )
     }
   }
 

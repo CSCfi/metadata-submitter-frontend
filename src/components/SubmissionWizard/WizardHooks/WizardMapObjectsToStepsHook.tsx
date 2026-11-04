@@ -15,6 +15,7 @@ import type {
   SDSchemaName,
 } from "types"
 import { hasMetadata } from "utils"
+
 /*
  * Map the structure of objects within a submission to separate steps in the Accordion
  */

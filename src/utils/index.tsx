@@ -1,3 +1,4 @@
+import axios from "axios"
 import { uniq } from "lodash"
 import moment from "moment"
 import { useLocation } from "react-router"
@@ -110,4 +111,8 @@ export const formatBytes = (bytes: number, decimals: number = 2) => {
   const sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
 
   return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(d))} ${sizes[i]}`
+}
+
+export const isAxiosErrorWithStatus = (error: unknown, status: number): boolean => {
+  return axios.isAxiosError(error) && error.response?.status === status
 }

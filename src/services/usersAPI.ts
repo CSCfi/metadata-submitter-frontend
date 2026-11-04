@@ -1,18 +1,14 @@
-import { create } from "apisauce"
+import { APIResponse } from "../types"
 
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
-import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/users")
 
-const api = create({ baseURL: apiPath })
-api.addMonitor(errorMonitor)
+const api = createApiClient(apiPath)
 
-const getUser = async (): Promise<APIResponse> => {
-  return await api.get("")
-}
+const getUser = (): Promise<APIResponse> => api.get("")
 
 export default {
   getUser,

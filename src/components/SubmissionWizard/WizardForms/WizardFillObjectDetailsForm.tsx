@@ -203,28 +203,27 @@ const FormContent = ({
   }
 
   const handleMetadataSubmit = async (data: MetadataFormDetails) => {
-    dispatch(addMetadataToSubmission(submission.submissionId, data))
-      .then(() => {
-        dispatch(resetAutocompleteField())
-        // dispatch(resetCurrentObject())
-        methods.reset(data, { keepValues: true })
-        dispatch(resetUnsavedForm())
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            helperText: "snackbarMessages.success.doi.saved",
-          })
-        )
-      })
-      .catch(error =>
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-            helperText: "snackbarMessages.error.helperText.submitDoi",
-          })
-        )
+    try {
+      await dispatch(addMetadataToSubmission(submission.submissionId, data))
+      dispatch(resetAutocompleteField())
+      // dispatch(resetCurrentObject())
+      methods.reset(data, { keepValues: true })
+      dispatch(resetUnsavedForm())
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.success,
+          helperText: "snackbarMessages.success.doi.saved",
+        })
       )
+    } catch (error) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: error,
+          helperText: "snackbarMessages.error.helperText.submitDoi",
+        })
+      )
+    }
   }
 
   const handleValidationErrors = (errors: FieldErrors) => {

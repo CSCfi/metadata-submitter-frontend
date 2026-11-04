@@ -131,25 +131,24 @@ const DacPoliciesForm = () => {
 
   const onSubmit = async data => {
     const remsData = { ...data, licenses: data.licenses.concat(linkedPolicies) }
-    dispatch(addRemsToSubmission(submissionId, remsData))
-      .then(() => {
-        reset(data, { keepValues: true }) // reset form state
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.success,
-            helperText: "snackbarMessages.success.rems.saved",
-          })
-        )
-      })
-      .catch(error =>
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: error,
-            helperText: "snackbarMessages.error.helperText.submitRems",
-          })
-        )
+    try {
+      await dispatch(addRemsToSubmission(submissionId, remsData))
+      reset(data, { keepValues: true }) // reset form state
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.success,
+          helperText: "snackbarMessages.success.rems.saved",
+        })
       )
+    } catch (error) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: error,
+          helperText: "snackbarMessages.error.helperText.submitRems",
+        })
+      )
+    }
   }
 
   const SaveButton = (

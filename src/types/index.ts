@@ -1,4 +1,4 @@
-import { ApiResponse } from "apisauce"
+import type { AxiosResponse } from "axios"
 import {
   UseFormRegister,
   FieldValues,
@@ -179,9 +179,7 @@ export type NestedField = {
   fieldValues: string
 }
 
-// ApiSauce uses "any" as argument for response type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type APIResponse = ApiResponse<any>
+export type APIResponse = AxiosResponse
 
 export type ObjectDisplayValues = {
   descriptor?: { studyTitle?: string }

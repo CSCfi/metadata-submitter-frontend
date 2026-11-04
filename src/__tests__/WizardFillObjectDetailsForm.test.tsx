@@ -8,65 +8,65 @@ import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardFo
 import { SDObjectTypes } from "constants/wizardObject"
 import { renderWithProviders } from "utils/test-utils"
 
-describe("WizardFillObjectDetailsForm", () => {
-  vi.mock("../schemas/submission.json", () => ({
-    default: {
-      title: "Submission",
-      type: "object",
-      properties: {
-        metadata: {
-          type: "object",
-          title: "Public metadata of your dataset",
-          properties: {
-            creators: {
-              type: "array",
-              title: "Creators",
-              description:
-                "The main researcher(s) involved in producing the data, or the author(s) of the publication.",
-              items: {
-                type: "object",
-                title: "Main researcher(s) involved with data or the author(s) of the publication.",
-                required: ["givenName", "familyName", "affiliation"],
-                properties: {
-                  givenName: {
-                    type: "string",
-                    title: "Given Name",
-                  },
-                  familyName: {
-                    type: "string",
-                    title: "Family Name",
-                  },
-                  affiliation: {
-                    type: "array",
-                    title: "Affiliations",
-                    description:
-                      "The organizational or institutional affiliation of the creator. Upon filling the form with the organization or institution suggestion will be made from Research Organization Registry (ROR) Community API.",
-                    items: {
-                      type: "object",
-                      title: "Affiliation Details",
-                      required: ["name"],
-                      properties: {
-                        name: {
-                          type: "string",
-                          title: "Name of the place of affiliation",
-                        },
+vi.mock("../schemas/submission.json", () => ({
+  default: {
+    title: "Submission",
+    type: "object",
+    properties: {
+      metadata: {
+        type: "object",
+        title: "Public metadata of your dataset",
+        properties: {
+          creators: {
+            type: "array",
+            title: "Creators",
+            description:
+              "The main researcher(s) involved in producing the data, or the author(s) of the publication.",
+            items: {
+              type: "object",
+              title: "Main researcher(s) involved with data or the author(s) of the publication.",
+              required: ["givenName", "familyName", "affiliation"],
+              properties: {
+                givenName: {
+                  type: "string",
+                  title: "Given Name",
+                },
+                familyName: {
+                  type: "string",
+                  title: "Family Name",
+                },
+                affiliation: {
+                  type: "array",
+                  title: "Affiliations",
+                  description:
+                    "The organizational or institutional affiliation of the creator. Upon filling the form with the organization or institution suggestion will be made from Research Organization Registry (ROR) Community API.",
+                  items: {
+                    type: "object",
+                    title: "Affiliation Details",
+                    required: ["name"],
+                    properties: {
+                      name: {
+                        type: "string",
+                        title: "Name of the place of affiliation",
                       },
                     },
                   },
                 },
               },
             },
-            keywords: {
-              type: "string",
-              title: "Keywords",
-              description: "A list of keywords or tags describing the resources.",
-            },
+          },
+          keywords: {
+            type: "string",
+            title: "Keywords",
+            description: "A list of keywords or tags describing the resources.",
           },
         },
       },
     },
-  }))
+  },
+}))
 
+describe("WizardFillObjectDetailsForm", () => {
   const state = {
     objectType: SDObjectTypes.publicMetadata,
     submission: {

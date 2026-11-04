@@ -8,7 +8,6 @@ import type {
   SubmissionDetailsWithId,
   SubmissionDataFromForm,
   MetadataFormDetails,
-  APIResponse,
   Creator,
   Contributor,
   Description,
@@ -63,7 +62,7 @@ export default wizardSubmissionSlice.reducer
 
 export const createSubmission =
   (projectId: string, submissionDetails: SubmissionDataFromForm) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
     const { name, title, description, workflowType: workflow } = submissionDetails
     const submissionForBackend: SubmissionDetails = {
       name,
@@ -76,81 +75,50 @@ export const createSubmission =
 
     const response = await submissionAPIService.createNewSubmission(submissionForBackend)
 
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        const submission: SubmissionDetailsWithId = {
-          ...submissionForBackend,
-          submissionId: response.data.submissionId,
-        }
-        dispatch(setSubmission(submission))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    const submission: SubmissionDetailsWithId = {
+      ...submissionForBackend,
+      submissionId: response.data.submissionId,
+    }
+    dispatch(setSubmission(submission))
   }
 
 export const updateSubmission =
   (submissionDetails: SubmissionDataFromForm & { submission: SubmissionDetailsWithId }) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.patchSubmissionById(
-      submissionDetails.submission.submissionId,
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
+    await submissionAPIService.patchSubmissionById(submissionDetails.submission.submissionId, {
+      name: submissionDetails.name,
+      title: submissionDetails.title,
+      description: submissionDetails.description,
+    })
+
+    const updatedSubmission = extend(
+      { ...submissionDetails.submission },
       {
         name: submissionDetails.name,
         title: submissionDetails.title,
         description: submissionDetails.description,
       }
     )
-
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        const updatedSubmission = extend(
-          { ...submissionDetails.submission },
-          {
-            name: submissionDetails.name,
-            title: submissionDetails.title,
-            description: submissionDetails.description,
-          }
-        )
-        dispatch(setSubmission(updatedSubmission))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    dispatch(setSubmission(updatedSubmission))
   }
 
 export const publishSubmissionContent =
   (submission: SubmissionDetailsWithId) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await publishAPIService.publishSubmissionById(submission.submissionId)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        const updatedSubmission = { ...submission, published: true }
-        dispatch(setSubmission(updatedSubmission))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
+    await publishAPIService.publishSubmissionById(submission.submissionId)
+    const updatedSubmission = { ...submission, published: true }
+    dispatch(setSubmission(updatedSubmission))
   }
 
 export const deleteSubmissionAndContent =
-  (submissionId: string): (() => Promise<APIResponse | undefined>) =>
+  (submissionId: string): (() => Promise<void>) =>
   async () => {
-    const response = await submissionAPIService.deleteSubmissionById(submissionId)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        resolve(response)
-      } else {
-        reject({ response: JSON.stringify(response) })
-      }
-    })
+    await submissionAPIService.deleteSubmissionById(submissionId)
   }
 
 export const addMetadataToSubmission =
   (submissionId: string, metadataFormDetails: MetadataFormDetails) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
     const nameType = { nameType: "Personal" }
     /*
      * 'nameType' is currently set default to 'Personal for 'creators' and 'contributors'.
@@ -195,68 +163,40 @@ export const addMetadataToSubmission =
     delete modifiedMetadataFormDetails["accessionId"]
     delete modifiedMetadataFormDetails["cleanedValues"]
 
-    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+    await submissionAPIService.patchSubmissionById(submissionId, {
       metadata: modifiedMetadataFormDetails,
     })
 
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(addMetadata(metadataFormDetails))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    dispatch(addMetadata(metadataFormDetails))
   }
 
 export const addBucketToSubmission =
   (submissionId: string, bucketName: string) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
+    await submissionAPIService.patchSubmissionById(submissionId, {
       bucket: bucketName,
     })
 
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(addBucket(bucketName))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    dispatch(addBucket(bucketName))
   }
 
 export const addRemsToSubmission =
   (submissionId: string, remsData: RemsDetails) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
-    const response = await submissionAPIService.patchSubmissionById(submissionId, {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
+    await submissionAPIService.patchSubmissionById(submissionId, {
       rems: remsData,
     })
 
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        dispatch(addRemsData(remsData))
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    dispatch(addRemsData(remsData))
   }
 
 export const addRegistrationsToSubmission =
   (submissionId: string) =>
-  async (dispatch: (reducer: DispatchReducer) => void): Promise<APIResponse> => {
+  async (dispatch: (reducer: DispatchReducer) => void): Promise<void> => {
     const response = await submissionAPIService.getSubmissionRegistrations(submissionId)
-    return new Promise((resolve, reject) => {
-      if (response.ok) {
-        const data = response.data?.[0]
-        if (data) {
-          const rest = omit(data, ["submissionId", "title", "description"])
-          dispatch(addRegistrations(rest))
-        }
-        resolve(response)
-      } else {
-        reject(JSON.stringify(response))
-      }
-    })
+    const data = response.data?.[0]
+    if (data) {
+      const rest = omit(data, ["submissionId", "title", "description"])
+      dispatch(addRegistrations(rest))
+    }
   }

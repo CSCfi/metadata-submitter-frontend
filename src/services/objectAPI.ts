@@ -1,10 +1,10 @@
-import { create } from "apisauce"
 import { omit } from "lodash"
 
-import { errorMonitor } from "./errorMonitor"
+import { APIResponse } from "../types"
+
+import createApiClient from "./apiClient"
 
 import { OmitObjectValues } from "constants/wizardObject"
-import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/objects")
@@ -16,58 +16,53 @@ const apiPath = await addApiPrefix("/v1/objects")
   - 'getAllObjectsByObjectType' and 'getObjectByObjectId' are moved to 'submissionAPI'.
 *
 */
-const api = create({ baseURL: apiPath })
-api.addMonitor(errorMonitor)
+const api = createApiClient(apiPath)
 
-const createFromXML = async (
+const createFromXML = (
   objectType: string,
   submissionId: string,
   XMLFile: File
 ): Promise<APIResponse> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return await api.post(`/${objectType}?submission=${submissionId}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  })
+  return api.post(`/${objectType}?submission=${submissionId}`, formData)
 }
 
 /*
   Backend now supports creating multiple objects at once, the response is an Array of objects.
   Frontend only creates one object at a time atm but we may support this multi-object feature also in the future.
 */
-const createFromJSON = async (
+const createFromJSON = (
   objectType: string,
   submissionId: string,
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
-  return await api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
+  return api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
 }
 
-const patchFromJSON = async (
+const patchFromJSON = (
   objectType: string,
   accessionId: string,
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
-  return await api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
+  return api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
 }
 
-const replaceXML = async (
+const replaceXML = (
   objectType: string,
   accessionId: string,
   XMLFile: File
 ): Promise<APIResponse> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return await api.put(`/${objectType}/${accessionId}`, formData)
+  return api.put(`/${objectType}/${accessionId}`, formData)
 }
 
-const deleteObjectByAccessionId = async (
+const deleteObjectByAccessionId = (
   objectType: string,
   accessionId: string
 ): Promise<APIResponse> => {
-  return await api.delete(`/${objectType}/${accessionId}`)
+  return api.delete(`/${objectType}/${accessionId}`)
 }
 
 export default {

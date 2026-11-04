@@ -131,7 +131,7 @@ console.log(metadataObjects) // Should be an empty array
 
 ## API
 
-API/backend modules are defined in `services/` -folder with help from `apisauce` library. Modules should be only responsible for API-related things, so one shouldn't modify data inside them.
+API/backend modules are defined in `services/` -folder with help from `axios` library. Modules should be only responsible for API-related things, so one shouldn't modify data inside them.
 
 Example:
 

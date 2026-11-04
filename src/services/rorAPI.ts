@@ -1,14 +1,12 @@
-import { create } from "apisauce"
+import { APIResponse } from "../types"
 
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
-import { APIResponse } from "types"
+const apiPath = "https://api.ror.org"
+const api = createApiClient(apiPath)
 
-const api = create({ baseURL: "https://api.ror.org" })
-api.addMonitor(errorMonitor)
-
-const getOrganisations = async (searchTerm: string): Promise<APIResponse> => {
-  return await api.get("/organizations", { query: searchTerm })
+const getOrganisations = (searchTerm: string): Promise<APIResponse> => {
+  return api.get("/organizations", { params: { query: searchTerm } })
 }
 
 export default {

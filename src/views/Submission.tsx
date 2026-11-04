@@ -25,7 +25,7 @@ import { useAppDispatch, useAppSelector } from "hooks"
 import remsAPIService from "services/remsAPI"
 import submissionAPIService from "services/submissionAPI"
 import type { HandlerRef, MappedSteps, Workflow } from "types"
-import { useQuery } from "utils"
+import { useQuery, isAxiosErrorWithStatus } from "utils"
 import { loadJSONSchema, loadJSONData, validateJSONData } from "utils/JSONSchemaUtils"
 import Page404 from "views/ErrorPages/Page404"
 
@@ -83,7 +83,6 @@ const SubmissionWizard: React.FC = () => {
       if (isMounted) {
         try {
           const response = await submissionAPIService.getSubmissionById(submissionId)
-          if (response.status === 404) setValidStep(false) // Not a valid step if submissionId is not found
           dispatch(setSubmission(response.data))
           const workflowType = response.data.workflow
           dispatch(setWorkflowType(workflowType))
@@ -94,6 +93,8 @@ const SubmissionWizard: React.FC = () => {
             dispatch(setObjectTypesArray(Object.keys(SDObjectTypes)))
           setFetchingSubmission(false)
         } catch (error) {
+          if (isAxiosErrorWithStatus(error, 404)) setValidStep(false) // Not a valid step if submissionId is not found
+
           navigate({ pathname: "" })
           dispatch(
             updateStatus({

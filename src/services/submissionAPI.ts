@@ -1,42 +1,38 @@
-import { create } from "apisauce"
-
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
 import { APIResponse, SubmissionDetails } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/submissions")
 
-const api = create({ baseURL: apiPath })
+const api = createApiClient(apiPath)
 
-api.addMonitor(errorMonitor)
-
-const createNewSubmission = async (submission: SubmissionDetails): Promise<APIResponse> => {
-  return await api.post("", submission)
+const createNewSubmission = (submission: SubmissionDetails): Promise<APIResponse> => {
+  return api.post("", submission)
 }
 
-const getSubmissionById = async (submissionId: string): Promise<APIResponse> => {
-  return await api.get(`/${submissionId}`)
+const getSubmissionById = (submissionId: string): Promise<APIResponse> => {
+  return api.get(`/${submissionId}`)
 }
 
-const patchSubmissionById = async (
+const patchSubmissionById = (
   submissionId: string,
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse> => {
-  return await api.patch(`/${submissionId}`, JSONContent)
+  return api.patch(`/${submissionId}`, JSONContent)
 }
 
-const deleteSubmissionById = async (submissionId: string): Promise<APIResponse> => {
-  return await api.delete(`/${submissionId}`)
+const deleteSubmissionById = (submissionId: string): Promise<APIResponse> => {
+  return api.delete(`/${submissionId}`)
 }
 
-const getSubmissions = async (params: {
+const getSubmissions = (params: {
   page: number
   per_page: number
   published: boolean
   projectId: string
 }): Promise<APIResponse> => {
-  return await api.get("", params)
+  return api.get("", { params })
 }
 
 /* The below 2 endpoints from backend are mostly focusing on XML objects and
@@ -44,23 +40,23 @@ const getSubmissions = async (params: {
  * Their responses are envisioned what we could get when the backend function being more generalized
  * to serve different cases in the future.
  */
-const getAllObjectsByObjectType = async (
+const getAllObjectsByObjectType = (
   submissionId: string,
   objectType: string
 ): Promise<APIResponse> => {
-  return await api.get(`${submissionId}/objects/docs?objectType=${objectType}`)
+  return api.get(`${submissionId}/objects/docs?objectType=${objectType}`)
 }
 
-const getObjectByObjectId = async (
+const getObjectByObjectId = (
   submissionId: string,
   objectType: string,
   objectId: string
 ): Promise<APIResponse> => {
-  return await api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
+  return api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
 }
 
-const getSubmissionRegistrations = async (submissionId: string): Promise<APIResponse> => {
-  return await api.get(`${submissionId}/registrations`)
+const getSubmissionRegistrations = (submissionId: string): Promise<APIResponse> => {
+  return api.get(`${submissionId}/registrations`)
 }
 
 export default {

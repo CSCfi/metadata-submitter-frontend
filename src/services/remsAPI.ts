@@ -1,17 +1,15 @@
-﻿import { create } from "apisauce"
+﻿import { APIResponse } from "../types"
 
-import { errorMonitor } from "./errorMonitor"
+import createApiClient from "./apiClient"
 
-import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/rems")
 
-const api = create({ baseURL: apiPath })
-api.addMonitor(errorMonitor)
+const api = createApiClient(apiPath)
 
-const getRemsInfo = async (language?: string): Promise<APIResponse> => {
-  return await api.get("", language ? { language } : {})
+const getRemsInfo = (language?: string): Promise<APIResponse> => {
+  return api.get("", { params: language ? { language } : {} })
 }
 
 export default {

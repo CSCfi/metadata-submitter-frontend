@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- apisauce package
 - CI audit job
 - Default branch rules from both build and scan Gitlab pipelines are removed.
 
@@ -19,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - get secret CI variable `JF_CONFIG` from Vault
+
+### Added
+
+- axios package
 
 ## [2026.10.0] - 2026-10-06
 

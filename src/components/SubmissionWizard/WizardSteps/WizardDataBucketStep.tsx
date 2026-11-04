@@ -23,7 +23,7 @@ import { addBucketToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import bucketsAPIService from "services/bucketsAPI"
 import type { BucketFile } from "types"
-import { isBucketFile } from "utils"
+import { isBucketFile, isAxiosErrorWithStatus } from "utils"
 
 /*
  * Render buckets and files from SD Connect based on user selection
@@ -63,7 +63,6 @@ const WizardDataBucketStep = () => {
           updateStatus({
             status: ResponseStatus.error,
             response: error,
-            helperText: "",
           })
         )
       }
@@ -101,19 +100,31 @@ const WizardDataBucketStep = () => {
     dispatch(setUnsavedForm())
   }
 
+  const ensureBucketAccess = async (bucketName: string) => {
+    try {
+      await bucketsAPIService.checkAccessBucket(projectId, bucketName)
+    } catch (err) {
+      if (isAxiosErrorWithStatus(err, 403)) {
+        await bucketsAPIService.grantAccessBucket(projectId, bucketName)
+      } else throw err
+    }
+  }
+
   const getFiles = async (bucketName: string) => {
     if (!!bucketName) {
       try {
-        const hasGrant = await bucketsAPIService.checkAccessBucket(projectId, bucketName)
-        if (hasGrant.status !== 200) {
-          await bucketsAPIService.grantAccessBucket(projectId, bucketName)
-        }
+        await ensureBucketAccess(bucketName)
         const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
         const files = response.data ?? []
         dispatch(addFiles({ bucketName: bucketName, files: files }))
         return files
       } catch (err) {
-        console.error("Bucket endpoint error during getting files", err)
+        dispatch(
+          updateStatus({
+            status: ResponseStatus.error,
+            response: err,
+          })
+        )
       }
     }
   }

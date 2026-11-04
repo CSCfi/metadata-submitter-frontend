@@ -13,7 +13,7 @@ const getProjectBuckets = (projectId: string): Promise<APIResponse> => {
 }
 
 const getBucketFiles = (projectId: string, bucketName: string): Promise<APIResponse> => {
-  return api.get(`/${bucketName}/files/?projectId=${projectId}`)
+  return api.get(`/${bucketName}/files?projectId=${projectId}`)
 }
 
 // Grant access to a specific bucket

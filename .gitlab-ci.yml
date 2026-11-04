@@ -6,7 +6,7 @@ stages:
   - release
 
 default:
-  image: "${ARTIFACTORY_SERVER}/sds/sdd-common-ci:2026.10.0@sha256:4dbef76cae6000a9fed4636a748d6411a7c0959e2f9e5562090eaec572f74c26"
+  image: "${ARTIFACTORY_SERVER}/sds/sdd-common-ci:2026.10.1@sha256:d77c07a571ae799ede75bcb318a74198d1b1ed633781403563ea767924300a9c"
 
 # Release process
 include:

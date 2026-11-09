@@ -27,6 +27,7 @@ import WizardAlert from "./SubmissionWizard/WizardComponents/WizardAlert"
 import { PathsWithoutLogin } from "constants/paths"
 import { Locale } from "constants/translation"
 import { setLocale } from "features/localeSlice"
+import { resetProjectId } from "features/projectIdSlice"
 import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { fetchUser, resetUser } from "features/userSlice"
 import { resetObjectType } from "features/wizardObjectTypeSlice"
@@ -125,6 +126,7 @@ const NavigationLinks = () => {
           onClick={() => {
             handleClose
             dispatch(resetUser())
+            dispatch(resetProjectId())
           }}
           href={prefixedPath}
         >

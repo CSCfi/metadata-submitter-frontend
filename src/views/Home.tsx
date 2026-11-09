@@ -154,7 +154,7 @@ const Home: React.FC = () => {
           setAllDraftSubmissions(unpublishedResponse.data?.submissions)
         }
       }
-      getAllDraftSubmisisons()
+      if (projectId) getAllDraftSubmisisons()
     }
     return () => {
       isMounted = false
@@ -178,7 +178,7 @@ const Home: React.FC = () => {
           setAllPublishedSubmissions(publishedResponse.data?.submissions)
         }
       }
-      getAllPublishedSubmisisons()
+      if (projectId) getAllPublishedSubmisisons()
     }
     return () => {
       isMounted = false

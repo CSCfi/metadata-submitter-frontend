@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- (users) Checking bucket access no more exits current view and redirects to error page 403(#1151)
 - (users) Fixed removing an added field not triggering unsaved input alert (#1105)
 
 ### Changed
 
+- Refactored errorMonitor.ts to improve error handling readability(#1151)
 - Reset projectId when logging out
 - get secret CI variable `JF_CONFIG` from Vault
 

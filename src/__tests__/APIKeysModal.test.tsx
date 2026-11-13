@@ -83,9 +83,9 @@ describe("APIKeysModal", () => {
     const buttons = await waitFor(() => screen.getAllByTestId("api-key-delete"))
     expect(buttons.length).toBe(7)
 
-    await waitFor(() => {
-      fireEvent.click(buttons[6])
-      expect(screen.getAllByTestId("api-key-delete").length).toBe(6)
-    })
+    fireEvent.click(toBeDeleted)
+    await waitFor(() =>
+      expect(screen.getAllByTestId(/^api-key-delete-apiTestKey[1-7]$/).length).toBe(6)
+    )
   })
 })

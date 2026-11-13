@@ -13,17 +13,9 @@ const submissionName = "Submission name"
 const submissionTitle = "Submission dataset title"
 const submissionDescription = "Submission description"
 
-const usersPath: string = await addApiPrefix("/v1/users")
 const submissionPath: string = await addApiPrefix("/v1/submissions")
 
 const restHandlers = [
-  http.get(usersPath, () => {
-    return HttpResponse.json({
-      user_id: "001",
-      user_name: "Test User",
-      projects: [{ project_id: "PROJECT1" }],
-    })
-  }),
   http.get(`${submissionPath}/:submissionId`, ({ params }) => {
     const id = params.submissionId
     return id === "123456"
@@ -35,6 +27,10 @@ const restHandlers = [
           workflow: "SD",
         })
       : new HttpResponse("Not found", { status: 404 })
+  }),
+  // Catch all other GET requests
+  http.get("*", () => {
+    return HttpResponse.json({})
   }),
 ]
 

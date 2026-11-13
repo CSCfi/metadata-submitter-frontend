@@ -1,14 +1,18 @@
 export const fixedConfig: string = "/api"
 
 export const addApiPrefix = async (path: string): Promise<string> => {
-  // Catching an error when failing in promise is offering an escape for Vitest having no fetch
-  const url = new URL("/config.json", window.location.origin)
-  const apiPrefix: string = await fetch(url)
-    .then(res => res.json())
-    .then(data => data.API_PREFIX)
-    .catch(() => {
-      return "/api"
-    })
+  const normalizedPath = path.replace(/^\//, "")
+  try {
+    const url = new URL("/config.json", window.location.origin)
+    const response = await fetch(url)
 
-  return `${apiPrefix.replace(/\/$/, "")}/${path.replace(/^\//, "")}`
+    if (!response.ok) {
+      throw new Error(`Failed to fetch config.json: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return `${data.API_PREFIX.replace(/\/$/, "")}/${normalizedPath}`
+  } catch {
+    return `${fixedConfig}/${normalizedPath}`
+  }
 }

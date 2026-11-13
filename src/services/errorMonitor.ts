@@ -36,6 +36,7 @@ export const errorMonitor = (err: unknown): void => {
   // Handle case when there is no HTTP response
   if (!err.response) {
     console.error("Unexpected error: network error or no responsed received", {
+      baseURL,
       url,
       method,
       message: err.message,

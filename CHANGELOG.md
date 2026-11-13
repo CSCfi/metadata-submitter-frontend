@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- separate CI job `upload-image` into two jobs, where one runs in the tag pipeline and the other in the MR pipeline. Use variable `JF_IDENTITY_TOKEN` instead of `JF_CONFIG` in the job that runs in the unprotected MR pipeline.
 - (users) Checking bucket access no more exits current view and redirects to error page 403(#1151)
 - (users) Fixed removing an added field not triggering unsaved input alert (#1105)
 

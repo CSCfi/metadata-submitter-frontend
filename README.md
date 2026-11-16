@@ -168,4 +168,3 @@ To have an overview of this repository, see [STRUCTURE](STRUCTURE.md).
 Metadata submission UI is released under `MIT`, see [LICENSE](LICENSE).
 
 </details>
-

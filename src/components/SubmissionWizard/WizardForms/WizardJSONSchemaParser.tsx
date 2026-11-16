@@ -979,16 +979,13 @@ const FormAutocompleteField = ({
   const { t } = useTranslation()
 
   const fetchOrganisations = async (searchTerm: string) => {
-    // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
-    const isContainingNonWordChar = searchTerm.match(/[^\p{L}\p{N}\s'-]/u)
-
     try {
-      const response =
-        isContainingNonWordChar === null ? await rorAPIService.getOrganisations(searchTerm) : null
+      const response = await rorAPIService.getOrganisations(searchTerm)
+
       setLoading(false)
 
-      const mappedOrganisations = response?.data.items.reduce(
-        (orgArr: RORItem[], org: ROROrganization) => {
+      const mappedOrganisations =
+        response?.data.items.reduce((orgArr: RORItem[], org: ROROrganization) => {
           const orgName = org.names.filter(name => name.types.includes("ror_display"))[0]?.value
           if (orgName) {
             orgArr.push({
@@ -997,11 +994,10 @@ const FormAutocompleteField = ({
             })
           }
           return orgArr
-        },
-        []
-      )
+        }, []) ?? []
       setOptions(mappedOrganisations)
     } catch (error) {
+      setOptions([])
       dispatch(
         updateStatus({
           status: ResponseStatus.error,
@@ -1011,8 +1007,13 @@ const FormAutocompleteField = ({
     }
   }
 
+  //Escape Elasticsearch reserved characters
+  const escapeElasticQueryString = (term: string): string =>
+    term.replace(/[+\-=&|><!(){}[\]^"~*?:\\/]/g, "\\$&")
+
   const debouncedSearch = debounce((newInput: string) => {
-    if (newInput.length > 0) fetchOrganisations(newInput)
+    if (newInput.length === 0) return
+    fetchOrganisations(escapeElasticQueryString(newInput))
   }, 150)
 
   React.useEffect(() => {

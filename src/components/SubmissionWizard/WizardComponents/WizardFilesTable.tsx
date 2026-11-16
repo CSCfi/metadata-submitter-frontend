@@ -60,6 +60,7 @@ const FilesTable: React.FC<FilesTableProps> = props => {
       headerName: t("dataTable.size"),
       type: "number",
       sortable: true,
+      valueFormatter: (value: number) => formatBytes(value),
     },
     {
       field: "lastModified",
@@ -68,23 +69,17 @@ const FilesTable: React.FC<FilesTableProps> = props => {
     },
   ]
 
-  const getDisplayingFiles = () => {
+  const getDisplayingFiles = (): (BucketFile & { name: string })[] | [] => {
+    const pathPrefix = `${currentFilePath}/`
     const displayingFiles = currentFilePath
       ? files
-          .filter(file => file.path.includes(currentFilePath))
+          .filter(file => file.path.startsWith(pathPrefix))
           .map(file => {
-            let newName = ""
-            let newPath = ""
-            if (file.path.length > currentFilePath.length) {
-              newName = file.path.split(currentFilePath)[1].split("/")[1]
-              newPath = `${currentFilePath}/${newName}`
-            } else {
-              newName = file.name
-              newPath = file.path
-            }
-            return { ...file, path: newPath, name: newName }
+            const name = file.path.slice(pathPrefix.length).split("/")[0]
+            const path = `${pathPrefix}${name}`
+            return { ...file, path, name }
           })
-      : files
+      : []
     return uniqBy(displayingFiles, "path")
   }
 
@@ -94,7 +89,7 @@ const FilesTable: React.FC<FilesTableProps> = props => {
       return {
         id: file.path,
         name: file.name,
-        size: formatBytes(file.bytes),
+        size: file.bytes,
         lastModified: "TBD",
       }
     })

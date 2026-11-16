@@ -238,9 +238,7 @@ export type DataBucketRow = {
 }
 
 export type BucketFile = {
-  id: string
   path: string
-  name: string
   bytes: number
   lastModified?: string
 }

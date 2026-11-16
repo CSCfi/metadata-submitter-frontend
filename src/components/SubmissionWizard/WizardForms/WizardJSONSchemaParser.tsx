@@ -980,7 +980,7 @@ const FormAutocompleteField = ({
 
   const fetchOrganisations = async (searchTerm: string) => {
     // Check if searchTerm includes non-word char, for e.g. "(", ")", "-" because the api does not work with those chars
-    const isContainingNonWordChar = searchTerm.match(/\W/g)
+    const isContainingNonWordChar = searchTerm.match(/[^\p{L}\p{N}\s'-]/u)
 
     try {
       const response =

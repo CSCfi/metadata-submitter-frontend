@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026.11.2] - 2026-11-17
+
+### Changed
+
+- Added empty array as ROR API response instead of null or undefined response.
+- Replaced ROR API search term checking with special character escaping (#1156)
+
+### Fixed
+
+- (users) Scandic or specila characters crashing UI in metadata creators affiliations field. (#1156)
+
 ## [2026.11.1] - 2026-11-17
 
 ## [2026.11.0] - 2026-11-16
@@ -765,7 +776,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.1...HEAD
+[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.2...HEAD
+[2026.11.2]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.1...2026.11.2
 [2026.11.1]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.0...2026.11.1
 [2026.11.0]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.10.0...2026.11.0
 [2026.10.0]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.5.0...2026.10.0

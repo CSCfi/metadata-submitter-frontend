@@ -39,8 +39,6 @@ test.describe("Basic SD flow", () => {
     await page.getByTestId("1").getByRole("radio").check()
     await formActions("form-ready")
     await expect(page.getByTestId("success-alert")).toBeVisible()
-    // On real interaction clicking the panel blurs the form, simulate it
-    await page.getByTestId("1").getByRole("radio").focus()
 
     /*
      * 3rd step, Data bucket

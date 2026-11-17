@@ -14,6 +14,7 @@ import WizardStepContentHeader from "components/SubmissionWizard/WizardComponent
 import checkUnsavedInputHook from "components/SubmissionWizard/WizardHooks/WizardCheckUnsavedInputHook"
 import { ResponseStatus } from "constants/responseStatus"
 import { updateStatus } from "features/statusMessageSlice"
+import { resetUnsavedForm } from "features/unsavedFormSlice"
 import { addRemsToSubmission } from "features/wizardSubmissionSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import submissionAPIService from "services/submissionAPI"
@@ -134,6 +135,7 @@ const DacPoliciesForm = () => {
     try {
       await dispatch(addRemsToSubmission(submissionId, remsData))
       reset(data, { keepValues: true }) // reset form state
+      dispatch(resetUnsavedForm())
       dispatch(
         updateStatus({
           status: ResponseStatus.success,
@@ -247,7 +249,7 @@ const DacPoliciesForm = () => {
                   let checkedItems = [...selectedRems.licenses]
                   const checked = parseInt(e.target.value)
                   if (selectedRems.licenses.includes(checked)) {
-                    checkedItems.filter(item => item !== checked)
+                    checkedItems = checkedItems.filter(item => item !== checked)
                   } else {
                     checkedItems.push(checked)
                   }

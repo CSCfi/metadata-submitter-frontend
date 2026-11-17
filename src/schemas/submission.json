@@ -129,7 +129,7 @@
         "subjects": {
           "type": "array",
           "title": "Field of Science",
-          "description": "Select one or multiple fields of science from the Statistics Finland field of science classification.",
+          "description": "Select the field of science from the Statistics Finland field of science classification.",
           "items": {
             "type": "object",
             "title": "Single subject",

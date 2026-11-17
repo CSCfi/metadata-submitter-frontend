@@ -60,6 +60,14 @@ vi.mock("../schemas/submission.json", () => ({
             title: "Keywords",
             description: "A list of keywords or tags describing the resources.",
           },
+          language: {
+            type: "string",
+            title: "Language",
+            oneOf: [
+              { const: "en", title: "English" },
+              { const: "fi", title: "Finnish" },
+            ],
+          },
         },
       },
     },
@@ -89,6 +97,20 @@ describe("WizardFillObjectDetailsForm", () => {
     )
     const text = await waitFor(() => screen.getByText("Creators"))
     expect(text).toBeDefined()
+  })
+
+  test("should show language names as options but store language codes as values", async () => {
+    renderWithProviders(<WizardFillObjectDetailsForm />, { preloadedState: state })
+
+    const select = (await waitFor(() => screen.getByTestId("language"))) as HTMLSelectElement
+    const options = screen.getAllByTestId("language-option") as HTMLOptionElement[]
+    expect(options.map(option => [option.value, option.textContent])).toEqual([
+      ["en", "English"],
+      ["fi", "Finnish"],
+    ])
+
+    fireEvent.change(select, { target: { value: "fi" } })
+    await waitFor(() => expect(select.value).toBe("fi"))
   })
 
   test("should validate without errors on blur", async () => {

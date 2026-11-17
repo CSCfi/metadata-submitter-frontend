@@ -142,6 +142,7 @@ export type FormObject = {
   title: string
   description: string
   oneOf: FormObject[]
+  const?: string
   enum: string[]
   properties: Record<string, unknown>
   items: FormObject

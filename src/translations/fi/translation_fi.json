@@ -221,6 +221,7 @@
   },
   "searchItems": "Search items",
   "OrganisationsBy": "Organisations provided by ",
+  "PlacesBy": "Paikat tarjoaa ",
   "dataTable": {
     "name": "Nimi",
     "dateCreated": "Date created",

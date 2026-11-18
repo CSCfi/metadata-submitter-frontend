@@ -112,6 +112,7 @@ const test = base.extend<CommandFixtures>({
       await page.getByTestId("submissionDescription").fill("Test submission description")
       await page.getByTestId(workflowType ? workflowType : "FEGA").isHidden() // For temporary hiding
       await page.getByTestId("form-ready").click()
+      await expect(page.getByTestId("success-alert")).toBeVisible()
     }
     await baseUse(workflowType => newSubmission(workflowType))
   },

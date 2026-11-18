@@ -4,8 +4,6 @@ import { expect } from "@playwright/test"
 import test from "../fixtures/commands"
 
 test.describe("Basic SD flow", () => {
-  // Do skip until issues 1128 is fixed
-  test.skip()
   test.beforeEach(async ({ resetDB }) => {
     await resetDB
   })
@@ -39,8 +37,6 @@ test.describe("Basic SD flow", () => {
     await page.getByTestId("1").getByRole("radio").check()
     await formActions("form-ready")
     await expect(page.getByTestId("success-alert")).toBeVisible()
-    // On real interaction clicking the panel blurs the form, simulate it
-    await page.getByTestId("1").getByRole("radio").focus()
 
     /*
      * 3rd step, Data bucket

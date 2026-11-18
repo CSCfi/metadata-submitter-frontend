@@ -155,19 +155,15 @@ const traverseFields = (
   const description = object.description
   const autoCompleteIdentifiers = ["organisation", "name of the place of affiliation"]
 
-  // oneOf with only const options is a select with separate stored values and display labels,
-  // e.g. language: { const: "en", title: "English" }
-  if (isConstOneOf(object))
+  const selectOptions = getSelectOptions(object)
+  if (selectOptions)
     return (
       <FormSection key={name} name={name} label={label} level={path.length}>
         <FormSelectField
           key={name}
           name={name}
           label={label}
-          options={object.oneOf.map(option => ({
-            value: option.const as string,
-            label: option.title ?? option.const,
-          }))}
+          options={selectOptions}
           required={required}
           description={description}
         />
@@ -226,18 +222,7 @@ const traverseFields = (
       )
     }
     case "string": {
-      return object["enum"] ? (
-        <FormSection key={name} name={name} label={label} level={path.length}>
-          <FormSelectField
-            key={name}
-            name={name}
-            label={label}
-            options={object.enum}
-            required={required}
-            description={description}
-          />
-        </FormSection>
-      ) : object.title === "Date" ? (
+      return object.title === "Date" ? (
         <FormDatePicker
           key={name}
           name={name}
@@ -690,10 +675,26 @@ type SelectOption = string | { value: string; label: string }
 
 type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
 
-const isConstOneOf = (object: FormObject) =>
-  Array.isArray(object.oneOf) &&
-  object.oneOf.length > 0 &&
-  object.oneOf.every(option => option?.const !== undefined)
+/*
+ * Returns select options for fields rendered as a FormSelectField, or undefined otherwise:
+ * - string enums, where the stored value and displayed label are the same
+ * - oneOf with only const options, where the stored value and displayed label differ,
+ *   e.g. language: { const: "en", title: "English" }
+ */
+const getSelectOptions = (object: FormObject): SelectOption[] | undefined => {
+  if (
+    Array.isArray(object.oneOf) &&
+    object.oneOf.length > 0 &&
+    object.oneOf.every(option => option?.const !== undefined)
+  ) {
+    return object.oneOf.map(option => ({
+      value: option.const as string,
+      label: option.title ?? option.const,
+    }))
+  }
+  if (object.type === "string" && object.enum) return object.enum
+  return undefined
+}
 
 /*
  * FormTextField is the most usual type, rendered for strings, integers and numbers.

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026.11.4] - 2026-11-18
+
+### Added
+
+- Unit tests for bucket's features (#1155)
+
+### Fixed
+
+- Improved APIKeysModal unit tests to catch wrong request body errors (#1153)
+- Fixed NETWORK_ERROR when running unit tests (#1152)
+
 ## [2026.11.3] - 2026-11-18
 
 ## [2026.11.2] - 2026-11-17
@@ -778,7 +789,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.3...HEAD
+[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.4...HEAD
+[2026.11.4]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.3...2026.11.4
 [2026.11.3]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.2...2026.11.3
 [2026.11.2]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.1...2026.11.2
 [2026.11.1]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.0...2026.11.1

@@ -30,13 +30,6 @@ const restHandlers = [
   http.get(prefixedPath, () => {
     return HttpResponse.json(mockKeys)
   }),
-  http.delete(prefixedPath, ({ params }) => {
-    const key_name = params.key_id
-    return HttpResponse.json(mockKeys.filter(item => item.key_id !== key_name))
-  }),
-  http.post(prefixedPath, async () => {
-    return HttpResponse.json("a030151a32ca.itPXpPwFfSYnN9Yx2")
-  }),
 ]
 
 const server = setupServer(...restHandlers)
@@ -58,21 +51,29 @@ describe("APIKeysModal", () => {
   })
 
   test("should list existing API keys", async () => {
-    const keyRows = await waitFor(() => screen.getAllByTestId("api-key-delete"))
+    const keyRows = await waitFor(() => screen.getAllByTestId(/^api-key-delete-apiTestKey[1-7]$/))
     expect(keyRows).toHaveLength(7)
   })
 
   test("should create a new API key", async () => {
+    let requestBody: { key_id: string }
+    server.use(
+      http.post(prefixedPath, async ({ request }) => {
+        requestBody = (await request.json()) as { key_id: string }
+        return HttpResponse.json("a030151a32ca.itPXpPwFfSYnN9Yx2")
+      })
+    )
     const apikeyNameField = screen.getByPlaceholderText("Key name")
     const createButton = screen.getByTestId("api-key-create-button")
 
     fireEvent.change(apikeyNameField, { target: { value: "apiTestKey0" } })
     expect(apikeyNameField).toHaveValue("apiTestKey0")
 
+    fireEvent.click(createButton)
     await waitFor(() => {
-      fireEvent.click(createButton)
+      expect(requestBody).toEqual({ key_id: "apiTestKey0" })
       expect(screen.getByTestId("api-key-table")).toHaveTextContent("apiTestKey0")
-      expect(screen.getByTestId("api-key-copy")).toBeVisible
+      expect(screen.getByTestId("api-key-copy")).toBeVisible()
       expect(screen.getByTestId("new-key-value")).toHaveTextContent(
         "a030151a32ca.itPXpPwFfSYnN9Yx2"
       )
@@ -80,12 +81,20 @@ describe("APIKeysModal", () => {
   })
 
   test("should delete an existing API key", async () => {
-    const buttons = await waitFor(() => screen.getAllByTestId("api-key-delete"))
-    expect(buttons.length).toBe(7)
+    let requestBody: { key_id: string }
+    server.use(
+      http.delete(prefixedPath, async ({ request }) => {
+        requestBody = (await request.json()) as { key_id: string }
+        return HttpResponse.json(mockKeys.filter(item => item.key_id !== requestBody.key_id))
+      })
+    )
+    const toBeDeleted = await waitFor(() => screen.getByTestId("api-key-delete-apiTestKey2"))
+    expect(toBeDeleted).toBeVisible()
 
+    fireEvent.click(toBeDeleted)
     await waitFor(() => {
-      fireEvent.click(buttons[6])
-      expect(screen.getAllByTestId("api-key-delete").length).toBe(6)
+      expect(requestBody).toEqual({ key_id: "apiTestKey2" })
+      expect(screen.getAllByTestId(/^api-key-delete-apiTestKey[1-7]$/).length).toBe(6)
     })
   })
 })

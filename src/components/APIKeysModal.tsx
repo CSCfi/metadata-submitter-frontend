@@ -267,7 +267,7 @@ const APIKeysModal = ({ open, onClose }: APIKeyModalProps) => {
                   <TableCell>{apikey}</TableCell>
                   <TableCell align="right">
                     <Button
-                      data-testid="api-key-delete"
+                      data-testid={`api-key-delete-${apikey}`}
                       sx={{ pt: 0, mt: 0 }}
                       onClick={() => handleDelete(apikey)}
                     >

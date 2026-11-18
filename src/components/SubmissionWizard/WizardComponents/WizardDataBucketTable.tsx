@@ -43,7 +43,7 @@ const WizardDataBucketTable: React.FC<DataBucketTableProps> = props => {
                 onChange={handleBucketChange}
                 value={params.row.name}
                 name="radio-buttons"
-                slotProps={{ input: { "aria-labelledby": params.row.name } }}
+                slotProps={{ input: { "aria-label": params.row.name } }}
               />
             )}
             {/* Use mdiPail path: MUI icons lack a corresponding icon */}

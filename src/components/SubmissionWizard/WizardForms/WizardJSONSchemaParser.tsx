@@ -34,6 +34,7 @@ import { ResponseStatus } from "constants/responseStatus"
 import { setAutocompleteField } from "features/autocompleteSlice"
 import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
+import fintoAPIService from "services/fintoAPI"
 import rorAPIService from "services/rorAPI"
 import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
@@ -233,6 +234,15 @@ const traverseFields = (
           label={label}
           required={required}
           description={description}
+        />
+      ) : lastPathItem === "geoLocationPlace" ? (
+        <FormAutocompleteField
+          key={name}
+          name={name}
+          label={label}
+          required={required}
+          description={description}
+          source="finto"
         />
       ) : name.includes("keywords") ? (
         <FormSection key={name} name={name} label={label} level={path.length}>
@@ -939,14 +949,26 @@ const FormDatePicker = ({
 }
 
 /*
- * FormAutocompleteField uses ROR API to fetch organisations
+ * FormAutocompleteField uses the ROR API to fetch organisations,
+ * or the Finto API to fetch places
  */
-type RORItem = {
+type AutocompleteItem = {
   name: string
   id: string
 }
+
+type AutocompleteSource = "ror" | "finto"
+
 /*
-  More details of ROR data structure is here: https://ror.readme.io/docs/ror-data-structure
+  More details of Finto search response are here: https://api.finto.fi/doc/
+*/
+type FintoConcept = Record<string, unknown> & {
+  uri: string
+  prefLabel: string
+  altLabel?: string
+}
+/*
+  More details of ROR data structure are here: https://ror.readme.io/docs/ror-data-structure
 */
 type ROROrganization = Record<string, unknown> & {
   id: string
@@ -966,7 +988,8 @@ const FormAutocompleteField = ({
   label,
   required,
   description,
-}: FormFieldBaseProps & { description: string }) => {
+  source = "ror",
+}: FormFieldBaseProps & { description: string; source?: AutocompleteSource }) => {
   const dispatch = useAppDispatch()
   const { getValues } = useFormContext()
 
@@ -976,7 +999,36 @@ const FormAutocompleteField = ({
   const [inputValue, setInputValue] = React.useState("")
   const [loading, setLoading] = React.useState(false)
 
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+
+  const fetchPlaces = async (searchTerm: string) => {
+    try {
+      // Finto supports fi, sv and en labels
+      const lang = ["fi", "sv", "en"].includes(i18n.language) ? i18n.language : "en"
+      const response = await fintoAPIService.getPlaces(searchTerm, lang)
+      setLoading(false)
+
+      const mappedPlaces = (response?.data.results ?? []).reduce(
+        (placeArr: AutocompleteItem[], place: FintoConcept) => {
+          // Results can contain the same concept multiple times (matched by different labels)
+          if (place.prefLabel && !placeArr.some(item => item.id === place.uri)) {
+            placeArr.push({ name: place.prefLabel, id: place.uri })
+          }
+          return placeArr
+        },
+        []
+      )
+      setOptions(mappedPlaces)
+    } catch (error) {
+      setLoading(false)
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: error,
+        })
+      )
+    }
+  }
 
   const fetchOrganisations = async (searchTerm: string) => {
     try {
@@ -985,7 +1037,7 @@ const FormAutocompleteField = ({
       setLoading(false)
 
       const mappedOrganisations =
-        response?.data.items.reduce((orgArr: RORItem[], org: ROROrganization) => {
+        response?.data.items.reduce((orgArr: AutocompleteItem[], org: ROROrganization) => {
           const orgName = org.names.filter(name => name.types.includes("ror_display"))[0]?.value
           if (orgName) {
             orgArr.push({
@@ -1013,7 +1065,8 @@ const FormAutocompleteField = ({
 
   const debouncedSearch = debounce((newInput: string) => {
     if (newInput.length === 0) return
-    fetchOrganisations(escapeElasticQueryString(newInput))
+    if (source === "finto") fetchPlaces(newInput)
+    else fetchOrganisations(escapeElasticQueryString(newInput))
   }, 150)
 
   React.useEffect(() => {
@@ -1048,7 +1101,6 @@ const FormAutocompleteField = ({
             render={({ field }) => {
               return (
                 <StyledAutocomplete
-                  freeSolo
                   open={open}
                   onOpen={() => {
                     setOpen(true)
@@ -1059,14 +1111,18 @@ const FormAutocompleteField = ({
                   options={options}
                   getOptionKey={option => option.id ?? ""}
                   getOptionLabel={option => option.name || ""}
+                  isOptionEqualToValue={(option, value) => option.name === value.name}
                   disableClearable={inputValue.length === 0}
-                  value={field.value}
+                  value={field.value ? { name: field.value, id: "" } : null}
                   inputValue={inputValue || defaultValue}
-                  onChange={(_event, option: RORItem) => {
+                  onChange={(_event, option: AutocompleteItem | null) => {
                     field.onChange(option?.name)
-                    option?.id
-                      ? dispatch(setAutocompleteField(option.id))
-                      : dispatch(setAutocompleteField(null))
+                    // Identifier is stored only for ROR organisations (affiliationIdentifier)
+                    if (source === "ror") {
+                      option?.id
+                        ? dispatch(setAutocompleteField(option.id))
+                        : dispatch(setAutocompleteField(null))
+                    }
                   }}
                   onInputChange={(_event, newInputValue: string) => setInputValue(newInputValue)}
                   renderInput={params => (
@@ -1103,9 +1159,13 @@ const FormAutocompleteField = ({
                           child={
                             <>
                               <br />
-                              {t("OrganisationsBy")}
-                              <a href="https://ror.org/" target="_blank" rel="noreferrer">
-                                {"ror.org"}
+                              {source === "finto" ? t("PlacesBy") : t("OrganisationsBy")}
+                              <a
+                                href={source === "finto" ? "https://finto.fi/" : "https://ror.org/"}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {source === "finto" ? "finto.fi" : "ror.org"}
                                 <LaunchIcon sx={{ fontSize: "1rem", mb: -1 }} />
                               </a>
                             </>

@@ -221,6 +221,7 @@
   },
   "searchItems": "Search items",
   "OrganisationsBy": "Organisations provided by ",
+  "PlacesBy": "Places provided by ",
   "dataTable": {
     "name": "Name",
     "dateCreated": "Date created",

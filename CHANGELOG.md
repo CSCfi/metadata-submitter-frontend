@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026.11.7] - 2026-11-19
+
 ## [2026.11.6] - 2026-11-19
 
 ## [2026.11.5] - 2026-11-18
@@ -793,7 +795,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.6...HEAD
+[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.7...HEAD
+[2026.11.7]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.6...2026.11.7
 [2026.11.6]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.5...2026.11.6
 [2026.11.5]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.4...2026.11.5
 [2026.11.4]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.3...2026.11.4

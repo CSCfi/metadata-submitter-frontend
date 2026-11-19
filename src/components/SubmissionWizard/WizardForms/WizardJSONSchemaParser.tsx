@@ -156,6 +156,21 @@ const traverseFields = (
   const description = object.description
   const autoCompleteIdentifiers = ["organisation", "name of the place of affiliation"]
 
+  const selectOptions = getSelectOptions(object)
+  if (selectOptions)
+    return (
+      <FormSection key={name} name={name} label={label} level={path.length}>
+        <FormSelectField
+          key={name}
+          name={name}
+          label={label}
+          options={selectOptions}
+          required={required}
+          description={description}
+        />
+      </FormSection>
+    )
+
   if (object.oneOf)
     return (
       <FormSection key={name} name={name} label={label} level={path.length}>
@@ -208,18 +223,7 @@ const traverseFields = (
       )
     }
     case "string": {
-      return object["enum"] ? (
-        <FormSection key={name} name={name} label={label} level={path.length}>
-          <FormSelectField
-            key={name}
-            name={name}
-            label={label}
-            options={object.enum}
-            required={required}
-            description={description}
-          />
-        </FormSection>
-      ) : object.title === "Date" ? (
+      return object.title === "Date" ? (
         <FormDatePicker
           key={name}
           name={name}
@@ -677,7 +681,30 @@ type FormFieldBaseProps = {
   required: boolean
 }
 
+type SelectOption = string | { value: string; label: string }
+
 type FormSelectFieldProps = FormFieldBaseProps & { options: string[] }
+
+/*
+ * Returns select options for fields rendered as a FormSelectField, or undefined otherwise:
+ * - string enums, where the stored value and displayed label are the same
+ * - oneOf with only const options, where the stored value and displayed label differ,
+ *   e.g. language: { const: "en", title: "English" }
+ */
+const getSelectOptions = (object: FormObject): SelectOption[] | undefined => {
+  if (
+    Array.isArray(object.oneOf) &&
+    object.oneOf.length > 0 &&
+    object.oneOf.every(option => option?.const !== undefined)
+  ) {
+    return object.oneOf.map(option => ({
+      value: option.const as string,
+      label: option.title ?? option.const,
+    }))
+  }
+  if (object.type === "string" && object.enum) return object.enum
+  return undefined
+}
 
 /*
  * FormTextField is the most usual type, rendered for strings, integers and numbers.
@@ -759,7 +786,7 @@ const FormSelectField = ({
   required,
   options,
   description,
-}: FormSelectFieldProps & { description: string }) => (
+}: FormFieldBaseProps & { options: SelectOption[]; description: string }) => (
   <ConnectForm>
     {({ control }: ConnectFormMethods) => {
       return (
@@ -792,11 +819,15 @@ const FormSelectField = ({
                   sx={{ mb: "1rem" }}
                 >
                   <option aria-label="None" value="" disabled />
-                  {options.map(option => (
-                    <option key={`${name}-${option}`} value={option} data-testid={`${name}-option`}>
-                      {option}
-                    </option>
-                  ))}
+                  {options.map(option => {
+                    const { value, label } =
+                      typeof option === "string" ? { value: option, label: option } : option
+                    return (
+                      <option key={`${name}-${value}`} value={value} data-testid={`${name}-option`}>
+                        {label}
+                      </option>
+                    )
+                  })}
                 </TextField>
                 {description && <HelpTooltip helpText={description} placement={"right"} />}
               </BaselineDiv>

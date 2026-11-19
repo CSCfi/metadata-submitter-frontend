@@ -1,9 +1,7 @@
 # syntax=docker/dockerfile:1.28.0@sha256:bb22d9815c728170f72750f4e5b0d672e06176142e1d602c7e66c050100b7e5b
 
 ARG BASE_IMAGE=node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
-ARG NGINX_IMAGE=nginx:1.31.8-trixie@sha256:5ab5b0b01097420873a3f3330f44248e34a3c2a3e8d5ee30658aeae8cb7435da
-# 1.29.5-trixie contains fix to prevenr man-in-the-middle (MITM) vulnerability
-# NGINX proxying to TLS-enabled HTTP (HTTP 1.x and HTTP/2), gRPC, and uWSGI backends
+ARG NGINX_IMAGE=nginx:1.30.7-trixie@sha256:7fad6c0dff97965adbddf28027d934b111fc0221a554315dc274712f3fba24d3
 
 #=======================
 FROM ${BASE_IMAGE} AS appbuilder

@@ -1,10 +1,9 @@
 import { omit } from "lodash"
 
-import { APIResponse } from "../types"
-
 import createApiClient from "./apiClient"
 
 import { OmitObjectValues } from "constants/wizardObject"
+import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/objects")
@@ -26,7 +25,7 @@ const createFromXML = (
 ): Promise<APIResponse<void>> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return api.post(`/${objectType}?submission=${submissionId}`, formData)
+  return api.post(`/${objectType}`, formData, { params: { submission: submissionId } })
 }
 
 /*
@@ -38,7 +37,7 @@ const createFromJSON = (
   submissionId: string,
   JSONContent: Record<string, unknown>
 ): Promise<APIResponse<void>> => {
-  return api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
+  return api.post(`/${objectType}`, JSONContent, { params: { submission: submissionId } })
 }
 
 const patchFromJSON = (

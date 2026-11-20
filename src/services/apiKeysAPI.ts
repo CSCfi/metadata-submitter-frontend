@@ -1,7 +1,6 @@
-import { APIResponse, APIKey } from "../types"
-
 import createApiClient from "./apiClient"
 
+import { APIResponse, APIKey } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/api/keys")

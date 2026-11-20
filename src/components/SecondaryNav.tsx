@@ -98,7 +98,11 @@ const SecondaryNav: React.FC = () => {
     <StyledSecondaryNavBar>
       <Toolbar sx={{ pt: 2 }}>
         <div>{projectSelection}</div>
-        <Link component={RouterLink} to={pathWithLocale("submission?step=1")} sx={{ ml: "auto" }}>
+        <Link
+          component={RouterLink}
+          to={{ pathname: pathWithLocale("submission"), search: "?step=1" }}
+          sx={{ ml: "auto" }}
+        >
           <Button
             color="primary"
             variant="contained"

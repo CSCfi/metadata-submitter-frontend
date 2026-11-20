@@ -1,7 +1,6 @@
-import { APIResponse } from "../types"
-
 import createApiClient from "./apiClient"
 
+import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/validate")
@@ -20,7 +19,7 @@ const validateXMLFile = (
 ): Promise<APIResponse<void>> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
-  return api.post(apiPath, formData)
+  return api.post("", formData)
 }
 
 export default { validateXMLFile }

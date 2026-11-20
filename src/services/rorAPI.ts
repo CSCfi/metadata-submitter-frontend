@@ -1,6 +1,6 @@
-import { APIResponse, RORSearchResponse } from "../types"
-
 import createApiClient from "./apiClient"
+
+import { APIResponse, RORSearchResponse } from "types"
 
 const apiPath = "https://api.ror.org"
 const api = createApiClient(apiPath)

@@ -1,6 +1,6 @@
-import { APIResponse, FintoSearchResponse } from "../types"
-
 import createApiClient from "./apiClient"
+
+import { APIResponse, FintoSearchResponse } from "types"
 
 const apiPath = "https://api.finto.fi/rest/v1"
 const api = createApiClient(apiPath)

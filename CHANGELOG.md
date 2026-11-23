@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026.11.8] - 2026-11-23
+
+### Changed
+
+- To have matching types types/index.ts
+- To match typing StatusMessageHandler.tsx, WizardJSONSchemaParser.tsx, WizardEditObjectHook.tsx, WizardSubmitObjectHook.tsx, WizardDataBucketStep.tsx, remsInfoSlice.tsx (#1154)
+- Added typing top API calls, apiKeysAPI.ts, bucketsAPI.ts, objectAPI.ts, publishAPI.ts,  remsAPI.ts, rorAPI.ts, submissionAPI.ts, usersAPI.ts, xmlSubmissionAPI.ts (#1154)
+
 ## [2026.11.7] - 2026-11-19
 
 ## [2026.11.6] - 2026-11-19
@@ -795,7 +803,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - React SPA initialization with URL routing
 - XML upload form for metadata object types with validation and notifications about upload status
 
-[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.7...HEAD
+[Unreleased]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.8...HEAD
+[2026.11.8]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.7...2026.11.8
 [2026.11.7]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.6...2026.11.7
 [2026.11.6]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.5...2026.11.6
 [2026.11.5]: https://gitlab.ci.csc.fi/sds-dev/sd-submit/metadata-submitter-frontend/compare/2026.11.4...2026.11.5

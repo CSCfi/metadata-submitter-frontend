@@ -45,7 +45,7 @@ declare module "@mui/system" {
   interface ThemeOptions extends CustomTheme {}
 }
 
-declare module "@mui/material/styles/createPalette" {
+declare module "@mui/material/styles" {
   interface Palette {
     third: { main: string }
     button: { edit: string; delete: string }

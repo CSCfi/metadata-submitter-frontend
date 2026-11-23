@@ -1,7 +1,7 @@
 import { act } from "react"
 
 import { screen } from "@testing-library/react"
-import { http, HttpResponse } from "msw"
+import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router"
 import { vi } from "vitest"
@@ -26,7 +26,7 @@ const restHandlers = [
 const server = setupServer(...restHandlers)
 
 describe("Page403", () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  beforeAll(() => server.listen({ onUnhandledFrame: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

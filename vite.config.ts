@@ -4,7 +4,6 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig, loadEnv } from "vite"
 import { nodePolyfills } from "vite-plugin-node-polyfills"
-import viteTsconfigPaths from "vite-tsconfig-paths"
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
@@ -34,7 +33,7 @@ export default defineConfig(({ mode }) => {
    * Otherwise, we would need to import component as "../../folder/component" instead of "folder/component"
    */
   // Configure the path aliases
-  const srcDir = path.resolve(__dirname, "src")
+  const srcDir = path.resolve(import.meta.dirname, "src")
   // Folder alias
   const folders = fs
     .readdirSync(srcDir, { withFileTypes: true })
@@ -74,7 +73,6 @@ export default defineConfig(({ mode }) => {
           plugins: ["@emotion/babel-plugin"],
         },
       }),
-      viteTsconfigPaths(),
     ],
     resolve: {
       alias: pathAliases,

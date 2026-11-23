@@ -8,6 +8,8 @@ import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles"
 import { configureStore } from "@reduxjs/toolkit"
 import { render } from "@testing-library/react"
 import type { RenderOptions } from "@testing-library/react"
+import type { JsonBodyType } from "msw"
+import { HttpResponse } from "msw/http"
 import { Provider } from "react-redux"
 
 import type { RootState } from "../rootReducer"
@@ -54,6 +56,9 @@ export const mockState = {
     },
   },
 }
+
+export const corsJsonResponse = <T extends JsonBodyType>(body: T) =>
+  HttpResponse.json(body, { headers: { "Access-Control-Allow-Origin": "*" } })
 
 export function renderWithProviders(
   ui: React.ReactElement<unknown>,

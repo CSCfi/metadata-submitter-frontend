@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react"
-import { http, HttpResponse } from "msw"
+import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router"
 
@@ -22,7 +22,7 @@ const restHandlers = [
 const server = setupServer(...restHandlers)
 
 describe("HomePage", () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  beforeAll(() => server.listen({ onUnhandledFrame: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

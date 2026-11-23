@@ -18,7 +18,6 @@ import Grid from "@mui/material/Grid"
 import IconButton from "@mui/material/IconButton"
 import Paper from "@mui/material/Paper"
 import { styled } from "@mui/material/styles"
-import { TypographyVariant } from "@mui/material/styles/createTypography"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment"
@@ -396,7 +395,7 @@ const FormSection = ({
         <FormSectionTitle square={true} elevation={0} level={level}>
           <Typography
             key={`${name}-header`}
-            variant={level === 0 ? "h4" : ("subtitle1" as TypographyVariant)}
+            variant={level === 0 ? "h4" : "subtitle1"}
             role="heading"
             color="secondary"
           >

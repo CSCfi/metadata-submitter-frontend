@@ -8,15 +8,12 @@
     "@emotion/babel-plugin": "^11.12.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/codemod": "^7.0.0",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
     "@mui/system": "^7.0.0",
     "@mui/x-data-grid": "^8.0.0",
     "@mui/x-date-pickers": "^8.4.0",
     "@reduxjs/toolkit": "^2.2.7",
-    "@typescript-eslint/parser": "^8.3.0",
-    "@vitejs/plugin-react": "^6.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "ajv-i18n": "^4.2.0",
@@ -32,9 +29,7 @@
     "react-i18next": "^18.0.0",
     "react-redux": "^9.1.2",
     "react-router": "^7.1.1",
-    "react-transition-group": "^4.4.2",
-    "vite": "^8.0.0",
-    "vite-tsconfig-paths": "^6.0.0"
+    "react-transition-group": "^4.4.2"
   },
   "scripts": {
     "start": "vite",
@@ -72,16 +67,19 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.9.1",
+    "@mui/codemod": "^7.0.0",
     "@playwright/test": "^1.46.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.0.4",
     "@types/lodash": "^4.17.15",
-    "@types/node": "^26.0.0",
+    "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vitejs/plugin-react": "^6.0.0",
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
     "concurrently": "^10.0.0",
@@ -96,7 +94,8 @@
     "pg": "^8.16.3",
     "pinst": "^3.0.0",
     "prettier": "^3.0.0",
-    "typescript": "^7.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.0",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vitest": "^4.0.16"
   },
@@ -104,5 +103,8 @@
     "hooks": {
       "pre-commit": "pnpm run concurrently -- \"pnpm:lint:check\" \"pnpm:format:check\" \"pnpm:tsc\" \"pnpm:test:no-watch\" "
     }
+  },
+  "engines": {
+    "node": ">=22.22.2"
   }
 }

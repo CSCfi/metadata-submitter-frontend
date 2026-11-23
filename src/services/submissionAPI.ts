@@ -1,28 +1,36 @@
 import createApiClient from "./apiClient"
 
-import { APIResponse, SubmissionDetails } from "types"
+import {
+  APIResponse,
+  MetaObject,
+  PaginatedSubmissions,
+  RegistrationDetails,
+  SubmissionDetails,
+  SubmissionDetailsWithId,
+  SubmissionId,
+} from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/submissions")
 
 const api = createApiClient(apiPath)
 
-const createNewSubmission = (submission: SubmissionDetails): Promise<APIResponse> => {
+const createNewSubmission = (submission: SubmissionDetails): Promise<APIResponse<SubmissionId>> => {
   return api.post("", submission)
 }
 
-const getSubmissionById = (submissionId: string): Promise<APIResponse> => {
+const getSubmissionById = (submissionId: string): Promise<APIResponse<SubmissionDetailsWithId>> => {
   return api.get(`/${submissionId}`)
 }
 
 const patchSubmissionById = (
   submissionId: string,
   JSONContent: Record<string, unknown>
-): Promise<APIResponse> => {
+): Promise<APIResponse<SubmissionId>> => {
   return api.patch(`/${submissionId}`, JSONContent)
 }
 
-const deleteSubmissionById = (submissionId: string): Promise<APIResponse> => {
+const deleteSubmissionById = (submissionId: string): Promise<APIResponse<void>> => {
   return api.delete(`/${submissionId}`)
 }
 
@@ -31,7 +39,7 @@ const getSubmissions = (params: {
   per_page: number
   published: boolean
   projectId: string
-}): Promise<APIResponse> => {
+}): Promise<APIResponse<PaginatedSubmissions>> => {
   return api.get("", { params })
 }
 
@@ -43,7 +51,7 @@ const getSubmissions = (params: {
 const getAllObjectsByObjectType = (
   submissionId: string,
   objectType: string
-): Promise<APIResponse> => {
+): Promise<APIResponse<MetaObject[]>> => {
   return api.get(`${submissionId}/objects/docs?objectType=${objectType}`)
 }
 
@@ -51,11 +59,13 @@ const getObjectByObjectId = (
   submissionId: string,
   objectType: string,
   objectId: string
-): Promise<APIResponse> => {
+): Promise<APIResponse<MetaObject>> => {
   return api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
 }
 
-const getSubmissionRegistrations = (submissionId: string): Promise<APIResponse> => {
+const getSubmissionRegistrations = (
+  submissionId: string
+): Promise<APIResponse<RegistrationDetails>> => {
   return api.get(`${submissionId}/registrations`)
 }
 

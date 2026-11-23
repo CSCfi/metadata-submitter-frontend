@@ -8,7 +8,7 @@ const apiPath = await addApiPrefix("/v1/publish")
 
 const api = createApiClient(apiPath)
 
-const publishSubmissionById = (submissionId: string): Promise<APIResponse> => {
+const publishSubmissionById = (submissionId: string): Promise<APIResponse<void>> => {
   return api.patch(`/${submissionId}`)
 }
 

@@ -36,7 +36,14 @@ import { updateStatus } from "features/statusMessageSlice"
 import { useAppSelector, useAppDispatch } from "hooks"
 import fintoAPIService from "services/fintoAPI"
 import rorAPIService from "services/rorAPI"
-import { ConnectFormChildren, ConnectFormMethods, FormObject, NestedField } from "types"
+import {
+  ConnectFormChildren,
+  ConnectFormMethods,
+  FintoConcept,
+  FormObject,
+  NestedField,
+  ROROrganization,
+} from "types"
 import { pathToName, traverseValues } from "utils/JSONSchemaUtils"
 
 /*
@@ -990,22 +997,6 @@ type AutocompleteItem = {
 
 type AutocompleteSource = "ror" | "finto"
 
-/*
-  More details of Finto search response are here: https://api.finto.fi/doc/
-*/
-type FintoConcept = Record<string, unknown> & {
-  uri: string
-  prefLabel: string
-  altLabel?: string
-}
-/*
-  More details of ROR data structure are here: https://ror.readme.io/docs/ror-data-structure
-*/
-type ROROrganization = Record<string, unknown> & {
-  id: string
-  names: { lang: string | null; types: string[]; value: string }[]
-}
-
 const StyledAutocomplete = styled(Autocomplete)(() => ({
   flex: "auto",
   alignSelf: "flex-start",
@@ -1026,7 +1017,7 @@ const FormAutocompleteField = ({
 
   const defaultValue = getValues(name) || ""
   const [open, setOpen] = React.useState(false)
-  const [options, setOptions] = React.useState([])
+  const [options, setOptions] = React.useState<AutocompleteItem[]>([])
   const [inputValue, setInputValue] = React.useState("")
   const [loading, setLoading] = React.useState(false)
 

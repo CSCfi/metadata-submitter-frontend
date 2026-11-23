@@ -1,6 +1,8 @@
 ﻿import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = [{ id: "", name: "", workflows: [], licenses: [] }]
+import type { RemsInfo } from "types"
+
+const initialState: RemsInfo[] = [{ id: "", name: "", workflows: [], licenses: [] }]
 
 const remsSlice = createSlice({
   name: "rems",

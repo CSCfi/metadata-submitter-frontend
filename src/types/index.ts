@@ -31,6 +31,11 @@ export type User = {
   projects: { projectId: string }[]
 }
 
+export type APIKey = {
+  key_id: string
+  created_at?: string | null
+}
+
 export type Schema =
   "study" | "dac" | "policy" | "sample" | "experiment" | "run" | "analysis" | "dataset"
 
@@ -130,6 +135,29 @@ export type SubmissionDataFromForm = {
   workflowType: string
 }
 
+export type PaginatedSubmissionsPage = {
+  page: number
+  size: number
+  totalPages: number
+  totalSubmissions: number
+}
+
+export type PaginatedSubmissions = {
+  page: PaginatedSubmissionsPage
+  submissions: SubmissionDetailsWithId[]
+}
+
+export type MetaObject = {
+  name: string
+  objectId: string
+  objectType: string
+  submissionId: string
+  title?: string | null
+  description?: string | null
+  created?: string | null
+  modified?: string | null
+}
+
 export type StatusDetails = {
   status: string | null
   response?: unknown
@@ -180,7 +208,7 @@ export type NestedField = {
   fieldValues: string
 }
 
-export type APIResponse = AxiosResponse
+export type APIResponse<T> = AxiosResponse<T>
 
 export type ObjectDisplayValues = {
   descriptor?: { studyTitle?: string }
@@ -228,6 +256,13 @@ export type RemsDetails = {
   organizationId: string
   workflowId: number
   licenses: number[]
+}
+
+export type RemsInfo = {
+  id: ""
+  name: ""
+  workflows: []
+  licenses: []
 }
 
 export type DataBucketRow = {
@@ -280,4 +315,32 @@ export type RegistrationDetails = {
   remsCatalogueId: string
   remsResourceId: string
   remsUrl: string
+}
+
+/*
+ * More details of ROR data structure is here: https://ror.readme.io/docs/ror-data-structure
+ * Only the fields "id" and "names" are used from the ROR v2 search response
+ */
+export type ROROrganization = {
+  id: string
+  names: { lang: string | null; types: string[]; value: string }[]
+}
+
+// Only the fields we use from the ROR v2 search response
+export type RORSearchResponse = {
+  items: ROROrganization[]
+}
+
+/*
+  More details of Finto search response are here: https://api.finto.fi/doc/
+*/
+export type FintoConcept = {
+  uri: string
+  prefLabel: string
+  altLabel?: string
+}
+
+// Only the fields we use from the Finto (Skosmos) search response.
+export type FintoSearchResponse = {
+  results: FintoConcept[]
 }

@@ -110,22 +110,22 @@ const WizardDataBucketStep = () => {
     }
   }
 
-  const getFiles = async (bucketName: string) => {
-    if (!!bucketName) {
-      try {
-        await ensureBucketAccess(bucketName)
-        const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
-        const files = response.data ?? []
-        dispatch(addFiles({ bucketName: bucketName, files: files }))
-        return files
-      } catch (err) {
-        dispatch(
-          updateStatus({
-            status: ResponseStatus.error,
-            response: err,
-          })
-        )
-      }
+  const getFiles = async (bucketName: string): Promise<BucketFile[]> => {
+    if (!bucketName) return []
+    try {
+      await ensureBucketAccess(bucketName)
+      const response = await bucketsAPIService.getBucketFiles(projectId, bucketName)
+      const files = response.data ?? []
+      dispatch(addFiles({ bucketName: bucketName, files: files }))
+      return files
+    } catch (err) {
+      dispatch(
+        updateStatus({
+          status: ResponseStatus.error,
+          response: err,
+        })
+      )
+      return []
     }
   }
 

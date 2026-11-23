@@ -1,4 +1,4 @@
-﻿import { APIResponse } from "../types"
+﻿import { APIResponse, RemsInfo } from "../types"
 
 import createApiClient from "./apiClient"
 
@@ -8,7 +8,7 @@ const apiPath = await addApiPrefix("/v1/rems")
 
 const api = createApiClient(apiPath)
 
-const getRemsInfo = (language?: string): Promise<APIResponse> => {
+const getRemsInfo = (language?: string): Promise<APIResponse<RemsInfo[]>> => {
   return api.get("", { params: language ? { language } : {} })
 }
 

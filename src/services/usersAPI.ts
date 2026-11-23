@@ -1,4 +1,4 @@
-import { APIResponse } from "../types"
+import { APIResponse, User } from "../types"
 
 import createApiClient from "./apiClient"
 
@@ -8,7 +8,7 @@ const apiPath = await addApiPrefix("/v1/users")
 
 const api = createApiClient(apiPath)
 
-const getUser = (): Promise<APIResponse> => api.get("")
+const getUser = (): Promise<APIResponse<User>> => api.get("")
 
 export default {
   getUser,

@@ -18,7 +18,7 @@ import { APIResponse } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 type MessageHandlerProps = {
-  response?: APIResponse
+  response?: APIResponse<unknown>
   helperText?: string
   handleClose: (status: boolean) => void
 }
@@ -119,6 +119,9 @@ const getSeverityIcon = (severity, theme) => {
   }
 }
 
+const hasDetail = (data: unknown): data is { detail: string } =>
+  typeof data === "object" && data !== null && "detail" in data && typeof data.detail === "string"
+
 const ErrorHandler = (props: MessageHandlerProps) => {
   const { t } = useTranslation()
   const { response, helperText, handleClose } = props
@@ -132,7 +135,7 @@ const ErrorHandler = (props: MessageHandlerProps) => {
     case 400:
       message = t("snackbarMessages.error.400", {
         helperText,
-        responseDetail: response.data.detail,
+        responseDetail: hasDetail(response.data) ? response.data.detail : "",
       })
       break
     default:
@@ -231,7 +234,7 @@ const SuccessHandler = (props: MessageHandlerProps) => {
 
 type StatusMessageProps = {
   status: string
-  response?: APIResponse
+  response?: APIResponse<unknown>
   helperText?: string
 }
 

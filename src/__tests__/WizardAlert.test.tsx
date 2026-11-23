@@ -25,4 +25,16 @@ describe("WizardAlert", () => {
       })
     })
   })
+
+  test("should render submissionsTable dialog", async () => {
+    renderWithProviders(
+      <BrowserRouter>
+        <WizardAlert parentLocation="submissionsTable" onAlert={() => ({})} />
+      </BrowserRouter>
+    )
+
+    const dialog = await screen.findByRole("dialog")
+    expect(dialog).toBeInTheDocument()
+    expect(dialog).not.toHaveTextContent("default")
+  })
 })

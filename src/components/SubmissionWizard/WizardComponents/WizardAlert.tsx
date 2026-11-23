@@ -166,6 +166,22 @@ const CancelFormDialog = ({
       }
       break
     }
+    case "submissionsTable": {
+      dialogTitle = t("alerts.delete.title")
+      dialogContent = t("alerts.delete.content")
+      dialogActions = (
+        <DialogActions style={{ justifyContent: "flex-end" }}>
+          <Button variant="contained" onClick={() => handleDialog(false)} color="primary" autoFocus>
+            {t("alerts.actions.cancel")}
+          </Button>
+
+          <Button variant="outlined" onClick={() => handleDialog(true)} color="primary">
+            {t("alerts.actions.delete")}
+          </Button>
+        </DialogActions>
+      )
+      break
+    }
     default: {
       dialogTitle = "default"
       dialogContent = "default content"

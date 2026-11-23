@@ -1,4 +1,4 @@
-import { APIResponse } from "../types"
+import { APIResponse, APIKey } from "../types"
 
 import createApiClient from "./apiClient"
 
@@ -8,15 +8,15 @@ const apiPath = await addApiPrefix("/v1/api/keys")
 
 const api = createApiClient(apiPath)
 
-const addAPIKey = (name: string): Promise<APIResponse> => {
-  return api.post("", { key_id: name })
+const addAPIKey = (name: string): Promise<APIResponse<string>> => {
+  return api.post<string, APIResponse<string>, Pick<APIKey, "key_id">>("", { key_id: name })
 }
 
-const deleteAPIKey = (name: string): Promise<APIResponse> => {
-  return api.delete("", { data: { key_id: name } })
+const deleteAPIKey = (name: string): Promise<APIResponse<void>> => {
+  return api.delete<void, APIResponse<void>, APIKey>("", { data: { key_id: name } })
 }
 
-const getAPIKeys = () => api.get("", {})
+const getAPIKeys = (): Promise<APIResponse<APIKey[]>> => api.get("", {})
 
 export default {
   getAPIKeys,

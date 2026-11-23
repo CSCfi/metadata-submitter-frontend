@@ -17,7 +17,7 @@ const submitObjectHook = async (
   formData: Record<string, unknown>,
   submissionId: string,
   objectType: string,
-  dispatch: (reducer: unknown) => Promise<APIResponse>
+  dispatch: (reducer: unknown) => Promise<APIResponse<void>>
 ): Promise<void> => {
   dispatch(setLoading())
 

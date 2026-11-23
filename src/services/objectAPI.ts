@@ -13,6 +13,7 @@ const apiPath = await addApiPrefix("/v1/objects")
   - '/v1/object' endpoint is already removed from backend, but we will need a replacement for it in the end
   to add an (metadata) object to a submission and update it.
   - The functions below are left as is so we could update them/have them as template when the new endpoints are available.
+  - The API responses have been typed APIResponse<void> and APIResponse<object> for there being no information of the actual types.
   - 'getAllObjectsByObjectType' and 'getObjectByObjectId' are moved to 'submissionAPI'.
 *
 */
@@ -22,7 +23,7 @@ const createFromXML = (
   objectType: string,
   submissionId: string,
   XMLFile: File
-): Promise<APIResponse> => {
+): Promise<APIResponse<void>> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
   return api.post(`/${objectType}?submission=${submissionId}`, formData)
@@ -36,7 +37,7 @@ const createFromJSON = (
   objectType: string,
   submissionId: string,
   JSONContent: Record<string, unknown>
-): Promise<APIResponse> => {
+): Promise<APIResponse<void>> => {
   return api.post(`/${objectType}?submission=${submissionId}`, JSONContent)
 }
 
@@ -44,7 +45,7 @@ const patchFromJSON = (
   objectType: string,
   accessionId: string,
   JSONContent: Record<string, unknown>
-): Promise<APIResponse> => {
+): Promise<APIResponse<void>> => {
   return api.patch(`/${objectType}/${accessionId}`, omit(JSONContent, OmitObjectValues))
 }
 
@@ -52,7 +53,7 @@ const replaceXML = (
   objectType: string,
   accessionId: string,
   XMLFile: File
-): Promise<APIResponse> => {
+): Promise<APIResponse<object>> => {
   const formData = new FormData()
   formData.append(objectType, XMLFile)
   return api.put(`/${objectType}/${accessionId}`, formData)
@@ -61,7 +62,7 @@ const replaceXML = (
 const deleteObjectByAccessionId = (
   objectType: string,
   accessionId: string
-): Promise<APIResponse> => {
+): Promise<APIResponse<void>> => {
   return api.delete(`/${objectType}/${accessionId}`)
 }
 

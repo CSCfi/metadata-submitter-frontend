@@ -10,7 +10,7 @@ import type { APIResponse, StepObject } from "types"
 import { pathWithLocale } from "utils"
 
 /*
- * Fetch an object based on its schema and accessionId, 
+ * Fetch an object based on its schema and accessionId,
   and set the correct object to display in the UI
  */
 const editObjectHook = async (
@@ -18,7 +18,7 @@ const editObjectHook = async (
   item: StepObject,
   step: number,
   submissionId: string,
-  dispatch: (reducer: unknown) => Promise<APIResponse>,
+  dispatch: (reducer: unknown) => Promise<APIResponse<void>>,
   navigate: NavigateFunction
 ) => {
   try {

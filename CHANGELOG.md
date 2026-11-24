@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- added test for delete alert (#1148)
+- WizardAlert.tsx, SubmissionDataTable.tsx, translation_en.json and translation_fi.json (#1148)
+
+### Added
+
+- (users) There is a confirmation dialog added for deleting a submission from home page submission list (#1148)
+- An case for alerting for deleting a submission (#1148)
+
 ## [2026.11.8] - 2026-11-23
 
 ### Changed

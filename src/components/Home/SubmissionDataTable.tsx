@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import Button from "@mui/material/Button"
@@ -6,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router"
 
 import DataTable from "components/DataTable"
+import WizardAlert from "components/SubmissionWizard/WizardComponents/WizardAlert"
 import { ExtraObjectTypes } from "constants/wizardObject"
 import { SubmissionStatus } from "constants/wizardSubmission"
 import { setObjectType } from "features/wizardObjectTypeSlice"
@@ -31,6 +34,12 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
   const { submissionType, page, totalItems, fetchPageOnChange, rows, onDeleteSubmission } = props
   const navigate = useNavigate()
   const { t } = useTranslation()
+
+  const [alert, setAlert] = useState(false)
+  const [selectedSubmission, setSelectedSubmission] = useState<{
+    submissionId: string
+    submissionType: string
+  } | null>(null)
 
   const columns: GridColDef[] = [
     {
@@ -77,7 +86,9 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
                 <GridActionsCellItem
                   key={params.id}
                   icon={<DeleteIcon color="primary" fontSize="large" />}
-                  onClick={e => handleDeleteSubmission(e, params.id, params.row.submissionType)}
+                  onClick={e =>
+                    handleDeleteSubmission(e, String(params.id), params.row.submissionType)
+                  }
                   label={t("delete")}
                   data-testid="delete-draft-submission"
                   showInMenu
@@ -104,21 +115,36 @@ const SubmissionDataTable: React.FC<SubmissionDataTableProps> = props => {
     dispatch(setObjectType(ExtraObjectTypes.submissionDetails))
   }
 
-  const handleDeleteSubmission = async (e, id, submissionType) => {
+  const handleDeleteSubmission = async (
+    e: React.MouseEvent,
+    id: string,
+    submissionType: string
+  ) => {
     e.stopPropagation()
-    onDeleteSubmission ? onDeleteSubmission(id, submissionType) : null
+    setSelectedSubmission({ submissionId: id, submissionType: submissionType })
+    setAlert(true)
+  }
+
+  const handleDeleteAlert = (isDeleteAlert: boolean) => {
+    if (isDeleteAlert && selectedSubmission && onDeleteSubmission)
+      onDeleteSubmission(selectedSubmission.submissionId, selectedSubmission.submissionType)
+    setSelectedSubmission(null)
+    setAlert(false)
   }
 
   return (
-    <DataTable
-      key={submissionType}
-      rows={rows}
-      columns={columns}
-      page={page}
-      sortingModel={sortingModel}
-      totalItems={totalItems}
-      fetchPageOnChange={fetchPageOnChange}
-    />
+    <>
+      <DataTable
+        key={submissionType}
+        rows={rows}
+        columns={columns}
+        page={page}
+        sortingModel={sortingModel}
+        totalItems={totalItems}
+        fetchPageOnChange={fetchPageOnChange}
+      />
+      {alert && <WizardAlert onAlert={handleDeleteAlert} parentLocation={"submissionsTable"} />}
+    </>
   )
 }
 

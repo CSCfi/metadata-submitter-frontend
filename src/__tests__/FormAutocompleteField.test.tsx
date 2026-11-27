@@ -2,14 +2,14 @@ import { act } from "react"
 
 import { screen, waitFor, fireEvent } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
-import { http, HttpResponse } from "msw"
+import { http } from "msw/http"
 import { setupServer } from "msw/node"
 import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 
 import { SDObjectTypes } from "constants/wizardObject"
-import { renderWithProviders } from "utils/test-utils"
+import { corsJsonResponse, renderWithProviders } from "utils/test-utils"
 
 vi.mock("../schemas/submission.json", () => ({
   default: {
@@ -42,7 +42,7 @@ const restHandlers = [
     const url = new URL(request.url)
     const searchTerm = url.searchParams.get("query") as string
 
-    return HttpResponse.json({
+    return corsJsonResponse({
       items: mockOrganisations.filter(item =>
         item.names.some(name => name.value.toLowerCase().includes(searchTerm))
       ),
@@ -53,7 +53,7 @@ const restHandlers = [
 const server = setupServer(...restHandlers)
 
 describe("Test autocomplete on affiliation field", () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  beforeAll(() => server.listen({ onUnhandledFrame: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

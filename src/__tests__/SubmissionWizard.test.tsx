@@ -1,5 +1,5 @@
 import { screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react"
-import { http, HttpResponse } from "msw"
+import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 import { MemoryRouter, Routes, Route } from "react-router"
 
@@ -37,7 +37,7 @@ const restHandlers = [
 const server = setupServer(...restHandlers)
 
 describe("SubmissionWizard", () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  beforeAll(() => server.listen({ onUnhandledFrame: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

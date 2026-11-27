@@ -2,14 +2,14 @@ import { act } from "react"
 
 import { screen, waitFor, fireEvent } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
-import { http, HttpResponse } from "msw"
+import { http } from "msw/http"
 import { setupServer } from "msw/node"
 import { vi } from "vitest"
 
 import WizardFillObjectDetailsForm from "../components/SubmissionWizard/WizardForms/WizardFillObjectDetailsForm"
 
 import { SDObjectTypes } from "constants/wizardObject"
-import { renderWithProviders } from "utils/test-utils"
+import { corsJsonResponse, renderWithProviders } from "utils/test-utils"
 
 vi.mock("../schemas/submission.json", () => ({
   default: {
@@ -48,14 +48,14 @@ const server = setupServer(
     const url = new URL(request.url)
     requestedParams = url.searchParams
     const searchTerm = (url.searchParams.get("query") as string).replace("*", "").toLowerCase()
-    return HttpResponse.json({
+    return corsJsonResponse({
       results: mockPlaces.filter(place => place.prefLabel.toLowerCase().startsWith(searchTerm)),
     })
   })
 )
 
 describe("Test autocomplete on geoLocationPlace field", () => {
-  beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }))
+  beforeAll(() => server.listen({ onUnhandledFrame: "bypass" }))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 

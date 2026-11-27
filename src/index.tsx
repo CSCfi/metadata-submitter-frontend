@@ -2,13 +2,12 @@ import { StyledEngineProvider } from "@mui/material/styles"
 import { ThemeProvider } from "@mui/system"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
-import "style.css"
+import "./style.css"
 import { BrowserRouter as Router } from "react-router"
-
-import CSCtheme from "./theme"
 
 import App from "App"
 import { setupStore } from "store"
+import CSCtheme from "theme"
 
 import "./i18n"
 

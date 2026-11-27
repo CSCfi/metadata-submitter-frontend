@@ -1,5 +1,5 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react"
-import { http, HttpResponse } from "msw"
+import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 import { vi } from "vitest"
 

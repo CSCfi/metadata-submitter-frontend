@@ -1,5 +1,5 @@
 ﻿import { screen, fireEvent, waitFor, within } from "@testing-library/react"
-import { http, HttpResponse } from "msw"
+import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 
 import WizardDataBucketStep from "components/SubmissionWizard/WizardSteps/WizardDataBucketStep"

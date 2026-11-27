@@ -9,7 +9,7 @@ import { FormObject } from "types"
  */
 export const dereferenceSchema = async (schema: FormObject) => {
   const dereferenced = JSON.parse(JSON.stringify(schema))
-  await $RefParser.dereference(dereferenced)
+  await $RefParser.dereference(dereferenced, { resolve: { http: false, file: false } })
   delete dereferenced["definitions"]
   return dereferenced
 }

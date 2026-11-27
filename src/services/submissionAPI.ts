@@ -52,7 +52,7 @@ const getAllObjectsByObjectType = (
   submissionId: string,
   objectType: string
 ): Promise<APIResponse<MetaObject[]>> => {
-  return api.get(`${submissionId}/objects/docs?objectType=${objectType}`)
+  return api.get(`/${submissionId}/objects/docs`, { params: { objectType } })
 }
 
 const getObjectByObjectId = (
@@ -60,13 +60,13 @@ const getObjectByObjectId = (
   objectType: string,
   objectId: string
 ): Promise<APIResponse<MetaObject>> => {
-  return api.get(`${submissionId}/objects/docs?objectType=${objectType}&objectId=${objectId}`)
+  return api.get(`/${submissionId}/objects/docs`, { params: { objectType, objectId } })
 }
 
 const getSubmissionRegistrations = (
   submissionId: string
 ): Promise<APIResponse<RegistrationDetails>> => {
-  return api.get(`${submissionId}/registrations`)
+  return api.get(`/${submissionId}/registrations`)
 }
 
 export default {

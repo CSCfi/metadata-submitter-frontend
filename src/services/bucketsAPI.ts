@@ -1,7 +1,6 @@
-import { APIResponse, BucketFile } from "../types"
-
 import createApiClient from "./apiClient"
 
+import { APIResponse, BucketFile } from "types"
 import { addApiPrefix } from "utils/getConfig"
 
 const apiPath = await addApiPrefix("/v1/buckets")
@@ -16,17 +15,17 @@ const getBucketFiles = (
   projectId: string,
   bucketName: string
 ): Promise<APIResponse<BucketFile[]>> => {
-  return api.get(`/${bucketName}/files/?projectId=${projectId}`)
+  return api.get(`/${bucketName}/files`, { params: { projectId } })
 }
 
 // Grant access to a specific bucket
 const grantAccessBucket = (projectId: string, bucketName: string): Promise<APIResponse<void>> => {
-  return api.put(`/${bucketName}?projectId=${projectId}`)
+  return api.put(`/${bucketName}`, undefined, { params: { projectId } })
 }
 
 // Check if a specific bucket can be accessed
 const checkAccessBucket = (projectId: string, bucketName: string): Promise<APIResponse<void>> => {
-  return api.head(`/${bucketName}?projectId=${projectId}`)
+  return api.head(`/${bucketName}`, { params: { projectId } })
 }
 
 export default {

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Standardize query params handling
 - added test for delete alert (#1148)
 - WizardAlert.tsx, SubmissionDataTable.tsx, translation_en.json and translation_fi.json (#1148)
 
